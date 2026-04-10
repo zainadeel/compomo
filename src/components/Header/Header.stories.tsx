@@ -20,11 +20,11 @@ export const WithSlots: Story = {
   render: () => (
     <Header
       title="Dashboard"
-      left={<Button variant="tertiary" label="Back" size="small" />}
+      left={<Button variant="tertiary" label="Back" size="sm" />}
       right={
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button variant="secondary" label="Export" size="small" />
-          <Button variant="primary" label="New" size="small" />
+          <Button variant="secondary" label="Export" size="sm" />
+          <Button variant="primary" label="New" size="sm" />
         </div>
       }
     />
@@ -34,9 +34,9 @@ export const WithSlots: Story = {
 export const CenterContent: Story = {
   render: () => (
     <Header
-      left={<Button variant="tertiary" label="Menu" size="small" />}
+      left={<Button variant="tertiary" label="Menu" size="sm" />}
       center={<span style={{ fontWeight: 600 }}>App Name</span>}
-      right={<Button variant="tertiary" label="Settings" size="small" />}
+      right={<Button variant="tertiary" label="Settings" size="sm" />}
     />
   ),
 };

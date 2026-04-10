@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Fade } from './Fade';
 
 const meta: Meta<typeof Fade> = {
-  title: 'Utility/Fade',
+  title: 'Layout/Fade',
   component: Fade,
 };
 

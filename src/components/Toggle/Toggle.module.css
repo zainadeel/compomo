@@ -26,7 +26,8 @@
 }
 
 .toggle:focus-visible {
-  box-shadow: var(--effect-focus-ring);
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
 }
 
 .checked {

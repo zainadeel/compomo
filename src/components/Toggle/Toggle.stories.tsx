@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Toggle } from './Toggle';
 
 const meta: Meta<typeof Toggle> = {
-  title: 'Components/Toggle',
+  title: 'Primitives/Toggle',
   component: Toggle,
 };
 

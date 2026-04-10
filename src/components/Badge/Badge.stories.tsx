@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from './Badge';
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Badge',
+  title: 'Primitives/Badge',
   component: Badge,
   argTypes: {
     count: { control: 'number' },

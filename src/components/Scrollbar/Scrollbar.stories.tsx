@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Scrollbar } from './Scrollbar';
 
 const meta: Meta<typeof Scrollbar> = {
-  title: 'Utility/Scrollbar',
+  title: 'Layout/Scrollbar',
   component: Scrollbar,
 };
 

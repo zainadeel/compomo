@@ -33,6 +33,9 @@ export type { CardProps, CardElevation, CardRadius } from './components/Card';
 export { Button } from './components/Button';
 export type { ButtonProps, ButtonVariant, ButtonIntent, ButtonSize } from './components/Button';
 
+export { ToggleButton } from './components/ToggleButton';
+export type { ToggleButtonProps, ToggleButtonVariant, ToggleButtonSize } from './components/ToggleButton';
+
 export { Tag } from './components/Tag';
 export type { TagProps, TagIntent, TagContrast, TagStyle, TagSize } from './components/Tag';
 

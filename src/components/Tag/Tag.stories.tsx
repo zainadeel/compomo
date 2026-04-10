@@ -3,7 +3,7 @@ import React from 'react';
 import { Tag } from './Tag';
 
 const meta: Meta<typeof Tag> = {
-  title: 'Components/Tag',
+  title: 'Primitives/Tag',
   component: Tag,
   argTypes: {
     intent: { control: 'select', options: ['positive', 'negative', 'warning', 'caution', 'neutral', 'brand', 'ai', 'walkthrough', 'guide'] },

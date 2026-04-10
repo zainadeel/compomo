@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ErrorBoundary } from './ErrorBoundary';
 
 const meta: Meta<typeof ErrorBoundary> = {
-  title: 'Utility/ErrorBoundary',
+  title: 'Components/ErrorBoundary',
   component: ErrorBoundary,
 };
 

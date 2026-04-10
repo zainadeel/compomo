@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card } from './Card';
 
 const meta: Meta<typeof Card> = {
-  title: 'Primitives/Card',
+  title: 'Components/Card',
   component: Card,
   argTypes: {
     elevation: {
