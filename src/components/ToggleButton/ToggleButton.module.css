@@ -101,7 +101,7 @@
 
 .iconOnly    { padding: 0; width: var(--dimension-size-400); min-width: var(--dimension-size-400); }
 .labelOnly   { padding: 0 var(--dimension-space-100); }
-.iconAndLabel{ padding: 0 var(--dimension-space-100); gap: var(--dimension-space-025); }
+.iconAndLabel{ padding: 0 var(--dimension-space-100) 0 var(--dimension-space-075); gap: var(--dimension-space-025); }
 
 /* ==========================================================================
    Sizes
@@ -109,7 +109,8 @@
 
 .sizeSM { height: var(--dimension-size-300); }
 .sizeSM.iconOnly { width: var(--dimension-size-300); min-width: var(--dimension-size-300); }
-.sizeSM.labelOnly, .sizeSM.iconAndLabel { padding: 0 var(--dimension-space-075); gap: 0; }
+.sizeSM.labelOnly   { padding: 0 var(--dimension-space-075); }
+.sizeSM.iconAndLabel { padding: 0 var(--dimension-space-075) 0 var(--dimension-space-050); gap: 0; }
 
 .sizeXS { height: var(--dimension-size-200); }
 .sizeXS.iconOnly { width: var(--dimension-size-200); min-width: var(--dimension-size-200); }
@@ -120,8 +121,10 @@
    ========================================================================== */
 
 .rounded { border-radius: var(--dimension-radius-half); }
-.rounded.labelOnly, .rounded.iconAndLabel { padding-left: calc(var(--dimension-space-100) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
-.rounded.sizeSM.labelOnly, .rounded.sizeSM.iconAndLabel { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.rounded.labelOnly   { padding-left: calc(var(--dimension-space-100) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
+.rounded.iconAndLabel { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
+.rounded.sizeSM.labelOnly   { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.rounded.sizeSM.iconAndLabel { padding-left: calc(var(--dimension-space-050) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
 .rounded.iconOnly { width: var(--dimension-size-400); min-width: var(--dimension-size-400); padding: 0; }
 .rounded.sizeSM.iconOnly { width: var(--dimension-size-300); min-width: var(--dimension-size-300); }
 .rounded.sizeXS.iconOnly { width: var(--dimension-size-200); min-width: var(--dimension-size-200); }

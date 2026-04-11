@@ -63,6 +63,27 @@
 .roundedLeftXS  { padding-left:  calc(var(--dimension-space-012) + var(--dimension-space-050)); }
 .roundedRightXS { padding-right: calc(var(--dimension-space-012) + var(--dimension-space-050)); }
 
+/*
+ * Icon-edge padding correction — when an icon (leading or remove) sits on a
+ * side, that side's padding should match the top/bottom optical gap:
+ *   (height − icon_size) / 2
+ *
+ *   md: (28 − 20) / 2 = 4px  → space-050
+ *   sm: (20 − 16) / 2 = 2px  → space-025
+ *   xs: (12 − 12) / 2 = 0px  → 0
+ *
+ * Applied by Tag.tsx: iconLeft when Icon present, iconRight when removable.
+ * Placed after size + rounded rules so same-specificity cascade wins.
+ */
+.iconLeftMD  { padding-left:  var(--dimension-space-050); }
+.iconRightMD { padding-right: var(--dimension-space-050); }
+
+.iconLeftSM  { padding-left:  var(--dimension-space-025); }
+.iconRightSM { padding-right: var(--dimension-space-025); }
+
+.iconLeftXS  { padding-left:  0; }
+.iconRightXS { padding-right: 0; }
+
 /* ==========================================================================
    Elevation
    none     — filled intent bg, no border, no shadow  (default)
@@ -208,7 +229,7 @@
 
 .removeButton::before {
   content: ''; position: absolute; inset: -2px;
-  border-radius: var(--dimension-radius-050);
+  border-radius: var(--dimension-radius-025);
   background-color: transparent;
   transition: var(--effect-transition-interaction-background-short-2);
   pointer-events: none;
@@ -216,6 +237,12 @@
 
 .removeButton:hover::before  { background-color: var(--color-interaction-hover); }
 .removeButton:active::before { background-color: var(--color-interaction-pressed); }
+
+/* SM — 1px gap, inset -1px → 18×18 hover area */
+.sizeSm .removeButton::before { inset: -1px; border-radius: 3px; }
+
+/* XS — flush, inset 0 → 12×12 hover area matching tag radius */
+.sizeXs .removeButton::before { inset: 0; border-radius: var(--dimension-radius-050); }
 
 .rounded .removeButton,
 .rounded .removeButton::before { border-radius: var(--dimension-radius-half); }

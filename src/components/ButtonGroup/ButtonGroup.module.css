@@ -58,11 +58,17 @@
  * on adjacent buttons cannot bleed through to the divider.
  * ─────────────────────────────────────────────────────────────────────────── */
 
-/* Full-height divider (secondary + primary) */
+/* Full-height divider (secondary + primary).
+ * Overlaps each neighbour by 0.5px and paints on top so the alpha token
+ * composites over the button fill rather than the page background. */
 .divider {
   width: 1px;
   flex-shrink: 0;
   background-color: var(--color-border-tertiary);
+  position: relative;
+  z-index: 1;
+  margin: 0 -0.5px;
+  pointer-events: none;
 }
 
 /* Ghost (elevation=none): short centred divider at icon height */

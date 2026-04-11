@@ -130,8 +130,64 @@ export const Matrix: Story = {
 
       {divider}
 
-      {/* ── Icon + Removable ── */}
-      {section('Icon + Removable combos')}
+      {/* ── Rounded — content variants ── */}
+      {section('Rounded — content variants')}
+      <div style={{ ...col, marginTop: 12 }}>
+        {([
+          { combo: 'label only',       icon: false, removable: false },
+          { combo: 'icon + label',     icon: true,  removable: false },
+          { combo: 'removable',        icon: false, removable: true  },
+          { combo: 'icon + removable', icon: true,  removable: true  },
+        ] as const).map(({ combo, icon, removable }) => (
+          <div key={combo} style={row}>
+            <span style={lbl()}>{combo}</span>
+            {SIZES.map(size => (
+              <Tag
+                key={size}
+                label="Label"
+                size={size}
+                intent="brand"
+                rounded
+                icon={icon ? PlaceholderIcon : undefined}
+                removable={removable}
+                onRemove={removable ? () => {} : undefined}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {divider}
+
+      {/* ── Content variants × Intents ── */}
+      {section('Content variants × Intents')}
+      <div style={{ ...col, marginTop: 12 }}>
+        {([
+          { combo: 'label only',       icon: false, removable: false },
+          { combo: 'icon + label',     icon: true,  removable: false },
+          { combo: 'removable',        icon: false, removable: true  },
+          { combo: 'icon + removable', icon: true,  removable: true  },
+        ] as const).map(({ combo, icon, removable }) => (
+          <div key={combo} style={row}>
+            <span style={lbl()}>{combo}</span>
+            {INTENTS.map(intent => (
+              <Tag
+                key={intent}
+                label={intent.charAt(0).toUpperCase() + intent.slice(1)}
+                intent={intent}
+                icon={icon ? PlaceholderIcon : undefined}
+                removable={removable}
+                onRemove={removable ? () => {} : undefined}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {divider}
+
+      {/* ── Content variants × Elevations ── */}
+      {section('Content variants × Elevations')}
       <div style={{ ...col, marginTop: 12 }}>
         {([
           { combo: 'label only',       icon: false, removable: false },

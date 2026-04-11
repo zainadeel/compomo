@@ -58,11 +58,19 @@
  * on adjacent buttons cannot bleed through to the divider.
  * ─────────────────────────────────────────────────────────────────────────── */
 
-/* Full-height divider (elevated / flat / floating) */
+/* Full-height divider (elevated / flat / floating).
+ * Rendered as a separate element (independent of adjacent button opacity),
+ * then nudged ±0.5px so it overlaps each neighbour and paints on top via
+ * z-index — this lets the alpha token (rgb(0 0 0 / 0.1)) composite over
+ * whatever fill the buttons carry (white, blue pressed state, etc.). */
 .divider {
   width: 1px;
   flex-shrink: 0;
   background-color: var(--color-border-tertiary);
+  position: relative;
+  z-index: 1;
+  margin: 0 -0.5px;
+  pointer-events: none;
 }
 
 /* Ghost (elevation=none): short centred divider at icon height */
@@ -77,6 +85,7 @@
 /* Ghost pressed-state: hide the divider on either side of a selected button */
 .itemPressed + .dividerGhost,
 .dividerGhost:has(+ .itemPressed) { opacity: 0; }
+
 
 /* ── Ghost interaction states: rounded chips ──────────────────────────────────
  * Ghost items have no connecting chrome — hover/press overlay and selected

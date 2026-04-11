@@ -9,6 +9,7 @@
   border: none;
   border-radius: var(--dimension-radius-half);
   cursor: pointer;
+  user-select: none;
   outline: none;
   flex-shrink: 0;
   background-color: var(--color-background-medium-neutral);

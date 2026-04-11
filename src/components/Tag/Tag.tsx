@@ -86,6 +86,9 @@ export const Tag = forwardRef<HTMLDivElement, TagProps>(
       // Pill padding correction — extra space-050 on bare sides (no content anchor)
       rounded && !Icon      && (styles as Record<string, string>)[`roundedLeft${sizeKey}`],
       rounded && !hasRemove && (styles as Record<string, string>)[`roundedRight${sizeKey}`],
+      // Icon-edge correction — reduce padding to (height − icon) / 2 on icon sides
+      !!Icon    && (styles as Record<string, string>)[`iconLeft${sizeKey}`],
+      hasRemove && (styles as Record<string, string>)[`iconRight${sizeKey}`],
       removable  && styles.removable,
       isInteractive && styles.interactive,
       inactive   && styles.inactive,

@@ -12,6 +12,9 @@
   flex-shrink: 0;
 }
 
+/* Small scale: tighter optical padding */
+.sizeSm { padding: 0 var(--dimension-space-025); } /* 2px */
+
 /* Caption scale: tighter optical padding */
 .sizeXs { padding: 0 var(--dimension-space-025); } /* 2px */
 

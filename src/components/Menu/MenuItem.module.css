@@ -5,6 +5,7 @@
   padding: var(--dimension-space-075);
   border: none;
   cursor: pointer;
+  user-select: none;
   text-align: left;
   width: 100%;
   min-height: var(--dimension-size-400);

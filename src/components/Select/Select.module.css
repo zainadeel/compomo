@@ -12,6 +12,7 @@
   padding: 0 var(--dimension-space-075);
   gap: var(--dimension-space-050);
   cursor: pointer;
+  user-select: none;
   border: none;
   outline: none;
 }

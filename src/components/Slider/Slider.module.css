@@ -3,7 +3,7 @@
 
 .track {
   position: relative; width: 100%; height: var(--dimension-size-400);
-  padding: 0 var(--dimension-space-025); border-radius: var(--dimension-radius-075); cursor: pointer;
+  padding: 0 var(--dimension-space-025); border-radius: var(--dimension-radius-075); cursor: pointer; user-select: none;
 }
 
 .trackInner {

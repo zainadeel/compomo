@@ -6,6 +6,7 @@
   height: var(--dimension-size-400);
   box-sizing: border-box;
   cursor: pointer;
+  user-select: none;
   border-radius: var(--dimension-radius-075);
   transition: background-color var(--effect-motion-short-2);
 }

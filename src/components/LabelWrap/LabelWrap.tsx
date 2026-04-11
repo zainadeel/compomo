@@ -6,8 +6,8 @@ interface LabelWrapProps {
   children: React.ReactNode;
   /**
    * Maps to typography size — controls optical horizontal padding:
-   *   xs  → 2px (caption scale)
-   *   sm | md | lg → 4px (body scale, default)
+   *   xs | sm → 2px (tighter scale)
+   *   md | lg → 4px (body scale, default)
    */
   size?: 'xs' | 'sm' | 'md' | 'lg';
   /** Enables truncation with ellipsis — use inside full-width containers. */
@@ -24,7 +24,7 @@ interface LabelWrapProps {
  * Not exported from the public barrel — internal use only.
  */
 export const LabelWrap = ({ children, size = 'md', truncate = false, className }: LabelWrapProps) => (
-  <span className={cn(styles.labelWrap, size === 'xs' && styles.sizeXs, truncate && styles.truncate, className)}>
+  <span className={cn(styles.labelWrap, size === 'sm' && styles.sizeSm, size === 'xs' && styles.sizeXs, truncate && styles.truncate, className)}>
     {children}
   </span>
 );
