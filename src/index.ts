@@ -43,7 +43,7 @@ export { ToggleButtonGroup } from './components/ToggleButtonGroup';
 export type { ToggleButtonGroupProps } from './components/ToggleButtonGroup';
 
 export { Tag } from './components/Tag';
-export type { TagProps, TagIntent, TagContrast, TagVariant, TagSize } from './components/Tag';
+export type { TagProps, TagIntent, TagContrast, TagElevation, TagSize } from './components/Tag';
 
 export { Badge } from './components/Badge';
 export type { BadgeProps } from './components/Badge';

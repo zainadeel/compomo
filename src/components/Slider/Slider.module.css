@@ -45,10 +45,10 @@
   transition: var(--effect-transition-interaction-background-instant);
 }
 
-.track:hover:not(.trackDisabled) .thumb::after { background-color: var(--color-interaction-hover); }
-.track:active:not(.trackDisabled) .thumb::after { background-color: var(--color-interaction-pressed); }
+.track:hover:not(.trackInactive) .thumb::after { background-color: var(--color-interaction-hover); }
+.track:active:not(.trackInactive) .thumb::after { background-color: var(--color-interaction-pressed); }
 
-.trackDisabled { cursor: not-allowed; opacity: 0.5; }
+.trackInactive { cursor: not-allowed; opacity: 0.5; }
 
 .input {
   position: absolute; inset: 0; width: 100%; height: 100%;

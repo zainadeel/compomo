@@ -9,13 +9,13 @@ const meta: Meta<typeof Checkbox> = {
     label: 'Accept terms',
     checked: false,
     indeterminate: false,
-    disabled: false,
+    inactive: false,
   },
   argTypes: {
     label: { control: 'text' },
     checked: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
-    disabled: { control: 'boolean' },
+    inactive: { control: 'boolean' },
   },
 };
 
@@ -56,17 +56,17 @@ export const Matrix: Story = {
         <div style={row}>
           <span style={labelStyle}>unchecked</span>
           <Controlled label="Option" checked={false} />
-          <Checkbox label="Option" checked={false} disabled onChange={() => {}} />
+          <Checkbox label="Option" checked={false} inactive onChange={() => {}} />
         </div>
         <div style={row}>
           <span style={labelStyle}>checked</span>
           <Controlled label="Option" checked={true} />
-          <Checkbox label="Option" checked={true} disabled onChange={() => {}} />
+          <Checkbox label="Option" checked={true} inactive onChange={() => {}} />
         </div>
         <div style={row}>
           <span style={labelStyle}>indeterminate</span>
           <Checkbox label="Select all" checked={false} indeterminate onChange={() => {}} />
-          <Checkbox label="Select all" checked={false} indeterminate disabled onChange={() => {}} />
+          <Checkbox label="Select all" checked={false} indeterminate inactive onChange={() => {}} />
         </div>
       </div>
     </div>
@@ -94,12 +94,12 @@ export const Indeterminate: Story = {
   ),
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <Checkbox label="Disabled unchecked" checked={false} disabled onChange={() => {}} />
-      <Checkbox label="Disabled checked" checked={true} disabled onChange={() => {}} />
-      <Checkbox label="Disabled indeterminate" checked={false} indeterminate disabled onChange={() => {}} />
+      <Checkbox label="Disabled unchecked" checked={false} inactive onChange={() => {}} />
+      <Checkbox label="Disabled checked" checked={true} inactive onChange={() => {}} />
+      <Checkbox label="Disabled indeterminate" checked={false} indeterminate inactive onChange={() => {}} />
     </div>
   ),
 };

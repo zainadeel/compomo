@@ -7,10 +7,13 @@
 
 .labelWrap {
   line-height: 0;
-  padding: 0 var(--dimension-space-025);
+  padding: 0 var(--dimension-space-050); /* 4px — body sm / md / lg */
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* Caption scale: tighter optical padding */
+.sizeXs { padding: 0 var(--dimension-space-025); } /* 2px */
 
 /* Truncation mode — used when parent is full-width and label must ellipsize */
 .truncate {

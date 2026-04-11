@@ -13,7 +13,7 @@ export interface InputProps {
   autoFocus?: boolean;
   className?: string;
   type?: InputType;
-  disabled?: boolean;
+  inactive?: boolean;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   /** Content rendered inside the field on the right. */
   suffix?: React.ReactNode;
@@ -32,7 +32,7 @@ export const Input = forwardRef<HTMLDivElement, InputProps>(
       autoFocus = false,
       className,
       type = 'text',
-      disabled = false,
+      inactive = false,
       onKeyDown,
       suffix,
       clearIcon: ClearIcon,
@@ -40,7 +40,7 @@ export const Input = forwardRef<HTMLDivElement, InputProps>(
     },
     ref
   ) => {
-    const showClear = type === 'search' && value.length > 0 && !disabled;
+    const showClear = type === 'search' && value.length > 0 && !inactive;
 
     const handleClear = () => {
       onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
@@ -58,7 +58,7 @@ export const Input = forwardRef<HTMLDivElement, InputProps>(
             placeholder={placeholder}
             className={styles.input}
             autoFocus={autoFocus}
-            disabled={disabled}
+            disabled={inactive}
             aria-label={ariaLabel}
           />
           {showClear && (

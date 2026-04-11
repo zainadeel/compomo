@@ -267,10 +267,10 @@ export const Matrix: Story = {
       {divider}
       <div style={col}>
         <div style={row}>
-          <span style={lbl}>with disabled</span>
+          <span style={lbl}>with inactive</span>
           <ButtonGroup>
             <Button variant="secondary" label="One" />
-            <Button variant="secondary" label="Two" disabled />
+            <Button variant="secondary" label="Two" inactive />
             <Button variant="secondary" label="Three" />
           </ButtonGroup>
         </div>

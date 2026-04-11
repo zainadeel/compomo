@@ -8,12 +8,12 @@ const meta: Meta<typeof Input> = {
   component: Input,
   args: {
     placeholder: 'Enter text…',
-    disabled: false,
+    inactive: false,
     type: 'text',
   },
   argTypes: {
     type: { control: 'select', options: ['text', 'email', 'tel', 'url', 'search', 'password'] },
-    disabled: { control: 'boolean' },
+    inactive: { control: 'boolean' },
     placeholder: { control: 'text' },
   },
 };
@@ -83,12 +83,12 @@ export const Matrix: Story = {
           <div style={inputCell}><Controlled initialValue="Some value" /></div>
         </div>
         <div style={row}>
-          <span style={labelStyle}>disabled</span>
-          <div style={inputCell}><Input value="Disabled value" disabled onChange={() => {}} /></div>
+          <span style={labelStyle}>Inactive</span>
+          <div style={inputCell}><Input value="Disabled value" inactive onChange={() => {}} /></div>
         </div>
         <div style={row}>
-          <span style={labelStyle}>disabled empty</span>
-          <div style={inputCell}><Input value="" placeholder="Disabled…" disabled onChange={() => {}} /></div>
+          <span style={labelStyle}>Inactive empty</span>
+          <div style={inputCell}><Input value="" placeholder="Disabled…" inactive onChange={() => {}} /></div>
         </div>
       </div>
 
@@ -115,11 +115,11 @@ export const Password: Story = {
   render: () => <Controlled type="password" placeholder="Enter password…" style={{ width: 260 }} />,
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: 260 }}>
-      <Input value="" placeholder="Disabled empty" disabled onChange={() => {}} />
-      <Input value="Disabled with value" disabled onChange={() => {}} />
+      <Input value="" placeholder="Disabled empty" inactive onChange={() => {}} />
+      <Input value="Disabled with value" inactive onChange={() => {}} />
     </div>
   ),
 };

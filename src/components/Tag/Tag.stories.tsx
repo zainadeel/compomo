@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 import { Tag } from './Tag';
-import type { TagIntent, TagContrast, TagVariant, TagSize } from './Tag';
+import type { TagIntent, TagContrast, TagElevation, TagSize } from './Tag';
 import type { IconComponent } from '@/types/icons';
 
 const PlaceholderIcon: IconComponent = ({ size = 16 }) => (
@@ -11,27 +11,26 @@ const PlaceholderIcon: IconComponent = ({ size = 16 }) => (
 );
 
 const meta: Meta<typeof Tag> = {
-  title: 'Primitives/Tag',
+  title: 'Primitives (Reviewed)/Tag',
   component: Tag,
   args: {
-    label: 'Tag',
-    intent: 'neutral',
-    contrast: 'faint',
-    variant: 'filled',
-    size: 'md',
-    rounded: false,
-    disabled: false,
+    label:     'Tag',
+    intent:    'neutral',
+    contrast:  'faint',
+    elevation: 'none',
+    size:      'md',
+    rounded:   false,
+    inactive:  false,
   },
   argTypes: {
-    intent:   { control: 'select', options: ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'] },
-    contrast: { control: 'select', options: ['strong', 'bold', 'medium', 'faint'] },
-    variant:  { control: 'select', options: ['filled', 'outline'] },
-    size:     { control: 'select', options: ['md', 'sm', 'xs'] },
-    label:    { control: 'text' },
-    rounded:  { control: 'boolean' },
-    removable:{ control: 'boolean' },
-    disabled: { control: 'boolean' },
-    elevation:{ control: 'select', options: [false, true, 'floating'] },
+    intent:    { control: 'select', options: ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'] },
+    contrast:  { control: 'select', options: ['strong', 'bold', 'medium', 'faint'] },
+    elevation: { control: 'select', options: ['none', 'flat', 'elevated'] },
+    size:      { control: 'select', options: ['md', 'sm', 'xs'] },
+    label:     { control: 'text' },
+    rounded:   { control: 'boolean' },
+    removable: { control: 'boolean' },
+    inactive:  { control: 'boolean' },
     icon: {
       control: 'boolean',
       mapping: { true: PlaceholderIcon, false: undefined },
@@ -46,14 +45,14 @@ export const Playground: Story = {};
 
 // ─── Matrix helpers ───────────────────────────────────────────────────────────
 
-const INTENTS: TagIntent[]   = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
-const CONTRASTS: TagContrast[] = ['strong', 'bold', 'medium', 'faint'];
-const VARIANTS: TagVariant[] = ['filled', 'outline'];
-const SIZES: TagSize[]       = ['md', 'sm', 'xs'];
+const INTENTS:    TagIntent[]    = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
+const CONTRASTS:  TagContrast[]  = ['strong', 'bold', 'medium', 'faint'];
+const ELEVATIONS: TagElevation[] = ['none', 'flat', 'elevated'];
+const SIZES:      TagSize[]      = ['md', 'sm', 'xs'];
 
 const col: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' };
 const row: React.CSSProperties = { display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' };
-const lbl = (): React.CSSProperties => ({ fontSize: 10, fontFamily: 'monospace', color: '#888', minWidth: 72, flexShrink: 0 });
+const lbl = (): React.CSSProperties => ({ fontSize: 10, fontFamily: 'monospace', color: '#888', minWidth: 80, flexShrink: 0 });
 const section = (text: string) => (
   <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#555', marginTop: 8 }}>
     {text}
@@ -66,8 +65,8 @@ export const Matrix: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0, fontFamily: 'sans-serif' }}>
 
-      {/* ── Intents × Contrasts ── */}
-      {section('Intents × Contrasts — filled')}
+      {/* ── Intents × Contrasts — none ── */}
+      {section('Intents × Contrasts — elevation: none')}
       <div style={{ ...col, marginTop: 12 }}>
         <div style={row}>
           <span style={lbl()}></span>
@@ -77,7 +76,7 @@ export const Matrix: Story = {
           <div key={intent} style={row}>
             <span style={lbl()}>{intent}</span>
             {CONTRASTS.map(contrast => (
-              <Tag key={contrast} label={intent} intent={intent} contrast={contrast} />
+              <Tag key={contrast} label={intent.charAt(0).toUpperCase() + intent.slice(1)} intent={intent} contrast={contrast} />
             ))}
           </div>
         ))}
@@ -85,14 +84,14 @@ export const Matrix: Story = {
 
       {divider}
 
-      {/* ── Intents × Contrasts — outline ── */}
-      {section('Intents × Contrasts — outline')}
+      {/* ── Intents × Contrasts — flat ── */}
+      {section('Intents × Contrasts — elevation: flat')}
       <div style={{ ...col, marginTop: 12 }}>
         {INTENTS.map(intent => (
           <div key={intent} style={row}>
             <span style={lbl()}>{intent}</span>
             {CONTRASTS.map(contrast => (
-              <Tag key={contrast} label={intent} intent={intent} contrast={contrast} variant="outline" />
+              <Tag key={contrast} label={intent.charAt(0).toUpperCase() + intent.slice(1)} intent={intent} contrast={contrast} elevation="flat" />
             ))}
           </div>
         ))}
@@ -116,22 +115,37 @@ export const Matrix: Story = {
 
       {divider}
 
+      {/* ── Sizes × Elevation ── */}
+      {section('Sizes × Elevation')}
+      <div style={{ ...col, marginTop: 12 }}>
+        {SIZES.map(size => (
+          <div key={size} style={row}>
+            <span style={lbl()}>{size}</span>
+            {ELEVATIONS.map(elevation => (
+              <Tag key={elevation} label={elevation} size={size} intent="brand" elevation={elevation} />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {divider}
+
       {/* ── Icon + Removable ── */}
       {section('Icon + Removable combos')}
       <div style={{ ...col, marginTop: 12 }}>
         {([
-          { combo: 'label only',        icon: false, removable: false },
-          { combo: 'icon + label',      icon: true,  removable: false },
-          { combo: 'removable',         icon: false, removable: true  },
-          { combo: 'icon + removable',  icon: true,  removable: true  },
+          { combo: 'label only',       icon: false, removable: false },
+          { combo: 'icon + label',     icon: true,  removable: false },
+          { combo: 'removable',        icon: false, removable: true  },
+          { combo: 'icon + removable', icon: true,  removable: true  },
         ] as const).map(({ combo, icon, removable }) => (
           <div key={combo} style={row}>
             <span style={lbl()}>{combo}</span>
-            {VARIANTS.map(v => (
+            {ELEVATIONS.map(elevation => (
               <Tag
-                key={v}
+                key={elevation}
                 label="Label"
-                variant={v}
+                elevation={elevation}
                 intent="brand"
                 icon={icon ? PlaceholderIcon : undefined}
                 removable={removable}
@@ -148,17 +162,17 @@ export const Matrix: Story = {
       {section('States')}
       <div style={{ ...col, marginTop: 12 }}>
         {([
-          { label: 'default',   props: {} },
-          { label: 'rounded',   props: { rounded: true } },
-          { label: 'disabled',  props: { disabled: true } },
-          { label: 'elevation', props: { elevation: true as const } },
-          { label: 'floating',  props: { elevation: 'floating' as const } },
-          { label: 'pressed',   props: { pressed: true } },
+          { label: 'default',  props: {} },
+          { label: 'rounded',  props: { rounded: true } },
+          { label: 'Inactive', props: { inactive: true } },
+          { label: 'elevated', props: { elevation: 'elevated' as const } },
+          { label: 'flat',     props: { elevation: 'flat' as const } },
+          { label: 'pressed',  props: { pressed: true } },
         ]).map(({ label: stateLabel, props }) => (
           <div key={stateLabel} style={row}>
             <span style={lbl()}>{stateLabel}</span>
             <Tag label="Label" intent="brand" {...(props as object)} />
-            <Tag label="Label" intent="brand" variant="outline" {...(props as object)} />
+            <Tag label="Label" intent="negative" {...(props as object)} />
           </div>
         ))}
       </div>
@@ -172,7 +186,7 @@ export const Matrix: Story = {
 export const Intents: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-      {INTENTS.map(intent => <Tag key={intent} label={intent} intent={intent} />)}
+      {INTENTS.map(intent => <Tag key={intent} label={intent.charAt(0).toUpperCase() + intent.slice(1)} intent={intent} />)}
     </div>
   ),
 };
@@ -201,7 +215,7 @@ export const Sizes: Story = {
 export const WithIcon: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-      {INTENTS.map(intent => <Tag key={intent} label={intent} intent={intent} icon={PlaceholderIcon} />)}
+      {INTENTS.map(intent => <Tag key={intent} label={intent.charAt(0).toUpperCase() + intent.slice(1)} intent={intent} icon={PlaceholderIcon} />)}
     </div>
   ),
 };
@@ -217,10 +231,10 @@ export const Removable: Story = {
   ),
 };
 
-export const Outline: Story = {
+export const Flat: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-      {INTENTS.map(intent => <Tag key={intent} label={intent} intent={intent} variant="outline" />)}
+      {INTENTS.map(intent => <Tag key={intent} label={intent.charAt(0).toUpperCase() + intent.slice(1)} intent={intent} elevation="flat" />)}
     </div>
   ),
 };
@@ -228,9 +242,9 @@ export const Outline: Story = {
 export const Elevation: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Tag label="No elevation"  intent="brand" />
-      <Tag label="Elevated"      intent="brand" elevation />
-      <Tag label="Floating"      intent="brand" elevation="floating" />
+      <Tag label="none"     intent="brand" elevation="none" />
+      <Tag label="flat"     intent="brand" elevation="flat" />
+      <Tag label="elevated" intent="brand" elevation="elevated" />
     </div>
   ),
 };
@@ -260,7 +274,7 @@ export const Interactive: Story = {
             {(Object.keys(filters) as TagIntent[]).map(intent => (
               <Tag
                 key={intent}
-                label={intent}
+                label={intent.charAt(0).toUpperCase() + intent.slice(1)}
                 intent={intent}
                 pressed={filters[intent]}
                 onPressedChange={() => toggle(intent)}
@@ -277,12 +291,12 @@ export const Interactive: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-      <Tag label="Disabled"           intent="brand" disabled />
-      <Tag label="Disabled removable" intent="brand" disabled removable onRemove={() => {}} />
-      <Tag label="Disabled outline"   intent="brand" disabled variant="outline" />
+      <Tag label="Inactive"         intent="brand" inactive />
+      <Tag label="Inactive remove"  intent="brand" inactive removable onRemove={() => {}} />
+      <Tag label="Inactive flat"    intent="brand" inactive elevation="flat" />
     </div>
   ),
 };

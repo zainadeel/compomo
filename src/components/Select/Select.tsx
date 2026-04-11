@@ -17,13 +17,13 @@ export interface SelectProps {
   options: SelectOption[];
   placeholder?: string;
   className?: string;
-  disabled?: boolean;
+  inactive?: boolean;
   id?: string;
   chevronIcon?: IconComponent;
 }
 
 export const Select = forwardRef<HTMLDivElement, SelectProps>(
-  ({ value, onChange, options, placeholder = 'Select option', className, disabled = false, id, chevronIcon: ChevronIcon }, ref) => {
+  ({ value, onChange, options, placeholder = 'Select option', className, inactive = false, id, chevronIcon: ChevronIcon }, ref) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -40,7 +40,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     }));
 
     const handleToggle = () => {
-      if (!disabled) setIsMenuOpen(prev => !prev);
+      if (!inactive) setIsMenuOpen(prev => !prev);
     };
 
     return (
@@ -56,7 +56,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           selected={isMenuOpen}
           className={styles.selectButton}
           onClick={handleToggle}
-          inactive={disabled}
+          inactive={inactive}
         >
           <Text
             variant="text-body-medium"

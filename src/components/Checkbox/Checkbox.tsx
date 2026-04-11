@@ -9,7 +9,7 @@ export interface CheckboxProps {
   checked?: boolean;
   indeterminate?: boolean;
   onChange?: (checked: boolean) => void;
-  disabled?: boolean;
+  inactive?: boolean;
   className?: string;
   /** Icon for checked state. */
   checkedIcon?: IconComponent;
@@ -26,7 +26,7 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
       checked = false,
       indeterminate = false,
       onChange,
-      disabled = false,
+      inactive = false,
       className,
       checkedIcon: CheckedIcon,
       uncheckedIcon: UncheckedIcon,
@@ -35,7 +35,7 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
     ref
   ) => {
     const handleClick = () => {
-      if (!disabled) onChange?.(!checked);
+      if (!inactive) onChange?.(!checked);
     };
 
     const iconColor = indeterminate || checked ? 'var(--color-foreground-primary)' : 'var(--color-foreground-secondary)';
@@ -46,9 +46,9 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
         ref={ref}
         role="checkbox"
         aria-checked={indeterminate ? 'mixed' : checked}
-        aria-disabled={disabled}
-        tabIndex={disabled ? -1 : 0}
-        className={cn(styles.checkbox, disabled && styles.disabled, className)}
+        aria-inactive={inactive}
+        tabIndex={inactive ? -1 : 0}
+        className={cn(styles.checkbox, inactive && styles.inactive, className)}
         onClick={handleClick}
         onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleClick(); } }}
       >

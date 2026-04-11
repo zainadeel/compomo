@@ -10,14 +10,14 @@ const meta: Meta<typeof Slider> = {
     min: 0,
     max: 100,
     step: 1,
-    disabled: false,
+    inactive: false,
   },
   argTypes: {
     label: { control: 'text' },
     min: { control: 'number' },
     max: { control: 'number' },
     step: { control: 'number' },
-    disabled: { control: 'boolean' },
+    inactive: { control: 'boolean' },
   },
 };
 
@@ -74,8 +74,8 @@ export const Matrix: Story = {
           <div style={sliderCell}><Controlled label="Brightness" initialValue={60} /></div>
         </div>
         <div style={row}>
-          <span style={labelStyle}>disabled</span>
-          <div style={sliderCell}><Slider label="Brightness" value={60} disabled onChange={() => {}} /></div>
+          <span style={labelStyle}>Inactive</span>
+          <div style={sliderCell}><Slider label="Brightness" value={60} inactive onChange={() => {}} /></div>
         </div>
         <div style={row}>
           <span style={labelStyle}>at min</span>
@@ -110,11 +110,11 @@ export const CustomRange: Story = {
   ),
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 280 }}>
-      <Slider label="Brightness" value={30} disabled onChange={() => {}} />
-      <Slider label="Contrast" value={70} disabled onChange={() => {}} />
+      <Slider label="Brightness" value={30} inactive onChange={() => {}} />
+      <Slider label="Contrast" value={70} inactive onChange={() => {}} />
     </div>
   ),
 };

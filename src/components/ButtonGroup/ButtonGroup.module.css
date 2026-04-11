@@ -44,56 +44,41 @@
   box-shadow: none !important;
   /* Suppress noElevation individual border — divider handles separation */
   border: none !important;
+  /* Suppress scale-on-press: transform would detach the divider from the
+     adjacent button, creating a visible gap. Pressed state is still
+     communicated via the ::after overlay colour. */
+}
+.item:active {
+  transform: none !important;
 }
 
-/* Default full-height divider (secondary + primary/none intent) */
-.item + .item {
-  border-left: 1px solid var(--color-border-tertiary) !important;
-}
+/* ── Divider ────────────────────────────────────────────────────────────────
+ * Rendered as a separate <div> between items so it is never part of any
+ * button's stacking context — disabled (opacity: 0.5) or other state changes
+ * on adjacent buttons cannot bleed through to the divider.
+ * ─────────────────────────────────────────────────────────────────────────── */
 
-/* ── Primary (with intent): on-background divider colour ───────────────────── */
-/* Placed after .item + .item so equal-specificity cascade wins.
-   No on-faint token exists — faint backgrounds are near-page level so the
-   default color-border-tertiary divider is sufficient. */
-
-.primaryBold   + .primaryBold   { border-left: 1px solid var(--color-border-on-bold-background-tertiary)   !important; }
-.primaryMedium + .primaryMedium { border-left: 1px solid var(--color-border-on-medium-background-tertiary) !important; }
-.primaryStrong + .primaryStrong { border-left: 1px solid var(--color-border-on-strong-background-tertiary) !important; }
-
-/* ── Tertiary: short centred divider ───────────────────────────────────────── */
-
-.itemShort {
-  position: relative;
-}
-
-/* Suppress the full-height border; pseudo-element handles it instead */
-.item + .itemShort {
-  border-left: none !important;
-}
-
-/* Divider centred vertically, height defaults to md icon size (20px) */
-.item + .itemShort::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+/* Full-height divider (secondary + primary) */
+.divider {
   width: 1px;
-  height: 20px;
+  flex-shrink: 0;
   background-color: var(--color-border-tertiary);
-  pointer-events: none;
 }
 
-/* Size overrides — matches icon size at each scale */
-.item + .itemShort.dividerXS::before { height: 12px; }
-.item + .itemShort.dividerSM::before { height: 16px; }
-.item + .itemShort.dividerLG::before { height: 24px; }
+/* Ghost (elevation=none): short centred divider at icon height */
+.dividerGhost    { height: 20px; align-self: center; } /* md default */
+.dividerGhostXS  { height: 12px; }
+.dividerGhostSM  { height: 16px; }
+.dividerGhostLG  { height: 24px; }
 
-/* Hide dividers that touch a hovered ghost button */
-.itemShort:hover::before,
-.itemShort:hover + .itemShort::before {
-  opacity: 0;
-}
+/* Primary intent: on-background divider colour */
+.dividerBold   { background-color: var(--color-border-on-bold-background-tertiary); }
+.dividerMedium { background-color: var(--color-border-on-medium-background-tertiary); }
+.dividerStrong { background-color: var(--color-border-on-strong-background-tertiary); }
+
+/* Ghost hover-fade: hide the divider on either side of a hovered ghost button */
+.item:hover + .dividerGhost,
+.dividerGhost:has(+ .item:hover) { opacity: 0; }
 
 /* ── Ghost interaction states: rounded chips ──────────────────────────────────
  * Ghost items have no group chrome — hover/press overlay should appear as

@@ -29,7 +29,7 @@ export interface ToggleButtonProps {
   pressed: boolean;
   /** Called when pressed state changes. */
   onPressedChange: (pressed: boolean) => void;
-  disabled?: boolean;
+  inactive?: boolean;
   className?: string;
   id?: string;
   'aria-label'?: string;
@@ -53,7 +53,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       rounded = false,
       pressed,
       onPressedChange,
-      disabled = false,
+      inactive = false,
       className,
       id,
       'aria-label': ariaLabel,
@@ -75,7 +75,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       styles[`elevation${elevKey}`],
       size !== 'md' && styles[`size${size.toUpperCase()}`],
       rounded && styles.rounded,
-      disabled && styles.disabled,
+      inactive && styles.inactive,
       isIconOnly && styles.iconOnly,
       isLabelOnly && styles.labelOnly,
       isIconAndLabel && styles.iconAndLabel,
@@ -88,9 +88,9 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         ref={ref}
         id={id}
         className={classes}
-        onClick={disabled ? undefined : () => onPressedChange(!pressed)}
+        onClick={inactive ? undefined : () => onPressedChange(!pressed)}
         type="button"
-        disabled={disabled}
+        disabled={inactive}
         aria-label={ariaLabel || label || 'toggle'}
         aria-pressed={pressed}
       >

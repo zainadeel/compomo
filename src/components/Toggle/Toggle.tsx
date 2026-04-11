@@ -5,23 +5,23 @@ import styles from './Toggle.module.css';
 export interface ToggleProps {
   checked?: boolean;
   onChange?: (checked: boolean) => void;
-  disabled?: boolean;
+  inactive?: boolean;
   className?: string;
   'aria-label'?: string;
 }
 
 export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
-  ({ checked = false, onChange, disabled = false, className, 'aria-label': ariaLabel }, ref) => {
+  ({ checked = false, onChange, inactive = false, className, 'aria-label': ariaLabel }, ref) => {
     const [isPressed, setIsPressed] = useState(false);
 
     const handleMouseDown = (e: React.MouseEvent) => {
-      if (disabled) return;
+      if (inactive) return;
       e.preventDefault();
       setIsPressed(true);
     };
 
     const handleMouseUp = () => {
-      if (disabled || !isPressed) return;
+      if (inactive || !isPressed) return;
       setIsPressed(false);
       onChange?.(!checked);
     };
@@ -37,8 +37,8 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
         role="switch"
         aria-checked={checked}
         aria-label={ariaLabel}
-        disabled={disabled}
-        className={cn(styles.toggle, checked && styles.checked, disabled && styles.disabled, className)}
+        disabled={inactive}
+        className={cn(styles.toggle, checked && styles.checked, inactive && styles.inactive, className)}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}

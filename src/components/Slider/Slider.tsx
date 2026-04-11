@@ -11,12 +11,12 @@ export interface SliderProps {
   step?: number;
   label: string;
   id?: string;
-  disabled?: boolean;
+  inactive?: boolean;
   className?: string;
 }
 
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(
-  ({ value, onChange, min = 0, max = 100, step = 1, label, id: idProp, disabled = false, className }, ref) => {
+  ({ value, onChange, min = 0, max = 100, step = 1, label, id: idProp, inactive = false, className }, ref) => {
     const generatedId = useId();
     const id = idProp ?? generatedId;
     const containerRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         </div>
         <div
           ref={containerRef}
-          className={cn(styles.track, disabled && styles.trackDisabled, pct === 0 && styles.trackAtMin)}
+          className={cn(styles.track, inactive && styles.trackInactive, pct === 0 && styles.trackAtMin)}
           style={{ '--slider-pct': pct } as React.CSSProperties}
         >
           <div className={styles.trackInner}>
@@ -59,7 +59,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             step={step}
             value={value}
             onChange={handleInput}
-            disabled={disabled}
+            disabled={inactive}
             className={styles.input}
             aria-valuemin={min}
             aria-valuemax={max}

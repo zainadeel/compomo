@@ -19,7 +19,7 @@ const meta: Meta<typeof ToggleButton> = {
     size:      'md',
     rounded:   false,
     pressed:   false,
-    disabled:  false,
+    inactive:  false,
   },
   argTypes: {
     elevation: { control: 'select', options: ['elevated', 'flat', 'none', 'floating'] },
@@ -27,7 +27,7 @@ const meta: Meta<typeof ToggleButton> = {
     label:     { control: 'text' },
     rounded:   { control: 'boolean' },
     pressed:   { control: 'boolean' },
-    disabled:  { control: 'boolean' },
+    inactive:  { control: 'boolean' },
     icon: {
       control: 'boolean',
       mapping: { true: PlaceholderIcon, false: undefined },
@@ -167,16 +167,16 @@ export const Matrix: Story = {
           ))}
         </div>
         {([
-          { key: 'default',          pressed: false, disabled: false },
-          { key: 'pressed',          pressed: true,  disabled: false },
-          { key: 'disabled',         pressed: false, disabled: true  },
-          { key: 'disabled+pressed', pressed: true,  disabled: true  },
-        ] as const).map(({ key, pressed, disabled }) => (
+          { key: 'default',           pressed: false, inactive: false },
+          { key: 'pressed',           pressed: true,  inactive: false },
+          { key: 'Inactive',          pressed: false, inactive: true  },
+          { key: 'Inactive+pressed',  pressed: true,  inactive: true  },
+        ] as const).map(({ key, pressed, inactive }) => (
           <div key={key} style={row}>
             <span style={lbl()}>{key}</span>
             {ELEVATIONS.map(e => (
               <div key={e} style={cell()}>
-                <Controlled elevation={e} label="Label" pressed={pressed} disabled={disabled} />
+                <Controlled elevation={e} label="Label" pressed={pressed} inactive={inactive} />
               </div>
             ))}
           </div>
@@ -236,14 +236,14 @@ export const IconOnly: Story = {
   ),
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Controlled elevation="elevated" label="Elevated" disabled />
-      <Controlled elevation="flat"     label="Flat"     disabled />
-      <Controlled elevation="none"     label="Ghost"    disabled />
-      <Controlled elevation="elevated" label="Pressed"  disabled pressed />
-      <Controlled elevation="none"     label="Pressed"  disabled pressed />
+      <Controlled elevation="elevated" label="Elevated" inactive />
+      <Controlled elevation="flat"     label="Flat"     inactive />
+      <Controlled elevation="none"     label="Ghost"    inactive />
+      <Controlled elevation="elevated" label="Pressed"  inactive pressed />
+      <Controlled elevation="none"     label="Pressed"  inactive pressed />
     </div>
   ),
 };

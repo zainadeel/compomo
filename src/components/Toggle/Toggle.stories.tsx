@@ -7,12 +7,12 @@ const meta: Meta<typeof Toggle> = {
   component: Toggle,
   args: {
     checked: false,
-    disabled: false,
+    inactive: false,
     'aria-label': 'Toggle',
   },
   argTypes: {
     checked: { control: 'boolean' },
-    disabled: { control: 'boolean' },
+    inactive: { control: 'boolean' },
   },
 };
 
@@ -53,12 +53,12 @@ export const Matrix: Story = {
         </div>
       </div>
       <div style={row}>
-        <span style={labelStyle}>disabled</span>
+        <span style={labelStyle}>Inactive</span>
         <div style={{ minWidth: 80, display: 'flex', justifyContent: 'center' }}>
-          <Toggle aria-label="Toggle" checked={false} disabled onChange={() => {}} />
+          <Toggle aria-label="Toggle" checked={false} inactive onChange={() => {}} />
         </div>
         <div style={{ minWidth: 80, display: 'flex', justifyContent: 'center' }}>
-          <Toggle aria-label="Toggle" checked={true} disabled onChange={() => {}} />
+          <Toggle aria-label="Toggle" checked={true} inactive onChange={() => {}} />
         </div>
       </div>
     </div>
@@ -75,11 +75,11 @@ export const Checked: Story = {
   render: () => <Controlled aria-label="Toggle" checked />,
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-      <Toggle aria-label="Off disabled" checked={false} disabled onChange={() => {}} />
-      <Toggle aria-label="On disabled" checked={true} disabled onChange={() => {}} />
+      <Toggle aria-label="Off disabled" checked={false} inactive onChange={() => {}} />
+      <Toggle aria-label="On disabled" checked={true} inactive onChange={() => {}} />
     </div>
   ),
 };

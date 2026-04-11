@@ -6,12 +6,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--dimension-radius-075);
+  border-radius: var(--dimension-radius-050);
   box-sizing: border-box;
-  border: var(--dimension-stroke-width-015) solid transparent;
   color: var(--color-foreground-primary);
   position: relative;
-  gap: var(--dimension-space-025);
 }
 
 /* Interaction overlay */
@@ -30,11 +28,14 @@
 
 /* ==========================================================================
    Sizes
+   md  28px — no size-350 token, expressed as 7/2 × base
+   sm  20px — size-250
+   xs  12px — size-150
    ========================================================================== */
 
-.sizeMd { height: var(--dimension-size-400); padding: 0 var(--dimension-space-075); gap: var(--dimension-space-025); }
-.sizeSm { height: var(--dimension-size-300); padding: 0 var(--dimension-space-050); gap: var(--dimension-space-025); }
-.sizeXs { height: var(--dimension-size-250); padding: 0 var(--dimension-space-050); gap: 0; }
+.sizeMd { height: calc(var(--dimension-size-base) * 7 / 2); padding: 0 var(--dimension-space-075); gap: 0; }
+.sizeSm { height: var(--dimension-size-250);                padding: 0 var(--dimension-space-050); gap: 0; }
+.sizeXs { height: var(--dimension-size-150);                padding: 0 var(--dimension-space-012); gap: 0; }
 
 /* ==========================================================================
    Rounded
@@ -42,12 +43,77 @@
 
 .rounded { border-radius: var(--dimension-radius-half); }
 
+/*
+ * Pill padding correction — add space-050 to sides that have no content anchor.
+ * Applied by Tag.tsx based on whether a leading icon or trailing remove is present:
+ *   no leading icon  → roundedLeft{Size}   (left side is bare label text)
+ *   no trailing icon → roundedRight{Size}  (right side is bare label text)
+ * Placed after size rules so same-specificity cascade wins correctly.
+ */
+
+/* MD — base: space-075 */
+.roundedLeftMD  { padding-left:  calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.roundedRightMD { padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+
+/* SM — base: space-050 */
+.roundedLeftSM  { padding-left:  calc(var(--dimension-space-050) + var(--dimension-space-050)); }
+.roundedRightSM { padding-right: calc(var(--dimension-space-050) + var(--dimension-space-050)); }
+
+/* XS — base: space-012 (1px) */
+.roundedLeftXS  { padding-left:  calc(var(--dimension-space-012) + var(--dimension-space-050)); }
+.roundedRightXS { padding-right: calc(var(--dimension-space-012) + var(--dimension-space-050)); }
+
 /* ==========================================================================
-   Variant: filled (default) / outline
+   Elevation
+   none     — filled intent bg, no border, no shadow  (default)
+   flat     — transparent bg + intent-coloured border ring
+   elevated — filled intent bg + elevated shadow
    ========================================================================== */
 
-.variantFilled { border-color: transparent; }
-.variantOutline { background-color: transparent !important; }
+/* elevationNone — no extra chrome needed, intent+contrast classes handle fill */
+
+.elevationFlat {
+  background-color: transparent !important;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) currentColor;
+}
+
+/* Flat: no background — use on-surface fg tokens matched to the contrast level.
+   The border ring is currentColor so it follows text color automatically.
+   3-class specificity beats the 2-class intent+contrast filled rules above. */
+
+.elevationFlat.intentNeutral.contrastBold   { color: var(--color-foreground-bold-neutral);   }
+.elevationFlat.intentBrand.contrastBold     { color: var(--color-foreground-bold-brand);     }
+.elevationFlat.intentAi.contrastBold        { color: var(--color-foreground-bold-ai);        }
+.elevationFlat.intentNegative.contrastBold  { color: var(--color-foreground-bold-negative);  }
+.elevationFlat.intentWarning.contrastBold   { color: var(--color-foreground-bold-warning);   }
+.elevationFlat.intentCaution.contrastBold   { color: var(--color-foreground-bold-caution);   }
+.elevationFlat.intentPositive.contrastBold  { color: var(--color-foreground-bold-positive);  }
+
+.elevationFlat.intentNeutral.contrastStrong   { color: var(--color-foreground-strong-neutral);   }
+.elevationFlat.intentBrand.contrastStrong     { color: var(--color-foreground-strong-brand);     }
+.elevationFlat.intentAi.contrastStrong        { color: var(--color-foreground-strong-ai);        }
+.elevationFlat.intentNegative.contrastStrong  { color: var(--color-foreground-strong-negative);  }
+.elevationFlat.intentWarning.contrastStrong   { color: var(--color-foreground-strong-warning);   }
+.elevationFlat.intentCaution.contrastStrong   { color: var(--color-foreground-strong-caution);   }
+.elevationFlat.intentPositive.contrastStrong  { color: var(--color-foreground-strong-positive);  }
+
+.elevationFlat.intentNeutral.contrastMedium   { color: var(--color-foreground-medium-neutral);   }
+.elevationFlat.intentBrand.contrastMedium     { color: var(--color-foreground-medium-brand);     }
+.elevationFlat.intentAi.contrastMedium        { color: var(--color-foreground-medium-ai);        }
+.elevationFlat.intentNegative.contrastMedium  { color: var(--color-foreground-medium-negative);  }
+.elevationFlat.intentWarning.contrastMedium   { color: var(--color-foreground-medium-warning);   }
+.elevationFlat.intentCaution.contrastMedium   { color: var(--color-foreground-medium-caution);   }
+.elevationFlat.intentPositive.contrastMedium  { color: var(--color-foreground-medium-positive);  }
+
+.elevationFlat.intentNeutral.contrastFaint   { color: var(--color-foreground-faint-neutral);   }
+.elevationFlat.intentBrand.contrastFaint     { color: var(--color-foreground-faint-brand);     }
+.elevationFlat.intentAi.contrastFaint        { color: var(--color-foreground-faint-ai);        }
+.elevationFlat.intentNegative.contrastFaint  { color: var(--color-foreground-faint-negative);  }
+.elevationFlat.intentWarning.contrastFaint   { color: var(--color-foreground-faint-warning);   }
+.elevationFlat.intentCaution.contrastFaint   { color: var(--color-foreground-faint-caution);   }
+.elevationFlat.intentPositive.contrastFaint  { color: var(--color-foreground-faint-positive);  }
+
+.elevationElevated { box-shadow: var(--effect-elevation-elevated-sm); }
 
 /* ==========================================================================
    Intent + contrast — strong
@@ -98,12 +164,6 @@
 .intentPositive.contrastFaint { background-color: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }
 
 /* ==========================================================================
-   Outline — border uses current intent color
-   ========================================================================== */
-
-.variantOutline { border-color: currentColor; }
-
-/* ==========================================================================
    Interactive (clickable / filter-chip)
    ========================================================================== */
 
@@ -133,17 +193,11 @@
 }
 
 /* ==========================================================================
-   Elevation
-   ========================================================================== */
-
-.elevation         { box-shadow: var(--effect-elevation-elevated-sm); }
-.elevationFloating { box-shadow: var(--effect-elevation-elevated-floating); }
-
-/* ==========================================================================
    Remove button
    ========================================================================== */
 
 .removable { gap: var(--dimension-space-025); }
+.sizeXs.removable { gap: 0; }
 
 .removeButton {
   padding: 0; margin: 0; border: none; background: none;
@@ -170,4 +224,4 @@
    Disabled
    ========================================================================== */
 
-.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+.inactive { opacity: 0.5; pointer-events: none; cursor: not-allowed; }

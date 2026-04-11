@@ -81,30 +81,39 @@ export const ButtonGroup = ({ children, className }: ButtonGroupProps) => {
         const sizeKey = size.toUpperCase() as 'MD' | 'SM' | 'LG' | 'XS';
         const needsRoundedCorrection = isRounded && !isIconOnly && size !== 'xs';
 
-        return React.cloneElement(el, {
-          className: cn(
-            p.className,
-            styles.item,
-            isFirst && styles.first,
-            isLast  && styles.last,
-            isMid   && styles.middle,
+        // Divider injected as a separate element so it's never affected by
+        // the adjacent button's opacity (e.g. disabled state).
+        const dividerClasses = cn(
+          styles.divider,
+          isGhost && styles.dividerGhost,
+          isGhost && size === 'xs' && styles.dividerGhostXS,
+          isGhost && size === 'sm' && styles.dividerGhostSM,
+          isGhost && size === 'lg' && styles.dividerGhostLG,
+          isPrimary && (styles as Record<string, string>)[`divider${contrastKey}`],
+        );
 
-            // Ghost (secondary+elevation=none): short centred divider, height matched to icon size
-            isGhost && styles.itemShort,
-            isGhost && size === 'xs' && styles.dividerXS,
-            isGhost && size === 'sm' && styles.dividerSM,
-            isGhost && size === 'lg' && styles.dividerLG,
-            // md is the default height (20px) — no extra class needed
+        return (
+          <React.Fragment key={i}>
+            {i > 0 && <div className={dividerClasses} aria-hidden="true" />}
+            {React.cloneElement(el, {
+              className: cn(
+                p.className,
+                styles.item,
+                isFirst && styles.first,
+                isLast  && styles.last,
+                isMid   && styles.middle,
 
-            // Primary with intent: divider colour from on-background border token
-            isPrimary && (styles as Record<string, string>)[`primary${contrastKey}`],
+                // Ghost (secondary+elevation=none): ::after overlay gets 4px radius treatment
+                isGhost && styles.itemShort,
 
-            // Rounded: revert inner-edge padding to base (non-pill) value
-            needsRoundedCorrection && isFirst && (styles as Record<string, string>)[`roundedFirst${sizeKey}`],
-            needsRoundedCorrection && isLast  && (styles as Record<string, string>)[`roundedLast${sizeKey}`],
-            needsRoundedCorrection && isMid   && (styles as Record<string, string>)[`roundedMid${sizeKey}`],
-          ),
-        });
+                // Rounded: revert inner-edge padding to base (non-pill) value
+                needsRoundedCorrection && isFirst && (styles as Record<string, string>)[`roundedFirst${sizeKey}`],
+                needsRoundedCorrection && isLast  && (styles as Record<string, string>)[`roundedLast${sizeKey}`],
+                needsRoundedCorrection && isMid   && (styles as Record<string, string>)[`roundedMid${sizeKey}`],
+              ),
+            })}
+          </React.Fragment>
+        );
       })}
     </div>
   );

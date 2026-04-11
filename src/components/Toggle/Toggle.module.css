@@ -57,11 +57,11 @@
   pointer-events: none;
 }
 
-.toggle:hover:not(.disabled) .thumb::after {
+.toggle:hover:not(.inactive) .thumb::after {
   background-color: var(--color-interaction-hover);
 }
 
-.toggle:active:not(.disabled) .thumb::after {
+.toggle:active:not(.inactive) .thumb::after {
   background-color: var(--color-interaction-pressed);
 }
 
@@ -69,17 +69,17 @@
   transform: translateX(var(--dimension-offset-150));
 }
 
-.toggle:active:not(.disabled) .thumb {
+.toggle:active:not(.inactive) .thumb {
   transform: translateX(0) scale(var(--dimension-scale-subtle)) !important;
   transition: transform var(--effect-motion-instant);
 }
 
-.checked.toggle:active:not(.disabled) .thumb {
+.checked.toggle:active:not(.inactive) .thumb {
   transform: translateX(var(--dimension-offset-150)) scale(var(--dimension-scale-subtle)) !important;
   transition: transform var(--effect-motion-instant);
 }
 
-.disabled {
+.inactive {
   cursor: not-allowed;
   opacity: 0.5;
 }

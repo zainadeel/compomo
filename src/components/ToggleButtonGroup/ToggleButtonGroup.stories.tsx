@@ -234,10 +234,10 @@ export const Matrix: Story = {
             </ToggleButtonGroup>
           </div>
           <div style={row}>
-            <span style={labelStyle}>with disabled</span>
+            <span style={labelStyle}>with inactive</span>
             <ToggleButtonGroup>
               <ToggleButton elevation="elevated" label="One"   pressed={false} onPressedChange={() => {}} />
-              <ToggleButton elevation="elevated" label="Two"   pressed={true}  onPressedChange={() => {}} disabled />
+              <ToggleButton elevation="elevated" label="Two"   pressed={true}  onPressedChange={() => {}} inactive />
               <ToggleButton elevation="elevated" label="Three" pressed={false} onPressedChange={() => {}} />
             </ToggleButtonGroup>
           </div>

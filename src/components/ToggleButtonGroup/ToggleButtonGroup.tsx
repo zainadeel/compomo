@@ -69,29 +69,40 @@ export const ToggleButtonGroup = ({ children, className }: ToggleButtonGroupProp
         const sizeKey = size.toUpperCase() as 'XS' | 'SM' | 'MD';
         const needsRoundedCorrection = isRounded && !isIconOnly && size !== 'xs';
 
-        return React.cloneElement(el, {
-          className: cn(
-            p.className,
-            styles.item,
-            isFirst && styles.first,
-            isLast  && styles.last,
-            isMid   && styles.middle,
+        // Divider injected as a separate element so it's never affected by
+        // the adjacent button's opacity (e.g. disabled state).
+        const dividerClasses = cn(
+          styles.divider,
+          isGhost && styles.dividerGhost,
+          isGhost && size === 'xs' && styles.dividerGhostXS,
+          isGhost && size === 'sm' && styles.dividerGhostSM,
+        );
 
-            // Ghost variant: short centred divider, height matched to icon size
-            isGhost && styles.itemShort,
-            isGhost && size === 'xs' && styles.dividerXS,
-            isGhost && size === 'sm' && styles.dividerSM,
-            // md is the default height (20px) — no extra class needed
+        return (
+          <React.Fragment key={i}>
+            {i > 0 && <div className={dividerClasses} aria-hidden="true" />}
+            {React.cloneElement(el, {
+              className: cn(
+                p.className,
+                styles.item,
+                isFirst && styles.first,
+                isLast  && styles.last,
+                isMid   && styles.middle,
 
-            // Ghost + pressed: hide adjacent dividers (selected state)
-            isGhost && isPressed && styles.itemPressed,
+                // Ghost variant: ::after overlay gets 4px radius treatment
+                isGhost && styles.itemShort,
 
-            // Rounded: revert inner-edge padding to base (non-pill) value
-            needsRoundedCorrection && isFirst && (styles as Record<string, string>)[`roundedFirst${sizeKey}`],
-            needsRoundedCorrection && isLast  && (styles as Record<string, string>)[`roundedLast${sizeKey}`],
-            needsRoundedCorrection && isMid   && (styles as Record<string, string>)[`roundedMid${sizeKey}`],
-          ),
-        });
+                // Ghost + pressed: selected state background chip
+                isGhost && isPressed && styles.itemPressed,
+
+                // Rounded: revert inner-edge padding to base (non-pill) value
+                needsRoundedCorrection && isFirst && (styles as Record<string, string>)[`roundedFirst${sizeKey}`],
+                needsRoundedCorrection && isLast  && (styles as Record<string, string>)[`roundedLast${sizeKey}`],
+                needsRoundedCorrection && isMid   && (styles as Record<string, string>)[`roundedMid${sizeKey}`],
+              ),
+            })}
+          </React.Fragment>
+        );
       })}
     </div>
   );

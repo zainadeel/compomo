@@ -22,7 +22,7 @@ const meta: Meta<typeof Button> = {
     contrast: 'bold',
     elevation: 'none',
     rounded: false,
-    disabled: false,
+    inactive: false,
     loading: false,
     dropdown: false,
     fullWidth: false,
@@ -35,7 +35,7 @@ const meta: Meta<typeof Button> = {
     contrast:  { control: 'select', options: ['strong', 'bold', 'medium', 'faint'] },
     label:     { control: 'text' },
     rounded:   { control: 'boolean' },
-    disabled:  { control: 'boolean' },
+    inactive:  { control: 'boolean' },
     loading:   { control: 'boolean' },
     dropdown:  { control: 'boolean' },
     fullWidth: { control: 'boolean' },
@@ -217,7 +217,7 @@ export const Matrix: Story = {
       <div style={{ ...col, marginTop: 12 }}>
         {([
           { label: 'default',  props: {} },
-          { label: 'disabled', props: { disabled: true } },
+          { label: 'Inactive', props: { inactive: true } },
           { label: 'rounded',  props: { rounded: true } },
         ] as const).map(({ label: stateLabel, props }) => (
           <div key={stateLabel} style={row}>
@@ -340,12 +340,12 @@ export const WithBadge: Story = {
   ),
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Button variant="primary" label="Primary" disabled />
-      <Button variant="secondary" label="Secondary" disabled />
-      <Button variant="secondary" elevation="none" label="Ghost" disabled />
+      <Button variant="primary" label="Primary" inactive />
+      <Button variant="secondary" label="Secondary" inactive />
+      <Button variant="secondary" elevation="none" label="Ghost" inactive />
     </div>
   ),
 };

@@ -53,7 +53,7 @@ export interface ButtonProps {
   onMouseEnter?: React.MouseEventHandler<HTMLElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLElement>;
   className?: string;
-  disabled?: boolean;
+  inactive?: boolean;
   type?: 'button' | 'submit' | 'reset';
   id?: string;
   'aria-label'?: string;
@@ -93,7 +93,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
       onMouseEnter,
       onMouseLeave,
       className,
-      disabled = false,
+      inactive = false,
       type = 'button',
       id,
       'aria-label': ariaLabel,
@@ -105,7 +105,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
   ) => {
     const Component = (as ?? 'button') as React.ElementType;
     const isButton = !as || as === 'button';
-    const isInteractive = !disabled && !loading;
+    const isInteractive = !inactive && !loading;
 
     const hasIcon = !!Icon;
     const hasLabel = !!label;
@@ -126,7 +126,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
       styles[`intent${intent.charAt(0).toUpperCase() + intent.slice(1)}`],
       size !== 'md' && styles[`size${size.toUpperCase()}`],
       rounded && styles.rounded,
-      (disabled || loading) && styles.disabled,
+      (inactive || loading) && styles.inactive,
       isIconOnly && styles.iconOnly,
       isLabelOnly && styles.labelOnly,
       isIconAndLabel && styles.iconAndLabel,
@@ -142,7 +142,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
     const extraProps: Record<string, unknown> = {};
     if (isButton) {
       extraProps.type = type;
-      extraProps.disabled = disabled || loading;
+      extraProps.disabled = inactive || loading;
     }
     if (href) extraProps.href = href;
     if (target) extraProps.target = target;

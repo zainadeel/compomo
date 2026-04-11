@@ -44,80 +44,43 @@
   box-shadow: none !important;
   /* Suppress noElevation individual border — divider handles separation */
   border: none !important;
+  /* Suppress scale-on-press: transform would detach the divider from the
+     adjacent button, creating a visible gap. Pressed state is still
+     communicated via the ::after overlay colour. */
+}
+.item:active {
+  transform: none !important;
 }
 
-/* Default full-height divider (elevated / flat / floating) */
-.item + .item {
-  border-left: 1px solid var(--color-border-tertiary) !important;
-}
+/* ── Divider ────────────────────────────────────────────────────────────────
+ * Rendered as a separate <div> between items so it is never part of any
+ * button's stacking context — disabled (opacity: 0.5) or other state changes
+ * on adjacent buttons cannot bleed through to the divider.
+ * ─────────────────────────────────────────────────────────────────────────── */
 
-/* ── Ghost (elevation=none): short centred divider ─────────────────────────── */
-
-.itemShort {
-  position: relative;
-}
-
-/* Suppress the full-height border; pseudo-element handles it instead */
-.item + .itemShort {
-  border-left: none !important;
-}
-
-/* Divider centred vertically, height defaults to md icon size (20px) */
-.item + .itemShort::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+/* Full-height divider (elevated / flat / floating) */
+.divider {
   width: 1px;
-  height: 20px;
+  flex-shrink: 0;
   background-color: var(--color-border-tertiary);
-  pointer-events: none;
 }
 
-/* Size overrides — matches icon size at each scale */
-.item + .itemShort.dividerXS::before { height: 12px; }
-.item + .itemShort.dividerSM::before { height: 16px; }
+/* Ghost (elevation=none): short centred divider at icon height */
+.dividerGhost    { height: 20px; align-self: center; } /* md default */
+.dividerGhostXS  { height: 12px; }
+.dividerGhostSM  { height: 16px; }
 
-/* Hide dividers that touch a hovered ghost button */
-.itemShort:hover::before,
-.itemShort:hover + .itemShort::before {
-  opacity: 0;
-}
+/* Ghost hover-fade: hide the divider on either side of a hovered ghost button */
+.item:hover + .dividerGhost,
+.dividerGhost:has(+ .item:hover) { opacity: 0; }
 
-/* Hide dividers that touch a pressed (selected) ghost button */
-.itemShort.itemPressed::before,
-.itemShort.itemPressed + .itemShort::before {
-  opacity: 0;
-}
-
-/* ── Border radius: flatten only the inner-facing corners ──────────────────── */
-/* Outer corners keep the button's own radius — works for default + rounded */
-
-.first {
-  border-top-right-radius:    0 !important;
-  border-bottom-right-radius: 0 !important;
-}
-
-.last {
-  border-top-left-radius:    0 !important;
-  border-bottom-left-radius: 0 !important;
-}
-
-.middle {
-  border-radius: 0 !important;
-}
-
-/* ── Ghost interaction states: restore 4px radius ──────────────────────────── */
-/*
- * Ghost items have no group chrome, so hover/press feedback and the selected
- * state should appear as independent rounded chips (4px on all corners).
- * These rules come AFTER first/last/middle so they win the !important cascade.
- */
+/* Ghost pressed-state: hide the divider on either side of a selected button */
+.itemPressed + .dividerGhost,
+.dividerGhost:has(+ .itemPressed) { opacity: 0; }
 
 /* ── Ghost interaction states: rounded chips ──────────────────────────────────
  * Ghost items have no connecting chrome — hover/press overlay and selected
- * state always appear as fully rounded chips (4px all corners).
+ * state always appear as independent rounded chips (4px on all corners).
  * Rounded groups: outer corners of first/last become pill; inner stay 4px.
  *
  * Uses explicit longhands throughout to avoid shorthand/longhand cascade
@@ -140,6 +103,23 @@
   border-top-right-radius:    var(--dimension-radius-050) !important;
   border-bottom-right-radius: var(--dimension-radius-050) !important;
   border-bottom-left-radius:  var(--dimension-radius-050) !important;
+}
+
+/* ── Border radius: flatten only the inner-facing corners ──────────────────── */
+/* Outer corners keep the button's own radius — works for default + rounded */
+
+.first {
+  border-top-right-radius:    0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.last {
+  border-top-left-radius:    0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.middle {
+  border-radius: 0 !important;
 }
 
 /* Rounded group: first — left corners become pill (3-class specificity) */

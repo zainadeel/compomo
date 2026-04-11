@@ -178,7 +178,7 @@
 
 .iconOnly { padding: 0; width: var(--dimension-size-400); min-width: var(--dimension-size-400); }
 .labelOnly { padding: 0 var(--dimension-space-100); }
-.iconAndLabel { padding: 0 var(--dimension-space-100); gap: var(--dimension-space-050); }
+.iconAndLabel { padding: 0 var(--dimension-space-100); gap: var(--dimension-space-025); }
 .dropdown { gap: var(--dimension-space-050); }
 
 /* ==========================================================================
@@ -187,11 +187,11 @@
 
 .sizeSM { height: var(--dimension-size-300); }
 .sizeSM.iconOnly { width: var(--dimension-size-300); min-width: var(--dimension-size-300); }
-.sizeSM.labelOnly, .sizeSM.iconAndLabel { padding: 0 var(--dimension-space-075); gap: var(--dimension-space-025); }
+.sizeSM.labelOnly, .sizeSM.iconAndLabel { padding: 0 var(--dimension-space-075); gap: 1px; }
 
 .sizeXS { height: var(--dimension-size-200); }
 .sizeXS.iconOnly { width: var(--dimension-size-200); min-width: var(--dimension-size-200); }
-.sizeXS.labelOnly, .sizeXS.iconAndLabel { padding: 0 var(--dimension-space-050); gap: 0; }
+.sizeXS.labelOnly, .sizeXS.iconAndLabel { padding: 0 var(--dimension-space-025); gap: 0; }
 
 .sizeLG { height: var(--dimension-size-500); }
 .sizeLG.iconOnly { width: var(--dimension-size-500); min-width: var(--dimension-size-500); }
@@ -214,8 +214,8 @@
    Disabled
    ========================================================================== */
 
-.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-.disabled::after { display: none; }
+.inactive { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+.inactive::after { display: none; }
 
 /* ==========================================================================
    Badge

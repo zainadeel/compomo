@@ -13,7 +13,7 @@
 .checkbox:hover { background-color: var(--color-interaction-hover); }
 .checkbox:active { background-color: var(--color-interaction-pressed); }
 
-.disabled {
+.inactive {
   cursor: not-allowed;
   opacity: 0.5;
   pointer-events: none;

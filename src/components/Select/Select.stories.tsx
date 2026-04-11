@@ -45,14 +45,14 @@ export const WithValue: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const Inactive: Story = {
   render: () => (
     <div style={{ width: 260, padding: 24 }}>
       <Select
         value="banana"
         onChange={() => {}}
         options={fruitOptions}
-        disabled
+        inactive
       />
     </div>
   ),
