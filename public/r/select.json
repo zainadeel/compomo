@@ -81,7 +81,7 @@
   "files": [
     {
       "path": "src/components/Select/Select.module.css",
-      "content": ".selectWrapper {\n  width: 100%;\n  position: relative;\n}\n\n.selectButton {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0 var(--dimension-space-075);\n  gap: var(--dimension-space-050);\n  cursor: pointer;\n  user-select: none;\n  border: none;\n  outline: none;\n}\n\n.selectButton:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.chevron {\n  display: flex;\n  align-items: center;\n  color: var(--color-foreground-secondary);\n  flex-shrink: 0;\n}\n",
+      "content": ".selectWrapper {\n  width: 100%;\n  position: relative;\n}\n\n.selectButton {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0 var(--dimension-space-075);\n  gap: var(--dimension-space-050);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  border: none;\n  outline: none;\n}\n\n.selectButton:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.chevron {\n  display: flex;\n  align-items: center;\n  color: var(--color-foreground-secondary);\n  flex-shrink: 0;\n}\n",
       "type": "registry:ui"
     },
     {
