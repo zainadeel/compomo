@@ -1,0 +1,95 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Elevation Usage" />
+
+# Elevation Usage Guidelines
+
+## 1. Quick Decision Rule
+
+Use this rule first:
+
+1. if the surface touches most of its container edges, use a **panel** elevation,
+2. if the surface has breathing room on all four sides, use `flat` or `elevated`,
+3. if the surface has breathing room and is meant to visually float above other content, use `floating`,
+4. if the surface should feel inset or embedded, use `depressed`,
+5. if elevation is intentionally turned off, use `none`.
+
+In practice, panel elevations are for surfaces that touch at least three sides of the container they live in, or otherwise read as edge-attached.
+
+## 2. Panel Elevations
+
+Panel elevations are for surfaces that are attached to the boundary of the area they sit inside.
+
+These styles are directional. The panel direction should match the side of the container that the panel is attached to.
+
+This makes them the right choice for:
+
+- app headers
+- bottom bars
+- left and right drawers
+- edge-attached trays or panels
+
+| Surface | Elevation |
+|---------|-----------|
+| Top header or app bar | `elevation-panel-top` |
+| Bottom bar or footer | `elevation-panel-bottom` |
+| Left-side drawer | `elevation-panel-left` |
+| Right-side drawer | `elevation-panel-right` |
+
+> **Do not** use panel elevations on floating cards or standalone containers. They are intentionally asymmetric and will look wrong when the surface has clearance on every side.
+
+## 3. Non-Panel Elevations
+
+`flat`, `elevated`, and `floating` are for surfaces that do not touch surrounding boundaries on any of their four sides.
+
+| Level | Purpose | Use for |
+|-------|---------|---------|
+| `flat` | Lightest raised treatment | Cards, containers with subtle lift |
+| `elevated` | Standard raised treatment | Cards, free-standing containers |
+| `floating` | Visually floating above content | FABs, popups, dropdown menus, modals |
+
+> **Do not** use `floating` just because an element needs more lift than `elevated`. If the surface is not actually meant to float above other content, `flat` or `elevated` is usually the better choice.
+
+## 4. Depressed Elevation
+
+`depressed` is for elements that should appear embedded within a surrounding surface rather than raised above it.
+
+Typical use cases:
+
+- text inputs
+- embedded fields
+- inset control regions
+- surfaces that read as carved into their parent
+
+Like non-panel elevations, `depressed` should only be used when the element has visible clearance on all four sides.
+
+## 5. None
+
+`none` is for cases where elevation is part of the component model but the visual result should be no elevation treatment.
+
+Use it when:
+
+- a component supports elevation variants but should currently render flat,
+- you want to explicitly choose no elevation instead of leaving it undefined,
+- you need a zero-elevation option that fits into the same naming system.
+
+## 6. Anti-Patterns
+
+Avoid these patterns:
+
+1. using a panel elevation on a card that has open space on all four sides,
+2. using `flat`, `elevated`, `floating`, or `depressed` on a surface attached to a container edge,
+3. choosing a panel direction that does not match the aligned edge,
+4. using `depressed` for elements meant to read as raised,
+5. using `floating` on a normal card that isn't hovering above content,
+6. leaving elevation unspecified when the component API expects a named elevation style.
+
+## 7. Practical Summary
+
+| Situation | Use |
+|-----------|-----|
+| Surface attached to container boundary | Panel elevation (matching direction) |
+| Surface with clearance on all sides, standard lift | `flat` or `elevated` |
+| Surface visually hovering above other content | `floating` |
+| Surface embedded/inset into parent | `depressed` |
+| Elevation slot present but no visual lift needed | `none` |

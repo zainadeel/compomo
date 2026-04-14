@@ -1,0 +1,195 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Color Usage" />
+
+# Color Usage Guidelines
+
+## 1. Objective
+
+This document explains how to use color tokens in product code and design implementation.
+
+The key distinction in this repository is:
+
+1. semantic colors are for UI meaning, hierarchy, and component states,
+2. data colors are for charts, graphs, and other visualization marks,
+3. both layers are aliases on top of the reference palette.
+
+If a choice is available between semantic and data tokens, default to semantic for interface chrome and default to data for visualization marks.
+
+## 2. Quick Decision Rule
+
+Use this rule first:
+
+1. use semantic colors when the color communicates UI role,
+2. use data colors when the color differentiates or encodes data,
+3. use reference colors only when working on the token system itself.
+
+Examples:
+
+1. page background, card text, button hover, error banner: **semantic**
+2. bar series, line series, pie slices, heatmap steps: **data**
+3. palette generation or alias maintenance: **reference**
+
+## 3. Semantic Colors
+
+### 3.1 What Semantic Means
+
+Semantic tokens are named by purpose, not by visual appearance. They should be chosen based on what the UI element is doing, not based on whether a blue, red, or grey value looks convenient.
+
+For example:
+
+- `background.primary` means the main surface
+- `foreground.secondary` means lower-emphasis content
+- `background.strong.negative` means a strong negative-intent surface
+- `interaction.hover` means an interaction overlay
+- `foreground.on-strong-background.primary` means primary content placed on a strong colored background
+
+### 3.2 When To Use Semantic Colors
+
+Use semantic tokens for:
+
+1. application and component surfaces,
+2. text and icon hierarchy,
+3. borders and strokes when they convey UI structure,
+4. status styling such as brand, positive, warning, and negative,
+5. hover and pressed overlays,
+6. special product-domain markers that are part of the product language.
+
+Do not use semantic tokens to color arbitrary chart series just because a semantic hue looks nice.
+
+### 3.3 Common Semantic Families
+
+#### Background
+
+Use background tokens for surfaces and fills.
+
+- `background.primary` and `background.secondary` are standard UI surfaces
+- `background.strong.*`, `background.bold.*`, `background.medium.*`, and `background.faint.*` express emphasis and intent
+- `background.translucent`, `background.shade`, and `background.transparent` are utility surface values
+
+Typical mapping:
+
+| Use case | Token |
+|----------|-------|
+| Nested card or panel surface | `background.primary` |
+| App shell or secondary panel | `background.secondary` |
+| Bold status banner | `background.bold.negative` |
+| Subtle info container | `background.faint.neutral` |
+
+#### Foreground
+
+Use foreground tokens for text, icons, and strokes that follow content hierarchy.
+
+- `foreground.primary` is the highest-emphasis content
+- `foreground.secondary` through `foreground.quaternary` reduce emphasis
+- `foreground.strong.*`, `foreground.bold.*`, `foreground.medium.*`, and `foreground.faint.*` provide colored content roles
+- `foreground.on-strong-background.*` is for content placed on strong colored surfaces
+
+Typical mapping:
+
+| Use case | Token |
+|----------|-------|
+| Main body text | `foreground.primary` |
+| Helper text or secondary icon | `foreground.secondary` |
+| Inactive or de-emphasized content | `foreground.tertiary` |
+| Disabled or very low-emphasis ornament | `foreground.quaternary` |
+| Text on a bold brand fill | `foreground.on-bold-background.primary` |
+
+> **Note:** `foreground.tertiary` is only about 3.35:1 in light mode and 3.23:1 in dark mode, so it does not meet AA for standard text sizes. Use it only for genuinely low-emphasis content.
+
+#### Interaction
+
+Use interaction tokens for overlays caused by state changes, not for base surfaces or replacement fills.
+
+- `interaction.hover` and `interaction.pressed` are for standard surfaces
+- `interaction.on-strong-background.hover` and similar are for colored fills
+- Interaction tokens preserve the underlying semantic meaning of the surface they sit on
+
+#### Border & Divider
+
+- `border.primary`, `border.secondary`, and `border.tertiary` are for container edges, field outlines, card strokes
+- `divider.divider` is for internal rules that separate content inside a surface
+- `divider.on-strong-background`, `divider.on-bold-background`, etc. are divider variants for colored fills
+
+> **Divider tokens** are narrower in purpose than border tokens. Use them only when drawing a horizontal or vertical rule inside a surface.
+
+#### Always-Dark
+
+Use `always-dark.*` only when the component must stay dark regardless of surrounding theme. This is a special-case family for fixed dark contexts.
+
+### 3.4 Semantic Tone Selection
+
+When multiple semantic intensities exist, choose the one that matches the amount of emphasis required:
+
+| Tone | Purpose |
+|------|---------|
+| `strong` | Highest-emphasis fills or content |
+| `bold` | Strong but less dominant than strong |
+| `medium` | Mid-emphasis |
+| `faint` | Low-emphasis tinting or supporting treatment |
+
+When a surface uses a strong semantic background, pair it with the matching `on-background` content token rather than reusing normal foreground tokens.
+
+## 4. Data Colors
+
+### 4.1 When To Use Data Colors
+
+Use data tokens for:
+
+1. chart series colors,
+2. legend keys,
+3. map overlays and plotted markers,
+4. heatmaps and gradients tied to values,
+5. ordered or diverging color ramps.
+
+Do **not** use data tokens for page backgrounds, standard text hierarchy, button states, banners, or form validation.
+
+### 4.2 Common Data Families
+
+| Family | Purpose | Examples |
+|--------|---------|----------|
+| `data-misc` | Neutral visualization elements | Gridlines, reference lines, axes |
+| `data-category` | Nominal categories (unordered) | Multi-series bars, pie slices, legend palettes |
+| `data-win-loss` | Outcome polarity | Pass/fail, win/loss, positive/negative |
+| `data-sequence-*` | Ordered single-direction values | Intensity ramps, ordered buckets, choropleths |
+| `data-diverging-*` | Values extending from a midpoint | Above/below target, deviation from baseline |
+
+> **Important:** When using `data-category` colors together, use them in numeric order (1, 2, 3...). This is especially important when categories touch each other (donut charts, stacked bars).
+
+### 4.3 How Semantic And Data Work Together
+
+| Element | Token source |
+|---------|-------------|
+| Chart card background | `background.primary` (semantic) |
+| Chart title | `foreground.primary` (semantic) |
+| Axis labels | `foreground.secondary` (semantic) |
+| Chart bars/lines | `data-category.*` or `data-sequence-*` (data) |
+| Alert banner around chart | `background.faint.warning` (semantic) |
+
+## 5. Accessibility & Pairing
+
+### Preferred Text Pairings
+
+| Background | Safe foreground | Lowest contrast |
+|-----------|----------------|-----------------|
+| `background.primary` | `foreground.primary` or `.secondary` | ~5.74:1 light, ~6.13:1 dark |
+| `background.strong.*` | `foreground.on-strong-background.primary` or `.secondary` | ~6.54:1 light, ~5.28:1 dark |
+| `background.bold.*` | `foreground.on-bold-background.primary` or `.secondary` | ~5.45:1 light, ~4.89:1 dark |
+
+### Tone Pairs
+
+- `background.bold.*` with `foreground.faint.*` — safe, lowest floor ~4.54:1
+- `background.faint.*` with `foreground.bold.*` — safe, same reciprocal rule
+- `background.strong.*` with `foreground.medium.*` — near-AA, not guaranteed for every intent
+
+## 6. Anti-Patterns
+
+Avoid these patterns:
+
+1. choosing a token only because the hue looks visually convenient,
+2. using semantic status colors as a chart palette,
+3. using data colors for ordinary UI text or surfaces,
+4. mixing reference tokens directly into product code,
+5. pairing strong backgrounds with regular foreground tokens instead of `on-background` tokens,
+6. using `divider.*` as a generic border token,
+7. changing token meaning across screens without a strong product reason.

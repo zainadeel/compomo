@@ -1,0 +1,121 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Typography Usage" />
+
+# Typography Usage Guidelines
+
+## 1. Quick Decision Rule
+
+Use this rule first:
+
+1. start with `body-medium` for normal product copy,
+2. use `body-small` when the text is supporting or slightly subdued,
+3. use `body-large` when you need a little more hierarchy than normal body copy,
+4. use `title-*` styles for actual titles and section headers,
+5. use `display-*` styles only for rare, oversized emphasis such as large numeric values.
+
+**If you are unsure, start with `body-medium`.**
+
+## 2. Body Styles
+
+### body-medium (default)
+
+The default text style for most product copy:
+
+- paragraph text
+- standard labels
+- most explanatory copy
+- the majority of text content in the product
+
+### body-small
+
+For supporting text that should feel slightly more subdued:
+
+- helper text
+- secondary metadata
+- supporting subtext below primary copy
+
+### body-large
+
+For text that should sit above normal body copy without becoming a true title:
+
+- emphasized labels
+- short introductory lines
+- lightweight card or section headings when a full title style would feel too strong
+
+> **Note:** Text hierarchy and color hierarchy should work together. De-emphasis usually comes from a combination of text role and foreground role rather than from color alone.
+
+## 3. Emphasis Styles
+
+Emphasis variants add more weight without changing the size tier. They are useful when:
+
+1. emphasizing a term inside a paragraph,
+2. giving one label more emphasis than another at the same body size,
+3. increasing emphasis through weight rather than a size jump.
+
+> **Important:** Emphasis variants should not replace hierarchy. If text needs to function as a heading, move to a title or display role instead of trying to create hierarchy through emphasis alone.
+
+## 4. Title Styles
+
+Use `title-*` styles for actual titles:
+
+- card titles
+- section headers
+- page section labels
+- other short text that needs to read clearly as a title rather than body copy
+
+| Style | Typical use |
+|-------|------------|
+| `title-small` | Card titles, compact section headers |
+| `title-medium` | Standard section headers, dialog titles |
+| `title-large` | Page-level headers, prominent section titles |
+
+If the text is functioning as a title, use a title style rather than forcing hierarchy by increasing body size.
+
+## 5. Underline Styles
+
+Underline treatments communicate interactive meaning:
+
+| Treatment | Meaning |
+|-----------|---------|
+| **Solid underline** | Text is a hyperlink or tappable link |
+| **Dotted underline** | Text has an associated hover/reveal interaction |
+
+- If text already uses brand bold foreground color, a solid underline isn't always required — the color can signal link behavior on its own
+- Dotted and solid can work together: dotted at rest, solid on hover (for text that discloses info and also navigates)
+
+> These underline treatments should communicate interaction meaning, not be used as decoration.
+
+## 6. Display Styles
+
+Display styles should be used **very sparingly**. They are reserved for:
+
+- large scores
+- primary summary metrics
+- rare hero-value moments (e.g., a prominent driver safety score)
+
+> Display styles should not be treated as general-purpose headings. They are intentionally dramatic and reserved for exceptional emphasis.
+
+## 7. Anti-Patterns
+
+Avoid these patterns:
+
+1. defaulting to `body-large` when normal copy should use `body-medium`,
+2. defaulting to emphasis variants instead of using them only where extra emphasis is needed,
+3. using underline treatments as decoration instead of interaction cues,
+4. using title styles for ordinary paragraph text,
+5. using display styles for common headers or labels,
+6. escalating text size too quickly when a smaller hierarchy shift would do the job.
+
+## 8. Practical Summary
+
+| Need | Style |
+|------|-------|
+| Normal product copy | `body-medium` |
+| Subdued supporting copy | `body-small` |
+| Slight hierarchy bump | `body-large` |
+| More emphasis, same size | `body-*-emphasis` |
+| Link indication | Solid underline |
+| Hover/reveal indication | Dotted underline |
+| Actual titles | `title-small`, `title-medium`, `title-large` |
+| Rare oversized emphasis | `display-small`, `display-medium` |
