@@ -169,7 +169,7 @@ function EasingDemo({ token, bezier }: { token: string; bezier: string }) {
           height: 20,
           borderRadius: 10,
           backgroundColor: 'var(--color-background-bold-positive)',
-          transition: `left var(--effect-motion-medium-3) var(--effect-animation-easing-${token})`,
+          transition: `left var(--effect-animation-duration-medium-3) var(--effect-animation-easing-${token})`,
         }} />
       </div>
     </div>
