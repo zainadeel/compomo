@@ -1,0 +1,25 @@
+/* Storybook MDX docs — table styling
+ * Storybook's default docs theme renders markdown tables without borders or
+ * alternating row colors. These overrides make tables readable. */
+
+.sbdocs-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.sbdocs-content th,
+.sbdocs-content td {
+  border: 1px solid var(--color-border-tertiary, #e0e0e0);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.sbdocs-content th {
+  background: var(--color-background-secondary, #f5f5f5);
+  font-weight: 600;
+}
+
+.sbdocs-content tr:nth-child(even) td {
+  background: var(--color-background-secondary, #fafafa);
+}

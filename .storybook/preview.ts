@@ -3,6 +3,7 @@ import '@ds-mo/tokens';
 import '@ds-mo/tokens/reset';
 import '@ds-mo/tokens/globals';
 import '@ds-mo/tokens/utilities';
+import './docs.css';
 
 const preview: Preview = {
   globalTypes: {
