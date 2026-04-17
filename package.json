@@ -54,7 +54,7 @@
     }
   },
   "devDependencies": {
-    "@ds-mo/icons": "^0.5.0",
+    "@ds-mo/icons": "^0.7.2",
     "@ds-mo/tokens": "^0.3.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@storybook/addon-docs": "^10.3.5",
