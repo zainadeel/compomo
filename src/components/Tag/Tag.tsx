@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { cn } from '@/utils/cn';
 import { Text } from '@/components/Text';
 import { LabelWrap } from '@/components/LabelWrap';
-import { CrossUI } from '@ds-mo/icons';
+import { Cross } from '@ds-mo/icons';
 import type { IconComponent } from '@/types/icons';
 import styles from './Tag.module.css';
 
@@ -29,7 +29,7 @@ export interface TagProps {
   icon?: IconComponent;
   removable?: boolean;
   onRemove?: () => void;
-  /** Override the default CrossUI remove icon. */
+  /** Override the default Cross remove icon. */
   removeIcon?: IconComponent;
   maxWidth?: string | number;
   inactive?: boolean;
@@ -151,7 +151,7 @@ export const Tag = forwardRef<HTMLDivElement, TagProps>(
             aria-label={`Remove ${label}`}
             tabIndex={-1}
           >
-            {RemoveIcon ? <RemoveIcon size={iconSize} /> : <CrossUI size={iconSize} />}
+            {RemoveIcon ? <RemoveIcon size={iconSize} /> : <Cross size={iconSize} />}
           </button>
         )}
       </div>
