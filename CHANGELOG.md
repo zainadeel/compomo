@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/zainadeel/compomo/compare/v0.2.0...v0.2.1) (2026-04-17)
+
+
+### Fixed
+
+* align react 19 types and bump vite to unbreak npm ci ([#17](https://github.com/zainadeel/compomo/issues/17)) ([b9c5f9f](https://github.com/zainadeel/compomo/commit/b9c5f9f5960fe2891d583095f1ae17d6a48d52a6))
+
 ## [0.2.0](https://github.com/zainadeel/compomo/compare/v0.1.0...v0.2.0) (2026-04-17)
 
 
