@@ -1,11 +1,11 @@
-# CompoMo — `@compomo/ui`
+# CompoMo — `@ds-mo/ui`
 
 Composable React UI components styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens.
 
 ## Install
 
 ```bash
-npm install @compomo/ui @ds-mo/tokens
+npm install @ds-mo/ui @ds-mo/tokens
 ```
 
 **Required peer dependency:** `@ds-mo/tokens` provides all CSS custom properties (colors, dimensions, typography, effects) that CompoMo components consume. Components will not render correctly without it.
@@ -29,7 +29,7 @@ import '@ds-mo/tokens/globals'; // global styles
 Then import CompoMo components:
 
 ```tsx
-import { Button, Text, Surface, Card } from '@compomo/ui';
+import { Button, Text, Surface, Card } from '@ds-mo/ui';
 ```
 
 ## Components
