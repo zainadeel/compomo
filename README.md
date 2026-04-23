@@ -1,5 +1,7 @@
 # CompoMo — `@ds-mo/ui`
 
+[![npm version](https://img.shields.io/npm/v/@ds-mo/ui.svg)](https://www.npmjs.com/package/@ds-mo/ui)
+
 Composable React UI components styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens.
 
 ## Install
