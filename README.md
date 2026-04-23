@@ -41,21 +41,44 @@ import { Button, Text, Surface, Card } from '@ds-mo/ui';
 - **Input** — text input field
 - **Slider** — range slider
 - **Field** — label + input wrapper
+- **LabelWrap** — label + content wrapper with layout variants
+- **Divider** — horizontal or vertical rule
 
-### Components
+### Actions
 - **Button** — primary/secondary/tertiary with intents, sizes, icon support
-- **Tag** — labels with intents, contrasts, removable
-- **Badge** — numeric count indicator
+- **ButtonGroup** — grouped button row with shared borders
+- **ToggleButton** — two-state selectable button
+- **ToggleButtonGroup** — radio-style group of toggle buttons
+
+### Controls
 - **Toggle** — on/off switch
 - **Checkbox** — with label and indeterminate state
+- **Radio** — single-select radio input
+
+### Data display
+- **Tag** — labels with intents, contrasts, removable
+- **Badge** — numeric count indicator
+- **Table** — sortable, paginated data table
+- **Accordion** — collapsible content sections
+- **Pagination** — page navigation control
+
+### Overlays
 - **Modal** — dialog with title, subtitle, footer slots
 - **Menu** — dropdown with sections, selection, positioning
 - **Tooltip** — hover tooltip with shortcut key support
 - **Select** — dropdown select
+- **Toast** — transient notification
 - **Banner** — notification bar with intents, toast mode
+
+### Navigation
 - **Tab** — tab button with selection state
-- **Table** — sortable, paginated data table
+- **TabGroup** — grouped tabs with shared selection
+- **Breadcrumb** — path navigation
+
+### Status
 - **EmptyState** — placeholder states
+- **Loader** — loading indicator
+- **Skeleton** — content placeholder
 
 ### Layout
 - **Header** — page header with left/center/right slots
