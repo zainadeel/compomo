@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/zainadeel/compomo/compare/v0.2.2...v0.2.3) (2026-04-23)
+
+
+### Fixed
+
+* add npm version badge to readme ([#23](https://github.com/zainadeel/compomo/issues/23)) ([21b3d5b](https://github.com/zainadeel/compomo/commit/21b3d5bf0195cab680012cfdab31dd15220f5216))
+
 ## [0.2.2](https://github.com/zainadeel/compomo/compare/v0.2.1...v0.2.2) (2026-04-23)
 
 
