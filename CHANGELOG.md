@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/zainadeel/compomo/compare/v0.2.3...v0.2.4) (2026-04-29)
+
+
+### Documentation
+
+* add button mdx guidelines page with embedded examples ([#25](https://github.com/zainadeel/compomo/issues/25)) ([6a36ead](https://github.com/zainadeel/compomo/commit/6a36ead84bbd73c89570c7c88e3eb45236698119))
+
 ## [0.2.3](https://github.com/zainadeel/compomo/compare/v0.2.2...v0.2.3) (2026-04-23)
 
 
