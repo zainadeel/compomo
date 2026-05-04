@@ -14,13 +14,11 @@ export type ButtonSize     = 'xs' | 'sm' | 'md' | 'lg';
 export type ButtonContrast = 'strong' | 'bold' | 'medium' | 'faint';
 export type ButtonBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
 
-export interface ButtonProps {
+interface ButtonBaseProps {
   /** Polymorphic element type. Defaults to 'button'. */
   as?: React.ElementType;
   /** Visual variant. Defaults to 'primary'. */
   variant?: ButtonVariant;
-  /** Label text. */
-  label?: string;
   /** Leading icon component from @ds-mo/icons. */
   icon?: IconComponent;
   /** Semantic intent. Defaults to 'brand'. */
@@ -67,11 +65,23 @@ export interface ButtonProps {
   inactive?: boolean;
   type?: 'button' | 'submit' | 'reset';
   id?: string;
-  'aria-label'?: string;
   href?: string;
   target?: string;
   rel?: string;
 }
+
+/**
+ * Accessible-name requirement: a Button must expose text via `label`,
+ * `aria-label`, or `aria-labelledby`. Icon-only buttons that omit all three
+ * fail at the call site (TypeScript), with a runtime warning as a soft
+ * fallback for callers that bypass the type system.
+ */
+type ButtonAccessibleNameProps =
+  | { label: string; 'aria-label'?: string; 'aria-labelledby'?: string }
+  | { label?: string; 'aria-label': string; 'aria-labelledby'?: string }
+  | { label?: string; 'aria-label'?: string; 'aria-labelledby': string };
+
+export type ButtonProps = ButtonBaseProps & ButtonAccessibleNameProps;
 
 const ICON_SIZE_MAP: Record<ButtonSize, number> = { xs: 12, sm: 16, md: 20, lg: 24 };
 
@@ -84,8 +94,8 @@ const TEXT_STYLE_MAP: Record<ButtonSize, string> = {
 
 
 export const Button = forwardRef<HTMLElement, ButtonProps>(
-  (
-    {
+  (props, ref) => {
+    const {
       as,
       variant = 'primary',
       label,
@@ -109,14 +119,16 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
       type = 'button',
       id,
       'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
       href,
       target,
       rel,
-    },
-    ref
-  ) => {
+    } = props;
+
     const Component = (as ?? 'button') as React.ElementType;
     const isButton = !as || as === 'button';
+    const isLink = as === 'a';
+    const isCustomInteractive = !isButton && !isLink;
     const isInteractive = !inactive && !loading;
 
     const hasIcon = !!Icon;
@@ -153,7 +165,11 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
       className,
     );
 
-    const resolvedAriaLabel = ariaLabel || label || 'button';
+    if (isIconOnly && !ariaLabel && !ariaLabelledBy) {
+      console.warn(
+        '[@ds-mo/ui Button] Icon-only Button is missing an accessible name. Provide `label`, `aria-label`, or `aria-labelledby`.'
+      );
+    }
 
     const extraProps: Record<string, unknown> = {};
     if (isButton) {
@@ -164,6 +180,19 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
     if (target) extraProps.target = target;
     if (rel) extraProps.rel = rel;
 
+    if (isCustomInteractive) {
+      extraProps.role = 'button';
+      extraProps.tabIndex = isInteractive ? 0 : -1;
+      if (isInteractive) {
+        extraProps.onKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            (e.currentTarget as HTMLElement).click();
+          }
+        };
+      }
+    }
+
     return (
       <Component
         ref={ref}
@@ -173,7 +202,9 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
         onClick={isInteractive ? onClick : undefined}
         onMouseEnter={isInteractive ? onMouseEnter : undefined}
         onMouseLeave={isInteractive ? onMouseLeave : undefined}
-        aria-label={resolvedAriaLabel}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-disabled={inactive || loading || undefined}
         aria-busy={loading || undefined}
         {...extraProps}
       >
