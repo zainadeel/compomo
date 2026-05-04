@@ -110,6 +110,31 @@ export const CustomRange: Story = {
   ),
 };
 
+const SIGNAL_LABELS = ['Off', 'Low', 'Medium', 'High', 'Max'];
+
+const SignalSlider = () => {
+  const [value, setValue] = useState(2);
+  return (
+    <Slider
+      label="Signal strength"
+      min={0}
+      max={4}
+      step={1}
+      value={value}
+      onChange={setValue}
+      valueText={SIGNAL_LABELS[value]}
+    />
+  );
+};
+
+export const NonNumericValueText: Story = {
+  render: () => (
+    <div style={{ width: 280 }}>
+      <SignalSlider />
+    </div>
+  ),
+};
+
 export const Inactive: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 280 }}>
