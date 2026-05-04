@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useCallback, useId } from 'react';
 import { cn } from '@/utils/cn';
 import { Text } from '@/components/Text';
 import styles from './Accordion.module.css';
@@ -73,6 +73,9 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
   ({ label, children, isExpanded = false, onToggle, inactive = false, className }, ref) => {
     const contentRef = useRef<HTMLDivElement>(null);
     const [height, setHeight] = useState<number>(0);
+    const reactId = useId();
+    const triggerId = `${reactId}-trigger`;
+    const panelId = `${reactId}-panel`;
 
     const measure = useCallback(() => {
       if (contentRef.current) {
@@ -93,9 +96,12 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
       <div ref={ref} className={cn(styles.item, inactive && styles.inactive, className)}>
         <button
           type="button"
+          id={triggerId}
           className={styles.trigger}
           onClick={() => !inactive && onToggle?.()}
           aria-expanded={isExpanded}
+          aria-controls={panelId}
+          aria-disabled={inactive || undefined}
           tabIndex={inactive ? -1 : 0}
         >
           <Text variant="text-body-medium-emphasis" as="span" color="inherit">
@@ -106,6 +112,9 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
           </span>
         </button>
         <div
+          id={panelId}
+          role="region"
+          aria-labelledby={triggerId}
           className={styles.body}
           style={{ height: isExpanded ? height : 0 }}
           aria-hidden={!isExpanded}
