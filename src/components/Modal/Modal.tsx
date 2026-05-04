@@ -14,6 +14,27 @@ const WIDTH_MAP: Record<ModalWidth, string> = {
 
 const CLOSE_ANIMATION_MS = 220;
 
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'area[href]',
+  'button:not([disabled])',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'iframe',
+  'object',
+  'embed',
+  '[contenteditable="true"]',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+const getFocusableElements = (root: HTMLElement): HTMLElement[] => {
+  const nodes = root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+  return Array.from(nodes).filter(
+    (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
+  );
+};
+
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,6 +44,7 @@ export interface ModalProps {
   footer?: React.ReactNode;
   width?: ModalWidth | string;
   bodyClassName?: string;
+  initialFocus?: React.RefObject<HTMLElement>;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -34,9 +56,12 @@ export const Modal: React.FC<ModalProps> = ({
   footer,
   width = 'md',
   bodyClassName,
+  initialFocus,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
+  const subtitleId = useId();
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
 
@@ -72,13 +97,61 @@ export const Modal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     if (!isOpen || !shouldRender) return;
+    previouslyFocusedRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const id = requestAnimationFrame(() => {
-      dialogRef.current?.focus();
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      if (initialFocus?.current) {
+        initialFocus.current.focus();
+        return;
+      }
+      const focusables = getFocusableElements(dialog);
+      if (focusables.length > 0) {
+        focusables[0].focus();
+      } else {
+        dialog.focus();
+      }
     });
-    return () => cancelAnimationFrame(id);
-  }, [isOpen, shouldRender]);
+    return () => {
+      cancelAnimationFrame(id);
+      const previous = previouslyFocusedRef.current;
+      if (previous && document.contains(previous)) {
+        previous.focus();
+      }
+      previouslyFocusedRef.current = null;
+    };
+  }, [isOpen, shouldRender, initialFocus]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab') return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const focusables = getFocusableElements(dialog);
+    if (focusables.length === 0) {
+      e.preventDefault();
+      dialog.focus();
+      return;
+    }
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey) {
+      if (active === first || active === dialog || !dialog.contains(active)) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last || !dialog.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
 
   if (!shouldRender) return null;
+
+  const describedById = subtitle != null ? subtitleId : undefined;
 
   return createPortal(
     <div
@@ -86,6 +159,7 @@ export const Modal: React.FC<ModalProps> = ({
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      onKeyDown={handleKeyDown}
     >
       <Surface
         ref={dialogRef}
@@ -97,6 +171,7 @@ export const Modal: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        aria-describedby={describedById}
         tabIndex={-1}
       >
         <div className={styles.header}>
@@ -104,7 +179,9 @@ export const Modal: React.FC<ModalProps> = ({
             {title}
           </Text>
           {subtitle != null && (
-            <div className={styles.subtitle}>{subtitle}</div>
+            <div id={subtitleId} className={styles.subtitle}>
+              {subtitle}
+            </div>
           )}
         </div>
         <div className={`${styles.body} ${bodyClassName ?? ''}`.trim()}>
