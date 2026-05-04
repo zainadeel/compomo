@@ -17,6 +17,11 @@
 
 .content::-webkit-scrollbar { display: none; }
 
+.content:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: calc(var(--dimension-space-025) * -1);
+}
+
 .track {
   position: absolute;
   top: 0; right: 0; bottom: 0;

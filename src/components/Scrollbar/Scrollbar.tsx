@@ -158,7 +158,15 @@ export const Scrollbar: React.FC<ScrollbarProps> = ({
   const showThumb = thumbHeight > 0;
   const showThumbH = thumbWidth > 0;
   const showTrack = showTrackOnHover && (isPointerInside || isDragging || isDraggingH);
+  const isScrollable = showThumb || showThumbH;
 
+  // A11y model: the custom thumbs are a visual reskin of the native scrollbar,
+  // not a separate widget. The `.content` div retains native `overflow: auto`,
+  // so when it is focusable the browser handles arrow keys, Page Up/Down,
+  // Home/End, and Space for free — implementing the full `role="scrollbar"`
+  // ARIA pattern would just re-create that behavior. We therefore expose the
+  // scroll container itself as the keyboard target (tabIndex=0 only when
+  // content overflows) and hide the decorative thumbs from assistive tech.
   return (
     <div
       ref={containerRef}
@@ -168,15 +176,21 @@ export const Scrollbar: React.FC<ScrollbarProps> = ({
       data-dragging={isDragging || isDraggingH}
       data-show-track={showTrack ? 'true' : 'false'}
     >
-      <div ref={contentRef} className={styles.content}>{children}</div>
+      <div
+        ref={contentRef}
+        className={styles.content}
+        tabIndex={isScrollable ? 0 : undefined}
+      >
+        {children}
+      </div>
       {fadeOverlay}
       {showThumb && (
-        <div className={styles.track}>
+        <div className={styles.track} aria-hidden="true">
           <div ref={thumbRef} className={styles.thumb} style={{ height: `${thumbHeight}px`, top: `${thumbTop}px` }} onMouseDown={handleThumbMouseDown} />
         </div>
       )}
       {showThumbH && (
-        <div className={styles.trackHorizontal}>
+        <div className={styles.trackHorizontal} aria-hidden="true">
           <div ref={thumbHRef} className={styles.thumbHorizontal} style={{ width: `${thumbWidth}px`, left: `${thumbLeft}px` }} onMouseDown={handleThumbHMouseDown} />
         </div>
       )}
