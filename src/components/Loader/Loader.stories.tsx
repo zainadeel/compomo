@@ -14,6 +14,15 @@ type Story = StoryObj<typeof Loader>;
 
 export const Default: Story = {};
 
+/**
+ * Standalone usage with an accessible label. Wraps the spinner in a
+ * `role="status"` live region and renders a visually-hidden label so
+ * screen readers announce the loading state on mount.
+ */
+export const WithLabel: Story = {
+  args: { label: 'Loading' },
+};
+
 /** Shows how stroke weight scales naturally with size — same as icon strokes. */
 export const Sizes: Story = {
   render: () => (
