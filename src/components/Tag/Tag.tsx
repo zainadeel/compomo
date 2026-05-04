@@ -125,6 +125,9 @@ export const Tag = forwardRef<HTMLDivElement, TagProps>(
         }
       : undefined;
 
+    // Rendered as <div role="button"> rather than a native <button> because
+    // removable tags contain an inner <button> for the remove affordance, and
+    // nesting <button> inside <button> is invalid HTML.
     return (
       <div
         ref={ref}
@@ -133,8 +136,8 @@ export const Tag = forwardRef<HTMLDivElement, TagProps>(
         onClick={handleInteract}
         onKeyDown={handleKeyDown}
         role={isInteractive ? 'button' : undefined}
-        tabIndex={isInteractive && !inactive ? 0 : undefined}
-        aria-pressed={onPressedChange != null ? pressed : undefined}
+        tabIndex={isInteractive ? (inactive ? -1 : 0) : undefined}
+        aria-pressed={isInteractive && pressed !== undefined ? !!pressed : undefined}
         aria-disabled={inactive || undefined}
       >
         {Icon && <Icon size={iconSize} />}
