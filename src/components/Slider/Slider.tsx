@@ -13,10 +13,12 @@ export interface SliderProps {
   id?: string;
   inactive?: boolean;
   className?: string;
+  /** Human-readable text for assistive tech when the numeric value alone isn't meaningful (e.g. "Low", "Medium", "High"). Maps to `aria-valuetext`. */
+  valueText?: string;
 }
 
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(
-  ({ value, onChange, min = 0, max = 100, step = 1, label, id: idProp, inactive = false, className }, ref) => {
+  ({ value, onChange, min = 0, max = 100, step = 1, label, id: idProp, inactive = false, className, valueText }, ref) => {
     const generatedId = useId();
     const id = idProp ?? generatedId;
     const containerRef = useRef<HTMLDivElement>(null);
@@ -61,9 +63,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             onChange={handleInput}
             disabled={inactive}
             className={styles.input}
-            aria-valuemin={min}
-            aria-valuemax={max}
-            aria-valuenow={value}
+            aria-valuetext={valueText}
           />
         </div>
       </div>
