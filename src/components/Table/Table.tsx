@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { cn } from '@/utils/cn';
 import { Text } from '@/components/Text';
 import styles from './Table.module.css';
@@ -109,41 +109,61 @@ export function Table<T>({
   };
 
   return (
-    <div className={cn(styles.tableWrapper, className)}>
+    <div className={cn(styles.tableWrapper, className)} aria-busy={loading || undefined}>
       <div className={styles.tableScroll}>
         <div className={styles.table} style={{ gridTemplateColumns }} role="table">
           {/* Header */}
           <div className={styles.headerRow} role="row">
-            {visibleColumns.map(col => (
-              <div
-                key={col.id}
-                className={cn(
-                  styles.headerCell,
-                  col.sortable && styles.sortable,
-                  col.align === 'right' && styles.alignRight,
-                  col.align === 'center' && styles.alignCenter
-                )}
-                role="columnheader"
-                onClick={() => col.sortable && handleSort(col.id)}
-                style={col.minWidth ? { minWidth: typeof col.minWidth === 'number' ? `${col.minWidth}px` : col.minWidth } : undefined}
-              >
-                {typeof col.header === 'string' ? (
-                  <Text variant="text-body-small-emphasis" as="span" color="secondary">
-                    {col.header}
-                  </Text>
-                ) : col.header}
-                {sortState?.columnId === col.id && (
-                  <span className={styles.sortIndicator} aria-hidden>
-                    {sortState.direction === 'asc' ? '\u2191' : '\u2193'}
-                  </span>
-                )}
-              </div>
-            ))}
+            {visibleColumns.map(col => {
+              const isSorted = sortState?.columnId === col.id;
+              const ariaSort: 'ascending' | 'descending' | 'none' | undefined = col.sortable
+                ? (isSorted ? (sortState.direction === 'asc' ? 'ascending' : 'descending') : 'none')
+                : undefined;
+              const onHeaderActivate = () => col.sortable && handleSort(col.id);
+              return (
+                <div
+                  key={col.id}
+                  className={cn(
+                    styles.headerCell,
+                    col.sortable && styles.sortable,
+                    col.align === 'right' && styles.alignRight,
+                    col.align === 'center' && styles.alignCenter
+                  )}
+                  role="columnheader"
+                  aria-sort={ariaSort}
+                  tabIndex={col.sortable ? 0 : undefined}
+                  onClick={onHeaderActivate}
+                  onKeyDown={col.sortable ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onHeaderActivate();
+                    }
+                  } : undefined}
+                  style={col.minWidth ? { minWidth: typeof col.minWidth === 'number' ? `${col.minWidth}px` : col.minWidth } : undefined}
+                >
+                  {typeof col.header === 'string' ? (
+                    <Text variant="text-body-small-emphasis" as="span" color="secondary">
+                      {col.header}
+                    </Text>
+                  ) : col.header}
+                  {isSorted && (
+                    <span className={styles.sortIndicator} aria-hidden>
+                      {sortState.direction === 'asc' ? '\u2191' : '\u2193'}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Loading skeleton */}
           {loading && Array.from({ length: 5 }).map((_, i) => (
-            <div key={`skeleton-${i}`} className={styles.row} role="row">
+            <div
+              key={`skeleton-${i}`}
+              className={styles.row}
+              role={i === 0 ? 'status' : 'row'}
+              aria-label={i === 0 ? 'Loading' : undefined}
+            >
               {visibleColumns.map(col => (
                 <div key={col.id} className={styles.cell} role="cell">
                   <div className={styles.skeleton} />
@@ -162,16 +182,25 @@ export function Table<T>({
           {/* Data rows */}
           {!loading && pagedData.map((row, rowIndex) => {
             const isSelected = selectedRows?.has(rowIndex);
+            const isClickable = Boolean(onRowClick);
             return (
               <div
                 key={rowIndex}
                 className={cn(
                   styles.row,
                   isSelected && styles.rowSelected,
-                  onRowClick && styles.rowClickable
+                  isClickable && styles.rowClickable
                 )}
                 role="row"
+                tabIndex={isClickable ? 0 : undefined}
+                aria-selected={selectedRows ? Boolean(isSelected) : undefined}
                 onClick={() => onRowClick?.(row, rowIndex)}
+                onKeyDown={isClickable ? (e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onRowClick?.(row, rowIndex);
+                  }
+                } : undefined}
               >
                 {visibleColumns.map(col => (
                   <div
