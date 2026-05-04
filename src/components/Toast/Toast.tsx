@@ -100,6 +100,9 @@ interface ToastItemProps {
 const ToastItem: React.FC<ToastItemProps> = ({ data }) => {
   const [exiting, setExiting] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const remainingRef = useRef<number>(data.duration ?? 4000);
+  const startedAtRef = useRef<number>(0);
+  const pausedRef = useRef<boolean>(false);
 
   const dismiss = useCallback(() => {
     setExiting(true);
@@ -109,13 +112,41 @@ const ToastItem: React.FC<ToastItemProps> = ({ data }) => {
     }, 200);
   }, [data]);
 
-  useEffect(() => {
-    const duration = data.duration ?? 4000;
-    if (duration > 0) {
-      timerRef.current = setTimeout(dismiss, duration);
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = undefined;
     }
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [data.duration, dismiss]);
+  }, []);
+
+  const startTimer = useCallback((ms: number) => {
+    if (ms <= 0) return;
+    startedAtRef.current = Date.now();
+    timerRef.current = setTimeout(dismiss, ms);
+  }, [dismiss]);
+
+  const pause = useCallback(() => {
+    if (pausedRef.current || !timerRef.current) return;
+    pausedRef.current = true;
+    const elapsed = Date.now() - startedAtRef.current;
+    remainingRef.current = Math.max(0, remainingRef.current - elapsed);
+    clearTimer();
+  }, [clearTimer]);
+
+  const resume = useCallback(() => {
+    if (!pausedRef.current) return;
+    pausedRef.current = false;
+    startTimer(remainingRef.current);
+  }, [startTimer]);
+
+  useEffect(() => {
+    remainingRef.current = data.duration ?? 4000;
+    pausedRef.current = false;
+    startTimer(remainingRef.current);
+    return clearTimer;
+  }, [data.duration, startTimer, clearTimer]);
+
+  const isNegative = data.intent === 'negative';
 
   return (
     <Surface
@@ -124,8 +155,12 @@ const ToastItem: React.FC<ToastItemProps> = ({ data }) => {
       elevation="floating"
       radius="lg"
       className={cn(styles.toast, exiting && styles.toastExit)}
-      role="status"
-      aria-live="polite"
+      role={isNegative ? 'alert' : 'status'}
+      aria-live={isNegative ? 'assertive' : 'polite'}
+      onMouseEnter={pause}
+      onMouseLeave={resume}
+      onFocus={pause}
+      onBlur={resume}
     >
       <Text variant="text-body-medium" as="span" color="inherit">
         {data.message}
@@ -159,6 +194,7 @@ export const ToastContainer = forwardRef<HTMLDivElement, ToastContainerProps>(
       <div
         ref={ref}
         className={cn(styles.container, styles[positionClass(position)])}
+        role="region"
         aria-label="Notifications"
       >
         {items.map(item => (
