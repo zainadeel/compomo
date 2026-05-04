@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { getCssTimeMs } from '@/utils/css-tokens';
 import { Text } from '@/components/Text';
@@ -42,6 +42,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const resolvedDelay = delay ?? hoverDelayMs;
   const anchorRef = useRef<HTMLElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipId = useId();
 
   const setAnchorRef = useCallback(
     (el: HTMLElement | null) => {
@@ -92,6 +93,15 @@ export const Tooltip: React.FC<TooltipProps> = ({
   };
 
   useEffect(() => () => { clearDelayTimer(); if (closeTimerRef.current) clearTimeout(closeTimerRef.current); }, []);
+
+  useEffect(() => {
+    if (!shouldRender) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [shouldRender]);
 
   useLayoutEffect(() => {
     if (!shouldRender || !tooltipRef.current) return;
@@ -179,6 +189,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const tooltipContent = shouldRender ? (
     <div
       ref={tooltipRef}
+      id={tooltipId}
       className={`${styles.tooltip} ${isClosing ? styles.closing : ''}`}
       style={{
         position: 'fixed',
@@ -189,6 +200,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
         zIndex: 10000,
       }}
       role="tooltip"
+      onMouseEnter={handleOpen}
+      onMouseLeave={handleClose}
     >
       <div className={styles.tooltipInner}>
         {shortcutKey && shortcutKeyPosition === 'start' && keyHint}
@@ -198,19 +211,40 @@ export const Tooltip: React.FC<TooltipProps> = ({
     </div>
   ) : null;
 
+  type TriggerProps = {
+    onMouseEnter?: (e: React.MouseEvent) => void;
+    onMouseLeave?: (e: React.MouseEvent) => void;
+    onFocus?: (e: React.FocusEvent) => void;
+    onBlur?: (e: React.FocusEvent) => void;
+    'aria-describedby'?: string;
+  };
   const trigger = React.Children.only(children);
-  const triggerWithRefAndHandlers = React.isValidElement(trigger)
-    ? React.cloneElement(trigger as React.ReactElement<any>, {
+  const triggerEl = React.isValidElement<TriggerProps>(trigger) ? trigger : null;
+  const existingDescribedBy = triggerEl?.props['aria-describedby'];
+  const mergedDescribedBy =
+    [existingDescribedBy, shouldRender ? tooltipId : undefined].filter(Boolean).join(' ') ||
+    undefined;
+  const triggerWithRefAndHandlers = triggerEl
+    ? React.cloneElement(triggerEl, {
         ref: setAnchorRef,
+        'aria-describedby': mergedDescribedBy,
         onMouseEnter: (e: React.MouseEvent) => {
           handleOpen();
-          (trigger as any).props.onMouseEnter?.(e);
+          triggerEl.props.onMouseEnter?.(e);
         },
         onMouseLeave: (e: React.MouseEvent) => {
           handleClose();
-          (trigger as any).props.onMouseLeave?.(e);
+          triggerEl.props.onMouseLeave?.(e);
         },
-      })
+        onFocus: (e: React.FocusEvent) => {
+          handleOpen();
+          triggerEl.props.onFocus?.(e);
+        },
+        onBlur: (e: React.FocusEvent) => {
+          handleClose();
+          triggerEl.props.onBlur?.(e);
+        },
+      } as Partial<TriggerProps> & { ref: typeof setAnchorRef })
     : children;
 
   return (
