@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Cross } from '@ds-mo/icons';
 import { Surface } from '@/components/Surface';
 import { Text } from '@/components/Text';
 import { getCssTimeMs } from '@/utils/css-tokens';
@@ -22,6 +23,8 @@ export interface BannerProps {
   className?: string;
   floating?: boolean;
   onDismiss?: () => void;
+  /** Accessible label for the dismiss button. Defaults to "Dismiss". */
+  dismissLabel?: string;
 }
 
 const getContentColorVar = (intent: BannerIntent, contrast: BannerContrast): string => {
@@ -38,6 +41,7 @@ export const Banner: React.FC<BannerProps> = ({
   className = '',
   floating = false,
   onDismiss,
+  dismissLabel = 'Dismiss',
 }) => {
   const toastDurationMs = getCssTimeMs('--effect-animation-delay-long-2', TOAST_DURATION_FALLBACK_MS);
   const messageColor = getContentColorVar(intent, contrast);
@@ -45,18 +49,28 @@ export const Banner: React.FC<BannerProps> = ({
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const scheduleDismiss = useCallback(() => {
+  const beginClose = useCallback(() => {
     if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-    dismissTimerRef.current = setTimeout(() => {
-      dismissTimerRef.current = null;
+    dismissTimerRef.current = null;
+    if (floating) {
       setIsClosing(true);
       closeTimerRef.current = setTimeout(() => {
         closeTimerRef.current = null;
         onDismiss?.();
       }, FADE_OUT_DURATION_MS);
+    } else {
+      onDismiss?.();
+    }
+  }, [floating, onDismiss]);
+
+  const scheduleDismiss = useCallback(() => {
+    if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+    dismissTimerRef.current = setTimeout(() => {
+      dismissTimerRef.current = null;
+      beginClose();
     }, toastDurationMs);
-  }, [onDismiss, toastDurationMs]);
+  }, [beginClose, toastDurationMs]);
 
   useEffect(() => {
     if (floating && message) scheduleDismiss();
@@ -66,10 +80,16 @@ export const Banner: React.FC<BannerProps> = ({
     };
   }, [floating, message, scheduleDismiss]);
 
+  const isAssertive = intent === 'negative';
+  const role = isAssertive ? 'alert' : 'status';
+  const ariaLive = isAssertive ? undefined : 'polite';
+
   const content = (
     <div
       className={`${styles.bannerWrapper} ${className}`.trim()}
       style={{ '--banner-content': messageColor } as React.CSSProperties}
+      role={role}
+      aria-live={ariaLive}
     >
       <Surface
         elevation={floating ? 'floating' : 'elevated'}
@@ -87,6 +107,16 @@ export const Banner: React.FC<BannerProps> = ({
           <Text variant="text-body-medium" as="span" className={styles.message}>
             {message}
           </Text>
+          {onDismiss && (
+            <button
+              type="button"
+              className={styles.dismiss}
+              onClick={beginClose}
+              aria-label={dismissLabel}
+            >
+              <Cross size={16} />
+            </button>
+          )}
         </div>
       </Surface>
     </div>

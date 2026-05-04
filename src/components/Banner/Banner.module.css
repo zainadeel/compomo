@@ -30,12 +30,50 @@
 .bannerBody {
   padding: var(--dimension-space-075);
   min-height: var(--dimension-size-400);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--dimension-space-075);
 }
 
 .message {
   color: var(--banner-content);
   line-height: var(--typography-lineheight-md);
   display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.dismiss {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: var(--dimension-space-025);
+  color: var(--banner-content);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--dimension-radius-050);
+  position: relative;
+}
+
+.dismiss::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+  transition: var(--effect-transition-interaction-background-short-2);
+  pointer-events: none;
+}
+
+.dismiss:hover::before  { background-color: var(--color-interaction-hover); }
+.dismiss:active::before { background-color: var(--color-interaction-pressed); }
+
+.dismiss:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-stroke-width-015);
 }
 
 .floatingPosition {
