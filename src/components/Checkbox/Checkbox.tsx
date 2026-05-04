@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 import { cn } from '@/utils/cn';
 import { Text } from '@/components/Text';
 import type { IconComponent } from '@/types/icons';
@@ -34,6 +34,7 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
     },
     ref
   ) => {
+    const labelId = useId();
     const handleClick = () => {
       if (!inactive) onChange?.(!checked);
     };
@@ -46,7 +47,9 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
         ref={ref}
         role="checkbox"
         aria-checked={indeterminate ? 'mixed' : checked}
-        aria-inactive={inactive}
+        aria-disabled={inactive || undefined}
+        aria-labelledby={labelId}
+        data-inactive={inactive || undefined}
         tabIndex={inactive ? -1 : 0}
         className={cn(styles.checkbox, inactive && styles.inactive, className)}
         onClick={handleClick}
@@ -57,7 +60,7 @@ export const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
             {(checked || indeterminate) && <span className={styles.checkmark}>{indeterminate ? '−' : '✓'}</span>}
           </span>
         )}
-        <Text variant="text-body-medium" as="span" color="inherit">
+        <Text id={labelId} variant="text-body-medium" as="span" color="inherit">
           {label}
         </Text>
       </div>
