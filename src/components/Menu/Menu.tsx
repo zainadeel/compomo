@@ -53,6 +53,16 @@ export interface MenuProps {
   matchAnchorWidth?: boolean;
   matchAnchorWidthOffset?: number;
   usePortal?: boolean;
+  /** Container role + item role semantics. Defaults to `menu` (items are buttons). `listbox` makes items render as `option` with `aria-selected`. */
+  role?: 'menu' | 'listbox';
+  /** DOM id for the popup container — required when an external combobox references it via `aria-controls`/`aria-activedescendant`. */
+  id?: string;
+  /** Accessible label for the popup container. Defaults to `'Menu'` for menu role; omitted for listbox (let consumer provide via aria-labelledby on the combobox). */
+  ariaLabel?: string;
+  /** Active descendant index for listbox keyboard nav — highlights one option visually without moving DOM focus. */
+  activeIndex?: number;
+  /** Builds the DOM id for option `index`. Required in listbox mode if `aria-activedescendant` is used externally. */
+  getOptionId?: (index: number) => string;
 }
 
 export const Menu: React.FC<MenuProps> = ({
@@ -73,7 +83,13 @@ export const Menu: React.FC<MenuProps> = ({
   matchAnchorWidth = false,
   matchAnchorWidthOffset = 0,
   usePortal = true,
+  role = 'menu',
+  id,
+  ariaLabel,
+  activeIndex,
+  getOptionId,
 }) => {
+  const isListbox = role === 'listbox';
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [isPositionReady, setIsPositionReady] = useState(false);
@@ -199,11 +215,11 @@ export const Menu: React.FC<MenuProps> = ({
 
   if (!shouldRender || sectionsToRender.length === 0) return null;
 
-  const renderMenuItem = (item: MenuItemData, index: number) => {
+  const renderMenuItem = (item: MenuItemData, key: number, flatIndex: number) => {
     if (item.isDestructive) {
       return (
         <DestructiveMenuItem
-          key={index}
+          key={key}
           label={item.label}
           subtext={item.subtext}
           holdDuration={item.holdDuration ?? 4000}
@@ -211,9 +227,10 @@ export const Menu: React.FC<MenuProps> = ({
         />
       );
     }
+    const optionId = isListbox && getOptionId ? getOptionId(flatIndex) : undefined;
     return (
       <MenuItemComponent
-        key={index}
+        key={key}
         icon={item.icon}
         label={item.label}
         subtext={item.subtext}
@@ -224,6 +241,11 @@ export const Menu: React.FC<MenuProps> = ({
         showToggle={item.showToggle}
         toggleValue={item.toggleValue}
         selectionStyle={item.selectionStyle}
+        role={isListbox ? 'option' : undefined}
+        id={optionId}
+        ariaSelected={isListbox ? !!item.isSelected : undefined}
+        isActive={isListbox && activeIndex === flatIndex}
+        tabIndex={isListbox ? -1 : undefined}
       />
     );
   };
@@ -241,8 +263,17 @@ export const Menu: React.FC<MenuProps> = ({
     ...(maxWidth ? { maxWidth } : {}),
   };
 
+  let flatIndexCounter = 0;
+  const containerLabel = ariaLabel ?? (isListbox ? undefined : 'Menu');
   const menuContent = (
-    <div ref={menuRef} className={`${styles.menuContainer} ${isClosing ? styles.closing : ''}`} style={menuStyle} role="menu" aria-label="Menu">
+    <div
+      ref={menuRef}
+      id={id}
+      className={`${styles.menuContainer} ${isClosing ? styles.closing : ''}`}
+      style={menuStyle}
+      role={role}
+      aria-label={containerLabel}
+    >
       {sectionsToRender.map((section, sectionIndex) => (
         <Surface
           key={sectionIndex}
@@ -256,7 +287,7 @@ export const Menu: React.FC<MenuProps> = ({
               <Text variant="text-body-small-emphasis" as="span" className={styles.sectionLabel}>{section.header}</Text>
             </div>
           )}
-          {section.items.map((item, itemIndex) => renderMenuItem(item, itemIndex))}
+          {section.items.map((item, itemIndex) => renderMenuItem(item, itemIndex, flatIndexCounter++))}
         </Surface>
       ))}
     </div>

@@ -21,6 +21,16 @@ export interface MenuItemProps {
   showTrailingChevron?: boolean;
   checkIcon?: IconComponent;
   chevronIcon?: IconComponent;
+  /** Override the implicit `button` role — e.g. `'option'` when used inside a listbox. */
+  role?: string;
+  /** Element id — required when used as an `option` referenced by `aria-activedescendant`. */
+  id?: string;
+  /** Maps to `aria-selected`. Only emitted when role is set (e.g. listbox option). */
+  ariaSelected?: boolean;
+  /** Visual highlight for keyboard "active" cursor (separate from selection state). */
+  isActive?: boolean;
+  /** Override default tabIndex (e.g. -1 for listbox options driven by aria-activedescendant). */
+  tabIndex?: number;
 }
 
 export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
@@ -39,6 +49,11 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
     showTrailingChevron = false,
     checkIcon: CheckIcon,
     chevronIcon: ChevronIcon,
+    role,
+    id,
+    ariaSelected,
+    isActive = false,
+    tabIndex,
   }, ref) => {
     const useRadioStyle = selectionStyle === 'radio';
     const noOverlay = selectionStyle === 'noOverlay' || useRadioStyle;
@@ -51,10 +66,14 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
         interactive={!isInactive}
         selected={showSelectedOverlay}
         radius="sm"
-        className={`${styles.menuItem} ${isSelected ? styles.menuItemSelected : ''} ${isInactive ? styles.menuItemInactive : ''} ${intent === 'negative' ? styles.menuItemNegative : ''} ${labelColor === 'tertiary' ? styles.menuItemLabelTertiary : ''}`}
+        className={`${styles.menuItem} ${isSelected ? styles.menuItemSelected : ''} ${isInactive ? styles.menuItemInactive : ''} ${intent === 'negative' ? styles.menuItemNegative : ''} ${labelColor === 'tertiary' ? styles.menuItemLabelTertiary : ''} ${isActive ? styles.menuItemActive : ''}`}
         onClick={onClick}
         type="button"
         inactive={isInactive}
+        role={role}
+        id={id}
+        aria-selected={role && ariaSelected !== undefined ? ariaSelected : undefined}
+        tabIndex={tabIndex}
       >
         {Icon && (
           <div className={styles.iconPrefix}>
