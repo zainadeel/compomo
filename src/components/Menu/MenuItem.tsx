@@ -6,6 +6,8 @@ import styles from './MenuItem.module.css';
 
 export type MenuItemSelectionStyle = 'highlight' | 'radio' | 'noOverlay';
 
+export type MenuItemRole = 'menuitem' | 'menuitemcheckbox' | 'menuitemradio';
+
 export interface MenuItemProps {
   label: string;
   onClick: () => void;
@@ -21,6 +23,9 @@ export interface MenuItemProps {
   showTrailingChevron?: boolean;
   checkIcon?: IconComponent;
   chevronIcon?: IconComponent;
+  tabIndex?: number;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLButtonElement>) => void;
 }
 
 export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
@@ -39,10 +44,26 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
     showTrailingChevron = false,
     checkIcon: CheckIcon,
     chevronIcon: ChevronIcon,
+    tabIndex,
+    onKeyDown,
+    onFocus,
   }, ref) => {
     const useRadioStyle = selectionStyle === 'radio';
     const noOverlay = selectionStyle === 'noOverlay' || useRadioStyle;
     const showSelectedOverlay = isSelected && !noOverlay;
+
+    const role: MenuItemRole = showToggle
+      ? 'menuitemcheckbox'
+      : useRadioStyle
+        ? 'menuitemradio'
+        : 'menuitem';
+
+    const ariaChecked: boolean | undefined =
+      role === 'menuitemcheckbox'
+        ? !!toggleValue
+        : role === 'menuitemradio'
+          ? !!isSelected
+          : undefined;
 
     return (
       <Surface
@@ -55,9 +76,15 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
         onClick={onClick}
         type="button"
         inactive={isInactive}
+        role={role}
+        tabIndex={tabIndex ?? -1}
+        aria-checked={ariaChecked}
+        aria-disabled={isInactive || undefined}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
       >
         {Icon && (
-          <div className={styles.iconPrefix}>
+          <div className={styles.iconPrefix} aria-hidden="true">
             <Icon size={20} />
           </div>
         )}
@@ -77,19 +104,19 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
           )}
         </div>
         {showToggle && (
-          <div className={styles.toggleSuffix}>
+          <div className={styles.toggleSuffix} aria-hidden="true">
             <div className={`${styles.toggle} ${toggleValue ? styles.toggleOn : ''}`}>
               <div className={styles.toggleThumb} />
             </div>
           </div>
         )}
         {useRadioStyle && isSelected && CheckIcon && (
-          <div className={styles.checkSuffix}>
+          <div className={styles.checkSuffix} aria-hidden="true">
             <CheckIcon size={20} />
           </div>
         )}
         {showTrailingChevron && ChevronIcon && (
-          <div className={styles.chevronSuffix}>
+          <div className={styles.chevronSuffix} aria-hidden="true">
             <ChevronIcon size={20} />
           </div>
         )}
