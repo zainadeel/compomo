@@ -97,3 +97,35 @@ export const ZeroCount: Story = {
     </div>
   ),
 };
+
+export const AccessibleLabel: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Inspect the rendered HTML to see how the accessible name is composed. ' +
+          'Default is just the count. Pass `aria-label` for an explicit string, ' +
+          'or `labelFormat` for a count-aware formatter.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ ...col, fontFamily: 'sans-serif', fontSize: 12 }}>
+      <div style={row}>
+        <span style={{ ...labelStyle, minWidth: 220 }}>default (just count)</span>
+        <Badge count={3} />
+        <code style={{ color: '#888' }}>aria-label="3"</code>
+      </div>
+      <div style={row}>
+        <span style={{ ...labelStyle, minWidth: 220 }}>aria-label override</span>
+        <Badge count={3} aria-label="3 new notifications" />
+        <code style={{ color: '#888' }}>aria-label="3 new notifications"</code>
+      </div>
+      <div style={row}>
+        <span style={{ ...labelStyle, minWidth: 220 }}>labelFormat callback</span>
+        <Badge count={3} labelFormat={n => `${n} unread messages`} />
+        <code style={{ color: '#888' }}>aria-label="3 unread messages"</code>
+      </div>
+    </div>
+  ),
+};
