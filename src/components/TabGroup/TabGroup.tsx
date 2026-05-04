@@ -5,7 +5,11 @@ import styles from './TabGroup.module.css';
 
 export interface TabGroupTab {
   label: string;
+  /** id for the tab. Pair with `panelId` to wire SR semantics on the consumer's tabpanel. */
   id?: string;
+  /** id of the tabpanel this tab controls. Forwarded to the Tab as `aria-controls`. */
+  panelId?: string;
+  disabled?: boolean;
 }
 
 export interface TabGroupProps {
@@ -13,26 +17,40 @@ export interface TabGroupProps {
   tabs: TabGroupTab[];
   /** Index of the active tab. */
   activeIndex?: number;
-  /** Called when a tab is clicked. */
+  /** Called when a tab is activated (click or keyboard). */
   onTabChange?: (index: number) => void;
+  /** Tablist orientation. Determines which arrow keys navigate. */
+  orientation?: 'horizontal' | 'vertical';
+  /** Accessible label for the tablist. */
+  'aria-label'?: string;
+  /** id of an external label for the tablist. */
+  'aria-labelledby'?: string;
   className?: string;
 }
 
 export const TabGroup = forwardRef<HTMLDivElement, TabGroupProps>(
-  ({ tabs, activeIndex = 0, onTabChange, className }, ref) => {
+  (
+    {
+      tabs,
+      activeIndex = 0,
+      onTabChange,
+      orientation = 'horizontal',
+      className,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+    },
+    ref,
+  ) => {
     const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
     const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
     const updateIndicator = useCallback(() => {
       const el = tabsRef.current[activeIndex];
       if (el) {
-        const parent = el.parentElement;
-        if (parent) {
-          setIndicator({
-            left: el.offsetLeft,
-            width: el.offsetWidth,
-          });
-        }
+        setIndicator({
+          left: el.offsetLeft,
+          width: el.offsetWidth,
+        });
       }
     }, [activeIndex]);
 
@@ -40,7 +58,6 @@ export const TabGroup = forwardRef<HTMLDivElement, TabGroupProps>(
       updateIndicator();
     }, [updateIndicator]);
 
-    // Recalculate on resize
     useEffect(() => {
       const observer = new ResizeObserver(updateIndicator);
       const container = tabsRef.current[0]?.parentElement;
@@ -48,10 +65,58 @@ export const TabGroup = forwardRef<HTMLDivElement, TabGroupProps>(
       return () => observer.disconnect();
     }, [updateIndicator]);
 
+    const findEnabled = useCallback(
+      (from: number, step: number): number => {
+        const len = tabs.length;
+        if (len === 0) return from;
+        let i = from;
+        for (let n = 0; n < len; n++) {
+          i = (i + step + len) % len;
+          if (!tabs[i].disabled) return i;
+        }
+        return from;
+      },
+      [tabs],
+    );
+
+    const activate = useCallback(
+      (index: number) => {
+        if (index !== activeIndex) onTabChange?.(index);
+        tabsRef.current[index]?.focus();
+      },
+      [activeIndex, onTabChange],
+    );
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const isHorizontal = orientation !== 'vertical';
+      const nextKey = isHorizontal ? 'ArrowRight' : 'ArrowDown';
+      const prevKey = isHorizontal ? 'ArrowLeft' : 'ArrowUp';
+
+      let nextIndex: number | null = null;
+      if (e.key === nextKey) {
+        nextIndex = findEnabled(activeIndex, 1);
+      } else if (e.key === prevKey) {
+        nextIndex = findEnabled(activeIndex, -1);
+      } else if (e.key === 'Home') {
+        nextIndex = findEnabled(-1, 1);
+      } else if (e.key === 'End') {
+        nextIndex = findEnabled(tabs.length, -1);
+      }
+
+      if (nextIndex !== null) {
+        e.preventDefault();
+        activate(nextIndex);
+      }
+    };
+
     return (
       <div
         ref={ref}
         role="tablist"
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-orientation={orientation === 'vertical' ? 'vertical' : undefined}
+        onKeyDown={handleKeyDown}
         className={cn(styles.tabGroup, className)}
       >
         <div className={styles.tabsRow}>
@@ -60,8 +125,10 @@ export const TabGroup = forwardRef<HTMLDivElement, TabGroupProps>(
               key={tab.id ?? i}
               ref={el => { tabsRef.current[i] = el; }}
               id={tab.id}
+              controls={tab.panelId}
               label={tab.label}
               isSelected={i === activeIndex}
+              disabled={tab.disabled}
               onClick={() => onTabChange?.(i)}
             />
           ))}
