@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/zainadeel/compomo/compare/v0.4.1...v0.5.0) (2026-05-20)
+
+
+### Added
+
+* **storybook:** add Foundation/Colors, Foundation/Typography, and expand Button stories ([#62](https://github.com/zainadeel/compomo/issues/62)) ([95954cc](https://github.com/zainadeel/compomo/commit/95954cc4675cb5c8b8e8be83fc2491d4a7e14f12))
+
 ## [0.4.1](https://github.com/zainadeel/compomo/compare/v0.4.0...v0.4.1) (2026-05-20)
 
 
