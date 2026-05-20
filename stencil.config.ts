@@ -4,7 +4,6 @@ import { angularOutputTarget } from '@stencil/angular-output-target';
 export const config: Config = {
   namespace: 'ds-mo',
   srcDir: 'src/wc',
-  globalStyle: 'src/global.css',
   sourceMap: true,
   outputTargets: [
     {

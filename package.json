@@ -31,8 +31,7 @@
     },
     "./angular": {
       "import": "./src/angular/index.ts"
-    },
-    "./css": "./dist/ds-mo/ds-mo.css"
+    }
   },
   "files": [
     "dist",
