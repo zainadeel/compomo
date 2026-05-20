@@ -6,39 +6,47 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AccordionItemData } from "./components/Accordion/Accordion";
+import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 import { CardElevation, CardRadius } from "./components/Card/Card";
 import { DividerOrientation } from "./components/Divider/Divider";
+import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { FadeSide } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { InputType } from "./components/Input/Input";
 import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 import { ModalWidth } from "./components/Modal/Modal";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
+import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SidebarWidth } from "./components/Sidebar/Sidebar";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 import { TabBackground, TabItem } from "./components/TabGroup/TabGroup";
+import { SortState, TableColumn } from "./components/Table/Table";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 import { ToastPosition } from "./components/Toast/Toast";
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
+export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 export { CardElevation, CardRadius } from "./components/Card/Card";
 export { DividerOrientation } from "./components/Divider/Divider";
+export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { FadeSide } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { InputType } from "./components/Input/Input";
 export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 export { ModalWidth } from "./components/Modal/Modal";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
+export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SidebarWidth } from "./components/Sidebar/Sidebar";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 export { TabBackground, TabItem } from "./components/TabGroup/TabGroup";
+export { SortState, TableColumn } from "./components/Table/Table";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 export { ToastPosition } from "./components/Toast/Toast";
@@ -72,6 +80,38 @@ export namespace Components {
           * Accessible label. Defaults to the count as a string.
          */
         "label": string | undefined;
+    }
+    interface DsBanner {
+        /**
+          * @default 'medium'
+         */
+        "contrast": BannerContrast;
+        /**
+          * @default 'Dismiss'
+         */
+        "dismissLabel": string;
+        /**
+          * Renders at a fixed position (centered top) and auto-dismisses after 4 s.
+          * @default false
+         */
+        "floating": boolean;
+        /**
+          * Renders the diagonal-stripe accent bar above the body.
+          * @default false
+         */
+        "header": boolean;
+        /**
+          * @default 'neutral'
+         */
+        "intent": BannerIntent;
+        /**
+          * @default ''
+         */
+        "message": string;
+        /**
+          * @default false
+         */
+        "showDismiss": boolean;
     }
     interface DsBreadcrumb {
         /**
@@ -166,6 +206,13 @@ export namespace Components {
          */
         "orientation": DividerOrientation;
     }
+    interface DsEmptyState {
+        "message": string | undefined;
+        /**
+          * @default 'no-content'
+         */
+        "type": EmptyStateType;
+    }
     interface DsFade {
         /**
           * Background color to fade from. Defaults to var(--color-background-secondary).
@@ -177,6 +224,13 @@ export namespace Components {
          */
         "height": string | undefined;
         "side": FadeSide;
+    }
+    interface DsField {
+        /**
+          * ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted.
+         */
+        "fieldId": string | undefined;
+        "label": string;
     }
     interface DsHeader {
         /**
@@ -280,6 +334,24 @@ export namespace Components {
         "open": boolean;
         "subtitle": string | undefined;
     }
+    interface DsPagination {
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * @default 1
+         */
+        "page": number;
+        /**
+          * @default 1
+         */
+        "siblingCount": number;
+        /**
+          * @default 1
+         */
+        "totalPages": number;
+    }
     interface DsRadioGroup {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
@@ -299,6 +371,16 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    interface DsScrollbar {
+        /**
+          * @default true
+         */
+        "showTrackOnHover": boolean;
+        /**
+          * @default 'default'
+         */
+        "variant": ScrollbarVariant;
     }
     interface DsSidebar {
         /**
@@ -419,6 +501,38 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsTable {
+        /**
+          * @default []
+         */
+        "columns": TableColumn[];
+        /**
+          * @default []
+         */
+        "data": unknown[];
+        /**
+          * @default 'No results found.'
+         */
+        "emptyMessage": string;
+        /**
+          * @default false
+         */
+        "loading": boolean;
+        /**
+          * Page index (0-based). Enables built-in pagination when set alongside pageSize.
+         */
+        "pageIndex": number | undefined;
+        /**
+          * @default 20
+         */
+        "pageSize": number;
+        /**
+          * Comma-separated zero-based row indices that are selected.
+          * @default ''
+         */
+        "selectedRows": string;
+        "sortState": SortState | undefined;
+    }
     interface DsTag {
         "background": TagBackground | undefined;
         /**
@@ -536,6 +650,10 @@ export interface DsAccordionCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsAccordionElement;
 }
+export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBannerElement;
+}
 export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBreadcrumbElement;
@@ -560,6 +678,10 @@ export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
 }
+export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPaginationElement;
+}
 export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioGroupElement;
@@ -575,6 +697,10 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
 export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTabGroupElement;
+}
+export interface DsTableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTableElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -607,6 +733,23 @@ declare global {
     var HTMLDsBadgeElement: {
         prototype: HTMLDsBadgeElement;
         new (): HTMLDsBadgeElement;
+    };
+    interface HTMLDsBannerElementEventMap {
+        "dsDismiss": void;
+    }
+    interface HTMLDsBannerElement extends Components.DsBanner, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBannerElementEventMap>(type: K, listener: (this: HTMLDsBannerElement, ev: DsBannerCustomEvent<HTMLDsBannerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBannerElementEventMap>(type: K, listener: (this: HTMLDsBannerElement, ev: DsBannerCustomEvent<HTMLDsBannerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBannerElement: {
+        prototype: HTMLDsBannerElement;
+        new (): HTMLDsBannerElement;
     };
     interface HTMLDsBreadcrumbElementEventMap {
         "dsNavigate": { item: BreadcrumbItem; index: number };
@@ -673,11 +816,23 @@ declare global {
         prototype: HTMLDsDividerElement;
         new (): HTMLDsDividerElement;
     };
+    interface HTMLDsEmptyStateElement extends Components.DsEmptyState, HTMLStencilElement {
+    }
+    var HTMLDsEmptyStateElement: {
+        prototype: HTMLDsEmptyStateElement;
+        new (): HTMLDsEmptyStateElement;
+    };
     interface HTMLDsFadeElement extends Components.DsFade, HTMLStencilElement {
     }
     var HTMLDsFadeElement: {
         prototype: HTMLDsFadeElement;
         new (): HTMLDsFadeElement;
+    };
+    interface HTMLDsFieldElement extends Components.DsField, HTMLStencilElement {
+    }
+    var HTMLDsFieldElement: {
+        prototype: HTMLDsFieldElement;
+        new (): HTMLDsFieldElement;
     };
     interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
     }
@@ -744,6 +899,23 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    interface HTMLDsPaginationElementEventMap {
+        "dsPageChange": number;
+    }
+    interface HTMLDsPaginationElement extends Components.DsPagination, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPaginationElement: {
+        prototype: HTMLDsPaginationElement;
+        new (): HTMLDsPaginationElement;
+    };
     interface HTMLDsRadioGroupElementEventMap {
         "dsChange": string;
     }
@@ -760,6 +932,12 @@ declare global {
     var HTMLDsRadioGroupElement: {
         prototype: HTMLDsRadioGroupElement;
         new (): HTMLDsRadioGroupElement;
+    };
+    interface HTMLDsScrollbarElement extends Components.DsScrollbar, HTMLStencilElement {
+    }
+    var HTMLDsScrollbarElement: {
+        prototype: HTMLDsScrollbarElement;
+        new (): HTMLDsScrollbarElement;
     };
     interface HTMLDsSidebarElementEventMap {
         "dsToggle": void;
@@ -825,6 +1003,25 @@ declare global {
         prototype: HTMLDsTabGroupElement;
         new (): HTMLDsTabGroupElement;
     };
+    interface HTMLDsTableElementEventMap {
+        "dsSort": { columnId: string };
+        "dsRowClick": { row: unknown; rowIndex: number };
+        "dsPageChange": { pageIndex: number };
+    }
+    interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTableElement: {
+        prototype: HTMLDsTableElement;
+        new (): HTMLDsTableElement;
+    };
     interface HTMLDsTagElementEventMap {
         "dsRemove": void;
         "dsClick": void;
@@ -882,23 +1079,29 @@ declare global {
     interface HTMLElementTagNameMap {
         "ds-accordion": HTMLDsAccordionElement;
         "ds-badge": HTMLDsBadgeElement;
+        "ds-banner": HTMLDsBannerElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button": HTMLDsButtonElement;
         "ds-card": HTMLDsCardElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-divider": HTMLDsDividerElement;
+        "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-fade": HTMLDsFadeElement;
+        "ds-field": HTMLDsFieldElement;
         "ds-header": HTMLDsHeaderElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-modal": HTMLDsModalElement;
+        "ds-pagination": HTMLDsPaginationElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
+        "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-surface": HTMLDsSurfaceElement;
         "ds-tab-group": HTMLDsTabGroupElement;
+        "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-toast-provider": HTMLDsToastProviderElement;
@@ -938,6 +1141,39 @@ declare namespace LocalJSX {
           * Accessible label. Defaults to the count as a string.
          */
         "label"?: string | undefined;
+    }
+    interface DsBanner {
+        /**
+          * @default 'medium'
+         */
+        "contrast"?: BannerContrast;
+        /**
+          * @default 'Dismiss'
+         */
+        "dismissLabel"?: string;
+        /**
+          * Renders at a fixed position (centered top) and auto-dismisses after 4 s.
+          * @default false
+         */
+        "floating"?: boolean;
+        /**
+          * Renders the diagonal-stripe accent bar above the body.
+          * @default false
+         */
+        "header"?: boolean;
+        /**
+          * @default 'neutral'
+         */
+        "intent"?: BannerIntent;
+        /**
+          * @default ''
+         */
+        "message"?: string;
+        "onDsDismiss"?: (event: DsBannerCustomEvent<void>) => void;
+        /**
+          * @default false
+         */
+        "showDismiss"?: boolean;
     }
     interface DsBreadcrumb {
         /**
@@ -1037,6 +1273,13 @@ declare namespace LocalJSX {
          */
         "orientation"?: DividerOrientation;
     }
+    interface DsEmptyState {
+        "message"?: string | undefined;
+        /**
+          * @default 'no-content'
+         */
+        "type"?: EmptyStateType;
+    }
     interface DsFade {
         /**
           * Background color to fade from. Defaults to var(--color-background-secondary).
@@ -1048,6 +1291,13 @@ declare namespace LocalJSX {
          */
         "height"?: string | undefined;
         "side": FadeSide;
+    }
+    interface DsField {
+        /**
+          * ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted.
+         */
+        "fieldId"?: string | undefined;
+        "label": string;
     }
     interface DsHeader {
         /**
@@ -1155,6 +1405,25 @@ declare namespace LocalJSX {
         "open"?: boolean;
         "subtitle"?: string | undefined;
     }
+    interface DsPagination {
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        "onDsPageChange"?: (event: DsPaginationCustomEvent<number>) => void;
+        /**
+          * @default 1
+         */
+        "page"?: number;
+        /**
+          * @default 1
+         */
+        "siblingCount"?: number;
+        /**
+          * @default 1
+         */
+        "totalPages"?: number;
+    }
     interface DsRadioGroup {
         "ariaLabel"?: string | undefined;
         "ariaLabelledby"?: string | undefined;
@@ -1175,6 +1444,16 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    interface DsScrollbar {
+        /**
+          * @default true
+         */
+        "showTrackOnHover"?: boolean;
+        /**
+          * @default 'default'
+         */
+        "variant"?: ScrollbarVariant;
     }
     interface DsSidebar {
         /**
@@ -1298,6 +1577,41 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    interface DsTable {
+        /**
+          * @default []
+         */
+        "columns"?: TableColumn[];
+        /**
+          * @default []
+         */
+        "data"?: unknown[];
+        /**
+          * @default 'No results found.'
+         */
+        "emptyMessage"?: string;
+        /**
+          * @default false
+         */
+        "loading"?: boolean;
+        "onDsPageChange"?: (event: DsTableCustomEvent<{ pageIndex: number }>) => void;
+        "onDsRowClick"?: (event: DsTableCustomEvent<{ row: unknown; rowIndex: number }>) => void;
+        "onDsSort"?: (event: DsTableCustomEvent<{ columnId: string }>) => void;
+        /**
+          * Page index (0-based). Enables built-in pagination when set alongside pageSize.
+         */
+        "pageIndex"?: number | undefined;
+        /**
+          * @default 20
+         */
+        "pageSize"?: number;
+        /**
+          * Comma-separated zero-based row indices that are selected.
+          * @default ''
+         */
+        "selectedRows"?: string;
+        "sortState"?: SortState | undefined;
     }
     interface DsTag {
         "background"?: TagBackground | undefined;
@@ -1434,6 +1748,15 @@ declare namespace LocalJSX {
         "isSelected": boolean;
         "label": string | undefined;
     }
+    interface DsBannerAttributes {
+        "intent": BannerIntent;
+        "contrast": BannerContrast;
+        "message": string;
+        "header": boolean;
+        "floating": boolean;
+        "showDismiss": boolean;
+        "dismissLabel": string;
+    }
     interface DsBreadcrumbAttributes {
         "separator": string;
     }
@@ -1471,10 +1794,18 @@ declare namespace LocalJSX {
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
     }
+    interface DsEmptyStateAttributes {
+        "type": EmptyStateType;
+        "message": string | undefined;
+    }
     interface DsFadeAttributes {
         "side": FadeSide;
         "height": string | undefined;
         "background": string;
+    }
+    interface DsFieldAttributes {
+        "label": string;
+        "fieldId": string | undefined;
     }
     interface DsHeaderAttributes {
         "heading": string | undefined;
@@ -1513,12 +1844,22 @@ declare namespace LocalJSX {
         "subtitle": string | undefined;
         "modalWidth": ModalWidth | string;
     }
+    interface DsPaginationAttributes {
+        "page": number;
+        "totalPages": number;
+        "siblingCount": number;
+        "inactive": boolean;
+    }
     interface DsRadioGroupAttributes {
         "value": string;
         "direction": 'vertical' | 'horizontal';
         "inactive": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
+    }
+    interface DsScrollbarAttributes {
+        "variant": ScrollbarVariant;
+        "showTrackOnHover": boolean;
     }
     interface DsSidebarAttributes {
         "collapsed": boolean;
@@ -1560,6 +1901,13 @@ declare namespace LocalJSX {
         "background": TabBackground | undefined;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
+    }
+    interface DsTableAttributes {
+        "loading": boolean;
+        "emptyMessage": string;
+        "selectedRows": string;
+        "pageIndex": number | undefined;
+        "pageSize": number;
     }
     interface DsTagAttributes {
         "label": string;
@@ -1607,23 +1955,29 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ds-accordion": Omit<DsAccordion, keyof DsAccordionAttributes> & { [K in keyof DsAccordion & keyof DsAccordionAttributes]?: DsAccordion[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `attr:${K}`]?: DsAccordionAttributes[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `prop:${K}`]?: DsAccordion[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
+        "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
+        "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
+        "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
+        "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
+        "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
         "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
+        "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
@@ -1637,23 +1991,29 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "ds-accordion": LocalJSX.IntrinsicElements["ds-accordion"] & JSXBase.HTMLAttributes<HTMLDsAccordionElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
+            "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
+            "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
+            "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
+            "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
+            "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;

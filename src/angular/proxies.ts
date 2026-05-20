@@ -59,6 +59,34 @@ export declare interface DsBadge extends Components.DsBadge {}
 
 
 @ProxyCmp({
+  inputs: ['contrast', 'dismissLabel', 'floating', 'header', 'intent', 'message', 'showDismiss']
+})
+@Component({
+  selector: 'ds-banner',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['contrast', 'dismissLabel', 'floating', 'header', 'intent', 'message', 'showDismiss'],
+  outputs: ['dsDismiss'],
+  standalone: false
+})
+export class DsBanner {
+  protected el: HTMLDsBannerElement;
+  @Output() dsDismiss = new EventEmitter<CustomEvent<void>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsBanner extends Components.DsBanner {
+
+  dsDismiss: EventEmitter<CustomEvent<void>>;
+}
+
+
+@ProxyCmp({
   inputs: ['items', 'separator']
 })
 @Component({
@@ -197,6 +225,29 @@ export declare interface DsDivider extends Components.DsDivider {}
 
 
 @ProxyCmp({
+  inputs: ['message', 'type']
+})
+@Component({
+  selector: 'ds-empty-state',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['message', 'type'],
+  standalone: false
+})
+export class DsEmptyState {
+  protected el: HTMLDsEmptyStateElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsEmptyState extends Components.DsEmptyState {}
+
+
+@ProxyCmp({
   inputs: ['background', 'height', 'side']
 })
 @Component({
@@ -217,6 +268,29 @@ export class DsFade {
 
 
 export declare interface DsFade extends Components.DsFade {}
+
+
+@ProxyCmp({
+  inputs: ['fieldId', 'label']
+})
+@Component({
+  selector: 'ds-field',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['fieldId', { name: 'label', required: true }],
+  standalone: false
+})
+export class DsField {
+  protected el: HTMLDsFieldElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsField extends Components.DsField {}
 
 
 @ProxyCmp({
@@ -359,6 +433,34 @@ export declare interface DsModal extends Components.DsModal {
 
 
 @ProxyCmp({
+  inputs: ['inactive', 'page', 'siblingCount', 'totalPages']
+})
+@Component({
+  selector: 'ds-pagination',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['inactive', 'page', 'siblingCount', 'totalPages'],
+  outputs: ['dsPageChange'],
+  standalone: false
+})
+export class DsPagination {
+  protected el: HTMLDsPaginationElement;
+  @Output() dsPageChange = new EventEmitter<CustomEvent<number>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsPagination extends Components.DsPagination {
+
+  dsPageChange: EventEmitter<CustomEvent<number>>;
+}
+
+
+@ProxyCmp({
   inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'inactive', 'options', 'value']
 })
 @Component({
@@ -384,6 +486,29 @@ export declare interface DsRadioGroup extends Components.DsRadioGroup {
 
   dsChange: EventEmitter<CustomEvent<string>>;
 }
+
+
+@ProxyCmp({
+  inputs: ['showTrackOnHover', 'variant']
+})
+@Component({
+  selector: 'ds-scrollbar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['showTrackOnHover', 'variant'],
+  standalone: false
+})
+export class DsScrollbar {
+  protected el: HTMLDsScrollbarElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsScrollbar extends Components.DsScrollbar {}
 
 
 @ProxyCmp({
@@ -518,6 +643,40 @@ export class DsTabGroup {
 export declare interface DsTabGroup extends Components.DsTabGroup {
 
   dsChange: EventEmitter<CustomEvent<string>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['columns', 'data', 'emptyMessage', 'loading', 'pageIndex', 'pageSize', 'selectedRows', 'sortState']
+})
+@Component({
+  selector: 'ds-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['columns', 'data', 'emptyMessage', 'loading', 'pageIndex', 'pageSize', 'selectedRows', 'sortState'],
+  outputs: ['dsSort', 'dsRowClick', 'dsPageChange'],
+  standalone: false
+})
+export class DsTable {
+  protected el: HTMLDsTableElement;
+  @Output() dsSort = new EventEmitter<CustomEvent<{ columnId: string }>>();
+  @Output() dsRowClick = new EventEmitter<CustomEvent<{ row: unknown; rowIndex: number }>>();
+  @Output() dsPageChange = new EventEmitter<CustomEvent<{ pageIndex: number }>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsTable extends Components.DsTable {
+
+  dsSort: EventEmitter<CustomEvent<{ columnId: string }>>;
+
+  dsRowClick: EventEmitter<CustomEvent<{ row: unknown; rowIndex: number }>>;
+
+  dsPageChange: EventEmitter<CustomEvent<{ pageIndex: number }>>;
 }
 
 

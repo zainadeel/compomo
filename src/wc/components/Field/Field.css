@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+}
+
+.field__label {
+  display: block;
+}
