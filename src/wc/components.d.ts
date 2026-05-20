@@ -5,13 +5,19 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 import { DividerOrientation } from "./components/Divider/Divider";
 import { FadeSide } from "./components/Fade/Fade";
+import { InputType } from "./components/Input/Input";
+import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
+export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 export { DividerOrientation } from "./components/Divider/Divider";
 export { FadeSide } from "./components/Fade/Fade";
+export { InputType } from "./components/Input/Input";
+export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
@@ -29,6 +35,72 @@ export namespace Components {
           * Accessible label. Defaults to the count as a string.
          */
         "label": string | undefined;
+    }
+    interface DsButton {
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        "background": ButtonBackground | undefined;
+        "badgeCount": number | undefined;
+        /**
+          * @default 'bold'
+         */
+        "contrast": ButtonContrast;
+        /**
+          * @default false
+         */
+        "dropdown": boolean;
+        "elevation": ButtonElevation | undefined;
+        /**
+          * @default false
+         */
+        "fullWidth": boolean;
+        "href": string | undefined;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * @default 'brand'
+         */
+        "intent": ButtonIntent;
+        "label": string | undefined;
+        /**
+          * @default false
+         */
+        "loading": boolean;
+        /**
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * @default 'md'
+         */
+        "size": ButtonSize;
+        "target": string | undefined;
+        /**
+          * @default 'button'
+         */
+        "type": 'button' | 'submit' | 'reset';
+        /**
+          * @default 'primary'
+         */
+        "variant": ButtonVariant;
+        "width": string | undefined;
+    }
+    interface DsCheckbox {
+        /**
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * @default false
+         */
+        "indeterminate": boolean;
+        "label": string;
     }
     interface DsDivider {
         /**
@@ -49,6 +121,38 @@ export namespace Components {
         "height": string | undefined;
         "side": FadeSide;
     }
+    interface DsInput {
+        "ariaDescribedby": string | undefined;
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Associates the internal input with an external <label>.
+         */
+        "inputId": string | undefined;
+        "placeholder": string | undefined;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'text'
+         */
+        "type": InputType;
+        /**
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsLoader {
         /**
           * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
@@ -59,6 +163,26 @@ export namespace Components {
           * @default 20
          */
         "size": number;
+    }
+    interface DsRadioGroup {
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default 'vertical'
+         */
+        "direction": 'vertical' | 'horizontal';
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * @default []
+         */
+        "options": RadioOption[];
+        /**
+          * @default ''
+         */
+        "value": string;
     }
     interface DsSkeleton {
         /**
@@ -83,6 +207,34 @@ export namespace Components {
           * Width as a CSS value string (e.g. '200px', '100%') or number (px).
          */
         "width": string | number | undefined;
+    }
+    interface DsSlider {
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Associates with an external <label>. Defaults to an auto-generated ID.
+         */
+        "inputId": string | undefined;
+        "label": string;
+        /**
+          * @default 100
+         */
+        "max": number;
+        /**
+          * @default 0
+         */
+        "min": number;
+        /**
+          * @default 1
+         */
+        "step": number;
+        /**
+          * @default 0
+         */
+        "value": number;
+        "valueText": string | undefined;
     }
     interface DsTag {
         "background": TagBackground | undefined;
@@ -152,10 +304,44 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
+    interface DsToggle {
+        /**
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+    }
+}
+export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtonElement;
+}
+export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCheckboxElement;
+}
+export interface DsInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputElement;
+}
+export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsRadioGroupElement;
+}
+export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSliderElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTagElement;
+}
+export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsToggleElement;
 }
 declare global {
     interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
@@ -163,6 +349,42 @@ declare global {
     var HTMLDsBadgeElement: {
         prototype: HTMLDsBadgeElement;
         new (): HTMLDsBadgeElement;
+    };
+    interface HTMLDsButtonElementEventMap {
+        "dsClick": MouseEvent;
+        "dsMouseEnter": MouseEvent;
+        "dsMouseLeave": MouseEvent;
+    }
+    interface HTMLDsButtonElement extends Components.DsButton, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonElementEventMap>(type: K, listener: (this: HTMLDsButtonElement, ev: DsButtonCustomEvent<HTMLDsButtonElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonElementEventMap>(type: K, listener: (this: HTMLDsButtonElement, ev: DsButtonCustomEvent<HTMLDsButtonElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsButtonElement: {
+        prototype: HTMLDsButtonElement;
+        new (): HTMLDsButtonElement;
+    };
+    interface HTMLDsCheckboxElementEventMap {
+        "dsChange": boolean;
+    }
+    interface HTMLDsCheckboxElement extends Components.DsCheckbox, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCheckboxElementEventMap>(type: K, listener: (this: HTMLDsCheckboxElement, ev: DsCheckboxCustomEvent<HTMLDsCheckboxElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCheckboxElementEventMap>(type: K, listener: (this: HTMLDsCheckboxElement, ev: DsCheckboxCustomEvent<HTMLDsCheckboxElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCheckboxElement: {
+        prototype: HTMLDsCheckboxElement;
+        new (): HTMLDsCheckboxElement;
     };
     interface HTMLDsDividerElement extends Components.DsDivider, HTMLStencilElement {
     }
@@ -176,17 +398,69 @@ declare global {
         prototype: HTMLDsFadeElement;
         new (): HTMLDsFadeElement;
     };
+    interface HTMLDsInputElementEventMap {
+        "dsChange": string;
+        "dsClear": void;
+    }
+    interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsInputElementEventMap>(type: K, listener: (this: HTMLDsInputElement, ev: DsInputCustomEvent<HTMLDsInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsInputElementEventMap>(type: K, listener: (this: HTMLDsInputElement, ev: DsInputCustomEvent<HTMLDsInputElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsInputElement: {
+        prototype: HTMLDsInputElement;
+        new (): HTMLDsInputElement;
+    };
     interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
     }
     var HTMLDsLoaderElement: {
         prototype: HTMLDsLoaderElement;
         new (): HTMLDsLoaderElement;
     };
+    interface HTMLDsRadioGroupElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsRadioGroupElement extends Components.DsRadioGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsRadioGroupElementEventMap>(type: K, listener: (this: HTMLDsRadioGroupElement, ev: DsRadioGroupCustomEvent<HTMLDsRadioGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsRadioGroupElementEventMap>(type: K, listener: (this: HTMLDsRadioGroupElement, ev: DsRadioGroupCustomEvent<HTMLDsRadioGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsRadioGroupElement: {
+        prototype: HTMLDsRadioGroupElement;
+        new (): HTMLDsRadioGroupElement;
+    };
     interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
     }
     var HTMLDsSkeletonElement: {
         prototype: HTMLDsSkeletonElement;
         new (): HTMLDsSkeletonElement;
+    };
+    interface HTMLDsSliderElementEventMap {
+        "dsChange": number;
+    }
+    interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSliderElement: {
+        prototype: HTMLDsSliderElement;
+        new (): HTMLDsSliderElement;
     };
     interface HTMLDsTagElementEventMap {
         "dsRemove": void;
@@ -213,14 +487,37 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    interface HTMLDsToggleElementEventMap {
+        "dsChange": boolean;
+    }
+    interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsToggleElement: {
+        prototype: HTMLDsToggleElement;
+        new (): HTMLDsToggleElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-badge": HTMLDsBadgeElement;
+        "ds-button": HTMLDsButtonElement;
+        "ds-checkbox": HTMLDsCheckboxElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-fade": HTMLDsFadeElement;
+        "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
+        "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-skeleton": HTMLDsSkeletonElement;
+        "ds-slider": HTMLDsSliderElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
+        "ds-toggle": HTMLDsToggleElement;
     }
 }
 declare namespace LocalJSX {
@@ -239,6 +536,76 @@ declare namespace LocalJSX {
           * Accessible label. Defaults to the count as a string.
          */
         "label"?: string | undefined;
+    }
+    interface DsButton {
+        "ariaLabel"?: string | undefined;
+        "ariaLabelledby"?: string | undefined;
+        "background"?: ButtonBackground | undefined;
+        "badgeCount"?: number | undefined;
+        /**
+          * @default 'bold'
+         */
+        "contrast"?: ButtonContrast;
+        /**
+          * @default false
+         */
+        "dropdown"?: boolean;
+        "elevation"?: ButtonElevation | undefined;
+        /**
+          * @default false
+         */
+        "fullWidth"?: boolean;
+        "href"?: string | undefined;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * @default 'brand'
+         */
+        "intent"?: ButtonIntent;
+        "label"?: string | undefined;
+        /**
+          * @default false
+         */
+        "loading"?: boolean;
+        "onDsClick"?: (event: DsButtonCustomEvent<MouseEvent>) => void;
+        "onDsMouseEnter"?: (event: DsButtonCustomEvent<MouseEvent>) => void;
+        "onDsMouseLeave"?: (event: DsButtonCustomEvent<MouseEvent>) => void;
+        /**
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * @default 'md'
+         */
+        "size"?: ButtonSize;
+        "target"?: string | undefined;
+        /**
+          * @default 'button'
+         */
+        "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * @default 'primary'
+         */
+        "variant"?: ButtonVariant;
+        "width"?: string | undefined;
+    }
+    interface DsCheckbox {
+        /**
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * @default false
+         */
+        "indeterminate"?: boolean;
+        "label": string;
+        "onDsChange"?: (event: DsCheckboxCustomEvent<boolean>) => void;
     }
     interface DsDivider {
         /**
@@ -259,6 +626,39 @@ declare namespace LocalJSX {
         "height"?: string | undefined;
         "side": FadeSide;
     }
+    interface DsInput {
+        "ariaDescribedby"?: string | undefined;
+        "ariaLabel"?: string | undefined;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * Associates the internal input with an external <label>.
+         */
+        "inputId"?: string | undefined;
+        "onDsChange"?: (event: DsInputCustomEvent<string>) => void;
+        "onDsClear"?: (event: DsInputCustomEvent<void>) => void;
+        "placeholder"?: string | undefined;
+        /**
+          * @default 'text'
+         */
+        "type"?: InputType;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsLoader {
         /**
           * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
@@ -269,6 +669,27 @@ declare namespace LocalJSX {
           * @default 20
          */
         "size"?: number;
+    }
+    interface DsRadioGroup {
+        "ariaLabel"?: string | undefined;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default 'vertical'
+         */
+        "direction"?: 'vertical' | 'horizontal';
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        "onDsChange"?: (event: DsRadioGroupCustomEvent<string>) => void;
+        /**
+          * @default []
+         */
+        "options"?: RadioOption[];
+        /**
+          * @default ''
+         */
+        "value"?: string;
     }
     interface DsSkeleton {
         /**
@@ -293,6 +714,35 @@ declare namespace LocalJSX {
           * Width as a CSS value string (e.g. '200px', '100%') or number (px).
          */
         "width"?: string | number | undefined;
+    }
+    interface DsSlider {
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * Associates with an external <label>. Defaults to an auto-generated ID.
+         */
+        "inputId"?: string | undefined;
+        "label": string;
+        /**
+          * @default 100
+         */
+        "max"?: number;
+        /**
+          * @default 0
+         */
+        "min"?: number;
+        "onDsChange"?: (event: DsSliderCustomEvent<number>) => void;
+        /**
+          * @default 1
+         */
+        "step"?: number;
+        /**
+          * @default 0
+         */
+        "value"?: number;
+        "valueText"?: string | undefined;
     }
     interface DsTag {
         "background"?: TagBackground | undefined;
@@ -374,11 +824,49 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
+    interface DsToggle {
+        /**
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
+    }
 
     interface DsBadgeAttributes {
         "count": number;
         "isSelected": boolean;
         "label": string | undefined;
+    }
+    interface DsButtonAttributes {
+        "variant": ButtonVariant;
+        "intent": ButtonIntent;
+        "size": ButtonSize;
+        "label": string | undefined;
+        "rounded": boolean;
+        "fullWidth": boolean;
+        "width": string | undefined;
+        "contrast": ButtonContrast;
+        "background": ButtonBackground | undefined;
+        "dropdown": boolean;
+        "badgeCount": number | undefined;
+        "elevation": ButtonElevation | undefined;
+        "loading": boolean;
+        "inactive": boolean;
+        "href": string | undefined;
+        "target": string | undefined;
+        "type": 'button' | 'submit' | 'reset';
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+    }
+    interface DsCheckboxAttributes {
+        "label": string;
+        "checked": boolean;
+        "indeterminate": boolean;
+        "inactive": boolean;
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
@@ -388,9 +876,29 @@ declare namespace LocalJSX {
         "height": string | undefined;
         "background": string;
     }
+    interface DsInputAttributes {
+        "value": string;
+        "placeholder": string | undefined;
+        "type": InputType;
+        "inactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
     interface DsLoaderAttributes {
         "size": number;
         "label": string | undefined;
+    }
+    interface DsRadioGroupAttributes {
+        "value": string;
+        "direction": 'vertical' | 'horizontal';
+        "inactive": boolean;
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
     }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
@@ -398,6 +906,16 @@ declare namespace LocalJSX {
         "height": string;
         "lines": number;
         "shimmer": boolean;
+    }
+    interface DsSliderAttributes {
+        "value": number;
+        "min": number;
+        "max": number;
+        "step": number;
+        "label": string;
+        "inactive": boolean;
+        "valueText": string | undefined;
+        "inputId": string | undefined;
     }
     interface DsTagAttributes {
         "label": string;
@@ -424,15 +942,25 @@ declare namespace LocalJSX {
         "as": TextElement;
         "for": string | undefined;
     }
+    interface DsToggleAttributes {
+        "checked": boolean;
+        "inactive": boolean;
+    }
 
     interface IntrinsicElements {
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
+        "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
+        "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
+        "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
+        "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
+        "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -440,12 +968,18 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
+            "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
+            "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
+            "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
+            "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
         }
     }
 }

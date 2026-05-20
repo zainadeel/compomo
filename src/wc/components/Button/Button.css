@@ -1,0 +1,304 @@
+/* ── Host wrapper ─────────────────────────────────────────────────────────── */
+
+.btn-host {
+  display: inline-block;
+}
+
+.btn-host--full {
+  display: block;
+  width: 100%;
+}
+
+/* ── Base button ──────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--dimension-radius-050);
+  cursor: pointer;
+  position: relative;
+  transition: transform var(--effect-motion-short-2);
+  height: var(--dimension-size-400);
+  font-family: inherit;
+  color: var(--color-foreground-primary);
+  background: transparent;
+  box-sizing: border-box;
+  text-decoration: none;
+  user-select: none;
+  outline: none;
+  width: 100%;
+
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+  --_border: var(--color-border-tertiary);
+}
+
+.btn:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+.btn:hover:not(.inactive) {
+  background-color: var(--_hover-bg);
+}
+
+.btn:active:not(.inactive) {
+  background-color: var(--_pressed-bg);
+  transform: scale(var(--dimension-scale-subtle));
+}
+
+/* ── Background context ───────────────────────────────────────────────────── */
+
+.onMedium {
+  --_hover-bg: var(--color-interaction-on-medium-background-hover);
+  --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
+  --_border: var(--color-border-on-medium-background-tertiary);
+}
+
+.onBold {
+  --_hover-bg: var(--color-interaction-on-bold-background-hover);
+  --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
+  --_border: var(--color-border-on-bold-background-tertiary);
+}
+
+.onStrong {
+  --_hover-bg: var(--color-interaction-on-strong-background-hover);
+  --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
+  --_border: var(--color-border-on-strong-background-tertiary);
+}
+
+.onAlwaysDark {
+  --_hover-bg: var(--color-always-dark-interaction-hover);
+  --_pressed-bg: var(--color-always-dark-interaction-pressed);
+  --_border: var(--color-always-dark-border-tertiary);
+}
+
+/* ── Primary variant ──────────────────────────────────────────────────────── */
+
+.primary {
+  color: var(--color-foreground-on-bold-background-primary);
+}
+
+.primary.intentNone {
+  background-color: var(--color-inverted-background);
+  color: var(--color-inverted-foreground-primary);
+  --_hover-bg: color-mix(in oklch, var(--color-inverted-background) 90%, var(--color-inverted-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-inverted-background) 85%, var(--color-inverted-foreground-primary));
+  --_border: var(--color-inverted-border-tertiary);
+}
+
+.primary:not(.intentNone) {
+  background-color: var(--_bg);
+  --_hover-bg: color-mix(in oklch, var(--_bg) 85%, var(--color-foreground-on-bold-background-primary));
+  --_pressed-bg: color-mix(in oklch, var(--_bg) 80%, var(--color-foreground-on-bold-background-primary));
+}
+
+/* Bold contrast (default) */
+.primary.intentBrand    { --_bg: var(--color-background-bold-brand);    color: var(--color-foreground-faint-brand); }
+.primary.intentNeutral  { --_bg: var(--color-background-bold-neutral);  color: var(--color-foreground-faint-neutral); }
+.primary.intentPositive { --_bg: var(--color-background-bold-positive); color: var(--color-foreground-faint-positive); }
+.primary.intentNegative { --_bg: var(--color-background-bold-negative); color: var(--color-foreground-faint-negative); }
+.primary.intentWarning  { --_bg: var(--color-background-bold-warning);  color: var(--color-foreground-faint-warning); }
+.primary.intentCaution  { --_bg: var(--color-background-bold-caution);  color: var(--color-foreground-faint-caution); }
+.primary.intentAi       { --_bg: var(--color-background-bold-ai);       color: var(--color-foreground-faint-ai); }
+
+/* Medium contrast */
+.primary.contrastMedium {
+  --_hover-bg: color-mix(in oklch, var(--_bg) 85%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--_bg) 80%, var(--color-foreground-primary));
+}
+.primary.contrastMedium.intentBrand    { --_bg: var(--color-background-medium-brand);    color: var(--color-foreground-strong-brand); }
+.primary.contrastMedium.intentNeutral  { --_bg: var(--color-background-medium-neutral);  color: var(--color-foreground-strong-neutral); }
+.primary.contrastMedium.intentPositive { --_bg: var(--color-background-medium-positive); color: var(--color-foreground-strong-positive); }
+.primary.contrastMedium.intentNegative { --_bg: var(--color-background-medium-negative); color: var(--color-foreground-strong-negative); }
+.primary.contrastMedium.intentWarning  { --_bg: var(--color-background-medium-warning);  color: var(--color-foreground-strong-warning); }
+.primary.contrastMedium.intentCaution  { --_bg: var(--color-background-medium-caution);  color: var(--color-foreground-strong-caution); }
+.primary.contrastMedium.intentAi       { --_bg: var(--color-background-medium-ai);       color: var(--color-foreground-strong-ai); }
+
+/* Strong contrast */
+.primary.contrastStrong {
+  --_hover-bg: color-mix(in oklch, var(--_bg) 90%, var(--color-foreground-on-bold-background-primary));
+  --_pressed-bg: color-mix(in oklch, var(--_bg) 85%, var(--color-foreground-on-bold-background-primary));
+}
+.primary.contrastStrong.intentBrand    { --_bg: var(--color-background-strong-brand);    color: var(--color-foreground-medium-brand); }
+.primary.contrastStrong.intentNeutral  { --_bg: var(--color-background-strong-neutral);  color: var(--color-foreground-medium-neutral); }
+.primary.contrastStrong.intentPositive { --_bg: var(--color-background-strong-positive); color: var(--color-foreground-medium-positive); }
+.primary.contrastStrong.intentNegative { --_bg: var(--color-background-strong-negative); color: var(--color-foreground-medium-negative); }
+.primary.contrastStrong.intentWarning  { --_bg: var(--color-background-strong-warning);  color: var(--color-foreground-medium-warning); }
+.primary.contrastStrong.intentCaution  { --_bg: var(--color-background-strong-caution);  color: var(--color-foreground-medium-caution); }
+.primary.contrastStrong.intentAi       { --_bg: var(--color-background-strong-ai);       color: var(--color-foreground-medium-ai); }
+
+/* Faint contrast */
+.primary.contrastFaint {
+  --_hover-bg: color-mix(in oklch, var(--_bg) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--_bg) 85%, var(--color-foreground-primary));
+}
+.primary.contrastFaint.intentBrand    { --_bg: var(--color-background-faint-brand);    color: var(--color-foreground-bold-brand); }
+.primary.contrastFaint.intentNeutral  { --_bg: var(--color-background-faint-neutral);  color: var(--color-foreground-bold-neutral); }
+.primary.contrastFaint.intentPositive { --_bg: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }
+.primary.contrastFaint.intentNegative { --_bg: var(--color-background-faint-negative); color: var(--color-foreground-bold-negative); }
+.primary.contrastFaint.intentWarning  { --_bg: var(--color-background-faint-warning);  color: var(--color-foreground-bold-warning); }
+.primary.contrastFaint.intentCaution  { --_bg: var(--color-background-faint-caution);  color: var(--color-foreground-bold-caution); }
+.primary.contrastFaint.intentAi       { --_bg: var(--color-background-faint-ai);       color: var(--color-foreground-bold-ai); }
+
+/* intentNone on strong/always-dark */
+.primary.intentNone.onStrong,
+.primary.intentNone.onAlwaysDark {
+  background-color: var(--color-background-primary);
+  color: var(--color-foreground-primary);
+  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+  --_border: var(--color-border-tertiary);
+}
+
+/* ── Secondary variant ────────────────────────────────────────────────────── */
+
+.secondary {
+  background-color: transparent;
+  color: var(--color-foreground-secondary);
+}
+
+.secondary.intentBrand    { color: var(--color-foreground-bold-brand); }
+.secondary.intentNeutral  { color: var(--color-foreground-bold-neutral); }
+.secondary.intentPositive { color: var(--color-foreground-bold-positive); }
+.secondary.intentNegative { color: var(--color-foreground-bold-negative); }
+.secondary.intentWarning  { color: var(--color-foreground-bold-warning); }
+.secondary.intentCaution  { color: var(--color-foreground-bold-caution); }
+.secondary.intentAi       { color: var(--color-foreground-bold-ai); }
+
+.secondary.onMedium { color: var(--color-foreground-primary); }
+.secondary.onMedium.intentBrand    { color: var(--color-foreground-strong-brand); }
+.secondary.onMedium.intentNeutral  { color: var(--color-foreground-strong-neutral); }
+.secondary.onMedium.intentPositive { color: var(--color-foreground-strong-positive); }
+.secondary.onMedium.intentNegative { color: var(--color-foreground-strong-negative); }
+.secondary.onMedium.intentWarning  { color: var(--color-foreground-strong-warning); }
+.secondary.onMedium.intentCaution  { color: var(--color-foreground-strong-caution); }
+.secondary.onMedium.intentAi       { color: var(--color-foreground-strong-ai); }
+
+.secondary.onBold { color: var(--color-foreground-on-bold-background-secondary); }
+.secondary.onBold.intentBrand    { color: var(--color-foreground-faint-brand); }
+.secondary.onBold.intentNeutral  { color: var(--color-foreground-faint-neutral); }
+.secondary.onBold.intentPositive { color: var(--color-foreground-faint-positive); }
+.secondary.onBold.intentNegative { color: var(--color-foreground-faint-negative); }
+.secondary.onBold.intentWarning  { color: var(--color-foreground-faint-warning); }
+.secondary.onBold.intentCaution  { color: var(--color-foreground-faint-caution); }
+.secondary.onBold.intentAi       { color: var(--color-foreground-faint-ai); }
+
+.secondary.onAlwaysDark { color: var(--color-always-dark-foreground-secondary); }
+.secondary.onAlwaysDark.intentBrand    { color: var(--color-always-dark-foreground-brand); }
+.secondary.onAlwaysDark.intentNeutral  { color: var(--color-always-dark-foreground-neutral); }
+.secondary.onAlwaysDark.intentPositive { color: var(--color-always-dark-foreground-positive); }
+.secondary.onAlwaysDark.intentNegative { color: var(--color-always-dark-foreground-negative); }
+.secondary.onAlwaysDark.intentWarning  { color: var(--color-always-dark-foreground-warning); }
+.secondary.onAlwaysDark.intentCaution  { color: var(--color-always-dark-foreground-caution); }
+.secondary.onAlwaysDark.intentAi       { color: var(--color-always-dark-foreground-ai); }
+
+.secondary.onStrong { color: var(--color-foreground-on-bold-background-secondary); }
+.secondary.onStrong.intentBrand    { color: var(--color-foreground-faint-brand); }
+.secondary.onStrong.intentNeutral  { color: var(--color-foreground-faint-neutral); }
+.secondary.onStrong.intentPositive { color: var(--color-foreground-faint-positive); }
+.secondary.onStrong.intentNegative { color: var(--color-foreground-faint-negative); }
+.secondary.onStrong.intentWarning  { color: var(--color-foreground-faint-warning); }
+.secondary.onStrong.intentCaution  { color: var(--color-foreground-faint-caution); }
+.secondary.onStrong.intentAi       { color: var(--color-foreground-faint-ai); }
+
+/* ── Elevation ────────────────────────────────────────────────────────────── */
+
+.secondary.elevationFlat {
+  box-shadow: inset 0 0 0 1px var(--_border);
+}
+
+.secondary.elevationElevated {
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-sm);
+  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+}
+
+.secondary.elevationFloating {
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-floating);
+  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+}
+
+.primary.elevationElevated { box-shadow: var(--effect-elevation-elevated-sm); }
+.primary.elevationNone     { box-shadow: none; }
+.primary.elevationFlat     { box-shadow: inset 0 0 0 1px var(--_border); }
+.primary.intentNone.elevationFlat { --_border: var(--color-border-tertiary); }
+.primary.elevationFloating { box-shadow: var(--effect-elevation-elevated-floating) !important; }
+
+/* ── Layout modes ─────────────────────────────────────────────────────────── */
+
+.iconOnly    { padding: 0; width: var(--dimension-size-400); min-width: var(--dimension-size-400); }
+.labelOnly   { padding: 0 var(--dimension-space-100); }
+.iconAndLabel { padding: 0 var(--dimension-space-100) 0 var(--dimension-space-075); gap: var(--dimension-space-025); }
+.dropdown    { gap: var(--dimension-space-050); }
+
+/* ── Sizes ────────────────────────────────────────────────────────────────── */
+
+.sizeSM { height: var(--dimension-size-300); }
+.sizeSM.iconOnly   { width: var(--dimension-size-300); min-width: var(--dimension-size-300); }
+.sizeSM.labelOnly  { padding: 0 var(--dimension-space-075); }
+.sizeSM.iconAndLabel { padding: 0 var(--dimension-space-075) 0 var(--dimension-space-050); gap: 1px; }
+
+.sizeXS { height: var(--dimension-size-200); }
+.sizeXS.iconOnly   { width: var(--dimension-size-200); min-width: var(--dimension-size-200); }
+.sizeXS.labelOnly, .sizeXS.iconAndLabel { padding: 0 var(--dimension-space-025); gap: 0; }
+
+.sizeLG { height: var(--dimension-size-500); }
+.sizeLG.iconOnly   { width: var(--dimension-size-500); min-width: var(--dimension-size-500); }
+.sizeLG.labelOnly  { padding: 0 var(--dimension-space-150); }
+.sizeLG.iconAndLabel { padding: 0 var(--dimension-space-150) 0 var(--dimension-space-100); gap: var(--dimension-space-075); }
+
+/* ── Rounded ──────────────────────────────────────────────────────────────── */
+
+.rounded { border-radius: var(--dimension-radius-half); }
+.rounded.labelOnly   { padding-left: calc(var(--dimension-space-100) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
+.rounded.iconAndLabel { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
+.rounded.sizeSM.labelOnly   { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.rounded.sizeSM.iconAndLabel { padding-left: calc(var(--dimension-space-050) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.rounded.sizeLG.labelOnly   { padding-left: calc(var(--dimension-space-150) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-150) + var(--dimension-space-050)); }
+.rounded.sizeLG.iconAndLabel { padding-left: calc(var(--dimension-space-100) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-150) + var(--dimension-space-050)); }
+
+/* ── Disabled ─────────────────────────────────────────────────────────────── */
+
+.inactive { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ── Full width ───────────────────────────────────────────────────────────── */
+
+.fullWidth { display: flex; width: 100%; }
+
+/* ── Inner slots ──────────────────────────────────────────────────────────── */
+
+.btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.btn__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn__chevron {
+  flex-shrink: 0;
+}
+
+.btn__badge {
+  position: absolute;
+  top: var(--dimension-space-025);
+  right: var(--dimension-space-025);
+  font-size: var(--typography-fontsize-xs);
+  font-weight: var(--typography-weight-semibold);
+  line-height: var(--typography-lineheight-xs);
+  color: var(--color-foreground-secondary);
+  pointer-events: none;
+  z-index: 10;
+}

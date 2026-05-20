@@ -1,0 +1,89 @@
+:host {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: var(--dimension-size-400);
+  height: var(--dimension-size-250);
+  padding: 0 var(--dimension-space-025);
+  border: none;
+  border-radius: var(--dimension-radius-half);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  flex-shrink: 0;
+  background-color: var(--color-background-medium-neutral);
+  box-shadow: var(--effect-highlight-depressed-sm);
+  transition: background-color var(--effect-motion-short-2);
+  box-sizing: border-box;
+}
+
+:host::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--effect-shadow-depressed-sm);
+  pointer-events: none;
+}
+
+:host(:focus-visible) {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+:host(.checked) {
+  background-color: var(--color-foreground-bold-brand);
+}
+
+:host(.inactive) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ── Thumb ───────────────────────────────────────────────────────────────── */
+
+.thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--dimension-size-200);
+  height: var(--dimension-size-200);
+  background-color: var(--color-background-primary);
+  border-radius: var(--dimension-radius-half);
+  box-shadow: var(--effect-elevation-elevated-sm);
+  transition: transform var(--effect-motion-short-2);
+  transform: translateX(0);
+  z-index: 1;
+}
+
+.thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  border-radius: inherit;
+  transition: background-color var(--effect-motion-instant, 100ms);
+  pointer-events: none;
+}
+
+:host(:hover:not(.inactive)) .thumb::after {
+  background-color: var(--color-interaction-hover);
+}
+
+:host(:active:not(.inactive)) .thumb::after {
+  background-color: var(--color-interaction-pressed);
+}
+
+:host(.checked) .thumb {
+  transform: translateX(var(--dimension-offset-150));
+}
+
+:host(:active:not(.inactive)) .thumb {
+  transform: translateX(0) scale(var(--dimension-scale-subtle)) !important;
+  transition: transform var(--effect-motion-instant);
+}
+
+:host(.checked:active:not(.inactive)) .thumb {
+  transform: translateX(var(--dimension-offset-150)) scale(var(--dimension-scale-subtle)) !important;
+  transition: transform var(--effect-motion-instant);
+}
