@@ -8,6 +8,34 @@ import { Components } from '@ds-mo/ui';
 
 
 @ProxyCmp({
+  inputs: ['expandedIds', 'items', 'multiple']
+})
+@Component({
+  selector: 'ds-accordion',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['expandedIds', 'items', 'multiple'],
+  outputs: ['dsExpandedChange'],
+  standalone: false
+})
+export class DsAccordion {
+  protected el: HTMLDsAccordionElement;
+  @Output() dsExpandedChange = new EventEmitter<CustomEvent<string[]>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsAccordion extends Components.DsAccordion {
+
+  dsExpandedChange: EventEmitter<CustomEvent<string[]>>;
+}
+
+
+@ProxyCmp({
   inputs: ['count', 'isSelected', 'label']
 })
 @Component({
@@ -28,6 +56,36 @@ export class DsBadge {
 
 
 export declare interface DsBadge extends Components.DsBadge {}
+
+
+@ProxyCmp({
+  inputs: ['items', 'separator']
+})
+@Component({
+  selector: 'ds-breadcrumb',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['items', 'separator'],
+  outputs: ['dsNavigate'],
+  standalone: false
+})
+export class DsBreadcrumb {
+  protected el: HTMLDsBreadcrumbElement;
+  @Output() dsNavigate = new EventEmitter<CustomEvent<{ item: IDsBreadcrumbBreadcrumbItem; index: number }>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { BreadcrumbItem as IDsBreadcrumbBreadcrumbItem } from '@ds-mo/ui';
+
+export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
+
+  dsNavigate: EventEmitter<CustomEvent<{ item: IDsBreadcrumbBreadcrumbItem; index: number }>>;
+}
 
 
 @ProxyCmp({
@@ -62,6 +120,29 @@ export declare interface DsButton extends Components.DsButton {
 
   dsMouseLeave: EventEmitter<CustomEvent<MouseEvent>>;
 }
+
+
+@ProxyCmp({
+  inputs: ['elevation', 'radius']
+})
+@Component({
+  selector: 'ds-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['elevation', 'radius'],
+  standalone: false
+})
+export class DsCard {
+  protected el: HTMLDsCardElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsCard extends Components.DsCard {}
 
 
 @ProxyCmp({
@@ -136,6 +217,29 @@ export class DsFade {
 
 
 export declare interface DsFade extends Components.DsFade {}
+
+
+@ProxyCmp({
+  inputs: ['background', 'heading']
+})
+@Component({
+  selector: 'ds-header',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['background', 'heading'],
+  standalone: false
+})
+export class DsHeader {
+  protected el: HTMLDsHeaderElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsHeader extends Components.DsHeader {}
 
 
 @ProxyCmp({
@@ -222,6 +326,39 @@ export declare interface DsRadioGroup extends Components.DsRadioGroup {
 
 
 @ProxyCmp({
+  inputs: ['collapsed', 'mobile', 'resizable', 'width']
+})
+@Component({
+  selector: 'ds-sidebar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['collapsed', 'mobile', 'resizable', 'width'],
+  outputs: ['dsToggle', 'dsWidthChange'],
+  standalone: false
+})
+export class DsSidebar {
+  protected el: HTMLDsSidebarElement;
+  @Output() dsToggle = new EventEmitter<CustomEvent<void>>();
+  @Output() dsWidthChange = new EventEmitter<CustomEvent<IDsSidebarSidebarWidth>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { SidebarWidth as IDsSidebarSidebarWidth } from '@ds-mo/ui';
+
+export declare interface DsSidebar extends Components.DsSidebar {
+
+  dsToggle: EventEmitter<CustomEvent<void>>;
+
+  dsWidthChange: EventEmitter<CustomEvent<IDsSidebarSidebarWidth>>;
+}
+
+
+@ProxyCmp({
   inputs: ['height', 'lines', 'shimmer', 'variant', 'width']
 })
 @Component({
@@ -269,6 +406,57 @@ export class DsSlider {
 export declare interface DsSlider extends Components.DsSlider {
 
   dsChange: EventEmitter<CustomEvent<number>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['as', 'background', 'contrast', 'edge', 'elevation', 'inactive', 'intent', 'interactive', 'radius', 'selected']
+})
+@Component({
+  selector: 'ds-surface',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['as', 'background', 'contrast', 'edge', 'elevation', 'inactive', 'intent', 'interactive', 'radius', 'selected'],
+  standalone: false
+})
+export class DsSurface {
+  protected el: HTMLDsSurfaceElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsSurface extends Components.DsSurface {}
+
+
+@ProxyCmp({
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'tabs', 'value']
+})
+@Component({
+  selector: 'ds-tab-group',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'tabs', 'value'],
+  outputs: ['dsChange'],
+  standalone: false
+})
+export class DsTabGroup {
+  protected el: HTMLDsTabGroupElement;
+  @Output() dsChange = new EventEmitter<CustomEvent<string>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsTabGroup extends Components.DsTabGroup {
+
+  dsChange: EventEmitter<CustomEvent<string>>;
 }
 
 

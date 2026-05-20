@@ -5,23 +5,52 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { AccordionItemData } from "./components/Accordion/Accordion";
+import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
+import { CardElevation, CardRadius } from "./components/Card/Card";
 import { DividerOrientation } from "./components/Divider/Divider";
 import { FadeSide } from "./components/Fade/Fade";
+import { HeaderBackground } from "./components/Header/Header";
 import { InputType } from "./components/Input/Input";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
+import { SidebarWidth } from "./components/Sidebar/Sidebar";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
+import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
+import { TabBackground, TabItem } from "./components/TabGroup/TabGroup";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
+export { AccordionItemData } from "./components/Accordion/Accordion";
+export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
+export { CardElevation, CardRadius } from "./components/Card/Card";
 export { DividerOrientation } from "./components/Divider/Divider";
 export { FadeSide } from "./components/Fade/Fade";
+export { HeaderBackground } from "./components/Header/Header";
 export { InputType } from "./components/Input/Input";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
+export { SidebarWidth } from "./components/Sidebar/Sidebar";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
+export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
+export { TabBackground, TabItem } from "./components/TabGroup/TabGroup";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 export namespace Components {
+    interface DsAccordion {
+        /**
+          * Comma-separated list of expanded item IDs for controlled mode.
+          * @default ''
+         */
+        "expandedIds": string;
+        /**
+          * @default []
+         */
+        "items": AccordionItemData[];
+        /**
+          * @default false
+         */
+        "multiple": boolean;
+    }
     interface DsBadge {
         /**
           * @default 0
@@ -35,6 +64,16 @@ export namespace Components {
           * Accessible label. Defaults to the count as a string.
          */
         "label": string | undefined;
+    }
+    interface DsBreadcrumb {
+        /**
+          * @default []
+         */
+        "items": BreadcrumbItem[];
+        /**
+          * @default '/'
+         */
+        "separator": string;
     }
     interface DsButton {
         "ariaLabel": string | undefined;
@@ -87,6 +126,16 @@ export namespace Components {
         "variant": ButtonVariant;
         "width": string | undefined;
     }
+    interface DsCard {
+        /**
+          * @default 'elevated'
+         */
+        "elevation": CardElevation;
+        /**
+          * @default 'lg'
+         */
+        "radius": CardRadius;
+    }
     interface DsCheckbox {
         /**
           * @default false
@@ -120,6 +169,13 @@ export namespace Components {
          */
         "height": string | undefined;
         "side": FadeSide;
+    }
+    interface DsHeader {
+        /**
+          * @default 'secondary'
+         */
+        "background": HeaderBackground;
+        "heading": string | undefined;
     }
     interface DsInput {
         "ariaDescribedby": string | undefined;
@@ -184,6 +240,24 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsSidebar {
+        /**
+          * @default false
+         */
+        "collapsed": boolean;
+        /**
+          * @default false
+         */
+        "mobile": boolean;
+        /**
+          * @default true
+         */
+        "resizable": boolean;
+        /**
+          * @default 'default'
+         */
+        "width": SidebarWidth;
+    }
     interface DsSkeleton {
         /**
           * Height as a CSS value string or number (px).
@@ -235,6 +309,55 @@ export namespace Components {
          */
         "value": number;
         "valueText": string | undefined;
+    }
+    interface DsSurface {
+        /**
+          * @default 'div'
+         */
+        "as": SurfaceElement;
+        /**
+          * @default 'transparent'
+         */
+        "background": SurfaceBackground;
+        /**
+          * @default 'faint'
+         */
+        "contrast": SurfaceContrast;
+        /**
+          * Space-separated list of edges: "top bottom" etc. Only applies when elevation='none'.
+         */
+        "edge": string | undefined;
+        /**
+          * @default 'none'
+         */
+        "elevation": SurfaceElevation;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        "intent": SurfaceIntent | undefined;
+        /**
+          * @default false
+         */
+        "interactive": boolean;
+        "radius": SurfaceRadius | undefined;
+        /**
+          * @default false
+         */
+        "selected": boolean;
+    }
+    interface DsTabGroup {
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        "background": TabBackground | undefined;
+        /**
+          * @default []
+         */
+        "tabs": TabItem[];
+        /**
+          * @default ''
+         */
+        "value": string;
     }
     interface DsTag {
         "background": TagBackground | undefined;
@@ -315,6 +438,14 @@ export namespace Components {
         "inactive": boolean;
     }
 }
+export interface DsAccordionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAccordionElement;
+}
+export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBreadcrumbElement;
+}
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
@@ -331,9 +462,17 @@ export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioGroupElement;
 }
+export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSidebarElement;
+}
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
+}
+export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTabGroupElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -344,11 +483,45 @@ export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
     target: HTMLDsToggleElement;
 }
 declare global {
+    interface HTMLDsAccordionElementEventMap {
+        "dsExpandedChange": string[];
+    }
+    interface HTMLDsAccordionElement extends Components.DsAccordion, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAccordionElementEventMap>(type: K, listener: (this: HTMLDsAccordionElement, ev: DsAccordionCustomEvent<HTMLDsAccordionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAccordionElementEventMap>(type: K, listener: (this: HTMLDsAccordionElement, ev: DsAccordionCustomEvent<HTMLDsAccordionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsAccordionElement: {
+        prototype: HTMLDsAccordionElement;
+        new (): HTMLDsAccordionElement;
+    };
     interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
     }
     var HTMLDsBadgeElement: {
         prototype: HTMLDsBadgeElement;
         new (): HTMLDsBadgeElement;
+    };
+    interface HTMLDsBreadcrumbElementEventMap {
+        "dsNavigate": { item: BreadcrumbItem; index: number };
+    }
+    interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBreadcrumbElement: {
+        prototype: HTMLDsBreadcrumbElement;
+        new (): HTMLDsBreadcrumbElement;
     };
     interface HTMLDsButtonElementEventMap {
         "dsClick": MouseEvent;
@@ -368,6 +541,12 @@ declare global {
     var HTMLDsButtonElement: {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
+    };
+    interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
+    }
+    var HTMLDsCardElement: {
+        prototype: HTMLDsCardElement;
+        new (): HTMLDsCardElement;
     };
     interface HTMLDsCheckboxElementEventMap {
         "dsChange": boolean;
@@ -397,6 +576,12 @@ declare global {
     var HTMLDsFadeElement: {
         prototype: HTMLDsFadeElement;
         new (): HTMLDsFadeElement;
+    };
+    interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
+    }
+    var HTMLDsHeaderElement: {
+        prototype: HTMLDsHeaderElement;
+        new (): HTMLDsHeaderElement;
     };
     interface HTMLDsInputElementEventMap {
         "dsChange": string;
@@ -439,6 +624,24 @@ declare global {
         prototype: HTMLDsRadioGroupElement;
         new (): HTMLDsRadioGroupElement;
     };
+    interface HTMLDsSidebarElementEventMap {
+        "dsToggle": void;
+        "dsWidthChange": SidebarWidth;
+    }
+    interface HTMLDsSidebarElement extends Components.DsSidebar, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSidebarElementEventMap>(type: K, listener: (this: HTMLDsSidebarElement, ev: DsSidebarCustomEvent<HTMLDsSidebarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSidebarElementEventMap>(type: K, listener: (this: HTMLDsSidebarElement, ev: DsSidebarCustomEvent<HTMLDsSidebarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSidebarElement: {
+        prototype: HTMLDsSidebarElement;
+        new (): HTMLDsSidebarElement;
+    };
     interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
     }
     var HTMLDsSkeletonElement: {
@@ -461,6 +664,29 @@ declare global {
     var HTMLDsSliderElement: {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
+    };
+    interface HTMLDsSurfaceElement extends Components.DsSurface, HTMLStencilElement {
+    }
+    var HTMLDsSurfaceElement: {
+        prototype: HTMLDsSurfaceElement;
+        new (): HTMLDsSurfaceElement;
+    };
+    interface HTMLDsTabGroupElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsTabGroupElement extends Components.DsTabGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTabGroupElementEventMap>(type: K, listener: (this: HTMLDsTabGroupElement, ev: DsTabGroupCustomEvent<HTMLDsTabGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTabGroupElementEventMap>(type: K, listener: (this: HTMLDsTabGroupElement, ev: DsTabGroupCustomEvent<HTMLDsTabGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTabGroupElement: {
+        prototype: HTMLDsTabGroupElement;
+        new (): HTMLDsTabGroupElement;
     };
     interface HTMLDsTagElementEventMap {
         "dsRemove": void;
@@ -505,16 +731,23 @@ declare global {
         new (): HTMLDsToggleElement;
     };
     interface HTMLElementTagNameMap {
+        "ds-accordion": HTMLDsAccordionElement;
         "ds-badge": HTMLDsBadgeElement;
+        "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button": HTMLDsButtonElement;
+        "ds-card": HTMLDsCardElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-fade": HTMLDsFadeElement;
+        "ds-header": HTMLDsHeaderElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
+        "ds-sidebar": HTMLDsSidebarElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
+        "ds-surface": HTMLDsSurfaceElement;
+        "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-toggle": HTMLDsToggleElement;
@@ -523,6 +756,22 @@ declare global {
 declare namespace LocalJSX {
     type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}` | `prop:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K | `prop:${K}`]?: never } | { [P in `prop:${K}`]: PropT } & { [P in K | `attr:${K}`]?: never };
 
+    interface DsAccordion {
+        /**
+          * Comma-separated list of expanded item IDs for controlled mode.
+          * @default ''
+         */
+        "expandedIds"?: string;
+        /**
+          * @default []
+         */
+        "items"?: AccordionItemData[];
+        /**
+          * @default false
+         */
+        "multiple"?: boolean;
+        "onDsExpandedChange"?: (event: DsAccordionCustomEvent<string[]>) => void;
+    }
     interface DsBadge {
         /**
           * @default 0
@@ -536,6 +785,17 @@ declare namespace LocalJSX {
           * Accessible label. Defaults to the count as a string.
          */
         "label"?: string | undefined;
+    }
+    interface DsBreadcrumb {
+        /**
+          * @default []
+         */
+        "items"?: BreadcrumbItem[];
+        "onDsNavigate"?: (event: DsBreadcrumbCustomEvent<{ item: BreadcrumbItem; index: number }>) => void;
+        /**
+          * @default '/'
+         */
+        "separator"?: string;
     }
     interface DsButton {
         "ariaLabel"?: string | undefined;
@@ -591,6 +851,16 @@ declare namespace LocalJSX {
         "variant"?: ButtonVariant;
         "width"?: string | undefined;
     }
+    interface DsCard {
+        /**
+          * @default 'elevated'
+         */
+        "elevation"?: CardElevation;
+        /**
+          * @default 'lg'
+         */
+        "radius"?: CardRadius;
+    }
     interface DsCheckbox {
         /**
           * @default false
@@ -625,6 +895,13 @@ declare namespace LocalJSX {
          */
         "height"?: string | undefined;
         "side": FadeSide;
+    }
+    interface DsHeader {
+        /**
+          * @default 'secondary'
+         */
+        "background"?: HeaderBackground;
+        "heading"?: string | undefined;
     }
     interface DsInput {
         "ariaDescribedby"?: string | undefined;
@@ -691,6 +968,26 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsSidebar {
+        /**
+          * @default false
+         */
+        "collapsed"?: boolean;
+        /**
+          * @default false
+         */
+        "mobile"?: boolean;
+        "onDsToggle"?: (event: DsSidebarCustomEvent<void>) => void;
+        "onDsWidthChange"?: (event: DsSidebarCustomEvent<SidebarWidth>) => void;
+        /**
+          * @default true
+         */
+        "resizable"?: boolean;
+        /**
+          * @default 'default'
+         */
+        "width"?: SidebarWidth;
+    }
     interface DsSkeleton {
         /**
           * Height as a CSS value string or number (px).
@@ -743,6 +1040,56 @@ declare namespace LocalJSX {
          */
         "value"?: number;
         "valueText"?: string | undefined;
+    }
+    interface DsSurface {
+        /**
+          * @default 'div'
+         */
+        "as"?: SurfaceElement;
+        /**
+          * @default 'transparent'
+         */
+        "background"?: SurfaceBackground;
+        /**
+          * @default 'faint'
+         */
+        "contrast"?: SurfaceContrast;
+        /**
+          * Space-separated list of edges: "top bottom" etc. Only applies when elevation='none'.
+         */
+        "edge"?: string | undefined;
+        /**
+          * @default 'none'
+         */
+        "elevation"?: SurfaceElevation;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        "intent"?: SurfaceIntent | undefined;
+        /**
+          * @default false
+         */
+        "interactive"?: boolean;
+        "radius"?: SurfaceRadius | undefined;
+        /**
+          * @default false
+         */
+        "selected"?: boolean;
+    }
+    interface DsTabGroup {
+        "ariaLabel"?: string | undefined;
+        "ariaLabelledby"?: string | undefined;
+        "background"?: TabBackground | undefined;
+        "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
+        /**
+          * @default []
+         */
+        "tabs"?: TabItem[];
+        /**
+          * @default ''
+         */
+        "value"?: string;
     }
     interface DsTag {
         "background"?: TagBackground | undefined;
@@ -836,10 +1183,17 @@ declare namespace LocalJSX {
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
     }
 
+    interface DsAccordionAttributes {
+        "multiple": boolean;
+        "expandedIds": string;
+    }
     interface DsBadgeAttributes {
         "count": number;
         "isSelected": boolean;
         "label": string | undefined;
+    }
+    interface DsBreadcrumbAttributes {
+        "separator": string;
     }
     interface DsButtonAttributes {
         "variant": ButtonVariant;
@@ -862,6 +1216,10 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
+    interface DsCardAttributes {
+        "elevation": CardElevation;
+        "radius": CardRadius;
+    }
     interface DsCheckboxAttributes {
         "label": string;
         "checked": boolean;
@@ -875,6 +1233,10 @@ declare namespace LocalJSX {
         "side": FadeSide;
         "height": string | undefined;
         "background": string;
+    }
+    interface DsHeaderAttributes {
+        "heading": string | undefined;
+        "background": HeaderBackground;
     }
     interface DsInputAttributes {
         "value": string;
@@ -900,6 +1262,12 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
+    interface DsSidebarAttributes {
+        "collapsed": boolean;
+        "width": string;
+        "resizable": boolean;
+        "mobile": boolean;
+    }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
         "width": string;
@@ -916,6 +1284,24 @@ declare namespace LocalJSX {
         "inactive": boolean;
         "valueText": string | undefined;
         "inputId": string | undefined;
+    }
+    interface DsSurfaceAttributes {
+        "background": SurfaceBackground;
+        "intent": SurfaceIntent | undefined;
+        "contrast": SurfaceContrast;
+        "elevation": SurfaceElevation;
+        "edge": string | undefined;
+        "radius": SurfaceRadius | undefined;
+        "interactive": boolean;
+        "selected": boolean;
+        "inactive": boolean;
+        "as": SurfaceElement;
+    }
+    interface DsTabGroupAttributes {
+        "value": string;
+        "background": TabBackground | undefined;
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
     }
     interface DsTagAttributes {
         "label": string;
@@ -948,16 +1334,23 @@ declare namespace LocalJSX {
     }
 
     interface IntrinsicElements {
+        "ds-accordion": Omit<DsAccordion, keyof DsAccordionAttributes> & { [K in keyof DsAccordion & keyof DsAccordionAttributes]?: DsAccordion[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `attr:${K}`]?: DsAccordionAttributes[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `prop:${K}`]?: DsAccordion[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
+        "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
+        "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
+        "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
+        "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
+        "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
+        "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
@@ -967,16 +1360,23 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ds-accordion": LocalJSX.IntrinsicElements["ds-accordion"] & JSXBase.HTMLAttributes<HTMLDsAccordionElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
+            "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
+            "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
+            "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
+            "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;
+            "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;

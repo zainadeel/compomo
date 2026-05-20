@@ -2,16 +2,23 @@
 import * as d from './proxies';
 
 export const DIRECTIVES = [
+  d.DsAccordion,
   d.DsBadge,
+  d.DsBreadcrumb,
   d.DsButton,
+  d.DsCard,
   d.DsCheckbox,
   d.DsDivider,
   d.DsFade,
+  d.DsHeader,
   d.DsInput,
   d.DsLoader,
   d.DsRadioGroup,
+  d.DsSidebar,
   d.DsSkeleton,
   d.DsSlider,
+  d.DsSurface,
+  d.DsTabGroup,
   d.DsTag,
   d.DsText,
   d.DsToggle
