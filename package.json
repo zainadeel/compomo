@@ -50,7 +50,7 @@
     "mcp": "node scripts/mcp-server.mjs"
   },
   "peerDependencies": {
-    "@ds-mo/tokens": ">=0.3.0"
+    "@ds-mo/tokens": ">=2.5.0"
   },
   "peerDependenciesMeta": {
     "@ds-mo/icons": {
@@ -58,8 +58,8 @@
     }
   },
   "devDependencies": {
-    "@ds-mo/icons": "^2.0.0",
-    "@ds-mo/tokens": "^2.5.0",
+    "@ds-mo/icons": "^4.3.0",
+    "@ds-mo/tokens": "^2.7.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@stencil/angular-output-target": "^1.3.1",
     "@stencil/core": "^4.43.4",
