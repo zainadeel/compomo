@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/zainadeel/compomo/compare/v0.5.0...v0.6.0) (2026-05-20)
+
+
+### Added
+
+* **storybook:** add Foundation/Icons gallery and expand Text stories ([#64](https://github.com/zainadeel/compomo/issues/64)) ([cf83f09](https://github.com/zainadeel/compomo/commit/cf83f095222fbf3bb48b56856f74a4b6c87d1f0b))
+
 ## [0.5.0](https://github.com/zainadeel/compomo/compare/v0.4.1...v0.5.0) (2026-05-20)
 
 
