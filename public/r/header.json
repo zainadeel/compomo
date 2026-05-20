@@ -5,28 +5,30 @@
   "description": "App header bar with background variants.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/header",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/header",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Header } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { HeaderProps, HeaderBackground } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-header.js';",
+      "usage": {
+        "html": "<ds-header></ds-header>",
+        "react": "<ds-header></ds-header>",
+        "angular": "<ds-header></ds-header>"
+      },
       "internalDependencies": [
         {
           "component": "Surface",
-          "note": "Used internally by Header. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by Header. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -46,7 +48,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
@@ -54,13 +56,13 @@
   ],
   "files": [
     {
-      "path": "src/components/Header/Header.module.css",
-      "content": ".header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: var(--dimension-size-600, 48px);\n  padding: 0 var(--dimension-space-100);\n  flex-shrink: 0;\n  gap: var(--dimension-space-100);\n}\n\n.left {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  flex-shrink: 0;\n  min-width: 0;\n}\n\n.center {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-050);\n  flex: 1;\n  min-width: 0;\n}\n\n.right {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  flex-shrink: 0;\n}\n",
+      "path": "src/wc/components/Header/Header.css",
+      "content": ":host {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: var(--dimension-size-600, 48px);\n  padding: 0 var(--dimension-space-100);\n  flex-shrink: 0;\n  gap: var(--dimension-space-100);\n  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);\n  box-sizing: border-box;\n}\n\n/* Backgrounds */\n:host(.bg-primary)     { background-color: var(--color-background-primary); }\n:host(.bg-secondary)   { background-color: var(--color-background-secondary); }\n:host(.bg-transparent) { background-color: transparent; }\n:host(.bg-translucent) {\n  background-color: var(--color-background-translucent);\n  backdrop-filter: blur(var(--effect-blur-md));\n  -webkit-backdrop-filter: blur(var(--effect-blur-md));\n}\n\n.left {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  flex-shrink: 0;\n  min-width: 0;\n}\n\n.title {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.center {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-050);\n  flex: 1;\n  min-width: 0;\n}\n\n.right {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  flex-shrink: 0;\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Header/Header.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Surface } from '@/components/Surface';\nimport { Text } from '@/components/Text';\nimport styles from './Header.module.css';\n\nexport type HeaderBackground = 'primary' | 'secondary' | 'transparent' | 'translucent';\n\nexport interface HeaderProps {\n  title?: string;\n  left?: React.ReactNode;\n  center?: React.ReactNode;\n  right?: React.ReactNode;\n  background?: HeaderBackground;\n  className?: string;\n}\n\nexport const Header = forwardRef<HTMLElement, HeaderProps>(\n  ({ title, left, center, right, background = 'secondary', className }, ref) => (\n    <Surface\n      ref={ref}\n      as=\"header\"\n      background={background}\n      elevation=\"none\"\n      edge=\"bottom\"\n      className={cn(styles.header, className)}\n    >\n      <div className={styles.left}>\n        {left}\n        {title && !center && (\n          <Text variant=\"text-title-small\" as=\"h1\" lineTruncation={1}>\n            {title}\n          </Text>\n        )}\n      </div>\n      {center && <div className={styles.center}>{center}</div>}\n      <div className={styles.right}>{right}</div>\n    </Surface>\n  )\n);\n\nHeader.displayName = 'Header';\n",
+      "path": "src/wc/components/Header/Header.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type HeaderBackground = 'primary' | 'secondary' | 'transparent' | 'translucent';\n\n@Component({\n  tag: 'ds-header',\n  styleUrl: 'Header.css',\n  scoped: true,\n})\nexport class Header {\n  @Prop() heading: string | undefined;\n  @Prop() background: HeaderBackground = 'secondary';\n\n  render() {\n    return (\n      <Host\n        class={{ header: true, [`bg-${this.background}`]: true }}\n        role=\"banner\"\n      >\n        <div class=\"left\">\n          <slot name=\"left\" />\n          {this.heading && <span class=\"title text-title-small\">{this.heading}</span>}\n        </div>\n        <div class=\"center\">\n          <slot name=\"center\" />\n        </div>\n        <div class=\"right\">\n          <slot name=\"right\" />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

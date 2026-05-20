@@ -1,0 +1,44 @@
+.tooltip-popup {
+  box-sizing: border-box;
+  background-color: var(--color-background-primary);
+  border-radius: var(--dimension-radius-075);
+  box-shadow: var(--effect-elevation-elevated-floating);
+  padding: var(--dimension-space-050);
+  white-space: nowrap;
+  animation: tooltipFadeIn var(--effect-motion-short-2) forwards;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.tooltip-popup--closing {
+  animation: tooltipFadeOut var(--effect-motion-short-3) forwards;
+}
+
+.tooltip-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--dimension-space-050);
+}
+
+.key-hint {
+  width: var(--dimension-size-200);
+  height: var(--dimension-size-200);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--dimension-stroke-width-015) solid var(--color-foreground-tertiary);
+  border-bottom-width: var(--dimension-stroke-width-025);
+  border-radius: var(--dimension-radius-025);
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes tooltipFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}

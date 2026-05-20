@@ -5,28 +5,30 @@
   "description": "Hierarchical navigation with link or button items, custom separator, and aria-current on the last item.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/breadcrumb",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/breadcrumb",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Breadcrumb } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { BreadcrumbProps, BreadcrumbItem } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-breadcrumb.js';",
+      "usage": {
+        "html": "<ds-breadcrumb></ds-breadcrumb>",
+        "react": "<ds-breadcrumb></ds-breadcrumb>",
+        "angular": "<ds-breadcrumb></ds-breadcrumb>"
+      },
       "internalDependencies": [
         {
           "component": "Text",
-          "note": "Used internally by Breadcrumb. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by Breadcrumb. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -49,7 +51,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
@@ -57,13 +59,13 @@
   ],
   "files": [
     {
-      "path": "src/components/Breadcrumb/Breadcrumb.module.css",
-      "content": ".breadcrumb {\n  display: flex;\n  align-items: center;\n}\n\n.list {\n  display: flex;\n  align-items: center;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  gap: var(--dimension-space-050);\n}\n\n.item {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n}\n\n.link {\n  color: var(--color-foreground-secondary);\n  text-decoration: none;\n  background: none;\n  border: none;\n  padding: var(--dimension-space-025) var(--dimension-space-050);\n  border-radius: var(--dimension-radius-050);\n  cursor: pointer;\n  transition: background-color var(--effect-motion-short-2), color var(--effect-motion-short-2);\n}\n\n.link:hover {\n  background-color: var(--color-interaction-hover);\n  color: var(--color-foreground-primary);\n}\n\n.link:active {\n  background-color: var(--color-interaction-pressed);\n}\n\n.separator {\n  color: var(--color-foreground-tertiary);\n  font-size: 12px;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "path": "src/wc/components/Breadcrumb/Breadcrumb.css",
+      "content": ".breadcrumb {\n  display: flex;\n  align-items: center;\n}\n\n.list {\n  display: flex;\n  align-items: center;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  gap: var(--dimension-space-050);\n}\n\n.item {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n}\n\n.item-inner {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n}\n\n.link {\n  color: var(--color-foreground-secondary);\n  text-decoration: none;\n  padding: var(--dimension-space-025) var(--dimension-space-050);\n  border-radius: var(--dimension-radius-050);\n  transition: background-color var(--effect-motion-short-2), color var(--effect-motion-short-2);\n}\n\n.link:hover {\n  background-color: var(--color-interaction-hover);\n  color: var(--color-foreground-primary);\n}\n\n.link:active { background-color: var(--color-interaction-pressed); }\n\n.link:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-space-025);\n}\n\n.separator {\n  color: var(--color-foreground-tertiary);\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.current {\n  color: var(--color-foreground-primary);\n  padding: var(--dimension-space-025) var(--dimension-space-050);\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Breadcrumb/Breadcrumb.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Text } from '@/components/Text';\nimport styles from './Breadcrumb.module.css';\n\nexport interface BreadcrumbItem {\n  label: string;\n  href?: string;\n  onClick?: () => void;\n}\n\nexport interface BreadcrumbProps {\n  /** Ordered list of breadcrumb items. Last item is treated as current page. */\n  items: BreadcrumbItem[];\n  /** Custom separator. Defaults to '/'. */\n  separator?: React.ReactNode;\n  className?: string;\n}\n\nexport const Breadcrumb = forwardRef<HTMLElement, BreadcrumbProps>(\n  ({ items, separator = '/', className }, ref) => (\n    <nav ref={ref} aria-label=\"Breadcrumb\" className={cn(styles.breadcrumb, className)}>\n      <ol className={styles.list}>\n        {items.map((item, i) => {\n          const isLast = i === items.length - 1;\n          return (\n            <li key={i} className={styles.item}>\n              {isLast ? (\n                <Text variant=\"text-body-medium-emphasis\" as=\"span\" color=\"primary\" aria-current=\"page\">\n                  {item.label}\n                </Text>\n              ) : (\n                <>\n                  {item.href ? (\n                    <a\n                      href={item.href}\n                      className={styles.link}\n                      onClick={e => { if (item.onClick) { e.preventDefault(); item.onClick(); } }}\n                    >\n                      <Text variant=\"text-body-medium\" as=\"span\" color=\"inherit\">\n                        {item.label}\n                      </Text>\n                    </a>\n                  ) : (\n                    <button\n                      type=\"button\"\n                      className={styles.link}\n                      onClick={item.onClick}\n                    >\n                      <Text variant=\"text-body-medium\" as=\"span\" color=\"inherit\">\n                        {item.label}\n                      </Text>\n                    </button>\n                  )}\n                  <span className={styles.separator} aria-hidden=\"true\">\n                    {separator}\n                  </span>\n                </>\n              )}\n            </li>\n          );\n        })}\n      </ol>\n    </nav>\n  )\n);\n\nBreadcrumb.displayName = 'Breadcrumb';\n",
+      "path": "src/wc/components/Breadcrumb/Breadcrumb.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nexport interface BreadcrumbItem {\n  label: string;\n  href?: string;\n}\n\n@Component({\n  tag: 'ds-breadcrumb',\n  styleUrl: 'Breadcrumb.css',\n  scoped: true,\n})\nexport class Breadcrumb {\n  @Prop() items: BreadcrumbItem[] = [];\n  @Prop() separator: string = '/';\n\n  @Event() dsNavigate!: EventEmitter<{ item: BreadcrumbItem; index: number }>;\n\n  private handleClick(item: BreadcrumbItem, index: number, e: MouseEvent) {\n    if (!item.href) {\n      e.preventDefault();\n    }\n    this.dsNavigate.emit({ item, index });\n  }\n\n  render() {\n    return (\n      <Host>\n        <nav aria-label=\"Breadcrumb\" class=\"breadcrumb\">\n          <ol class=\"list\">\n            {this.items.map((item, i) => {\n              const isLast = i === this.items.length - 1;\n              return (\n                <li class=\"item\" key={i}>\n                  {isLast ? (\n                    <span class=\"text-body-medium-emphasis current\" aria-current=\"page\">\n                      {item.label}\n                    </span>\n                  ) : (\n                    <span class=\"item-inner\">\n                      <a\n                        href={item.href ?? '#'}\n                        class=\"link text-body-medium\"\n                        onClick={e => this.handleClick(item, i, e)}\n                      >\n                        {item.label}\n                      </a>\n                      <span class=\"separator text-body-small\" aria-hidden=\"true\">\n                        {this.separator}\n                      </span>\n                    </span>\n                  )}\n                </li>\n              );\n            })}\n          </ol>\n        </nav>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

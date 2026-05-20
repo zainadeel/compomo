@@ -1,0 +1,35 @@
+
+import * as d from './proxies';
+
+export const DIRECTIVES = [
+  d.DsAccordion,
+  d.DsBadge,
+  d.DsBanner,
+  d.DsBreadcrumb,
+  d.DsButton,
+  d.DsCard,
+  d.DsCheckbox,
+  d.DsDivider,
+  d.DsEmptyState,
+  d.DsFade,
+  d.DsField,
+  d.DsHeader,
+  d.DsInput,
+  d.DsLoader,
+  d.DsMenu,
+  d.DsModal,
+  d.DsPagination,
+  d.DsRadioGroup,
+  d.DsScrollbar,
+  d.DsSidebar,
+  d.DsSkeleton,
+  d.DsSlider,
+  d.DsSurface,
+  d.DsTabGroup,
+  d.DsTable,
+  d.DsTag,
+  d.DsText,
+  d.DsToastProvider,
+  d.DsToggle,
+  d.DsTooltip
+];

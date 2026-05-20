@@ -5,31 +5,32 @@
   "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/checkbox",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Checkbox } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { CheckboxProps } from '@compomo/ui';",
-      "iconImport": "import { IconName } from '@ds-mo/icons';  // Tree-shakeable, import only what you need",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-checkbox.js';",
+      "usage": {
+        "html": "<ds-checkbox></ds-checkbox>",
+        "react": "<ds-checkbox></ds-checkbox>",
+        "angular": "<ds-checkbox></ds-checkbox>"
+      },
       "internalDependencies": [
         {
           "component": "Text",
-          "note": "Used internally by Checkbox. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by Checkbox. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
         "optional": [
-          "@ds-mo/icons >=0.1.0 (for icon props)"
-        ]
+          "@ds-mo/icons >=0.1.0"
+        ],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -69,7 +70,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens",
     "@ds-mo/icons"
   ],
@@ -78,13 +79,13 @@
   ],
   "files": [
     {
-      "path": "src/components/Checkbox/Checkbox.module.css",
-      "content": ".checkbox {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-075);\n  height: var(--dimension-size-400);\n  box-sizing: border-box;\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  border-radius: var(--dimension-radius-075);\n  transition: background-color var(--effect-motion-short-2);\n}\n\n.checkbox:hover { background-color: var(--color-interaction-hover); }\n.checkbox:active { background-color: var(--color-interaction-pressed); }\n\n.inactive {\n  cursor: not-allowed;\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n/* Fallback checkbox box (when no icon components provided) */\n.box {\n  width: 20px;\n  height: 20px;\n  border: 1.5px solid var(--color-foreground-secondary);\n  border-radius: var(--dimension-radius-050);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  transition: all var(--effect-motion-short-2);\n}\n\n.boxChecked {\n  background-color: var(--color-foreground-primary);\n  border-color: var(--color-foreground-primary);\n}\n\n.checkmark {\n  color: var(--color-foreground-on-bold-background-primary);\n  font-size: 14px;\n  line-height: 1;\n  font-weight: 700;\n}\n",
+      "path": "src/wc/components/Checkbox/Checkbox.css",
+      "content": ".checkbox {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-075);\n  height: var(--dimension-size-400);\n  box-sizing: border-box;\n  cursor: pointer;\n  user-select: none;\n  border-radius: var(--dimension-radius-075);\n  transition: background-color var(--effect-motion-short-2);\n}\n\n.checkbox:hover {\n  background-color: var(--color-interaction-hover);\n}\n\n.checkbox:active {\n  background-color: var(--color-interaction-pressed);\n}\n\n.inactive {\n  cursor: not-allowed;\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n/* ── Default box indicator ───────────────────────────────────────────────── */\n\n.box {\n  width: 20px;\n  height: 20px;\n  flex-shrink: 0;\n  border: 1.5px solid var(--color-foreground-secondary);\n  border-radius: var(--dimension-radius-050);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  transition: all var(--effect-motion-short-2);\n}\n\n.box--marked {\n  background-color: var(--color-foreground-primary);\n  border-color: var(--color-foreground-primary);\n}\n\n.checkmark {\n  color: var(--color-foreground-on-bold-background-primary);\n  font-size: 14px;\n  line-height: 1;\n  font-weight: 700;\n}\n\n/* ── Label ───────────────────────────────────────────────────────────────── */\n\n.checkbox__label {\n  flex: 1;\n  min-width: 0;\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Checkbox/Checkbox.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Text } from '@/components/Text';\nimport type { IconComponent } from '@/types/icons';\nimport styles from './Checkbox.module.css';\n\nexport interface CheckboxProps {\n  label: string;\n  checked?: boolean;\n  indeterminate?: boolean;\n  onChange?: (checked: boolean) => void;\n  inactive?: boolean;\n  className?: string;\n  /** Icon for checked state. */\n  checkedIcon?: IconComponent;\n  /** Icon for unchecked state. */\n  uncheckedIcon?: IconComponent;\n  /** Icon for indeterminate state. */\n  indeterminateIcon?: IconComponent;\n}\n\nexport const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(\n  (\n    {\n      label,\n      checked = false,\n      indeterminate = false,\n      onChange,\n      inactive = false,\n      className,\n      checkedIcon: CheckedIcon,\n      uncheckedIcon: UncheckedIcon,\n      indeterminateIcon: IndeterminateIcon,\n    },\n    ref\n  ) => {\n    const handleClick = () => {\n      if (!inactive) onChange?.(!checked);\n    };\n\n    const iconColor = indeterminate || checked ? 'var(--color-foreground-primary)' : 'var(--color-foreground-secondary)';\n    const Icon = indeterminate ? IndeterminateIcon : checked ? CheckedIcon : UncheckedIcon;\n\n    return (\n      <div\n        ref={ref}\n        role=\"checkbox\"\n        aria-checked={indeterminate ? 'mixed' : checked}\n        aria-inactive={inactive}\n        tabIndex={inactive ? -1 : 0}\n        className={cn(styles.checkbox, inactive && styles.inactive, className)}\n        onClick={handleClick}\n        onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleClick(); } }}\n      >\n        {Icon ? <Icon size={20} color={iconColor} /> : (\n          <span className={cn(styles.box, (checked || indeterminate) && styles.boxChecked)}>\n            {(checked || indeterminate) && <span className={styles.checkmark}>{indeterminate ? '−' : '✓'}</span>}\n          </span>\n        )}\n        <Text variant=\"text-body-medium\" as=\"span\" color=\"inherit\">\n          {label}\n        </Text>\n      </div>\n    );\n  }\n);\n\nCheckbox.displayName = 'Checkbox';\n",
+      "path": "src/wc/components/Checkbox/Checkbox.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n})\nexport class Checkbox {\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  @Prop() label!: string;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() indeterminate: boolean = false;\n  @Prop() inactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private handleActivate = () => {\n    if (this.inactive) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const isMarked = this.checked || this.indeterminate;\n\n    return (\n      <Host\n        role=\"checkbox\"\n        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={this.inactive || undefined}\n        aria-labelledby={this.labelId}\n        tabIndex={this.inactive ? -1 : 0}\n        class={{ checkbox: true, inactive: this.inactive }}\n        onClick={this.handleActivate}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class={{ box: true, 'box--marked': isMarked }}>\n          {isMarked && (\n            <span class=\"checkmark\" aria-hidden=\"true\">\n              {this.indeterminate ? '−' : '✓'}\n            </span>\n          )}\n        </span>\n        <span id={this.labelId} class=\"text-body-medium checkbox__label\">\n          {this.label}\n        </span>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

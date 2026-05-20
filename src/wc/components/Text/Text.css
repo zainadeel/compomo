@@ -1,0 +1,79 @@
+.text {
+  margin: 0;
+}
+
+/* ── Truncation ─────────────────────────────────────────────────────────── */
+
+.text--truncate-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text--truncate-2,
+.text--truncate-3,
+.text--truncate-4,
+.text--truncate-5 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+.text--truncate-2 { -webkit-line-clamp: 2; }
+.text--truncate-3 { -webkit-line-clamp: 3; }
+.text--truncate-4 { -webkit-line-clamp: 4; }
+.text--truncate-5 { -webkit-line-clamp: 5; }
+
+/* ── Wrap ───────────────────────────────────────────────────────────────── */
+
+.text--nowrap {
+  white-space: nowrap;
+  word-break: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.text--balance { text-wrap: balance; }
+.text--pretty  { text-wrap: pretty; }
+
+/* ── Color ──────────────────────────────────────────────────────────────── */
+
+.text--color-primary   { color: var(--color-foreground-primary); }
+.text--color-secondary { color: var(--color-foreground-secondary); }
+.text--color-tertiary  { color: var(--color-foreground-tertiary); }
+.text--color-brand     { color: var(--color-foreground-bold-brand); }
+.text--color-negative  { color: var(--color-foreground-bold-negative); }
+.text--color-positive  { color: var(--color-foreground-bold-positive); }
+.text--color-warning   { color: var(--color-foreground-bold-warning); }
+.text--color-caution   { color: var(--color-foreground-bold-caution); }
+.text--color-ai        { color: var(--color-foreground-bold-ai); }
+.text--color-on-strong { color: var(--color-foreground-on-strong-background-primary); }
+.text--color-on-bold   { color: var(--color-foreground-on-bold-background-primary); }
+.text--color-inherit   { color: inherit; }
+
+/* ── Decoration ─────────────────────────────────────────────────────────── */
+
+.text--decoration-underline {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+.text--decoration-dotted-underline {
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* ── Style ──────────────────────────────────────────────────────────────── */
+
+.text--italic { font-style: italic; }
+
+/* ── Align ──────────────────────────────────────────────────────────────── */
+
+.text--align-left   { text-align: left; }
+.text--align-center { text-align: center; }
+.text--align-right  { text-align: right; }

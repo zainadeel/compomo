@@ -2,26 +2,24 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "experimentalDecorators": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "ignoreDeprecations": "6.0"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "**/*.stories.tsx"]
+  "include": ["src/wc"],
+  "exclude": ["node_modules", "dist", "**/*.stories.ts", "**/*.stories.tsx"]
 }

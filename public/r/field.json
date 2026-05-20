@@ -5,28 +5,30 @@
   "description": "Simple label wrapper that links to child input via htmlFor.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/field",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/field",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Field } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { FieldProps } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-field.js';",
+      "usage": {
+        "html": "<ds-field></ds-field>",
+        "react": "<ds-field></ds-field>",
+        "angular": "<ds-field></ds-field>"
+      },
       "internalDependencies": [
         {
           "component": "Text",
-          "note": "Used internally by Field. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by Field. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -50,7 +52,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
@@ -58,13 +60,13 @@
   ],
   "files": [
     {
-      "path": "src/components/Field/Field.module.css",
-      "content": ".field {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n}\n",
+      "path": "src/wc/components/Field/Field.css",
+      "content": ":host {\n  display: block;\n}\n\n.field {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n}\n\n.field__label {\n  display: block;\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Field/Field.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Text } from '@/components/Text';\nimport styles from './Field.module.css';\n\nexport interface FieldProps {\n  label: string;\n  children: React.ReactNode;\n  id?: string;\n  className?: string;\n}\n\nexport const Field = forwardRef<HTMLDivElement, FieldProps>(\n  ({ label, children, id, className }, ref) => (\n    <div ref={ref} className={cn(styles.field, className)}>\n      <Text variant=\"text-body-small-emphasis\" as=\"label\" htmlFor={id}>{label}</Text>\n      {children}\n    </div>\n  )\n);\n\nField.displayName = 'Field';\n",
+      "path": "src/wc/components/Field/Field.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nlet fieldCounter = 0;\n\n@Component({\n  tag: 'ds-field',\n  styleUrl: 'Field.css',\n  scoped: true,\n})\nexport class Field {\n  @Prop() label!: string;\n  /** ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted. */\n  @Prop() fieldId: string | undefined;\n\n  private resolvedId = `ds-field-${++fieldCounter}`;\n\n  render() {\n    const id = this.fieldId || this.resolvedId;\n    return (\n      <Host>\n        <div class=\"field\">\n          <label class=\"text-body-small-emphasis field__label\" htmlFor={id}>{this.label}</label>\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

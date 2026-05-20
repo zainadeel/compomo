@@ -1,0 +1,89 @@
+:host {
+  display: block;
+}
+
+.tab-list {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-secondary);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--dimension-space-075);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--dimension-radius-075);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  color: var(--color-foreground-secondary);
+  position: relative;
+  transition: color var(--effect-motion-short-2), background-color var(--effect-motion-short-2);
+  flex-shrink: 0;
+  height: var(--dimension-size-400);
+  box-sizing: border-box;
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+}
+
+.tab:hover { background-color: var(--_hover-bg); }
+.tab:active { background-color: var(--_pressed-bg); }
+
+.tab--selected { color: var(--color-foreground-primary); }
+
+.tab:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+.tab:disabled,
+.tab[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Background context */
+.on-medium {
+  --_hover-bg: var(--color-interaction-on-medium-background-hover);
+  --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
+}
+
+.on-bold {
+  --_hover-bg: var(--color-interaction-on-bold-background-hover);
+  --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
+  color: var(--color-foreground-on-bold-background-secondary);
+}
+
+.on-bold.tab--selected { color: var(--color-foreground-on-bold-background-primary); }
+
+.on-strong {
+  --_hover-bg: var(--color-interaction-on-strong-background-hover);
+  --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
+  color: var(--color-foreground-on-bold-background-secondary);
+}
+
+.on-strong.tab--selected { color: var(--color-foreground-on-bold-background-primary); }
+
+.on-always-dark {
+  --_hover-bg: var(--color-always-dark-interaction-hover);
+  --_pressed-bg: var(--color-always-dark-interaction-pressed);
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+.on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }
+
+/* Sliding indicator */
+.indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--color-foreground-brand);
+  border-radius: var(--dimension-radius-full, 9999px);
+  transition: left var(--effect-motion-short-3), width var(--effect-motion-short-3);
+  pointer-events: none;
+}

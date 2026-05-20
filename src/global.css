@@ -1,0 +1,7 @@
+/* Global styles loaded by Stencil for all ds-mo components.
+   Resolved to explicit node_modules paths because Stencil's CSS
+   processor does not support bare package specifiers in @import. */
+@import '../node_modules/@ds-mo/tokens/dist/index.css';
+@import '../node_modules/@ds-mo/tokens/dist/reset.css';
+@import '../node_modules/@ds-mo/tokens/dist/globals.css';
+@import '../node_modules/@ds-mo/tokens/dist/utilities.css';

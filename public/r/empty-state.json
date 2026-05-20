@@ -5,28 +5,30 @@
   "description": "Centered placeholder for empty content, no results, or no access states.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/empty-state",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/empty-state",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { EmptyState } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { EmptyStateProps, EmptyStateType } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-empty-state.js';",
+      "usage": {
+        "html": "<ds-empty-state></ds-empty-state>",
+        "react": "<ds-empty-state></ds-empty-state>",
+        "angular": "<ds-empty-state></ds-empty-state>"
+      },
       "internalDependencies": [
         {
           "component": "Text",
-          "note": "Used internally by EmptyState. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by EmptyState. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -48,7 +50,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
@@ -56,13 +58,13 @@
   ],
   "files": [
     {
-      "path": "src/components/EmptyState/EmptyState.module.css",
-      "content": ".emptyState {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  min-height: 400px;\n  width: 100%;\n}\n",
+      "path": "src/wc/components/EmptyState/EmptyState.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  height: 100%;\n}\n\n.empty-state {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n  min-height: 400px;\n  width: 100%;\n}\n\n.empty-state p {\n  margin: 0;\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/EmptyState/EmptyState.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Text } from '@/components/Text';\nimport styles from './EmptyState.module.css';\n\nexport type EmptyStateType = 'no-content' | 'no-results' | 'no-results-filter' | 'no-access';\n\nconst defaultMessages: Record<EmptyStateType, string> = {\n  'no-content': 'No page contents to display.',\n  'no-results': 'No results found.',\n  'no-results-filter': 'No results found. Please update search criteria.',\n  'no-access': \"You don't have access to this page.\",\n};\n\nexport interface EmptyStateProps {\n  type?: EmptyStateType;\n  message?: string;\n  className?: string;\n}\n\nexport const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(\n  ({ type = 'no-content', message, className }, ref) => (\n    <div ref={ref} className={cn(styles.emptyState, className)}>\n      <Text variant=\"text-body-medium\" as=\"p\" color=\"secondary\">\n        {message || defaultMessages[type]}\n      </Text>\n    </div>\n  )\n);\n\nEmptyState.displayName = 'EmptyState';\n",
+      "path": "src/wc/components/EmptyState/EmptyState.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type EmptyStateType = 'no-content' | 'no-results' | 'no-results-filter' | 'no-access';\n\nconst DEFAULT_MESSAGES: Record<EmptyStateType, string> = {\n  'no-content': 'No page contents to display.',\n  'no-results': 'No results found.',\n  'no-results-filter': 'No results found. Please update search criteria.',\n  'no-access': \"You don't have access to this page.\",\n};\n\n@Component({\n  tag: 'ds-empty-state',\n  styleUrl: 'EmptyState.css',\n  scoped: true,\n})\nexport class EmptyState {\n  @Prop() type: EmptyStateType = 'no-content';\n  @Prop() message: string | undefined;\n\n  render() {\n    return (\n      <Host>\n        <div class=\"empty-state\">\n          <p class=\"text-body-medium\" style={{ color: 'var(--color-foreground-secondary)' }}>\n            {this.message || DEFAULT_MESSAGES[this.type]}\n          </p>\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

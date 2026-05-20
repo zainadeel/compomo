@@ -5,22 +5,24 @@
   "description": "Horizontal or vertical separator line using design tokens.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/divider",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/divider",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Divider } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { DividerProps, DividerOrientation } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-divider.js';",
+      "usage": {
+        "html": "<ds-divider></ds-divider>",
+        "react": "<ds-divider></ds-divider>",
+        "angular": "<ds-divider></ds-divider>"
+      },
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -38,19 +40,19 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [],
   "files": [
     {
-      "path": "src/components/Divider/Divider.module.css",
-      "content": ".divider {\n  border: none;\n  margin: 0;\n  flex-shrink: 0;\n  background-color: var(--color-border-secondary);\n}\n\n/* Horizontal (default) */\n.divider:not(.vertical) {\n  width: 100%;\n  height: 1px;\n}\n\n/* Vertical */\n.vertical {\n  width: 1px;\n  height: 100%;\n  align-self: stretch;\n}\n",
+      "path": "src/wc/components/Divider/Divider.css",
+      "content": ":host {\n  display: block;\n  border: none;\n  margin: 0;\n  flex-shrink: 0;\n  background-color: var(--color-border-secondary);\n}\n\n/* Horizontal (default) */\n:host(:not(.vertical)) {\n  width: 100%;\n  height: 1px;\n}\n\n/* Vertical */\n:host(.vertical) {\n  width: 1px;\n  height: 100%;\n  align-self: stretch;\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Divider/Divider.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport styles from './Divider.module.css';\n\nexport type DividerOrientation = 'horizontal' | 'vertical';\n\nexport interface DividerProps {\n  /** Direction of the divider line. */\n  orientation?: DividerOrientation;\n  className?: string;\n}\n\nexport const Divider = forwardRef<HTMLHRElement, DividerProps>(\n  ({ orientation = 'horizontal', className }, ref) => (\n    <hr\n      ref={ref}\n      role=\"separator\"\n      aria-orientation={orientation}\n      className={cn(\n        styles.divider,\n        orientation === 'vertical' && styles.vertical,\n        className\n      )}\n    />\n  )\n);\n\nDivider.displayName = 'Divider';\n",
+      "path": "src/wc/components/Divider/Divider.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type DividerOrientation = 'horizontal' | 'vertical';\n\n@Component({\n  tag: 'ds-divider',\n  styleUrl: 'Divider.css',\n  shadow: true,\n})\nexport class Divider {\n  /** Direction of the divider line. Defaults to 'horizontal'. */\n  @Prop() orientation: DividerOrientation = 'horizontal';\n\n  render() {\n    return (\n      <Host\n        role=\"separator\"\n        aria-orientation={this.orientation}\n        class={{ vertical: this.orientation === 'vertical' }}\n      />\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

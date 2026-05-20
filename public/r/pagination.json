@@ -5,28 +5,30 @@
   "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/pagination",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Pagination } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { PaginationProps } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-pagination.js';",
+      "usage": {
+        "html": "<ds-pagination></ds-pagination>",
+        "react": "<ds-pagination></ds-pagination>",
+        "angular": "<ds-pagination></ds-pagination>"
+      },
       "internalDependencies": [
         {
           "component": "Text",
-          "note": "Used internally by Pagination. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by Pagination. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -59,7 +61,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
@@ -67,13 +69,13 @@
   ],
   "files": [
     {
-      "path": "src/components/Pagination/Pagination.module.css",
-      "content": ".pagination {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-025);\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.inactive {\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n/* ─── Button ────────────────────────────────────────────────────────────────── */\n\n.button {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: var(--dimension-size-300);\n  height: var(--dimension-size-300);\n  padding: 0 var(--dimension-space-050);\n  background: none;\n  border: none;\n  border-radius: var(--dimension-radius-075);\n  cursor: pointer;\n  color: var(--color-foreground-secondary);\n  transition: background-color var(--effect-motion-short-2), color var(--effect-motion-short-2);\n}\n\n.button:hover:not(:disabled) {\n  background-color: var(--color-interaction-hover);\n  color: var(--color-foreground-primary);\n}\n\n.button:active:not(:disabled) {\n  background-color: var(--color-interaction-pressed);\n}\n\n.button:disabled {\n  cursor: not-allowed;\n  opacity: 0.35;\n}\n\n.active {\n  background-color: var(--color-interaction-hover);\n  color: var(--color-foreground-primary);\n}\n\n/* ─── Nav arrows ────────────────────────────────────────────────────────────── */\n\n.nav {\n  font-size: 18px;\n}\n\n/* ─── Ellipsis ──────────────────────────────────────────────────────────────── */\n\n.ellipsis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: var(--dimension-size-300);\n  height: var(--dimension-size-300);\n}\n",
+      "path": "src/wc/components/Pagination/Pagination.css",
+      "content": ":host {\n  display: inline-block;\n}\n\n.pagination {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-025);\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.pagination--inactive {\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n.button {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: var(--dimension-size-300);\n  height: var(--dimension-size-300);\n  padding: 0 var(--dimension-space-050);\n  background: none;\n  border: none;\n  border-radius: var(--dimension-radius-075);\n  cursor: pointer;\n  color: var(--color-foreground-secondary);\n  transition: background-color var(--effect-motion-short-2), color var(--effect-motion-short-2);\n}\n\n.button:hover:not(:disabled) {\n  background-color: var(--color-interaction-hover);\n  color: var(--color-foreground-primary);\n}\n\n.button:active:not(:disabled) {\n  background-color: var(--color-interaction-pressed);\n}\n\n.button:disabled {\n  cursor: not-allowed;\n  opacity: 0.35;\n}\n\n.button:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-stroke-width-015);\n}\n\n.button--active {\n  background-color: var(--color-interaction-hover);\n  color: var(--color-foreground-primary);\n}\n\n.button--nav {\n  font-size: 18px;\n}\n\n.ellipsis {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: var(--dimension-size-300);\n  height: var(--dimension-size-300);\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Pagination/Pagination.tsx",
-      "content": "import React, { forwardRef, useMemo } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Text } from '@/components/Text';\nimport styles from './Pagination.module.css';\n\nexport interface PaginationProps {\n  /** Current page (1-based). */\n  page: number;\n  /** Total number of pages. */\n  totalPages: number;\n  /** Called when page changes. */\n  onPageChange: (page: number) => void;\n  /** Max page buttons visible (excluding prev/next). */\n  siblingCount?: number;\n  /** Disables all interaction. */\n  inactive?: boolean;\n  className?: string;\n}\n\nfunction buildRange(start: number, end: number): (number | 'ellipsis')[] {\n  const items: (number | 'ellipsis')[] = [];\n  for (let i = start; i <= end; i++) items.push(i);\n  return items;\n}\n\nfunction buildPages(page: number, totalPages: number, siblings: number): (number | 'ellipsis')[] {\n  const totalSlots = siblings * 2 + 5; // siblings + boundaries + ellipses + current\n\n  if (totalPages <= totalSlots) return buildRange(1, totalPages);\n\n  const leftSibling = Math.max(page - siblings, 2);\n  const rightSibling = Math.min(page + siblings, totalPages - 1);\n\n  const showLeftEllipsis = leftSibling > 2;\n  const showRightEllipsis = rightSibling < totalPages - 1;\n\n  if (!showLeftEllipsis && showRightEllipsis) {\n    const left = buildRange(1, siblings * 2 + 3);\n    return [...left, 'ellipsis', totalPages];\n  }\n\n  if (showLeftEllipsis && !showRightEllipsis) {\n    const right = buildRange(totalPages - (siblings * 2 + 2), totalPages);\n    return [1, 'ellipsis', ...right];\n  }\n\n  return [1, 'ellipsis', ...buildRange(leftSibling, rightSibling), 'ellipsis', totalPages];\n}\n\nexport const Pagination = forwardRef<HTMLElement, PaginationProps>(\n  ({ page, totalPages, onPageChange, siblingCount = 1, inactive = false, className }, ref) => {\n    const pages = useMemo(() => buildPages(page, totalPages, siblingCount), [page, totalPages, siblingCount]);\n\n    if (totalPages <= 1) return null;\n\n    return (\n      <nav ref={ref} aria-label=\"Pagination\" className={cn(styles.pagination, inactive && styles.inactive, className)}>\n        <button\n          type=\"button\"\n          className={cn(styles.button, styles.nav)}\n          disabled={page <= 1 || inactive}\n          onClick={() => onPageChange(page - 1)}\n          aria-label=\"Previous page\"\n        >\n          <Text variant=\"text-body-small\" as=\"span\" color=\"inherit\">&#x2039;</Text>\n        </button>\n\n        {pages.map((item, i) =>\n          item === 'ellipsis' ? (\n            <span key={`e${i}`} className={styles.ellipsis}>\n              <Text variant=\"text-body-small\" as=\"span\" color=\"tertiary\">&hellip;</Text>\n            </span>\n          ) : (\n            <button\n              key={item}\n              type=\"button\"\n              className={cn(styles.button, item === page && styles.active)}\n              onClick={() => onPageChange(item)}\n              aria-current={item === page ? 'page' : undefined}\n              disabled={inactive}\n            >\n              <Text variant={item === page ? 'text-body-small-emphasis' : 'text-body-small'} as=\"span\" color=\"inherit\">\n                {item}\n              </Text>\n            </button>\n          )\n        )}\n\n        <button\n          type=\"button\"\n          className={cn(styles.button, styles.nav)}\n          disabled={page >= totalPages || inactive}\n          onClick={() => onPageChange(page + 1)}\n          aria-label=\"Next page\"\n        >\n          <Text variant=\"text-body-small\" as=\"span\" color=\"inherit\">&#x203A;</Text>\n        </button>\n      </nav>\n    );\n  }\n);\n\nPagination.displayName = 'Pagination';\n",
+      "path": "src/wc/components/Pagination/Pagination.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nfunction buildRange(start: number, end: number): (number | 'ellipsis')[] {\n  const items: (number | 'ellipsis')[] = [];\n  for (let i = start; i <= end; i++) items.push(i);\n  return items;\n}\n\nfunction buildPages(page: number, totalPages: number, siblings: number): (number | 'ellipsis')[] {\n  const totalSlots = siblings * 2 + 5;\n  if (totalPages <= totalSlots) return buildRange(1, totalPages);\n\n  const leftSibling = Math.max(page - siblings, 2);\n  const rightSibling = Math.min(page + siblings, totalPages - 1);\n  const showLeft = leftSibling > 2;\n  const showRight = rightSibling < totalPages - 1;\n\n  if (!showLeft && showRight) return [...buildRange(1, siblings * 2 + 3), 'ellipsis', totalPages];\n  if (showLeft && !showRight) return [1, 'ellipsis', ...buildRange(totalPages - (siblings * 2 + 2), totalPages)];\n  return [1, 'ellipsis', ...buildRange(leftSibling, rightSibling), 'ellipsis', totalPages];\n}\n\n@Component({\n  tag: 'ds-pagination',\n  styleUrl: 'Pagination.css',\n  scoped: true,\n})\nexport class Pagination {\n  @Prop({ mutable: true }) page: number = 1;\n  @Prop() totalPages: number = 1;\n  @Prop() siblingCount: number = 1;\n  @Prop() inactive: boolean = false;\n\n  @Event() dsPageChange!: EventEmitter<number>;\n\n  private go(p: number) {\n    if (this.inactive) return;\n    this.page = p;\n    this.dsPageChange.emit(p);\n  }\n\n  render() {\n    if (this.totalPages <= 1) return <Host style={{ display: 'none' }} />;\n\n    const pages = buildPages(this.page, this.totalPages, this.siblingCount);\n\n    return (\n      <Host>\n        <nav\n          class={{ pagination: true, 'pagination--inactive': this.inactive }}\n          aria-label=\"Pagination\"\n        >\n          <button\n            type=\"button\"\n            class=\"button button--nav\"\n            disabled={this.page <= 1 || this.inactive}\n            onClick={() => this.go(this.page - 1)}\n            aria-label=\"Previous page\"\n          >\n            &#x2039;\n          </button>\n\n          {pages.map((item, i) =>\n            item === 'ellipsis' ? (\n              <span key={`e${i}`} class=\"ellipsis\">\n                <span class=\"text-body-small\" style={{ color: 'var(--color-foreground-tertiary)' }}>…</span>\n              </span>\n            ) : (\n              <button\n                key={item}\n                type=\"button\"\n                class={{ button: true, 'button--active': item === this.page }}\n                onClick={() => this.go(item)}\n                aria-current={item === this.page ? 'page' : undefined}\n                disabled={this.inactive}\n              >\n                <span class={item === this.page ? 'text-body-small-emphasis' : 'text-body-small'}>\n                  {item}\n                </span>\n              </button>\n            )\n          )}\n\n          <button\n            type=\"button\"\n            class=\"button button--nav\"\n            disabled={this.page >= this.totalPages || this.inactive}\n            onClick={() => this.go(this.page + 1)}\n            aria-label=\"Next page\"\n          >\n            &#x203A;\n          </button>\n        </nav>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -28,9 +28,8 @@ jobs:
       - name: Verify dist artifacts
         run: |
           for f in \
-            dist/index.js \
-            dist/index.css \
-            dist/index.d.ts; do
+            dist/components/index.js \
+            dist/components/index.d.ts; do
             if [ ! -f "$f" ]; then
               echo "❌ Missing expected output: $f"
               exit 1

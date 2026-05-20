@@ -5,21 +5,23 @@
   "description": "SVG spinner that scales proportionally. Uses currentColor for theming.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/loader",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
     "consumption": {
-      "install": "npm install @compomo/ui",
-      "import": "import { Loader } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { LoaderProps } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-loader.js';",
+      "usage": {
+        "html": "<ds-loader></ds-loader>",
+        "react": "<ds-loader></ds-loader>",
+        "angular": "<ds-loader></ds-loader>"
+      },
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -36,18 +38,18 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui"
+    "@ds-mo/ui"
   ],
   "registryDependencies": [],
   "files": [
     {
-      "path": "src/components/Loader/Loader.module.css",
-      "content": ".loader {\n  flex-shrink: 0;\n  animation: spin 0.75s linear infinite;\n}\n\n.status {\n  display: inline-flex;\n  align-items: center;\n}\n\n.visuallyHidden {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}\n",
+      "path": "src/wc/components/Loader/Loader.css",
+      "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  flex-shrink: 0;\n}\n\n.spinner {\n  flex-shrink: 0;\n  animation: spin 0.75s linear infinite;\n}\n\n.status {\n  display: inline-flex;\n  align-items: center;\n}\n\n.visually-hidden {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Loader/Loader.tsx",
-      "content": "import React from 'react';\nimport styles from './Loader.module.css';\n\nexport interface LoaderProps {\n  /**\n   * Render size in px. Designed at 16px (r=6, strokeWidth=1).\n   * Stroke weight scales proportionally with size — same behaviour as icons.\n   * Defaults to 20.\n   */\n  size?: number;\n  className?: string;\n  /**\n   * Accessible label announced by assistive tech when the Loader is used\n   * standalone. When provided, the spinner is wrapped in a live region\n   * (`role=\"status\"`, `aria-live=\"polite\"`) and the label is rendered\n   * visually-hidden so screen readers announce it on mount.\n   *\n   * Omit when the Loader is rendered inside a host that already conveys\n   * busy state (e.g. a Button with `aria-busy`) — the spinner stays\n   * `aria-hidden` to avoid double-announcing.\n   */\n  label?: string;\n}\n\n/**\n * Placeholder spinner component. Will be replaced with a full Loader\n * component once motion/brand specs are finalised.\n *\n * Designed at 16×16 viewBox so it matches the icon grid:\n *   - r=5  → 10px circle in a 16px box (3px optical padding each side)\n *   - strokeWidth=1 at native size → scales to 1.25px at 20px, 1.5px at 24px\n */\nexport const Loader = ({ size = 20, className, label }: LoaderProps) => {\n  const svg = (\n    <svg\n      width={size}\n      height={size}\n      viewBox=\"0 0 16 16\"\n      fill=\"none\"\n      className={`${styles.loader}${className ? ` ${className}` : ''}`}\n      aria-hidden=\"true\"\n    >\n      <circle\n        cx=\"8\"\n        cy=\"8\"\n        r=\"5\"\n        stroke=\"currentColor\"\n        strokeWidth=\"1\"\n        strokeLinecap=\"round\"\n        strokeDasharray=\"23.6 7.9\"\n      />\n    </svg>\n  );\n\n  if (label === undefined) return svg;\n\n  return (\n    <span role=\"status\" aria-live=\"polite\" className={styles.status}>\n      {svg}\n      <span className={styles.visuallyHidden}>{label}</span>\n    </span>\n  );\n};\n\nLoader.displayName = 'Loader';\n",
+      "path": "src/wc/components/Loader/Loader.tsx",
+      "content": "import { Component, Prop, h } from '@stencil/core';\n\n@Component({\n  tag: 'ds-loader',\n  styleUrl: 'Loader.css',\n  shadow: true,\n})\nexport class Loader {\n  /** Render size in px. Designed on a 16×16 viewBox; stroke scales proportionally. */\n  @Prop() size: number = 20;\n  /**\n   * Accessible label for standalone usage. Wraps the spinner in a live region\n   * and renders the label visually-hidden. Omit when the host element already\n   * conveys busy state via aria-busy.\n   */\n  @Prop() label: string | undefined;\n\n  render() {\n    const px = `${this.size}px`;\n    const svg = (\n      <svg\n        style={{ width: px, height: px }}\n        viewBox=\"0 0 16 16\"\n        fill=\"none\"\n        class=\"spinner\"\n        aria-hidden=\"true\"\n      >\n        <circle\n          cx=\"8\" cy=\"8\" r=\"5\"\n          stroke=\"currentColor\"\n          stroke-width=\"1\"\n          stroke-linecap=\"round\"\n          stroke-dasharray=\"23.6 7.9\"\n        />\n      </svg>\n    );\n\n    if (!this.label) return svg;\n\n    return (\n      <span role=\"status\" aria-live=\"polite\" class=\"status\">\n        {svg}\n        <span class=\"visually-hidden\">{this.label}</span>\n      </span>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

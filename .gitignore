@@ -16,6 +16,7 @@ dist
 
 # Build
 *.tsbuildinfo
+.stencil/
 
 # Storybook
 storybook-static
