@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/zainadeel/compomo/compare/v0.4.0...v0.4.1) (2026-05-20)
+
+
+### Fixed
+
+* **storybook:** prevent Vite from tree-shaking Stencil component registrations ([#60](https://github.com/zainadeel/compomo/issues/60)) ([ca3e572](https://github.com/zainadeel/compomo/commit/ca3e5727a1cd291e83e7f36b6562d68ba163d425))
+
 ## [0.4.0](https://github.com/zainadeel/compomo/compare/v0.3.0...v0.4.0) (2026-05-20)
 
 
