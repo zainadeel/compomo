@@ -5,28 +5,30 @@
   "description": "Range input with visual fill track, label, and current value display.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/slider",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/slider",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Slider } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { SliderProps } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-slider.js';",
+      "usage": {
+        "html": "<ds-slider></ds-slider>",
+        "react": "<ds-slider></ds-slider>",
+        "angular": "<ds-slider></ds-slider>"
+      },
       "internalDependencies": [
         {
           "component": "Text",
-          "note": "Used internally by Slider. No action needed — it's bundled in @compomo/ui."
+          "note": "Used internally by Slider. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -66,7 +68,7 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
@@ -74,13 +76,13 @@
   ],
   "files": [
     {
-      "path": "src/components/Slider/Slider.module.css",
-      "content": ".field { display: flex; flex-direction: column; gap: var(--dimension-space-050); width: 100%; }\n.labelRow { display: flex; align-items: baseline; justify-content: space-between; gap: var(--dimension-space-050); }\n\n.track {\n  position: relative; width: 100%; height: var(--dimension-size-400);\n  padding: 0 var(--dimension-space-025); border-radius: var(--dimension-radius-075); cursor: pointer; -webkit-user-select: none;\n  user-select: none;\n}\n\n.trackInner {\n  position: absolute; inset: 0; border-radius: inherit;\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-elevation-depressed-sm); pointer-events: none; z-index: 1;\n}\n\n.fillTrack { position: absolute; top: var(--dimension-space-025); right: 0; bottom: var(--dimension-space-025); left: 0; z-index: 1; }\n\n.fill {\n  position: absolute; left: var(--dimension-space-025); top: 0; bottom: 0;\n  width: max(0px, calc((var(--slider-pct, 0) / 100) * (100% - var(--dimension-size-150)) - var(--dimension-space-025)));\n  background-color: var(--color-background-bold-brand);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  border-radius: var(--dimension-radius-050);\n  transition: opacity var(--effect-motion-short-2);\n}\n\n.trackAtMin .fill { opacity: 0; }\n\n.thumb {\n  position: absolute; top: 0; bottom: 0;\n  left: calc((var(--slider-pct, 0) / 100) * (100% - var(--dimension-size-150)));\n  width: var(--dimension-size-150); padding: var(--dimension-space-025);\n  box-sizing: border-box; pointer-events: none; z-index: 2;\n}\n\n.thumb::before {\n  content: ''; position: absolute; inset: var(--dimension-space-025);\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  border-radius: var(--dimension-radius-050);\n}\n\n.thumb::after {\n  content: ''; position: absolute; inset: var(--dimension-space-025);\n  background-color: transparent; border-radius: var(--dimension-radius-050);\n  transition: var(--effect-transition-interaction-background-instant);\n}\n\n.track:hover:not(.trackInactive) .thumb::after { background-color: var(--color-interaction-hover); }\n.track:active:not(.trackInactive) .thumb::after { background-color: var(--color-interaction-pressed); }\n\n.trackInactive { cursor: not-allowed; opacity: 0.5; }\n\n.input {\n  position: absolute; inset: 0; width: 100%; height: 100%;\n  margin: 0; padding: 0; opacity: 0; cursor: pointer;\n  -webkit-appearance: none; appearance: none; outline: none; z-index: 3;\n}\n\n.input:disabled { cursor: not-allowed; }\n.input:hover { cursor: grab; }\n.input:active { cursor: grabbing; }\n",
+      "path": "src/wc/components/Slider/Slider.css",
+      "content": ".field {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  width: 100%;\n}\n\n.label-row {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: var(--dimension-space-050);\n}\n\n/* ── Track ───────────────────────────────────────────────────────────────── */\n\n.track {\n  position: relative;\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0 var(--dimension-space-025);\n  border-radius: var(--dimension-radius-075);\n  cursor: pointer;\n  user-select: none;\n  box-sizing: border-box;\n}\n\n.track-inner {\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-elevation-depressed-sm);\n  pointer-events: none;\n  z-index: 1;\n}\n\n/* ── Fill ────────────────────────────────────────────────────────────────── */\n\n.fill-track {\n  position: absolute;\n  top: var(--dimension-space-025);\n  right: 0;\n  bottom: var(--dimension-space-025);\n  left: 0;\n  z-index: 1;\n  pointer-events: none;\n}\n\n.fill {\n  position: absolute;\n  left: var(--dimension-space-025);\n  top: 0;\n  bottom: 0;\n  width: max(0px, calc((var(--slider-pct, 0) / 100) * (100% - var(--dimension-size-150)) - var(--dimension-space-025)));\n  background-color: var(--color-background-bold-brand);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  border-radius: var(--dimension-radius-050);\n  transition: opacity var(--effect-motion-short-2);\n  pointer-events: none;\n}\n\n.track--at-min .fill {\n  opacity: 0;\n}\n\n/* ── Thumb ───────────────────────────────────────────────────────────────── */\n\n.thumb {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: calc((var(--slider-pct, 0) / 100) * (100% - var(--dimension-size-150)));\n  width: var(--dimension-size-150);\n  padding: var(--dimension-space-025);\n  box-sizing: border-box;\n  pointer-events: none;\n  z-index: 2;\n}\n\n.thumb::before {\n  content: '';\n  position: absolute;\n  inset: var(--dimension-space-025);\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  border-radius: var(--dimension-radius-050);\n}\n\n.thumb::after {\n  content: '';\n  position: absolute;\n  inset: var(--dimension-space-025);\n  background-color: transparent;\n  border-radius: var(--dimension-radius-050);\n  transition: background-color 100ms ease;\n}\n\n.track:hover:not(.track--inactive) .thumb::after {\n  background-color: var(--color-interaction-hover);\n}\n\n.track:active:not(.track--inactive) .thumb::after {\n  background-color: var(--color-interaction-pressed);\n}\n\n/* ── Native range input (invisible overlay) ──────────────────────────────── */\n\n.range-input {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n  opacity: 0;\n  cursor: pointer;\n  -webkit-appearance: none;\n  appearance: none;\n  outline: none;\n  z-index: 3;\n}\n\n.range-input:disabled {\n  cursor: not-allowed;\n}\n\n.range-input:hover {\n  cursor: grab;\n}\n\n.range-input:active {\n  cursor: grabbing;\n}\n\n.track--inactive {\n  cursor: not-allowed;\n  opacity: 0.5;\n}\n\n.track:focus-within .track-inner {\n  box-shadow: var(--effect-elevation-depressed-sm), inset 0 0 0 1.25px var(--color-interaction-focus);\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Slider/Slider.tsx",
-      "content": "import React, { forwardRef, useCallback, useEffect, useId, useRef, useState } from 'react';\nimport { cn } from '@/utils/cn';\nimport { Text } from '@/components/Text';\nimport styles from './Slider.module.css';\n\nexport interface SliderProps {\n  value: number;\n  onChange: (value: number) => void;\n  min?: number;\n  max?: number;\n  step?: number;\n  label: string;\n  id?: string;\n  inactive?: boolean;\n  className?: string;\n}\n\nexport const Slider = forwardRef<HTMLDivElement, SliderProps>(\n  ({ value, onChange, min = 0, max = 100, step = 1, label, id: idProp, inactive = false, className }, ref) => {\n    const generatedId = useId();\n    const id = idProp ?? generatedId;\n    const containerRef = useRef<HTMLDivElement>(null);\n    const [pct, setPct] = useState(() => {\n      const range = max - min;\n      return range === 0 ? 0 : Math.round(((value - min) / range) * 100);\n    });\n\n    const sync = useCallback(() => {\n      const range = max - min;\n      setPct(range === 0 ? 0 : Math.round(((value - min) / range) * 100));\n    }, [value, min, max]);\n\n    useEffect(() => { sync(); }, [sync]);\n\n    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {\n      onChange(Number(e.target.value));\n    };\n\n    return (\n      <div ref={ref} className={cn(styles.field, className)}>\n        <div className={styles.labelRow}>\n          <Text variant=\"text-body-small-emphasis\" as=\"label\" htmlFor={id}>{label}</Text>\n          <Text variant=\"text-body-small-emphasis\" as=\"span\">{value}</Text>\n        </div>\n        <div\n          ref={containerRef}\n          className={cn(styles.track, inactive && styles.trackInactive, pct === 0 && styles.trackAtMin)}\n          style={{ '--slider-pct': pct } as React.CSSProperties}\n        >\n          <div className={styles.trackInner}>\n            <div className={styles.fillTrack}><div className={styles.fill} /></div>\n            <div className={styles.thumb} />\n          </div>\n          <input\n            type=\"range\"\n            id={id}\n            min={min}\n            max={max}\n            step={step}\n            value={value}\n            onChange={handleInput}\n            disabled={inactive}\n            className={styles.input}\n            aria-valuemin={min}\n            aria-valuemax={max}\n            aria-valuenow={value}\n          />\n        </div>\n      </div>\n    );\n  }\n);\n\nSlider.displayName = 'Slider';\n",
+      "path": "src/wc/components/Slider/Slider.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-slider',\n  styleUrl: 'Slider.css',\n  scoped: true,\n})\nexport class Slider {\n  private generatedId = `ds-slider-${++idCounter}`;\n\n  @Prop() value: number = 0;\n  @Prop() min: number = 0;\n  @Prop() max: number = 100;\n  @Prop() step: number = 1;\n  @Prop() label!: string;\n  @Prop() inactive: boolean = false;\n  @Prop() valueText: string | undefined;\n  /** Associates with an external <label>. Defaults to an auto-generated ID. */\n  @Prop() inputId: string | undefined;\n\n  @Event() dsChange!: EventEmitter<number>;\n\n  private handleInput = (e: Event) => {\n    this.dsChange.emit(Number((e.target as HTMLInputElement).value));\n  };\n\n  private get pct() {\n    const range = this.max - this.min;\n    return range === 0 ? 0 : Math.round(((this.value - this.min) / range) * 100);\n  }\n\n  render() {\n    const finalId = this.inputId ?? this.generatedId;\n    const pct = this.pct;\n\n    return (\n      <Host class=\"field\">\n        <div class=\"label-row\">\n          <label class=\"text-body-small-emphasis\" htmlFor={finalId}>{this.label}</label>\n          <span class=\"text-body-small-emphasis\">{this.value}</span>\n        </div>\n        <div\n          class={{ track: true, 'track--inactive': this.inactive, 'track--at-min': pct === 0 }}\n          style={{ '--slider-pct': String(pct) } as Record<string, string>}\n        >\n          <div class=\"track-inner\">\n            <div class=\"fill-track\"><div class=\"fill\" /></div>\n            <div class=\"thumb\" />\n          </div>\n          <input\n            type=\"range\"\n            id={finalId}\n            min={this.min}\n            max={this.max}\n            step={this.step}\n            value={this.value}\n            disabled={this.inactive}\n            class=\"range-input\"\n            aria-valuetext={this.valueText}\n            onInput={this.handleInput}\n          />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

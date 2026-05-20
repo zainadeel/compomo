@@ -28,11 +28,12 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const SRC = path.join(ROOT, 'src', 'components');
+const SRC    = path.join(ROOT, 'src', 'components');    // legacy React source
+const WC_SRC = path.join(ROOT, 'src', 'wc', 'components'); // Stencil WC source
 const OUT = path.join(ROOT, 'public', 'r');
 
-const PKG = '@compomo/ui';
-const STORYBOOK_URL = 'https://zainadeel.github.io/CompoMo/';
+const PKG = '@ds-mo/ui';
+const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
 
 // ─── Component catalog ─────────────────────────────────────────────────────────
 
@@ -645,14 +646,23 @@ function toKebab(str) {
 }
 
 function readComponentFiles(dirName, explicitFiles) {
-  const dir = path.join(SRC, dirName);
+  // Prefer the Stencil WC source; fall back to the legacy React source.
+  const wcDir   = path.join(WC_SRC, dirName);
+  const legDir  = path.join(SRC, dirName);
+  const isWC    = fs.existsSync(wcDir);
+  const dir     = isWC ? wcDir : legDir;
+  const srcRel  = isWC ? `src/wc/components/${dirName}` : `src/components/${dirName}`;
+
   if (!fs.existsSync(dir)) {
     console.warn(`  ⚠ Directory not found: ${dir}`);
     return [];
   }
 
-  const filenames = explicitFiles ?? fs.readdirSync(dir).filter(f =>
+  // WC source uses auto-scan only — explicit file lists are legacy React paths.
+  const useExplicit = !isWC && explicitFiles;
+  const filenames = useExplicit ? explicitFiles : fs.readdirSync(dir).filter(f =>
     (f.endsWith('.tsx') || f.endsWith('.ts') || f.endsWith('.css')) &&
+    !f.endsWith('.stories.ts') &&
     !f.endsWith('.stories.tsx') &&
     f !== 'index.ts'
   );
@@ -661,14 +671,14 @@ function readComponentFiles(dirName, explicitFiles) {
     const filePath = path.join(dir, filename);
     const content = fs.readFileSync(filePath, 'utf-8');
     return {
-      path: `src/components/${dirName}/${filename}`,
+      path: `${srcRel}/${filename}`,
       content,
       type: 'registry:ui',
     };
   });
 }
 
-/** Build the consumption guide for a component. */
+/** Build the consumption guide for a web-component (Stencil) component. */
 function buildConsumptionGuide(config) {
   const guide = {};
 
@@ -678,40 +688,62 @@ function buildConsumptionGuide(config) {
   if (config.usesIcons) packages.push('@ds-mo/icons');
   guide.install = `npm install ${packages.join(' ')}`;
 
-  // 2. CSS setup
+  // 2. CSS setup — token CSS vars must be imported once at app root
   if (config.usesTokens) {
-    guide.cssSetup = "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.";
+    guide.cssSetup = [
+      "Import at your app entry point:",
+      "  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)",
+      "  import '@ds-mo/ui/css';       // Component-level CSS",
+      "For dark mode: set data-theme=\"dark\" on <html>.",
+    ].join('\n');
   }
 
-  // 3. Component import
-  const namedExports = config.exports.join(', ');
-  guide.import = `import { ${namedExports} } from '${PKG}';`;
+  // 3. Register custom elements (once at app boot, framework-agnostic)
+  guide.register = [
+    "// Register all custom elements once at your app entry point:",
+    "import { defineCustomElements } from '@ds-mo/ui/loader';",
+    "defineCustomElements();",
+    "",
+    "// Or import individual components for tree-shaking:",
+    `import '@ds-mo/ui/dist/components/ds-${toKebab(config.title)}.js';`,
+  ].join('\n');
 
-  // 4. CSS import
-  guide.cssImport = `import '${PKG}/css';`;
+  // 4. Usage pattern (HTML / JSX / Angular template)
+  const tag = config.tag ?? `ds-${toKebab(config.title)}`;
+  guide.usage = {
+    html: `<${tag}></${tag}>`,
+    react: `<${tag}></${tag}>`,
+    angular: `<${tag}></${tag}>`,
+  };
 
-  // 5. Type imports
-  if (config.types?.length) {
-    guide.typeImport = `import type { ${config.types.join(', ')} } from '${PKG}';`;
+  // 5. Events — all Stencil events are CustomEvents on the element
+  if (config.events?.length) {
+    guide.events = config.events.map(e => ({
+      name: e,
+      listen: `element.addEventListener('${e}', handler)`,
+      reactProp: `on${e.charAt(0).toUpperCase() + e.slice(1)}={handler}`,
+      angularBinding: `(${e})="handler($event)"`,
+    }));
   }
 
-  // 6. Icon imports (if applicable)
-  if (config.usesIcons) {
-    guide.iconImport = "import { IconName } from '@ds-mo/icons';  // Tree-shakeable, import only what you need";
+  // 6. JS-only props (complex objects/arrays — cannot be set as HTML attributes)
+  if (config.jsPropNote) {
+    guide.jsPropNote = config.jsPropNote;
   }
 
-  // 7. Internal dependencies — what other CompoMo components this uses
+  // 7. Internal dependencies
   if (config.internalDeps?.length) {
     guide.internalDependencies = config.internalDeps.map(dep => ({
       component: dep,
-      note: `Used internally by ${config.title}. No action needed — it's bundled in ${PKG}.`,
+      note: `Used internally by ${config.title}. Bundled in ${PKG}.`,
     }));
   }
 
   // 8. Peer dependency summary
   guide.peerDependencies = {
-    required: ['react >=17', 'react-dom >=17', '@ds-mo/tokens >=0.1.0'],
-    optional: config.usesIcons ? ['@ds-mo/icons >=0.1.0 (for icon props)'] : [],
+    required: ['@ds-mo/tokens >=0.3.0'],
+    optional: config.usesIcons ? ['@ds-mo/icons >=0.1.0'] : [],
+    frameworks: 'None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support.',
   };
 
   // 9. Usage notes
@@ -791,7 +823,7 @@ for (const [dirName, config] of COMPONENTS) {
     },
     dependencies: [
       PKG,
-      ...(config.usesTokens ? ['@ds-mo/tokens'] : []),
+      '@ds-mo/tokens',
       ...(config.usesIcons ? ['@ds-mo/icons'] : []),
     ],
     registryDependencies: (config.internalDeps ?? []).map(d => toKebab(d)),
@@ -804,15 +836,17 @@ const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
   name: 'compomo',
   homepage: STORYBOOK_URL,
-  description: `CompoMo (@compomo/ui) — React component library from the ds-mo design system. Distributed as an npm package, not copy-paste. Components require @ds-mo/tokens for CSS custom properties and optionally @ds-mo/icons for icon props.`,
+  description: `CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Works with React 17+, Angular 12+, and plain HTML. Distributed as an npm package; not copy-paste.`,
   meta: {
     distribution: 'npm',
     install: `npm install ${PKG} @ds-mo/tokens`,
-    cssSetup: "import '@ds-mo/tokens/css';  // Provides design token CSS custom properties\nimport '@compomo/ui/css';     // Provides component styles",
+    register: "import { defineCustomElements } from '@ds-mo/ui/loader'; defineCustomElements();",
+    cssSetup: "import '@ds-mo/tokens/css';  // Design token CSS custom properties\nimport '@ds-mo/ui/css';       // Component styles",
     themeSetup: "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     peerDependencies: {
-      required: ['react >=17', 'react-dom >=17', '@ds-mo/tokens >=0.1.0'],
+      required: ['@ds-mo/tokens >=0.3.0'],
       optional: ['@ds-mo/icons >=0.1.0'],
+      frameworks: 'None required — works with any framework that supports Custom Elements.',
     },
   },
   items: registryItems,

@@ -5,22 +5,24 @@
   "description": "Switch control with on/off state and accessible role=\"switch\".",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/toggle",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Toggle } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { ToggleProps } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-toggle.js';",
+      "usage": {
+        "html": "<ds-toggle></ds-toggle>",
+        "react": "<ds-toggle></ds-toggle>",
+        "angular": "<ds-toggle></ds-toggle>"
+      },
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -46,19 +48,19 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [],
   "files": [
     {
-      "path": "src/components/Toggle/Toggle.module.css",
-      "content": ".toggle {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-start;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-250);\n  padding: 0 var(--dimension-space-025);\n  border: none;\n  border-radius: var(--dimension-radius-half);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  outline: none;\n  flex-shrink: 0;\n  background-color: var(--color-background-medium-neutral);\n  box-shadow: var(--effect-highlight-depressed-sm);\n  transition: background-color var(--effect-motion-short-2);\n}\n\n.toggle::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  box-shadow: var(--effect-shadow-depressed-sm);\n  pointer-events: none;\n}\n\n.toggle:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-space-025);\n}\n\n.checked {\n  background-color: var(--color-foreground-bold-brand) !important;\n}\n\n.thumb {\n  position: relative;\n  flex-shrink: 0;\n  width: var(--dimension-size-200);\n  height: var(--dimension-size-200);\n  background-color: var(--color-background-primary);\n  border-radius: var(--dimension-radius-half);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  transition: transform var(--effect-motion-short-2);\n  transform: translateX(0);\n  z-index: 1;\n}\n\n.thumb::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background-color: transparent;\n  border-radius: inherit;\n  transition: var(--effect-transition-interaction-background-instant);\n  pointer-events: none;\n}\n\n.toggle:hover:not(.inactive) .thumb::after {\n  background-color: var(--color-interaction-hover);\n}\n\n.toggle:active:not(.inactive) .thumb::after {\n  background-color: var(--color-interaction-pressed);\n}\n\n.checked .thumb {\n  transform: translateX(var(--dimension-offset-150));\n}\n\n.toggle:active:not(.inactive) .thumb {\n  transform: translateX(0) scale(var(--dimension-scale-subtle)) !important;\n  transition: transform var(--effect-motion-instant);\n}\n\n.checked.toggle:active:not(.inactive) .thumb {\n  transform: translateX(var(--dimension-offset-150)) scale(var(--dimension-scale-subtle)) !important;\n  transition: transform var(--effect-motion-instant);\n}\n\n.inactive {\n  cursor: not-allowed;\n  opacity: 0.5;\n}\n",
+      "path": "src/wc/components/Toggle/Toggle.css",
+      "content": ":host {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-start;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-250);\n  padding: 0 var(--dimension-space-025);\n  border: none;\n  border-radius: var(--dimension-radius-half);\n  cursor: pointer;\n  user-select: none;\n  outline: none;\n  flex-shrink: 0;\n  background-color: var(--color-background-medium-neutral);\n  box-shadow: var(--effect-highlight-depressed-sm);\n  transition: background-color var(--effect-motion-short-2);\n  box-sizing: border-box;\n}\n\n:host::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  box-shadow: var(--effect-shadow-depressed-sm);\n  pointer-events: none;\n}\n\n:host(:focus-visible) {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-space-025);\n}\n\n:host(.checked) {\n  background-color: var(--color-foreground-bold-brand);\n}\n\n:host(.inactive) {\n  cursor: not-allowed;\n  opacity: 0.5;\n}\n\n/* ── Thumb ───────────────────────────────────────────────────────────────── */\n\n.thumb {\n  position: relative;\n  flex-shrink: 0;\n  width: var(--dimension-size-200);\n  height: var(--dimension-size-200);\n  background-color: var(--color-background-primary);\n  border-radius: var(--dimension-radius-half);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  transition: transform var(--effect-motion-short-2);\n  transform: translateX(0);\n  z-index: 1;\n}\n\n.thumb::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background-color: transparent;\n  border-radius: inherit;\n  transition: background-color var(--effect-motion-instant, 100ms);\n  pointer-events: none;\n}\n\n:host(:hover:not(.inactive)) .thumb::after {\n  background-color: var(--color-interaction-hover);\n}\n\n:host(:active:not(.inactive)) .thumb::after {\n  background-color: var(--color-interaction-pressed);\n}\n\n:host(.checked) .thumb {\n  transform: translateX(var(--dimension-offset-150));\n}\n\n:host(:active:not(.inactive)) .thumb {\n  transform: translateX(0) scale(var(--dimension-scale-subtle)) !important;\n  transition: transform var(--effect-motion-instant);\n}\n\n:host(.checked:active:not(.inactive)) .thumb {\n  transform: translateX(var(--dimension-offset-150)) scale(var(--dimension-scale-subtle)) !important;\n  transition: transform var(--effect-motion-instant);\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Toggle/Toggle.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport styles from './Toggle.module.css';\n\ninterface ToggleBaseProps {\n  checked?: boolean;\n  onChange?: (checked: boolean) => void;\n  inactive?: boolean;\n  className?: string;\n}\n\nexport type ToggleProps = ToggleBaseProps &\n  (\n    | { 'aria-label': string; 'aria-labelledby'?: never }\n    | { 'aria-label'?: never; 'aria-labelledby': string }\n  );\n\nexport const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(\n  (\n    {\n      checked = false,\n      onChange,\n      inactive = false,\n      className,\n      'aria-label': ariaLabel,\n      'aria-labelledby': ariaLabelledby,\n    },\n    ref,\n  ) => {\n    const handleClick = () => {\n      if (inactive) return;\n      onChange?.(!checked);\n    };\n\n    return (\n      <button\n        ref={ref}\n        type=\"button\"\n        role=\"switch\"\n        aria-checked={checked}\n        aria-label={ariaLabel}\n        aria-labelledby={ariaLabelledby}\n        disabled={inactive}\n        className={cn(styles.toggle, checked && styles.checked, inactive && styles.inactive, className)}\n        onClick={handleClick}\n      >\n        <span className={styles.thumb} />\n      </button>\n    );\n  },\n);\n\nToggle.displayName = 'Toggle';\n",
+      "path": "src/wc/components/Toggle/Toggle.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\n@Component({\n  tag: 'ds-toggle',\n  styleUrl: 'Toggle.css',\n  shadow: true,\n})\nexport class Toggle {\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() inactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private handleClick = () => {\n    if (this.inactive) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.inactive) return;\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  render() {\n    return (\n      <Host\n        role=\"switch\"\n        aria-checked={String(this.checked)}\n        aria-disabled={this.inactive || undefined}\n        tabIndex={this.inactive ? -1 : 0}\n        class={{ toggle: true, checked: this.checked, inactive: this.inactive }}\n        onClick={this.handleClick}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class=\"thumb\" />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

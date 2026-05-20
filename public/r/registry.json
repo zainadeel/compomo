@@ -1,22 +1,22 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "compomo",
-  "homepage": "https://zainadeel.github.io/CompoMo/",
-  "description": "CompoMo (@compomo/ui) — React component library from the ds-mo design system. Distributed as an npm package, not copy-paste. Components require @ds-mo/tokens for CSS custom properties and optionally @ds-mo/icons for icon props.",
+  "homepage": "https://zainadeel.github.io/compomo/",
+  "description": "CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Works with React 17+, Angular 12+, and plain HTML. Distributed as an npm package; not copy-paste.",
   "meta": {
     "distribution": "npm",
-    "install": "npm install @compomo/ui @ds-mo/tokens",
-    "cssSetup": "import '@ds-mo/tokens/css';  // Provides design token CSS custom properties\nimport '@compomo/ui/css';     // Provides component styles",
+    "install": "npm install @ds-mo/ui @ds-mo/tokens",
+    "register": "import { defineCustomElements } from '@ds-mo/ui/loader'; defineCustomElements();",
+    "cssSetup": "import '@ds-mo/tokens/css';  // Design token CSS custom properties\nimport '@ds-mo/ui/css';       // Component styles",
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "react >=17",
-        "react-dom >=17",
-        "@ds-mo/tokens >=0.1.0"
+        "@ds-mo/tokens >=0.3.0"
       ],
       "optional": [
         "@ds-mo/icons >=0.1.0"
-      ]
+      ],
+      "frameworks": "None required — works with any framework that supports Custom Elements."
     }
   },
   "items": [
@@ -26,9 +26,9 @@
       "description": "Typography primitive supporting all design-system text variants, colors, truncation, and wrapping.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/text",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/text",
         "exports": [
           "Text"
         ],
@@ -72,7 +72,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -83,9 +83,9 @@
       "description": "Foundational container with intent-based or background-based coloring, elevation, edges, radius, and interactive states.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/surface",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/surface",
         "exports": [
           "Surface"
         ],
@@ -133,7 +133,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -144,9 +144,9 @@
       "description": "Content container with header, body, and footer sections. Supports elevation and radius presets.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/card",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
         "exports": [
           "Card"
         ],
@@ -174,7 +174,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -187,9 +187,9 @@
       "description": "Primary action component with variants (primary/secondary), 8 semantic intents, 4 sizes, icon support, loading state, dropdown indicator, badge count, and elevation levels.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/button",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button",
         "exports": [
           "Button"
         ],
@@ -257,7 +257,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens",
         "@ds-mo/icons"
       ],
@@ -273,9 +273,9 @@
       "description": "Controlled toggle button with pressed state, icon and label support.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/toggle-button",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle-button",
         "exports": [
           "ToggleButton"
         ],
@@ -315,7 +315,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens",
         "@ds-mo/icons"
       ],
@@ -329,9 +329,9 @@
       "description": "Groups Button children with automatic dividers and shared elevation/rounding. Reads props from first child to drive group styling.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/button-group",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-group",
         "exports": [
           "ButtonGroup"
         ],
@@ -343,7 +343,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -356,9 +356,9 @@
       "description": "Groups ToggleButton children with dividers and shared chrome.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/toggle-button-group",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle-button-group",
         "exports": [
           "ToggleButtonGroup"
         ],
@@ -370,7 +370,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -383,9 +383,9 @@
       "description": "Semantic label with intent coloring, removable chip, pressable filter-chip mode, and icon support.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/tag",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tag",
         "exports": [
           "Tag"
         ],
@@ -441,7 +441,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens",
         "@ds-mo/icons"
       ],
@@ -455,9 +455,9 @@
       "description": "Compact count indicator with selection state.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/badge",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/badge",
         "exports": [
           "Badge"
         ],
@@ -473,7 +473,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -486,9 +486,9 @@
       "description": "SVG spinner that scales proportionally. Uses currentColor for theming.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/loader",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
         "exports": [
           "Loader"
         ],
@@ -500,7 +500,8 @@
         }
       },
       "dependencies": [
-        "@compomo/ui"
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
       ],
       "registryDependencies": []
     },
@@ -510,9 +511,9 @@
       "description": "Switch control with on/off state and accessible role=\"switch\".",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/toggle",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle",
         "exports": [
           "Toggle"
         ],
@@ -536,7 +537,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -547,9 +548,9 @@
       "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/checkbox",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
         "exports": [
           "Checkbox"
         ],
@@ -589,7 +590,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens",
         "@ds-mo/icons"
       ],
@@ -603,9 +604,9 @@
       "description": "Text input supporting text, email, tel, url, search, and password types. Search type includes auto clear button.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/input",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/input",
         "exports": [
           "Input"
         ],
@@ -641,7 +642,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -652,9 +653,9 @@
       "description": "Range input with visual fill track, label, and current value display.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/slider",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/slider",
         "exports": [
           "Slider"
         ],
@@ -690,7 +691,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -703,9 +704,9 @@
       "description": "Simple label wrapper that links to child input via htmlFor.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/field",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/field",
         "exports": [
           "Field"
         ],
@@ -725,7 +726,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -738,9 +739,9 @@
       "description": "Dropdown select using Menu internally. Supports placeholder, inactive state, and custom chevron icon.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/select",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select",
         "exports": [
           "Select"
         ],
@@ -772,7 +773,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -787,9 +788,9 @@
       "description": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/modal",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/modal",
         "exports": [
           "Modal"
         ],
@@ -825,7 +826,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -839,9 +840,9 @@
       "description": "Positioned dropdown menu with sections, item selection styles, toggle items, and destructive hold-to-confirm items.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/menu",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/menu",
         "exports": [
           "Menu",
           "MenuItem",
@@ -883,7 +884,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -898,9 +899,9 @@
       "description": "Positioned tooltip with portal rendering, delay, keyboard shortcut display, and viewport clamping.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/tooltip",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip",
         "exports": [
           "Tooltip"
         ],
@@ -932,7 +933,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -945,9 +946,9 @@
       "description": "Intent-colored message bar. Supports floating toast mode with auto-dismiss and fade-out animation.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/banner",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/banner",
         "exports": [
           "Banner"
         ],
@@ -979,7 +980,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -993,9 +994,9 @@
       "description": "Data table with CSS grid layout, sorting, pagination, loading skeleton, row selection, and custom cell rendering.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/table",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
         "exports": [
           "Table"
         ],
@@ -1043,7 +1044,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1058,9 +1059,9 @@
       "description": "Individual tab button with selected state and hover overlay.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/tab",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab",
         "exports": [
           "Tab"
         ],
@@ -1080,7 +1081,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1093,9 +1094,9 @@
       "description": "Centered placeholder for empty content, no results, or no access states.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/empty-state",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/empty-state",
         "exports": [
           "EmptyState"
         ],
@@ -1111,7 +1112,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1124,9 +1125,9 @@
       "description": "Decorative gradient overlay for scroll edges.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/fade",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/fade",
         "exports": [
           "Fade"
         ],
@@ -1146,7 +1147,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -1157,9 +1158,9 @@
       "description": "Custom scrollbar with draggable thumb, proportional sizing, and hover reveal.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/scrollbar",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/scrollbar",
         "exports": [
           "Scrollbar"
         ],
@@ -1183,7 +1184,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -1194,9 +1195,9 @@
       "description": "React error boundary with fallback UI and console logging.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/error-boundary",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/error-boundary",
         "exports": [
           "ErrorBoundary"
         ],
@@ -1212,7 +1213,8 @@
         }
       },
       "dependencies": [
-        "@compomo/ui"
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
       ],
       "registryDependencies": [
         "empty-state"
@@ -1224,9 +1226,9 @@
       "description": "Resizable navigation sidebar with drag handle, snap-to-collapse, mobile mode, and nested sections/items.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/sidebar",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/sidebar",
         "exports": [
           "Sidebar",
           "SidebarSection",
@@ -1264,7 +1266,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1278,9 +1280,9 @@
       "description": "App header bar with background variants.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/header",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/header",
         "exports": [
           "Header"
         ],
@@ -1296,7 +1298,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1309,9 +1311,9 @@
       "description": "Radio selection group with vertical/horizontal layout, per-option inactive, and keyboard navigation.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/radio",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio",
         "exports": [
           "RadioGroup",
           "RadioItem"
@@ -1344,7 +1346,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1357,9 +1359,9 @@
       "description": "Tab orchestrator that wraps Tab components with an animated sliding indicator and active state management.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/tab-group",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group",
         "exports": [
           "TabGroup"
         ],
@@ -1379,7 +1381,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1392,9 +1394,9 @@
       "description": "Collapsible section list with single or multiple expand mode, animated height transitions, and controlled/uncontrolled state.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/accordion",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/accordion",
         "exports": [
           "Accordion",
           "AccordionItem"
@@ -1419,7 +1421,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1432,9 +1434,9 @@
       "description": "Hierarchical navigation with link or button items, custom separator, and aria-current on the last item.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/breadcrumb",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/breadcrumb",
         "exports": [
           "Breadcrumb"
         ],
@@ -1450,7 +1452,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1463,9 +1465,9 @@
       "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/pagination",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
         "exports": [
           "Pagination"
         ],
@@ -1493,7 +1495,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
@@ -1506,9 +1508,9 @@
       "description": "Horizontal or vertical separator line using design tokens.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/divider",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/divider",
         "exports": [
           "Divider"
         ],
@@ -1520,7 +1522,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -1531,9 +1533,9 @@
       "description": "Loading placeholder with text, circular, and rectangular variants. Supports multi-line text and shimmer animation.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/skeleton",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/skeleton",
         "exports": [
           "Skeleton"
         ],
@@ -1561,7 +1563,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
@@ -1572,9 +1574,9 @@
       "description": "Imperative toast notification system. Use toast.success()/error()/warning()/info() to show toasts. Place <ToastContainer /> once at the app root.",
       "type": "registry:ui",
       "meta": {
-        "library": "@compomo/ui",
+        "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/toast",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toast",
         "exports": [
           "ToastContainer",
           "toast",
@@ -1588,7 +1590,7 @@
         }
       },
       "dependencies": [
-        "@compomo/ui",
+        "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
       "registryDependencies": [

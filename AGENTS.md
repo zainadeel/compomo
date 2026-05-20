@@ -8,11 +8,13 @@ Keep this file as the single source of truth for project conventions. Update it 
 
 ## What this project is
 
-CompoMo is an npm package (`@ds-mo/ui`) that ships a **React component library** styled with TokoMo design tokens. It provides:
+CompoMo is an npm package (`@ds-mo/ui`) that ships a **framework-agnostic web component library** authored with [Stencil.js](https://stenciljs.com/). It provides:
 
-- Tree-shakeable React components authored in TypeScript
-- CSS Modules compiled into a single `dist/index.css`
-- TypeScript type definitions rolled up into a single `dist/index.d.ts`
+- Custom elements (`<ds-*>`) consumable from React 19, Angular 12+, or plain HTML without framework wrappers
+- Per-component ESM files in `dist/components/` (tree-shakeable)
+- Auto-generated Angular proxy directives via `@stencil/angular-output-target` in `src/angular/`
+- A global CSS bundle at `dist/ds-mo/ds-mo.css` (token-driven, no hardcoded values)
+- TypeScript definitions at `dist/components/index.d.ts`
 - A component registry (`public/r/`) consumed by the in-repo MCP server for AI-assisted component discovery
 
 It's the **top layer** of the ds-mo design-system trilogy: `@ds-mo/tokens` → `@ds-mo/icons` → `@ds-mo/ui` (CompoMo). TokoMo and IcoMo ship the foundation; CompoMo composes them into reusable UI primitives.
@@ -23,19 +25,19 @@ It's the **top layer** of the ds-mo design-system trilogy: `@ds-mo/tokens` → `
 
 ```
 src/
-  components/           # One directory per component (PascalCase)
-    Button/
-      Button.tsx          # Component
-      Button.module.css   # Scoped styles (CSS Modules)
-      Button.stories.tsx  # Storybook stories
-      index.ts            # Re-exports
-    ...                 # 37 components today (Accordion, Badge, Banner, …)
+  wc/                   # Stencil source root (srcDir in stencil.config.ts)
+    components/         # One directory per web component (PascalCase)
+      Button/
+        Button.tsx        # Stencil component class (@Component, @Prop, @Event, …)
+        Button.css        # Scoped styles — token custom properties only (no CSS Modules)
+        Button.stories.ts # Storybook stories using lit-html html`` tags
+      ...               # All ported components (Accordion, Badge, Banner, …)
+    components.d.ts     # Auto-generated Stencil type declarations — do not edit
+  components/           # Legacy React source — reference only; do not add new components here
+  angular/              # Auto-generated Angular proxies (proxies.ts, index.ts) — do not edit
   stories/              # Token showcase stories (Colors, Typography, Effects, …)
   docs/                 # Storybook MDX docs (ColorUsage, ElevationUsage, …)
-  types/                # Shared TS types
-  utils/                # Shared helpers
-  index.ts              # Barrel — public API surface of the package
-  css-modules.d.ts      # CSS Modules ambient types
+  global.css            # Global CSS: @import '@ds-mo/tokens/css'
 .storybook/             # Storybook config
 scripts/
   build-registry.mjs    # Builds public/r/ — component metadata registry
@@ -44,17 +46,19 @@ public/
   r/                    # Generated registry (committed, rebuilt on dev/build)
 docs/                   # Storybook reference docs source
 dist/                   # Generated — do not edit directly
+  components/           # Per-component ESM files + type definitions
+  ds-mo/                # Global CSS bundle (ds-mo.css)
+stencil.config.ts       # Stencil build config (output targets, namespace, srcDir)
 .github/
   workflows/
-    build.yml              # PR: npm ci, typecheck, build, verify dist + src unchanged
+    build.yml              # PR: npm ci, build (stencil), verify dist artifacts + src unchanged
     codeql.yml             # JS/TS security scan — PR + push + weekly Sunday cron
     pr-title.yml           # Lints PR titles as conventional commits
     release-please.yml     # Opens release PRs on feat/fix; publishes to npm on merge (OIDC)
-    deploy-storybook.yml   # Builds + deploys Storybook to GitHub Pages
+    deploy-storybook.yml   # stencil build → storybook build → deploy to GitHub Pages
   dependabot.yml           # Monthly bumps for github-actions + npm
 release-please-config.json      # Release Please config (node, changelog sections)
 .release-please-manifest.json   # Pinned current version
-vite.config.ts         # Library build config (ES output, dts rollup, externals)
 ```
 
 ---
@@ -62,72 +66,161 @@ vite.config.ts         # Library build config (ES output, dts rollup, externals)
 ## Commands
 
 ```bash
-npm run dev              # Build registry, then start Storybook on :6006
-npm run build            # Vite library build → dist/
-npm run storybook:build  # Build registry, then build static Storybook
-npm run typecheck        # tsc --noEmit
-npm run lint             # eslint src/ (⚠ see note below)
+npm run build            # Stencil compiler build → dist/
+npm run dev              # Stencil build then Storybook dev server on :6006
+npm run storybook:build  # Build static Storybook
+npm run typecheck        # tsc --noEmit (checks legacy React source)
+npm run lint             # eslint src/
 npm run registry:build   # Regenerate public/r/ (component registry)
 npm run mcp              # Run the in-repo MCP server
 npm run clean            # Remove dist/
 ```
 
-> **Heads-up on `lint`:** the `lint` script is wired to `eslint src/` but ESLint is not installed and there is no config. Running it today fails with `eslint: command not found`. It's intentionally **not** in `build.yml`. Fix and re-enable before relying on it.
-
 ---
 
 ## Build pipeline (what `npm run build` does)
 
-Vite builds the library from `src/index.ts`:
+The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 
-1. Bundle TS/TSX → single ESM `dist/index.js` with inline source map (`dist/index.js.map`)
-2. Extract and concatenate every `*.module.css` and global CSS → `dist/index.css` (no code-splitting)
-3. Roll up all `.d.ts` files via `vite-plugin-dts` → `dist/index.d.ts`
-4. Externalize `react`, `react-dom`, `react/jsx-runtime`, `@ds-mo/tokens`, `@ds-mo/icons` (they come from the host app, not from us)
+1. Transpiles every `@Component()` class in `src/wc/components/**/*.tsx` to native Custom Elements
+2. Emits per-component ESM files to `dist/components/` (auto-define mode — `customElementsExportBehavior: 'auto-define-custom-elements'`)
+3. Bundles global CSS (token imports + component styles) → `dist/ds-mo/ds-mo.css`
+4. Generates TypeScript declarations → `dist/components/index.d.ts`
+5. Runs Angular output target → regenerates `src/angular/proxies.ts` and `src/angular/index.ts`
 
 Package `exports`:
 
 ```jsonc
 {
-  ".":   { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
-  "./css": "./dist/index.css"
+  ".":          { "import": "./dist/components/index.js", "types": "./dist/components/index.d.ts" },
+  "./angular":  { "import": "./src/angular/index.ts" },
+  "./css":      "./dist/ds-mo/ds-mo.css"
 }
 ```
 
-Consumers must import the CSS once at their app root:
+Consumers register custom elements once at app boot, then use the tags anywhere:
 
 ```ts
-import '@ds-mo/tokens';
+// React / plain HTML
+import { defineCustomElements } from '@ds-mo/ui/loader';
+import '@ds-mo/tokens/css';
 import '@ds-mo/ui/css';
-import { Button } from '@ds-mo/ui';
+defineCustomElements();
+
+// Angular — import DsMoModule from '@ds-mo/ui/angular' in your AppModule
 ```
 
 ---
 
 ## Component authoring workflow
 
-**Adding a new component**
+**Adding a new Stencil component**
 
-1. Create `src/components/<PascalName>/`:
-   - `<PascalName>.tsx` — the component
-   - `<PascalName>.module.css` — scoped styles using TokoMo CSS custom properties only
-   - `<PascalName>.stories.tsx` — at least one Storybook story per meaningful state
-   - `index.ts` — re-export the component and its public types
-2. Add the export to `src/index.ts` (component + each public type) so it ships in the package barrel.
-3. Run `npm run dev` and verify the component in Storybook.
-4. Regenerate the registry: `npm run registry:build` (committed to `public/r/`).
+1. Create `src/wc/components/<PascalName>/`:
+   - `<PascalName>.tsx` — Stencil component class (see pattern below)
+   - `<PascalName>.css` — scoped styles using TokoMo CSS custom properties only
+   - `<PascalName>.stories.ts` — lit-html stories (see Storybook section below)
+2. Run `npm run build` — Stencil auto-discovers the new component by `@Component()` tag.
+3. Verify in Storybook: `npm run dev`.
+4. Regenerate registry: `npm run registry:build` (commit `public/r/` changes).
+
+**Stencil component skeleton**
+
+```tsx
+import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
+
+@Component({
+  tag: 'ds-my-component',
+  styleUrl: 'MyComponent.css',
+  scoped: true,               // always scoped: true (light DOM, tokens penetrate naturally)
+})
+export class MyComponent {
+  @Prop() label: string = '';
+  @Prop({ mutable: true }) open: boolean = false;
+
+  @Event() dsChange!: EventEmitter<string>;
+
+  render() {
+    return (
+      <Host>
+        <div class="my-component">
+          <slot />
+        </div>
+      </Host>
+    );
+  }
+}
+```
+
+**Key Stencil patterns**
+
+| Pattern | How |
+|---|---|
+| Reactive prop | `@Prop() value: string = ''` |
+| Mutable prop (component can self-update) | `@Prop({ mutable: true }) open = false` |
+| Derived/computed | getter `private get resolved()` |
+| Internal state (triggers re-render) | `@State() private foo: T` |
+| Side-effect on prop change | `@Watch('propName') onPropChange(next, prev)` |
+| Custom event | `@Event() dsChange: EventEmitter<T>; this.dsChange.emit(val)` |
+| DOM element reference | `@Element() el: HTMLElement` |
+| Lifecycle | `componentDidLoad()`, `disconnectedCallback()` |
+| Cross-element keyboard | `@Listen('keydown')` |
+| Children API | `<slot />` (named: `<slot name="footer" />`) |
+| Polymorphic element | `const Tag = this.href ? 'a' : 'button'; return <Tag>…</Tag>` |
+| Icon | `<slot name="icon" />` — consumer provides any SVG or `ds-*` element |
 
 **Styling rules (non-negotiable)**
 
 - **Never hardcode colors, spacing, radii, shadows, or typography values.** Always use CSS custom properties from `@ds-mo/tokens`. Hardcoded values break theming.
-- Styles go in `*.module.css` — one per component. No global CSS from components.
-- Icons are accepted via the typed prop pattern: `icon?: React.ComponentType<{ size?: number | string }>`.
-- Theming is driven by the `data-theme` attribute on a parent element (`@ds-mo/tokens` provides light/dark) — components must not hardcode mode-specific values.
+- Styles go in `<PascalName>.css` — one per component. Stencil scopes them automatically via `scoped: true`.
+- Use `:host` for component-level styles; use class selectors for internal elements.
+- Theming is driven by the `data-theme` attribute on a parent element (`@ds-mo/tokens` provides light/dark).
 
 **TypeScript**
 
-- `strict` mode. No `any`. Export every prop type that is part of the public API.
-- Prefer discriminated unions for variant props (see `ButtonVariant`, `SurfaceIntent`).
+- `strict` mode. No `any`. Export every public prop interface.
+- Prefer string-union types for variant props (`type ButtonIntent = 'brand' | 'positive' | ...`).
+- `@Prop()` with non-primitive types (arrays, objects) must be set via JS property (not HTML attribute). Note this in prop JSDoc.
+
+**Storybook stories (Stencil pattern)**
+
+```ts
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../../../dist/components/ds-my-component.js';  // import from dist
+
+const meta: Meta = {
+  title: 'Category/MyComponent',
+  tags: ['autodocs'],
+  argTypes: { label: { control: 'text' } },
+  args: { label: 'Hello' },
+};
+export default meta;
+
+export const Default: Story = {
+  render: args => html`<ds-my-component label=${args['label']}></ds-my-component>`,
+};
+```
+
+For components with complex JS-only props (arrays, objects), use `lit/directives/ref.js`:
+
+```ts
+import { ref } from 'lit/directives/ref.js';
+
+render: () => html`
+  <ds-table ${ref(el => {
+    if (!el) return;
+    (el as any).columns = columns;
+    (el as any).data = data;
+  })}></ds-table>
+`
+```
+
+For overlay components that need `?open=${true}` in stories (no `<script>` tags — they don't execute in Storybook):
+
+```ts
+render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`
+```
 
 ---
 
@@ -226,16 +319,20 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 
 ## Things not to do
 
-- **Do not edit `dist/`** — it's generated. Edit `src/`, then run `npm run build`.
+- **Do not edit `dist/`** — it's generated by `stencil build`. Edit `src/wc/`, then run `npm run build`.
+- **Do not edit `src/angular/proxies.ts` or `src/angular/index.ts`** — auto-generated by the Angular output target on every build.
+- **Do not edit `src/wc/components.d.ts`** — auto-generated by Stencil.
+- **Do not add new components to `src/components/`** — that is the legacy React source. New components go in `src/wc/components/`.
 - **Do not hardcode colors, spacing, or other design values** — always use `@ds-mo/tokens` CSS custom properties. Hardcoding breaks theming.
+- **Do not use `shadow: true`** in `@Component()` — all components use `scoped: true` (light DOM) so token CSS variables penetrate naturally without piercing selectors.
+- **Do not name a `@Prop()` `title`** — it's a reserved HTML attribute and causes Stencil a build warning. Use `heading` or another name.
+- **Do not rely on `@Watch` firing for the initial prop value** — it only fires on subsequent changes. Call the handler explicitly in `componentDidLoad()` for initial state (e.g. `if (this.open) this.onOpenChange(true)`).
+- **Do not re-export service singletons from a file that has `@Component()`** — Stencil enforces one export per file. Put services in a separate `*.ts` file.
 - **Do not hand-bump `package.json` version** during normal work — let release-please do it.
 - **Do not `git push` to `main`** — always branch + PR.
 - **Do not commit `NPM_TOKEN` or any npm auth** — publishing uses OIDC, no secrets required.
-- **Do not skip `npm install -g npm@latest`** in the publish job — Node 20 ships with npm 10.x which cannot complete OIDC auth; Trusted Publisher requires npm ≥ 11.5.1. (In IcoMo this cost us two failed releases — `v0.7.0` and `v0.7.1` exist as orphan GH tags for this reason.)
+- **Do not skip `npm install -g npm@latest`** in the publish job — Trusted Publisher requires npm ≥ 11.5.1.
 - **Do not set `NODE_AUTH_TOKEN`** in the publish step — OIDC handles auth; a stray token can conflict.
-- **Do not add `registry-url` logic that writes an `NPM_TOKEN`-based `.npmrc`** — OIDC handles auth directly in the npm CLI.
-- **Do not touch `.github/workflows/deploy-storybook.yml`** as part of CI/release changes — it already works and is out of scope for release pipeline work.
-- **Do not remove a component from the public barrel (`src/index.ts`) without a `feat!:`/major-note commit** — it's a breaking change for every consumer.
 
 ---
 
@@ -243,15 +340,15 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 
 | Need to change... | Edit this |
 |---|---|
-| A component's behavior | `src/components/<Name>/<Name>.tsx` |
-| A component's styling | `src/components/<Name>/<Name>.module.css` (tokens only — no hardcoded values) |
-| A component's Storybook stories | `src/components/<Name>/<Name>.stories.tsx` |
-| Public package API | `src/index.ts` |
+| A component's behavior | `src/wc/components/<Name>/<Name>.tsx` |
+| A component's styling | `src/wc/components/<Name>/<Name>.css` (tokens only — no hardcoded values) |
+| A component's Storybook stories | `src/wc/components/<Name>/<Name>.stories.ts` |
+| Angular proxy output | Auto-generated: `src/angular/proxies.ts`, `src/angular/index.ts` — do not hand-edit |
 | Token-showcase stories | `src/stories/*.stories.tsx` |
 | Usage docs (MDX) | `src/docs/*.mdx` |
 | Component registry logic | `scripts/build-registry.mjs` |
 | MCP server | `scripts/mcp-server.mjs` |
-| Library build config | `vite.config.ts` |
+| Stencil build config | `stencil.config.ts` |
 | Release changelog sections | `release-please-config.json` |
 | PR title rules | `.github/workflows/pr-title.yml` |
 | Storybook deploy | `.github/workflows/deploy-storybook.yml` |

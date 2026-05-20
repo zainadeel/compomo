@@ -5,22 +5,24 @@
   "description": "Loading placeholder with text, circular, and rectangular variants. Supports multi-line text and shimmer animation.",
   "type": "registry:ui",
   "meta": {
-    "library": "@compomo/ui",
+    "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/CompoMo/?path=/story/skeleton",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/skeleton",
     "consumption": {
-      "install": "npm install @compomo/ui @ds-mo/tokens",
-      "cssSetup": "Import tokens CSS at your app entry point: import '@ds-mo/tokens/css';\nThis provides all var(--color-*), var(--dimension-*), var(--effect-*), and var(--typography-*) custom properties.\nFor dark mode, set data-theme=\"dark\" on <html>.",
-      "import": "import { Skeleton } from '@compomo/ui';",
-      "cssImport": "import '@compomo/ui/css';",
-      "typeImport": "import type { SkeletonProps, SkeletonVariant } from '@compomo/ui';",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-skeleton.js';",
+      "usage": {
+        "html": "<ds-skeleton></ds-skeleton>",
+        "react": "<ds-skeleton></ds-skeleton>",
+        "angular": "<ds-skeleton></ds-skeleton>"
+      },
       "peerDependencies": {
         "required": [
-          "react >=17",
-          "react-dom >=17",
-          "@ds-mo/tokens >=0.1.0"
+          "@ds-mo/tokens >=0.3.0"
         ],
-        "optional": []
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
       }
     },
     "props": {
@@ -53,19 +55,19 @@
     ]
   },
   "dependencies": [
-    "@compomo/ui",
+    "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [],
   "files": [
     {
-      "path": "src/components/Skeleton/Skeleton.module.css",
-      "content": ".skeleton {\n  background-color: var(--color-background-secondary);\n  position: relative;\n  overflow: hidden;\n}\n\n/* ─── Variants ──────────────────────────────────────────────────────────────── */\n\n.text {\n  height: 14px;\n  border-radius: var(--dimension-radius-050);\n  width: 100%;\n}\n\n.circular {\n  width: 40px;\n  height: 40px;\n  border-radius: var(--dimension-radius-half);\n}\n\n.rectangular {\n  width: 100%;\n  height: 80px;\n  border-radius: var(--dimension-radius-075);\n}\n\n/* ─── Text group ────────────────────────────────────────────────────────────── */\n\n.textGroup {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-075);\n}\n\n/* ─── Shimmer animation ─────────────────────────────────────────────────────── */\n\n.animate::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(\n    90deg,\n    transparent 0%,\n    var(--color-interaction-hover) 50%,\n    transparent 100%\n  );\n  animation: shimmer 1.5s ease-in-out infinite;\n}\n\n@keyframes shimmer {\n  0% { transform: translateX(-100%); }\n  100% { transform: translateX(100%); }\n}\n",
+      "path": "src/wc/components/Skeleton/Skeleton.css",
+      "content": ":host {\n  display: block;\n}\n\n:host(.skeleton),\n.skeleton {\n  background-color: var(--color-background-secondary);\n  position: relative;\n  overflow: hidden;\n}\n\n/* ── Variants ───────────────────────────────────────────────────────────── */\n\n:host(.text),\n.text {\n  height: 14px;\n  border-radius: var(--dimension-radius-050);\n  width: 100%;\n}\n\n:host(.circular) {\n  width: 40px;\n  height: 40px;\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.rectangular),\n.rectangular {\n  width: 100%;\n  height: 80px;\n  border-radius: var(--dimension-radius-075);\n}\n\n/* ── Text group ─────────────────────────────────────────────────────────── */\n\n.text-group {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-075);\n}\n\n/* ── Shimmer ────────────────────────────────────────────────────────────── */\n\n:host(.animate),\n.animate {\n  overflow: hidden;\n  position: relative;\n}\n\n:host(.animate)::after,\n.animate::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(\n    90deg,\n    transparent 0%,\n    var(--color-interaction-hover) 50%,\n    transparent 100%\n  );\n  animation: shimmer 1.5s ease-in-out infinite;\n}\n\n@keyframes shimmer {\n  0%   { transform: translateX(-100%); }\n  100% { transform: translateX(100%); }\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/components/Skeleton/Skeleton.tsx",
-      "content": "import React, { forwardRef } from 'react';\nimport { cn } from '@/utils/cn';\nimport styles from './Skeleton.module.css';\n\nexport type SkeletonVariant = 'text' | 'circular' | 'rectangular';\n\nexport interface SkeletonProps {\n  /** Shape of the skeleton. */\n  variant?: SkeletonVariant;\n  /** Width (CSS value). */\n  width?: string | number;\n  /** Height (CSS value). */\n  height?: string | number;\n  /** Number of text lines to render. Only applies to 'text' variant. */\n  lines?: number;\n  /** Whether to animate the shimmer. */\n  animate?: boolean;\n  className?: string;\n}\n\nexport const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(\n  (\n    {\n      variant = 'text',\n      width,\n      height,\n      lines = 1,\n      animate = true,\n      className,\n    },\n    ref\n  ) => {\n    if (variant === 'text' && lines > 1) {\n      return (\n        <div ref={ref} className={cn(styles.textGroup, className)} style={{ width }}>\n          {Array.from({ length: lines }, (_, i) => (\n            <div\n              key={i}\n              className={cn(styles.skeleton, styles.text, animate && styles.animate)}\n              style={{\n                width: i === lines - 1 ? '60%' : '100%',\n                height,\n              }}\n            />\n          ))}\n        </div>\n      );\n    }\n\n    return (\n      <div\n        ref={ref}\n        className={cn(\n          styles.skeleton,\n          styles[variant],\n          animate && styles.animate,\n          className\n        )}\n        style={{ width, height }}\n        aria-hidden=\"true\"\n      />\n    );\n  }\n);\n\nSkeleton.displayName = 'Skeleton';\n",
+      "path": "src/wc/components/Skeleton/Skeleton.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type SkeletonVariant = 'text' | 'circular' | 'rectangular';\n\n@Component({\n  tag: 'ds-skeleton',\n  styleUrl: 'Skeleton.css',\n  shadow: true,\n})\nexport class Skeleton {\n  @Prop() variant: SkeletonVariant = 'text';\n  /** Width as a CSS value string (e.g. '200px', '100%') or number (px). */\n  @Prop() width: string | number | undefined;\n  /** Height as a CSS value string or number (px). */\n  @Prop() height: string | number | undefined;\n  /** Number of text lines. Only used when variant is 'text'. */\n  @Prop() lines: number = 1;\n  /** Whether to show the shimmer animation. */\n  @Prop() shimmer: boolean = true;\n\n  private get widthCss() {\n    const v = this.width;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  private get heightCss() {\n    const v = this.height;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  render() {\n    if (this.variant === 'text' && this.lines > 1) {\n      return (\n        <Host aria-hidden=\"true\" style={{ width: this.widthCss }}>\n          <div class=\"text-group\">\n            {Array.from({ length: this.lines }, (_, lineIdx) => (\n              <div\n                class={{ skeleton: true, text: true, animate: this.shimmer }}\n                style={{\n                  width: lineIdx === this.lines - 1 ? '60%' : '100%',\n                  height: this.heightCss,\n                }}\n              />\n            ))}\n          </div>\n        </Host>\n      );\n    }\n\n    return (\n      <Host\n        aria-hidden=\"true\"\n        class={{\n          skeleton: true,\n          [this.variant]: true,\n          animate: this.shimmer,\n        }}\n        style={{ width: this.widthCss, height: this.heightCss }}\n      />\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]
