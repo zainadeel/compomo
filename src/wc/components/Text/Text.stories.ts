@@ -87,3 +87,78 @@ export const Truncation: Story = {
     </div>
   `,
 };
+
+const ROW = 'display: flex; align-items: baseline; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border-tertiary)';
+const LBL = 'font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0';
+
+export const Decoration: Story = {
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 0">
+      <div style="${ROW}">
+        <span style="${LBL}">none (default)</span>
+        <ds-text variant="text-body-large">The quick brown fox jumps over the lazy dog</ds-text>
+      </div>
+      <div style="${ROW}">
+        <span style="${LBL}">underline</span>
+        <ds-text variant="text-body-large" decoration="underline">The quick brown fox jumps over the lazy dog</ds-text>
+      </div>
+      <div style="${ROW}">
+        <span style="${LBL}">dotted-underline</span>
+        <ds-text variant="text-body-large" decoration="dotted-underline">The quick brown fox jumps over the lazy dog</ds-text>
+      </div>
+      <div style="${ROW}">
+        <span style="${LBL}">italic</span>
+        <ds-text variant="text-body-large" italic>The quick brown fox jumps over the lazy dog</ds-text>
+      </div>
+      <div style="${ROW}">
+        <span style="${LBL}">italic + underline</span>
+        <ds-text variant="text-body-large" decoration="underline" italic>The quick brown fox jumps over the lazy dog</ds-text>
+      </div>
+    </div>
+  `,
+};
+
+export const Alignment: Story = {
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 480px">
+      ${(['left', 'center', 'right'] as const).map(a => html`
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary)">${a}</span>
+          <div style="border: 1px solid var(--color-border-tertiary); border-radius: 6px; padding: 12px">
+            <ds-text variant="text-body-medium" align=${a}>
+              The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
+            </ds-text>
+          </div>
+        </div>
+      `)}
+    </div>
+  `,
+};
+
+export const SemanticElements: Story = {
+  name: 'Semantic Elements',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      ${(['h1','h2','h3','h4','h5','h6'] as const).map((tag, i) => {
+        const variants = ['text-display-medium','text-display-small','text-title-large','text-title-medium','text-title-small','text-body-large-emphasis'] as const;
+        return html`
+          <div style="${ROW}">
+            <span style="${LBL}">as="${tag}"</span>
+            <ds-text as=${tag} variant=${variants[i]}>Heading level ${i + 1}</ds-text>
+          </div>`;
+      })}
+      <div style="${ROW}">
+        <span style="${LBL}">as="p" (default)</span>
+        <ds-text as="p">Paragraph text — the quick brown fox.</ds-text>
+      </div>
+      <div style="${ROW}">
+        <span style="${LBL}">as="span"</span>
+        <ds-text as="span" variant="text-body-small" color="secondary">Inline span text</ds-text>
+      </div>
+      <div style="${ROW}">
+        <span style="${LBL}">as="label"</span>
+        <ds-text as="label" variant="text-caption-emphasis">Form label</ds-text>
+      </div>
+    </div>
+  `,
+};
