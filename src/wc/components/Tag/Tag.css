@@ -1,0 +1,215 @@
+/* ==========================================================================
+   ds-tag
+   ========================================================================== */
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--dimension-radius-050);
+  box-sizing: border-box;
+  color: var(--color-foreground-primary);
+  position: relative;
+
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+}
+
+/* ── Sizes ──────────────────────────────────────────────────────────────── */
+
+:host(.tag--size-md) { height: calc(var(--dimension-size-base) * 7 / 2); padding: 0 var(--dimension-space-075); gap: 0; }
+:host(.tag--size-sm) { height: var(--dimension-size-250);                 padding: 0 var(--dimension-space-050); gap: 0; }
+:host(.tag--size-xs) { height: var(--dimension-size-150);                 padding: 0 var(--dimension-space-012); gap: 0; }
+
+/* ── Rounded ────────────────────────────────────────────────────────────── */
+
+:host(.tag--rounded) { border-radius: var(--dimension-radius-half); }
+
+/* Pill padding correction — add space-050 on bare sides */
+:host(.tag--rounded.tag--size-md) { padding-left:  calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+:host(.tag--rounded.tag--size-sm) { padding-left:  calc(var(--dimension-space-050) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-050) + var(--dimension-space-050)); }
+:host(.tag--rounded.tag--size-xs) { padding-left:  calc(var(--dimension-space-012) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-012) + var(--dimension-space-050)); }
+
+/* ── Background context ─────────────────────────────────────────────────── */
+
+:host(.tag--on-medium)      { --_hover-bg: var(--color-interaction-on-medium-background-hover);      --_pressed-bg: var(--color-interaction-on-medium-background-pressed); }
+:host(.tag--on-bold)        { --_hover-bg: var(--color-interaction-on-bold-background-hover);        --_pressed-bg: var(--color-interaction-on-bold-background-pressed); }
+:host(.tag--on-strong)      { --_hover-bg: var(--color-interaction-on-strong-background-hover);      --_pressed-bg: var(--color-interaction-on-strong-background-pressed); }
+:host(.tag--on-always-dark) { --_hover-bg: var(--color-always-dark-interaction-hover);               --_pressed-bg: var(--color-always-dark-interaction-pressed); }
+
+/* ── Elevation ──────────────────────────────────────────────────────────── */
+
+:host(.tag--elevation-flat) {
+  background-color: transparent !important;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) currentColor;
+}
+
+:host(.tag--elevation-elevated) { box-shadow: var(--effect-elevation-elevated-sm); }
+
+/* Flat foreground — bold */
+:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-bold)   { color: var(--color-foreground-bold-neutral);   }
+:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-bold)     { color: var(--color-foreground-bold-brand);     }
+:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-bold)        { color: var(--color-foreground-bold-ai);        }
+:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-bold)  { color: var(--color-foreground-bold-negative);  }
+:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-bold)   { color: var(--color-foreground-bold-warning);   }
+:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-bold)   { color: var(--color-foreground-bold-caution);   }
+:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-bold)  { color: var(--color-foreground-bold-positive);  }
+
+/* Flat foreground — strong */
+:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-strong)   { color: var(--color-foreground-strong-neutral);   }
+:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-strong)     { color: var(--color-foreground-strong-brand);     }
+:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-strong)        { color: var(--color-foreground-strong-ai);        }
+:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-strong)  { color: var(--color-foreground-strong-negative);  }
+:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-strong)   { color: var(--color-foreground-strong-warning);   }
+:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-strong)   { color: var(--color-foreground-strong-caution);   }
+:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-strong)  { color: var(--color-foreground-strong-positive);  }
+
+/* Flat foreground — medium */
+:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-medium)   { color: var(--color-foreground-medium-neutral);   }
+:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-medium)     { color: var(--color-foreground-medium-brand);     }
+:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-medium)        { color: var(--color-foreground-medium-ai);        }
+:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-medium)  { color: var(--color-foreground-medium-negative);  }
+:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-medium)   { color: var(--color-foreground-medium-warning);   }
+:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-medium)   { color: var(--color-foreground-medium-caution);   }
+:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-medium)  { color: var(--color-foreground-medium-positive);  }
+
+/* Flat foreground — faint */
+:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-faint)   { color: var(--color-foreground-faint-neutral);   }
+:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-faint)     { color: var(--color-foreground-faint-brand);     }
+:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-faint)        { color: var(--color-foreground-faint-ai);        }
+:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-faint)  { color: var(--color-foreground-faint-negative);  }
+:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-faint)   { color: var(--color-foreground-faint-warning);   }
+:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-faint)   { color: var(--color-foreground-faint-caution);   }
+:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-faint)  { color: var(--color-foreground-faint-positive);  }
+
+/* ── Intent × Contrast — strong ─────────────────────────────────────────── */
+
+:host(.tag--intent-neutral.tag--contrast-strong)  { background-color: var(--color-background-strong-neutral);  color: var(--color-foreground-medium-neutral);  }
+:host(.tag--intent-brand.tag--contrast-strong)    { background-color: var(--color-background-strong-brand);    color: var(--color-foreground-medium-brand);    }
+:host(.tag--intent-ai.tag--contrast-strong)       { background-color: var(--color-background-strong-ai);       color: var(--color-foreground-medium-ai);       }
+:host(.tag--intent-negative.tag--contrast-strong) { background-color: var(--color-background-strong-negative); color: var(--color-foreground-medium-negative); }
+:host(.tag--intent-warning.tag--contrast-strong)  { background-color: var(--color-background-strong-warning);  color: var(--color-foreground-medium-warning);  }
+:host(.tag--intent-caution.tag--contrast-strong)  { background-color: var(--color-background-strong-caution);  color: var(--color-foreground-medium-caution);  }
+:host(.tag--intent-positive.tag--contrast-strong) { background-color: var(--color-background-strong-positive); color: var(--color-foreground-medium-positive); }
+
+/* ── Intent × Contrast — bold ───────────────────────────────────────────── */
+
+:host(.tag--intent-neutral.tag--contrast-bold)  { background-color: var(--color-background-bold-neutral);  color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-brand.tag--contrast-bold)    { background-color: var(--color-background-bold-brand);    color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-ai.tag--contrast-bold)       { background-color: var(--color-background-bold-ai);       color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-negative.tag--contrast-bold) { background-color: var(--color-background-bold-negative); color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-warning.tag--contrast-bold)  { background-color: var(--color-background-bold-warning);  color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-caution.tag--contrast-bold)  { background-color: var(--color-background-bold-caution);  color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-positive.tag--contrast-bold) { background-color: var(--color-background-bold-positive); color: var(--color-foreground-on-bold-background-primary); }
+
+/* ── Intent × Contrast — medium ─────────────────────────────────────────── */
+
+:host(.tag--intent-neutral.tag--contrast-medium)  { background-color: var(--color-background-medium-neutral);  color: var(--color-foreground-strong-neutral);  }
+:host(.tag--intent-brand.tag--contrast-medium)    { background-color: var(--color-background-medium-brand);    color: var(--color-foreground-strong-brand);    }
+:host(.tag--intent-ai.tag--contrast-medium)       { background-color: var(--color-background-medium-ai);       color: var(--color-foreground-strong-ai);       }
+:host(.tag--intent-negative.tag--contrast-medium) { background-color: var(--color-background-medium-negative); color: var(--color-foreground-strong-negative); }
+:host(.tag--intent-warning.tag--contrast-medium)  { background-color: var(--color-background-medium-warning);  color: var(--color-foreground-strong-warning);  }
+:host(.tag--intent-caution.tag--contrast-medium)  { background-color: var(--color-background-medium-caution);  color: var(--color-foreground-strong-caution);  }
+:host(.tag--intent-positive.tag--contrast-medium) { background-color: var(--color-background-medium-positive); color: var(--color-foreground-strong-positive); }
+
+/* ── Intent × Contrast — faint ──────────────────────────────────────────── */
+
+:host(.tag--intent-neutral.tag--contrast-faint)  { background-color: var(--color-background-faint-neutral);  color: var(--color-foreground-bold-neutral);  }
+:host(.tag--intent-brand.tag--contrast-faint)    { background-color: var(--color-background-faint-brand);    color: var(--color-foreground-bold-brand);    }
+:host(.tag--intent-ai.tag--contrast-faint)       { background-color: var(--color-background-faint-ai);       color: var(--color-foreground-bold-ai);       }
+:host(.tag--intent-negative.tag--contrast-faint) { background-color: var(--color-background-faint-negative); color: var(--color-foreground-bold-negative); }
+:host(.tag--intent-warning.tag--contrast-faint)  { background-color: var(--color-background-faint-warning);  color: var(--color-foreground-bold-warning);  }
+:host(.tag--intent-caution.tag--contrast-faint)  { background-color: var(--color-background-faint-caution);  color: var(--color-foreground-bold-caution);  }
+:host(.tag--intent-positive.tag--contrast-faint) { background-color: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }
+
+/* ── Interactive ────────────────────────────────────────────────────────── */
+
+:host(.tag--interactive) {
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+:host(.tag--interactive:hover)  { background-color: var(--_hover-bg); }
+:host(.tag--interactive:active) { background-color: var(--_pressed-bg); }
+
+:host(.tag--interactive:focus-visible) {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+/* ── Pressed ────────────────────────────────────────────────────────────── */
+
+:host(.tag--pressed) {
+  background-color: var(--color-background-faint-brand) !important;
+  color: var(--color-foreground-bold-brand) !important;
+}
+
+/* ── Label ──────────────────────────────────────────────────────────────── */
+
+.tag__label {
+  line-height: 0;
+  padding: 0 var(--dimension-space-050);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+:host(.tag--size-sm) .tag__label,
+:host(.tag--size-xs) .tag__label {
+  padding: 0 var(--dimension-space-025);
+}
+
+/* ── Icon slot ──────────────────────────────────────────────────────────── */
+
+.tag__icon-slot {
+  display: contents;
+}
+
+/* ── Remove button ──────────────────────────────────────────────────────── */
+
+:host(.tag--removable) { gap: var(--dimension-space-025); }
+:host(.tag--size-xs.tag--removable) { gap: 0; }
+
+.tag__remove {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: var(--dimension-radius-050);
+}
+
+.tag__remove::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--dimension-radius-025);
+  background-color: transparent;
+  transition: var(--effect-transition-interaction-background-short-2);
+  pointer-events: none;
+}
+
+.tag__remove:hover::before  { background-color: var(--color-interaction-hover); }
+.tag__remove:active::before { background-color: var(--color-interaction-pressed); }
+
+:host(.tag--size-sm) .tag__remove::before { inset: -1px; border-radius: 3px; }
+:host(.tag--size-xs) .tag__remove::before { inset: 0; border-radius: var(--dimension-radius-050); }
+
+:host(.tag--rounded) .tag__remove,
+:host(.tag--rounded) .tag__remove::before { border-radius: var(--dimension-radius-half); }
+
+.tag__remove-x {
+  display: inline-flex;
+  line-height: 0;
+  font-size: inherit;
+}
+
+/* ── Inactive ───────────────────────────────────────────────────────────── */
+
+:host(.tag--inactive) { opacity: 0.5; pointer-events: none; cursor: not-allowed; }

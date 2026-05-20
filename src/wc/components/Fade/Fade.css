@@ -1,0 +1,31 @@
+:host {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host { transition: none; }
+}
+
+:host(.fade--top) {
+  top: 0; left: 0; right: 0;
+  background: linear-gradient(to bottom, var(--ds-fade-bg) 0%, var(--ds-fade-bg) 50%, transparent 100%);
+}
+
+:host(.fade--bottom) {
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, var(--ds-fade-bg) 0%, transparent 100%);
+}
+
+:host(.fade--left) {
+  top: 0; bottom: 0; left: 0;
+  background: linear-gradient(to right, var(--ds-fade-bg) 0%, transparent 100%);
+}
+
+:host(.fade--right) {
+  top: 0; bottom: 0; right: 0;
+  background: linear-gradient(to left, var(--ds-fade-bg) 0%, transparent 100%);
+}

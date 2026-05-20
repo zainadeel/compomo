@@ -6,8 +6,30 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DividerOrientation } from "./components/Divider/Divider";
+import { FadeSide } from "./components/Fade/Fade";
+import { SkeletonVariant } from "./components/Skeleton/Skeleton";
+import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
+import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 export { DividerOrientation } from "./components/Divider/Divider";
+export { FadeSide } from "./components/Fade/Fade";
+export { SkeletonVariant } from "./components/Skeleton/Skeleton";
+export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
+export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 export namespace Components {
+    interface DsBadge {
+        /**
+          * @default 0
+         */
+        "count": number;
+        /**
+          * @default false
+         */
+        "isSelected": boolean;
+        /**
+          * Accessible label. Defaults to the count as a string.
+         */
+        "label": string | undefined;
+    }
     interface DsDivider {
         /**
           * Direction of the divider line. Defaults to 'horizontal'.
@@ -15,19 +37,209 @@ export namespace Components {
          */
         "orientation": DividerOrientation;
     }
+    interface DsFade {
+        /**
+          * Background color to fade from. Defaults to var(--color-background-secondary).
+          * @default 'var(--color-background-secondary)'
+         */
+        "background": string;
+        /**
+          * Height (or width for left/right) of the fade overlay — any CSS value.
+         */
+        "height": string | undefined;
+        "side": FadeSide;
+    }
+    interface DsLoader {
+        /**
+          * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
+         */
+        "label": string | undefined;
+        /**
+          * Render size in px. Designed on a 16×16 viewBox; stroke scales proportionally.
+          * @default 20
+         */
+        "size": number;
+    }
+    interface DsSkeleton {
+        /**
+          * Height as a CSS value string or number (px).
+         */
+        "height": string | number | undefined;
+        /**
+          * Number of text lines. Only used when variant is 'text'.
+          * @default 1
+         */
+        "lines": number;
+        /**
+          * Whether to show the shimmer animation.
+          * @default true
+         */
+        "shimmer": boolean;
+        /**
+          * @default 'text'
+         */
+        "variant": SkeletonVariant;
+        /**
+          * Width as a CSS value string (e.g. '200px', '100%') or number (px).
+         */
+        "width": string | number | undefined;
+    }
+    interface DsTag {
+        "background": TagBackground | undefined;
+        /**
+          * @default 'faint'
+         */
+        "contrast": TagContrast;
+        /**
+          * @default 'none'
+         */
+        "elevation": TagElevation;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * @default 'neutral'
+         */
+        "intent": TagIntent;
+        /**
+          * Whether the tag has a click/toggle behavior.
+          * @default false
+         */
+        "interactive": boolean;
+        "label": string;
+        "maxWidth": string | number | undefined;
+        /**
+          * @default false
+         */
+        "pressed": boolean;
+        /**
+          * @default false
+         */
+        "removable": boolean;
+        /**
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * @default 'md'
+         */
+        "size": TagSize;
+    }
+    interface DsText {
+        "align": TextAlign | undefined;
+        /**
+          * @default 'p'
+         */
+        "as": TextElement;
+        "color": TextColor | undefined;
+        "decoration": TextDecoration | undefined;
+        /**
+          * Maps to `for` attribute on <label> elements.
+         */
+        "for": string | undefined;
+        /**
+          * @default false
+         */
+        "italic": boolean;
+        /**
+          * @default 'none'
+         */
+        "lineTruncation": LineTruncation;
+        /**
+          * @default 'text-body-medium'
+         */
+        "variant": TextVariant;
+        "wrap": TextWrap | undefined;
+    }
+}
+export interface DsTagCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTagElement;
 }
 declare global {
+    interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
+    }
+    var HTMLDsBadgeElement: {
+        prototype: HTMLDsBadgeElement;
+        new (): HTMLDsBadgeElement;
+    };
     interface HTMLDsDividerElement extends Components.DsDivider, HTMLStencilElement {
     }
     var HTMLDsDividerElement: {
         prototype: HTMLDsDividerElement;
         new (): HTMLDsDividerElement;
     };
+    interface HTMLDsFadeElement extends Components.DsFade, HTMLStencilElement {
+    }
+    var HTMLDsFadeElement: {
+        prototype: HTMLDsFadeElement;
+        new (): HTMLDsFadeElement;
+    };
+    interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
+    }
+    var HTMLDsLoaderElement: {
+        prototype: HTMLDsLoaderElement;
+        new (): HTMLDsLoaderElement;
+    };
+    interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
+    }
+    var HTMLDsSkeletonElement: {
+        prototype: HTMLDsSkeletonElement;
+        new (): HTMLDsSkeletonElement;
+    };
+    interface HTMLDsTagElementEventMap {
+        "dsRemove": void;
+        "dsClick": void;
+        "dsPressedChange": boolean;
+    }
+    interface HTMLDsTagElement extends Components.DsTag, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTagElement: {
+        prototype: HTMLDsTagElement;
+        new (): HTMLDsTagElement;
+    };
+    interface HTMLDsTextElement extends Components.DsText, HTMLStencilElement {
+    }
+    var HTMLDsTextElement: {
+        prototype: HTMLDsTextElement;
+        new (): HTMLDsTextElement;
+    };
     interface HTMLElementTagNameMap {
+        "ds-badge": HTMLDsBadgeElement;
         "ds-divider": HTMLDsDividerElement;
+        "ds-fade": HTMLDsFadeElement;
+        "ds-loader": HTMLDsLoaderElement;
+        "ds-skeleton": HTMLDsSkeletonElement;
+        "ds-tag": HTMLDsTagElement;
+        "ds-text": HTMLDsTextElement;
     }
 }
 declare namespace LocalJSX {
+    type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}` | `prop:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K | `prop:${K}`]?: never } | { [P in `prop:${K}`]: PropT } & { [P in K | `attr:${K}`]?: never };
+
+    interface DsBadge {
+        /**
+          * @default 0
+         */
+        "count"?: number;
+        /**
+          * @default false
+         */
+        "isSelected"?: boolean;
+        /**
+          * Accessible label. Defaults to the count as a string.
+         */
+        "label"?: string | undefined;
+    }
     interface DsDivider {
         /**
           * Direction of the divider line. Defaults to 'horizontal'.
@@ -35,20 +247,205 @@ declare namespace LocalJSX {
          */
         "orientation"?: DividerOrientation;
     }
+    interface DsFade {
+        /**
+          * Background color to fade from. Defaults to var(--color-background-secondary).
+          * @default 'var(--color-background-secondary)'
+         */
+        "background"?: string;
+        /**
+          * Height (or width for left/right) of the fade overlay — any CSS value.
+         */
+        "height"?: string | undefined;
+        "side": FadeSide;
+    }
+    interface DsLoader {
+        /**
+          * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
+         */
+        "label"?: string | undefined;
+        /**
+          * Render size in px. Designed on a 16×16 viewBox; stroke scales proportionally.
+          * @default 20
+         */
+        "size"?: number;
+    }
+    interface DsSkeleton {
+        /**
+          * Height as a CSS value string or number (px).
+         */
+        "height"?: string | number | undefined;
+        /**
+          * Number of text lines. Only used when variant is 'text'.
+          * @default 1
+         */
+        "lines"?: number;
+        /**
+          * Whether to show the shimmer animation.
+          * @default true
+         */
+        "shimmer"?: boolean;
+        /**
+          * @default 'text'
+         */
+        "variant"?: SkeletonVariant;
+        /**
+          * Width as a CSS value string (e.g. '200px', '100%') or number (px).
+         */
+        "width"?: string | number | undefined;
+    }
+    interface DsTag {
+        "background"?: TagBackground | undefined;
+        /**
+          * @default 'faint'
+         */
+        "contrast"?: TagContrast;
+        /**
+          * @default 'none'
+         */
+        "elevation"?: TagElevation;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * @default 'neutral'
+         */
+        "intent"?: TagIntent;
+        /**
+          * Whether the tag has a click/toggle behavior.
+          * @default false
+         */
+        "interactive"?: boolean;
+        "label": string;
+        "maxWidth"?: string | number | undefined;
+        /**
+          * Fired when an interactive tag is clicked.
+         */
+        "onDsClick"?: (event: DsTagCustomEvent<void>) => void;
+        /**
+          * Fired when the pressed state toggles.
+         */
+        "onDsPressedChange"?: (event: DsTagCustomEvent<boolean>) => void;
+        /**
+          * Fired when the remove button is clicked.
+         */
+        "onDsRemove"?: (event: DsTagCustomEvent<void>) => void;
+        /**
+          * @default false
+         */
+        "pressed"?: boolean;
+        /**
+          * @default false
+         */
+        "removable"?: boolean;
+        /**
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * @default 'md'
+         */
+        "size"?: TagSize;
+    }
+    interface DsText {
+        "align"?: TextAlign | undefined;
+        /**
+          * @default 'p'
+         */
+        "as"?: TextElement;
+        "color"?: TextColor | undefined;
+        "decoration"?: TextDecoration | undefined;
+        /**
+          * Maps to `for` attribute on <label> elements.
+         */
+        "for"?: string | undefined;
+        /**
+          * @default false
+         */
+        "italic"?: boolean;
+        /**
+          * @default 'none'
+         */
+        "lineTruncation"?: LineTruncation;
+        /**
+          * @default 'text-body-medium'
+         */
+        "variant"?: TextVariant;
+        "wrap"?: TextWrap | undefined;
+    }
 
+    interface DsBadgeAttributes {
+        "count": number;
+        "isSelected": boolean;
+        "label": string | undefined;
+    }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
     }
+    interface DsFadeAttributes {
+        "side": FadeSide;
+        "height": string | undefined;
+        "background": string;
+    }
+    interface DsLoaderAttributes {
+        "size": number;
+        "label": string | undefined;
+    }
+    interface DsSkeletonAttributes {
+        "variant": SkeletonVariant;
+        "width": string;
+        "height": string;
+        "lines": number;
+        "shimmer": boolean;
+    }
+    interface DsTagAttributes {
+        "label": string;
+        "intent": TagIntent;
+        "contrast": TagContrast;
+        "elevation": TagElevation;
+        "size": TagSize;
+        "rounded": boolean;
+        "removable": boolean;
+        "maxWidth": string;
+        "inactive": boolean;
+        "background": TagBackground | undefined;
+        "pressed": boolean;
+        "interactive": boolean;
+    }
+    interface DsTextAttributes {
+        "variant": TextVariant;
+        "color": TextColor | undefined;
+        "decoration": TextDecoration | undefined;
+        "italic": boolean;
+        "align": TextAlign | undefined;
+        "lineTruncation": string;
+        "wrap": TextWrap | undefined;
+        "as": TextElement;
+        "for": string | undefined;
+    }
 
     interface IntrinsicElements {
+        "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
+        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
+        "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
+        "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
+        "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
+        "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
+            "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
+            "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
+            "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
+            "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
+            "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
         }
     }
 }

@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+
+:host(.skeleton),
+.skeleton {
+  background-color: var(--color-background-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Variants ───────────────────────────────────────────────────────────── */
+
+:host(.text),
+.text {
+  height: 14px;
+  border-radius: var(--dimension-radius-050);
+  width: 100%;
+}
+
+:host(.circular) {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--dimension-radius-half);
+}
+
+:host(.rectangular),
+.rectangular {
+  width: 100%;
+  height: 80px;
+  border-radius: var(--dimension-radius-075);
+}
+
+/* ── Text group ─────────────────────────────────────────────────────────── */
+
+.text-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-075);
+}
+
+/* ── Shimmer ────────────────────────────────────────────────────────────── */
+
+:host(.animate),
+.animate {
+  overflow: hidden;
+  position: relative;
+}
+
+:host(.animate)::after,
+.animate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-interaction-hover) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

@@ -1,0 +1,14 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.badge__text {
+  color: var(--color-foreground-secondary);
+}
+
+.badge__text--selected {
+  color: var(--color-foreground-primary);
+}
