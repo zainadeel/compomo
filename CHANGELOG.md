@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/zainadeel/compomo/compare/v0.3.0...v0.4.0) (2026-05-20)
+
+
+### Added
+
+* **stencil:** migrate CompoMo to Stencil web components ([#57](https://github.com/zainadeel/compomo/issues/57)) ([2b5b7e1](https://github.com/zainadeel/compomo/commit/2b5b7e1a40356eb3de844cf599470c5cd933541b))
+
 ## [0.3.0](https://github.com/zainadeel/compomo/compare/v0.2.4...v0.3.0) (2026-05-04)
 
 
