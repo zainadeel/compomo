@@ -298,6 +298,67 @@ export declare interface DsLoader extends Components.DsLoader {}
 
 
 @ProxyCmp({
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset']
+})
+@Component({
+  selector: 'ds-menu',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
+  outputs: ['dsClose', 'dsSelect'],
+  standalone: false
+})
+export class DsMenu {
+  protected el: HTMLDsMenuElement;
+  @Output() dsClose = new EventEmitter<CustomEvent<void>>();
+  @Output() dsSelect = new EventEmitter<CustomEvent<IDsMenuMenuItemData>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { MenuItemData as IDsMenuMenuItemData } from '@ds-mo/ui';
+
+export declare interface DsMenu extends Components.DsMenu {
+
+  dsClose: EventEmitter<CustomEvent<void>>;
+
+  dsSelect: EventEmitter<CustomEvent<IDsMenuMenuItemData>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['heading', 'modalWidth', 'open', 'subtitle']
+})
+@Component({
+  selector: 'ds-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: [{ name: 'heading', required: true }, 'modalWidth', 'open', 'subtitle'],
+  outputs: ['dsClose'],
+  standalone: false
+})
+export class DsModal {
+  protected el: HTMLDsModalElement;
+  @Output() dsClose = new EventEmitter<CustomEvent<void>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsModal extends Components.DsModal {
+
+  dsClose: EventEmitter<CustomEvent<void>>;
+}
+
+
+@ProxyCmp({
   inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'inactive', 'options', 'value']
 })
 @Component({
@@ -524,6 +585,29 @@ export declare interface DsText extends Components.DsText {}
 
 
 @ProxyCmp({
+  inputs: ['position']
+})
+@Component({
+  selector: 'ds-toast-provider',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['position'],
+  standalone: false
+})
+export class DsToastProvider {
+  protected el: HTMLDsToastProviderElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsToastProvider extends Components.DsToastProvider {}
+
+
+@ProxyCmp({
   inputs: ['checked', 'inactive']
 })
 @Component({
@@ -549,5 +633,28 @@ export declare interface DsToggle extends Components.DsToggle {
 
   dsChange: EventEmitter<CustomEvent<boolean>>;
 }
+
+
+@ProxyCmp({
+  inputs: ['align', 'alignOffset', 'delay', 'label', 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset']
+})
+@Component({
+  selector: 'ds-tooltip',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['align', 'alignOffset', 'delay', { name: 'label', required: true }, 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset'],
+  standalone: false
+})
+export class DsTooltip {
+  protected el: HTMLDsTooltipElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsTooltip extends Components.DsTooltip {}
 
 

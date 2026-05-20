@@ -13,6 +13,8 @@ export const DIRECTIVES = [
   d.DsHeader,
   d.DsInput,
   d.DsLoader,
+  d.DsMenu,
+  d.DsModal,
   d.DsRadioGroup,
   d.DsSidebar,
   d.DsSkeleton,
@@ -21,5 +23,7 @@ export const DIRECTIVES = [
   d.DsTabGroup,
   d.DsTag,
   d.DsText,
-  d.DsToggle
+  d.DsToastProvider,
+  d.DsToggle,
+  d.DsTooltip
 ];

@@ -13,6 +13,8 @@ import { DividerOrientation } from "./components/Divider/Divider";
 import { FadeSide } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { InputType } from "./components/Input/Input";
+import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
+import { ModalWidth } from "./components/Modal/Modal";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { SidebarWidth } from "./components/Sidebar/Sidebar";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
@@ -20,6 +22,8 @@ import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, S
 import { TabBackground, TabItem } from "./components/TabGroup/TabGroup";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
+import { ToastPosition } from "./components/Toast/Toast";
+import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -28,6 +32,8 @@ export { DividerOrientation } from "./components/Divider/Divider";
 export { FadeSide } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { InputType } from "./components/Input/Input";
+export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
+export { ModalWidth } from "./components/Modal/Modal";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { SidebarWidth } from "./components/Sidebar/Sidebar";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
@@ -35,6 +41,8 @@ export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, S
 export { TabBackground, TabItem } from "./components/TabGroup/TabGroup";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
+export { ToastPosition } from "./components/Toast/Toast";
+export { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAccordion {
         /**
@@ -219,6 +227,58 @@ export namespace Components {
           * @default 20
          */
         "size": number;
+    }
+    interface DsMenu {
+        /**
+          * @default 'start'
+         */
+        "align": MenuAlign;
+        /**
+          * @default 0
+         */
+        "alignOffset": number;
+        /**
+          * External trigger element to position against. Set via JS: menuEl.anchor = buttonEl
+         */
+        "anchor": HTMLElement | undefined;
+        /**
+          * ID of the external trigger element for positioning
+         */
+        "anchorId": string | undefined;
+        /**
+          * @default []
+         */
+        "items": MenuItemData[];
+        "menuWidth": string | undefined;
+        "minWidth": string | undefined;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default []
+         */
+        "sections": MenuSection[];
+        /**
+          * @default 'bottom'
+         */
+        "side": MenuSide;
+        /**
+          * @default 4
+         */
+        "sideOffset": number;
+    }
+    interface DsModal {
+        "heading": string;
+        /**
+          * @default 'md'
+         */
+        "modalWidth": ModalWidth | string;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        "subtitle": string | undefined;
     }
     interface DsRadioGroup {
         "ariaLabel": string | undefined;
@@ -427,6 +487,12 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
+    interface DsToastProvider {
+        /**
+          * @default 'top-center'
+         */
+        "position": ToastPosition;
+    }
     interface DsToggle {
         /**
           * @default false
@@ -436,6 +502,34 @@ export namespace Components {
           * @default false
          */
         "inactive": boolean;
+    }
+    interface DsTooltip {
+        /**
+          * @default 'center'
+         */
+        "align": TooltipAlign;
+        /**
+          * @default 0
+         */
+        "alignOffset": number;
+        /**
+          * @default HOVER_DELAY_MS
+         */
+        "delay": number;
+        "label": string;
+        "shortcutKey": string | undefined;
+        /**
+          * @default 'end'
+         */
+        "shortcutKeyPosition": 'start' | 'end';
+        /**
+          * @default 'top'
+         */
+        "side": TooltipSide;
+        /**
+          * @default 4
+         */
+        "sideOffset": number;
     }
 }
 export interface DsAccordionCustomEvent<T> extends CustomEvent<T> {
@@ -457,6 +551,14 @@ export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
 export interface DsInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputElement;
+}
+export interface DsMenuCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsMenuElement;
+}
+export interface DsModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsModalElement;
 }
 export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -607,6 +709,41 @@ declare global {
         prototype: HTMLDsLoaderElement;
         new (): HTMLDsLoaderElement;
     };
+    interface HTMLDsMenuElementEventMap {
+        "dsClose": void;
+        "dsSelect": MenuItemData;
+    }
+    interface HTMLDsMenuElement extends Components.DsMenu, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsMenuElementEventMap>(type: K, listener: (this: HTMLDsMenuElement, ev: DsMenuCustomEvent<HTMLDsMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsMenuElementEventMap>(type: K, listener: (this: HTMLDsMenuElement, ev: DsMenuCustomEvent<HTMLDsMenuElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsMenuElement: {
+        prototype: HTMLDsMenuElement;
+        new (): HTMLDsMenuElement;
+    };
+    interface HTMLDsModalElementEventMap {
+        "dsClose": void;
+    }
+    interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsModalElement: {
+        prototype: HTMLDsModalElement;
+        new (): HTMLDsModalElement;
+    };
     interface HTMLDsRadioGroupElementEventMap {
         "dsChange": string;
     }
@@ -713,6 +850,12 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    interface HTMLDsToastProviderElement extends Components.DsToastProvider, HTMLStencilElement {
+    }
+    var HTMLDsToastProviderElement: {
+        prototype: HTMLDsToastProviderElement;
+        new (): HTMLDsToastProviderElement;
+    };
     interface HTMLDsToggleElementEventMap {
         "dsChange": boolean;
     }
@@ -730,6 +873,12 @@ declare global {
         prototype: HTMLDsToggleElement;
         new (): HTMLDsToggleElement;
     };
+    interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
+    }
+    var HTMLDsTooltipElement: {
+        prototype: HTMLDsTooltipElement;
+        new (): HTMLDsTooltipElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-accordion": HTMLDsAccordionElement;
         "ds-badge": HTMLDsBadgeElement;
@@ -742,6 +891,8 @@ declare global {
         "ds-header": HTMLDsHeaderElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
+        "ds-menu": HTMLDsMenuElement;
+        "ds-modal": HTMLDsModalElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-skeleton": HTMLDsSkeletonElement;
@@ -750,7 +901,9 @@ declare global {
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
+        "ds-toast-provider": HTMLDsToastProviderElement;
         "ds-toggle": HTMLDsToggleElement;
+        "ds-tooltip": HTMLDsTooltipElement;
     }
 }
 declare namespace LocalJSX {
@@ -946,6 +1099,61 @@ declare namespace LocalJSX {
           * @default 20
          */
         "size"?: number;
+    }
+    interface DsMenu {
+        /**
+          * @default 'start'
+         */
+        "align"?: MenuAlign;
+        /**
+          * @default 0
+         */
+        "alignOffset"?: number;
+        /**
+          * External trigger element to position against. Set via JS: menuEl.anchor = buttonEl
+         */
+        "anchor"?: HTMLElement | undefined;
+        /**
+          * ID of the external trigger element for positioning
+         */
+        "anchorId"?: string | undefined;
+        /**
+          * @default []
+         */
+        "items"?: MenuItemData[];
+        "menuWidth"?: string | undefined;
+        "minWidth"?: string | undefined;
+        "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
+        "onDsSelect"?: (event: DsMenuCustomEvent<MenuItemData>) => void;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default []
+         */
+        "sections"?: MenuSection[];
+        /**
+          * @default 'bottom'
+         */
+        "side"?: MenuSide;
+        /**
+          * @default 4
+         */
+        "sideOffset"?: number;
+    }
+    interface DsModal {
+        "heading": string;
+        /**
+          * @default 'md'
+         */
+        "modalWidth"?: ModalWidth | string;
+        "onDsClose"?: (event: DsModalCustomEvent<void>) => void;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        "subtitle"?: string | undefined;
     }
     interface DsRadioGroup {
         "ariaLabel"?: string | undefined;
@@ -1171,6 +1379,12 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
+    interface DsToastProvider {
+        /**
+          * @default 'top-center'
+         */
+        "position"?: ToastPosition;
+    }
     interface DsToggle {
         /**
           * @default false
@@ -1181,6 +1395,34 @@ declare namespace LocalJSX {
          */
         "inactive"?: boolean;
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
+    }
+    interface DsTooltip {
+        /**
+          * @default 'center'
+         */
+        "align"?: TooltipAlign;
+        /**
+          * @default 0
+         */
+        "alignOffset"?: number;
+        /**
+          * @default HOVER_DELAY_MS
+         */
+        "delay"?: number;
+        "label": string;
+        "shortcutKey"?: string | undefined;
+        /**
+          * @default 'end'
+         */
+        "shortcutKeyPosition"?: 'start' | 'end';
+        /**
+          * @default 'top'
+         */
+        "side"?: TooltipSide;
+        /**
+          * @default 4
+         */
+        "sideOffset"?: number;
     }
 
     interface DsAccordionAttributes {
@@ -1255,6 +1497,22 @@ declare namespace LocalJSX {
         "size": number;
         "label": string | undefined;
     }
+    interface DsMenuAttributes {
+        "open": boolean;
+        "side": MenuSide;
+        "align": MenuAlign;
+        "sideOffset": number;
+        "alignOffset": number;
+        "menuWidth": string | undefined;
+        "minWidth": string | undefined;
+        "anchorId": string | undefined;
+    }
+    interface DsModalAttributes {
+        "open": boolean;
+        "heading": string;
+        "subtitle": string | undefined;
+        "modalWidth": ModalWidth | string;
+    }
     interface DsRadioGroupAttributes {
         "value": string;
         "direction": 'vertical' | 'horizontal';
@@ -1328,9 +1586,22 @@ declare namespace LocalJSX {
         "as": TextElement;
         "for": string | undefined;
     }
+    interface DsToastProviderAttributes {
+        "position": ToastPosition;
+    }
     interface DsToggleAttributes {
         "checked": boolean;
         "inactive": boolean;
+    }
+    interface DsTooltipAttributes {
+        "label": string;
+        "side": TooltipSide;
+        "align": TooltipAlign;
+        "sideOffset": number;
+        "alignOffset": number;
+        "delay": number;
+        "shortcutKey": string | undefined;
+        "shortcutKeyPosition": 'start' | 'end';
     }
 
     interface IntrinsicElements {
@@ -1345,6 +1616,8 @@ declare namespace LocalJSX {
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
+        "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
+        "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
@@ -1353,7 +1626,9 @@ declare namespace LocalJSX {
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
+        "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
     }
 }
 export { LocalJSX as JSX };
@@ -1371,6 +1646,8 @@ declare module "@stencil/core" {
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
+            "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
+            "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
@@ -1379,7 +1656,9 @@ declare module "@stencil/core" {
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
         }
     }
 }
