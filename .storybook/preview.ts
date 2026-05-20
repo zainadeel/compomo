@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react-vite';
+import type { Preview } from '@storybook/web-components';
 import '@ds-mo/tokens';
 import '@ds-mo/tokens/reset';
 import '@ds-mo/tokens/globals';
@@ -25,10 +25,8 @@ const preview: Preview = {
   },
   decorators: [
     (Story, context) => {
-      const theme = context.globals.theme || 'light';
+      const theme = context.globals['theme'] || 'light';
       document.documentElement.setAttribute('data-theme', theme);
-      // Drive the canvas background from the active theme token so it always
-      // matches — no separate backgrounds toolbar needed.
       document.body.style.backgroundColor = 'var(--color-background-primary)';
       return Story();
     },
