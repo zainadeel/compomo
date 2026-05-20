@@ -79,6 +79,7 @@
     "node": ">=18.0.0"
   },
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "dist/components/**/*.js"
   ]
 }
