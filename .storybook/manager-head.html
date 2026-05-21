@@ -1,0 +1,11 @@
+<style>
+  /*
+   * Hide the bottom addon panel — we only ship @storybook/addon-docs so it
+   * shows an empty "Storybook add-ons" state and just wastes canvas height.
+   * Target the panel root AND its wrapper (which carries the resize handle).
+   */
+  #storybook-panel-root,
+  div:has(> #storybook-panel-root) {
+    display: none !important;
+  }
+</style>

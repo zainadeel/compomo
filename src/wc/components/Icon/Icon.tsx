@@ -56,7 +56,19 @@ export class Icon {
 
   private updateSvg() {
     const container = this.el.querySelector<HTMLElement>('.icon__svg');
-    if (container) container.innerHTML = this.svgString;
+    if (!container) return;
+    container.innerHTML = this.svgString;
+    // Stencil's scoped CSS cannot reach innerHTML-injected elements (no sc-* class).
+    // Apply width/height as inline styles so sizing works regardless of scope class.
+    const svg = container.querySelector<SVGElement>('svg');
+    if (svg) {
+      svg.removeAttribute('width');
+      svg.removeAttribute('height');
+      svg.style.display = 'block';
+      svg.style.flexShrink = '0';
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+    }
   }
 
   @Watch('name')

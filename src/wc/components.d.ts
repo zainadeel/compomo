@@ -398,7 +398,7 @@ export namespace Components {
          */
         "groups": string;
         /**
-          * Single character shown in the avatar circle
+          * Single character shown in the collapsed avatar
           * @default ''
          */
         "userInitial": string;
@@ -1565,7 +1565,7 @@ declare namespace LocalJSX {
          */
         "onDsNavToggle"?: (event: DsPanelNavCustomEvent<boolean>) => void;
         /**
-          * Single character shown in the avatar circle
+          * Single character shown in the collapsed avatar
           * @default ''
          */
         "userInitial"?: string;

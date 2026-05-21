@@ -27,11 +27,26 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals['theme'] || 'light';
       document.documentElement.setAttribute('data-theme', theme);
-      document.body.style.backgroundColor = 'var(--color-background-primary)';
+
+      // For fullscreen stories let the story control its own background.
+      // For padded/centered stories apply the surface token so the canvas
+      // isn't stuck on browser-default white when switching to dark theme.
+      const layout = context.parameters['layout'] ?? 'padded';
+      if (layout === 'fullscreen') {
+        document.body.style.removeProperty('background-color');
+      } else {
+        document.body.style.setProperty('background-color', 'var(--color-background-primary)');
+      }
+
       return Story();
     },
   ],
   parameters: {
+    // Hide the bottom addon panel globally — we only ship @storybook/addon-docs
+    // so the panel has no content and just steals canvas height.
+    options: {
+      showPanel: false,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

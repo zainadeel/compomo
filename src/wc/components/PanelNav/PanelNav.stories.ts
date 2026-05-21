@@ -3,38 +3,40 @@ import { html } from 'lit';
 import type { TemplateResult } from 'lit';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-icon.js';
+import '../../../../dist/components/ds-text.js';
 import type { PanelNavGroup } from './PanelNav';
 
-// ── Sample data ────────────────────────────────────────────────────────────
+// ── Sample data (icon names verified against IcoMo) ───────────────────────
 
 const DASHBOARD_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'fleet-view',    icon: 'Dashboard',    label: 'Fleet View'    },
-      { id: 'safety',        icon: 'Shield',        label: 'Safety'        },
-      { id: 'compliance',    icon: 'ShieldCheck',   label: 'Compliance'    },
-      { id: 'fuel',          icon: 'FuelPump',      label: 'Fuel'          },
-      { id: 'cards',         icon: 'Card',          label: 'Cards'         },
-      { id: 'maintenance',   icon: 'GearCheck',     label: 'Maintenance'   },
-      { id: 'workforce',     icon: 'PersonGroup',   label: 'Workforce'     },
+      { id: 'fleet-view',        icon: 'MapPage',            label: 'Fleet View'          },
+      { id: 'safety',            icon: 'ShieldCircle',       label: 'Safety'              },
+      { id: 'compliance',        icon: 'Chart',              label: 'Compliance'          },
+      { id: 'fuel',              icon: 'FuelPump',           label: 'Fuel'                },
+      { id: 'cards',             icon: 'Card',               label: 'Cards'               },
+      { id: 'maintenance',       icon: 'Wrench',             label: 'Maintenance'         },
+      { id: 'workforce',         icon: 'Person',             label: 'Workforce'           },
     ],
   },
   {
     items: [
-      { id: 'performance',    icon: 'Chart',          label: 'Performance'         },
-      { id: 'security',       icon: 'ShieldLock',     label: 'Security'            },
-      { id: 'service-ops',    icon: 'PersonGear',     label: 'Service Operations'  },
-      { id: 'dispatch',       icon: 'MapNavigation',  label: 'Dispatch'            },
-      { id: 'devices',        icon: 'Devices',        label: 'Devices'             },
+      { id: 'performance',       icon: 'Whistle',            label: 'Performance'         },
+      { id: 'security',          icon: 'ShieldLock',         label: 'Security'            },
+      { id: 'service-ops',       icon: 'WorkflowA',          label: 'Service Operations'  },
+      { id: 'dispatch',          icon: 'LocationPinArrows',  label: 'Dispatch'            },
+      { id: 'devices',           icon: 'Devices',            label: 'Devices'             },
     ],
   },
   {
     items: [
-      { id: 'atlas',       icon: 'GlobeWorldMap',    label: 'Atlas'       },
-      { id: 'documents',   icon: 'DocumentStacked',  label: 'Documents'   },
-      { id: 'analytics',   icon: 'DocumentChart',    label: 'Analytics'   },
-      { id: 'marketplace', icon: 'AssetTracker',     label: 'Marketplace' },
-      { id: 'labs',        icon: 'Bulb',             label: 'Labs'        },
+      { id: 'atlas',             icon: 'AI',                 label: 'Atlas'               },
+      { id: 'messages',          icon: 'MessageBubbleStack', label: 'Messages'            },
+      { id: 'documents',         icon: 'Document',           label: 'Documents'           },
+      { id: 'analytics',         icon: 'GraphArrow',         label: 'Analytics'           },
+      { id: 'marketplace',       icon: 'ShoppingBag',        label: 'Marketplace'         },
+      { id: 'labs',              icon: 'Beaker',             label: 'Labs'                },
     ],
   },
 ];
@@ -42,30 +44,30 @@ const DASHBOARD_GROUPS: PanelNavGroup[] = [
 const SETTINGS_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'user-settings', icon: 'PersonGear', label: 'User Settings' },
+      { id: 'user-settings',     icon: 'Avatar',             label: 'User Settings'       },
     ],
   },
   {
     items: [
-      { id: 'company',     icon: 'BuildingOffice', label: 'Company'     },
-      { id: 'fleet-users', icon: 'PersonGroup',   label: 'Fleet Users' },
-      { id: 'groups',      icon: 'GroupBy',        label: 'Groups'      },
+      { id: 'company',           icon: 'BuildingOffice',     label: 'Company'             },
+      { id: 'fleet-users',       icon: 'PersonManager',      label: 'Fleet Users'         },
+      { id: 'groups',            icon: 'PersonGroup',        label: 'Groups'              },
     ],
   },
   {
     items: [
-      { id: 'settings-profiles', icon: 'DocumentGear',    label: 'Settings Profiles' },
-      { id: 'product-settings',  icon: 'Gear',            label: 'Product Settings'  },
-      { id: 'automations',       icon: 'CircleArrow',     label: 'Automations'       },
-      { id: 'alerts',            icon: 'Bell',            label: 'Alerts'            },
+      { id: 'settings-profiles', icon: 'DocumentGear',       label: 'Settings Profiles'   },
+      { id: 'product-settings',  icon: 'Preferences',        label: 'Product Settings'    },
+      { id: 'automations',       icon: 'Bolt',               label: 'Automations'         },
+      { id: 'alerts',            icon: 'Notification',       label: 'Alerts'              },
     ],
   },
   {
     items: [
-      { id: 'driver-app',    icon: 'EntityDriver',  label: 'Driver & Fleet App' },
-      { id: 'security-data', icon: 'ShieldLock',    label: 'Security & Data'    },
-      { id: 'developers',    icon: 'Braces',        label: 'Developers'         },
-      { id: 'audit-log',     icon: 'DocumentCheck', label: 'Audit Log'          },
+      { id: 'driver-app',        icon: 'Mobile',             label: 'Driver & Fleet App'  },
+      { id: 'security-data',     icon: 'LockClosed',         label: 'Security & Data'     },
+      { id: 'developers',        icon: 'BackslashBrackets',  label: 'Developers'          },
+      { id: 'audit-log',         icon: 'DocumentPencil',     label: 'Audit Log'           },
     ],
   },
 ];
@@ -78,7 +80,7 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
   return html`
     <div style="
       display: flex;
-      height: 600px;
+      height: 100%;
       background: #0f0f0f;
       font-family: var(--typography-font-family, system-ui);
     ">
@@ -100,8 +102,8 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
         }}
       ></ds-panel-nav>
 
-      <div style="flex:1; padding: 24px; color: rgba(255,255,255,0.7); font-size: 14px;">
-        <p style="margin: 0; opacity: 0.5">← Click a nav item or the chevron to interact</p>
+      <div style="flex:1; padding: 24px; color: rgba(255,255,255,0.5); font-size: 13px;">
+        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click a nav item to select it.</p>
       </div>
     </div>
   `;
@@ -113,7 +115,7 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
   return html`
     <div style="
       display: flex;
-      height: 600px;
+      height: 100%;
       background: var(--color-background-primary);
       font-family: var(--typography-font-family, system-ui);
     ">
@@ -135,15 +137,15 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
         }}
       ></ds-panel-nav>
 
-      <div style="flex:1; padding: 24px; color: var(--color-foreground-secondary); font-size: 14px;">
-        <p style="margin: 0; opacity: 0.5">← Click a nav item or the chevron to interact</p>
+      <div style="flex:1; padding: 24px; color: var(--color-foreground-secondary); font-size: 13px;">
+        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click a nav item to select it.</p>
       </div>
     </div>
   `;
 }
 
 function sideBySide(): TemplateResult {
-  const dashGroups    = JSON.stringify(DASHBOARD_GROUPS);
+  const dashGroups     = JSON.stringify(DASHBOARD_GROUPS);
   const settingsGroups = JSON.stringify(SETTINGS_GROUPS);
 
   return html`
@@ -151,14 +153,16 @@ function sideBySide(): TemplateResult {
       display: flex;
       gap: 32px;
       padding: 32px;
+      min-height: 100%;
       background: var(--color-background-secondary);
       font-family: var(--typography-font-family, system-ui);
       flex-wrap: wrap;
+      box-sizing: border-box;
     ">
       <!-- Dashboard expanded -->
       <div style="display:flex; flex-direction:column; gap:8px;">
         <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Dashboard — expanded</span>
-        <div style="height:480px; display:flex;">
+        <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-exp"
             variant="dashboard"
@@ -181,7 +185,7 @@ function sideBySide(): TemplateResult {
       <!-- Dashboard collapsed -->
       <div style="display:flex; flex-direction:column; gap:8px;">
         <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Dashboard — collapsed</span>
-        <div style="height:480px; display:flex;">
+        <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-col"
             variant="dashboard"
@@ -205,7 +209,7 @@ function sideBySide(): TemplateResult {
       <!-- Settings expanded -->
       <div style="display:flex; flex-direction:column; gap:8px;">
         <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Settings — expanded</span>
-        <div style="height:480px; display:flex; background:var(--color-background-primary);">
+        <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
           <ds-panel-nav
             id="sb-settings-exp"
             variant="settings"
@@ -228,7 +232,7 @@ function sideBySide(): TemplateResult {
       <!-- Settings collapsed -->
       <div style="display:flex; flex-direction:column; gap:8px;">
         <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Settings — collapsed</span>
-        <div style="height:480px; display:flex; background:var(--color-background-primary);">
+        <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
           <ds-panel-nav
             id="sb-settings-col"
             variant="settings"

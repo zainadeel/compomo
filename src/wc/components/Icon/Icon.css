@@ -7,6 +7,9 @@
   flex-shrink: 0;
   line-height: 0;
   color: var(--color-foreground-primary);
+  /* Explicit size so the SVG (width/height: 100% via JS) has a defined container */
+  width: var(--_icon-sz, var(--dimension-iconography-md));
+  height: var(--_icon-sz, var(--dimension-iconography-md));
 }
 
 .icon__svg {
@@ -14,13 +17,8 @@
   line-height: 0;
 }
 
-/* SVG paths use fill="currentColor" — size is driven by CSS, overriding SVG attrs */
-.icon__svg svg {
-  display: block;
-  flex-shrink: 0;
-  width: var(--_icon-sz, var(--dimension-iconography-md));
-  height: var(--_icon-sz, var(--dimension-iconography-md));
-}
+/* SVG width/height are set via inline style in updateSvg() because Stencil's
+   scoped CSS cannot reach innerHTML-injected elements (they lack the sc-* class). */
 
 /* ── Sizes ───────────────────────────────────────────────────────────────── */
 

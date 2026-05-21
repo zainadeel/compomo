@@ -6,6 +6,8 @@ export interface PanelNavItem {
   id: string;
   icon: string;
   label: string;
+  /** Show a notification dot badge on the item */
+  dot?: boolean;
   flag?: boolean;
 }
 
@@ -36,7 +38,7 @@ export class PanelNav {
   /** Display name for the footer user section */
   @Prop() userName: string = '';
 
-  /** Single character shown in the avatar circle */
+  /** Single character shown in the collapsed avatar */
   @Prop() userInitial: string = '';
 
   /** Emitted when a nav item is clicked. Detail = the item's `id`. */
@@ -83,12 +85,40 @@ export class PanelNav {
       <Host>
         <nav class={navCls} aria-label={isDashboard ? 'Main navigation' : 'Settings navigation'}>
 
-          {/* Scrollable body */}
+          {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
+          <div class="panel-nav__header">
+            <button
+              class="panel-nav__header-btn"
+              onClick={() => this.handleToggle()}
+              aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+            >
+              {/* Motive M mark — fades out on hover to reveal collapse toggle */}
+              <span class="panel-nav__header-logo" aria-hidden="true">
+                <svg class="panel-nav__m-mark" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.1159 4.31537H7.67021L2.53401 13.0703H0V15.6875H4.02716L8.24319 8.49978V15.6846H11.6342L15.8289 8.47829V15.6846H18.7122V4.3125H15.2559L11.1159 11.3648V4.31537Z" fill="currentColor"/>
+                </svg>
+              </span>
+              {/* Collapse / expand icon — revealed on hover via CSS */}
+              <span class="panel-nav__header-toggle" aria-hidden="true">
+                <ds-icon
+                  name={collapsed ? 'LeftExpandB' : 'LeftCollapseB'}
+                  size="md"
+                  color="inherit"
+                />
+              </span>
+            </button>
+          </div>
+
+          {/* ── Scrollable body ── */}
           <div class="panel-nav__body">
             {this.parsedGroups.map((group, gi) => (
               <div class={{ 'panel-nav__group': true, 'panel-nav__group--divider': gi > 0 }}>
                 {group.label && !collapsed && (
-                  <span class="panel-nav__group-label">{group.label}</span>
+                  <span class="panel-nav__group-label">
+                    <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                      {group.label}
+                    </ds-text>
+                  </span>
                 )}
                 {group.items.map(item => {
                   const isActive = item.id === this.activeId;
@@ -111,7 +141,18 @@ export class PanelNav {
                         />
                       </span>
                       {!collapsed && (
-                        <span class="panel-nav__item-label">{item.label}</span>
+                        <span class="panel-nav__item-label">
+                          <ds-text
+                            as="span"
+                            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
+                            color="inherit"
+                          >
+                            {item.label}
+                          </ds-text>
+                        </span>
+                      )}
+                      {item.dot && !collapsed && (
+                        <span class="panel-nav__item-dot" aria-label="notification" />
                       )}
                     </button>
                   );
@@ -120,32 +161,43 @@ export class PanelNav {
             ))}
           </div>
 
-          {/* Footer */}
+          {/* ── Footer ── */}
           <div class="panel-nav__footer">
+            {/* Settings gear — always present */}
             <button
-              class="panel-nav__footer-settings"
+              class="panel-nav__footer-gear"
               title="Settings"
-              onClick={() => this.handleToggle()}
-              aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+              aria-label="Open settings"
             >
-              <ds-icon name="ChevronLeft" size="sm" color="inherit" class="panel-nav__toggle-icon" />
+              <ds-icon name="Gear" size="md" color="inherit" />
             </button>
 
-            <div class="panel-nav__footer-user">
-              {collapsed ? (
-                <span class="panel-nav__avatar" aria-hidden="true">
-                  {userInitial}
-                </span>
-              ) : (
-                <span class="panel-nav__user-row">
-                  <span class="panel-nav__avatar panel-nav__avatar--sm" aria-hidden="true">
+            {/* User row — expanded: name + chevron; collapsed: circular avatar */}
+            {collapsed ? (
+              <button
+                class="panel-nav__footer-user-mini"
+                title={userName}
+                aria-label={`User: ${userName}`}
+              >
+                <span class="panel-nav__user-initial">
+                  <ds-text as="span" variant="text-caption-emphasis" color="inherit">
                     {userInitial}
-                  </span>
-                  <span class="panel-nav__user-name">{userName}</span>
-                  <ds-icon name="ChevronUpDown" size="sm" color="inherit" />
+                  </ds-text>
                 </span>
-              )}
-            </div>
+              </button>
+            ) : (
+              <button
+                class="panel-nav__footer-user"
+                aria-label={`User menu for ${userName}`}
+              >
+                <span class="panel-nav__user-name">
+                  <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+                    {userName}
+                  </ds-text>
+                </span>
+                <ds-icon name="ChevronUpDown" size="sm" color="inherit" />
+              </button>
+            )}
           </div>
 
         </nav>
