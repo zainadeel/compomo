@@ -1,3 +1,15 @@
+/*
+ * Allow fullscreen stories to fill the exact canvas height.
+ * Without this, height: 100% inside story wrappers cannot resolve because
+ * the html/body/storybook-root chain has no explicit height.
+ */
+html,
+body,
+#storybook-root,
+#root-inner {
+  height: 100%;
+}
+
 /* Storybook MDX docs — table styling
  * Storybook's default docs theme renders markdown tables without borders or
  * alternating row colors. These overrides make tables readable. */

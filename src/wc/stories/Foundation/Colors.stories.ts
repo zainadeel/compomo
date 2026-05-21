@@ -12,6 +12,7 @@ type Story = StoryObj;
 
 const INTENTS   = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution', 'ai', 'guide', 'walkthrough'] as const;
 const CONTRASTS = ['faint', 'medium', 'bold', 'strong'] as const;
+const STATES    = ['hover', 'pressed', 'focus', 'active'] as const;
 
 // ── Shared styles (CSS strings) ───────────────────────────────────────────────
 
@@ -139,10 +140,10 @@ function BorderColors(): TemplateResult {
             swatchBorder(`color-border-${level}`, `border-${level}`))}
         </div>`)}
 
-      ${section('Border — Intent', undefined, html`
+      ${CONTRASTS.map(contrast => section(`Border — ${cap(contrast)}`, undefined, html`
         <div style="${GRID}">
-          ${INTENTS.map(intent => swatchBorder(`color-border-${intent}`, intent))}
-        </div>`)}
+          ${INTENTS.map(intent => swatchBorder(`color-border-${contrast}-${intent}`, intent))}
+        </div>`))}
 
       ${section('Border — On Background', 'Context-aware border hierarchy', html`
         ${(['on-bold-background', 'on-strong-background', 'on-medium-background', 'on-translucent-background'] as const).map(ctx => {
@@ -194,9 +195,9 @@ function BorderColors(): TemplateResult {
 function InteractionColors(): TemplateResult {
   return html`
     <div style="${PAGE}">
-      ${section('Interaction — Default', 'Hover, pressed, focus on standard surfaces', html`
+      ${section('Interaction — Default', 'Hover, pressed, focus, active on standard surfaces', html`
         <div style="${GRID}">
-          ${(['hover', 'pressed', 'focus'] as const).map(state =>
+          ${STATES.map(state =>
             swatch(`color-interaction-${state}`, state))}
         </div>`)}
 
@@ -207,7 +208,7 @@ function InteractionColors(): TemplateResult {
                  :                                   'var(--color-background-translucent)';
         return section(`Interaction — ${ctx}`, undefined, html`
           <div style="${GRID}">
-            ${(['hover', 'pressed', 'focus'] as const).map(state => html`
+            ${STATES.map(state => html`
               <div style="${SWATCH}">
                 <div style="${COLOR} position: relative; background-color: ${bg}; overflow: hidden;">
                   <div style="position: absolute; inset: 0; background-color: var(--color-interaction-${ctx}-${state});"></div>
@@ -243,7 +244,7 @@ function AlwaysDarkColors(): TemplateResult {
           <div>
             <p style="${darkLabel}">Foreground — Hierarchy</p>
             <div style="${GRID}">
-              ${(['primary', 'secondary', 'tertiary', 'quaternary', 'quinary'] as const).map(level => html`
+              ${(['primary', 'secondary', 'tertiary', 'quaternary'] as const).map(level => html`
                 <div style="${SWATCH}">
                   <div style="${COLOR} display: flex; align-items: center; justify-content: center; border: none;">
                     <span style="color: var(--color-always-dark-foreground-${level}); font-weight: 600; font-size: 16px;">Aa</span>
@@ -277,16 +278,17 @@ function AlwaysDarkColors(): TemplateResult {
             </div>
           </div>
 
-          <div>
-            <p style="${darkLabel}">Border — Intent</p>
-            <div style="${GRID}">
-              ${INTENTS.map(intent => html`
-                <div style="${SWATCH}">
-                  <div style="${COLOR} border: 3px solid var(--color-always-dark-border-${intent});"></div>
-                  <span style="${tinyLabel}">${intent}</span>
-                </div>`)}
-            </div>
-          </div>
+          ${CONTRASTS.map(contrast => html`
+            <div>
+              <p style="${darkLabel}">Border — ${cap(contrast)}</p>
+              <div style="${GRID}">
+                ${INTENTS.map(intent => html`
+                  <div style="${SWATCH}">
+                    <div style="${COLOR} border: 3px solid var(--color-always-dark-border-${contrast}-${intent});"></div>
+                    <span style="${tinyLabel}">${intent}</span>
+                  </div>`)}
+              </div>
+            </div>`)}
 
           <div>
             <p style="${darkLabel}">Divider</p>
@@ -297,10 +299,103 @@ function AlwaysDarkColors(): TemplateResult {
           <div>
             <p style="${darkLabel}">Interaction</p>
             <div style="${GRID}">
-              ${(['hover', 'pressed', 'focus'] as const).map(state => html`
+              ${STATES.map(state => html`
                 <div style="${SWATCH}">
                   <div style="${COLOR} position: relative; overflow: hidden; border: none;">
                     <div style="position: absolute; inset: 0; background-color: var(--color-always-dark-interaction-${state});"></div>
+                  </div>
+                  <span style="${tinyLabel}">${state}</span>
+                </div>`)}
+            </div>
+          </div>
+
+        </div>`)}
+    </div>`;
+}
+
+// ── Inverted ──────────────────────────────────────────────────────────────────
+
+function InvertedColors(): TemplateResult {
+  const invLabel  = 'font-size: 13px; font-weight: 500; color: var(--color-inverted-foreground-secondary); margin: 0 0 8px;';
+  const tinyLabel = `${LABEL} color: var(--color-inverted-foreground-tertiary);`;
+
+  return html`
+    <div style="${PAGE}">
+      ${section('Inverted', 'Tokens for inverted / dark-surface contexts', html`
+        <div style="background-color: var(--color-inverted-background); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+
+          <div>
+            <p style="${invLabel}">Background</p>
+            <div style="${GRID}">
+              <div style="${SWATCH}">
+                <div style="${COLOR} background-color: var(--color-inverted-background); border: 1px solid var(--color-inverted-border-tertiary);"></div>
+                <span style="${tinyLabel}">inverted-background</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p style="${invLabel}">Foreground — Hierarchy</p>
+            <div style="${GRID}">
+              ${(['primary', 'secondary', 'tertiary', 'quaternary'] as const).map(level => html`
+                <div style="${SWATCH}">
+                  <div style="${COLOR} display: flex; align-items: center; justify-content: center; border: none;">
+                    <span style="color: var(--color-inverted-foreground-${level}); font-weight: 600; font-size: 16px;">Aa</span>
+                  </div>
+                  <span style="${tinyLabel}">${level}</span>
+                </div>`)}
+            </div>
+          </div>
+
+          <div>
+            <p style="${invLabel}">Foreground — Intent</p>
+            <div style="${GRID}">
+              ${INTENTS.map(intent => html`
+                <div style="${SWATCH}">
+                  <div style="${COLOR} display: flex; align-items: center; justify-content: center; border: none;">
+                    <span style="color: var(--color-inverted-foreground-${intent}); font-weight: 600; font-size: 16px;">Aa</span>
+                  </div>
+                  <span style="${tinyLabel}">${intent}</span>
+                </div>`)}
+            </div>
+          </div>
+
+          <div>
+            <p style="${invLabel}">Border — Hierarchy</p>
+            <div style="${GRID}">
+              ${(['primary', 'secondary', 'tertiary'] as const).map(level => html`
+                <div style="${SWATCH}">
+                  <div style="${COLOR} border: 3px solid var(--color-inverted-border-${level});"></div>
+                  <span style="${tinyLabel}">${level}</span>
+                </div>`)}
+            </div>
+          </div>
+
+          ${CONTRASTS.map(contrast => html`
+            <div>
+              <p style="${invLabel}">Border — ${cap(contrast)}</p>
+              <div style="${GRID}">
+                ${INTENTS.map(intent => html`
+                  <div style="${SWATCH}">
+                    <div style="${COLOR} border: 3px solid var(--color-inverted-border-${contrast}-${intent});"></div>
+                    <span style="${tinyLabel}">${intent}</span>
+                  </div>`)}
+              </div>
+            </div>`)}
+
+          <div>
+            <p style="${invLabel}">Divider</p>
+            <div style="height: 1px; background-color: var(--color-inverted-divider); margin: 4px 0;"></div>
+            <span style="${tinyLabel}">inverted-divider</span>
+          </div>
+
+          <div>
+            <p style="${invLabel}">Interaction</p>
+            <div style="${GRID}">
+              ${STATES.map(state => html`
+                <div style="${SWATCH}">
+                  <div style="${COLOR} position: relative; overflow: hidden; border: none;">
+                    <div style="position: absolute; inset: 0; background-color: var(--color-inverted-interaction-${state});"></div>
                   </div>
                   <span style="${tinyLabel}">${state}</span>
                 </div>`)}
@@ -355,6 +450,300 @@ function DataVizColors(): TemplateResult {
         <div style="display: flex; gap: 8px; max-width: 400px;">
           ${[1, 2, 3, 4].map(n => html`
             <div style="flex: 1;">${swatch(`color-data-misc-${n}`, `${n}`)}</div>`)}
+        </div>`)}
+    </div>`;
+}
+
+// ── Color Intent ──────────────────────────────────────────────────────────────
+
+function ColorIntentColors(): TemplateResult {
+  const hues = [
+    'blue', 'cyan', 'green', 'grey', 'magenta', 'olive',
+    'orange', 'pink', 'purple', 'red', 'teal', 'yellow',
+  ] as const;
+
+  const intentInteractionCtx = [
+    'on-faint-background', 'on-medium-background', 'on-strong-background', 'on-bold-background',
+  ] as const;
+
+  return html`
+    <div style="${PAGE}">
+      ${section('Color Intent', 'Hue-first palette: color-color-intent-{hue}-{contrast}-{role}', html`
+        <p style="${SUB}">Each row shows faint → medium → bold → strong. Three chips per cell: background · border · foreground.</p>`)}
+
+      ${hues.map(hue => html`
+        <div style="${SECTION}">
+          <h2 style="${H2}">${cap(hue)}${hue === 'magenta' ? ' (+ alt-2 variants)' : ''}</h2>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+            ${CONTRASTS.map(contrast => html`
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="${LABEL} font-weight: 600;">${contrast}</span>
+                <div style="height: 40px; border-radius: 6px; background-color: var(--color-color-intent-${hue}-${contrast}-background); border: 1px solid var(--color-border-tertiary);" title="--color-color-intent-${hue}-${contrast}-background"></div>
+                <div style="height: 40px; border-radius: 6px; background-color: var(--color-background-primary); border: 3px solid var(--color-color-intent-${hue}-${contrast}-border);" title="--color-color-intent-${hue}-${contrast}-border"></div>
+                <div style="height: 40px; border-radius: 6px; background-color: var(--color-color-intent-${hue}-${contrast}-background); display: flex; align-items: center; justify-content: center; border: none;">
+                  <span style="color: var(--color-color-intent-${hue}-${contrast}-foreground); font-weight: 700; font-size: 14px;" title="--color-color-intent-${hue}-${contrast}-foreground">Aa</span>
+                </div>
+                <span style="${LABEL}">bg · border · fg</span>
+              </div>`)}
+          </div>
+          ${hue === 'magenta' ? html`
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px;">
+              ${CONTRASTS.map(contrast => html`
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <span style="${LABEL} font-weight: 600;">${contrast}-2</span>
+                  <div style="height: 40px; border-radius: 6px; background-color: var(--color-color-intent-magenta-${contrast}-2-background); border: 1px solid var(--color-border-tertiary);"></div>
+                  <div style="height: 40px; border-radius: 6px; background-color: var(--color-background-primary); border: 3px solid var(--color-color-intent-magenta-${contrast}-2-border);"></div>
+                  <div style="height: 40px; border-radius: 6px; background-color: var(--color-color-intent-magenta-${contrast}-2-background); display: flex; align-items: center; justify-content: center; border: none;">
+                    <span style="color: var(--color-color-intent-magenta-${contrast}-2-foreground); font-weight: 700; font-size: 14px;">Aa</span>
+                  </div>
+                  <span style="${LABEL}">bg · border · fg</span>
+                </div>`)}
+            </div>` : ''}
+        </div>`)}
+
+      ${section('Color Intent — Interactions', 'Overlay states for each background context', html`
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+          ${intentInteractionCtx.map(ctx => html`
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <span style="${LABEL} font-weight: 600;">${ctx}</span>
+              ${(['hover', 'pressed', 'focus'] as const).map(state => html`
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                  <div style="height: 32px; border-radius: 6px; background-color: var(--color-color-intent-interaction-${ctx}-${state}); border: 1px solid var(--color-border-tertiary);"></div>
+                  <span style="${LABEL}">${state}</span>
+                </div>`)}
+            </div>`)}
+        </div>`)}
+    </div>`;
+}
+
+// ── Domain (Fleet) ────────────────────────────────────────────────────────────
+
+function DomainColors(): TemplateResult {
+  const driverStatuses    = ['driving', 'on-duty', 'off-duty', 'personal-conveyance', 'yard-move'] as const;
+  const entityStatuses    = ['in-motion', 'idling', 'stationary', 'stale', 'immobilized'] as const;
+  const locationIntents   = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution'] as const;
+  const safetyGrades      = ['excellent', 'good', 'fair'] as const;
+  const markerInteraction = ['hover', 'pressed', 'focus'] as const;
+
+  return html`
+    <div style="${PAGE}">
+      ${section('Driver Status', 'HOS duty-cycle backgrounds and foreground', html`
+        <div style="${GRID}">
+          ${driverStatuses.map(status => swatch(`color-driver-status-background-${status}`, status))}
+          <div style="${SWATCH}">
+            <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-driver-status-background-driving);">
+              <span style="color: var(--color-driver-status-foreground); font-weight: 600; font-size: 14px;">Aa</span>
+            </div>
+            <span style="${LABEL}">foreground</span>
+          </div>
+        </div>
+        <div style="${GRID} margin-top: 4px;">
+          ${markerInteraction.map(state => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} position: relative; background-color: var(--color-driver-status-background-driving); overflow: hidden;">
+                <div style="position: absolute; inset: 0; background-color: var(--color-driver-status-interaction-${state});"></div>
+              </div>
+              <span style="${LABEL}">interaction-${state}</span>
+            </div>`)}
+        </div>`)}
+
+      ${section('Entity Markers', 'Map vehicle/asset markers by motion state', html`
+        <div style="${GRID}">
+          ${entityStatuses.map(status => swatch(`color-entity-marker-background-${status}`, status))}
+          <div style="${SWATCH}">
+            <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-entity-marker-background-in-motion);">
+              <span style="color: var(--color-entity-marker-foreground); font-weight: 600; font-size: 14px;">Aa</span>
+            </div>
+            <span style="${LABEL}">foreground</span>
+          </div>
+        </div>
+        <div style="${GRID} margin-top: 4px;">
+          ${markerInteraction.map(state => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} position: relative; background-color: var(--color-entity-marker-background-in-motion); overflow: hidden;">
+                <div style="position: absolute; inset: 0; background-color: var(--color-entity-marker-interaction-${state});"></div>
+              </div>
+              <span style="${LABEL}">interaction-${state}</span>
+            </div>`)}
+        </div>`)}
+
+      ${section('Entity Cluster Marker', 'Grouped asset cluster pin', html`
+        <div style="${GRID}">
+          ${swatch('color-entity-cluster-marker-background', 'background')}
+          <div style="${SWATCH}">
+            <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-entity-cluster-marker-background);">
+              <span style="color: var(--color-entity-cluster-marker-foreground); font-weight: 600; font-size: 14px;">Aa</span>
+            </div>
+            <span style="${LABEL}">foreground</span>
+          </div>
+          ${markerInteraction.map(state => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} position: relative; background-color: var(--color-entity-cluster-marker-background); overflow: hidden;">
+                <div style="position: absolute; inset: 0; background-color: var(--color-entity-cluster-marker-interaction-${state});"></div>
+              </div>
+              <span style="${LABEL}">interaction-${state}</span>
+            </div>`)}
+        </div>`)}
+
+      ${section('Location Markers', 'Map location pins by intent', html`
+        <div style="${GRID}">
+          ${locationIntents.map(intent => swatch(`color-location-marker-background-${intent}`, intent))}
+          <div style="${SWATCH}">
+            <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-location-marker-background-brand);">
+              <span style="color: var(--color-location-marker-foreground); font-weight: 600; font-size: 14px;">Aa</span>
+            </div>
+            <span style="${LABEL}">foreground</span>
+          </div>
+        </div>
+        <div style="${GRID} margin-top: 4px;">
+          ${markerInteraction.map(state => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} position: relative; background-color: var(--color-location-marker-background-brand); overflow: hidden;">
+                <div style="position: absolute; inset: 0; background-color: var(--color-location-marker-interaction-${state});"></div>
+              </div>
+              <span style="${LABEL}">interaction-${state}</span>
+            </div>`)}
+        </div>`)}
+
+      ${section('Safety Score', 'Driver safety grade surfaces', html`
+        <div style="${GRID}">
+          ${safetyGrades.map(grade => swatch(`color-safety-score-background-${grade}`, grade))}
+        </div>
+        <div style="${GRID}">
+          ${safetyGrades.map(grade => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-safety-score-background-${grade});">
+                <span style="color: var(--color-safety-score-foreground-on-${grade}); font-weight: 600; font-size: 14px;">Aa</span>
+              </div>
+              <span style="${LABEL}">foreground-on-${grade}</span>
+            </div>`)}
+        </div>
+        <div style="${GRID}">
+          ${markerInteraction.map(state => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} position: relative; background-color: var(--color-safety-score-background-excellent); overflow: hidden;">
+                <div style="position: absolute; inset: 0; background-color: var(--color-safety-score-interaction-${state});"></div>
+              </div>
+              <span style="${LABEL}">interaction-${state}</span>
+            </div>`)}
+        </div>`)}
+    </div>`;
+}
+
+// ── Surfaces ──────────────────────────────────────────────────────────────────
+
+function SurfacesColors(): TemplateResult {
+  function surfaceBlock(
+    prefix: string,
+    label: string,
+    extraFg?: string,
+  ): TemplateResult {
+    const fgLevels = ['primary', 'secondary', 'tertiary', 'quaternary'] as const;
+    const borderLevels = ['primary', 'secondary', 'tertiary'] as const;
+    const bg = `var(--${prefix}-background)`;
+    const subStyle = `font-size: 13px; font-weight: 500; color: var(--${prefix}-foreground-secondary); margin: 0 0 6px;`;
+    const tinyLabel = `${LABEL} color: var(--${prefix}-foreground-tertiary);`;
+
+    return html`
+      <div style="background-color: ${bg}; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <h2 style="${H2} color: var(--${prefix}-foreground-primary);">${label}</h2>
+
+        <div>
+          <p style="${subStyle}">Foreground</p>
+          <div style="${GRID}">
+            ${fgLevels.map(level => html`
+              <div style="${SWATCH}">
+                <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: ${bg}; border: none;">
+                  <span style="color: var(--${prefix}-foreground-${level}); font-weight: 600; font-size: 16px;">Aa</span>
+                </div>
+                <span style="${tinyLabel}">${level}</span>
+              </div>`)}
+            ${extraFg ? html`
+              <div style="${SWATCH}">
+                <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: ${bg}; border: none;">
+                  <span style="color: var(--${prefix}-foreground-${extraFg}); font-weight: 600; font-size: 16px;">Aa</span>
+                </div>
+                <span style="${tinyLabel}">${extraFg}</span>
+              </div>` : ''}
+          </div>
+        </div>
+
+        <div>
+          <p style="${subStyle}">Border</p>
+          <div style="${GRID}">
+            ${borderLevels.map(level => html`
+              <div style="${SWATCH}">
+                <div style="${COLOR} background-color: ${bg}; border: 3px solid var(--${prefix}-border-${level});"></div>
+                <span style="${tinyLabel}">${level}</span>
+              </div>`)}
+          </div>
+        </div>
+
+        <div>
+          <p style="${subStyle}">Divider</p>
+          <div style="height: 1px; background-color: var(--${prefix}-divider); margin: 4px 0;"></div>
+          <span style="${tinyLabel}">${prefix}-divider</span>
+        </div>
+
+        <div>
+          <p style="${subStyle}">Interaction</p>
+          <div style="${GRID}">
+            ${STATES.map(state => html`
+              <div style="${SWATCH}">
+                <div style="${COLOR} position: relative; background-color: ${bg}; overflow: hidden; border: none;">
+                  <div style="position: absolute; inset: 0; background-color: var(--${prefix}-interaction-${state});"></div>
+                </div>
+                <span style="${tinyLabel}">${state}</span>
+              </div>`)}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  return html`
+    <div style="${PAGE}">
+      ${section('Navigation', 'color-navigation-* — sidebar/topbar surface', html`
+        ${surfaceBlock('color-navigation', 'Navigation', 'brand')}`)}
+      ${section('Media', 'color-media-* — media player surface', html`
+        ${surfaceBlock('color-media', 'Media')}`)}
+    </div>`;
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────────
+
+function UtilityColors(): TemplateResult {
+  return html`
+    <div style="${PAGE}">
+      ${section('Elevation', 'Shadow and highlight for layered surfaces', html`
+        <div style="${GRID}">
+          ${swatch('color-elevation-shadow', 'shadow')}
+          ${swatch('color-elevation-highlight', 'highlight')}
+        </div>`)}
+
+      ${section('Shimmer', 'Loading skeleton animation colors', html`
+        <div style="display: flex; gap: 0; width: 200px; height: 48px; border-radius: 6px; overflow: hidden;">
+          <div style="flex: 1; background-color: var(--color-shimmer-fade);"></div>
+          <div style="flex: 1; background-color: var(--color-shimmer-highlight);"></div>
+          <div style="flex: 1; background-color: var(--color-shimmer-fade);"></div>
+        </div>
+        <div style="${GRID} max-width: 320px; margin-top: 8px;">
+          ${swatch('color-shimmer-fade', 'shimmer-fade')}
+          ${swatch('color-shimmer-highlight', 'shimmer-highlight')}
+        </div>`)}
+
+      ${section('Settings Profile', 'Avatar / profile-page accent surface', html`
+        <div style="${GRID}">
+          ${swatch('color-settings-profile-background', 'background')}
+          <div style="${SWATCH}">
+            <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-settings-profile-background);">
+              <span style="color: var(--color-settings-profile-foreground); font-weight: 600; font-size: 16px;">Aa</span>
+            </div>
+            <span style="${LABEL}">foreground</span>
+          </div>
+          <div style="${SWATCH}">
+            <div style="${COLOR} background-color: var(--color-settings-profile-background); border: 3px solid var(--color-settings-profile-border);"></div>
+            <span style="${LABEL}">border</span>
+          </div>
         </div>`)}
     </div>`;
 }
@@ -439,5 +828,10 @@ export const Foregrounds:  Story = { name: 'Foregrounds',          render: () =>
 export const Borders:      Story = { name: 'Borders & Dividers',   render: () => BorderColors() };
 export const Interactions: Story = { name: 'Interactions',         render: () => InteractionColors() };
 export const AlwaysDark:   Story = { name: 'Always Dark',          render: () => AlwaysDarkColors() };
+export const Inverted:     Story = { name: 'Inverted',             render: () => InvertedColors() };
 export const DataViz:      Story = { name: 'Data Visualization',   render: () => DataVizColors() };
+export const ColorIntent:  Story = { name: 'Color Intent',         render: () => ColorIntentColors() };
+export const Domain:       Story = { name: 'Domain (Fleet)',       render: () => DomainColors() };
+export const Surfaces:     Story = { name: 'Surfaces',             render: () => SurfacesColors() };
+export const Utility:      Story = { name: 'Utility',              render: () => UtilityColors() };
 export const References:   Story = { name: 'References',           render: () => ReferenceColors() };

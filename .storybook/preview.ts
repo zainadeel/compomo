@@ -5,6 +5,18 @@ import '@ds-mo/tokens/globals';
 import '@ds-mo/tokens/utilities';
 import './docs.css';
 
+// Suppress the default View Transitions crossfade so stories can
+// define their own clip-path animations via document.startViewTransition.
+const vtStyle = document.createElement('style');
+vtStyle.textContent = `
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+`;
+document.head.appendChild(vtStyle);
+
 const preview: Preview = {
   globalTypes: {
     theme: {
@@ -27,11 +39,26 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals['theme'] || 'light';
       document.documentElement.setAttribute('data-theme', theme);
-      document.body.style.backgroundColor = 'var(--color-background-primary)';
+
+      // For fullscreen stories let the story control its own background.
+      // For padded/centered stories apply the surface token so the canvas
+      // isn't stuck on browser-default white when switching to dark theme.
+      const layout = context.parameters['layout'] ?? 'padded';
+      if (layout === 'fullscreen') {
+        document.body.style.removeProperty('background-color');
+      } else {
+        document.body.style.setProperty('background-color', 'var(--color-background-primary)');
+      }
+
       return Story();
     },
   ],
   parameters: {
+    // Hide the bottom addon panel globally — we only ship @storybook/addon-docs
+    // so the panel has no content and just steals canvas height.
+    options: {
+      showPanel: false,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

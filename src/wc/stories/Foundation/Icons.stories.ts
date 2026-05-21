@@ -1,20 +1,30 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, css, LitElement } from 'lit';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import type { TemplateResult } from 'lit';
 import * as SvgIcons from '@ds-mo/icons/svg';
 import * as SvgFlags from '@ds-mo/icons/svg/flags';
+import '../../../../dist/components/ds-icon.js';
+import type { IconSize } from '../../components/Icon';
 
 type SvgRecord = Record<string, string>;
 
-const ALL_ICONS: [string, string][] = Object.entries(SvgIcons as SvgRecord);
-const ALL_FLAGS: [string, string][] = Object.entries(SvgFlags as SvgRecord);
+const ALL_ICONS: string[] = Object.keys(SvgIcons as SvgRecord).sort();
+const ALL_FLAGS: string[] = Object.keys(SvgFlags as SvgRecord).sort();
 
-class IconGallery extends LitElement {
+const SIZES: IconSize[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
+// Pixel values used as inline --_icon-sz to bypass Shadow DOM style isolation
+const SIZE_PX: Record<IconSize, number> = {
+  xs: 12, sm: 16, md: 20, lg: 24, xl: 32, '2xl': 48, '3xl': 64,
+};
+
+// ── Gallery custom element ─────────────────────────────────────────────────
+
+class DsIconGallery extends LitElement {
   static properties = {
     search:   { type: String },
-    iconSize: { type: Number },
-    copied:   { type: String },
+    iconSize: { type: String },
     dataset:  { type: String },
+    copied:   { type: String },
   };
 
   static styles = css`
@@ -60,21 +70,23 @@ class IconGallery extends LitElement {
       background: var(--color-background-primary, #fff);
       color: var(--color-foreground-primary, #111);
     }
-    .size-btns { display: flex; gap: 4px; }
+    .size-btns { display: flex; gap: 4px; flex-wrap: wrap; }
     .size-btn {
       height: 32px;
-      padding: 0 12px;
+      padding: 0 10px;
       border: 1px solid var(--color-border-tertiary, #e0e0e0);
       border-radius: 6px;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       background: var(--color-background-primary, #fff);
       color: var(--color-foreground-secondary, #555);
+      white-space: nowrap;
     }
     .size-btn.active {
       background: var(--color-background-faint-brand, #eff3ff);
       color: var(--color-foreground-bold-brand, #3a5ccc);
       font-weight: 600;
+      border-color: currentColor;
     }
     .count {
       font-size: 13px;
@@ -101,8 +113,6 @@ class IconGallery extends LitElement {
     }
     .cell:hover { background: var(--color-background-faint-neutral, #f5f5f5); }
     .cell.copied { background: var(--color-background-faint-brand, #eff3ff); }
-    .icon-wrap { line-height: 0; color: var(--color-foreground-primary, #111); }
-    .icon-wrap svg { width: var(--icon-sz); height: var(--icon-sz); }
     .name {
       font-size: 10px;
       line-height: 1.3;
@@ -119,14 +129,14 @@ class IconGallery extends LitElement {
   `;
 
   search   = '';
-  iconSize = 20;
-  copied   = '';
+  iconSize: IconSize = 'md';
   dataset  = 'system';
+  copied   = '';
 
   private _onSearch(e: Event) {
     this.search = (e.target as HTMLInputElement).value;
   }
-  private _setSize(s: number) { this.iconSize = s; }
+  private _setSize(s: IconSize) { this.iconSize = s; }
   private _setDataset(d: string) { this.dataset = d; this.search = ''; }
   private _copy(name: string) {
     navigator.clipboard.writeText(name).catch(() => {});
@@ -134,11 +144,14 @@ class IconGallery extends LitElement {
     setTimeout(() => { this.copied = ''; this.requestUpdate(); }, 1500);
   }
 
-  render() {
-    const entries  = this.dataset === 'system' ? ALL_ICONS : ALL_FLAGS;
-    const q        = this.search.toLowerCase();
-    const filtered = q ? entries.filter(([n]) => n.toLowerCase().includes(q)) : entries;
+  render(): TemplateResult {
+    const entries = this.dataset === 'system' ? ALL_ICONS : ALL_FLAGS;
+    const q       = this.search.toLowerCase();
+    const filtered = q ? entries.filter(n => n.toLowerCase().includes(q)) : entries;
     const label    = this.dataset === 'system' ? 'icon' : 'flag';
+    const isFlag   = this.dataset !== 'system';
+    // Inline --_icon-sz bypasses Shadow DOM isolation so Stencil's size CSS applies
+    const szPx     = SIZE_PX[this.iconSize];
 
     return html`
       <div class="toolbar">
@@ -161,11 +174,11 @@ class IconGallery extends LitElement {
         />
 
         <div class="size-btns">
-          ${[12, 16, 20, 24, 32].map(s => html`
+          ${SIZES.map(s => html`
             <button
               class="size-btn ${this.iconSize === s ? 'active' : ''}"
               @click=${() => this._setSize(s)}
-            >${s}</button>
+            >${s} (${SIZE_PX[s]})</button>
           `)}
         </div>
 
@@ -175,14 +188,19 @@ class IconGallery extends LitElement {
       ${filtered.length === 0
         ? html`<p class="empty">No ${label}s match "${this.search}"</p>`
         : html`
-          <div class="grid" style="--icon-sz: ${this.iconSize}px">
-            ${filtered.map(([name, svgStr]) => html`
+          <div class="grid">
+            ${filtered.map(name => html`
               <button
                 class="cell ${this.copied === name ? 'copied' : ''}"
                 @click=${() => this._copy(name)}
                 title="Click to copy: ${name}"
               >
-                <span class="icon-wrap">${unsafeHTML(svgStr)}</span>
+                <ds-icon
+                  name=${name}
+                  size=${this.iconSize}
+                  style="--_icon-sz: ${szPx}px"
+                  ?flag=${isFlag}
+                ></ds-icon>
                 <span class="name ${this.copied === name ? 'copied' : ''}">
                   ${this.copied === name ? '✓ copied' : name}
                 </span>
@@ -194,11 +212,11 @@ class IconGallery extends LitElement {
   }
 }
 
-if (!customElements.get('imo-icon-gallery')) {
-  customElements.define('imo-icon-gallery', IconGallery);
+if (!customElements.get('ds-icon-gallery')) {
+  customElements.define('ds-icon-gallery', DsIconGallery);
 }
 
-// ── Story exports ─────────────────────────────────────────────────────────────
+// ── Story exports ──────────────────────────────────────────────────────────
 
 const meta: Meta = {
   title: 'Foundation/Icons',
@@ -209,5 +227,5 @@ type Story = StoryObj;
 
 export const Gallery: Story = {
   name: 'Icon Gallery',
-  render: () => html`<imo-icon-gallery></imo-icon-gallery>`,
+  render: () => html`<ds-icon-gallery></ds-icon-gallery>`,
 };

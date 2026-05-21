@@ -317,6 +317,29 @@ export declare interface DsHeader extends Components.DsHeader {}
 
 
 @ProxyCmp({
+  inputs: ['color', 'flag', 'label', 'name', 'size']
+})
+@Component({
+  selector: 'ds-icon',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['color', 'flag', 'label', 'name', 'size'],
+  standalone: false
+})
+export class DsIcon {
+  protected el: HTMLDsIconElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsIcon extends Components.DsIcon {}
+
+
+@ProxyCmp({
   inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'error', 'errorMessage', 'inactive', 'inputId', 'placeholder', 'type', 'value'],
   methods: ['setFocus']
 })
@@ -457,6 +480,46 @@ export class DsPagination {
 export declare interface DsPagination extends Components.DsPagination {
 
   dsPageChange: EventEmitter<CustomEvent<number>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['activeId', 'collapsed', 'groups', 'userInitial', 'userName', 'variant']
+})
+@Component({
+  selector: 'ds-panel-nav',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['activeId', 'collapsed', 'groups', 'userInitial', 'userName', 'variant'],
+  outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction'],
+  standalone: false
+})
+export class DsPanelNav {
+  protected el: HTMLDsPanelNavElement;
+  @Output() dsNavSelect = new EventEmitter<CustomEvent<string>>();
+  @Output() dsNavToggle = new EventEmitter<CustomEvent<boolean>>();
+  @Output() dsNavFooterAction = new EventEmitter<CustomEvent<void>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsPanelNav extends Components.DsPanelNav {
+  /**
+   * Emitted when a nav item is clicked. Detail = the item's `id`.
+   */
+  dsNavSelect: EventEmitter<CustomEvent<string>>;
+  /**
+   * Emitted when the collapse toggle is clicked. Detail = new collapsed state.
+   */
+  dsNavToggle: EventEmitter<CustomEvent<boolean>>;
+  /**
+   * Emitted when the footer left button (gear / dashboard) is clicked.
+   */
+  dsNavFooterAction: EventEmitter<CustomEvent<void>>;
 }
 
 

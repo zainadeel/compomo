@@ -66,6 +66,7 @@
     "@storybook/addon-docs": "^8.6.18",
     "@storybook/web-components": "^8.6.18",
     "@storybook/web-components-vite": "^8.6.18",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.4",
     "globals": "^17.6.0",
     "lit": "^3.3.3",
