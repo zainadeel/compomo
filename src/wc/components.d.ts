@@ -990,6 +990,7 @@ declare global {
     interface HTMLDsPanelNavElementEventMap {
         "dsNavSelect": string;
         "dsNavToggle": boolean;
+        "dsNavFooterAction": void;
     }
     interface HTMLDsPanelNavElement extends Components.DsPanelNav, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelNavElementEventMap>(type: K, listener: (this: HTMLDsPanelNavElement, ev: DsPanelNavCustomEvent<HTMLDsPanelNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1556,6 +1557,10 @@ declare namespace LocalJSX {
           * @default '[]'
          */
         "groups"?: string;
+        /**
+          * Emitted when the footer left button (gear / dashboard) is clicked.
+         */
+        "onDsNavFooterAction"?: (event: DsPanelNavCustomEvent<void>) => void;
         /**
           * Emitted when a nav item is clicked. Detail = the item's `id`.
          */

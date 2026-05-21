@@ -1,4 +1,4 @@
-import { Component, Prop, Event, EventEmitter, Watch, State, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
 
 export type PanelNavVariant = 'dashboard' | 'settings';
 
@@ -47,7 +47,13 @@ export class PanelNav {
   /** Emitted when the collapse toggle is clicked. Detail = new collapsed state. */
   @Event() dsNavToggle!: EventEmitter<boolean>;
 
+  /** Emitted when the footer left button (gear / dashboard) is clicked. */
+  @Event() dsNavFooterAction!: EventEmitter<void>;
+
+  @Element() el!: HTMLElement;
+
   @State() private parsedGroups: PanelNavGroup[] = [];
+  @State() private atBottom = false;
 
   @Watch('groups')
   onGroupsChange(val: string) {
@@ -62,12 +68,33 @@ export class PanelNav {
     this.onGroupsChange(this.groups);
   }
 
+  componentDidLoad() {
+    this.checkScroll();
+  }
+
+  private checkScroll() {
+    const body = this.el.querySelector('.panel-nav__body') as HTMLElement | null;
+    if (!body) return;
+    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
+    this.atBottom = remaining < 2;
+  }
+
+  private handleBodyScroll(e: Event) {
+    const body = e.target as HTMLElement;
+    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
+    this.atBottom = remaining < 2;
+  }
+
   private handleItemClick(id: string) {
     this.dsNavSelect.emit(id);
   }
 
   private handleToggle() {
     this.dsNavToggle.emit(!this.collapsed);
+  }
+
+  private handleFooterAction() {
+    this.dsNavFooterAction.emit();
   }
 
   render() {
@@ -79,6 +106,7 @@ export class PanelNav {
       'panel-nav--dashboard': isDashboard,
       'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,
+      'panel-nav--at-bottom': this.atBottom,
     };
 
     return (
@@ -88,6 +116,7 @@ export class PanelNav {
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
           <div class="panel-nav__header">
             <button
+              type="button"
               class="panel-nav__header-btn"
               onClick={() => this.handleToggle()}
               aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
@@ -110,9 +139,9 @@ export class PanelNav {
           </div>
 
           {/* ── Scrollable body ── */}
-          <div class="panel-nav__body">
-            {this.parsedGroups.map((group, gi) => (
-              <div class={{ 'panel-nav__group': true, 'panel-nav__group--divider': gi > 0 }}>
+          <div class="panel-nav__body" onScroll={e => this.handleBodyScroll(e)}>
+            {this.parsedGroups.map(group => (
+              <div class="panel-nav__group">
                 {group.label && !collapsed && (
                   <span class="panel-nav__group-label">
                     <ds-text as="span" variant="text-caption-emphasis" color="inherit">
@@ -124,6 +153,7 @@ export class PanelNav {
                   const isActive = item.id === this.activeId;
                   return (
                     <button
+                      type="button"
                       class={{
                         'panel-nav__item': true,
                         'panel-nav__item--active': isActive,
@@ -139,20 +169,27 @@ export class PanelNav {
                           color="inherit"
                           flag={item.flag}
                         />
+                        {item.dot && collapsed && (
+                          <span class="panel-nav__item-dot panel-nav__item-dot--mini" aria-hidden="true" />
+                        )}
                       </span>
                       {!collapsed && (
                         <span class="panel-nav__item-label">
-                          <ds-text
-                            as="span"
-                            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
-                            color="inherit"
-                          >
-                            {item.label}
-                          </ds-text>
+                          <span class="panel-nav__item-label-text">
+                            <ds-text
+                              as="span"
+                              variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
+                              color="inherit"
+                            >
+                              {item.label}
+                            </ds-text>
+                          </span>
                         </span>
                       )}
                       {item.dot && !collapsed && (
-                        <span class="panel-nav__item-dot" aria-label="notification" />
+                        <span class="panel-nav__item-dot-wrap" aria-hidden="true">
+                          <span class="panel-nav__item-dot" />
+                        </span>
                       )}
                     </button>
                   );
@@ -163,23 +200,27 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
-            {/* Settings gear — always present */}
+            {/* Left icon button — Gear in dashboard, Dashboard in settings */}
             <button
-              class="panel-nav__footer-gear"
-              title="Settings"
-              aria-label="Open settings"
+              type="button"
+              class="panel-nav__footer-btn"
+              title={isDashboard ? 'Settings' : 'Dashboard'}
+              aria-label={isDashboard ? 'Open settings' : 'Go to dashboard'}
+              onClick={() => this.handleFooterAction()}
             >
-              <ds-icon name="Gear" size="md" color="inherit" />
+              <ds-icon name={isDashboard ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
             </button>
 
-            {/* User row — expanded: name + chevron; collapsed: circular avatar */}
+            {/* Right user — expanded: item-style with icon on right; mini: avatar + overlaid initial */}
             {collapsed ? (
               <button
-                class="panel-nav__footer-user-mini"
+                type="button"
+                class="panel-nav__footer-btn panel-nav__footer-user-mini"
                 title={userName}
                 aria-label={`User: ${userName}`}
               >
-                <span class="panel-nav__user-initial">
+                <ds-icon name="Circle" size="md" color="inherit" />
+                <span class="panel-nav__user-initial" aria-hidden="true">
                   <ds-text as="span" variant="text-caption-emphasis" color="inherit">
                     {userInitial}
                   </ds-text>
@@ -187,15 +228,20 @@ export class PanelNav {
               </button>
             ) : (
               <button
-                class="panel-nav__footer-user"
+                type="button"
+                class="panel-nav__item panel-nav__footer-user"
                 aria-label={`User menu for ${userName}`}
               >
-                <span class="panel-nav__user-name">
-                  <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
-                    {userName}
-                  </ds-text>
+                <span class="panel-nav__item-label">
+                  <span class="panel-nav__item-label-text">
+                    <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+                      {userName}
+                    </ds-text>
+                  </span>
                 </span>
-                <ds-icon name="ChevronUpDown" size="sm" color="inherit" />
+                <span class="panel-nav__item-icon">
+                  <ds-icon name="ChevronUpDown" size="md" color="inherit" />
+                </span>
               </button>
             )}
           </div>

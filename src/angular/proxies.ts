@@ -492,13 +492,14 @@ export declare interface DsPagination extends Components.DsPagination {
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['activeId', 'collapsed', 'groups', 'userInitial', 'userName', 'variant'],
-  outputs: ['dsNavSelect', 'dsNavToggle'],
+  outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction'],
   standalone: false
 })
 export class DsPanelNav {
   protected el: HTMLDsPanelNavElement;
   @Output() dsNavSelect = new EventEmitter<CustomEvent<string>>();
   @Output() dsNavToggle = new EventEmitter<CustomEvent<boolean>>();
+  @Output() dsNavFooterAction = new EventEmitter<CustomEvent<void>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -515,6 +516,10 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
    * Emitted when the collapse toggle is clicked. Detail = new collapsed state.
    */
   dsNavToggle: EventEmitter<CustomEvent<boolean>>;
+  /**
+   * Emitted when the footer left button (gear / dashboard) is clicked.
+   */
+  dsNavFooterAction: EventEmitter<CustomEvent<void>>;
 }
 
 
