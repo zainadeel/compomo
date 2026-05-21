@@ -14,9 +14,11 @@ import { DividerOrientation } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { FadeSide } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
+import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
 import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 import { ModalWidth } from "./components/Modal/Modal";
+import { PanelNavVariant } from "./components/PanelNav/PanelNav";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SidebarWidth } from "./components/Sidebar/Sidebar";
@@ -37,9 +39,11 @@ export { DividerOrientation } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { FadeSide } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
+export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
 export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 export { ModalWidth } from "./components/Modal/Modal";
+export { PanelNavVariant } from "./components/PanelNav/PanelNav";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SidebarWidth } from "./components/Sidebar/Sidebar";
@@ -239,6 +243,31 @@ export namespace Components {
         "background": HeaderBackground;
         "heading": string | undefined;
     }
+    interface DsIcon {
+        /**
+          * Semantic foreground color token, or a raw CSS var reference.
+         */
+        "color": IconColor | undefined;
+        /**
+          * Set `true` to look up from the flag icon set instead of the system icon set.
+          * @default false
+         */
+        "flag": boolean;
+        /**
+          * Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons.
+         */
+        "label": string | undefined;
+        /**
+          * Name of the system icon (e.g. `"Gear"`, `"ArrowRight"`) or flag (e.g. `"US"`)
+          * @default ''
+         */
+        "name": string;
+        /**
+          * Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px.
+          * @default 'md'
+         */
+        "size": IconSize;
+    }
     interface DsInput {
         "ariaDescribedby": string | undefined;
         "ariaLabel": string | undefined;
@@ -351,6 +380,38 @@ export namespace Components {
           * @default 1
          */
         "totalPages": number;
+    }
+    interface DsPanelNav {
+        /**
+          * ID of the currently active/selected nav item
+          * @default ''
+         */
+        "activeId": string;
+        /**
+          * Whether the nav is in collapsed (icon-only) state
+          * @default false
+         */
+        "collapsed": boolean;
+        /**
+          * JSON string of `PanelNavGroup[]`
+          * @default '[]'
+         */
+        "groups": string;
+        /**
+          * Single character shown in the avatar circle
+          * @default ''
+         */
+        "userInitial": string;
+        /**
+          * Display name for the footer user section
+          * @default ''
+         */
+        "userName": string;
+        /**
+          * Visual variant: `dashboard` = always-dark surface, `settings` = light surface
+          * @default 'dashboard'
+         */
+        "variant": PanelNavVariant;
     }
     interface DsRadioGroup {
         "ariaLabel": string | undefined;
@@ -682,6 +743,10 @@ export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPaginationElement;
 }
+export interface DsPanelNavCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelNavElement;
+}
 export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioGroupElement;
@@ -840,6 +905,12 @@ declare global {
         prototype: HTMLDsHeaderElement;
         new (): HTMLDsHeaderElement;
     };
+    interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
+    }
+    var HTMLDsIconElement: {
+        prototype: HTMLDsIconElement;
+        new (): HTMLDsIconElement;
+    };
     interface HTMLDsInputElementEventMap {
         "dsChange": string;
         "dsClear": void;
@@ -915,6 +986,24 @@ declare global {
     var HTMLDsPaginationElement: {
         prototype: HTMLDsPaginationElement;
         new (): HTMLDsPaginationElement;
+    };
+    interface HTMLDsPanelNavElementEventMap {
+        "dsNavSelect": string;
+        "dsNavToggle": boolean;
+    }
+    interface HTMLDsPanelNavElement extends Components.DsPanelNav, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPanelNavElementEventMap>(type: K, listener: (this: HTMLDsPanelNavElement, ev: DsPanelNavCustomEvent<HTMLDsPanelNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPanelNavElementEventMap>(type: K, listener: (this: HTMLDsPanelNavElement, ev: DsPanelNavCustomEvent<HTMLDsPanelNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPanelNavElement: {
+        prototype: HTMLDsPanelNavElement;
+        new (): HTMLDsPanelNavElement;
     };
     interface HTMLDsRadioGroupElementEventMap {
         "dsChange": string;
@@ -1089,11 +1178,13 @@ declare global {
         "ds-fade": HTMLDsFadeElement;
         "ds-field": HTMLDsFieldElement;
         "ds-header": HTMLDsHeaderElement;
+        "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-modal": HTMLDsModalElement;
         "ds-pagination": HTMLDsPaginationElement;
+        "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-sidebar": HTMLDsSidebarElement;
@@ -1306,6 +1397,31 @@ declare namespace LocalJSX {
         "background"?: HeaderBackground;
         "heading"?: string | undefined;
     }
+    interface DsIcon {
+        /**
+          * Semantic foreground color token, or a raw CSS var reference.
+         */
+        "color"?: IconColor | undefined;
+        /**
+          * Set `true` to look up from the flag icon set instead of the system icon set.
+          * @default false
+         */
+        "flag"?: boolean;
+        /**
+          * Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons.
+         */
+        "label"?: string | undefined;
+        /**
+          * Name of the system icon (e.g. `"Gear"`, `"ArrowRight"`) or flag (e.g. `"US"`)
+          * @default ''
+         */
+        "name"?: string;
+        /**
+          * Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px.
+          * @default 'md'
+         */
+        "size"?: IconSize;
+    }
     interface DsInput {
         "ariaDescribedby"?: string | undefined;
         "ariaLabel"?: string | undefined;
@@ -1423,6 +1539,46 @@ declare namespace LocalJSX {
           * @default 1
          */
         "totalPages"?: number;
+    }
+    interface DsPanelNav {
+        /**
+          * ID of the currently active/selected nav item
+          * @default ''
+         */
+        "activeId"?: string;
+        /**
+          * Whether the nav is in collapsed (icon-only) state
+          * @default false
+         */
+        "collapsed"?: boolean;
+        /**
+          * JSON string of `PanelNavGroup[]`
+          * @default '[]'
+         */
+        "groups"?: string;
+        /**
+          * Emitted when a nav item is clicked. Detail = the item's `id`.
+         */
+        "onDsNavSelect"?: (event: DsPanelNavCustomEvent<string>) => void;
+        /**
+          * Emitted when the collapse toggle is clicked. Detail = new collapsed state.
+         */
+        "onDsNavToggle"?: (event: DsPanelNavCustomEvent<boolean>) => void;
+        /**
+          * Single character shown in the avatar circle
+          * @default ''
+         */
+        "userInitial"?: string;
+        /**
+          * Display name for the footer user section
+          * @default ''
+         */
+        "userName"?: string;
+        /**
+          * Visual variant: `dashboard` = always-dark surface, `settings` = light surface
+          * @default 'dashboard'
+         */
+        "variant"?: PanelNavVariant;
     }
     interface DsRadioGroup {
         "ariaLabel"?: string | undefined;
@@ -1811,6 +1967,13 @@ declare namespace LocalJSX {
         "heading": string | undefined;
         "background": HeaderBackground;
     }
+    interface DsIconAttributes {
+        "name": string;
+        "size": IconSize;
+        "color": IconColor | undefined;
+        "label": string | undefined;
+        "flag": boolean;
+    }
     interface DsInputAttributes {
         "value": string;
         "placeholder": string | undefined;
@@ -1849,6 +2012,14 @@ declare namespace LocalJSX {
         "totalPages": number;
         "siblingCount": number;
         "inactive": boolean;
+    }
+    interface DsPanelNavAttributes {
+        "variant": PanelNavVariant;
+        "groups": string;
+        "activeId": string;
+        "collapsed": boolean;
+        "userName": string;
+        "userInitial": string;
     }
     interface DsRadioGroupAttributes {
         "value": string;
@@ -1965,11 +2136,13 @@ declare namespace LocalJSX {
         "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
+        "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
+        "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
@@ -2001,11 +2174,13 @@ declare module "@stencil/core" {
             "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
+            "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
+            "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;

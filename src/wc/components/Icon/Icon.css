@@ -1,0 +1,97 @@
+/* ── Base icon ───────────────────────────────────────────────────────────── */
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+  color: var(--color-foreground-primary);
+}
+
+.icon__svg {
+  display: contents;
+  line-height: 0;
+}
+
+/* SVG paths use fill="currentColor" — size is driven by CSS, overriding SVG attrs */
+.icon__svg svg {
+  display: block;
+  flex-shrink: 0;
+  width: var(--_icon-sz, var(--dimension-iconography-md));
+  height: var(--_icon-sz, var(--dimension-iconography-md));
+}
+
+/* ── Sizes ───────────────────────────────────────────────────────────────── */
+
+.icon--size-xs  { --_icon-sz: var(--dimension-iconography-xs);  }
+.icon--size-sm  { --_icon-sz: var(--dimension-iconography-sm);  }
+.icon--size-md  { --_icon-sz: var(--dimension-iconography-md);  }
+.icon--size-lg  { --_icon-sz: var(--dimension-iconography-lg);  }
+.icon--size-xl  { --_icon-sz: var(--dimension-iconography-xl);  }
+.icon--size-2xl { --_icon-sz: var(--dimension-iconography-2xl); }
+.icon--size-3xl { --_icon-sz: var(--dimension-iconography-3xl); }
+
+/* ── Colors — hierarchy ──────────────────────────────────────────────────── */
+
+.icon--color-primary    { color: var(--color-foreground-primary);    }
+.icon--color-secondary  { color: var(--color-foreground-secondary);  }
+.icon--color-tertiary   { color: var(--color-foreground-tertiary);   }
+.icon--color-quaternary { color: var(--color-foreground-quaternary); }
+.icon--color-inherit    { color: inherit; }
+
+/* ── Colors — intent (bold contrast default) ─────────────────────────────── */
+
+.icon--color-brand    { color: var(--color-foreground-bold-brand);    }
+.icon--color-negative { color: var(--color-foreground-bold-negative); }
+.icon--color-positive { color: var(--color-foreground-bold-positive); }
+.icon--color-warning  { color: var(--color-foreground-bold-warning);  }
+.icon--color-caution  { color: var(--color-foreground-bold-caution);  }
+.icon--color-ai       { color: var(--color-foreground-bold-ai);       }
+.icon--color-guide    { color: var(--color-foreground-bold-guide);    }
+.icon--color-neutral  { color: var(--color-foreground-bold-neutral);  }
+
+/* ── Colors — intent faint ───────────────────────────────────────────────── */
+
+.icon--color-faint-brand    { color: var(--color-foreground-faint-brand);    }
+.icon--color-faint-negative { color: var(--color-foreground-faint-negative); }
+.icon--color-faint-positive { color: var(--color-foreground-faint-positive); }
+.icon--color-faint-warning  { color: var(--color-foreground-faint-warning);  }
+.icon--color-faint-caution  { color: var(--color-foreground-faint-caution);  }
+.icon--color-faint-ai       { color: var(--color-foreground-faint-ai);       }
+.icon--color-faint-neutral  { color: var(--color-foreground-faint-neutral);  }
+
+/* ── Colors — intent medium ─────────────────────────────────────────────── */
+
+.icon--color-medium-brand    { color: var(--color-foreground-medium-brand);    }
+.icon--color-medium-negative { color: var(--color-foreground-medium-negative); }
+.icon--color-medium-positive { color: var(--color-foreground-medium-positive); }
+.icon--color-medium-warning  { color: var(--color-foreground-medium-warning);  }
+.icon--color-medium-caution  { color: var(--color-foreground-medium-caution);  }
+.icon--color-medium-ai       { color: var(--color-foreground-medium-ai);       }
+.icon--color-medium-neutral  { color: var(--color-foreground-medium-neutral);  }
+
+/* ── Colors — intent bold (explicit) ────────────────────────────────────── */
+
+.icon--color-bold-brand    { color: var(--color-foreground-bold-brand);    }
+.icon--color-bold-negative { color: var(--color-foreground-bold-negative); }
+.icon--color-bold-positive { color: var(--color-foreground-bold-positive); }
+.icon--color-bold-warning  { color: var(--color-foreground-bold-warning);  }
+.icon--color-bold-caution  { color: var(--color-foreground-bold-caution);  }
+.icon--color-bold-ai       { color: var(--color-foreground-bold-ai);       }
+.icon--color-bold-neutral  { color: var(--color-foreground-bold-neutral);  }
+
+/* ── Colors — intent strong ──────────────────────────────────────────────── */
+
+.icon--color-strong-brand    { color: var(--color-foreground-strong-brand);    }
+.icon--color-strong-negative { color: var(--color-foreground-strong-negative); }
+.icon--color-strong-positive { color: var(--color-foreground-strong-positive); }
+.icon--color-strong-warning  { color: var(--color-foreground-strong-warning);  }
+.icon--color-strong-caution  { color: var(--color-foreground-strong-caution);  }
+.icon--color-strong-ai       { color: var(--color-foreground-strong-ai);       }
+.icon--color-strong-neutral  { color: var(--color-foreground-strong-neutral);  }
+
+/* ── Colors — contextual ────────────────────────────────────────────────── */
+
+.icon--color-on-strong { color: var(--color-foreground-on-strong-background-primary); }
+.icon--color-on-bold   { color: var(--color-foreground-on-bold-background-primary);   }
