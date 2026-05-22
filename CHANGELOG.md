@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/zainadeel/compomo/compare/v0.7.2...v0.7.3) (2026-05-22)
+
+
+### Fixed
+
+* **DEVPRD-panel-nav:** replace rAF with microtask yield in VT callback ([#73](https://github.com/zainadeel/compomo/issues/73)) ([c00e3db](https://github.com/zainadeel/compomo/commit/c00e3db549c6af873f227493954f8b7cb7807433))
+
 ## [0.7.2](https://github.com/zainadeel/compomo/compare/v0.7.1...v0.7.2) (2026-05-22)
 
 
