@@ -515,7 +515,7 @@
   position: absolute;
   top: 0;
   /* Centered on the right edge: --dimension-space-050 outside + inside = --dimension-space-100 hit zone */
-  right: calc(-1 * var(--dimension-space-050, 4px));
+  right: var(--dimension-space-n050, -4px);
   bottom: 0;
   width: var(--dimension-space-100, 8px);
   z-index: 10;
