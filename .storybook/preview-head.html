@@ -1,0 +1,13 @@
+<style>
+  /*
+   * Suppress the browser's default View Transitions cross-fade so stories
+   * can run their own clip-path animations via document.startViewTransition.
+   * Placed here (not in preview.ts) so it's baked into iframe.html at build
+   * time and is guaranteed to apply before any transition fires.
+   */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+</style>
