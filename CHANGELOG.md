@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/zainadeel/compomo/compare/v0.7.1...v0.7.2) (2026-05-22)
+
+
+### Fixed
+
+* **DEVPRD-panel-nav:** await rAF so Stencil renders before VT snapshot ([#71](https://github.com/zainadeel/compomo/issues/71)) ([a9e7ddf](https://github.com/zainadeel/compomo/commit/a9e7ddffc130856f5c7ebde3a98fd5266ad1a626))
+
 ## [0.7.1](https://github.com/zainadeel/compomo/compare/v0.7.0...v0.7.1) (2026-05-22)
 
 
