@@ -50,7 +50,9 @@
   overflow: hidden;
   transition:
     width var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease),
-    min-width var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease);
+    min-width var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease),
+    background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease),
+    border-color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
   font-family: var(--typography-font-family, system-ui);
 }
 
@@ -68,6 +70,7 @@
   flex-shrink: 0;
   box-sizing: border-box;
   border-bottom: var(--dimension-stroke-width-012, 1px) solid var(--_nav-divider);
+  transition: border-color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 .panel-nav__header-btn {
@@ -82,6 +85,7 @@
   position: relative;
   flex-shrink: 0;
   box-sizing: border-box;
+  transition: color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 /* Interaction pseudo-element */
@@ -163,6 +167,7 @@
   margin-bottom: var(--dimension-space-025, 2px);
   white-space: nowrap;
   overflow: hidden;
+  transition: color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 /* ── Item ────────────────────────────────────────────────────────────────── */
@@ -181,6 +186,7 @@
   box-sizing: border-box;
   width: 100%;
   user-select: none;
+  transition: color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 /* Interaction layer */
@@ -253,6 +259,7 @@
   border-radius: var(--dimension-radius-full, 999px);
   background: var(--_nav-dot);
   flex-shrink: 0;
+  transition: background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 .panel-nav__item-dot--mini {
@@ -375,4 +382,5 @@
   text-transform: uppercase;
   line-height: 1;
   pointer-events: none;
+  transition: color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
