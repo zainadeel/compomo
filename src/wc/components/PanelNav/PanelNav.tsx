@@ -35,6 +35,9 @@ export class PanelNav {
   /** Whether the nav is in collapsed (icon-only) state */
   @Prop() collapsed: boolean = false;
 
+  /** Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled. */
+  @Prop() breakpoint: number = 0;
+
   /** Display name for the footer user section */
   @Prop() userName: string = '';
 
@@ -55,11 +58,25 @@ export class PanelNav {
   @State() private parsedGroups: PanelNavGroup[] = [];
   @State() private atBottom = false;
   @State() private isAnimating = false;
+  @State() private rovingIndex: number = 0;
+  @State() private viewportNarrow: boolean = false;
 
   private transitionEndHandler?: (e: TransitionEvent) => void;
+  private resizeObserver?: ResizeObserver;
 
   @Watch('collapsed')
+  @Watch('viewportNarrow')
   onCollapsedChange() {
+    this.startCollapseAnimation();
+  }
+
+  @Watch('breakpoint')
+  onBreakpointChange() {
+    this.disconnectResizeObserver();
+    if (this.breakpoint > 0) this.connectResizeObserver();
+  }
+
+  private startCollapseAnimation() {
     this.isAnimating = true;
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
     if (this.transitionEndHandler) {
@@ -74,6 +91,19 @@ export class PanelNav {
     panel?.addEventListener('transitionend', this.transitionEndHandler);
   }
 
+  private connectResizeObserver() {
+    this.viewportNarrow = window.innerWidth < this.breakpoint;
+    this.resizeObserver = new ResizeObserver(() => {
+      this.viewportNarrow = window.innerWidth < this.breakpoint;
+    });
+    this.resizeObserver.observe(document.documentElement);
+  }
+
+  private disconnectResizeObserver() {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  }
+
   @Watch('groups')
   onGroupsChange(val: string) {
     try {
@@ -81,14 +111,51 @@ export class PanelNav {
     } catch {
       this.parsedGroups = [];
     }
+    this.syncRovingIndex();
+  }
+
+  @Watch('activeId')
+  onActiveIdChange() {
+    this.syncRovingIndex();
   }
 
   componentWillLoad() {
     this.onGroupsChange(this.groups);
   }
 
+  private getAllItems(): PanelNavItem[] {
+    return this.parsedGroups.flatMap(g => g.items);
+  }
+
+  private syncRovingIndex() {
+    const idx = this.getAllItems().findIndex(i => i.id === this.activeId);
+    this.rovingIndex = idx >= 0 ? idx : 0;
+  }
+
+  private handleItemKeyDown(e: KeyboardEvent, index: number) {
+    const total = this.getAllItems().length;
+    let next = index;
+    switch (e.key) {
+      case 'ArrowDown': e.preventDefault(); next = (index + 1) % total; break;
+      case 'ArrowUp':   e.preventDefault(); next = (index - 1 + total) % total; break;
+      case 'Home':      e.preventDefault(); next = 0; break;
+      case 'End':       e.preventDefault(); next = total - 1; break;
+      default: return;
+    }
+    this.rovingIndex = next;
+    const buttons = Array.from(
+      this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item')
+    );
+    buttons[next]?.focus();
+  }
+
   componentDidLoad() {
     this.checkScroll();
+    if (this.breakpoint > 0) this.connectResizeObserver();
+  }
+
+  disconnectedCallback() {
+    this.disconnectResizeObserver();
   }
 
   private checkScroll() {
@@ -118,7 +185,8 @@ export class PanelNav {
 
   render() {
     const isDashboard = this.variant === 'dashboard';
-    const { collapsed, userName, userInitial } = this;
+    const collapsed = this.collapsed || this.viewportNarrow;
+    const { userName, userInitial } = this;
 
     const navCls: Record<string, boolean> = {
       'panel-nav': true,
@@ -140,6 +208,7 @@ export class PanelNav {
               class="panel-nav__header-btn"
               onClick={() => this.handleToggle()}
               aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+              aria-expanded={collapsed ? 'false' : 'true'}
             >
               {/* Motive M mark — fades out on hover to reveal collapse toggle */}
               <span class="panel-nav__header-logo" aria-hidden="true">
@@ -160,28 +229,34 @@ export class PanelNav {
 
           {/* ── Scrollable body ── */}
           <div class="panel-nav__body" onScroll={e => this.handleBodyScroll(e)}>
-            {this.parsedGroups.map(group => (
-              <div class="panel-nav__group">
-                {group.label && (
-                  <span class="panel-nav__group-label">
-                    <ds-text as="span" variant="text-caption-emphasis" color="inherit">
-                      {group.label}
-                    </ds-text>
-                  </span>
-                )}
-                {group.items.map(item => {
-                  const isActive = item.id === this.activeId;
-                  return (
-                    <button
-                      type="button"
-                      class={{
-                        'panel-nav__item': true,
-                        'panel-nav__item--active': isActive,
-                      }}
-                      aria-current={isActive ? 'page' : undefined}
-                      title={collapsed ? item.label : undefined}
-                      onClick={() => this.handleItemClick(item.id)}
-                    >
+            {(() => {
+              let flatIdx = 0;
+              return this.parsedGroups.map(group => (
+                <div class="panel-nav__group">
+                  {group.label && (
+                    <span class="panel-nav__group-label">
+                      <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                        {group.label}
+                      </ds-text>
+                    </span>
+                  )}
+                  {group.items.map(item => {
+                    const isActive = item.id === this.activeId;
+                    const idx = flatIdx++;
+                    return (
+                      <button
+                        type="button"
+                        class={{
+                          'panel-nav__item': true,
+                          'panel-nav__item--active': isActive,
+                        }}
+                        aria-current={isActive ? 'page' : undefined}
+                        title={collapsed ? item.label : undefined}
+                        tabIndex={idx === this.rovingIndex ? 0 : -1}
+                        onClick={() => this.handleItemClick(item.id)}
+                        onKeyDown={(e: KeyboardEvent) => this.handleItemKeyDown(e, idx)}
+                        onFocus={() => { this.rovingIndex = idx; }}
+                      >
                       <span class="panel-nav__item-icon">
                         <ds-icon
                           name={item.icon}
@@ -206,9 +281,10 @@ export class PanelNav {
                       )}
                     </button>
                   );
-                })}
-              </div>
-            ))}
+                  })}
+                </div>
+              ));
+            })()}
           </div>
 
           {/* ── Footer ── */}

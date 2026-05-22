@@ -114,6 +114,7 @@
 
 .panel-nav__header-btn:hover::after  { background: var(--_nav-hover);   transition: none; }
 .panel-nav__header-btn:active::after { background: var(--_nav-pressed); transition: none; }
+.panel-nav__header-btn:focus-visible { outline: none; }
 .panel-nav__header-btn:focus-visible::after {
   outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
   outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
@@ -205,8 +206,7 @@
   box-sizing: border-box;
   width: 100%;
   user-select: none;
-  transition:
-    color var(--effect-motion-short-3, 200ms ease);
+  transition: color var(--effect-motion-short-1, 50ms ease-in-out);
 }
 
 /* Interaction layer */
@@ -222,6 +222,7 @@
 
 .panel-nav__item:hover::after  { background: var(--_nav-hover);   transition: none; }
 .panel-nav__item:active::after { background: var(--_nav-pressed); transition: none; }
+.panel-nav__item:focus-visible { outline: none; }
 .panel-nav__item:focus-visible::after {
   outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
   outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
@@ -286,7 +287,6 @@
   background: var(--_nav-dot);
   box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_nav-bg);
   pointer-events: none;
-  z-index: 1;
   transition:
     right var(--_nav-expand-motion),
     top var(--_nav-expand-motion),
@@ -381,6 +381,11 @@
     color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
 }
 
+.panel-nav__footer-btn:focus-visible {
+  outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
+  outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
+}
+
 /* Dashboard: hover previews settings surface */
 .panel-nav--dashboard .panel-nav__footer-btn:hover {
   background: var(--color-background-secondary);
@@ -412,28 +417,52 @@
     color var(--effect-motion-short-3, 200ms ease);
 }
 
-/* Label right-aligned to match current design */
-.panel-nav__footer-user-label {
-  text-align: right;
-}
-
 .panel-nav--collapsed .panel-nav__footer-user {
   /* column position: full-width row below gear */
   left: var(--_nav-padding-x);
   right: var(--_nav-padding-x);
   top: calc(var(--_nav-padding-y) + var(--_nav-item-height) + var(--dimension-space-050, 4px));
-  justify-content: center;
 }
 
-/* Pill hover radius in collapsed */
-.panel-nav--collapsed .panel-nav__footer-user::after {
-  border-radius: var(--dimension-radius-half, 9999px);
+/* Label: absolute so it stays in place and only fades — no mask slide */
+.panel-nav__footer-user-label {
+  text-align: right;
+  position: absolute;
+  left: var(--dimension-space-075, 6px);
+  right: calc(var(--dimension-space-075, 6px) + var(--dimension-iconography-md, 20px) + var(--dimension-space-050, 4px));
+  top: 50%;
+  transform: translateY(-50%);
+  flex: none;
+  height: var(--typography-lineheight-md, 20px);
+  mask-image: none;
+  -webkit-mask-image: none;
+  transition: opacity var(--_nav-label-fade-motion);
+}
+
+.panel-nav--collapsed .panel-nav__footer-user-label {
+  opacity: 0;
+  pointer-events: none;
+  mask-position: 0% 0;
+  -webkit-mask-position: 0% 0;
 }
 
 /* ── Footer user icon — cross-fades chevron ↔ circle+initial ────────────── */
 
+/* Absolute — right-anchored in expanded, left-anchored in collapsed to match regular item icon position */
 .panel-nav__footer-user-icon {
-  position: relative;
+  position: absolute;
+  left: calc(100% - var(--dimension-iconography-md, 20px) - var(--dimension-space-075, 6px));
+  top: 0;
+  bottom: 0;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left var(--_nav-expand-motion);
+}
+
+.panel-nav--collapsed .panel-nav__footer-user-icon {
+  left: var(--dimension-space-075, 6px);
 }
 
 .panel-nav__footer-icon-expanded,
@@ -478,4 +507,17 @@
   line-height: 1;
   pointer-events: none;
   transition: color var(--effect-motion-short-3, 200ms ease);
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-nav,
+  .panel-nav *,
+  .panel-nav *::before,
+  .panel-nav *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    transition-delay: 0.01ms !important;
+  }
 }
