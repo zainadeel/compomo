@@ -224,27 +224,31 @@ export class PanelNav {
               <ds-icon name={isDashboard ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
             </button>
 
-            {/* Right user — single element; avatar fades in on collapse, label+chevron fade out */}
+            {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}
             <button
               type="button"
               class="panel-nav__item panel-nav__footer-user"
               aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
             >
-              <span class="panel-nav__footer-avatar" aria-hidden="true">
-                <ds-icon name="Circle" size="md" color="inherit" />
-                <span class="panel-nav__user-initial">
-                  <ds-text as="span" variant="text-caption-emphasis" color="inherit">
-                    {userInitial}
+              <span class="panel-nav__item-label panel-nav__footer-user-label">
+                <span class="panel-nav__item-label-text">
+                  <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+                    {userName}
                   </ds-text>
                 </span>
               </span>
-              <span class="panel-nav__footer-user-label">
-                <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
-                  {userName}
-                </ds-text>
-              </span>
-              <span class="panel-nav__footer-chevron" aria-hidden="true">
-                <ds-icon name="ChevronUpDown" size="md" color="inherit" />
+              <span class="panel-nav__item-icon panel-nav__footer-user-icon" aria-hidden="true">
+                <span class="panel-nav__footer-icon-expanded">
+                  <ds-icon name="ChevronUpDown" size="md" color="inherit" />
+                </span>
+                <span class="panel-nav__footer-icon-collapsed">
+                  <ds-icon name="Circle" size="md" color="inherit" />
+                  <span class="panel-nav__user-initial">
+                    <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                      {userInitial}
+                    </ds-text>
+                  </span>
+                </span>
               </span>
             </button>
           </div>
