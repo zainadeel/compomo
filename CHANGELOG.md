@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/zainadeel/compomo/compare/v0.7.0...v0.7.1) (2026-05-22)
+
+
+### Fixed
+
+* **DEVPRD-panel-nav:** move view-transition suppression to preview-head.html ([#69](https://github.com/zainadeel/compomo/issues/69)) ([928da27](https://github.com/zainadeel/compomo/commit/928da2750c7554907eed204430ab6dbd95335cd5))
+
 ## [0.7.0](https://github.com/zainadeel/compomo/compare/v0.6.0...v0.7.0) (2026-05-22)
 
 
