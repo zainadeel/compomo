@@ -145,6 +145,9 @@ export class PanelNav {
   componentDidLoad() {
     this.checkScroll();
     if (this.breakpoint > 0) this.connectResizeObserver();
+    // Re-sync groups in case componentWillLoad ran before host bindings were applied
+    // (common with Angular's property binding timing)
+    this.onGroupsChange(this.groups);
   }
 
   disconnectedCallback() {
