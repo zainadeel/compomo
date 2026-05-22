@@ -509,6 +509,49 @@
   transition: color var(--effect-motion-short-3, 200ms ease);
 }
 
+/* ── Drag-to-resize handle ───────────────────────────────────────────────── */
+
+.panel-nav__resize-handle {
+  position: absolute;
+  top: 0;
+  /* Centered on the right edge: 4px outside + 4px inside = 8px hit zone */
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  z-index: 10;
+  cursor: ew-resize;
+  touch-action: none;
+  /* Needs a real background for Safari hit-testing */
+  background: transparent;
+}
+
+/* Safari requires non-transparent fill for hit testing */
+.panel-nav__resize-handle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.001);
+}
+
+/* The brand-bold overlay line */
+.panel-nav__resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--dimension-stroke-width-025, 2px);
+  background: var(--color-background-bold-brand);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--effect-motion-short-2, 100ms ease-in-out);
+}
+
+.panel-nav__resize-handle--overlay::after {
+  opacity: 1;
+}
+
 /* ── Reduced motion ──────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

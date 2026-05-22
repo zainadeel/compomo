@@ -64,6 +64,17 @@ export class PanelNav {
   private transitionEndHandler?: (e: TransitionEvent) => void;
   private resizeObserver?: ResizeObserver;
 
+  // Drag-to-resize state (not @State — no re-render needed)
+  private isDragging = false;
+  private dragStartX = 0;
+  private didSnap = false;
+  private lastDeltaX = 0;
+  private edgeOverlayTimer: number | null = null;
+  private globalMouseMoveHandler?: (e: MouseEvent) => void;
+  private globalMouseUpHandler?: () => void;
+
+  @State() private showEdgeOverlay = false;
+
   @Watch('collapsed')
   @Watch('viewportNarrow')
   onCollapsedChange() {
@@ -102,6 +113,75 @@ export class PanelNav {
   private disconnectResizeObserver() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+  }
+
+  private clearEdgeOverlayTimer() {
+    if (this.edgeOverlayTimer !== null) {
+      window.clearTimeout(this.edgeOverlayTimer);
+      this.edgeOverlayTimer = null;
+    }
+  }
+
+  private handleResizeHandleMouseEnter() {
+    this.clearEdgeOverlayTimer();
+    this.edgeOverlayTimer = window.setTimeout(() => {
+      this.showEdgeOverlay = true;
+      this.edgeOverlayTimer = null;
+    }, 500);
+  }
+
+  private handleResizeHandleMouseLeave() {
+    if (this.isDragging) return;
+    this.clearEdgeOverlayTimer();
+    this.showEdgeOverlay = false;
+  }
+
+  private handleResizeHandleMouseDown(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const wasCollapsed = this.collapsed || this.viewportNarrow;
+    this.isDragging = true;
+    this.dragStartX = e.clientX;
+    this.didSnap = false;
+    this.lastDeltaX = 0;
+    this.clearEdgeOverlayTimer();
+    this.showEdgeOverlay = false;
+
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+
+    const onMove = (ev: MouseEvent) => {
+      const deltaX = ev.clientX - this.dragStartX;
+      this.lastDeltaX = Math.abs(deltaX);
+      if (this.didSnap) return;
+      if (!wasCollapsed && deltaX < -8) {
+        this.dsNavToggle.emit(true);
+        this.didSnap = true;
+      } else if (wasCollapsed && deltaX > 8) {
+        this.dsNavToggle.emit(false);
+        this.didSnap = true;
+      }
+    };
+
+    const onUp = () => {
+      if (!this.didSnap && this.lastDeltaX < 3) {
+        this.dsNavToggle.emit(!wasCollapsed);
+      }
+      this.isDragging = false;
+      this.showEdgeOverlay = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      this.globalMouseMoveHandler = undefined;
+      this.globalMouseUpHandler = undefined;
+    };
+
+    this.globalMouseMoveHandler = onMove;
+    this.globalMouseUpHandler = onUp;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   }
 
   @Watch('groups')
@@ -156,6 +236,13 @@ export class PanelNav {
 
   disconnectedCallback() {
     this.disconnectResizeObserver();
+    this.clearEdgeOverlayTimer();
+    if (this.globalMouseMoveHandler) {
+      window.removeEventListener('mousemove', this.globalMouseMoveHandler);
+    }
+    if (this.globalMouseUpHandler) {
+      window.removeEventListener('mouseup', this.globalMouseUpHandler);
+    }
   }
 
   private checkScroll() {
@@ -198,7 +285,7 @@ export class PanelNav {
     };
 
     return (
-      <Host>
+      <Host style={{ display: 'block', position: 'relative' }}>
         <nav class={navCls} aria-label={isDashboard ? 'Main navigation' : 'Settings navigation'}>
 
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
@@ -330,6 +417,20 @@ export class PanelNav {
           </div>
 
         </nav>
+
+        {/* Drag-to-resize handle — always rendered, hidden only when auto-collapsed by breakpoint */}
+        {!this.viewportNarrow && (
+          <div
+            class={{
+              'panel-nav__resize-handle': true,
+              'panel-nav__resize-handle--overlay': this.showEdgeOverlay,
+            }}
+            onMouseEnter={() => this.handleResizeHandleMouseEnter()}
+            onMouseLeave={() => this.handleResizeHandleMouseLeave()}
+            onMouseDown={(e: MouseEvent) => this.handleResizeHandleMouseDown(e)}
+            aria-hidden="true"
+          />
+        )}
       </Host>
     );
   }
