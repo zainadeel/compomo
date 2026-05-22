@@ -189,9 +189,6 @@ export class PanelNav {
                           color="inherit"
                           flag={item.flag}
                         />
-                        {item.dot && (
-                          <span class="panel-nav__item-dot panel-nav__item-dot--mini" aria-hidden="true" />
-                        )}
                       </span>
                       <span class="panel-nav__item-label">
                         <span class="panel-nav__item-label-text">
@@ -205,9 +202,7 @@ export class PanelNav {
                         </span>
                       </span>
                       {item.dot && (
-                        <span class="panel-nav__item-dot-wrap" aria-hidden="true">
-                          <span class="panel-nav__item-dot" />
-                        </span>
+                        <span class="panel-nav__item-dot" aria-hidden="true" />
                       )}
                     </button>
                   );

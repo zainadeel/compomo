@@ -272,52 +272,29 @@
   padding: 0 var(--dimension-space-025, 2px);
 }
 
-/* ── Item notification dot ───────────────────────────────────────────────── */
-
-.panel-nav__item-dot-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: var(--dimension-iconography-md, 20px);
-  height: var(--dimension-iconography-md, 20px);
-  opacity: 1;
-  transition: opacity var(--_nav-label-fade-motion) 0ms;
-}
+/* ── Item notification dot — single element, moves between positions ──────── */
 
 .panel-nav__item-dot {
+  position: absolute;
+  right: 13px;
+  top: 13px;
   width: var(--dimension-space-075, 6px);
   height: var(--dimension-space-075, 6px);
   border-radius: var(--dimension-radius-full, 999px);
   background: var(--_nav-dot);
-  flex-shrink: 0;
-  transition: background var(--effect-motion-short-3, 200ms ease);
-}
-
-.panel-nav__item-dot--mini {
-  position: absolute;
-  top: 0;
-  right: 0;
-  flex-shrink: unset;
   box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_nav-bg);
-}
-
-/* ── Mini dot: hidden in expanded, fades in on collapse ─────────────────── */
-
-.panel-nav__item-dot--mini {
-  opacity: 0;
-  transition: opacity var(--_nav-label-fade-motion);
-}
-
-.panel-nav--collapsed .panel-nav__item-dot--mini {
-  opacity: 1;
-  transition: opacity var(--_nav-label-fade-out-motion);
-}
-
-.panel-nav--collapsed .panel-nav__item-dot-wrap {
-  opacity: 0;
   pointer-events: none;
-  transition: opacity var(--_nav-label-fade-out-motion) 0ms;
+  z-index: 1;
+  transition:
+    right var(--_nav-expand-motion),
+    top var(--_nav-expand-motion),
+    background var(--effect-motion-short-3, 200ms ease),
+    box-shadow var(--effect-motion-short-3, 200ms ease);
+}
+
+.panel-nav--collapsed .panel-nav__item-dot {
+  right: 6px;
+  top: 6px;
 }
 
 .panel-nav--animating .panel-nav__item-label {
