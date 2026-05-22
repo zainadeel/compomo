@@ -514,10 +514,10 @@
 .panel-nav__resize-handle {
   position: absolute;
   top: 0;
-  /* Centered on the right edge: 4px outside + 4px inside = 8px hit zone */
-  right: -4px;
+  /* Centered on the right edge: --dimension-space-050 outside + inside = --dimension-space-100 hit zone */
+  right: calc(-1 * var(--dimension-space-050, 4px));
   bottom: 0;
-  width: 8px;
+  width: var(--dimension-space-100, 8px);
   z-index: 10;
   cursor: ew-resize;
   touch-action: none;
@@ -558,7 +558,10 @@
   .panel-nav,
   .panel-nav *,
   .panel-nav *::before,
-  .panel-nav *::after {
+  .panel-nav *::after,
+  .panel-nav__resize-handle,
+  .panel-nav__resize-handle::before,
+  .panel-nav__resize-handle::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     transition-delay: 0.01ms !important;
