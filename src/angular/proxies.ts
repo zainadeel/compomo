@@ -484,14 +484,14 @@ export declare interface DsPagination extends Components.DsPagination {
 
 
 @ProxyCmp({
-  inputs: ['activeId', 'collapsed', 'groups', 'userInitial', 'userName', 'variant']
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'groups', 'userInitial', 'userName', 'variant']
 })
 @Component({
   selector: 'ds-panel-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeId', 'collapsed', 'groups', 'userInitial', 'userName', 'variant'],
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'groups', 'userInitial', 'userName', 'variant'],
   outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction'],
   standalone: false
 })

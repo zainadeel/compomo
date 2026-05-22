@@ -336,6 +336,33 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 
 ---
 
+## Fast lookups
+
+### Design tokens
+
+Read `node_modules/@ds-mo/tokens/dist/tokens-index.json` — one file, no grep. It's a flat object keyed by CSS custom-property name with `{$type, $value}` entries, plus a top-level `categories` map that groups names by category:
+
+| Category key | What's in it |
+|---|---|
+| `colors.reference` | Raw palette (`--color-reference-*`) |
+| `colors.semantic` | Semantic surface/border/foreground colors (`--color-background-*`, `--color-border-*`, `--color-foreground-*`, etc.) |
+| `colors.data` | Data-viz palettes |
+| `dimensions` | Spacing, sizing, radius, stroke (`--dimension-*`) |
+| `typography` | Font size, weight, line-height (`--typography-*`) |
+| `effects` | Animation duration/easing, motion shorthands, blur, shadow, elevation (`--effect-*`) |
+
+To find the right token: read the file, access the `categories.<key>` array for names, then look up the value. Single read, no grep.
+
+**Motion tokens quick reference:**
+- `--effect-motion-short-1` = 50 ms ease-in-out
+- `--effect-motion-short-2` = 100 ms ease-in-out
+- `--effect-motion-short-3` = 200 ms ease-in-out (default interaction speed)
+- `--effect-motion-medium-1` = 300 ms ease-in-out
+
+Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If you need the duration alone for `calc()`, use `--effect-animation-duration-short-N` separately.
+
+---
+
 ## Quick reference: where things live
 
 | Need to change... | Edit this |

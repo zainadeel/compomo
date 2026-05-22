@@ -388,6 +388,11 @@ export namespace Components {
          */
         "activeId": string;
         /**
+          * Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled.
+          * @default 0
+         */
+        "breakpoint": number;
+        /**
           * Whether the nav is in collapsed (icon-only) state
           * @default false
          */
@@ -1548,6 +1553,11 @@ declare namespace LocalJSX {
          */
         "activeId"?: string;
         /**
+          * Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled.
+          * @default 0
+         */
+        "breakpoint"?: number;
+        /**
           * Whether the nav is in collapsed (icon-only) state
           * @default false
          */
@@ -2023,6 +2033,7 @@ declare namespace LocalJSX {
         "groups": string;
         "activeId": string;
         "collapsed": boolean;
+        "breakpoint": number;
         "userName": string;
         "userInitial": string;
     }

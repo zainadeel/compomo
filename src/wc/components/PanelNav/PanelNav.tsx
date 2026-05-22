@@ -35,6 +35,9 @@ export class PanelNav {
   /** Whether the nav is in collapsed (icon-only) state */
   @Prop() collapsed: boolean = false;
 
+  /** Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled. */
+  @Prop() breakpoint: number = 0;
+
   /** Display name for the footer user section */
   @Prop() userName: string = '';
 
@@ -54,6 +57,132 @@ export class PanelNav {
 
   @State() private parsedGroups: PanelNavGroup[] = [];
   @State() private atBottom = false;
+  @State() private isAnimating = false;
+  @State() private rovingIndex: number = 0;
+  @State() private viewportNarrow: boolean = false;
+
+  private transitionEndHandler?: (e: TransitionEvent) => void;
+  private resizeObserver?: ResizeObserver;
+
+  // Drag-to-resize state (not @State — no re-render needed)
+  private isDragging = false;
+  private dragStartX = 0;
+  private didSnap = false;
+  private lastDeltaX = 0;
+  private edgeOverlayTimer: number | null = null;
+  private globalMouseMoveHandler?: (e: MouseEvent) => void;
+  private globalMouseUpHandler?: () => void;
+
+  @State() private showEdgeOverlay = false;
+
+  @Watch('collapsed')
+  @Watch('viewportNarrow')
+  onCollapsedChange() {
+    this.startCollapseAnimation();
+  }
+
+  @Watch('breakpoint')
+  onBreakpointChange() {
+    this.disconnectResizeObserver();
+    if (this.breakpoint > 0) this.connectResizeObserver();
+  }
+
+  private startCollapseAnimation() {
+    this.isAnimating = true;
+    const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
+    if (this.transitionEndHandler) {
+      panel?.removeEventListener('transitionend', this.transitionEndHandler);
+    }
+    this.transitionEndHandler = (e: TransitionEvent) => {
+      if (e.propertyName === 'width') {
+        this.isAnimating = false;
+        panel?.removeEventListener('transitionend', this.transitionEndHandler!);
+      }
+    };
+    panel?.addEventListener('transitionend', this.transitionEndHandler);
+  }
+
+  private connectResizeObserver() {
+    this.viewportNarrow = window.innerWidth < this.breakpoint;
+    this.resizeObserver = new ResizeObserver(() => {
+      this.viewportNarrow = window.innerWidth < this.breakpoint;
+    });
+    this.resizeObserver.observe(document.documentElement);
+  }
+
+  private disconnectResizeObserver() {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  }
+
+  private clearEdgeOverlayTimer() {
+    if (this.edgeOverlayTimer !== null) {
+      window.clearTimeout(this.edgeOverlayTimer);
+      this.edgeOverlayTimer = null;
+    }
+  }
+
+  private handleResizeHandleMouseEnter() {
+    this.clearEdgeOverlayTimer();
+    this.edgeOverlayTimer = window.setTimeout(() => {
+      this.showEdgeOverlay = true;
+      this.edgeOverlayTimer = null;
+    }, 500);
+  }
+
+  private handleResizeHandleMouseLeave() {
+    if (this.isDragging) return;
+    this.clearEdgeOverlayTimer();
+    this.showEdgeOverlay = false;
+  }
+
+  private handleResizeHandleMouseDown(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const wasCollapsed = this.collapsed || this.viewportNarrow;
+    this.isDragging = true;
+    this.dragStartX = e.clientX;
+    this.didSnap = false;
+    this.lastDeltaX = 0;
+    this.clearEdgeOverlayTimer();
+    this.showEdgeOverlay = false;
+
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+
+    const onMove = (ev: MouseEvent) => {
+      const deltaX = ev.clientX - this.dragStartX;
+      this.lastDeltaX = Math.abs(deltaX);
+      if (this.didSnap) return;
+      if (!wasCollapsed && deltaX < -8) {
+        this.dsNavToggle.emit(true);
+        this.didSnap = true;
+      } else if (wasCollapsed && deltaX > 8) {
+        this.dsNavToggle.emit(false);
+        this.didSnap = true;
+      }
+    };
+
+    const onUp = () => {
+      if (!this.didSnap && this.lastDeltaX < 3) {
+        this.dsNavToggle.emit(!wasCollapsed);
+      }
+      this.isDragging = false;
+      this.showEdgeOverlay = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      this.globalMouseMoveHandler = undefined;
+      this.globalMouseUpHandler = undefined;
+    };
+
+    this.globalMouseMoveHandler = onMove;
+    this.globalMouseUpHandler = onUp;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }
 
   @Watch('groups')
   onGroupsChange(val: string) {
@@ -62,14 +191,58 @@ export class PanelNav {
     } catch {
       this.parsedGroups = [];
     }
+    this.syncRovingIndex();
+  }
+
+  @Watch('activeId')
+  onActiveIdChange() {
+    this.syncRovingIndex();
   }
 
   componentWillLoad() {
     this.onGroupsChange(this.groups);
   }
 
+  private getAllItems(): PanelNavItem[] {
+    return this.parsedGroups.flatMap(g => g.items);
+  }
+
+  private syncRovingIndex() {
+    const idx = this.getAllItems().findIndex(i => i.id === this.activeId);
+    this.rovingIndex = idx >= 0 ? idx : 0;
+  }
+
+  private handleItemKeyDown(e: KeyboardEvent, index: number) {
+    const total = this.getAllItems().length;
+    let next = index;
+    switch (e.key) {
+      case 'ArrowDown': e.preventDefault(); next = (index + 1) % total; break;
+      case 'ArrowUp':   e.preventDefault(); next = (index - 1 + total) % total; break;
+      case 'Home':      e.preventDefault(); next = 0; break;
+      case 'End':       e.preventDefault(); next = total - 1; break;
+      default: return;
+    }
+    this.rovingIndex = next;
+    const buttons = Array.from(
+      this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item')
+    );
+    buttons[next]?.focus();
+  }
+
   componentDidLoad() {
     this.checkScroll();
+    if (this.breakpoint > 0) this.connectResizeObserver();
+  }
+
+  disconnectedCallback() {
+    this.disconnectResizeObserver();
+    this.clearEdgeOverlayTimer();
+    if (this.globalMouseMoveHandler) {
+      window.removeEventListener('mousemove', this.globalMouseMoveHandler);
+    }
+    if (this.globalMouseUpHandler) {
+      window.removeEventListener('mouseup', this.globalMouseUpHandler);
+    }
   }
 
   private checkScroll() {
@@ -99,18 +272,20 @@ export class PanelNav {
 
   render() {
     const isDashboard = this.variant === 'dashboard';
-    const { collapsed, userName, userInitial } = this;
+    const collapsed = this.collapsed || this.viewportNarrow;
+    const { userName, userInitial } = this;
 
     const navCls: Record<string, boolean> = {
       'panel-nav': true,
       'panel-nav--dashboard': isDashboard,
       'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,
+      'panel-nav--animating': this.isAnimating,
       'panel-nav--at-bottom': this.atBottom,
     };
 
     return (
-      <Host>
+      <Host style={{ display: 'block', position: 'relative' }}>
         <nav class={navCls} aria-label={isDashboard ? 'Main navigation' : 'Settings navigation'}>
 
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
@@ -120,6 +295,7 @@ export class PanelNav {
               class="panel-nav__header-btn"
               onClick={() => this.handleToggle()}
               aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+              aria-expanded={collapsed ? 'false' : 'true'}
             >
               {/* Motive M mark — fades out on hover to reveal collapse toggle */}
               <span class="panel-nav__header-logo" aria-hidden="true">
@@ -140,28 +316,34 @@ export class PanelNav {
 
           {/* ── Scrollable body ── */}
           <div class="panel-nav__body" onScroll={e => this.handleBodyScroll(e)}>
-            {this.parsedGroups.map(group => (
-              <div class="panel-nav__group">
-                {group.label && !collapsed && (
-                  <span class="panel-nav__group-label">
-                    <ds-text as="span" variant="text-caption-emphasis" color="inherit">
-                      {group.label}
-                    </ds-text>
-                  </span>
-                )}
-                {group.items.map(item => {
-                  const isActive = item.id === this.activeId;
-                  return (
-                    <button
-                      type="button"
-                      class={{
-                        'panel-nav__item': true,
-                        'panel-nav__item--active': isActive,
-                      }}
-                      aria-current={isActive ? 'page' : undefined}
-                      title={collapsed ? item.label : undefined}
-                      onClick={() => this.handleItemClick(item.id)}
-                    >
+            {(() => {
+              let flatIdx = 0;
+              return this.parsedGroups.map(group => (
+                <div class="panel-nav__group">
+                  {group.label && (
+                    <span class="panel-nav__group-label">
+                      <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                        {group.label}
+                      </ds-text>
+                    </span>
+                  )}
+                  {group.items.map(item => {
+                    const isActive = item.id === this.activeId;
+                    const idx = flatIdx++;
+                    return (
+                      <button
+                        type="button"
+                        class={{
+                          'panel-nav__item': true,
+                          'panel-nav__item--active': isActive,
+                        }}
+                        aria-current={isActive ? 'page' : undefined}
+                        title={collapsed ? item.label : undefined}
+                        tabIndex={idx === this.rovingIndex ? 0 : -1}
+                        onClick={() => this.handleItemClick(item.id)}
+                        onKeyDown={(e: KeyboardEvent) => this.handleItemKeyDown(e, idx)}
+                        onFocus={() => { this.rovingIndex = idx; }}
+                      >
                       <span class="panel-nav__item-icon">
                         <ds-icon
                           name={item.icon}
@@ -169,33 +351,27 @@ export class PanelNav {
                           color="inherit"
                           flag={item.flag}
                         />
-                        {item.dot && collapsed && (
-                          <span class="panel-nav__item-dot panel-nav__item-dot--mini" aria-hidden="true" />
-                        )}
                       </span>
-                      {!collapsed && (
-                        <span class="panel-nav__item-label">
-                          <span class="panel-nav__item-label-text">
-                            <ds-text
-                              as="span"
-                              variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
-                              color="inherit"
-                            >
-                              {item.label}
-                            </ds-text>
-                          </span>
+                      <span class="panel-nav__item-label">
+                        <span class="panel-nav__item-label-text">
+                          <ds-text
+                            as="span"
+                            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
+                            color="inherit"
+                          >
+                            {item.label}
+                          </ds-text>
                         </span>
-                      )}
-                      {item.dot && !collapsed && (
-                        <span class="panel-nav__item-dot-wrap" aria-hidden="true">
-                          <span class="panel-nav__item-dot" />
-                        </span>
+                      </span>
+                      {item.dot && (
+                        <span class="panel-nav__item-dot" aria-hidden="true" />
                       )}
                     </button>
                   );
-                })}
-              </div>
-            ))}
+                  })}
+                </div>
+              ));
+            })()}
           </div>
 
           {/* ── Footer ── */}
@@ -211,42 +387,50 @@ export class PanelNav {
               <ds-icon name={isDashboard ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
             </button>
 
-            {/* Right user — expanded: item-style with icon on right; mini: avatar + overlaid initial */}
-            {collapsed ? (
-              <button
-                type="button"
-                class="panel-nav__footer-btn panel-nav__footer-user-mini"
-                title={userName}
-                aria-label={`User: ${userName}`}
-              >
-                <ds-icon name="Circle" size="md" color="inherit" />
-                <span class="panel-nav__user-initial" aria-hidden="true">
-                  <ds-text as="span" variant="text-caption-emphasis" color="inherit">
-                    {userInitial}
+            {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}
+            <button
+              type="button"
+              class="panel-nav__item panel-nav__footer-user"
+              aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
+            >
+              <span class="panel-nav__item-label panel-nav__footer-user-label">
+                <span class="panel-nav__item-label-text">
+                  <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+                    {userName}
                   </ds-text>
                 </span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                class="panel-nav__item panel-nav__footer-user"
-                aria-label={`User menu for ${userName}`}
-              >
-                <span class="panel-nav__item-label">
-                  <span class="panel-nav__item-label-text">
-                    <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
-                      {userName}
+              </span>
+              <span class="panel-nav__item-icon panel-nav__footer-user-icon" aria-hidden="true">
+                <span class="panel-nav__footer-icon-expanded">
+                  <ds-icon name="ChevronUpDown" size="md" color="inherit" />
+                </span>
+                <span class="panel-nav__footer-icon-collapsed">
+                  <ds-icon name="Circle" size="md" color="inherit" />
+                  <span class="panel-nav__user-initial">
+                    <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                      {userInitial}
                     </ds-text>
                   </span>
                 </span>
-                <span class="panel-nav__item-icon">
-                  <ds-icon name="ChevronUpDown" size="md" color="inherit" />
-                </span>
-              </button>
-            )}
+              </span>
+            </button>
           </div>
 
         </nav>
+
+        {/* Drag-to-resize handle — always rendered, hidden only when auto-collapsed by breakpoint */}
+        {!this.viewportNarrow && (
+          <div
+            class={{
+              'panel-nav__resize-handle': true,
+              'panel-nav__resize-handle--overlay': this.showEdgeOverlay,
+            }}
+            onMouseEnter={() => this.handleResizeHandleMouseEnter()}
+            onMouseLeave={() => this.handleResizeHandleMouseLeave()}
+            onMouseDown={(e: MouseEvent) => this.handleResizeHandleMouseDown(e)}
+            aria-hidden="true"
+          />
+        )}
       </Host>
     );
   }

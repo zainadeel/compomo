@@ -19,14 +19,32 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    animSpeed: {
+      description: 'Animation speed multiplier — slow down to inspect transitions',
+      toolbar: {
+        title: 'Anim speed',
+        icon: 'timer',
+        items: [
+          { value: '1',  title: '1× (normal)'  },
+          { value: '2',  title: '2×'            },
+          { value: '5',  title: '5×'            },
+          { value: '10', title: '10×'           },
+          { value: '20', title: '20×'           },
+        ],
+        dynamicTitle: true,
+      },
+    },
   },
   initialGlobals: {
     theme: 'light',
+    animSpeed: '1',
   },
   decorators: [
     (Story, context) => {
       const theme = context.globals['theme'] || 'light';
+      const speed = context.globals['animSpeed'] || '1';
       document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.setProperty('--ds-panel-nav-speed', speed);
 
       // For fullscreen stories let the story control its own background.
       // For padded/centered stories apply the surface token so the canvas
