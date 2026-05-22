@@ -45,7 +45,7 @@ function distReloadPlugin(): Plugin {
 
 const config: StorybookConfig = {
   stories: ['../src/wc/**/*.mdx', '../src/wc/**/*.stories.@(ts|tsx)'],
-  addons: ['@storybook/addon-docs'],
+  addons: ['@storybook/addon-docs', '@storybook/addon-toolbars'],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},
