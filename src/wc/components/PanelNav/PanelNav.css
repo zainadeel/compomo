@@ -320,6 +320,10 @@
   transition: opacity var(--_nav-label-fade-out-motion) 0ms;
 }
 
+.panel-nav--animating .panel-nav__item-label {
+  text-overflow: clip;
+}
+
 .panel-nav--collapsed .panel-nav__item-label {
   opacity: 0;
   pointer-events: none;

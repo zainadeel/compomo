@@ -54,6 +54,25 @@ export class PanelNav {
 
   @State() private parsedGroups: PanelNavGroup[] = [];
   @State() private atBottom = false;
+  @State() private isAnimating = false;
+
+  private transitionEndHandler?: (e: TransitionEvent) => void;
+
+  @Watch('collapsed')
+  onCollapsedChange() {
+    this.isAnimating = true;
+    const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
+    if (this.transitionEndHandler) {
+      panel?.removeEventListener('transitionend', this.transitionEndHandler);
+    }
+    this.transitionEndHandler = (e: TransitionEvent) => {
+      if (e.propertyName === 'width') {
+        this.isAnimating = false;
+        panel?.removeEventListener('transitionend', this.transitionEndHandler!);
+      }
+    };
+    panel?.addEventListener('transitionend', this.transitionEndHandler);
+  }
 
   @Watch('groups')
   onGroupsChange(val: string) {
@@ -106,6 +125,7 @@ export class PanelNav {
       'panel-nav--dashboard': isDashboard,
       'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,
+      'panel-nav--animating': this.isAnimating,
       'panel-nav--at-bottom': this.atBottom,
     };
 
