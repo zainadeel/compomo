@@ -118,14 +118,15 @@ function switchFooterVariant(id: string) {
     return;
   }
 
-  // Stencil renders props asynchronously — if applySwitch returns synchronously
-  // the browser captures the "new" snapshot before Stencil has re-rendered,
-  // then Stencil's deferred DOM mutation aborts the in-progress transition with
-  // InvalidStateError. Awaiting one rAF lets Stencil flush its render queue
-  // before the new-state snapshot is taken.
+  // Stencil v4 schedules re-renders via microtasks (Promise.resolve / queueMicrotask).
+  // Yielding twice with Promise.resolve() lets Stencil's render queue fully flush
+  // before the VT captures the new-state snapshot — no paint frame needed, so
+  // this avoids the rAF deadlock where Chrome blocks painting while waiting for
+  // the callback Promise, preventing rAF from ever firing.
   const applyAndFlush = async () => {
     applySwitch();
-    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    await Promise.resolve(); // tick 1: Stencil queues its render microtask
+    await Promise.resolve(); // tick 2: Stencil's render runs
   };
 
   const transition = (document as any).startViewTransition(applyAndFlush);
