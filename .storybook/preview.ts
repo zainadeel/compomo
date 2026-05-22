@@ -5,18 +5,6 @@ import '@ds-mo/tokens/globals';
 import '@ds-mo/tokens/utilities';
 import './docs.css';
 
-// Suppress the default View Transitions crossfade so stories can
-// define their own clip-path animations via document.startViewTransition.
-const vtStyle = document.createElement('style');
-vtStyle.textContent = `
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-  }
-`;
-document.head.appendChild(vtStyle);
-
 const preview: Preview = {
   globalTypes: {
     theme: {
