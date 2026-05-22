@@ -12,11 +12,11 @@
   /* --ds-panel-nav-speed: unitless multiplier; override in Storybook to slow-mo (e.g. 10 = 10×).
      *-dur vars are duration-only (needed for calc); *-motion vars add easing for use in transitions. */
   --_nav-speed:               var(--ds-panel-nav-speed, 1);
-  --_nav-expand-dur:          calc(var(--_nav-speed) * var(--effect-animation-duration-short-3, 200ms));
+  --_nav-expand-dur:          calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
   --_nav-expand-motion:       var(--_nav-expand-dur) var(--effect-animation-easing-ease-in-out, ease);
-  --_nav-label-fade-dur:      calc(var(--_nav-speed) * var(--effect-animation-duration-short-3, 200ms));
+  --_nav-label-fade-dur:      calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
   --_nav-label-fade-motion:   var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease);
-  --_nav-label-fade-out-dur:  calc(var(--_nav-speed) * var(--effect-animation-duration-short-2, 100ms));
+  --_nav-label-fade-out-dur:  calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
   --_nav-label-fade-out-motion: var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease);
 
   /* ─ Colours – dashboard defaults ─ */
