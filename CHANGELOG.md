@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.5](https://github.com/zainadeel/compomo/compare/v0.7.4...v0.7.5) (2026-05-22)
+
+
+### Fixed
+
+* **storybook:** add light/dark theme toggle to toolbar ([#78](https://github.com/zainadeel/compomo/issues/78)) ([378e7d7](https://github.com/zainadeel/compomo/commit/378e7d713ec7097a33e9422425ad0e78a76ff66c))
+
 ## [0.7.4](https://github.com/zainadeel/compomo/compare/v0.7.3...v0.7.4) (2026-05-22)
 
 
