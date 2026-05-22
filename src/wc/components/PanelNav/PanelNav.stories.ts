@@ -118,20 +118,31 @@ function switchFooterVariant(id: string) {
     return;
   }
 
+  // Pin the circle origin on :root before calling startViewTransition so the
+  // CSS rule in preview-head.html (`::view-transition-new(root) { clip-path:
+  // circle(0px at var(--vt-x) var(--vt-y)) }`) hides the new-state snapshot
+  // from the very first committed compositor frame — preventing the one-frame
+  // flash that made the animation look "weird" at normal speed.
+  document.documentElement.style.setProperty('--vt-x', `${x}px`);
+  document.documentElement.style.setProperty('--vt-y', `${y}px`);
+
   // Stencil v4 schedules re-renders via microtasks (Promise.resolve / queueMicrotask).
-  // Yielding twice with Promise.resolve() lets Stencil's render queue fully flush
-  // before the VT captures the new-state snapshot — no paint frame needed, so
-  // this avoids the rAF deadlock where Chrome blocks painting while waiting for
-  // the callback Promise, preventing rAF from ever firing.
+  // Yielding four times lets Stencil's render queue fully flush before the VT
+  // captures the new-state snapshot — no paint frame needed, so this avoids
+  // the rAF deadlock where Chrome suspends painting while awaiting the callback.
   const applyAndFlush = async () => {
     applySwitch();
     await Promise.resolve(); // tick 1: Stencil queues its render microtask
     await Promise.resolve(); // tick 2: Stencil's render runs
+    await Promise.resolve(); // tick 3: any post-render microtasks
+    await Promise.resolve(); // tick 4: defensive extra flush
   };
 
   const transition = (document as any).startViewTransition(applyAndFlush);
 
   transition.ready.then(() => {
+    const durToken = getComputedStyle(document.documentElement).getPropertyValue('--effect-animation-duration-long-1').trim();
+    const duration = parseFloat(durToken) || 750;
     document.documentElement.animate(
       {
         clipPath: [
@@ -140,8 +151,12 @@ function switchFooterVariant(id: string) {
         ],
       },
       {
-        duration: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--effect-animation-duration-medium-1')) || 300,
+        duration,
         easing: 'ease-in-out',
+        // fill: 'forwards' keeps the final clip-path (circle(maxR)) in effect
+        // until the VT cleans up — prevents the snapshot snapping back to the
+        // CSS initial state (circle(0px)) for a frame before removal.
+        fill: 'forwards',
         pseudoElement: '::view-transition-new(root)',
       },
     );

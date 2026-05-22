@@ -10,4 +10,15 @@
     animation: none;
     mix-blend-mode: normal;
   }
+
+  /*
+   * Hide the new-state snapshot immediately (clip to 0px circle) so there is
+   * no single-frame flash of the new state before the WAAPI circle-reveal
+   * animation takes effect.  switchFooterVariant sets --vt-x / --vt-y on
+   * :root before calling startViewTransition, so the origin matches the gear
+   * button from the very first committed compositor frame of the transition.
+   */
+  ::view-transition-new(root) {
+    clip-path: circle(0px at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
 </style>
