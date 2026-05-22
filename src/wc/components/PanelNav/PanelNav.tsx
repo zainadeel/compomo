@@ -169,7 +169,7 @@ export class PanelNav {
                           color="inherit"
                           flag={item.flag}
                         />
-                        {item.dot && collapsed && (
+                        {item.dot && (
                           <span class="panel-nav__item-dot panel-nav__item-dot--mini" aria-hidden="true" />
                         )}
                       </span>
