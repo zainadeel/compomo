@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/zainadeel/compomo/compare/v0.7.5...v0.8.0) (2026-05-22)
+
+
+### Added
+
+* **panel-nav:** storageKey persistence and href/currentUrl routing support ([#80](https://github.com/zainadeel/compomo/issues/80)) ([5a24fb3](https://github.com/zainadeel/compomo/commit/5a24fb3e68d800a7d582465aa135f769db938050))
+
 ## [0.7.5](https://github.com/zainadeel/compomo/compare/v0.7.4...v0.7.5) (2026-05-22)
 
 
