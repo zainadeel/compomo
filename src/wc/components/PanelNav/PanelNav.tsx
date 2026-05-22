@@ -9,6 +9,10 @@ export interface PanelNavItem {
   /** Show a notification dot badge on the item */
   dot?: boolean;
   flag?: boolean;
+  /** When set, the item renders as an `<a>` element so any router that
+   *  intercepts anchor clicks (Angular Router, React Router, etc.) handles
+   *  navigation automatically. `dsNavSelect` still fires on click. */
+  href?: string;
 }
 
 export interface PanelNavGroup {
@@ -29,14 +33,26 @@ export class PanelNav {
   /** JSON string of `PanelNavGroup[]` */
   @Prop() groups: string = '[]';
 
-  /** ID of the currently active/selected nav item */
+  /** ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set. */
   @Prop() activeId: string = '';
 
-  /** Whether the nav is in collapsed (icon-only) state */
-  @Prop() collapsed: boolean = false;
+  /** Whether the nav is in collapsed (icon-only) state.
+   *  When `storageKey` is set the component manages this internally —
+   *  do not also bind it from outside in that mode. */
+  @Prop({ mutable: true }) collapsed: boolean = false;
 
   /** Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled. */
   @Prop() breakpoint: number = 0;
+
+  /** `localStorage` key used to persist the collapsed state across page loads.
+   *  When set the component is self-managing for collapsed state; `dsNavToggle`
+   *  still fires for consumers that want to observe the change. */
+  @Prop() storageKey: string = '';
+
+  /** Current route URL (e.g. `window.location.pathname` or the router's active URL).
+   *  When set the component derives the active item by matching item `href` values
+   *  against this string (longest prefix wins), overriding `activeId`. */
+  @Prop() currentUrl: string = '';
 
   /** Display name for the footer user section */
   @Prop() userName: string = '';
@@ -60,6 +76,7 @@ export class PanelNav {
   @State() private isAnimating = false;
   @State() private rovingIndex: number = 0;
   @State() private viewportNarrow: boolean = false;
+  @State() private urlDerivedActiveId: string = '';
 
   private transitionEndHandler?: (e: TransitionEvent) => void;
   private resizeObserver?: ResizeObserver;
@@ -75,6 +92,12 @@ export class PanelNav {
 
   @State() private showEdgeOverlay = false;
 
+  /** The ID that should be treated as active. `currentUrl` matching takes precedence
+   *  over `activeId` when both are present. */
+  private get effectiveActiveId(): string {
+    return this.urlDerivedActiveId || this.activeId;
+  }
+
   @Watch('collapsed')
   @Watch('viewportNarrow')
   onCollapsedChange() {
@@ -85,6 +108,54 @@ export class PanelNav {
   onBreakpointChange() {
     this.disconnectResizeObserver();
     if (this.breakpoint > 0) this.connectResizeObserver();
+  }
+
+  @Watch('groups')
+  onGroupsChange(val: string) {
+    try {
+      this.parsedGroups = JSON.parse(val);
+    } catch {
+      this.parsedGroups = [];
+    }
+    this.syncRovingIndex();
+  }
+
+  @Watch('activeId')
+  @Watch('urlDerivedActiveId')
+  onActiveIdChange() {
+    this.syncRovingIndex();
+  }
+
+  @Watch('currentUrl')
+  onCurrentUrlChange() {
+    this.syncActiveFromUrl();
+  }
+
+  componentWillLoad() {
+    if (this.storageKey) {
+      try {
+        const stored = localStorage.getItem(this.storageKey);
+        if (stored !== null) this.collapsed = stored === 'true';
+      } catch { /* localStorage unavailable */ }
+    }
+    this.onGroupsChange(this.groups);
+    this.syncActiveFromUrl();
+  }
+
+  componentDidLoad() {
+    this.checkScroll();
+    if (this.breakpoint > 0) this.connectResizeObserver();
+  }
+
+  disconnectedCallback() {
+    this.disconnectResizeObserver();
+    this.clearEdgeOverlayTimer();
+    if (this.globalMouseMoveHandler) {
+      window.removeEventListener('mousemove', this.globalMouseMoveHandler);
+    }
+    if (this.globalMouseUpHandler) {
+      window.removeEventListener('mouseup', this.globalMouseUpHandler);
+    }
   }
 
   private startCollapseAnimation() {
@@ -113,6 +184,85 @@ export class PanelNav {
   private disconnectResizeObserver() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+  }
+
+  /** Derive active ID from the current URL by matching item `href` values.
+   *  Uses longest-prefix match so `/fleet/detail` correctly activates `/fleet`. */
+  private syncActiveFromUrl() {
+    if (!this.currentUrl) {
+      this.urlDerivedActiveId = '';
+      return;
+    }
+    let best: PanelNavItem | undefined;
+    let bestLen = 0;
+    for (const item of this.getAllItems()) {
+      if (item.href && this.currentUrl.startsWith(item.href) && item.href.length > bestLen) {
+        best = item;
+        bestLen = item.href.length;
+      }
+    }
+    this.urlDerivedActiveId = best?.id ?? '';
+  }
+
+  /** Centralised toggle: always emits `dsNavToggle`; when `storageKey` is set
+   *  also mutates `collapsed` directly and persists to `localStorage`. */
+  private applyToggle(next: boolean) {
+    this.dsNavToggle.emit(next);
+    if (this.storageKey) {
+      this.collapsed = next;
+      try { localStorage.setItem(this.storageKey, String(next)); } catch { /* unavailable */ }
+    }
+  }
+
+  private getAllItems(): PanelNavItem[] {
+    return this.parsedGroups.flatMap(g => g.items);
+  }
+
+  private syncRovingIndex() {
+    const idx = this.getAllItems().findIndex(i => i.id === this.effectiveActiveId);
+    this.rovingIndex = idx >= 0 ? idx : 0;
+  }
+
+  private handleItemKeyDown(e: KeyboardEvent, index: number) {
+    const total = this.getAllItems().length;
+    let next = index;
+    switch (e.key) {
+      case 'ArrowDown': e.preventDefault(); next = (index + 1) % total; break;
+      case 'ArrowUp':   e.preventDefault(); next = (index - 1 + total) % total; break;
+      case 'Home':      e.preventDefault(); next = 0; break;
+      case 'End':       e.preventDefault(); next = total - 1; break;
+      default: return;
+    }
+    this.rovingIndex = next;
+    const items = Array.from(
+      this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item')
+    );
+    items[next]?.focus();
+  }
+
+  private checkScroll() {
+    const body = this.el.querySelector('.panel-nav__body') as HTMLElement | null;
+    if (!body) return;
+    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
+    this.atBottom = remaining < 2;
+  }
+
+  private handleBodyScroll(e: Event) {
+    const body = e.target as HTMLElement;
+    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
+    this.atBottom = remaining < 2;
+  }
+
+  private handleItemClick(id: string) {
+    this.dsNavSelect.emit(id);
+  }
+
+  private handleToggle() {
+    this.applyToggle(!this.collapsed);
+  }
+
+  private handleFooterAction() {
+    this.dsNavFooterAction.emit();
   }
 
   private clearEdgeOverlayTimer() {
@@ -156,17 +306,17 @@ export class PanelNav {
       this.lastDeltaX = Math.abs(deltaX);
       if (this.didSnap) return;
       if (!wasCollapsed && deltaX < -8) {
-        this.dsNavToggle.emit(true);
+        this.applyToggle(true);
         this.didSnap = true;
       } else if (wasCollapsed && deltaX > 8) {
-        this.dsNavToggle.emit(false);
+        this.applyToggle(false);
         this.didSnap = true;
       }
     };
 
     const onUp = () => {
       if (!this.didSnap && this.lastDeltaX < 3) {
-        this.dsNavToggle.emit(!wasCollapsed);
+        this.applyToggle(!wasCollapsed);
       }
       this.isDragging = false;
       this.showEdgeOverlay = false;
@@ -184,90 +334,40 @@ export class PanelNav {
     window.addEventListener('mouseup', onUp);
   }
 
-  @Watch('groups')
-  onGroupsChange(val: string) {
-    try {
-      this.parsedGroups = JSON.parse(val);
-    } catch {
-      this.parsedGroups = [];
-    }
-    this.syncRovingIndex();
-  }
+  private renderNavItem(item: PanelNavItem, idx: number, collapsed: boolean) {
+    const isActive = item.id === this.effectiveActiveId;
 
-  @Watch('activeId')
-  onActiveIdChange() {
-    this.syncRovingIndex();
-  }
+    const itemContent = [
+      <span class="panel-nav__item-icon">
+        <ds-icon name={item.icon} size="md" color="inherit" flag={item.flag} />
+      </span>,
+      <span class="panel-nav__item-label">
+        <span class="panel-nav__item-label-text">
+          <ds-text
+            as="span"
+            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
+            color="inherit"
+          >
+            {item.label}
+          </ds-text>
+        </span>
+      </span>,
+      item.dot && <span class="panel-nav__item-dot" aria-hidden="true" />,
+    ];
 
-  componentWillLoad() {
-    this.onGroupsChange(this.groups);
-  }
+    const sharedProps = {
+      class: { 'panel-nav__item': true, 'panel-nav__item--active': isActive },
+      'aria-current': isActive ? ('page' as const) : undefined,
+      title: collapsed ? item.label : undefined,
+      tabIndex: idx === this.rovingIndex ? 0 : -1,
+      onClick: () => this.handleItemClick(item.id),
+      onKeyDown: (e: KeyboardEvent) => this.handleItemKeyDown(e, idx),
+      onFocus: () => { this.rovingIndex = idx; },
+    };
 
-  private getAllItems(): PanelNavItem[] {
-    return this.parsedGroups.flatMap(g => g.items);
-  }
-
-  private syncRovingIndex() {
-    const idx = this.getAllItems().findIndex(i => i.id === this.activeId);
-    this.rovingIndex = idx >= 0 ? idx : 0;
-  }
-
-  private handleItemKeyDown(e: KeyboardEvent, index: number) {
-    const total = this.getAllItems().length;
-    let next = index;
-    switch (e.key) {
-      case 'ArrowDown': e.preventDefault(); next = (index + 1) % total; break;
-      case 'ArrowUp':   e.preventDefault(); next = (index - 1 + total) % total; break;
-      case 'Home':      e.preventDefault(); next = 0; break;
-      case 'End':       e.preventDefault(); next = total - 1; break;
-      default: return;
-    }
-    this.rovingIndex = next;
-    const buttons = Array.from(
-      this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item')
-    );
-    buttons[next]?.focus();
-  }
-
-  componentDidLoad() {
-    this.checkScroll();
-    if (this.breakpoint > 0) this.connectResizeObserver();
-  }
-
-  disconnectedCallback() {
-    this.disconnectResizeObserver();
-    this.clearEdgeOverlayTimer();
-    if (this.globalMouseMoveHandler) {
-      window.removeEventListener('mousemove', this.globalMouseMoveHandler);
-    }
-    if (this.globalMouseUpHandler) {
-      window.removeEventListener('mouseup', this.globalMouseUpHandler);
-    }
-  }
-
-  private checkScroll() {
-    const body = this.el.querySelector('.panel-nav__body') as HTMLElement | null;
-    if (!body) return;
-    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
-    this.atBottom = remaining < 2;
-  }
-
-  private handleBodyScroll(e: Event) {
-    const body = e.target as HTMLElement;
-    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
-    this.atBottom = remaining < 2;
-  }
-
-  private handleItemClick(id: string) {
-    this.dsNavSelect.emit(id);
-  }
-
-  private handleToggle() {
-    this.dsNavToggle.emit(!this.collapsed);
-  }
-
-  private handleFooterAction() {
-    this.dsNavFooterAction.emit();
+    return item.href
+      ? <a {...sharedProps} href={item.href}>{itemContent}</a>
+      : <button {...sharedProps} type="button">{itemContent}</button>;
   }
 
   render() {
@@ -327,48 +427,7 @@ export class PanelNav {
                       </ds-text>
                     </span>
                   )}
-                  {group.items.map(item => {
-                    const isActive = item.id === this.activeId;
-                    const idx = flatIdx++;
-                    return (
-                      <button
-                        type="button"
-                        class={{
-                          'panel-nav__item': true,
-                          'panel-nav__item--active': isActive,
-                        }}
-                        aria-current={isActive ? 'page' : undefined}
-                        title={collapsed ? item.label : undefined}
-                        tabIndex={idx === this.rovingIndex ? 0 : -1}
-                        onClick={() => this.handleItemClick(item.id)}
-                        onKeyDown={(e: KeyboardEvent) => this.handleItemKeyDown(e, idx)}
-                        onFocus={() => { this.rovingIndex = idx; }}
-                      >
-                      <span class="panel-nav__item-icon">
-                        <ds-icon
-                          name={item.icon}
-                          size="md"
-                          color="inherit"
-                          flag={item.flag}
-                        />
-                      </span>
-                      <span class="panel-nav__item-label">
-                        <span class="panel-nav__item-label-text">
-                          <ds-text
-                            as="span"
-                            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
-                            color="inherit"
-                          >
-                            {item.label}
-                          </ds-text>
-                        </span>
-                      </span>
-                      {item.dot && (
-                        <span class="panel-nav__item-dot" aria-hidden="true" />
-                      )}
-                    </button>
-                  );
-                  })}
+                  {group.items.map(item => this.renderNavItem(item, flatIdx++, collapsed))}
                 </div>
               ));
             })()}

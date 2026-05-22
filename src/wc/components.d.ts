@@ -383,7 +383,7 @@ export namespace Components {
     }
     interface DsPanelNav {
         /**
-          * ID of the currently active/selected nav item
+          * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
          */
         "activeId": string;
@@ -393,15 +393,25 @@ export namespace Components {
          */
         "breakpoint": number;
         /**
-          * Whether the nav is in collapsed (icon-only) state
+          * Whether the nav is in collapsed (icon-only) state. When `storageKey` is set the component manages this internally — do not also bind it from outside in that mode.
           * @default false
          */
         "collapsed": boolean;
+        /**
+          * Current route URL (e.g. `window.location.pathname` or the router's active URL). When set the component derives the active item by matching item `href` values against this string (longest prefix wins), overriding `activeId`.
+          * @default ''
+         */
+        "currentUrl": string;
         /**
           * JSON string of `PanelNavGroup[]`
           * @default '[]'
          */
         "groups": string;
+        /**
+          * `localStorage` key used to persist the collapsed state across page loads. When set the component is self-managing for collapsed state; `dsNavToggle` still fires for consumers that want to observe the change.
+          * @default ''
+         */
+        "storageKey": string;
         /**
           * Single character shown in the collapsed avatar
           * @default ''
@@ -1548,7 +1558,7 @@ declare namespace LocalJSX {
     }
     interface DsPanelNav {
         /**
-          * ID of the currently active/selected nav item
+          * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
          */
         "activeId"?: string;
@@ -1558,10 +1568,15 @@ declare namespace LocalJSX {
          */
         "breakpoint"?: number;
         /**
-          * Whether the nav is in collapsed (icon-only) state
+          * Whether the nav is in collapsed (icon-only) state. When `storageKey` is set the component manages this internally — do not also bind it from outside in that mode.
           * @default false
          */
         "collapsed"?: boolean;
+        /**
+          * Current route URL (e.g. `window.location.pathname` or the router's active URL). When set the component derives the active item by matching item `href` values against this string (longest prefix wins), overriding `activeId`.
+          * @default ''
+         */
+        "currentUrl"?: string;
         /**
           * JSON string of `PanelNavGroup[]`
           * @default '[]'
@@ -1579,6 +1594,11 @@ declare namespace LocalJSX {
           * Emitted when the collapse toggle is clicked. Detail = new collapsed state.
          */
         "onDsNavToggle"?: (event: DsPanelNavCustomEvent<boolean>) => void;
+        /**
+          * `localStorage` key used to persist the collapsed state across page loads. When set the component is self-managing for collapsed state; `dsNavToggle` still fires for consumers that want to observe the change.
+          * @default ''
+         */
+        "storageKey"?: string;
         /**
           * Single character shown in the collapsed avatar
           * @default ''
@@ -2034,6 +2054,8 @@ declare namespace LocalJSX {
         "activeId": string;
         "collapsed": boolean;
         "breakpoint": number;
+        "storageKey": string;
+        "currentUrl": string;
         "userName": string;
         "userInitial": string;
     }
