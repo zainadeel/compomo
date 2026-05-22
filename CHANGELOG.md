@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/zainadeel/compomo/compare/v0.7.3...v0.7.4) (2026-05-22)
+
+
+### Fixed
+
+* **panel-nav:** eliminate flash and snap-back in VT circle animation ([#76](https://github.com/zainadeel/compomo/issues/76)) ([08db13d](https://github.com/zainadeel/compomo/commit/08db13d29ea73ab2512ce75b3dfa80fd793fad71))
+
 ## [0.7.3](https://github.com/zainadeel/compomo/compare/v0.7.2...v0.7.3) (2026-05-22)
 
 
