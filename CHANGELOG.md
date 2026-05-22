@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/zainadeel/compomo/compare/v0.8.0...v0.8.1) (2026-05-22)
+
+
+### Fixed
+
+* **panel-nav:** re-sync groups in componentDidLoad to fix Angular initial render ([#83](https://github.com/zainadeel/compomo/issues/83)) ([36876c8](https://github.com/zainadeel/compomo/commit/36876c88c2df728d58d0a9fecf89a41621f68d35))
+
 ## [0.8.0](https://github.com/zainadeel/compomo/compare/v0.7.5...v0.8.0) (2026-05-22)
 
 
