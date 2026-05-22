@@ -310,16 +310,12 @@
 
 .panel-nav--collapsed .panel-nav__item-dot-wrap {
   opacity: 0;
-  flex: 0 0 0;
-  overflow: hidden;
   pointer-events: none;
   transition: opacity var(--_nav-label-fade-out-motion) 0ms;
 }
 
 .panel-nav--collapsed .panel-nav__item-label {
   opacity: 0;
-  flex: 0 0 0;
-  overflow: hidden;
   pointer-events: none;
   mask-position: 100% 0;
   -webkit-mask-position: 100% 0;
