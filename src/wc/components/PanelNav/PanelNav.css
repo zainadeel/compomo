@@ -2,11 +2,13 @@
 
 .panel-nav {
   /* ─ Sizes ─ */
-  --_nav-width:           200px;
-  --_nav-width-collapsed: 48px;
-  --_nav-item-height:     var(--dimension-size-400, 32px);
-  --_nav-padding-x:       var(--dimension-space-100, 8px);
-  --_nav-padding-y:       var(--dimension-space-100, 8px);
+  --_nav-width:              200px;
+  --_nav-width-collapsed:    48px;
+  --_nav-item-height:        var(--dimension-size-400, 32px);
+  --_nav-padding-x:          var(--dimension-space-100, 8px);
+  --_nav-padding-y:          var(--dimension-space-100, 8px);
+  /* gear button outer width = padding*2 + icon */
+  --_nav-footer-btn-w:       calc(var(--dimension-space-075, 6px) * 2 + var(--dimension-iconography-md, 20px));
 
   /* ─ Motion ─ */
   /* --ds-panel-nav-speed: unitless multiplier; override in Storybook to slow-mo (e.g. 10 = 10×).
@@ -328,14 +330,16 @@
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 
 .panel-nav__footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--dimension-space-050, 4px);
-  padding: var(--_nav-padding-y) var(--_nav-padding-x);
-  flex-shrink: 0;
   position: relative;
+  flex-shrink: 0;
+  /* single row: padding*2 + item */
+  height: calc(var(--_nav-padding-y) * 2 + var(--_nav-item-height));
+  transition: height var(--_nav-expand-motion);
+}
+
+.panel-nav--collapsed .panel-nav__footer {
+  /* two rows: padding*2 + item*2 + gap */
+  height: calc(var(--_nav-padding-y) * 2 + var(--_nav-item-height) * 2 + var(--dimension-space-050, 4px));
 }
 
 /* Gradient fade — floats above the footer, masks content scrolling under it */
@@ -363,12 +367,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  left: var(--_nav-padding-x);
+  top: var(--_nav-padding-y);
   padding: var(--dimension-space-075, 6px);
   border-radius: var(--dimension-radius-half, 9999px);
   cursor: pointer;
   color: var(--_nav-fg-secondary);
-  position: relative;
-  flex-shrink: 0;
   box-sizing: border-box;
   background: transparent;
   transition:
@@ -390,34 +395,37 @@
   transition: none;
 }
 
-/* ── Footer user — flex-basis animates row→column stacking ─────────────────── */
+/* ── Footer user — absolutely positioned, slides from row to below gear ───── */
 
 .panel-nav__footer-user {
-  flex: 1 1 0%;
+  position: absolute;
+  /* row position: right of gear button */
+  left: calc(var(--_nav-padding-x) + var(--_nav-footer-btn-w) + var(--dimension-space-050, 4px));
+  right: var(--_nav-padding-x);
+  top: var(--_nav-padding-y);
   width: auto;
   min-width: 0;
   transition:
-    color var(--effect-motion-short-3, 200ms ease),
-    flex-basis var(--_nav-expand-motion),
-    flex-grow var(--_nav-expand-motion);
+    left var(--_nav-expand-motion),
+    right var(--_nav-expand-motion),
+    top var(--_nav-expand-motion),
+    color var(--effect-motion-short-3, 200ms ease);
 }
 
-/* Label: reuse item-label fade; right-align for the footer */
+/* Label right-aligned to match current design */
 .panel-nav__footer-user-label {
   text-align: right;
 }
 
-/* Collapse the label's flex space so the icon centres in the collapsed button */
-.panel-nav--collapsed .panel-nav__footer-user .panel-nav__item-label {
-  flex: 0 0 0;
-}
-
 .panel-nav--collapsed .panel-nav__footer-user {
-  flex: 0 0 100%;
+  /* column position: full-width row below gear */
+  left: var(--_nav-padding-x);
+  right: var(--_nav-padding-x);
+  top: calc(var(--_nav-padding-y) + var(--_nav-item-height) + var(--dimension-space-050, 4px));
   justify-content: center;
 }
 
-/* Pill hover radius in collapsed — matches gear button */
+/* Pill hover radius in collapsed */
 .panel-nav--collapsed .panel-nav__footer-user::after {
   border-radius: var(--dimension-radius-half, 9999px);
 }
