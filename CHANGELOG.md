@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/zainadeel/compomo/compare/v0.6.0...v0.7.0) (2026-05-22)
+
+
+### Added
+
+* **DEVPRD-panel-nav:** polish PanelNav tokens, dot badge, and scroll fade ([#66](https://github.com/zainadeel/compomo/issues/66)) ([611511d](https://github.com/zainadeel/compomo/commit/611511d7e4a8902bb5f31a1b510f61b55273f957))
+
+
+### Fixed
+
+* **DEVPRD-panel-nav:** animate color/background on variant shift ([#68](https://github.com/zainadeel/compomo/issues/68)) ([c35e0bf](https://github.com/zainadeel/compomo/commit/c35e0bfc3905c7b0cca92f3447f1fc19e1a64133))
+
 ## [0.6.0](https://github.com/zainadeel/compomo/compare/v0.5.0...v0.6.0) (2026-05-20)
 
 
