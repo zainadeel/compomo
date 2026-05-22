@@ -177,9 +177,9 @@
   max-height: 2em;
   opacity: 1;
   transition:
-    opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur),
-    max-height var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur),
-    margin-bottom var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur),
+    opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    max-height var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    margin-bottom var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
     color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
@@ -199,7 +199,8 @@
   box-sizing: border-box;
   width: 100%;
   user-select: none;
-  transition: color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
+  transition:
+    color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 /* Interaction layer */
@@ -250,7 +251,17 @@
   height: var(--typography-lineheight-md, 20px);
   line-height: var(--typography-lineheight-md, 20px);
   opacity: 1;
-  transition: opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur);
+  /* Gradient wipe: mask sweeps left-to-right on expand, right-to-left on collapse */
+  mask-image: linear-gradient(to right, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
+  mask-size: 200% 100%;
+  -webkit-mask-size: 200% 100%;
+  mask-position: 0% 0;
+  -webkit-mask-position: 0% 0;
+  transition:
+    opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    mask-position var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    -webkit-mask-position var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms;
 }
 
 .panel-nav__item-label-text {
@@ -267,7 +278,7 @@
   width: var(--dimension-iconography-md, 20px);
   height: var(--dimension-iconography-md, 20px);
   opacity: 1;
-  transition: opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur);
+  transition: opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms;
 }
 
 .panel-nav__item-dot {
@@ -287,21 +298,31 @@
   box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_nav-bg);
 }
 
-/* ── Collapsed: centre the icon ──────────────────────────────────────────── */
+/* ── Collapsed: keep icon in place via animated padding-left ─────────────── */
 
 .panel-nav--collapsed .panel-nav__item {
-  justify-content: center;
-  padding: 0 var(--dimension-space-075, 6px);
   gap: 0;
 }
 
-.panel-nav--collapsed .panel-nav__item-label,
 .panel-nav--collapsed .panel-nav__item-dot-wrap {
   opacity: 0;
   flex: 0 0 0;
   overflow: hidden;
   pointer-events: none;
   transition: opacity var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms;
+}
+
+.panel-nav--collapsed .panel-nav__item-label {
+  opacity: 0;
+  flex: 0 0 0;
+  overflow: hidden;
+  pointer-events: none;
+  mask-position: 100% 0;
+  -webkit-mask-position: 100% 0;
+  transition:
+    opacity var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    mask-position var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    -webkit-mask-position var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms;
 }
 
 .panel-nav--collapsed .panel-nav__group-label {
@@ -346,11 +367,19 @@
   opacity: 0;
 }
 
-/* Collapsed footer: stack gear + user vertically */
+/* Collapsed footer: stack gear + user vertically.
+   step-end holds flex-direction:row for the full expand duration so the layout
+   snaps to column only when the panel is already narrow — no mid-animation jump. */
+@keyframes ds-nav-footer-to-col {
+  from { flex-direction: row; }
+  to   { flex-direction: column; }
+}
+
 .panel-nav--collapsed .panel-nav__footer {
   flex-direction: column;
   align-items: center;
   gap: var(--dimension-space-050, 4px);
+  animation: ds-nav-footer-to-col var(--_nav-expand-dur) step-end forwards;
 }
 
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */
