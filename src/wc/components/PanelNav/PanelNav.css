@@ -323,6 +323,7 @@
 .panel-nav--collapsed .panel-nav__item-label {
   opacity: 0;
   pointer-events: none;
+  text-overflow: clip;
   mask-position: 100% 0;
   -webkit-mask-position: 100% 0;
   transition:
