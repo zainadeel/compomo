@@ -9,9 +9,11 @@
   --_nav-padding-y:       var(--dimension-space-100, 8px);
 
   /* ─ Motion ─ */
-  --_nav-expand:          var(--effect-motion-short-2, 100ms ease-in-out);
-  --_nav-label-fade-in:   var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease) var(--effect-animation-duration-short-2, 100ms);
-  --_nav-label-fade-out:  var(--effect-animation-duration-short-1, 50ms) var(--effect-animation-easing-ease-in-out, ease) 0ms;
+  /* --ds-panel-nav-speed: unitless multiplier; override in Storybook to slow-mo (e.g. 10 = 10×) */
+  --_nav-speed:             var(--ds-panel-nav-speed, 1);
+  --_nav-expand-dur:        calc(var(--_nav-speed) * var(--effect-animation-duration-short-2, 100ms));
+  --_nav-label-fade-dur:    calc(var(--_nav-speed) * var(--effect-animation-duration-short-2, 100ms));
+  --_nav-label-fade-out-dur: calc(var(--_nav-speed) * var(--effect-animation-duration-short-1, 50ms));
 
   /* ─ Colours – dashboard defaults ─ */
   --_nav-bg:              var(--color-navigation-background);
@@ -54,8 +56,8 @@
   box-sizing: border-box;
   overflow: hidden;
   transition:
-    width var(--_nav-expand),
-    min-width var(--_nav-expand),
+    width var(--_nav-expand-dur) var(--effect-animation-easing-ease-in-out, ease),
+    min-width var(--_nav-expand-dur) var(--effect-animation-easing-ease-in-out, ease),
     background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease),
     border-color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
   font-family: var(--typography-font-family, system-ui);
@@ -175,9 +177,9 @@
   max-height: 2em;
   opacity: 1;
   transition:
-    opacity var(--_nav-label-fade-in),
-    max-height var(--_nav-label-fade-in),
-    margin-bottom var(--_nav-label-fade-in),
+    opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur),
+    max-height var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur),
+    margin-bottom var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur),
     color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
@@ -248,7 +250,7 @@
   height: var(--typography-lineheight-md, 20px);
   line-height: var(--typography-lineheight-md, 20px);
   opacity: 1;
-  transition: opacity var(--_nav-label-fade-in);
+  transition: opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur);
 }
 
 .panel-nav__item-label-text {
@@ -265,7 +267,7 @@
   width: var(--dimension-iconography-md, 20px);
   height: var(--dimension-iconography-md, 20px);
   opacity: 1;
-  transition: opacity var(--_nav-label-fade-in);
+  transition: opacity var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease) var(--_nav-label-fade-dur);
 }
 
 .panel-nav__item-dot {
@@ -299,7 +301,7 @@
   flex: 0 0 0;
   overflow: hidden;
   pointer-events: none;
-  transition: opacity var(--_nav-label-fade-out);
+  transition: opacity var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms;
 }
 
 .panel-nav--collapsed .panel-nav__group-label {
@@ -308,9 +310,9 @@
   margin-bottom: 0;
   pointer-events: none;
   transition:
-    opacity var(--_nav-label-fade-out),
-    max-height var(--_nav-label-fade-out),
-    margin-bottom var(--_nav-label-fade-out),
+    opacity var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    max-height var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
+    margin-bottom var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease) 0ms,
     color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
