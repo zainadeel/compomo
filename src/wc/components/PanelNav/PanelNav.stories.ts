@@ -118,7 +118,17 @@ function switchFooterVariant(id: string) {
     return;
   }
 
-  const transition = (document as any).startViewTransition(applySwitch);
+  // Stencil renders props asynchronously — if applySwitch returns synchronously
+  // the browser captures the "new" snapshot before Stencil has re-rendered,
+  // then Stencil's deferred DOM mutation aborts the in-progress transition with
+  // InvalidStateError. Awaiting one rAF lets Stencil flush its render queue
+  // before the new-state snapshot is taken.
+  const applyAndFlush = async () => {
+    applySwitch();
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+  };
+
+  const transition = (document as any).startViewTransition(applyAndFlush);
 
   transition.ready.then(() => {
     document.documentElement.animate(
