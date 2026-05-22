@@ -224,39 +224,29 @@ export class PanelNav {
               <ds-icon name={isDashboard ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
             </button>
 
-            {/* Right user — expanded: item-style with icon on right; mini: avatar + overlaid initial */}
-            {collapsed ? (
-              <button
-                type="button"
-                class="panel-nav__footer-btn panel-nav__footer-user-mini"
-                title={userName}
-                aria-label={`User: ${userName}`}
-              >
+            {/* Right user — single element; avatar fades in on collapse, label+chevron fade out */}
+            <button
+              type="button"
+              class="panel-nav__item panel-nav__footer-user"
+              aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
+            >
+              <span class="panel-nav__footer-avatar" aria-hidden="true">
                 <ds-icon name="Circle" size="md" color="inherit" />
-                <span class="panel-nav__user-initial" aria-hidden="true">
+                <span class="panel-nav__user-initial">
                   <ds-text as="span" variant="text-caption-emphasis" color="inherit">
                     {userInitial}
                   </ds-text>
                 </span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                class="panel-nav__item panel-nav__footer-user"
-                aria-label={`User menu for ${userName}`}
-              >
-                <span class="panel-nav__item-label">
-                  <span class="panel-nav__item-label-text">
-                    <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
-                      {userName}
-                    </ds-text>
-                  </span>
-                </span>
-                <span class="panel-nav__item-icon">
-                  <ds-icon name="ChevronUpDown" size="md" color="inherit" />
-                </span>
-              </button>
-            )}
+              </span>
+              <span class="panel-nav__footer-user-label">
+                <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+                  {userName}
+                </ds-text>
+              </span>
+              <span class="panel-nav__footer-chevron" aria-hidden="true">
+                <ds-icon name="ChevronUpDown" size="md" color="inherit" />
+              </span>
+            </button>
           </div>
 
         </nav>

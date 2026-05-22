@@ -329,7 +329,7 @@
 
 .panel-nav__footer {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--dimension-space-050, 4px);
   padding: var(--_nav-padding-y) var(--_nav-padding-x);
@@ -355,19 +355,9 @@
   opacity: 0;
 }
 
-/* Collapsed footer: stack gear + user vertically.
-   step-end holds flex-direction:row for the full expand duration so the layout
-   snaps to column only when the panel is already narrow — no mid-animation jump. */
-@keyframes ds-nav-footer-to-col {
-  from { flex-direction: row; }
-  to   { flex-direction: column; }
-}
-
-.panel-nav--collapsed .panel-nav__footer {
-  flex-direction: column;
-  align-items: center;
-  gap: var(--dimension-space-050, 4px);
-  animation: ds-nav-footer-to-col var(--_nav-expand-dur) step-end forwards;
+/* Collapsed footer: both children grow to 100% width → wrap to separate rows */
+.panel-nav--collapsed .panel-nav__footer-btn {
+  width: 100%;
 }
 
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */
@@ -387,7 +377,8 @@
   background: transparent;
   transition:
     background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease),
-    color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
+    color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease),
+    width var(--_nav-expand-motion);
 }
 
 /* Dashboard: hover previews settings surface */
@@ -404,23 +395,51 @@
   transition: none;
 }
 
-/* ── Footer user (expanded) — panel-nav__item base, icon on right ────────── */
+/* ── Footer user — unified element, flex-basis animates row→column stacking ── */
 
 .panel-nav__footer-user {
-  flex: 1;
+  flex: 1 1 0%;
   width: auto;
+  min-width: 0;
+  transition:
+    color var(--effect-motion-short-3, 200ms ease),
+    flex-basis var(--_nav-expand-motion),
+    flex-grow var(--_nav-expand-motion);
 }
 
-.panel-nav__footer-user .panel-nav__item-label {
-  text-align: right;
+.panel-nav--collapsed .panel-nav__footer-user {
+  flex: 0 0 100%;
+  justify-content: center;
 }
 
-/* ── Footer user mini (collapsed) — avatar icon + overlaid initial ───────── */
-
-.panel-nav__footer-user-mini {
-  position: relative;
+/* Pill hover in collapsed (user button is square-ish; match gear button radius) */
+.panel-nav--collapsed .panel-nav__footer-user::after {
+  border-radius: var(--dimension-radius-half, 9999px);
 }
 
+/* ── Footer avatar — absolutely centred, hidden in expanded, visible on collapse ── */
+
+.panel-nav__footer-avatar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--dimension-iconography-md, 20px);
+  height: var(--dimension-iconography-md, 20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--_nav-label-fade-motion);
+}
+
+.panel-nav--collapsed .panel-nav__footer-avatar {
+  opacity: 1;
+  transition: opacity var(--_nav-label-fade-out-motion);
+}
+
+/* User initial — positions inside the avatar span */
 .panel-nav__user-initial {
   position: absolute;
   inset: 0;
@@ -432,4 +451,55 @@
   line-height: 1;
   pointer-events: none;
   transition: color var(--effect-motion-short-3, 200ms ease);
+}
+
+/* ── Footer user label — fades out and collapses width on collapse ────────── */
+
+.panel-nav__footer-user-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: right;
+  padding: 0 var(--dimension-space-025, 2px);
+  opacity: 1;
+  transition:
+    opacity var(--_nav-label-fade-motion),
+    flex-basis var(--_nav-expand-motion),
+    flex-grow var(--_nav-expand-motion);
+}
+
+.panel-nav--collapsed .panel-nav__footer-user-label {
+  flex: 0 0 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--_nav-label-fade-out-motion),
+    flex-basis var(--_nav-expand-motion),
+    flex-grow var(--_nav-expand-motion);
+}
+
+/* ── Footer chevron — fades out and collapses width on collapse ──────────── */
+
+.panel-nav__footer-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--dimension-iconography-md, 20px);
+  height: var(--dimension-iconography-md, 20px);
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    opacity var(--_nav-label-fade-motion),
+    width var(--_nav-expand-motion);
+}
+
+.panel-nav--collapsed .panel-nav__footer-chevron {
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--_nav-label-fade-out-motion),
+    width var(--_nav-expand-motion);
 }
