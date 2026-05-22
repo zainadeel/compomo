@@ -31,7 +31,8 @@
     },
     "./angular": {
       "import": "./src/angular/index.ts"
-    }
+    },
+    "./dist/components/*": "./dist/components/*"
   },
   "files": [
     "dist",
