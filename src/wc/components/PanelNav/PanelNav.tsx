@@ -142,7 +142,7 @@ export class PanelNav {
           <div class="panel-nav__body" onScroll={e => this.handleBodyScroll(e)}>
             {this.parsedGroups.map(group => (
               <div class="panel-nav__group">
-                {group.label && !collapsed && (
+                {group.label && (
                   <span class="panel-nav__group-label">
                     <ds-text as="span" variant="text-caption-emphasis" color="inherit">
                       {group.label}
@@ -173,20 +173,18 @@ export class PanelNav {
                           <span class="panel-nav__item-dot panel-nav__item-dot--mini" aria-hidden="true" />
                         )}
                       </span>
-                      {!collapsed && (
-                        <span class="panel-nav__item-label">
-                          <span class="panel-nav__item-label-text">
-                            <ds-text
-                              as="span"
-                              variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
-                              color="inherit"
-                            >
-                              {item.label}
-                            </ds-text>
-                          </span>
+                      <span class="panel-nav__item-label">
+                        <span class="panel-nav__item-label-text">
+                          <ds-text
+                            as="span"
+                            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
+                            color="inherit"
+                          >
+                            {item.label}
+                          </ds-text>
                         </span>
-                      )}
-                      {item.dot && !collapsed && (
+                      </span>
+                      {item.dot && (
                         <span class="panel-nav__item-dot-wrap" aria-hidden="true">
                           <span class="panel-nav__item-dot" />
                         </span>

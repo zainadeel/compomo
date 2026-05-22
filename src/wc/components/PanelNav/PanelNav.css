@@ -8,6 +8,11 @@
   --_nav-padding-x:       var(--dimension-space-100, 8px);
   --_nav-padding-y:       var(--dimension-space-100, 8px);
 
+  /* ─ Motion ─ */
+  --_nav-expand:          var(--effect-motion-short-2, 100ms ease-in-out);
+  --_nav-label-fade-in:   var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease) var(--effect-animation-duration-short-2, 100ms);
+  --_nav-label-fade-out:  var(--effect-animation-duration-short-1, 50ms) var(--effect-animation-easing-ease-in-out, ease) 0ms;
+
   /* ─ Colours – dashboard defaults ─ */
   --_nav-bg:              var(--color-navigation-background);
   --_nav-border:          var(--color-navigation-border-tertiary);
@@ -49,8 +54,8 @@
   box-sizing: border-box;
   overflow: hidden;
   transition:
-    width var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease),
-    min-width var(--effect-animation-duration-short-2, 100ms) var(--effect-animation-easing-ease-in-out, ease),
+    width var(--_nav-expand),
+    min-width var(--_nav-expand),
     background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease),
     border-color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
   font-family: var(--typography-font-family, system-ui);
@@ -167,7 +172,13 @@
   margin-bottom: var(--dimension-space-025, 2px);
   white-space: nowrap;
   overflow: hidden;
-  transition: color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
+  max-height: 2em;
+  opacity: 1;
+  transition:
+    opacity var(--_nav-label-fade-in),
+    max-height var(--_nav-label-fade-in),
+    margin-bottom var(--_nav-label-fade-in),
+    color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 /* ── Item ────────────────────────────────────────────────────────────────── */
@@ -236,6 +247,8 @@
   min-width: 0;
   height: var(--typography-lineheight-md, 20px);
   line-height: var(--typography-lineheight-md, 20px);
+  opacity: 1;
+  transition: opacity var(--_nav-label-fade-in);
 }
 
 .panel-nav__item-label-text {
@@ -251,6 +264,8 @@
   flex-shrink: 0;
   width: var(--dimension-iconography-md, 20px);
   height: var(--dimension-iconography-md, 20px);
+  opacity: 1;
+  transition: opacity var(--_nav-label-fade-in);
 }
 
 .panel-nav__item-dot {
@@ -279,9 +294,24 @@
 }
 
 .panel-nav--collapsed .panel-nav__item-label,
-.panel-nav--collapsed .panel-nav__group-label,
-.panel-nav--collapsed .panel-nav__item-dot:not(.panel-nav__item-dot--mini) {
-  display: none;
+.panel-nav--collapsed .panel-nav__item-dot-wrap {
+  opacity: 0;
+  flex: 0 0 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity var(--_nav-label-fade-out);
+}
+
+.panel-nav--collapsed .panel-nav__group-label {
+  opacity: 0;
+  max-height: 0;
+  margin-bottom: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--_nav-label-fade-out),
+    max-height var(--_nav-label-fade-out),
+    margin-bottom var(--_nav-label-fade-out),
+    color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-in-out, ease);
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
