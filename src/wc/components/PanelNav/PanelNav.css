@@ -175,18 +175,22 @@
 
 .panel-nav__group-label {
   /* Typography via ds-text (text-caption-emphasis) */
+  display: flex;
+  align-items: center;
   text-transform: uppercase;
-  color: var(--_nav-fg-tertiary);
-  padding: 0 var(--dimension-space-050, 4px);
-  margin-bottom: var(--dimension-space-025, 2px);
+  color: var(--_nav-fg-secondary);
+  user-select: none;
+  height: var(--dimension-size-300, 24px);
+  line-height: var(--typography-lineheight-xs, 12px);
+  padding: 0 var(--dimension-space-075, 6px);
   white-space: nowrap;
   overflow: hidden;
-  max-height: 2em;
+  max-height: var(--dimension-size-300, 24px);
   opacity: 1;
   transition:
     opacity var(--_nav-label-fade-motion) 0ms,
     max-height var(--_nav-label-fade-motion) 0ms,
-    margin-bottom var(--_nav-label-fade-motion) 0ms,
+    padding var(--_nav-label-fade-motion) 0ms,
     color var(--effect-motion-short-3, 200ms ease);
 }
 
@@ -318,12 +322,12 @@
 .panel-nav--collapsed .panel-nav__group-label {
   opacity: 0;
   max-height: 0;
-  margin-bottom: 0;
+  padding: 0 var(--dimension-space-075, 6px);
   pointer-events: none;
   transition:
     opacity var(--_nav-label-fade-out-motion) 0ms,
     max-height var(--_nav-label-fade-out-motion) 0ms,
-    margin-bottom var(--_nav-label-fade-out-motion) 0ms,
+    padding var(--_nav-label-fade-out-motion) 0ms,
     color var(--effect-motion-short-3, 200ms ease);
 }
 
