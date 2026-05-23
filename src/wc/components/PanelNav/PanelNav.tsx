@@ -1,5 +1,22 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
 
+// Injected once per document to suppress the browser default cross-fade and
+// pin the new-state snapshot to a 0px circle so the WAAPI reveal has no flash.
+let vtStyleInjected = false;
+function ensureVtStyle() {
+  if (vtStyleInjected) return;
+  const id = 'ds-panel-nav-vt-style';
+  if (document.getElementById(id)) { vtStyleInjected = true; return; }
+  const style = document.createElement('style');
+  style.id = id;
+  style.textContent = [
+    '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}',
+    '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
+  ].join('\n');
+  document.head.appendChild(style);
+  vtStyleInjected = true;
+}
+
 export type PanelNavVariant = 'dashboard' | 'settings';
 
 export interface PanelNavItem {
@@ -71,6 +88,10 @@ export class PanelNav {
 
   @Element() el!: HTMLElement;
 
+  /** Mirrors `variant` but is only updated inside the VT callback so the
+   *  View Transition captures a clean before/after snapshot. */
+  @State() private renderedVariant: PanelNavVariant = 'dashboard';
+
   @State() private parsedGroups: PanelNavGroup[] = [];
   @State() private atBottom = false;
   @State() private isAnimating = false;
@@ -131,7 +152,50 @@ export class PanelNav {
     this.syncActiveFromUrl();
   }
 
+  @Watch('variant')
+  async onVariantChange(newVal: PanelNavVariant) {
+    if (typeof (document as any).startViewTransition !== 'function') {
+      this.renderedVariant = newVal;
+      return;
+    }
+
+    ensureVtStyle();
+
+    const btn = this.el.querySelector('.panel-nav__footer-btn') as HTMLElement | null;
+    const rect = btn?.getBoundingClientRect();
+    const x = rect ? Math.round(rect.left + rect.width / 2) : Math.round(window.innerWidth / 2);
+    const y = rect ? Math.round(rect.top + rect.height / 2) : Math.round(window.innerHeight / 2);
+    const maxR = Math.ceil(Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    ));
+
+    document.documentElement.style.setProperty('--vt-x', `${x}px`);
+    document.documentElement.style.setProperty('--vt-y', `${y}px`);
+
+    const transition = (document as any).startViewTransition(async () => {
+      this.renderedVariant = newVal;
+      // Four microtask ticks let Stencil's render queue fully flush so the VT
+      // captures a complete new-state snapshot before the animation starts.
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    transition.ready.then(() => {
+      const durToken = getComputedStyle(document.documentElement)
+        .getPropertyValue('--effect-animation-duration-long-1').trim();
+      const duration = parseFloat(durToken) || 750;
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxR}px at ${x}px ${y}px)`] },
+        { duration, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
+      );
+    });
+  }
+
   componentWillLoad() {
+    this.renderedVariant = this.variant;
     if (this.storageKey) {
       try {
         const stored = localStorage.getItem(this.storageKey);
@@ -374,7 +438,7 @@ export class PanelNav {
   }
 
   render() {
-    const isDashboard = this.variant === 'dashboard';
+    const isDashboard = this.renderedVariant === 'dashboard';
     const collapsed = this.collapsed || this.viewportNarrow;
     const { userName, userInitial } = this;
 
@@ -425,9 +489,11 @@ export class PanelNav {
                 <div class="panel-nav__group">
                   {group.label && (
                     <span class="panel-nav__group-label">
-                      <ds-text as="span" variant="text-caption-emphasis" color="inherit">
-                        {group.label}
-                      </ds-text>
+                      <span class="panel-nav__item-label-text">
+                        <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                          {group.label}
+                        </ds-text>
+                      </span>
                     </span>
                   )}
                   {group.items.map(item => this.renderNavItem(item, flatIdx++, collapsed))}
