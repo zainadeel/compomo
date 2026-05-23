@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/zainadeel/compomo/compare/v0.8.1...v0.8.2) (2026-05-23)
+
+
+### Fixed
+
+* **PanelNav:** section heading styles + live variant radial reveal ([#85](https://github.com/zainadeel/compomo/issues/85)) ([a101e30](https://github.com/zainadeel/compomo/commit/a101e30abfaaf5a59285b823c2100c9432e3609d))
+
 ## [0.8.1](https://github.com/zainadeel/compomo/compare/v0.8.0...v0.8.1) (2026-05-22)
 
 
