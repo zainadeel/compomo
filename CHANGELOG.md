@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/zainadeel/compomo/compare/v0.8.4...v0.8.5) (2026-06-01)
+
+
+### Fixed
+
+* **PanelNav:** use rAF instead of microtasks in VT callback for zone.js compat ([#91](https://github.com/zainadeel/compomo/issues/91)) ([f860bc0](https://github.com/zainadeel/compomo/commit/f860bc0728808e9075588c9d73d86aaa4e3bf91e))
+
 ## [0.8.4](https://github.com/zainadeel/compomo/compare/v0.8.3...v0.8.4) (2026-06-01)
 
 
