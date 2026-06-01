@@ -1,0 +1,85 @@
+/* ==========================================================================
+   Select — combobox-pattern select using ds-menu for the dropdown.
+   ========================================================================== */
+
+:host(.select-host) {
+  display: inline-block;
+  width: 100%;
+  position: relative;
+}
+
+:host(.inactive) {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── Trigger button ──────────────────────────────────────────────────────── */
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--dimension-size-400);
+  padding: 0 var(--dimension-space-075) 0 var(--dimension-space-100);
+  border: none;
+  border-radius: var(--dimension-radius-050);
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-sm);
+  cursor: pointer;
+  box-sizing: border-box;
+  gap: var(--dimension-space-050);
+  font-family: inherit;
+  outline: none;
+
+  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+}
+
+.trigger:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+.trigger:hover:not(:disabled) {
+  background-color: var(--_hover-bg);
+}
+
+.trigger:active:not(:disabled) {
+  background-color: var(--_pressed-bg);
+}
+
+.trigger--open {
+  background-color: var(--_pressed-bg);
+}
+
+/* ── Trigger label ───────────────────────────────────────────────────────── */
+
+.trigger__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-regular);
+  color: var(--color-foreground-primary);
+}
+
+.trigger__label--placeholder {
+  color: var(--color-foreground-secondary);
+}
+
+/* ── Chevron icon ────────────────────────────────────────────────────────── */
+
+.trigger__chevron {
+  flex-shrink: 0;
+  color: var(--color-foreground-secondary);
+  transition: transform var(--effect-motion-short-2);
+}
+
+.trigger--open .trigger__chevron {
+  transform: rotate(180deg);
+}

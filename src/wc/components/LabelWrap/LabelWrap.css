@@ -1,0 +1,27 @@
+/* ==========================================================================
+   LabelWrap — kills line-height struts; adds optical horizontal padding.
+   Used internally inside interactive components.
+   ========================================================================== */
+
+:host(.label-wrap) {
+  display: inline-block;
+  line-height: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  /* md / lg: body scale optical padding */
+  padding: 0 var(--dimension-space-050);
+}
+
+/* xs / sm: tighter scale optical padding */
+:host(.size-xs),
+:host(.size-sm) {
+  padding: 0 var(--dimension-space-025);
+}
+
+/* Truncation mode — use inside full-width containers */
+:host(.truncate) {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

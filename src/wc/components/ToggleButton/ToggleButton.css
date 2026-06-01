@@ -1,0 +1,189 @@
+/* ==========================================================================
+   ToggleButton — hover/pressed via direct background-color + color-mix().
+   Elevation controls the chrome level:
+     elevated — bg-primary + shadow  (default)
+     flat     — border only
+     none     — ghost (transparent, no border, no shadow)
+     floating — bg-primary + FAB-strength shadow
+   ========================================================================== */
+
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--dimension-radius-050);
+  cursor: pointer;
+  position: relative;
+  transition: transform var(--effect-motion-short-2);
+  height: var(--dimension-size-400);
+  font-family: inherit;
+  background: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* Interaction — ghost defaults */
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+  --_border: var(--color-border-tertiary);
+}
+
+.toggle-btn:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+.toggle-btn:hover:not(.inactive) {
+  background-color: var(--_hover-bg);
+}
+
+.toggle-btn:active:not(.inactive) {
+  background-color: var(--_pressed-bg);
+  transform: scale(var(--dimension-scale-subtle));
+}
+
+/* ==========================================================================
+   Background context — parent surface awareness
+   ========================================================================== */
+
+.onMedium {
+  --_hover-bg: var(--color-interaction-on-medium-background-hover);
+  --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
+  --_border: var(--color-border-on-medium-background-tertiary);
+}
+
+.onBold {
+  --_hover-bg: var(--color-interaction-on-bold-background-hover);
+  --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
+  --_border: var(--color-border-on-bold-background-tertiary);
+}
+
+.onStrong {
+  --_hover-bg: var(--color-interaction-on-strong-background-hover);
+  --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
+  --_border: var(--color-border-on-strong-background-tertiary);
+}
+
+.onAlwaysDark {
+  --_hover-bg: var(--color-always-dark-interaction-hover);
+  --_pressed-bg: var(--color-always-dark-interaction-pressed);
+  --_border: var(--color-always-dark-border-tertiary);
+}
+
+/* ==========================================================================
+   Elevation levels
+   ========================================================================== */
+
+/* ── Elevated (default): bg-primary + shadow ───────────────────────────── */
+
+.elevationElevated {
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-sm);
+  color: var(--color-foreground-secondary);
+  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+}
+
+/* ── Flat: border only, transparent bg ─────────────────────────────────── */
+
+.elevationFlat {
+  box-shadow: inset 0 0 0 1px var(--_border);
+  color: var(--color-foreground-secondary);
+}
+
+/* ── None: ghost — transparent, no border, no shadow ───────────────────── */
+
+.elevationNone {
+  color: var(--color-foreground-secondary);
+}
+
+/* ── Floating: bg-primary + FAB-strength shadow ─────────────────────────── */
+
+.elevationFloating {
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-floating);
+  color: var(--color-foreground-secondary);
+  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
+  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+}
+
+/* ── Fg on bold / strong surface ────────────────────────────────────────── */
+
+.onBold.elevationNone, .onBold.elevationFlat,
+.onStrong.elevationNone, .onStrong.elevationFlat {
+  color: var(--color-foreground-on-bold-background-secondary);
+}
+
+/* ── Fg on always-dark surface ─────────────────────────────────────────── */
+
+.onAlwaysDark.elevationNone, .onAlwaysDark.elevationFlat {
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+/* ==========================================================================
+   Pressed state — shared across all elevation levels
+   ========================================================================== */
+
+.pressed {
+  background-color: var(--color-background-faint-brand);
+  color: var(--color-foreground-bold-brand);
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.iconOnly    { padding: 0; width: var(--dimension-size-400); min-width: var(--dimension-size-400); }
+.labelOnly   { padding: 0 var(--dimension-space-100); }
+.iconAndLabel { padding: 0 var(--dimension-space-100) 0 var(--dimension-space-075); gap: var(--dimension-space-025); }
+
+/* ==========================================================================
+   Sizes
+   ========================================================================== */
+
+.sizeSM { height: var(--dimension-size-300); }
+.sizeSM.iconOnly { width: var(--dimension-size-300); min-width: var(--dimension-size-300); }
+.sizeSM.labelOnly   { padding: 0 var(--dimension-space-075); }
+.sizeSM.iconAndLabel { padding: 0 var(--dimension-space-075) 0 var(--dimension-space-050); gap: 0; }
+
+.sizeXS { height: var(--dimension-size-200); }
+.sizeXS.iconOnly { width: var(--dimension-size-200); min-width: var(--dimension-size-200); }
+.sizeXS.labelOnly, .sizeXS.iconAndLabel { padding: 0 var(--dimension-space-025); gap: 0; }
+
+/* ==========================================================================
+   Rounded (pill shape)
+   ========================================================================== */
+
+.rounded { border-radius: var(--dimension-radius-half); }
+.rounded.labelOnly   { padding-left: calc(var(--dimension-space-100) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
+.rounded.iconAndLabel { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-100) + var(--dimension-space-050)); }
+.rounded.sizeSM.labelOnly   { padding-left: calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.rounded.sizeSM.iconAndLabel { padding-left: calc(var(--dimension-space-050) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
+.rounded.iconOnly { width: var(--dimension-size-400); min-width: var(--dimension-size-400); padding: 0; }
+.rounded.sizeSM.iconOnly { width: var(--dimension-size-300); min-width: var(--dimension-size-300); }
+.rounded.sizeXS.iconOnly { width: var(--dimension-size-200); min-width: var(--dimension-size-200); }
+
+/* ==========================================================================
+   Disabled
+   ========================================================================== */
+
+.inactive { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ==========================================================================
+   Inner slots
+   ========================================================================== */
+
+.toggle-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.toggle-btn__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
