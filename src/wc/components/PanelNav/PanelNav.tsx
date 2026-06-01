@@ -3,6 +3,12 @@ import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } 
 // Injected once per document to suppress the browser default cross-fade and
 // pin the new-state snapshot to a 0px circle so the WAAPI reveal has no flash.
 let vtStyleInjected = false;
+
+// Module-level WeakMaps for per-instance VT state. Using WeakMaps instead of
+// class fields avoids Stencil generating getter-only property descriptors on
+// the host element for private fields, which throws in strict environments.
+const vtTransitions = new WeakMap<object, { skipTransition: () => void }>();
+const vtResolvers = new WeakMap<object, () => void>();
 function ensureVtStyle() {
   if (vtStyleInjected) return;
   const id = 'ds-panel-nav-vt-style';
@@ -46,6 +52,12 @@ export interface PanelNavGroup {
 export class PanelNav {
   /** Visual variant: `dashboard` = always-dark surface, `settings` = light surface */
   @Prop() variant: PanelNavVariant = 'dashboard';
+
+  /** When `true`, the component does not run its own View Transition on variant
+   *  change — it just updates the rendered surface synchronously. Use this when
+   *  the host app orchestrates the page transition itself (e.g. Angular Router's
+   *  `withViewTransitions`), so the two don't fight or nest. */
+  @Prop() disableViewTransition: boolean = false;
 
   /** JSON string of `PanelNavGroup[]` */
   @Prop() groups: string = '[]';
@@ -101,9 +113,6 @@ export class PanelNav {
 
   private transitionEndHandler?: (e: TransitionEvent) => void;
   private resizeObserver?: ResizeObserver;
-  private activeViewTransition?: { skipTransition: () => void };
-  /** Resolves the VT callback promise as soon as Stencil finishes its render. */
-  private vtRenderResolve?: () => void;
 
   // Drag-to-resize state (not @State — no re-render needed)
   private isDragging = false;
@@ -157,10 +166,17 @@ export class PanelNav {
 
   @Watch('variant')
   async onVariantChange(newVal: PanelNavVariant) {
+    // Host app drives the transition (e.g. Angular Router withViewTransitions):
+    // just reflect the new surface so the app's transition captures it.
+    if (this.disableViewTransition) {
+      this.renderedVariant = newVal;
+      return;
+    }
+
     // Skip any in-progress transition immediately so rapid variant changes
     // (e.g. quick dashboard → settings → dashboard) never leave the nav stuck.
-    this.activeViewTransition?.skipTransition();
-    this.activeViewTransition = undefined;
+    vtTransitions.get(this)?.skipTransition();
+    vtTransitions.delete(this);
 
     if (typeof (document as any).startViewTransition !== 'function') {
       this.renderedVariant = newVal;
@@ -183,20 +199,15 @@ export class PanelNav {
 
     const transition = (document as any).startViewTransition(() =>
       new Promise<void>(resolve => {
-        // Store the resolver — componentDidRender() will call it the moment
-        // Stencil finishes painting the new renderedVariant, giving the VT
-        // a precise "after" snapshot regardless of framework (zone.js etc).
-        this.vtRenderResolve = resolve;
+        vtResolvers.set(this, resolve);
         this.renderedVariant = newVal;
       })
     );
 
-    this.activeViewTransition = transition;
+    vtTransitions.set(this, transition);
     transition.finished.finally(() => {
-      if (this.activeViewTransition === transition) this.activeViewTransition = undefined;
-      // Guard: if the transition was skipped before Stencil rendered, clear
-      // the dangling resolver so componentDidRender doesn't resolve stale work.
-      this.vtRenderResolve = undefined;
+      if (vtTransitions.get(this) === transition) vtTransitions.delete(this);
+      vtResolvers.delete(this);
     });
 
     transition.ready.then(() => {
@@ -207,7 +218,7 @@ export class PanelNav {
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxR}px at ${x}px ${y}px)`] },
         { duration, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
       );
-    });
+    }).catch(() => { /* transition was skipped or aborted */ });
   }
 
   componentWillLoad() {
@@ -233,9 +244,9 @@ export class PanelNav {
   componentDidRender() {
     // If a view transition callback is waiting for the render to complete,
     // resolve it now so the "after" snapshot is taken at exactly the right moment.
-    if (this.vtRenderResolve) {
-      const resolve = this.vtRenderResolve;
-      this.vtRenderResolve = undefined;
+    const resolve = vtResolvers.get(this);
+    if (resolve) {
+      vtResolvers.delete(this);
       resolve();
     }
   }
