@@ -9,10 +9,19 @@
   border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-secondary);
 }
 
+/* Vertical orientation */
+.tab-list--vertical {
+  flex-direction: column;
+  align-items: stretch;
+  border-bottom: none;
+  border-right: var(--dimension-stroke-width-015) solid var(--color-border-secondary);
+}
+
 .tab {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--dimension-space-050);
   padding: var(--dimension-space-075);
   background-color: transparent;
   border: none;
@@ -47,6 +56,27 @@
   pointer-events: none;
 }
 
+/* Count badge pill */
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--dimension-size-200);
+  height: var(--dimension-size-200);
+  padding: 0 var(--dimension-space-025);
+  border-radius: var(--dimension-radius-full, 9999px);
+  background: var(--color-background-faint);
+  color: var(--color-foreground-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.tab-count--selected {
+  background: var(--color-background-faint-brand);
+  color: var(--color-foreground-bold-brand);
+}
+
 /* Background context */
 .on-medium {
   --_hover-bg: var(--color-interaction-on-medium-background-hover);
@@ -77,13 +107,25 @@
 
 .on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }
 
-/* Sliding indicator */
+/* Sliding indicator — horizontal (default) */
 .indicator {
   position: absolute;
   bottom: 0;
+  left: 0;
   height: 2px;
   background-color: var(--color-foreground-brand);
   border-radius: var(--dimension-radius-full, 9999px);
-  transition: left var(--effect-motion-short-3), width var(--effect-motion-short-3);
+  transition: transform var(--effect-motion-short-3), width var(--effect-motion-short-3);
   pointer-events: none;
+}
+
+/* Sliding indicator — vertical */
+.tab-list--vertical .indicator {
+  top: 0;
+  left: auto;
+  right: 0;
+  bottom: auto;
+  width: 2px;
+  height: auto;
+  transition: transform var(--effect-motion-short-3), height var(--effect-motion-short-3);
 }

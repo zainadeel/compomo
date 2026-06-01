@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-tab-group.js';
 
 const tabs = [
@@ -15,24 +16,148 @@ const meta: Meta = {
   argTypes: {
     value: { control: 'select', options: tabs.map(t => t.id) },
     background: { control: 'select', options: ['', 'faint', 'medium', 'bold', 'strong', 'always-dark'] },
+    orientation: { control: 'radio', options: ['horizontal', 'vertical'] },
   },
-  args: { value: 'overview' },
+  args: { value: 'overview', orientation: 'horizontal' },
 };
 
 export default meta;
 type Story = StoryObj;
 
 export const Playground: Story = {
-  render: args => html`
-    <div style="width: 400px">
-      <ds-tab-group
-        .tabs=${tabs}
-        value=${args['value'] ?? 'overview'}
-        background=${args['background'] ?? ''}
-        aria-label="Playground tabs"
-      ></ds-tab-group>
-    </div>
+  render: args => {
+    const playgroundTabs = [
+      { id: 'overview', label: 'Overview', count: 3 },
+      { id: 'activity', label: 'Activity', count: 12 },
+      { id: 'settings', label: 'Settings' },
+      { id: 'members',  label: 'Members', count: 5 },
+    ];
+    return html`
+      <div style="width: 400px">
+        <ds-tab-group
+          .tabs=${playgroundTabs}
+          value=${args['value'] ?? 'overview'}
+          background=${args['background'] ?? ''}
+          orientation=${args['orientation'] ?? 'horizontal'}
+          aria-label="Playground tabs"
+        ></ds-tab-group>
+      </div>
+    `;
+  },
+};
+
+export const WithPanels: Story = {
+  render: () => {
+    const panelTabs = [
+      { id: 'overview', label: 'Overview', panelId: 'panel-overview' },
+      { id: 'activity', label: 'Activity', panelId: 'panel-activity' },
+      { id: 'settings', label: 'Settings', panelId: 'panel-settings' },
+      { id: 'members',  label: 'Members',  panelId: 'panel-members'  },
+    ];
+    const panelContent: Record<string, string> = {
+      overview:  'Overview panel — summary of the item, key metrics, and recent highlights.',
+      activity:  'Activity panel — timeline of recent events and changes.',
+      settings:  'Settings panel — configure preferences and permissions.',
+      members:   'Members panel — manage team members and roles.',
+    };
+    return html`
+      <div style="width: 480px" ${ref(el => {
+        if (!el) return;
+        const tabGroup = el.querySelector('ds-tab-group') as HTMLElement & { value: string };
+        if (!tabGroup) return;
+        const showPanel = (id: string) => {
+          el.querySelectorAll('[role="tabpanel"]').forEach(p => {
+            (p as HTMLElement).hidden = (p as HTMLElement).id !== `panel-${id}`;
+          });
+        };
+        tabGroup.addEventListener('dsChange', (e: Event) => showPanel((e as CustomEvent<string>).detail));
+        showPanel(tabGroup.value || 'overview');
+      })}>
+        <ds-tab-group
+          .tabs=${panelTabs}
+          value="overview"
+          aria-label="Content sections"
+        ></ds-tab-group>
+        <div style="padding: var(--dimension-space-150) 0; color: var(--color-foreground-primary)">
+          ${panelTabs.map(t => html`
+            <div
+              id="panel-${t.id}"
+              role="tabpanel"
+              aria-labelledby="${t.id}"
+            >
+              ${panelContent[t.id]}
+            </div>
+          `)}
+        </div>
+      </div>
+    `;
+  },
+};
+
+export const WithCounts: Story = {
+  render: () => html`
+    <ds-tab-group
+      .tabs=${[
+        { id: 'inbox',    label: 'Inbox',    count: 4  },
+        { id: 'sent',     label: 'Sent',     count: 0  },
+        { id: 'drafts',   label: 'Drafts',   count: 99 },
+        { id: 'archived', label: 'Archived', count: 150 },
+      ]}
+      value="inbox"
+      aria-label="Mailbox tabs"
+    ></ds-tab-group>
   `,
+};
+
+export const Vertical: Story = {
+  render: () => {
+    const verticalTabs = [
+      { id: 'overview', label: 'Overview', panelId: 'vpanel-overview' },
+      { id: 'activity', label: 'Activity', panelId: 'vpanel-activity' },
+      { id: 'settings', label: 'Settings', panelId: 'vpanel-settings' },
+      { id: 'members',  label: 'Members',  panelId: 'vpanel-members'  },
+    ];
+    const panelContent: Record<string, string> = {
+      overview:  'Overview panel — summary and key metrics.',
+      activity:  'Activity panel — recent timeline.',
+      settings:  'Settings panel — configure preferences.',
+      members:   'Members panel — team and roles.',
+    };
+    return html`
+      <div style="display: flex; gap: var(--dimension-space-150); align-items: flex-start; width: 520px"
+        ${ref(el => {
+          if (!el) return;
+          const tabGroup = el.querySelector('ds-tab-group') as HTMLElement & { value: string };
+          if (!tabGroup) return;
+          const showPanel = (id: string) => {
+            el.querySelectorAll('[role="tabpanel"]').forEach(p => {
+              (p as HTMLElement).hidden = (p as HTMLElement).id !== `vpanel-${id}`;
+            });
+          };
+          tabGroup.addEventListener('dsChange', (e: Event) => showPanel((e as CustomEvent<string>).detail));
+          showPanel(tabGroup.value || 'overview');
+        })}>
+        <ds-tab-group
+          .tabs=${verticalTabs}
+          value="overview"
+          orientation="vertical"
+          aria-label="Vertical navigation"
+          style="width: 140px; flex-shrink: 0"
+        ></ds-tab-group>
+        <div style="flex: 1; padding: var(--dimension-space-100) 0; color: var(--color-foreground-primary)">
+          ${verticalTabs.map(t => html`
+            <div
+              id="vpanel-${t.id}"
+              role="tabpanel"
+              aria-labelledby="${t.id}"
+            >
+              ${panelContent[t.id]}
+            </div>
+          `)}
+        </div>
+      </div>
+    `;
+  },
 };
 
 export const WithDisabled: Story = {

@@ -649,6 +649,10 @@ export namespace Components {
         "ariaLabelledby": string | undefined;
         "background": TabBackground | undefined;
         /**
+          * @default 'horizontal'
+         */
+        "orientation": 'horizontal' | 'vertical';
+        /**
           * @default []
          */
         "tabs": TabItem[];
@@ -2092,6 +2096,10 @@ declare namespace LocalJSX {
         "background"?: TabBackground | undefined;
         "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
         /**
+          * @default 'horizontal'
+         */
+        "orientation"?: 'horizontal' | 'vertical';
+        /**
           * @default []
          */
         "tabs"?: TabItem[];
@@ -2539,6 +2547,7 @@ declare namespace LocalJSX {
         "background": TabBackground | undefined;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
+        "orientation": 'horizontal' | 'vertical';
     }
     interface DsTableAttributes {
         "loading": boolean;
