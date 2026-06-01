@@ -403,6 +403,11 @@ export namespace Components {
          */
         "currentUrl": string;
         /**
+          * When `true`, the component does not run its own View Transition on variant change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
+          * @default false
+         */
+        "disableViewTransition": boolean;
+        /**
           * JSON string of `PanelNavGroup[]`
           * @default '[]'
          */
@@ -1578,6 +1583,11 @@ declare namespace LocalJSX {
          */
         "currentUrl"?: string;
         /**
+          * When `true`, the component does not run its own View Transition on variant change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
+          * @default false
+         */
+        "disableViewTransition"?: boolean;
+        /**
           * JSON string of `PanelNavGroup[]`
           * @default '[]'
          */
@@ -2050,6 +2060,7 @@ declare namespace LocalJSX {
     }
     interface DsPanelNavAttributes {
         "variant": PanelNavVariant;
+        "disableViewTransition": boolean;
         "groups": string;
         "activeId": string;
         "collapsed": boolean;
