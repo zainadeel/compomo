@@ -9,6 +9,7 @@ import { AccordionItemData } from "./components/Accordion/Accordion";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
+import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
 import { CardElevation, CardRadius } from "./components/Card/Card";
 import { DividerOrientation } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -16,11 +17,13 @@ import { FadeSide } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
+import { LabelWrapSize } from "./components/LabelWrap/LabelWrap";
 import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavVariant } from "./components/PanelNav/PanelNav";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
+import { SelectOption } from "./components/Select/Select";
 import { SidebarWidth } from "./components/Sidebar/Sidebar";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
@@ -29,11 +32,14 @@ import { SortState, TableColumn } from "./components/Table/Table";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 import { ToastPosition } from "./components/Toast/Toast";
+import { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
+import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
+export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
 export { CardElevation, CardRadius } from "./components/Card/Card";
 export { DividerOrientation } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -41,11 +47,13 @@ export { FadeSide } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
+export { LabelWrapSize } from "./components/LabelWrap/LabelWrap";
 export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavVariant } from "./components/PanelNav/PanelNav";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
+export { SelectOption } from "./components/Select/Select";
 export { SidebarWidth } from "./components/Sidebar/Sidebar";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
@@ -54,6 +62,8 @@ export { SortState, TableColumn } from "./components/Table/Table";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
 export { ToastPosition } from "./components/Toast/Toast";
+export { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
+export { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
 export { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAccordion {
@@ -178,6 +188,29 @@ export namespace Components {
         "variant": ButtonVariant;
         "width": string | undefined;
     }
+    interface DsButtonGroup {
+        /**
+          * Chrome level for the group container.
+          * @default 'flat'
+         */
+        "elevation": ButtonGroupElevation;
+        /**
+          * Array of button descriptors. Set via JS property.
+          * @example el.items = [{ label: 'Filter', icon: 'Filter' }, { label: 'Sort' }];
+          * @default []
+         */
+        "items": ButtonGroupItem[];
+        /**
+          * Pill shape for group + buttons.
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * Size passed to each ds-button.
+          * @default 'md'
+         */
+        "size": ButtonGroupSize;
+    }
     interface DsCard {
         /**
           * @default 'elevated'
@@ -299,6 +332,23 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    /**
+     * Internal utility wrapper that kills line-height struts and adds optical
+     * horizontal padding. Used inside interactive components (Button, Tag, etc.)
+     * Not intended as a standalone consumer-facing component — internal use only.
+     */
+    interface DsLabelWrap {
+        /**
+          * Typography size — controls optical horizontal padding.
+          * @default 'md'
+         */
+        "size": LabelWrapSize;
+        /**
+          * Enable truncation with ellipsis — use inside full-width containers.
+          * @default false
+         */
+        "truncate": boolean;
     }
     interface DsLoader {
         /**
@@ -457,6 +507,31 @@ export namespace Components {
           * @default 'default'
          */
         "variant": ScrollbarVariant;
+    }
+    interface DsSelect {
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Array of options. Set via JS property.
+          * @example el.options = [{ label: 'Apple', value: 'apple' }];
+          * @default []
+         */
+        "options": SelectOption[];
+        /**
+          * Placeholder shown when no value is selected.
+          * @default 'Select option'
+         */
+        "placeholder": string;
+        /**
+          * Currently selected value.
+          * @default ''
+         */
+        "value": string;
     }
     interface DsSidebar {
         /**
@@ -693,6 +768,79 @@ export namespace Components {
          */
         "inactive": boolean;
     }
+    interface DsToggleButton {
+        "ariaLabel": string | undefined;
+        /**
+          * Parent surface context — adjusts hover tokens for colored backgrounds.
+         */
+        "background": ToggleButtonBackground | undefined;
+        /**
+          * Chrome level.   none     — ghost (transparent, no border, no shadow)   flat     — border only, transparent bg   elevated — bg-primary + shadow  [default]   floating — bg-primary + FAB-strength shadow
+          * @default 'elevated'
+         */
+        "elevation": ToggleButtonElevation;
+        /**
+          * Icon name for <ds-icon>. Set via JS property.
+          * @example el.icon = 'GridView';
+         */
+        "icon": string | undefined;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Label text.
+         */
+        "label": string | undefined;
+        /**
+          * Controlled pressed state.
+          * @default false
+         */
+        "pressed": boolean;
+        /**
+          * Pill shape.
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * Size: md (32px), sm (24px), xs (16px).
+          * @default 'md'
+         */
+        "size": ToggleButtonSize;
+    }
+    interface DsToggleButtonGroup {
+        /**
+          * Parent surface context.
+         */
+        "background": ToggleGroupBackground | undefined;
+        /**
+          * Chrome level for the group container.
+          * @default 'elevated'
+         */
+        "elevation": ToggleGroupElevation;
+        /**
+          * Array of item descriptors. Set via JS property.
+          * @example el.items = [{ id: 'list', label: 'List' }, { id: 'grid', icon: 'GridView' }];
+          * @default []
+         */
+        "items": ToggleGroupItem[];
+        /**
+          * Pill shape for group + buttons.
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * Size passed to each ds-toggle-button.
+          * @default 'md'
+         */
+        "size": ToggleGroupSize;
+        /**
+          * ID of the currently selected / pressed item.
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsTooltip {
         /**
           * @default 'center'
@@ -738,6 +886,10 @@ export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
 }
+export interface DsButtonGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtonGroupElement;
+}
 export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCheckboxElement;
@@ -766,6 +918,10 @@ export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioGroupElement;
 }
+export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSelectElement;
+}
 export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSidebarElement;
@@ -789,6 +945,14 @@ export interface DsTagCustomEvent<T> extends CustomEvent<T> {
 export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToggleElement;
+}
+export interface DsToggleButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsToggleButtonElement;
+}
+export interface DsToggleButtonGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsToggleButtonGroupElement;
 }
 declare global {
     interface HTMLDsAccordionElementEventMap {
@@ -867,6 +1031,23 @@ declare global {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
     };
+    interface HTMLDsButtonGroupElementEventMap {
+        "dsClick": number;
+    }
+    interface HTMLDsButtonGroupElement extends Components.DsButtonGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsButtonGroupElement, ev: DsButtonGroupCustomEvent<HTMLDsButtonGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsButtonGroupElement, ev: DsButtonGroupCustomEvent<HTMLDsButtonGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsButtonGroupElement: {
+        prototype: HTMLDsButtonGroupElement;
+        new (): HTMLDsButtonGroupElement;
+    };
     interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
     }
     var HTMLDsCardElement: {
@@ -943,6 +1124,17 @@ declare global {
     var HTMLDsInputElement: {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
+    };
+    /**
+     * Internal utility wrapper that kills line-height struts and adds optical
+     * horizontal padding. Used inside interactive components (Button, Tag, etc.)
+     * Not intended as a standalone consumer-facing component — internal use only.
+     */
+    interface HTMLDsLabelWrapElement extends Components.DsLabelWrap, HTMLStencilElement {
+    }
+    var HTMLDsLabelWrapElement: {
+        prototype: HTMLDsLabelWrapElement;
+        new (): HTMLDsLabelWrapElement;
     };
     interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
     }
@@ -1043,6 +1235,23 @@ declare global {
     var HTMLDsScrollbarElement: {
         prototype: HTMLDsScrollbarElement;
         new (): HTMLDsScrollbarElement;
+    };
+    interface HTMLDsSelectElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSelectElement: {
+        prototype: HTMLDsSelectElement;
+        new (): HTMLDsSelectElement;
     };
     interface HTMLDsSidebarElementEventMap {
         "dsToggle": void;
@@ -1175,6 +1384,40 @@ declare global {
         prototype: HTMLDsToggleElement;
         new (): HTMLDsToggleElement;
     };
+    interface HTMLDsToggleButtonElementEventMap {
+        "dsChange": boolean;
+    }
+    interface HTMLDsToggleButtonElement extends Components.DsToggleButton, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsToggleButtonElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonElement, ev: DsToggleButtonCustomEvent<HTMLDsToggleButtonElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsToggleButtonElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonElement, ev: DsToggleButtonCustomEvent<HTMLDsToggleButtonElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsToggleButtonElement: {
+        prototype: HTMLDsToggleButtonElement;
+        new (): HTMLDsToggleButtonElement;
+    };
+    interface HTMLDsToggleButtonGroupElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsToggleButtonGroupElement extends Components.DsToggleButtonGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsToggleButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonGroupElement, ev: DsToggleButtonGroupCustomEvent<HTMLDsToggleButtonGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsToggleButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonGroupElement, ev: DsToggleButtonGroupCustomEvent<HTMLDsToggleButtonGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsToggleButtonGroupElement: {
+        prototype: HTMLDsToggleButtonGroupElement;
+        new (): HTMLDsToggleButtonGroupElement;
+    };
     interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
     }
     var HTMLDsTooltipElement: {
@@ -1187,6 +1430,7 @@ declare global {
         "ds-banner": HTMLDsBannerElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button": HTMLDsButtonElement;
+        "ds-button-group": HTMLDsButtonGroupElement;
         "ds-card": HTMLDsCardElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-divider": HTMLDsDividerElement;
@@ -1196,6 +1440,7 @@ declare global {
         "ds-header": HTMLDsHeaderElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
+        "ds-label-wrap": HTMLDsLabelWrapElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-modal": HTMLDsModalElement;
@@ -1203,6 +1448,7 @@ declare global {
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
+        "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
@@ -1213,6 +1459,8 @@ declare global {
         "ds-text": HTMLDsTextElement;
         "ds-toast-provider": HTMLDsToastProviderElement;
         "ds-toggle": HTMLDsToggleElement;
+        "ds-toggle-button": HTMLDsToggleButtonElement;
+        "ds-toggle-button-group": HTMLDsToggleButtonGroupElement;
         "ds-tooltip": HTMLDsTooltipElement;
     }
 }
@@ -1347,6 +1595,33 @@ declare namespace LocalJSX {
         "variant"?: ButtonVariant;
         "width"?: string | undefined;
     }
+    interface DsButtonGroup {
+        /**
+          * Chrome level for the group container.
+          * @default 'flat'
+         */
+        "elevation"?: ButtonGroupElevation;
+        /**
+          * Array of button descriptors. Set via JS property.
+          * @example el.items = [{ label: 'Filter', icon: 'Filter' }, { label: 'Sort' }];
+          * @default []
+         */
+        "items"?: ButtonGroupItem[];
+        /**
+          * Emits the index of the clicked item.
+         */
+        "onDsClick"?: (event: DsButtonGroupCustomEvent<number>) => void;
+        /**
+          * Pill shape for group + buttons.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * Size passed to each ds-button.
+          * @default 'md'
+         */
+        "size"?: ButtonGroupSize;
+    }
     interface DsCard {
         /**
           * @default 'elevated'
@@ -1470,6 +1745,23 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    /**
+     * Internal utility wrapper that kills line-height struts and adds optical
+     * horizontal padding. Used inside interactive components (Button, Tag, etc.)
+     * Not intended as a standalone consumer-facing component — internal use only.
+     */
+    interface DsLabelWrap {
+        /**
+          * Typography size — controls optical horizontal padding.
+          * @default 'md'
+         */
+        "size"?: LabelWrapSize;
+        /**
+          * Enable truncation with ellipsis — use inside full-width containers.
+          * @default false
+         */
+        "truncate"?: boolean;
     }
     interface DsLoader {
         /**
@@ -1645,6 +1937,35 @@ declare namespace LocalJSX {
           * @default 'default'
          */
         "variant"?: ScrollbarVariant;
+    }
+    interface DsSelect {
+        "ariaLabel"?: string | undefined;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * Emits the selected value string.
+         */
+        "onDsChange"?: (event: DsSelectCustomEvent<string>) => void;
+        /**
+          * Array of options. Set via JS property.
+          * @example el.options = [{ label: 'Apple', value: 'apple' }];
+          * @default []
+         */
+        "options"?: SelectOption[];
+        /**
+          * Placeholder shown when no value is selected.
+          * @default 'Select option'
+         */
+        "placeholder"?: string;
+        /**
+          * Currently selected value.
+          * @default ''
+         */
+        "value"?: string;
     }
     interface DsSidebar {
         /**
@@ -1901,6 +2222,87 @@ declare namespace LocalJSX {
         "inactive"?: boolean;
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
     }
+    interface DsToggleButton {
+        "ariaLabel"?: string | undefined;
+        /**
+          * Parent surface context — adjusts hover tokens for colored backgrounds.
+         */
+        "background"?: ToggleButtonBackground | undefined;
+        /**
+          * Chrome level.   none     — ghost (transparent, no border, no shadow)   flat     — border only, transparent bg   elevated — bg-primary + shadow  [default]   floating — bg-primary + FAB-strength shadow
+          * @default 'elevated'
+         */
+        "elevation"?: ToggleButtonElevation;
+        /**
+          * Icon name for <ds-icon>. Set via JS property.
+          * @example el.icon = 'GridView';
+         */
+        "icon"?: string | undefined;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * Label text.
+         */
+        "label"?: string | undefined;
+        /**
+          * Emits the new pressed value (!pressed) on click.
+         */
+        "onDsChange"?: (event: DsToggleButtonCustomEvent<boolean>) => void;
+        /**
+          * Controlled pressed state.
+          * @default false
+         */
+        "pressed"?: boolean;
+        /**
+          * Pill shape.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * Size: md (32px), sm (24px), xs (16px).
+          * @default 'md'
+         */
+        "size"?: ToggleButtonSize;
+    }
+    interface DsToggleButtonGroup {
+        /**
+          * Parent surface context.
+         */
+        "background"?: ToggleGroupBackground | undefined;
+        /**
+          * Chrome level for the group container.
+          * @default 'elevated'
+         */
+        "elevation"?: ToggleGroupElevation;
+        /**
+          * Array of item descriptors. Set via JS property.
+          * @example el.items = [{ id: 'list', label: 'List' }, { id: 'grid', icon: 'GridView' }];
+          * @default []
+         */
+        "items"?: ToggleGroupItem[];
+        /**
+          * Emits the id of the newly selected item.
+         */
+        "onDsChange"?: (event: DsToggleButtonGroupCustomEvent<string>) => void;
+        /**
+          * Pill shape for group + buttons.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * Size passed to each ds-toggle-button.
+          * @default 'md'
+         */
+        "size"?: ToggleGroupSize;
+        /**
+          * ID of the currently selected / pressed item.
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsTooltip {
         /**
           * @default 'center'
@@ -1972,6 +2374,11 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
+    interface DsButtonGroupAttributes {
+        "elevation": ButtonGroupElevation;
+        "size": ButtonGroupSize;
+        "rounded": boolean;
+    }
     interface DsCardAttributes {
         "elevation": CardElevation;
         "radius": CardRadius;
@@ -2022,6 +2429,10 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
+    interface DsLabelWrapAttributes {
+        "size": LabelWrapSize;
+        "truncate": boolean;
+    }
     interface DsLoaderAttributes {
         "size": number;
         "label": string | undefined;
@@ -2069,6 +2480,13 @@ declare namespace LocalJSX {
     interface DsScrollbarAttributes {
         "variant": ScrollbarVariant;
         "showTrackOnHover": boolean;
+    }
+    interface DsSelectAttributes {
+        "value": string;
+        "placeholder": string;
+        "inactive": boolean;
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
     }
     interface DsSidebarAttributes {
         "collapsed": boolean;
@@ -2150,6 +2568,24 @@ declare namespace LocalJSX {
         "checked": boolean;
         "inactive": boolean;
     }
+    interface DsToggleButtonAttributes {
+        "elevation": ToggleButtonElevation;
+        "label": string | undefined;
+        "icon": string | undefined;
+        "size": ToggleButtonSize;
+        "rounded": boolean;
+        "background": ToggleButtonBackground | undefined;
+        "pressed": boolean;
+        "inactive": boolean;
+        "ariaLabel": string | undefined;
+    }
+    interface DsToggleButtonGroupAttributes {
+        "value": string;
+        "elevation": ToggleGroupElevation;
+        "size": ToggleGroupSize;
+        "rounded": boolean;
+        "background": ToggleGroupBackground | undefined;
+    }
     interface DsTooltipAttributes {
         "label": string;
         "side": TooltipSide;
@@ -2167,6 +2603,7 @@ declare namespace LocalJSX {
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
+        "ds-button-group": Omit<DsButtonGroup, keyof DsButtonGroupAttributes> & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes]?: DsButtonGroup[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `attr:${K}`]?: DsButtonGroupAttributes[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `prop:${K}`]?: DsButtonGroup[K] };
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
@@ -2176,6 +2613,7 @@ declare namespace LocalJSX {
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
+        "ds-label-wrap": Omit<DsLabelWrap, keyof DsLabelWrapAttributes> & { [K in keyof DsLabelWrap & keyof DsLabelWrapAttributes]?: DsLabelWrap[K] } & { [K in keyof DsLabelWrap & keyof DsLabelWrapAttributes as `attr:${K}`]?: DsLabelWrapAttributes[K] } & { [K in keyof DsLabelWrap & keyof DsLabelWrapAttributes as `prop:${K}`]?: DsLabelWrap[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
@@ -2183,6 +2621,7 @@ declare namespace LocalJSX {
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
+        "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
@@ -2193,6 +2632,8 @@ declare namespace LocalJSX {
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
+        "ds-toggle-button": Omit<DsToggleButton, keyof DsToggleButtonAttributes> & { [K in keyof DsToggleButton & keyof DsToggleButtonAttributes]?: DsToggleButton[K] } & { [K in keyof DsToggleButton & keyof DsToggleButtonAttributes as `attr:${K}`]?: DsToggleButtonAttributes[K] } & { [K in keyof DsToggleButton & keyof DsToggleButtonAttributes as `prop:${K}`]?: DsToggleButton[K] };
+        "ds-toggle-button-group": Omit<DsToggleButtonGroup, keyof DsToggleButtonGroupAttributes> & { [K in keyof DsToggleButtonGroup & keyof DsToggleButtonGroupAttributes]?: DsToggleButtonGroup[K] } & { [K in keyof DsToggleButtonGroup & keyof DsToggleButtonGroupAttributes as `attr:${K}`]?: DsToggleButtonGroupAttributes[K] } & { [K in keyof DsToggleButtonGroup & keyof DsToggleButtonGroupAttributes as `prop:${K}`]?: DsToggleButtonGroup[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
     }
 }
@@ -2205,6 +2646,7 @@ declare module "@stencil/core" {
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-button-group": LocalJSX.IntrinsicElements["ds-button-group"] & JSXBase.HTMLAttributes<HTMLDsButtonGroupElement>;
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
@@ -2214,6 +2656,12 @@ declare module "@stencil/core" {
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
+            /**
+             * Internal utility wrapper that kills line-height struts and adds optical
+             * horizontal padding. Used inside interactive components (Button, Tag, etc.)
+             * Not intended as a standalone consumer-facing component — internal use only.
+             */
+            "ds-label-wrap": LocalJSX.IntrinsicElements["ds-label-wrap"] & JSXBase.HTMLAttributes<HTMLDsLabelWrapElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
@@ -2221,6 +2669,7 @@ declare module "@stencil/core" {
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
+            "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
@@ -2231,6 +2680,8 @@ declare module "@stencil/core" {
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            "ds-toggle-button": LocalJSX.IntrinsicElements["ds-toggle-button"] & JSXBase.HTMLAttributes<HTMLDsToggleButtonElement>;
+            "ds-toggle-button-group": LocalJSX.IntrinsicElements["ds-toggle-button-group"] & JSXBase.HTMLAttributes<HTMLDsToggleButtonGroupElement>;
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
         }
     }
