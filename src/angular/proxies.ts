@@ -682,14 +682,14 @@ export declare interface DsSurface extends Components.DsSurface {}
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'tabs', 'value']
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'tabs', 'value']
 })
 @Component({
   selector: 'ds-tab-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'tabs', 'value'],
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'tabs', 'value'],
   outputs: ['dsChange'],
   standalone: false
 })
