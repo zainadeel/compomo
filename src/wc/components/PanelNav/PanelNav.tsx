@@ -179,7 +179,7 @@ export class PanelNav {
       // are intercepted by zone.js in Angular apps, causing the VT to capture
       // the "after" snapshot before Stencil has repainted. rAF fires after the
       // browser has actually painted, guaranteeing the render is complete.
-      await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
     });
 
     transition.ready.then(() => {
