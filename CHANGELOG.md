@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.7](https://github.com/zainadeel/compomo/compare/v0.8.6...v0.8.7) (2026-06-01)
+
+
+### Fixed
+
+* **PanelNav:** use componentDidRender to signal VT callback instead of rAF ([#95](https://github.com/zainadeel/compomo/issues/95)) ([1d0af2d](https://github.com/zainadeel/compomo/commit/1d0af2d622a72b0321cc34fbebcd7621a5ac23f0))
+
 ## [0.8.6](https://github.com/zainadeel/compomo/compare/v0.8.5...v0.8.6) (2026-06-01)
 
 
