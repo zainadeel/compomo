@@ -64,6 +64,10 @@ export class Icon {
     if (svg) {
       svg.removeAttribute('width');
       svg.removeAttribute('height');
+      // Prevent SVG from being natively focusable (Firefox/IE default) while
+      // sitting inside an aria-hidden parent — fixes aria-hidden-focus violation.
+      svg.setAttribute('focusable', 'false');
+      svg.setAttribute('aria-hidden', 'true');
       svg.style.display = 'block';
       svg.style.flexShrink = '0';
       svg.style.width = '100%';
