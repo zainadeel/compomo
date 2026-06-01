@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.6](https://github.com/zainadeel/compomo/compare/v0.8.5...v0.8.6) (2026-06-01)
+
+
+### Fixed
+
+* **PanelNav:** skip in-progress VT on rapid variant changes to prevent nav stuck ([#93](https://github.com/zainadeel/compomo/issues/93)) ([e0fae13](https://github.com/zainadeel/compomo/commit/e0fae1349c743a96f801fefe38328935d46858c1))
+
 ## [0.8.5](https://github.com/zainadeel/compomo/compare/v0.8.4...v0.8.5) (2026-06-01)
 
 
