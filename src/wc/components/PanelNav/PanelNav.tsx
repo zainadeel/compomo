@@ -175,12 +175,11 @@ export class PanelNav {
 
     const transition = (document as any).startViewTransition(async () => {
       this.renderedVariant = newVal;
-      // Four microtask ticks let Stencil's render queue fully flush so the VT
-      // captures a complete new-state snapshot before the animation starts.
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
+      // Wait two animation frames instead of microtasks. Promise.resolve() ticks
+      // are intercepted by zone.js in Angular apps, causing the VT to capture
+      // the "after" snapshot before Stencil has repainted. rAF fires after the
+      // browser has actually painted, guaranteeing the render is complete.
+      await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     });
 
     transition.ready.then(() => {
