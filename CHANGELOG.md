@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/zainadeel/compomo/compare/v0.8.2...v0.8.3) (2026-06-01)
+
+
+### Fixed
+
+* **PanelNav:** group-label styling and live variant animation ([#87](https://github.com/zainadeel/compomo/issues/87)) ([3fcbaf4](https://github.com/zainadeel/compomo/commit/3fcbaf402b96568b1273594ecbbf24c0abd658cd))
+
 ## [0.8.2](https://github.com/zainadeel/compomo/compare/v0.8.1...v0.8.2) (2026-05-23)
 
 
