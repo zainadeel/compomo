@@ -6,6 +6,10 @@ export interface TabItem {
   id: string;
   label: string;
   disabled?: boolean;
+  /** id of the tabpanel this tab controls */
+  panelId?: string;
+  /** optional badge count shown as a pill next to label */
+  count?: number;
 }
 
 @Component({
@@ -21,9 +25,10 @@ export class TabGroup {
   @Prop() background: TabBackground | undefined;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
+  @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';
 
-  @State() private indicatorLeft: number = 0;
-  @State() private indicatorWidth: number = 0;
+  @State() private indicatorOffset: number = 0;
+  @State() private indicatorSize: number = 0;
 
   @Event() dsChange!: EventEmitter<string>;
 
@@ -51,6 +56,11 @@ export class TabGroup {
     requestAnimationFrame(() => this.updateIndicator());
   }
 
+  @Watch('orientation')
+  onOrientationChange() {
+    requestAnimationFrame(() => this.updateIndicator());
+  }
+
   private updateIndicator() {
     const selected = this.el.querySelector(`[data-tab-id="${this.value}"]`) as HTMLElement | null;
     if (!selected) return;
@@ -58,8 +68,14 @@ export class TabGroup {
     if (!list) return;
     const listRect = list.getBoundingClientRect();
     const tabRect = selected.getBoundingClientRect();
-    this.indicatorLeft = tabRect.left - listRect.left;
-    this.indicatorWidth = tabRect.width;
+
+    if (this.orientation === 'vertical') {
+      this.indicatorOffset = tabRect.top - listRect.top;
+      this.indicatorSize = tabRect.height;
+    } else {
+      this.indicatorOffset = tabRect.left - listRect.left;
+      this.indicatorSize = tabRect.width;
+    }
   }
 
   private selectTab(id: string) {
@@ -67,27 +83,53 @@ export class TabGroup {
     this.dsChange.emit(id);
   }
 
+  /**
+   * Find the next non-disabled tab index relative to `from`, stepping by `step`.
+   * Returns `from` unchanged if no other enabled tab exists.
+   */
+  private findEnabled(from: number, step: 1 | -1): number {
+    const len = this.tabs.length;
+    for (let n = 0; n < len; n++) {
+      const i = (from + step * (n + 1) + len * (n + 1)) % len;
+      if (!this.tabs[i]?.disabled) return i;
+    }
+    return from;
+  }
+
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
-    const active = this.tabs.filter(t => !t.disabled);
-    if (!active.length) return;
+    if (!this.tabs.length) return;
 
-    const currentIdx = active.findIndex(t => t.id === this.value);
+    const currentIdx = this.tabs.findIndex(t => t.id === this.value);
+    const isVertical = this.orientation === 'vertical';
 
     let nextIdx: number | null = null;
-    if (e.key === 'ArrowRight') {
-      nextIdx = (currentIdx + 1) % active.length;
-    } else if (e.key === 'ArrowLeft') {
-      nextIdx = (currentIdx - 1 + active.length) % active.length;
-    } else if (e.key === 'Home') {
-      nextIdx = 0;
+
+    if (!isVertical) {
+      if (e.key === 'ArrowRight') {
+        nextIdx = this.findEnabled(currentIdx, 1);
+      } else if (e.key === 'ArrowLeft') {
+        nextIdx = this.findEnabled(currentIdx, -1);
+      }
+    } else {
+      if (e.key === 'ArrowDown') {
+        nextIdx = this.findEnabled(currentIdx, 1);
+      } else if (e.key === 'ArrowUp') {
+        nextIdx = this.findEnabled(currentIdx, -1);
+      }
+    }
+
+    if (e.key === 'Home') {
+      const first = this.tabs.findIndex(t => !t.disabled);
+      nextIdx = first === -1 ? null : first;
     } else if (e.key === 'End') {
-      nextIdx = active.length - 1;
+      const lastEnabled = [...this.tabs].reverse().findIndex(t => !t.disabled);
+      nextIdx = lastEnabled === -1 ? null : this.tabs.length - 1 - lastEnabled;
     }
 
     if (nextIdx !== null) {
       e.preventDefault();
-      const next = active[nextIdx];
+      const next = this.tabs[nextIdx];
       this.selectTab(next.id);
       const btn = this.el.querySelector(`[data-tab-id="${next.id}"]`) as HTMLElement | null;
       btn?.focus();
@@ -102,14 +144,26 @@ export class TabGroup {
 
   render() {
     const bgClass = this.getBgClass();
+    const isVertical = this.orientation === 'vertical';
+
+    const indicatorStyle = isVertical
+      ? {
+          transform: `translateY(${this.indicatorOffset}px)`,
+          height: `${this.indicatorSize}px`,
+        }
+      : {
+          transform: `translateX(${this.indicatorOffset}px)`,
+          width: `${this.indicatorSize}px`,
+        };
 
     return (
       <Host class="tab-group-host">
         <div
           role="tablist"
-          class="tab-list"
+          class={{ 'tab-list': true, 'tab-list--vertical': isVertical }}
           aria-label={this.ariaLabel}
           aria-labelledby={this.ariaLabelledby}
+          aria-orientation={isVertical ? 'vertical' : undefined}
         >
           {this.tabs.map(tab => {
             const isSelected = tab.id === this.value;
@@ -126,6 +180,7 @@ export class TabGroup {
                 }}
                 aria-selected={isSelected}
                 aria-disabled={tab.disabled || undefined}
+                aria-controls={tab.panelId ?? undefined}
                 disabled={tab.disabled}
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => !tab.disabled && this.selectTab(tab.id)}
@@ -133,13 +188,15 @@ export class TabGroup {
                 <span class={isSelected ? 'text-body-medium-emphasis' : 'text-body-medium'}>
                   {tab.label}
                 </span>
+                {tab.count != null && tab.count > 0 && (
+                  <span class={{ 'tab-count': true, 'tab-count--selected': isSelected }}>
+                    {tab.count > 99 ? '99+' : tab.count}
+                  </span>
+                )}
               </button>
             );
           })}
-          <div
-            class="indicator"
-            style={{ left: `${this.indicatorLeft}px`, width: `${this.indicatorWidth}px` }}
-          />
+          <div class="indicator" style={indicatorStyle} />
         </div>
       </Host>
     );
