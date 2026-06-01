@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.0](https://github.com/zainadeel/compomo/compare/v0.8.7...v0.9.0) (2026-06-01)
+
+
+### Added
+
+* **wc:** port LabelWrap, ToggleButton, ToggleButtonGroup, ButtonGroup, Select to web components ([#98](https://github.com/zainadeel/compomo/issues/98)) ([86c34ab](https://github.com/zainadeel/compomo/commit/86c34ab327ed36bbc6f8cb052bfc4e74ac6e34ea))
+
+
+### Fixed
+
+* **PanelNav:** add disableViewTransition prop to defer transitions to host app ([#97](https://github.com/zainadeel/compomo/issues/97)) ([8e09e1a](https://github.com/zainadeel/compomo/commit/8e09e1a66d6c03dee3058d76f51dd05c6e46b75f))
+* **TabGroup:** translateX indicator, count badges, aria-controls, orientation, keyboard nav fix ([#100](https://github.com/zainadeel/compomo/issues/100)) ([bad3a85](https://github.com/zainadeel/compomo/commit/bad3a85c34c188afa167ab65f0525d2c683b6b9c))
+
 ## [0.8.7](https://github.com/zainadeel/compomo/compare/v0.8.6...v0.8.7) (2026-06-01)
 
 
