@@ -102,6 +102,8 @@ export class PanelNav {
   private transitionEndHandler?: (e: TransitionEvent) => void;
   private resizeObserver?: ResizeObserver;
   private activeViewTransition?: { skipTransition: () => void };
+  /** Resolves the VT callback promise as soon as Stencil finishes its render. */
+  private vtRenderResolve?: () => void;
 
   // Drag-to-resize state (not @State — no re-render needed)
   private isDragging = false;
@@ -179,18 +181,22 @@ export class PanelNav {
     document.documentElement.style.setProperty('--vt-x', `${x}px`);
     document.documentElement.style.setProperty('--vt-y', `${y}px`);
 
-    const transition = (document as any).startViewTransition(async () => {
-      this.renderedVariant = newVal;
-      // Wait two animation frames instead of microtasks. Promise.resolve() ticks
-      // are intercepted by zone.js in Angular apps, causing the VT to capture
-      // the "after" snapshot before Stencil has repainted. rAF fires after the
-      // browser has actually painted, guaranteeing the render is complete.
-      await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-    });
+    const transition = (document as any).startViewTransition(() =>
+      new Promise<void>(resolve => {
+        // Store the resolver — componentDidRender() will call it the moment
+        // Stencil finishes painting the new renderedVariant, giving the VT
+        // a precise "after" snapshot regardless of framework (zone.js etc).
+        this.vtRenderResolve = resolve;
+        this.renderedVariant = newVal;
+      })
+    );
 
     this.activeViewTransition = transition;
     transition.finished.finally(() => {
       if (this.activeViewTransition === transition) this.activeViewTransition = undefined;
+      // Guard: if the transition was skipped before Stencil rendered, clear
+      // the dangling resolver so componentDidRender doesn't resolve stale work.
+      this.vtRenderResolve = undefined;
     });
 
     transition.ready.then(() => {
@@ -222,6 +228,16 @@ export class PanelNav {
     // Re-sync groups in case componentWillLoad ran before host bindings were applied
     // (common with Angular's property binding timing)
     this.onGroupsChange(this.groups);
+  }
+
+  componentDidRender() {
+    // If a view transition callback is waiting for the render to complete,
+    // resolve it now so the "after" snapshot is taken at exactly the right moment.
+    if (this.vtRenderResolve) {
+      const resolve = this.vtRenderResolve;
+      this.vtRenderResolve = undefined;
+      resolve();
+    }
   }
 
   disconnectedCallback() {
