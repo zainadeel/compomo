@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.4](https://github.com/zainadeel/compomo/compare/v0.8.3...v0.8.4) (2026-06-01)
+
+
+### Fixed
+
+* **a11y:** add focusable=false and aria-hidden to decorative SVGs ([#89](https://github.com/zainadeel/compomo/issues/89)) ([4419e13](https://github.com/zainadeel/compomo/commit/4419e13d8780c2866a8f18ec43e4f5d55d2b5c2f))
+
 ## [0.8.3](https://github.com/zainadeel/compomo/compare/v0.8.2...v0.8.3) (2026-06-01)
 
 
