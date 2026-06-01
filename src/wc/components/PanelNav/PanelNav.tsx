@@ -101,6 +101,7 @@ export class PanelNav {
 
   private transitionEndHandler?: (e: TransitionEvent) => void;
   private resizeObserver?: ResizeObserver;
+  private activeViewTransition?: { skipTransition: () => void };
 
   // Drag-to-resize state (not @State — no re-render needed)
   private isDragging = false;
@@ -154,6 +155,11 @@ export class PanelNav {
 
   @Watch('variant')
   async onVariantChange(newVal: PanelNavVariant) {
+    // Skip any in-progress transition immediately so rapid variant changes
+    // (e.g. quick dashboard → settings → dashboard) never leave the nav stuck.
+    this.activeViewTransition?.skipTransition();
+    this.activeViewTransition = undefined;
+
     if (typeof (document as any).startViewTransition !== 'function') {
       this.renderedVariant = newVal;
       return;
@@ -180,6 +186,11 @@ export class PanelNav {
       // the "after" snapshot before Stencil has repainted. rAF fires after the
       // browser has actually painted, guaranteeing the render is complete.
       await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    });
+
+    this.activeViewTransition = transition;
+    transition.finished.finally(() => {
+      if (this.activeViewTransition === transition) this.activeViewTransition = undefined;
     });
 
     transition.ready.then(() => {
