@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.4](https://github.com/zainadeel/compomo/compare/v0.9.3...v0.9.4) (2026-06-02)
+
+
+### Fixed
+
+* **lint:** resolve no-explicit-any and no-useless-assignment errors ([#114](https://github.com/zainadeel/compomo/issues/114)) ([739ea9c](https://github.com/zainadeel/compomo/commit/739ea9c8400784d9583f8ff6e6a00085f6d84656))
+
 ## [0.9.3](https://github.com/zainadeel/compomo/compare/v0.9.2...v0.9.3) (2026-06-02)
 
 
