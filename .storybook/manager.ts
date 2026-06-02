@@ -1,4 +1,5 @@
-import { addons } from '@storybook/manager-api';
+// @storybook/manager-api was consolidated into the storybook package in v10
+import { addons } from 'storybook/manager-api';
 
 addons.setConfig({
   // We only ship @storybook/addon-docs — the bottom panel has no content.
