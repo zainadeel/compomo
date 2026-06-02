@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/zainadeel/compomo/compare/v0.9.1...v0.9.2) (2026-06-02)
+
+
+### Fixed
+
+* correct README — web components library, not React ([#109](https://github.com/zainadeel/compomo/issues/109)) ([6faf46c](https://github.com/zainadeel/compomo/commit/6faf46cb0aadd5b642385239f1f14600bf8cc90f))
+
 ## [0.9.1](https://github.com/zainadeel/compomo/compare/v0.9.0...v0.9.1) (2026-06-02)
 
 
