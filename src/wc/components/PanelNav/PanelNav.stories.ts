@@ -155,13 +155,14 @@ function revealVariant(nav: HTMLElement, applyChange: () => void) {
   document.documentElement.style.setProperty('--vt-x', `${x}px`);
   document.documentElement.style.setProperty('--vt-y', `${y}px`);
 
-  const transition = doc.startViewTransition(async () => {
+  // The callback MUST settle synchronously. The browser suppresses rendering —
+  // and therefore requestAnimationFrame — until the update callback's promise
+  // resolves, so awaiting a frame here deadlocks until the View Transitions
+  // ~4s update-callback timeout, which then snaps the variant in with no reveal.
+  // Mirror the lab: apply the change and return. Stencil's re-render flushes on
+  // the next frame, alongside the browser capturing the new snapshot.
+  const transition = doc.startViewTransition(() => {
     applyChange();
-    // The component renders asynchronously; yield two frames so the captured
-    // "new" snapshot reflects the new variant.
-    await new Promise<void>(res =>
-      requestAnimationFrame(() => requestAnimationFrame(() => res())),
-    );
   });
 
   transition.ready
