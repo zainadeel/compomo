@@ -1,12 +1,15 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
+// eslint-plugin-react (v7) does not support ESLint 10 and is unnecessary here —
+// CompoMo is a Stencil web-components library. We keep react-hooks (v7, ESLint
+// 10-compatible) for the story files that use React hooks.
+
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', 'storybook-static/**', 'scripts/**'],
+    ignores: ['dist/**', 'node_modules/**', 'storybook-static/**', 'scripts/**', 'src/angular/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -23,17 +26,9 @@ export default tseslint.config(
       },
     },
     plugins: {
-      react,
       'react-hooks': reactHooks,
     },
-    settings: {
-      react: { version: 'detect' },
-    },
     rules: {
-      ...react.configs.recommended.rules,
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      'react/no-unescaped-entities': 'off',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       '@typescript-eslint/no-unused-vars': [

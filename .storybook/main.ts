@@ -1,8 +1,12 @@
 import type { StorybookConfig } from '@storybook/web-components-vite';
 import type { Plugin } from 'vite';
-import { resolve } from 'path';
+import { resolve, dirname } from 'path';
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
 
+// Storybook 10 loads this config as ESM — __dirname is not available in ESM
+// scope, so we derive it from import.meta.url instead.
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = resolve(__dirname, '../dist/components');
 
 function distReloadPlugin(): Plugin {
