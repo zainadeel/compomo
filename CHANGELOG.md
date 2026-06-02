@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.3](https://github.com/zainadeel/compomo/compare/v0.9.2...v0.9.3) (2026-06-02)
+
+
+### Fixed
+
+* **build:** remove deprecated @storybook/addon-toolbars to unblock storybook 10 ([#111](https://github.com/zainadeel/compomo/issues/111)) ([54288b3](https://github.com/zainadeel/compomo/commit/54288b3163b6135c15bc8bd7f2780ea353880436))
+
 ## [0.9.2](https://github.com/zainadeel/compomo/compare/v0.9.1...v0.9.2) (2026-06-02)
 
 
