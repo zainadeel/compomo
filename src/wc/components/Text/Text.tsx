@@ -45,6 +45,9 @@ export class Text {
   @Prop() for: string | undefined;
 
   render() {
+    // Polymorphic element: TSX treats a variable tag as a component, so a
+    // dynamic intrinsic element name must be cast to `any` to render.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Tag = this.as as any;
     const isCustomColor = (c: TextColor) => typeof c === 'string' && c.startsWith('var(--');
 

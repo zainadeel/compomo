@@ -98,7 +98,7 @@ export class Banner {
     const bannerEl = (
       <div
         class={{ 'banner-wrapper': true }}
-        style={{ '--banner-content': contentColor } as any}
+        style={{ '--banner-content': contentColor } as { [key: string]: string }}
         role={isAssertive ? 'alert' : 'status'}
         aria-live={isAssertive ? undefined : 'polite'}
       >

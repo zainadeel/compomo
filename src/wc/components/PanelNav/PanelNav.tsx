@@ -7,7 +7,16 @@ let vtStyleInjected = false;
 // Module-level WeakMaps for per-instance VT state. Using WeakMaps instead of
 // class fields avoids Stencil generating getter-only property descriptors on
 // the host element for private fields, which throws in strict environments.
-const vtTransitions = new WeakMap<object, { skipTransition: () => void }>();
+// Minimal typings for the View Transitions API, which isn't in our TS lib target.
+interface ViewTransition {
+  finished: Promise<void>;
+  skipTransition: () => void;
+}
+type DocumentWithViewTransition = Document & {
+  startViewTransition?: (callback: () => void | Promise<void>) => ViewTransition;
+};
+
+const vtTransitions = new WeakMap<object, ViewTransition>();
 const vtResolvers = new WeakMap<object, () => void>();
 function ensureVtStyle() {
   if (vtStyleInjected) return;
@@ -191,7 +200,8 @@ export class PanelNav {
     vtTransitions.get(this)?.skipTransition();
     vtTransitions.delete(this);
 
-    if (typeof (document as any).startViewTransition !== 'function') {
+    const doc = document as DocumentWithViewTransition;
+    if (typeof doc.startViewTransition !== 'function') {
       this.renderedVariant = newVal;
       return;
     }
@@ -210,7 +220,7 @@ export class PanelNav {
     document.documentElement.style.setProperty('--vt-x', `${x}px`);
     document.documentElement.style.setProperty('--vt-y', `${y}px`);
 
-    const transition = (document as any).startViewTransition(() =>
+    const transition = doc.startViewTransition(() =>
       new Promise<void>(resolve => {
         vtResolvers.set(this, resolve);
         this.renderedVariant = newVal;
@@ -342,7 +352,7 @@ export class PanelNav {
 
   private handleItemKeyDown(e: KeyboardEvent, index: number) {
     const total = this.getAllItems().length;
-    let next = index;
+    let next: number;
     switch (e.key) {
       case 'ArrowDown': e.preventDefault(); next = (index + 1) % total; break;
       case 'ArrowUp':   e.preventDefault(); next = (index - 1 + total) % total; break;

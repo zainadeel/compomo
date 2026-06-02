@@ -133,7 +133,7 @@ export class ToastProvider {
           role="region"
           aria-label="Notifications"
           aria-live="polite"
-          style={this.getPositionStyle() as any}
+          style={this.getPositionStyle()}
         >
           {this.items.map(item => (
             <div
