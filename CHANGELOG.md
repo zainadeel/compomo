@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/zainadeel/compomo/compare/v0.9.0...v0.9.1) (2026-06-02)
+
+
+### Fixed
+
+* **PanelNav:** parse view-transition duration token as CSS time ([#106](https://github.com/zainadeel/compomo/issues/106)) ([7c7f609](https://github.com/zainadeel/compomo/commit/7c7f609a6aa908477100ccbd38b0d35be571808e))
+
 ## [0.9.0](https://github.com/zainadeel/compomo/compare/v0.8.7...v0.9.0) (2026-06-01)
 
 
