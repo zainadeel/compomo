@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@ds-mo/ui.svg)](https://www.npmjs.com/package/@ds-mo/ui)
 
-Composable React UI components styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens.
+Composable web UI components (Stencil custom elements) styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens. Works in any framework — ships Angular proxies out of the box.
 
 ## Install
 
@@ -12,7 +12,7 @@ npm install @ds-mo/ui @ds-mo/tokens
 
 **Required peer dependency:** `@ds-mo/tokens` provides all CSS custom properties (colors, dimensions, typography, effects) that CompoMo components consume. Components will not render correctly without it.
 
-**Optional:** `@ds-mo/icons` for icon components used via the `icon` prop pattern.
+**Optional:** `@ds-mo/icons` for icon components passed via the `slot="icon"` pattern.
 
 ```bash
 npm install @ds-mo/icons
@@ -28,9 +28,9 @@ import '@ds-mo/tokens/reset';   // CSS reset
 import '@ds-mo/tokens/globals'; // global styles
 ```
 
-Then import CompoMo components:
+Then import CompoMo components (Angular proxies):
 
-```tsx
+```ts
 import { Button, Text, Surface, Card } from '@ds-mo/ui';
 ```
 
@@ -97,10 +97,13 @@ All styling uses TokoMo CSS custom properties. No hardcoded colors, sizes, or sh
 
 ## Icon pattern
 
-Components that accept icons use the typed prop pattern:
+Components that accept icons use named slots:
 
-```tsx
-icon?: React.ComponentType<{ size?: number | string }>
+```html
+<ds-button>
+  <ds-icon-arrow-right slot="icon"></ds-icon-arrow-right>
+  Save
+</ds-button>
 ```
 
-Pass any component that accepts a `size` prop. Works with `@ds-mo/icons` or custom SVG components.
+Pass any element into `slot="icon"`. Works with `@ds-mo/icons` or any custom SVG element.
