@@ -23,6 +23,19 @@ function ensureVtStyle() {
   vtStyleInjected = true;
 }
 
+/** Parse a CSS <time> value to milliseconds. Handles `s`, `ms`, and unitless
+ *  (assumed ms). Critically: `parseFloat('.75s')` is 0.75 — WAAPI treats that as
+ *  0.75ms (instant/invisible), so the `s` unit must be scaled to ms. Design
+ *  tokens (e.g. `--effect-animation-duration-long-1`) are authored in seconds. */
+function parseCssTimeMs(value: string, fallback: number): number {
+  const v = value.trim();
+  const num = parseFloat(v);
+  if (Number.isNaN(num)) return fallback;
+  if (/ms\s*$/.test(v)) return num;
+  if (/s\s*$/.test(v)) return num * 1000;
+  return num;
+}
+
 export type PanelNavVariant = 'dashboard' | 'settings';
 
 export interface PanelNavItem {
@@ -213,7 +226,7 @@ export class PanelNav {
     transition.ready.then(() => {
       const durToken = getComputedStyle(document.documentElement)
         .getPropertyValue('--effect-animation-duration-long-1').trim();
-      const duration = parseFloat(durToken) || 750;
+      const duration = parseCssTimeMs(durToken, 750);
       document.documentElement.animate(
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxR}px at ${x}px ${y}px)`] },
         { duration, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
