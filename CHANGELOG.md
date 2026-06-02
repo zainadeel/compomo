@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/zainadeel/compomo/compare/v0.9.4...v0.10.0) (2026-06-02)
+
+
+### Added
+
+* **bar-nav:** add BarNav secondary nav and BarNavAction; refactor TabGroup to button-tab style ([#118](https://github.com/zainadeel/compomo/issues/118)) ([a7631f1](https://github.com/zainadeel/compomo/commit/a7631f1144e488dd4277cb2ebcc32535e9881300))
+
 ## [0.9.4](https://github.com/zainadeel/compomo/compare/v0.9.3...v0.9.4) (2026-06-02)
 
 
