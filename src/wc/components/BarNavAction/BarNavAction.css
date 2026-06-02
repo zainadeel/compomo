@@ -21,15 +21,15 @@
   --_dot-ring: var(--color-background-secondary);
 }
 
-/* Hover/press overlay via ::after — instant on enter, fades out on leave */
+/* Interaction layer — same pattern as PanelNav */
 .action-btn::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: var(--dimension-radius-025, 2px);
   background: transparent;
   pointer-events: none;
-  transition: background var(--effect-motion-short-3);
+  transition: background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
 }
 
 .action-btn:hover:not(.inactive)::after  { background: var(--_hover-bg);  transition: none; }
@@ -88,7 +88,6 @@
 
 .action-btn__icon-wrap {
   position: relative;
-  z-index: 1;
   width: 20px;
   height: 20px;
   display: inline-flex;

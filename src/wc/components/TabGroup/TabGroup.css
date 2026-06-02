@@ -40,16 +40,15 @@
   --_dot: var(--color-foreground-bold-brand);
 }
 
-/* Hover/press overlay via ::after — instant on enter, fades out on leave */
+/* Interaction layer — same pattern as PanelNav */
 .tab::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: var(--dimension-radius-025, 2px);
   background: transparent;
   pointer-events: none;
-  /* Fade-out transition only — entry is instant */
-  transition: background var(--effect-motion-short-3);
+  transition: background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
 }
 
 .tab:hover::after  { background: var(--_hover-bg);   transition: none; }
@@ -74,8 +73,7 @@
 
 /* Label — 2px inset matches the Figma text-label frame */
 .tab__label {
-  position: relative; /* sit above ::after overlay */
-  z-index: 1;
+  position: relative;
   padding: 0 var(--dimension-space-025);
   white-space: nowrap;
 }
@@ -83,7 +81,6 @@
 /* Notification dot — 20×20 icon-slot wrapper, dot circle inside */
 .tab__dot-wrap {
   position: relative;
-  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
