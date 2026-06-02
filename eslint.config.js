@@ -38,9 +38,15 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/**/*.stories.tsx'],
+    // Story files are doc scaffolding, not shipped library code. They set
+    // Stencil web-component properties (.items, .options, .value) imperatively
+    // via lit `ref` callbacks or getElementById — the canonical lit + Stencil +
+    // Storybook idiom, where casting the element to `any` to reach those props
+    // is expected and harmless. Relax `no-explicit-any` here only.
+    files: ['src/**/*.stories.{ts,tsx}'],
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'react-hooks/rules-of-hooks': 'off',
     },
   },
