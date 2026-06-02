@@ -92,17 +92,103 @@ const VARIANT_ACTIVE: Record<string, string> = {
   settings:  'user-settings',
 };
 
+// ── App-level radial reveal ────────────────────────────────────────────────
+// Direct port of motive-webapp-lab/src/app/view-transitions.ts. Real apps drive
+// the panel-nav reveal at the app/router level (the nav sets
+// `disable-view-transition`, so the component's own VT path is off and there is
+// a single driver). Storybook has no router, so the story plays that role here
+// instead of relying on the component's built-in transition.
+
+let vtStyleInjected = false;
+
+/** Suppress the browser's default root cross-fade and pin the new snapshot to a
+ *  0px circle so the WAAPI reveal starts cleanly with no flash. */
+function ensureVtStyle() {
+  if (vtStyleInjected) return;
+  const id = 'sb-panel-nav-vt-style';
+  if (document.getElementById(id)) { vtStyleInjected = true; return; }
+  const style = document.createElement('style');
+  style.id = id;
+  style.textContent = [
+    '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}',
+    '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
+  ].join('\n');
+  document.head.appendChild(style);
+  vtStyleInjected = true;
+}
+
+/** Parse a CSS <time> value to milliseconds. `parseFloat('.75s')` is 0.75, which
+ *  WAAPI treats as 0.75ms (invisible), so the `s` unit must be scaled to ms. */
+function parseCssTimeMs(value: string, fallback: number): number {
+  const v = value.trim();
+  const num = parseFloat(v);
+  if (Number.isNaN(num)) return fallback;
+  if (/ms\s*$/.test(v)) return num;
+  if (/s\s*$/.test(v)) return num * 1000;
+  return num;
+}
+
+type DocWithVT = Document & {
+  startViewTransition?: (cb: () => void | Promise<void>) => { ready: Promise<void> };
+};
+
+/** Animate a panel-nav variant change with the radial circle reveal, driven from
+ *  the app side. `applyChange` mutates the nav props; we wait for Stencil to flush
+ *  the re-render before the new snapshot is captured so the reveal shows the new
+ *  variant rather than the old one. */
+function revealVariant(nav: HTMLElement, applyChange: () => void) {
+  const doc = document as DocWithVT;
+  if (typeof doc.startViewTransition !== 'function') {
+    applyChange();
+    return;
+  }
+  ensureVtStyle();
+
+  const btn = nav.querySelector<HTMLElement>('.panel-nav__footer-btn');
+  const rect = btn?.getBoundingClientRect();
+  const x = rect ? Math.round(rect.left + rect.width / 2) : Math.round(window.innerWidth / 2);
+  const y = rect ? Math.round(rect.top + rect.height / 2) : Math.round(window.innerHeight / 2);
+  const maxR = Math.ceil(
+    Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)),
+  );
+
+  document.documentElement.style.setProperty('--vt-x', `${x}px`);
+  document.documentElement.style.setProperty('--vt-y', `${y}px`);
+
+  const transition = doc.startViewTransition(async () => {
+    applyChange();
+    // The component renders asynchronously; yield two frames so the captured
+    // "new" snapshot reflects the new variant.
+    await new Promise<void>(res =>
+      requestAnimationFrame(() => requestAnimationFrame(() => res())),
+    );
+  });
+
+  transition.ready
+    .then(() => {
+      const durToken = getComputedStyle(document.documentElement)
+        .getPropertyValue('--effect-animation-duration-long-1').trim();
+      const duration = parseCssTimeMs(durToken, 750);
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxR}px at ${x}px ${y}px)`] },
+        { duration, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
+      );
+    })
+    .catch(() => { /* transition skipped or superseded */ });
+}
+
 function switchFooterVariant(id: string) {
   const el = document.getElementById(id) as any;
   const wrap = document.getElementById(`${id}-wrap`);
   if (!el) return;
 
   const next = el.variant === 'dashboard' ? 'settings' : 'dashboard';
-  // The component's @Watch('variant') owns the VT animation — just update props.
-  el.variant  = next;
-  el.groups   = JSON.stringify(VARIANT_GROUPS[next]);
-  el.activeId = VARIANT_ACTIVE[next];
-  if (wrap) wrap.style.background = VARIANT_BG[next];
+  revealVariant(el, () => {
+    el.variant  = next;
+    el.groups   = JSON.stringify(VARIANT_GROUPS[next]);
+    el.activeId = VARIANT_ACTIVE[next];
+    if (wrap) wrap.style.background = VARIANT_BG[next];
+  });
 }
 
 function interactiveDashboard(activeId = 'fleet-view', collapsed = false): TemplateResult {
@@ -120,6 +206,7 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
         active-id=${activeId}
         user-name="Zain Adeel"
         user-initial="Z"
+        disable-view-transition
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('dash-nav') as any;
@@ -154,6 +241,7 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
         active-id=${activeId}
         user-name="Zain Adeel"
         user-initial="Z"
+        disable-view-transition
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('settings-nav') as any;
@@ -313,6 +401,19 @@ export const LiveSwitch: Story = {
   name: 'Live Variant Switch',
   render: () => {
     let current: 'dashboard' | 'settings' = 'dashboard';
+    const toggleLive = () => {
+      const nav = document.getElementById('live-nav') as HTMLElement | null;
+      const wrap = document.getElementById('live-wrap');
+      if (!nav) return;
+      current = current === 'dashboard' ? 'settings' : 'dashboard';
+      revealVariant(nav, () => {
+        const el = nav as any;
+        el.variant  = current;
+        el.groups   = JSON.stringify(VARIANT_GROUPS[current]);
+        el.activeId = VARIANT_ACTIVE[current];
+        if (wrap) wrap.style.background = VARIANT_BG[current];
+      });
+    };
     return html`
       <div style="
         display: flex;
@@ -324,16 +425,7 @@ export const LiveSwitch: Story = {
         <div style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--color-background-secondary); border-bottom: 1px solid var(--color-border-tertiary);">
           <button
             style="padding: 6px 14px; cursor: pointer; font-size: 13px;"
-            @click=${() => {
-              const nav = document.getElementById('live-nav') as any;
-              const wrap = document.getElementById('live-wrap');
-              if (!nav) return;
-              current = current === 'dashboard' ? 'settings' : 'dashboard';
-              nav.variant  = current;
-              nav.groups   = JSON.stringify(VARIANT_GROUPS[current]);
-              nav.activeId = VARIANT_ACTIVE[current];
-              if (wrap) wrap.style.background = VARIANT_BG[current];
-            }}
+            @click=${toggleLive}
           >Toggle variant (same instance)</button>
           <span style="font-size: 12px; color: var(--color-foreground-secondary);">
             Switches dashboard ↔ settings on the same mounted &lt;ds-panel-nav&gt; — no remount.
@@ -347,6 +439,7 @@ export const LiveSwitch: Story = {
             active-id="fleet-view"
             user-name="Zain Adeel"
             user-initial="Z"
+            disable-view-transition
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('live-nav') as any;
               if (el) el.activeId = e.detail;
@@ -355,16 +448,7 @@ export const LiveSwitch: Story = {
               const el = document.getElementById('live-nav') as any;
               if (el) el.collapsed = e.detail;
             }}
-            @dsNavFooterAction=${() => {
-              const nav = document.getElementById('live-nav') as any;
-              const wrap = document.getElementById('live-wrap');
-              if (!nav) return;
-              current = current === 'dashboard' ? 'settings' : 'dashboard';
-              nav.variant  = current;
-              nav.groups   = JSON.stringify(VARIANT_GROUPS[current]);
-              nav.activeId = VARIANT_ACTIVE[current];
-              if (wrap) wrap.style.background = VARIANT_BG[current];
-            }}
+            @dsNavFooterAction=${toggleLive}
           ></ds-panel-nav>
         </div>
       </div>
