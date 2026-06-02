@@ -7,6 +7,8 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AccordionItemData } from "./components/Accordion/Accordion";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
+import { BarNavActionItem, BarNavBackground, BarNavTab } from "./components/BarNav/BarNav";
+import { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
@@ -37,6 +39,8 @@ import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGro
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
+export { BarNavActionItem, BarNavBackground, BarNavTab } from "./components/BarNav/BarNav";
+export { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
@@ -126,6 +130,62 @@ export namespace Components {
           * @default false
          */
         "showDismiss": boolean;
+    }
+    interface DsBarNav {
+        /**
+          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`
+          * @default []
+         */
+        "actions": BarNavActionItem[];
+        /**
+          * Surface background variant.
+          * @default 'secondary'
+         */
+        "background": BarNavBackground;
+        /**
+          * Fallback heading shown when no tabs are provided. When tabs are present the heading is hidden.
+         */
+        "heading": string | undefined;
+        /**
+          * Tab items for the left section. Set via JS property: `el.tabs = [...]`
+          * @default []
+         */
+        "tabs": BarNavTab[];
+        /**
+          * ID of the currently active tab.
+          * @default ''
+         */
+        "value": string;
+    }
+    interface DsBarNavAction {
+        /**
+          * @default 'action'
+         */
+        "ariaLabel": string;
+        /**
+          * Parent surface context — adjusts hover/press colours for coloured backgrounds.
+         */
+        "background": BarNavActionBackground | undefined;
+        /**
+          * Show a notification dot (brand colour) at the top-right of the icon.
+          * @default false
+         */
+        "dot": boolean;
+        /**
+          * Icon name passed to <ds-icon>.
+          * @default ''
+         */
+        "icon": string;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Controlled toggle/selected state.
+          * @default false
+         */
+        "selected": boolean;
     }
     interface DsBreadcrumb {
         /**
@@ -887,6 +947,14 @@ export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBannerElement;
 }
+export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBarNavElement;
+}
+export interface DsBarNavActionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBarNavActionElement;
+}
 export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBreadcrumbElement;
@@ -1003,6 +1071,41 @@ declare global {
     var HTMLDsBannerElement: {
         prototype: HTMLDsBannerElement;
         new (): HTMLDsBannerElement;
+    };
+    interface HTMLDsBarNavElementEventMap {
+        "dsTabChange": string;
+        "dsActionChange": { id: string; selected: boolean };
+    }
+    interface HTMLDsBarNavElement extends Components.DsBarNav, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBarNavElementEventMap>(type: K, listener: (this: HTMLDsBarNavElement, ev: DsBarNavCustomEvent<HTMLDsBarNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBarNavElementEventMap>(type: K, listener: (this: HTMLDsBarNavElement, ev: DsBarNavCustomEvent<HTMLDsBarNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBarNavElement: {
+        prototype: HTMLDsBarNavElement;
+        new (): HTMLDsBarNavElement;
+    };
+    interface HTMLDsBarNavActionElementEventMap {
+        "dsChange": boolean;
+    }
+    interface HTMLDsBarNavActionElement extends Components.DsBarNavAction, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBarNavActionElementEventMap>(type: K, listener: (this: HTMLDsBarNavActionElement, ev: DsBarNavActionCustomEvent<HTMLDsBarNavActionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBarNavActionElementEventMap>(type: K, listener: (this: HTMLDsBarNavActionElement, ev: DsBarNavActionCustomEvent<HTMLDsBarNavActionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBarNavActionElement: {
+        prototype: HTMLDsBarNavActionElement;
+        new (): HTMLDsBarNavActionElement;
     };
     interface HTMLDsBreadcrumbElementEventMap {
         "dsNavigate": { item: BreadcrumbItem; index: number };
@@ -1437,6 +1540,8 @@ declare global {
         "ds-accordion": HTMLDsAccordionElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
+        "ds-bar-nav": HTMLDsBarNavElement;
+        "ds-bar-nav-action": HTMLDsBarNavActionElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button": HTMLDsButtonElement;
         "ds-button-group": HTMLDsButtonGroupElement;
@@ -1538,6 +1643,74 @@ declare namespace LocalJSX {
           * @default false
          */
         "showDismiss"?: boolean;
+    }
+    interface DsBarNav {
+        /**
+          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`
+          * @default []
+         */
+        "actions"?: BarNavActionItem[];
+        /**
+          * Surface background variant.
+          * @default 'secondary'
+         */
+        "background"?: BarNavBackground;
+        /**
+          * Fallback heading shown when no tabs are provided. When tabs are present the heading is hidden.
+         */
+        "heading"?: string | undefined;
+        /**
+          * Emitted when an action button is toggled. Detail = { id, selected }.
+         */
+        "onDsActionChange"?: (event: DsBarNavCustomEvent<{ id: string; selected: boolean }>) => void;
+        /**
+          * Emitted when the active tab changes. Detail = tab id.
+         */
+        "onDsTabChange"?: (event: DsBarNavCustomEvent<string>) => void;
+        /**
+          * Tab items for the left section. Set via JS property: `el.tabs = [...]`
+          * @default []
+         */
+        "tabs"?: BarNavTab[];
+        /**
+          * ID of the currently active tab.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    interface DsBarNavAction {
+        /**
+          * @default 'action'
+         */
+        "ariaLabel"?: string;
+        /**
+          * Parent surface context — adjusts hover/press colours for coloured backgrounds.
+         */
+        "background"?: BarNavActionBackground | undefined;
+        /**
+          * Show a notification dot (brand colour) at the top-right of the icon.
+          * @default false
+         */
+        "dot"?: boolean;
+        /**
+          * Icon name passed to <ds-icon>.
+          * @default ''
+         */
+        "icon"?: string;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * Emits the new selected value (!selected) on click.
+         */
+        "onDsChange"?: (event: DsBarNavActionCustomEvent<boolean>) => void;
+        /**
+          * Controlled toggle/selected state.
+          * @default false
+         */
+        "selected"?: boolean;
     }
     interface DsBreadcrumb {
         /**
@@ -2368,6 +2541,19 @@ declare namespace LocalJSX {
         "showDismiss": boolean;
         "dismissLabel": string;
     }
+    interface DsBarNavAttributes {
+        "value": string;
+        "heading": string | undefined;
+        "background": BarNavBackground;
+    }
+    interface DsBarNavActionAttributes {
+        "icon": string;
+        "selected": boolean;
+        "dot": boolean;
+        "inactive": boolean;
+        "ariaLabel": string;
+        "background": BarNavActionBackground | undefined;
+    }
     interface DsBreadcrumbAttributes {
         "separator": string;
     }
@@ -2621,6 +2807,8 @@ declare namespace LocalJSX {
         "ds-accordion": Omit<DsAccordion, keyof DsAccordionAttributes> & { [K in keyof DsAccordion & keyof DsAccordionAttributes]?: DsAccordion[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `attr:${K}`]?: DsAccordionAttributes[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `prop:${K}`]?: DsAccordion[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
+        "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
+        "ds-bar-nav-action": Omit<DsBarNavAction, keyof DsBarNavActionAttributes> & { [K in keyof DsBarNavAction & keyof DsBarNavActionAttributes]?: DsBarNavAction[K] } & { [K in keyof DsBarNavAction & keyof DsBarNavActionAttributes as `attr:${K}`]?: DsBarNavActionAttributes[K] } & { [K in keyof DsBarNavAction & keyof DsBarNavActionAttributes as `prop:${K}`]?: DsBarNavAction[K] };
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
         "ds-button-group": Omit<DsButtonGroup, keyof DsButtonGroupAttributes> & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes]?: DsButtonGroup[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `attr:${K}`]?: DsButtonGroupAttributes[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `prop:${K}`]?: DsButtonGroup[K] };
@@ -2664,6 +2852,8 @@ declare module "@stencil/core" {
             "ds-accordion": LocalJSX.IntrinsicElements["ds-accordion"] & JSXBase.HTMLAttributes<HTMLDsAccordionElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
+            "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
+            "ds-bar-nav-action": LocalJSX.IntrinsicElements["ds-bar-nav-action"] & JSXBase.HTMLAttributes<HTMLDsBarNavActionElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             "ds-button-group": LocalJSX.IntrinsicElements["ds-button-group"] & JSXBase.HTMLAttributes<HTMLDsButtonGroupElement>;

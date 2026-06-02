@@ -5,6 +5,8 @@ export const DIRECTIVES = [
   d.DsAccordion,
   d.DsBadge,
   d.DsBanner,
+  d.DsBarNav,
+  d.DsBarNavAction,
   d.DsBreadcrumb,
   d.DsButton,
   d.DsButtonGroup,

@@ -27,10 +27,10 @@ type Story = StoryObj;
 export const Playground: Story = {
   render: args => {
     const playgroundTabs = [
-      { id: 'overview', label: 'Overview', count: 3 },
-      { id: 'activity', label: 'Activity', count: 12 },
+      { id: 'overview', label: 'Overview' },
+      { id: 'activity', label: 'Activity', dot: true },
       { id: 'settings', label: 'Settings' },
-      { id: 'members',  label: 'Members', count: 5 },
+      { id: 'members',  label: 'Members' },
     ];
     return html`
       <div style="width: 400px">
@@ -94,14 +94,14 @@ export const WithPanels: Story = {
   },
 };
 
-export const WithCounts: Story = {
+export const WithDot: Story = {
   render: () => html`
     <ds-tab-group
       .tabs=${[
-        { id: 'inbox',    label: 'Inbox',    count: 4  },
-        { id: 'sent',     label: 'Sent',     count: 0  },
-        { id: 'drafts',   label: 'Drafts',   count: 99 },
-        { id: 'archived', label: 'Archived', count: 150 },
+        { id: 'inbox',    label: 'Inbox',    dot: true },
+        { id: 'sent',     label: 'Sent'  },
+        { id: 'drafts',   label: 'Drafts', dot: true },
+        { id: 'archived', label: 'Archived' },
       ]}
       value="inbox"
       aria-label="Mailbox tabs"

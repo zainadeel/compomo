@@ -5,16 +5,14 @@
 .tab-list {
   display: flex;
   align-items: center;
+  gap: var(--dimension-space-050);
   position: relative;
-  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-secondary);
 }
 
 /* Vertical orientation */
 .tab-list--vertical {
   flex-direction: column;
   align-items: stretch;
-  border-bottom: none;
-  border-right: var(--dimension-stroke-width-015) solid var(--color-border-secondary);
 }
 
 .tab {
@@ -25,22 +23,37 @@
   padding: var(--dimension-space-075);
   background-color: transparent;
   border: none;
-  border-radius: var(--dimension-radius-075);
+  border-radius: var(--dimension-radius-025);
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
   color: var(--color-foreground-secondary);
   position: relative;
-  transition: color var(--effect-motion-short-2), background-color var(--effect-motion-short-2);
+  /* Only transition color — hover bg is instant (see ::after below) */
+  transition: color var(--effect-motion-short-2);
   flex-shrink: 0;
   height: var(--dimension-size-400);
+  min-width: var(--dimension-size-400);
   box-sizing: border-box;
   --_hover-bg: var(--color-interaction-hover);
   --_pressed-bg: var(--color-interaction-pressed);
+  --_dot: var(--color-foreground-bold-brand);
 }
 
-.tab:hover { background-color: var(--_hover-bg); }
-.tab:active { background-color: var(--_pressed-bg); }
+/* Hover/press overlay via ::after — instant on enter, fades out on leave */
+.tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  /* Fade-out transition only — entry is instant */
+  transition: background var(--effect-motion-short-3);
+}
+
+.tab:hover::after  { background: var(--_hover-bg);   transition: none; }
+.tab:active::after { background: var(--_pressed-bg);  transition: none; }
 
 .tab--selected { color: var(--color-foreground-primary); }
 
@@ -56,25 +69,34 @@
   pointer-events: none;
 }
 
-/* Count badge pill */
-.tab-count {
+/* Vertical tabs read as a list — left-align the label */
+.tab-list--vertical .tab { justify-content: flex-start; }
+
+/* Label — 2px inset matches the Figma text-label frame */
+.tab__label {
+  position: relative; /* sit above ::after overlay */
+  z-index: 1;
+  padding: 0 var(--dimension-space-025);
+  white-space: nowrap;
+}
+
+/* Notification dot — 20×20 icon-slot wrapper, dot circle inside */
+.tab__dot-wrap {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: var(--dimension-size-200);
-  height: var(--dimension-size-200);
-  padding: 0 var(--dimension-space-025);
-  border-radius: var(--dimension-radius-full, 9999px);
-  background: var(--color-background-faint);
-  color: var(--color-foreground-secondary);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
-.tab-count--selected {
-  background: var(--color-background-faint-brand);
-  color: var(--color-foreground-bold-brand);
+.tab__dot {
+  width: var(--dimension-space-075);
+  height: var(--dimension-space-075);
+  border-radius: var(--dimension-radius-full, 9999px);
+  background: var(--_dot);
 }
 
 /* Background context */
@@ -106,26 +128,3 @@
 }
 
 .on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }
-
-/* Sliding indicator — horizontal (default) */
-.indicator {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  background-color: var(--color-foreground-brand);
-  border-radius: var(--dimension-radius-full, 9999px);
-  transition: transform var(--effect-motion-short-3), width var(--effect-motion-short-3);
-  pointer-events: none;
-}
-
-/* Sliding indicator — vertical */
-.tab-list--vertical .indicator {
-  top: 0;
-  left: auto;
-  right: 0;
-  bottom: auto;
-  width: 2px;
-  height: auto;
-  transition: transform var(--effect-motion-short-3), height var(--effect-motion-short-3);
-}
