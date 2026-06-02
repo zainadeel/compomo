@@ -49,7 +49,10 @@ function distReloadPlugin(): Plugin {
 
 const config: StorybookConfig = {
   stories: ['../src/wc/**/*.mdx', '../src/wc/**/*.stories.@(ts|tsx)'],
-  addons: ['@storybook/addon-docs', '@storybook/addon-toolbars'],
+  // Toolbars are built into Storybook core since v9 (the standalone
+  // @storybook/addon-toolbars no longer exists). The theme / anim-speed
+  // toolbars in preview.ts are driven by globalTypes, which core renders.
+  addons: ['@storybook/addon-docs'],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},
