@@ -87,6 +87,71 @@ export declare interface DsBanner extends Components.DsBanner {
 
 
 @ProxyCmp({
+  inputs: ['actions', 'background', 'heading', 'tabs', 'value']
+})
+@Component({
+  selector: 'ds-bar-nav',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['actions', 'background', 'heading', 'tabs', 'value'],
+  outputs: ['dsTabChange', 'dsActionChange'],
+  standalone: false
+})
+export class DsBarNav {
+  protected el: HTMLDsBarNavElement;
+  @Output() dsTabChange = new EventEmitter<CustomEvent<string>>();
+  @Output() dsActionChange = new EventEmitter<CustomEvent<{ id: string; selected: boolean }>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsBarNav extends Components.DsBarNav {
+  /**
+   * Emitted when the active tab changes. Detail = tab id.
+   */
+  dsTabChange: EventEmitter<CustomEvent<string>>;
+  /**
+   * Emitted when an action button is toggled. Detail = { id, selected }.
+   */
+  dsActionChange: EventEmitter<CustomEvent<{ id: string; selected: boolean }>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['ariaLabel', 'background', 'dot', 'icon', 'inactive', 'selected']
+})
+@Component({
+  selector: 'ds-bar-nav-action',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['ariaLabel', 'background', 'dot', 'icon', 'inactive', 'selected'],
+  outputs: ['dsChange'],
+  standalone: false
+})
+export class DsBarNavAction {
+  protected el: HTMLDsBarNavActionElement;
+  @Output() dsChange = new EventEmitter<CustomEvent<boolean>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsBarNavAction extends Components.DsBarNavAction {
+  /**
+   * Emits the new selected value (!selected) on click.
+   */
+  dsChange: EventEmitter<CustomEvent<boolean>>;
+}
+
+
+@ProxyCmp({
   inputs: ['items', 'separator']
 })
 @Component({

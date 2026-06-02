@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.bar-nav {
+  display: flex;
+  align-items: center;
+  height: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+  gap: var(--dimension-space-100);
+  box-sizing: border-box;
+  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+}
+
+/* Background variants — mirrors ds-header pattern */
+.bg-primary     { background-color: var(--color-background-primary); }
+.bg-secondary   { background-color: var(--color-background-secondary); }
+.bg-transparent { background-color: transparent; }
+.bg-translucent {
+  background-color: var(--color-background-translucent);
+  backdrop-filter: blur(var(--effect-blur-md));
+  -webkit-backdrop-filter: blur(var(--effect-blur-md));
+}
+
+/* Left zone — tabs fill available space */
+.bar-nav__left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.bar-nav__left ds-tab-group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Fallback heading when no tabs */
+.bar-nav__heading {
+  color: var(--color-foreground-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Right zone — action buttons, hugging right */
+.bar-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  flex-shrink: 0;
+}

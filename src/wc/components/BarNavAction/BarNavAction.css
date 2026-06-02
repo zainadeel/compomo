@@ -1,0 +1,111 @@
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dimension-size-400);
+  height: var(--dimension-size-400);
+  padding: var(--dimension-space-075);
+  background: transparent;
+  border: none;
+  border-radius: var(--dimension-radius-025);
+  cursor: pointer;
+  color: var(--color-foreground-secondary);
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  /* Only transition color — hover bg is instant (see ::after below) */
+  transition: color var(--effect-motion-short-2);
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+  --_dot-ring: var(--color-background-secondary);
+}
+
+/* Hover/press overlay via ::after — instant on enter, fades out on leave */
+.action-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  transition: background var(--effect-motion-short-3);
+}
+
+.action-btn:hover:not(.inactive)::after  { background: var(--_hover-bg);  transition: none; }
+.action-btn:active:not(.inactive)::after { background: var(--_pressed-bg); transition: none; }
+
+.action-btn:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+/* Selected: icon turns primary — no background change */
+.action-btn.selected { color: var(--color-foreground-primary); }
+
+.action-btn.inactive { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ==========================================================================
+   Background context
+   ========================================================================== */
+
+.onMedium {
+  --_hover-bg: var(--color-interaction-on-medium-background-hover);
+  --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
+  --_dot-ring: var(--color-background-medium);
+}
+
+.onBold {
+  color: var(--color-foreground-on-bold-background-secondary);
+  --_hover-bg: var(--color-interaction-on-bold-background-hover);
+  --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
+  --_dot-ring: var(--color-background-bold);
+}
+
+.onBold.selected { color: var(--color-foreground-on-bold-background-primary); }
+
+.onStrong {
+  color: var(--color-foreground-on-bold-background-secondary);
+  --_hover-bg: var(--color-interaction-on-strong-background-hover);
+  --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
+  --_dot-ring: var(--color-background-strong);
+}
+
+.onStrong.selected { color: var(--color-foreground-on-bold-background-primary); }
+
+.onAlwaysDark {
+  color: var(--color-always-dark-foreground-secondary);
+  --_hover-bg: var(--color-always-dark-interaction-hover);
+  --_pressed-bg: var(--color-always-dark-interaction-pressed);
+  --_dot-ring: var(--color-always-dark-background);
+}
+
+.onAlwaysDark.selected { color: var(--color-always-dark-foreground-primary); }
+
+/* ==========================================================================
+   Inner layout — icon zone sits above the ::after overlay
+   ========================================================================== */
+
+.action-btn__icon-wrap {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Notification dot — top-right corner of the icon zone */
+.action-btn__dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--dimension-space-075);
+  height: var(--dimension-space-075);
+  border-radius: var(--dimension-radius-full, 9999px);
+  background: var(--color-foreground-bold-brand);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_dot-ring);
+  pointer-events: none;
+}

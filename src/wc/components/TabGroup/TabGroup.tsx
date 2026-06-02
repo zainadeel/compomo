@@ -1,4 +1,4 @@
-import { Component, Prop, State, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Element, Listen, h, Host } from '@stencil/core';
 
 export type TabBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
 
@@ -8,8 +8,8 @@ export interface TabItem {
   disabled?: boolean;
   /** id of the tabpanel this tab controls */
   panelId?: string;
-  /** optional badge count shown as a pill next to label */
-  count?: number;
+  /** Show a notification dot (brand) on the tab — no count, matching panel-nav. */
+  dot?: boolean;
 }
 
 @Component({
@@ -27,56 +27,7 @@ export class TabGroup {
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
   @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';
 
-  @State() private indicatorOffset: number = 0;
-  @State() private indicatorSize: number = 0;
-
   @Event() dsChange!: EventEmitter<string>;
-
-  private resizeObserver: ResizeObserver | null = null;
-
-  componentDidLoad() {
-    this.resizeObserver = new ResizeObserver(() => this.updateIndicator());
-    const list = this.el.querySelector('[role="tablist"]') as HTMLElement;
-    if (list) this.resizeObserver.observe(list);
-    this.updateIndicator();
-  }
-
-  disconnectedCallback() {
-    this.resizeObserver?.disconnect();
-  }
-
-  @Watch('value')
-  onValueChange() {
-    this.updateIndicator();
-  }
-
-  @Watch('tabs')
-  onTabsChange() {
-    // Allow a render cycle before measuring
-    requestAnimationFrame(() => this.updateIndicator());
-  }
-
-  @Watch('orientation')
-  onOrientationChange() {
-    requestAnimationFrame(() => this.updateIndicator());
-  }
-
-  private updateIndicator() {
-    const selected = this.el.querySelector(`[data-tab-id="${this.value}"]`) as HTMLElement | null;
-    if (!selected) return;
-    const list = selected.closest('.tab-list') as HTMLElement | null;
-    if (!list) return;
-    const listRect = list.getBoundingClientRect();
-    const tabRect = selected.getBoundingClientRect();
-
-    if (this.orientation === 'vertical') {
-      this.indicatorOffset = tabRect.top - listRect.top;
-      this.indicatorSize = tabRect.height;
-    } else {
-      this.indicatorOffset = tabRect.left - listRect.left;
-      this.indicatorSize = tabRect.width;
-    }
-  }
 
   private selectTab(id: string) {
     this.value = id;
@@ -146,16 +97,6 @@ export class TabGroup {
     const bgClass = this.getBgClass();
     const isVertical = this.orientation === 'vertical';
 
-    const indicatorStyle = isVertical
-      ? {
-          transform: `translateY(${this.indicatorOffset}px)`,
-          height: `${this.indicatorSize}px`,
-        }
-      : {
-          transform: `translateX(${this.indicatorOffset}px)`,
-          width: `${this.indicatorSize}px`,
-        };
-
     return (
       <Host class="tab-group-host">
         <div
@@ -185,18 +126,17 @@ export class TabGroup {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => !tab.disabled && this.selectTab(tab.id)}
               >
-                <span class={isSelected ? 'text-body-medium-emphasis' : 'text-body-medium'}>
+                <span class={`tab__label ${isSelected ? 'text-body-medium-emphasis' : 'text-body-medium'}`}>
                   {tab.label}
                 </span>
-                {tab.count != null && tab.count > 0 && (
-                  <span class={{ 'tab-count': true, 'tab-count--selected': isSelected }}>
-                    {tab.count > 99 ? '99+' : tab.count}
+                {tab.dot && (
+                  <span class="tab__dot-wrap" aria-hidden="true">
+                    <span class="tab__dot" />
                   </span>
                 )}
               </button>
             );
           })}
-          <div class="indicator" style={indicatorStyle} />
         </div>
       </Host>
     );
