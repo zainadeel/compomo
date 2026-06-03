@@ -79,6 +79,7 @@
 .panel-nav__header {
   display: flex;
   align-items: center;
+  height: var(--dimension-size-600, 48px);
   padding: var(--dimension-space-100, 8px);
   flex-shrink: 0;
   box-sizing: border-box;

@@ -9,7 +9,7 @@
   padding: var(--dimension-space-100);
   gap: var(--dimension-space-100);
   box-sizing: border-box;
-  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
 }
 
 /* Background variants — mirrors ds-header pattern */
