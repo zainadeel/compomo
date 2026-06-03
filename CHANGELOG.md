@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/zainadeel/compomo/compare/v0.10.1...v0.10.2) (2026-06-03)
+
+
+### Fixed
+
+* **nav:** pin PanelNav header + BarNav to 48px with border inside ([#122](https://github.com/zainadeel/compomo/issues/122)) ([8e40b6e](https://github.com/zainadeel/compomo/commit/8e40b6e2d628be0616e76e2e8e273af5009568c9))
+
 ## [0.10.1](https://github.com/zainadeel/compomo/compare/v0.10.0...v0.10.1) (2026-06-03)
 
 
