@@ -93,7 +93,7 @@ export class BarNav {
                 />
               )
               : this.heading && (
-                <span class="bar-nav__heading text-title-small">{this.heading}</span>
+                <span class="bar-nav__heading text-body-medium-emphasis">{this.heading}</span>
               )
             }
           </div>

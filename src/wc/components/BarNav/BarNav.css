@@ -35,8 +35,14 @@
   min-width: 0;
 }
 
-/* Fallback heading when no tabs */
+/* Fallback heading when no tabs — matches a single (selected) tab so the area
+   name shares the tab label's type token, color, height and horizontal inset.
+   Inset = tab button padding (space-075, 6px) + label inset (space-025, 2px). */
 .bar-nav__heading {
+  display: inline-flex;
+  align-items: center;
+  height: var(--dimension-size-400);
+  padding-inline: var(--dimension-space-100);
   color: var(--color-foreground-primary);
   white-space: nowrap;
   overflow: hidden;
