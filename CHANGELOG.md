@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/zainadeel/compomo/compare/v0.10.2...v0.10.3) (2026-06-03)
+
+
+### Fixed
+
+* **bar-nav:** style no-tabs area name to match a single tab ([#124](https://github.com/zainadeel/compomo/issues/124)) ([7632f2e](https://github.com/zainadeel/compomo/commit/7632f2e9caa08d44cb1a19082cbaad6b40b6e486))
+
 ## [0.10.2](https://github.com/zainadeel/compomo/compare/v0.10.1...v0.10.2) (2026-06-03)
 
 
