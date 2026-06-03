@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/zainadeel/compomo/compare/v0.10.0...v0.10.1) (2026-06-03)
+
+
+### Fixed
+
+* **bar-nav:** align ::after overlay with PanelNav pattern ([#120](https://github.com/zainadeel/compomo/issues/120)) ([4f76739](https://github.com/zainadeel/compomo/commit/4f76739ce68d92ed6d9d9f587efce47653469c70))
+
 ## [0.10.0](https://github.com/zainadeel/compomo/compare/v0.9.4...v0.10.0) (2026-06-02)
 
 
