@@ -126,14 +126,14 @@ export class TabGroup {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => !tab.disabled && this.selectTab(tab.id)}
               >
-                <span class={`tab__label ${isSelected ? 'text-body-medium-emphasis' : 'text-body-medium'}`}>
+                <span class={{
+                  tab__label: true,
+                  'tab__label--dot': !!tab.dot,
+                  [isSelected ? 'text-body-medium-emphasis' : 'text-body-medium']: true,
+                }}>
                   {tab.label}
+                  {tab.dot && <span class="tab__dot" aria-hidden="true" />}
                 </span>
-                {tab.dot && (
-                  <span class="tab__dot-wrap" aria-hidden="true">
-                    <span class="tab__dot" />
-                  </span>
-                )}
               </button>
             );
           })}

@@ -4,6 +4,7 @@ import type { TabItem } from '../TabGroup/TabGroup';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
+  shouldResyncBarNavProps,
 } from './bar-nav-utils';
 
 export type BarNavBackground = 'primary' | 'secondary' | 'transparent' | 'translucent';
@@ -81,6 +82,8 @@ export class BarNav {
   @State() private urlDerivedValue: string = '';
   @State() private hideTabsForDetailRoute = false;
 
+  private static readonly HOST_PROP_SYNC_BUDGET = 8;
+
   private get effectiveValue(): string {
     if (this.currentUrl && this.basePath) {
       return this.urlDerivedValue;
@@ -110,6 +113,41 @@ export class BarNav {
 
   componentWillLoad() {
     this.onPropsChange();
+  }
+
+  componentDidLoad() {
+    this.syncHostPropsIfNeeded();
+    this.scheduleDeferredHostPropSync();
+  }
+
+  /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
+  private syncHostPropsIfNeeded() {
+    if (
+      shouldResyncBarNavProps(
+        this.resolvedTabs,
+        this.tabs,
+        this.tabsJson,
+        this.resolvedActions,
+        this.actions,
+        this.actionsJson,
+      )
+    ) {
+      this.onPropsChange();
+    } else if (this.currentUrl && this.basePath) {
+      this.syncValueFromUrl();
+    }
+  }
+
+  /** Poll across animation frames — host props may land without triggering @Watch. */
+  private scheduleDeferredHostPropSync() {
+    let remaining = BarNav.HOST_PROP_SYNC_BUDGET;
+    const tick = () => {
+      this.syncHostPropsIfNeeded();
+      if (--remaining > 0) {
+        requestAnimationFrame(tick);
+      }
+    };
+    queueMicrotask(tick);
   }
 
   private syncValueFromUrl() {

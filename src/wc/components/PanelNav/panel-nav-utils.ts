@@ -23,6 +23,11 @@ export function deriveActiveIdFromUrl(path: string, items: PanelNavItem[]): stri
   return bestId;
 }
 
+/** Total nav item count across all groups. */
+export function countPanelNavItems(groups: PanelNavGroup[]): number {
+  return groups.reduce((sum, g) => sum + g.items.length, 0);
+}
+
 /** Parse `groups` from either a JSON attribute string or a JS property array. */
 export function parsePanelNavGroups(groups: string | unknown): PanelNavGroup[] {
   if (Array.isArray(groups)) return groups;
@@ -35,6 +40,17 @@ export function parsePanelNavGroups(groups: string | unknown): PanelNavGroup[] {
     }
   }
   return [];
+}
+
+/** True when host `groups` has items but internal parsed state is still empty. */
+export function shouldResyncPanelNavGroups(
+  parsedGroups: PanelNavGroup[],
+  groups: string | unknown,
+): boolean {
+  return (
+    countPanelNavItems(parsedGroups) === 0 &&
+    countPanelNavItems(parsePanelNavGroups(groups)) > 0
+  );
 }
 
 let vtStyleInjected = false;
