@@ -1,4 +1,4 @@
-import type { PanelNavGroup, PanelNavItem } from './PanelNav';
+import type { PanelNavGroup, PanelNavItem, PanelNavVariant } from './PanelNav';
 
 /** Whether `path` matches `href` at a segment boundary (exact or child path). */
 export function hrefMatchesPath(path: string, href: string): boolean {
@@ -40,6 +40,35 @@ export function parsePanelNavGroups(groups: string | unknown): PanelNavGroup[] {
     }
   }
   return [];
+}
+
+/** Parse `variant` from a host attribute value. */
+export function readPanelNavVariantAttr(attr: string | null): PanelNavVariant | undefined {
+  if (attr === 'settings' || attr === 'dashboard') return attr;
+  return undefined;
+}
+
+/** Resolve initial variant — prefer host attribute when present (hard reload before JS props). */
+export function resolvePanelNavVariant(
+  variantProp: PanelNavVariant,
+  variantAttr: string | null,
+): PanelNavVariant {
+  return readPanelNavVariantAttr(variantAttr) ?? variantProp;
+}
+
+/** Resolve whether VT is disabled from prop and/or host attribute. */
+export function resolvePanelNavDisableVt(prop: boolean, attr: string | null): boolean {
+  if (prop) return true;
+  if (attr === null) return false;
+  return attr !== 'false';
+}
+
+/** True when internal rendered surface lags the host `variant` prop. */
+export function shouldResyncPanelNavVariant(
+  renderedVariant: PanelNavVariant,
+  variant: PanelNavVariant,
+): boolean {
+  return renderedVariant !== variant;
 }
 
 /** True when host `groups` has items but internal parsed state is still empty. */

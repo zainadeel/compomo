@@ -3,7 +3,10 @@ import {
   deriveActiveIdFromUrl,
   ensurePanelNavVtStyle,
   parsePanelNavGroups,
+  resolvePanelNavDisableVt,
+  resolvePanelNavVariant,
   shouldResyncPanelNavGroups,
+  shouldResyncPanelNavVariant,
 } from './panel-nav-utils';
 
 // Module-level WeakMaps for per-instance VT state. Using WeakMaps instead of
@@ -152,6 +155,14 @@ export class PanelNav {
     return this.urlDerivedActiveId || this.activeId;
   }
 
+  /** Host may set `disable-view-transition` as an attribute before the JS prop lands. */
+  private get effectiveDisableViewTransition(): boolean {
+    return resolvePanelNavDisableVt(
+      this.disableViewTransition,
+      this.el.getAttribute('disable-view-transition'),
+    );
+  }
+
   @Watch('collapsed')
   @Watch('viewportNarrow')
   onCollapsedChange() {
@@ -186,7 +197,7 @@ export class PanelNav {
   async onVariantChange(newVal: PanelNavVariant) {
     // Host app drives the transition (e.g. Angular Router withViewTransitions):
     // just reflect the new surface so the app's transition captures it.
-    if (this.disableViewTransition) {
+    if (this.effectiveDisableViewTransition) {
       this.renderedVariant = newVal;
       return;
     }
@@ -241,7 +252,7 @@ export class PanelNav {
   }
 
   componentWillLoad() {
-    this.renderedVariant = this.variant;
+    this.renderedVariant = resolvePanelNavVariant(this.variant, this.el.getAttribute('variant'));
     if (this.storageKey) {
       try {
         const stored = localStorage.getItem(this.storageKey);
@@ -320,10 +331,25 @@ export class PanelNav {
 
   /** Re-parse props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
   private syncHostPropsIfNeeded() {
+    this.syncRenderedVariantIfNeeded();
+
     if (shouldResyncPanelNavGroups(this.parsedGroups, this.groups)) {
       this.onGroupsChange(this.groups);
     } else if (this.currentUrl) {
       this.syncActiveFromUrl();
+    }
+  }
+
+  /** Align `renderedVariant` with `variant` when host bindings land after first paint. */
+  private syncRenderedVariantIfNeeded() {
+    if (!shouldResyncPanelNavVariant(this.renderedVariant, this.variant)) return;
+
+    if (this.effectiveDisableViewTransition) {
+      vtTransitions.get(this)?.skipTransition();
+      vtTransitions.delete(this);
+      this.renderedVariant = this.variant;
+    } else {
+      void this.onVariantChange(this.variant);
     }
   }
 
