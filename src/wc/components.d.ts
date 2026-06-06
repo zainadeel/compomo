@@ -22,7 +22,7 @@ import { InputType } from "./components/Input/Input";
 import { LabelWrapSize } from "./components/LabelWrap/LabelWrap";
 import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 import { ModalWidth } from "./components/Modal/Modal";
-import { PanelNavVariant } from "./components/PanelNav/PanelNav";
+import { PanelNavGroup, PanelNavRouterMode, PanelNavVariant } from "./components/PanelNav/PanelNav";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
@@ -54,7 +54,7 @@ export { InputType } from "./components/Input/Input";
 export { LabelWrapSize } from "./components/LabelWrap/LabelWrap";
 export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 export { ModalWidth } from "./components/Modal/Modal";
-export { PanelNavVariant } from "./components/PanelNav/PanelNav";
+export { PanelNavGroup, PanelNavRouterMode, PanelNavVariant } from "./components/PanelNav/PanelNav";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
@@ -133,26 +133,46 @@ export namespace Components {
     }
     interface DsBarNav {
         /**
-          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`
+          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`. Replace the array reference to update.
           * @default []
          */
         "actions": BarNavActionItem[];
+        /**
+          * JSON fallback for `actions` — useful when framework bindings don't propagate arrays.
+          * @default ''
+         */
+        "actionsJson": string;
         /**
           * Surface background variant.
           * @default 'secondary'
          */
         "background": BarNavBackground;
         /**
+          * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
+          * @default ''
+         */
+        "basePath": string;
+        /**
+          * Current route URL. When set with `basePath`, the active tab is derived automatically.
+          * @default ''
+         */
+        "currentUrl": string;
+        /**
           * Fallback heading shown when no tabs are provided. When tabs are present the heading is hidden.
          */
         "heading": string | undefined;
         /**
-          * Tab items for the left section. Set via JS property: `el.tabs = [...]`
+          * Tab items for the left section. Set via JS property: `el.tabs = [...]`. Replace the array reference to update.
           * @default []
          */
         "tabs": BarNavTab[];
         /**
-          * ID of the currently active tab.
+          * JSON fallback for `tabs` — useful when framework bindings don't propagate arrays.
+          * @default ''
+         */
+        "tabsJson": string;
+        /**
+          * ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set.
           * @default ''
          */
         "value": string;
@@ -508,7 +528,7 @@ export namespace Components {
          */
         "collapsed": boolean;
         /**
-          * Current route URL (e.g. `window.location.pathname` or the router's active URL). When set the component derives the active item by matching item `href` values against this string (longest prefix wins), overriding `activeId`.
+          * Current route URL (e.g. `window.location.pathname` or the router's active URL). When set the component derives the active item by matching item `href` values against this string (longest segment-boundary prefix wins), overriding `activeId`.
           * @default ''
          */
         "currentUrl": string;
@@ -518,10 +538,15 @@ export namespace Components {
          */
         "disableViewTransition": boolean;
         /**
-          * JSON string of `PanelNavGroup[]`
+          * Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute.
           * @default '[]'
          */
-        "groups": string;
+        "groups": string | PanelNavGroup[];
+        /**
+          * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
+          * @default 'anchor'
+         */
+        "routerMode": PanelNavRouterMode;
         /**
           * `localStorage` key used to persist the collapsed state across page loads. When set the component is self-managing for collapsed state; `dsNavToggle` still fires for consumers that want to observe the change.
           * @default ''
@@ -1310,6 +1335,7 @@ declare global {
         "dsNavSelect": string;
         "dsNavToggle": boolean;
         "dsNavFooterAction": void;
+        "dsNavUserAction": void;
     }
     interface HTMLDsPanelNavElement extends Components.DsPanelNav, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelNavElementEventMap>(type: K, listener: (this: HTMLDsPanelNavElement, ev: DsPanelNavCustomEvent<HTMLDsPanelNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1646,15 +1672,30 @@ declare namespace LocalJSX {
     }
     interface DsBarNav {
         /**
-          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`
+          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`. Replace the array reference to update.
           * @default []
          */
         "actions"?: BarNavActionItem[];
+        /**
+          * JSON fallback for `actions` — useful when framework bindings don't propagate arrays.
+          * @default ''
+         */
+        "actionsJson"?: string;
         /**
           * Surface background variant.
           * @default 'secondary'
          */
         "background"?: BarNavBackground;
+        /**
+          * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
+          * @default ''
+         */
+        "basePath"?: string;
+        /**
+          * Current route URL. When set with `basePath`, the active tab is derived automatically.
+          * @default ''
+         */
+        "currentUrl"?: string;
         /**
           * Fallback heading shown when no tabs are provided. When tabs are present the heading is hidden.
          */
@@ -1668,12 +1709,17 @@ declare namespace LocalJSX {
          */
         "onDsTabChange"?: (event: DsBarNavCustomEvent<string>) => void;
         /**
-          * Tab items for the left section. Set via JS property: `el.tabs = [...]`
+          * Tab items for the left section. Set via JS property: `el.tabs = [...]`. Replace the array reference to update.
           * @default []
          */
         "tabs"?: BarNavTab[];
         /**
-          * ID of the currently active tab.
+          * JSON fallback for `tabs` — useful when framework bindings don't propagate arrays.
+          * @default ''
+         */
+        "tabsJson"?: string;
+        /**
+          * ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set.
           * @default ''
          */
         "value"?: string;
@@ -2047,7 +2093,7 @@ declare namespace LocalJSX {
          */
         "collapsed"?: boolean;
         /**
-          * Current route URL (e.g. `window.location.pathname` or the router's active URL). When set the component derives the active item by matching item `href` values against this string (longest prefix wins), overriding `activeId`.
+          * Current route URL (e.g. `window.location.pathname` or the router's active URL). When set the component derives the active item by matching item `href` values against this string (longest segment-boundary prefix wins), overriding `activeId`.
           * @default ''
          */
         "currentUrl"?: string;
@@ -2057,10 +2103,10 @@ declare namespace LocalJSX {
          */
         "disableViewTransition"?: boolean;
         /**
-          * JSON string of `PanelNavGroup[]`
+          * Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute.
           * @default '[]'
          */
-        "groups"?: string;
+        "groups"?: string | PanelNavGroup[];
         /**
           * Emitted when the footer left button (gear / dashboard) is clicked.
          */
@@ -2073,6 +2119,15 @@ declare namespace LocalJSX {
           * Emitted when the collapse toggle is clicked. Detail = new collapsed state.
          */
         "onDsNavToggle"?: (event: DsPanelNavCustomEvent<boolean>) => void;
+        /**
+          * Emitted when the footer user button is clicked.
+         */
+        "onDsNavUserAction"?: (event: DsPanelNavCustomEvent<void>) => void;
+        /**
+          * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
+          * @default 'anchor'
+         */
+        "routerMode"?: PanelNavRouterMode;
         /**
           * `localStorage` key used to persist the collapsed state across page loads. When set the component is self-managing for collapsed state; `dsNavToggle` still fires for consumers that want to observe the change.
           * @default ''
@@ -2542,9 +2597,13 @@ declare namespace LocalJSX {
         "dismissLabel": string;
     }
     interface DsBarNavAttributes {
+        "tabsJson": string;
         "value": string;
+        "actionsJson": string;
         "heading": string | undefined;
         "background": BarNavBackground;
+        "basePath": string;
+        "currentUrl": string;
     }
     interface DsBarNavActionAttributes {
         "icon": string;
@@ -2666,7 +2725,8 @@ declare namespace LocalJSX {
     interface DsPanelNavAttributes {
         "variant": PanelNavVariant;
         "disableViewTransition": boolean;
-        "groups": string;
+        "groups": string | PanelNavGroup[];
+        "routerMode": PanelNavRouterMode;
         "activeId": string;
         "collapsed": boolean;
         "breakpoint": number;

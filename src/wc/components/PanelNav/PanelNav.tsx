@@ -1,8 +1,9 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
-
-// Injected once per document to suppress the browser default cross-fade and
-// pin the new-state snapshot to a 0px circle so the WAAPI reveal has no flash.
-let vtStyleInjected = false;
+import {
+  deriveActiveIdFromUrl,
+  ensurePanelNavVtStyle,
+  parsePanelNavGroups,
+} from './panel-nav-utils';
 
 // Module-level WeakMaps for per-instance VT state. Using WeakMaps instead of
 // class fields avoids Stencil generating getter-only property descriptors on
@@ -18,19 +19,6 @@ type DocumentWithViewTransition = Document & {
 
 const vtTransitions = new WeakMap<object, ViewTransition>();
 const vtResolvers = new WeakMap<object, () => void>();
-function ensureVtStyle() {
-  if (vtStyleInjected) return;
-  const id = 'ds-panel-nav-vt-style';
-  if (document.getElementById(id)) { vtStyleInjected = true; return; }
-  const style = document.createElement('style');
-  style.id = id;
-  style.textContent = [
-    '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}',
-    '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
-  ].join('\n');
-  document.head.appendChild(style);
-  vtStyleInjected = true;
-}
 
 /** Parse a CSS <time> value to milliseconds. Handles `s`, `ms`, and unitless
  *  (assumed ms). Critically: `parseFloat('.75s')` is 0.75 — WAAPI treats that as
@@ -46,6 +34,7 @@ function parseCssTimeMs(value: string, fallback: number): number {
 }
 
 export type PanelNavVariant = 'dashboard' | 'settings';
+export type PanelNavRouterMode = 'anchor' | 'event';
 
 export interface PanelNavItem {
   id: string;
@@ -54,9 +43,8 @@ export interface PanelNavItem {
   /** Show a notification dot badge on the item */
   dot?: boolean;
   flag?: boolean;
-  /** When set, the item renders as an `<a>` element so any router that
-   *  intercepts anchor clicks (Angular Router, React Router, etc.) handles
-   *  navigation automatically. `dsNavSelect` still fires on click. */
+  /** Route path used for `currentUrl` matching. In `anchor` mode also sets `<a href>`.
+   *  In `event` mode navigation is delegated to the host via `dsNavSelect`. */
   href?: string;
 }
 
@@ -81,8 +69,13 @@ export class PanelNav {
    *  `withViewTransitions`), so the two don't fight or nest. */
   @Prop() disableViewTransition: boolean = false;
 
-  /** JSON string of `PanelNavGroup[]` */
-  @Prop() groups: string = '[]';
+  /** Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute. */
+  @Prop() groups: string | PanelNavGroup[] = '[]';
+
+  /** How items with `href` render:
+   *  - `anchor` (default): native `<a href>` — works with routers that intercept anchors.
+   *  - `event`: always `<button>`; host handles navigation via `dsNavSelect`. */
+  @Prop() routerMode: PanelNavRouterMode = 'anchor';
 
   /** ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set. */
   @Prop() activeId: string = '';
@@ -102,7 +95,7 @@ export class PanelNav {
 
   /** Current route URL (e.g. `window.location.pathname` or the router's active URL).
    *  When set the component derives the active item by matching item `href` values
-   *  against this string (longest prefix wins), overriding `activeId`. */
+   *  against this string (longest segment-boundary prefix wins), overriding `activeId`. */
   @Prop() currentUrl: string = '';
 
   /** Display name for the footer user section */
@@ -119,6 +112,9 @@ export class PanelNav {
 
   /** Emitted when the footer left button (gear / dashboard) is clicked. */
   @Event() dsNavFooterAction!: EventEmitter<void>;
+
+  /** Emitted when the footer user button is clicked. */
+  @Event() dsNavUserAction!: EventEmitter<void>;
 
   @Element() el!: HTMLElement;
 
@@ -166,13 +162,10 @@ export class PanelNav {
   }
 
   @Watch('groups')
-  onGroupsChange(val: string) {
-    try {
-      this.parsedGroups = JSON.parse(val);
-    } catch {
-      this.parsedGroups = [];
-    }
+  onGroupsChange(val: string | PanelNavGroup[]) {
+    this.parsedGroups = parsePanelNavGroups(val);
     this.syncRovingIndex();
+    this.syncActiveFromUrl();
   }
 
   @Watch('activeId')
@@ -206,7 +199,7 @@ export class PanelNav {
       return;
     }
 
-    ensureVtStyle();
+    ensurePanelNavVtStyle();
 
     const btn = this.el.querySelector('.panel-nav__footer-btn') as HTMLElement | null;
     const rect = btn?.getBoundingClientRect();
@@ -259,9 +252,6 @@ export class PanelNav {
   componentDidLoad() {
     this.checkScroll();
     if (this.breakpoint > 0) this.connectResizeObserver();
-    // Re-sync groups in case componentWillLoad ran before host bindings were applied
-    // (common with Angular's property binding timing)
-    this.onGroupsChange(this.groups);
   }
 
   componentDidRender() {
@@ -314,21 +304,13 @@ export class PanelNav {
   }
 
   /** Derive active ID from the current URL by matching item `href` values.
-   *  Uses longest-prefix match so `/fleet/detail` correctly activates `/fleet`. */
+   *  Uses longest segment-boundary prefix match. */
   private syncActiveFromUrl() {
     if (!this.currentUrl) {
       this.urlDerivedActiveId = '';
       return;
     }
-    let best: PanelNavItem | undefined;
-    let bestLen = 0;
-    for (const item of this.getAllItems()) {
-      if (item.href && this.currentUrl.startsWith(item.href) && item.href.length > bestLen) {
-        best = item;
-        bestLen = item.href.length;
-      }
-    }
-    this.urlDerivedActiveId = best?.id ?? '';
+    this.urlDerivedActiveId = deriveActiveIdFromUrl(this.currentUrl, this.getAllItems());
   }
 
   /** Centralised toggle: always emits `dsNavToggle`; when `storageKey` is set
@@ -390,6 +372,10 @@ export class PanelNav {
 
   private handleFooterAction() {
     this.dsNavFooterAction.emit();
+  }
+
+  private handleUserAction() {
+    this.dsNavUserAction.emit();
   }
 
   private clearEdgeOverlayTimer() {
@@ -492,7 +478,9 @@ export class PanelNav {
       onFocus: () => { this.rovingIndex = idx; },
     };
 
-    return item.href
+    const useAnchor = this.routerMode === 'anchor' && item.href;
+
+    return useAnchor
       ? <a {...sharedProps} href={item.href}>{itemContent}</a>
       : <button {...sharedProps} type="button">{itemContent}</button>;
   }
@@ -580,6 +568,7 @@ export class PanelNav {
               type="button"
               class="panel-nav__item panel-nav__footer-user"
               aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
+              onClick={() => this.handleUserAction()}
             >
               <span class="panel-nav__item-label panel-nav__footer-user-label">
                 <span class="panel-nav__item-label-text">

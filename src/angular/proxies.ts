@@ -87,14 +87,14 @@ export declare interface DsBanner extends Components.DsBanner {
 
 
 @ProxyCmp({
-  inputs: ['actions', 'background', 'heading', 'tabs', 'value']
+  inputs: ['actions', 'actionsJson', 'background', 'basePath', 'currentUrl', 'heading', 'tabs', 'tabsJson', 'value']
 })
 @Component({
   selector: 'ds-bar-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['actions', 'background', 'heading', 'tabs', 'value'],
+  inputs: ['actions', 'actionsJson', 'background', 'basePath', 'currentUrl', 'heading', 'tabs', 'tabsJson', 'value'],
   outputs: ['dsTabChange', 'dsActionChange'],
   standalone: false
 })
@@ -602,15 +602,15 @@ export declare interface DsPagination extends Components.DsPagination {
 
 
 @ProxyCmp({
-  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'storageKey', 'userInitial', 'userName', 'variant']
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'routerMode', 'storageKey', 'userInitial', 'userName', 'variant']
 })
 @Component({
   selector: 'ds-panel-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'storageKey', 'userInitial', 'userName', 'variant'],
-  outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction'],
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'routerMode', 'storageKey', 'userInitial', 'userName', 'variant'],
+  outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction', 'dsNavUserAction'],
   standalone: false
 })
 export class DsPanelNav {
@@ -618,6 +618,7 @@ export class DsPanelNav {
   @Output() dsNavSelect = new EventEmitter<CustomEvent<string>>();
   @Output() dsNavToggle = new EventEmitter<CustomEvent<boolean>>();
   @Output() dsNavFooterAction = new EventEmitter<CustomEvent<void>>();
+  @Output() dsNavUserAction = new EventEmitter<CustomEvent<void>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -638,6 +639,10 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
    * Emitted when the footer left button (gear / dashboard) is clicked.
    */
   dsNavFooterAction: EventEmitter<CustomEvent<void>>;
+  /**
+   * Emitted when the footer user button is clicked.
+   */
+  dsNavUserAction: EventEmitter<CustomEvent<void>>;
 }
 
 
