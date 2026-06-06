@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/zainadeel/compomo/compare/v0.11.0...v0.11.1) (2026-06-06)
+
+
+### Fixed
+
+* **nav:** sync host props after Angular assigns groups and tabs ([#128](https://github.com/zainadeel/compomo/issues/128)) ([9ac0545](https://github.com/zainadeel/compomo/commit/9ac05456bbc5a61ac04923580fc17c5e57d4b422))
+
 ## [0.11.0](https://github.com/zainadeel/compomo/compare/v0.10.3...v0.11.0) (2026-06-06)
 
 
