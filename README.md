@@ -34,6 +34,8 @@ Then import CompoMo components (Angular proxies):
 import { Button, Text, Surface, Card } from '@ds-mo/ui';
 ```
 
+**SPA hosts (Angular / React):** `ds-panel-nav` and `ds-bar-nav` need a [first-paint integration contract](docs/framework-integration.md) on hard reload — set a document variant hint or element attributes before the custom element upgrades.
+
 ## Components
 
 ### Primitives

@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  PANEL_NAV_VARIANT_HINT_ATTR,
   countPanelNavItems,
   deriveActiveIdFromUrl,
   hrefMatchesPath,
@@ -49,6 +50,16 @@ describe('resolvePanelNavVariant', () => {
 
   it('falls back to prop when attribute is absent', () => {
     assert.equal(resolvePanelNavVariant('settings', null), 'settings');
+  });
+
+  it('reads document hint before prop default', () => {
+    assert.equal(resolvePanelNavVariant('dashboard', null, 'settings'), 'settings');
+  });
+});
+
+describe('PANEL_NAV_VARIANT_HINT_ATTR', () => {
+  it('names the document hint attribute', () => {
+    assert.equal(PANEL_NAV_VARIANT_HINT_ATTR, 'data-panel-nav-variant');
   });
 });
 
