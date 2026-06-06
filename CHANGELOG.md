@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.3](https://github.com/zainadeel/compomo/compare/v0.11.2...v0.11.3) (2026-06-06)
+
+
+### Fixed
+
+* **panel-nav:** read document variant hint on framework hard reload ([#132](https://github.com/zainadeel/compomo/issues/132)) ([8b0ccb8](https://github.com/zainadeel/compomo/commit/8b0ccb8c9dbe153bbaafe422b6893d1e93d6734c))
+
 ## [0.11.2](https://github.com/zainadeel/compomo/compare/v0.11.1...v0.11.2) (2026-06-06)
 
 
