@@ -38,6 +38,7 @@
   --_hover-bg: var(--color-interaction-hover);
   --_pressed-bg: var(--color-interaction-pressed);
   --_dot: var(--color-foreground-bold-brand);
+  --_dot-ring: var(--color-background-secondary);
 }
 
 /* Interaction layer — same pattern as PanelNav */
@@ -71,40 +72,47 @@
 /* Vertical tabs read as a list — left-align the label */
 .tab-list--vertical .tab { justify-content: flex-start; }
 
-/* Label — 2px inset matches the Figma text-label frame */
-.tab__label {
-  position: relative;
-  padding: 0 var(--dimension-space-025);
-  white-space: nowrap;
-}
-
-/* Notification dot — 20×20 icon-slot wrapper, dot circle inside */
-.tab__dot-wrap {
+/* Label zone — dot anchors top-right like BarNav action icons */
+.tab__label-wrap {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
+  padding: 0 var(--dimension-space-025);
   flex-shrink: 0;
 }
 
+.tab__label-wrap--dot {
+  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-075));
+}
+
+.tab__label {
+  white-space: nowrap;
+}
+
+/* Notification dot — top-right corner of the label zone */
 .tab__dot {
+  position: absolute;
+  top: 0;
+  right: 0;
   width: var(--dimension-space-075);
   height: var(--dimension-space-075);
   border-radius: var(--dimension-radius-full, 9999px);
   background: var(--_dot);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_dot-ring);
+  pointer-events: none;
 }
 
 /* Background context */
 .on-medium {
   --_hover-bg: var(--color-interaction-on-medium-background-hover);
   --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
+  --_dot-ring: var(--color-background-medium);
 }
 
 .on-bold {
   --_hover-bg: var(--color-interaction-on-bold-background-hover);
   --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
+  --_dot-ring: var(--color-background-bold);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -113,6 +121,7 @@
 .on-strong {
   --_hover-bg: var(--color-interaction-on-strong-background-hover);
   --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
+  --_dot-ring: var(--color-background-strong);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -121,6 +130,7 @@
 .on-always-dark {
   --_hover-bg: var(--color-always-dark-interaction-hover);
   --_pressed-bg: var(--color-always-dark-interaction-pressed);
+  --_dot-ring: var(--color-always-dark-background);
   color: var(--color-always-dark-foreground-secondary);
 }
 
