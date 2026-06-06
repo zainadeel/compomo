@@ -1,6 +1,10 @@
-import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Watch, State, h, Host } from '@stencil/core';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
 import type { TabItem } from '../TabGroup/TabGroup';
+import {
+  deriveBarNavValueFromUrl,
+  parseJsonArrayProp,
+} from './bar-nav-utils';
 
 export type BarNavBackground = 'primary' | 'secondary' | 'transparent' | 'translucent';
 
@@ -32,18 +36,24 @@ export interface BarNavActionItem {
 export class BarNav {
   /**
    * Tab items for the left section.
-   * Set via JS property: `el.tabs = [...]`
+   * Set via JS property: `el.tabs = [...]`. Replace the array reference to update.
    */
   @Prop() tabs: BarNavTab[] = [];
 
-  /** ID of the currently active tab. */
+  /** JSON fallback for `tabs` — useful when framework bindings don't propagate arrays. */
+  @Prop({ attribute: 'tabs-json' }) tabsJson: string = '';
+
+  /** ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set. */
   @Prop({ mutable: true }) value: string = '';
 
   /**
    * Action items rendered in the right section.
-   * Set via JS property: `el.actions = [...]`
+   * Set via JS property: `el.actions = [...]`. Replace the array reference to update.
    */
   @Prop() actions: BarNavActionItem[] = [];
+
+  /** JSON fallback for `actions` — useful when framework bindings don't propagate arrays. */
+  @Prop({ attribute: 'actions-json' }) actionsJson: string = '';
 
   /**
    * Fallback heading shown when no tabs are provided.
@@ -54,11 +64,69 @@ export class BarNav {
   /** Surface background variant. */
   @Prop() background: BarNavBackground = 'secondary';
 
+  /** Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`. */
+  @Prop() basePath: string = '';
+
+  /** Current route URL. When set with `basePath`, the active tab is derived automatically. */
+  @Prop() currentUrl: string = '';
+
   /** Emitted when the active tab changes. Detail = tab id. */
   @Event() dsTabChange!: EventEmitter<string>;
 
   /** Emitted when an action button is toggled. Detail = { id, selected }. */
   @Event() dsActionChange!: EventEmitter<{ id: string; selected: boolean }>;
+
+  @State() private resolvedTabs: BarNavTab[] = [];
+  @State() private resolvedActions: BarNavActionItem[] = [];
+  @State() private urlDerivedValue: string = '';
+  @State() private hideTabsForDetailRoute = false;
+
+  private get effectiveValue(): string {
+    if (this.currentUrl && this.basePath) {
+      return this.urlDerivedValue;
+    }
+    return this.value;
+  }
+
+  @Watch('tabs')
+  @Watch('tabsJson')
+  @Watch('actions')
+  @Watch('actionsJson')
+  onPropsChange() {
+    this.resolvedTabs = this.tabsJson
+      ? parseJsonArrayProp(this.tabsJson, [])
+      : (this.tabs ?? []);
+    this.resolvedActions = this.actionsJson
+      ? parseJsonArrayProp(this.actionsJson, [])
+      : (this.actions ?? []);
+    this.syncValueFromUrl();
+  }
+
+  @Watch('currentUrl')
+  @Watch('basePath')
+  onUrlChange() {
+    this.syncValueFromUrl();
+  }
+
+  componentWillLoad() {
+    this.onPropsChange();
+  }
+
+  private syncValueFromUrl() {
+    if (!this.currentUrl || !this.basePath) {
+      this.urlDerivedValue = '';
+      this.hideTabsForDetailRoute = false;
+      return;
+    }
+
+    const { value, hideTabs } = deriveBarNavValueFromUrl(
+      this.currentUrl,
+      this.basePath,
+      this.resolvedTabs,
+    );
+    this.urlDerivedValue = value;
+    this.hideTabsForDetailRoute = hideTabs;
+  }
 
   private handleTabChange(e: Event) {
     const id = (e as CustomEvent<string>).detail;
@@ -72,7 +140,7 @@ export class BarNav {
   }
 
   render() {
-    const hasTabs = this.tabs.length > 0;
+    const hasTabs = this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
 
     // Map BarNavBackground → BarNavActionBackground for context pass-through.
     // primary/secondary/transparent/translucent are all light — no override needed.
@@ -87,8 +155,8 @@ export class BarNav {
             {hasTabs
               ? (
                 <ds-tab-group
-                  tabs={this.tabs as TabItem[]}
-                  value={this.value}
+                  tabs={this.resolvedTabs as TabItem[]}
+                  value={this.effectiveValue}
                   onDsChange={(e: Event) => this.handleTabChange(e)}
                 />
               )
@@ -98,9 +166,9 @@ export class BarNav {
             }
           </div>
 
-          {this.actions.length > 0 && (
+          {this.resolvedActions.length > 0 && (
             <div class="bar-nav__actions">
-              {this.actions.map(action => (
+              {this.resolvedActions.map(action => (
                 <ds-bar-nav-action
                   key={action.id}
                   icon={action.icon}
