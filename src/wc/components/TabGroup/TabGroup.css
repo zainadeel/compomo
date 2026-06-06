@@ -72,17 +72,18 @@
 /* Vertical tabs read as a list — left-align the label */
 .tab-list--vertical .tab { justify-content: flex-start; }
 
-/* Label zone — dot anchors top-right like BarNav action icons */
-.tab__label-wrap {
+/* Label — dot anchors top-right like BarNav action icon zone */
+.tab__label {
   position: relative;
   display: inline-flex;
   align-items: center;
   padding: 0 var(--dimension-space-025);
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-.tab__label {
-  white-space: nowrap;
+/* Clearance for top-right dot — slightly less than space-025 + space-075 */
+.tab__label--dot {
+  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
 }
 
 /* Notification dot — top-right corner of the label zone */
