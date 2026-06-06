@@ -42,18 +42,39 @@ export function parsePanelNavGroups(groups: string | unknown): PanelNavGroup[] {
   return [];
 }
 
+/** `document.documentElement` attribute for pre-bootstrap variant hints (SPA hard reload). */
+export const PANEL_NAV_VARIANT_HINT_ATTR = 'data-panel-nav-variant';
+
 /** Parse `variant` from a host attribute value. */
 export function readPanelNavVariantAttr(attr: string | null): PanelNavVariant | undefined {
   if (attr === 'settings' || attr === 'dashboard') return attr;
   return undefined;
 }
 
-/** Resolve initial variant — prefer host attribute when present (hard reload before JS props). */
+/** Set a document-level variant hint before the custom element upgrades (hard reload). */
+export function setPanelNavVariantHint(variant: PanelNavVariant): void {
+  if (typeof document === 'undefined') return;
+  document.documentElement.setAttribute(PANEL_NAV_VARIANT_HINT_ATTR, variant);
+}
+
+export function clearPanelNavVariantHint(): void {
+  if (typeof document === 'undefined') return;
+  document.documentElement.removeAttribute(PANEL_NAV_VARIANT_HINT_ATTR);
+}
+
+/** Resolve initial variant — host attr, then document hint, then prop default. */
 export function resolvePanelNavVariant(
   variantProp: PanelNavVariant,
   variantAttr: string | null,
+  documentVariantAttr: string | null = typeof document !== 'undefined'
+    ? document.documentElement.getAttribute(PANEL_NAV_VARIANT_HINT_ATTR)
+    : null,
 ): PanelNavVariant {
-  return readPanelNavVariantAttr(variantAttr) ?? variantProp;
+  return (
+    readPanelNavVariantAttr(variantAttr) ??
+    readPanelNavVariantAttr(documentVariantAttr) ??
+    variantProp
+  );
 }
 
 /** Resolve whether VT is disabled from prop and/or host attribute. */
