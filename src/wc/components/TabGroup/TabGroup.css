@@ -81,10 +81,6 @@
   flex-shrink: 0;
 }
 
-.tab__label-wrap--dot {
-  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-075));
-}
-
 .tab__label {
   white-space: nowrap;
 }
