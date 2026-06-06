@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/zainadeel/compomo/compare/v0.11.1...v0.11.2) (2026-06-06)
+
+
+### Fixed
+
+* **panel-nav:** resync renderedVariant on Angular first paint ([#130](https://github.com/zainadeel/compomo/issues/130)) ([f6fed20](https://github.com/zainadeel/compomo/commit/f6fed20d339e0631fd92bfa36323866fa5e98b17))
+
 ## [0.11.1](https://github.com/zainadeel/compomo/compare/v0.11.0...v0.11.1) (2026-06-06)
 
 
