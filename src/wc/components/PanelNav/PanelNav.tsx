@@ -3,6 +3,7 @@ import {
   deriveActiveIdFromUrl,
   ensurePanelNavVtStyle,
   parsePanelNavGroups,
+  shouldResyncPanelNavGroups,
 } from './panel-nav-utils';
 
 // Module-level WeakMaps for per-instance VT state. Using WeakMaps instead of
@@ -143,6 +144,8 @@ export class PanelNav {
 
   @State() private showEdgeOverlay = false;
 
+  private static readonly HOST_PROP_SYNC_BUDGET = 8;
+
   /** The ID that should be treated as active. `currentUrl` matching takes precedence
    *  over `activeId` when both are present. */
   private get effectiveActiveId(): string {
@@ -250,6 +253,8 @@ export class PanelNav {
   }
 
   componentDidLoad() {
+    this.syncHostPropsIfNeeded();
+    this.scheduleDeferredHostPropSync();
     this.checkScroll();
     if (this.breakpoint > 0) this.connectResizeObserver();
   }
@@ -311,6 +316,27 @@ export class PanelNav {
       return;
     }
     this.urlDerivedActiveId = deriveActiveIdFromUrl(this.currentUrl, this.getAllItems());
+  }
+
+  /** Re-parse props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
+  private syncHostPropsIfNeeded() {
+    if (shouldResyncPanelNavGroups(this.parsedGroups, this.groups)) {
+      this.onGroupsChange(this.groups);
+    } else if (this.currentUrl) {
+      this.syncActiveFromUrl();
+    }
+  }
+
+  /** Poll across animation frames — host props may land without triggering @Watch. */
+  private scheduleDeferredHostPropSync() {
+    let remaining = PanelNav.HOST_PROP_SYNC_BUDGET;
+    const tick = () => {
+      this.syncHostPropsIfNeeded();
+      if (--remaining > 0) {
+        requestAnimationFrame(tick);
+      }
+    };
+    queueMicrotask(tick);
   }
 
   /** Centralised toggle: always emits `dsNavToggle`; when `storageKey` is set

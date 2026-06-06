@@ -387,6 +387,77 @@ const ROUTER_GROUPS: PanelNavGroup[] = DASHBOARD_GROUPS.map(g => ({
   })),
 }));
 
+const DASHBOARD_ITEM_COUNT = DASHBOARD_GROUPS.reduce((n, g) => n + g.items.length, 0);
+
+/** Simulate Angular ngAfterViewInit: props land after customElements.whenDefined. */
+function assignPanelNavAfterUpgrade(
+  navId: string,
+  statusId: string,
+  assign: (el: HTMLElement & Record<string, unknown>) => void,
+) {
+  customElements.whenDefined('ds-panel-nav').then(() => {
+    requestAnimationFrame(() => {
+      const el = document.getElementById(navId) as HTMLElement & Record<string, unknown> | null;
+      const status = document.getElementById(statusId);
+      if (!el || !status) return;
+      assign(el);
+      requestAnimationFrame(() => {
+        const count = el.querySelectorAll('.panel-nav__body .panel-nav__item').length;
+        const mode = (el as HTMLElement & { routerMode?: string }).routerMode ?? 'anchor';
+        const anchors = el.querySelectorAll('.panel-nav__body a.panel-nav__item').length;
+        const buttons = el.querySelectorAll('.panel-nav__body button.panel-nav__item').length;
+        status.textContent =
+          `${count} nav items · routerMode=${mode} · ${anchors} anchors / ${buttons} buttons`;
+      });
+    });
+  });
+}
+
+export const AngularHostTiming: Story = {
+  name: 'Angular host timing',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Mounts an empty `<ds-panel-nav>`, then assigns `groups` and `routerMode` after ' +
+          '`customElements.whenDefined` (simulates Angular `ngAfterViewInit`). Expects all nav items ' +
+          'to render as buttons without JSON.stringify or double-assignment.',
+      },
+    },
+  },
+  render: () => {
+    assignPanelNavAfterUpgrade('angular-timing-nav', 'angular-timing-status', el => {
+      el.groups = ROUTER_GROUPS;
+      el.routerMode = 'event';
+      el.currentUrl = '/dashboard/fleet-view/live-map';
+    });
+
+    return html`
+      <div style="
+        display: flex;
+        height: 100vh;
+        background: ${VARIANT_BG['dashboard']};
+        font-family: var(--typography-font-family, system-ui);
+      ">
+        <ds-panel-nav
+          id="angular-timing-nav"
+          variant="dashboard"
+          router-mode="event"
+          user-name="Zain Adeel"
+          user-initial="Z"
+          disable-view-transition
+        ></ds-panel-nav>
+        <div style="flex:1; padding:24px; color:rgba(255,255,255,0.55); font-size:13px;">
+          <p style="margin:0 0 8px;">
+            Props assigned after upgrade — expect <strong>${DASHBOARD_ITEM_COUNT}</strong> nav items.
+          </p>
+          <p style="margin:0;" id="angular-timing-status">Waiting for host prop assignment…</p>
+        </div>
+      </div>
+    `;
+  },
+};
+
 export const RouterModeEvent: Story = {
   name: 'Router mode — event (SPA)',
   render: () => {

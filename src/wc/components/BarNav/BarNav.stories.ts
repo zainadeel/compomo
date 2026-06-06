@@ -120,6 +120,57 @@ export const ActionsOnly: Story = {
   `,
 };
 
+function assignBarNavAfterUpgrade(
+  navId: string,
+  statusId: string,
+  assign: (el: HTMLElement & Record<string, unknown>) => void,
+) {
+  customElements.whenDefined('ds-bar-nav').then(() => {
+    requestAnimationFrame(() => {
+      const el = document.getElementById(navId) as HTMLElement & Record<string, unknown> | null;
+      const status = document.getElementById(statusId);
+      if (!el || !status) return;
+      assign(el);
+      requestAnimationFrame(() => {
+        const tabs = el.querySelectorAll('ds-tab-group ds-tab, ds-tab-group button').length;
+        status.textContent = `${tabs} tabs rendered · basePath=${String(el.basePath)} · currentUrl=${String(el.currentUrl)}`;
+      });
+    });
+  });
+}
+
+export const AngularHostTiming: Story = {
+  name: 'Angular host timing',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Mounts an empty `<ds-bar-nav>`, then assigns `tabs`, `basePath`, and `currentUrl` after ' +
+          'upgrade (simulates Angular `ngAfterViewInit`). Expects the tab group to render without JSON fallbacks.',
+      },
+    },
+  },
+  render: () => {
+    assignBarNavAfterUpgrade('angular-bar-nav', 'angular-bar-status', el => {
+      el.tabs = safetyTabs;
+      el.actions = defaultActions;
+      el.basePath = '/dashboard/safety';
+      el.currentUrl = '/dashboard/safety/events';
+      el.heading = 'Safety';
+    });
+
+    return html`
+      <div style="width:900px; font-family: var(--typography-font-family, system-ui);">
+        <p style="font-size:13px; color:var(--color-foreground-secondary); margin:0 0 12px;">
+          Props assigned after upgrade — expect <strong>${safetyTabs.length}</strong> tabs (Events selected).
+        </p>
+        <p style="font-size:12px; margin:0 0 12px;" id="angular-bar-status">Waiting for host prop assignment…</p>
+        <ds-bar-nav id="angular-bar-nav"></ds-bar-nav>
+      </div>
+    `;
+  },
+};
+
 export const UrlDrivenTabs: Story = {
   name: 'URL-driven tab selection',
   render: () => {
