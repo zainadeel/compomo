@@ -5,7 +5,10 @@ import {
   deriveActiveIdFromUrl,
   hrefMatchesPath,
   parsePanelNavGroups,
+  resolvePanelNavDisableVt,
+  resolvePanelNavVariant,
   shouldResyncPanelNavGroups,
+  shouldResyncPanelNavVariant,
 } from '../src/wc/components/PanelNav/panel-nav-utils';
 import type { PanelNavGroup, PanelNavItem } from '../src/wc/components/PanelNav/PanelNav';
 
@@ -26,6 +29,40 @@ describe('hrefMatchesPath', () => {
 
   it('does not false-positive on sibling prefixes', () => {
     assert.equal(hrefMatchesPath('/dashboard/fleet-cards/overview', '/dashboard/fleet'), false);
+  });
+});
+
+describe('shouldResyncPanelNavVariant', () => {
+  it('returns true when renderedVariant lags variant prop', () => {
+    assert.equal(shouldResyncPanelNavVariant('dashboard', 'settings'), true);
+  });
+
+  it('returns false when renderedVariant matches variant prop', () => {
+    assert.equal(shouldResyncPanelNavVariant('settings', 'settings'), false);
+  });
+});
+
+describe('resolvePanelNavVariant', () => {
+  it('prefers host attribute on hard reload before JS props land', () => {
+    assert.equal(resolvePanelNavVariant('dashboard', 'settings'), 'settings');
+  });
+
+  it('falls back to prop when attribute is absent', () => {
+    assert.equal(resolvePanelNavVariant('settings', null), 'settings');
+  });
+});
+
+describe('resolvePanelNavDisableVt', () => {
+  it('returns true when disable-view-transition attribute is set', () => {
+    assert.equal(resolvePanelNavDisableVt(false, ''), true);
+  });
+
+  it('returns true when prop is set', () => {
+    assert.equal(resolvePanelNavDisableVt(true, null), true);
+  });
+
+  it('returns false when neither prop nor attribute is set', () => {
+    assert.equal(resolvePanelNavDisableVt(false, null), false);
   });
 });
 
