@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/zainadeel/compomo/compare/v0.10.3...v0.11.0) (2026-06-06)
+
+
+### Added
+
+* **nav:** harden PanelNav and BarNav for SPA framework integration ([#126](https://github.com/zainadeel/compomo/issues/126)) ([6f3b2ce](https://github.com/zainadeel/compomo/commit/6f3b2ce2cee4ba41c7578789520e12f27356816a))
+
 ## [0.10.3](https://github.com/zainadeel/compomo/compare/v0.10.2...v0.10.3) (2026-06-03)
 
 
