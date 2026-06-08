@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/zainadeel/compomo/compare/v0.11.3...v0.12.0) (2026-06-08)
+
+
+### Added
+
+* **TabGroup:** add in-tablist divider for grouped tabs ([#134](https://github.com/zainadeel/compomo/issues/134)) ([17b1da0](https://github.com/zainadeel/compomo/commit/17b1da0d5d84453ad71ff0e5bb1398b12071a1ef))
+
 ## [0.11.3](https://github.com/zainadeel/compomo/compare/v0.11.2...v0.11.3) (2026-06-06)
 
 
