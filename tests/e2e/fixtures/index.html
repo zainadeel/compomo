@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>BarNav overflow e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--typography-font-family, system-ui);
+        background: var(--color-background-primary);
+      }
+      #shell {
+        width: var(--shell-width, 900px);
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="shell">
+      <ds-bar-nav id="nav"></ds-bar-nav>
+    </div>
+    <script type="module" src="/setup.mjs"></script>
+  </body>
+</html>

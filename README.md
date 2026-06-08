@@ -36,6 +36,8 @@ import { Button, Text, Surface, Card } from '@ds-mo/ui';
 
 **SPA hosts (Angular / React):** `ds-panel-nav` and `ds-bar-nav` need a [first-paint integration contract](docs/framework-integration.md) on hard reload — set a document variant hint or element attributes before the custom element upgrades.
 
+**After upgrading `@ds-mo/ui`:** restart your dev server and hard-reload the browser. HMR often leaves stale custom-element definitions; BarNav overflow (`.bar-nav__tabs-probe`) will not appear until the new chunk loads. See [framework integration — `ds-bar-nav`](docs/framework-integration.md#ds-bar-nav--responsive-tab-overflow).
+
 ## Components
 
 ### Primitives

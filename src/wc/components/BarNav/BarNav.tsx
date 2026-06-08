@@ -17,6 +17,10 @@ import {
   shouldResyncBarNavProps,
 } from './bar-nav-utils';
 import {
+  getTabListFromTabGroup,
+  queryWithinComponentHost,
+} from './bar-nav-dom-utils';
+import {
   getActiveTab,
   getActiveTabLabel,
   tabsOverflowContainer,
@@ -96,6 +100,7 @@ export class BarNav {
   @State() private menuOpen = false;
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
+  private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
 
   private leftEl: HTMLElement | null = null;
   private triggerEl: HTMLButtonElement | null = null;
@@ -104,6 +109,7 @@ export class BarNav {
   private probeTabGroupEl: HTMLDsTabGroupElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
+  private intrinsicWidthRetryCount = 0;
 
   private get effectiveValue(): string {
     if (this.currentUrl && this.basePath) {
@@ -132,6 +138,7 @@ export class BarNav {
       ? parseJsonArrayProp(this.actionsJson, [])
       : (this.actions ?? []);
     this.syncValueFromUrl();
+    this.intrinsicWidthRetryCount = 0;
     this.scheduleOverflowCheck();
   }
 
@@ -260,8 +267,14 @@ export class BarNav {
   }
 
   private getTabsIntrinsicWidth(): number {
-    const tabList = this.probeTabGroupEl?.querySelector('[role="tablist"]') as HTMLElement | null;
+    const tabList = getTabListFromTabGroup(this.probeTabGroupEl);
     return tabList?.scrollWidth ?? 0;
+  }
+
+  private scheduleIntrinsicWidthRetry() {
+    if (this.intrinsicWidthRetryCount >= BarNav.INTRINSIC_WIDTH_RETRY_MAX) return;
+    this.intrinsicWidthRetryCount++;
+    requestAnimationFrame(() => this.scheduleOverflowCheck());
   }
 
   private updateTabsCollapsed() {
@@ -270,11 +283,16 @@ export class BarNav {
         this.tabsCollapsed = false;
         this.menuOpen = false;
       }
+      this.intrinsicWidthRetryCount = 0;
       return;
     }
 
     const intrinsicWidth = this.getTabsIntrinsicWidth();
-    if (intrinsicWidth === 0) return;
+    if (intrinsicWidth === 0) {
+      this.scheduleIntrinsicWidthRetry();
+      return;
+    }
+    this.intrinsicWidthRetryCount = 0;
 
     const shouldCollapse = tabsOverflowContainer(
       intrinsicWidth,
@@ -336,9 +354,10 @@ export class BarNav {
 
   /** Move focus to the selected tab in the visible tab group (after expand). */
   private focusVisibleSelectedTab() {
-    const tab = this.visibleTabGroupEl?.querySelector(
+    const tab = queryWithinComponentHost(
+      this.visibleTabGroupEl,
       `[data-tab-id="${this.effectiveValue}"]`,
-    ) as HTMLElement | null;
+    );
     tab?.focus({ preventScroll: true });
   }
 
@@ -407,7 +426,11 @@ export class BarNav {
               <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
                 <ds-tab-group
                   ref={el => {
-                    this.probeTabGroupEl = el as HTMLDsTabGroupElement;
+                    this.probeTabGroupEl = (el as HTMLDsTabGroupElement) ?? null;
+                    if (el) {
+                      this.intrinsicWidthRetryCount = 0;
+                      this.scheduleOverflowCheck();
+                    }
                   }}
                   tabs={this.resolvedTabs}
                   value={this.effectiveValue}

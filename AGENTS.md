@@ -67,6 +67,9 @@ release-please-config.json      # Release Please config (node, changelog section
 
 ```bash
 npm run build            # Stencil compiler build → dist/
+npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, etc.)
+npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
+npm run test:e2e:install # One-time Chromium for Playwright
 npm run dev              # Stencil build then Storybook dev server on :6006
 npm run storybook:build  # Build static Storybook
 npm run typecheck        # tsc --noEmit (checks legacy React source)
@@ -374,6 +377,8 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | Token-showcase stories | `src/stories/*.stories.tsx` |
 | Usage docs (MDX) | `src/docs/*.mdx` |
 | Component registry logic | `scripts/build-registry.mjs` |
+| BarNav overflow + SPA/HMR integration | `docs/framework-integration.md` |
+| BarNav overflow e2e tests | `tests/e2e/bar-nav-overflow.spec.ts` |
 | MCP server | `scripts/mcp-server.mjs` |
 | Stencil build config | `stencil.config.ts` |
 | Release changelog sections | `release-please-config.json` |

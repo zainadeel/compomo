@@ -309,6 +309,7 @@ export class Menu {
                       'menu-item--focused': isFocused,
                     }}
                     role="menuitem"
+                    aria-current={item.isSelected ? 'true' : undefined}
                     disabled={item.isInactive}
                     tabIndex={isFocused ? 0 : -1}
                     onClick={() => this.handleItemClick(item)}
