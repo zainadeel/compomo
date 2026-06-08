@@ -120,6 +120,55 @@ export const WithTabDivider: Story = {
   `,
 };
 
+const manyTabs = [
+  { id: 'live-map', label: 'Live Map' },
+  { id: 'location-history', label: 'Location History' },
+  { id: 'trips', label: 'Trips' },
+  { id: 'overview', label: 'Overview' },
+  { id: 'events', label: 'Events', dot: true },
+  { id: 'requests', label: 'Requests' },
+];
+
+export const ResponsiveTabCollapse: Story = {
+  name: 'Responsive tab collapse',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When tabs overflow the left zone (actions stay pinned on the right), all tabs collapse ' +
+          'into a single tab-styled trigger with the active label and ChevronDown. Opens `ds-menu` for selection.',
+      },
+    },
+    layout: 'padded',
+  },
+  render: () => html`
+    <div
+      style="width: min(100%, 420px); resize: horizontal; overflow: auto; padding-bottom: 16px; border: 1px dashed var(--color-border-tertiary);"
+      ${ref(el => {
+        if (!el) return;
+        const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
+          tabs: typeof manyTabs;
+          actions: typeof defaultActions;
+          value: string;
+        } | null;
+        if (!nav) return;
+        nav.tabs = manyTabs;
+        nav.actions = defaultActions;
+        nav.value = 'events';
+        nav.addEventListener('dsTabChange', (e: Event) => {
+          nav.value = (e as CustomEvent<string>).detail;
+        });
+      })}
+    >
+      <p style="font-size:12px; color:var(--color-foreground-secondary); margin:0 0 12px;">
+        Drag the container edge to resize — narrow widths collapse tabs into a menu trigger.
+        Events is selected by default to show its notification dot (also on action icons).
+      </p>
+      <ds-bar-nav></ds-bar-nav>
+    </div>
+  `,
+};
+
 export const WithDotOnTab: Story = {
   name: 'Tab dot + action dots (Safety)',
   render: () => html`

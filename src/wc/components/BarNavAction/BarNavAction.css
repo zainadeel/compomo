@@ -26,7 +26,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--dimension-radius-025, 2px);
+  border-radius: var(--dimension-radius-025);
   background: transparent;
   pointer-events: none;
   transition: background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
@@ -88,8 +88,8 @@
 
 .action-btn__icon-wrap {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -101,10 +101,10 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: var(--dimension-space-075);
-  height: var(--dimension-space-075);
-  border-radius: var(--dimension-radius-full, 9999px);
+  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  border-radius: var(--dimension-radius-half);
   background: var(--color-foreground-bold-brand);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_dot-ring);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_dot-ring);
   pointer-events: none;
 }

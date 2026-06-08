@@ -22,10 +22,12 @@
   -webkit-backdrop-filter: blur(var(--effect-blur-md));
 }
 
-/* Left zone — tabs fill available space */
+/* Left zone — always consume remaining header width (even when collapsed to a narrow trigger) */
 .bar-nav__left {
-  flex: 1;
+  position: relative;
+  flex: 1 1 0%;
   min-width: 0;
+  width: 0;
   display: flex;
   align-items: center;
 }
@@ -33,6 +35,115 @@
 .bar-nav__left ds-tab-group {
   flex: 1;
   min-width: 0;
+}
+
+/* Unconstrained width so intrinsic tab row width is measurable while collapsed */
+.bar-nav__tabs-probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: visible;
+  width: max-content;
+  max-width: none;
+  z-index: -1;
+}
+
+.bar-nav__tabs-probe ds-tab-group {
+  width: max-content;
+}
+
+.bar-nav__tabs-visible {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Collapsed tab trigger — tab interaction pattern, not ds-button */
+.bar-nav__tab-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dimension-space-050);
+  max-width: 100%;
+  padding: var(--dimension-space-075);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--dimension-radius-025);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  color: var(--color-foreground-primary);
+  position: relative;
+  transition: color var(--effect-motion-short-2);
+  flex-shrink: 1;
+  min-width: 0;
+  height: var(--dimension-size-400);
+  box-sizing: border-box;
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+  --_dot: var(--color-foreground-bold-brand);
+  --_dot-ring: var(--color-background-secondary);
+}
+
+.bar-nav__tab-trigger::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  pointer-events: none;
+  transition: background var(--effect-animation-duration-short-3) var(--effect-animation-easing-ease-out);
+}
+
+.bar-nav__tab-trigger:hover::after {
+  background: var(--_hover-bg);
+  transition: none;
+}
+
+.bar-nav__tab-trigger:active::after {
+  background: var(--_pressed-bg);
+  transition: none;
+}
+
+.bar-nav__tab-trigger:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+.bar-nav__tab-trigger--open::after {
+  background: var(--_hover-bg);
+}
+
+.bar-nav__tab-trigger-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 var(--dimension-space-025);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-nav__tab-trigger-label--dot {
+  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
+}
+
+.bar-nav__tab-trigger-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  border-radius: var(--dimension-radius-half);
+  background: var(--_dot);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_dot-ring);
+  pointer-events: none;
+}
+
+.bar-nav__tab-trigger-chevron {
+  flex-shrink: 0;
 }
 
 /* Fallback heading when no tabs — matches a single (selected) tab so the area

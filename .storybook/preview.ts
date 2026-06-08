@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/web-components';
 import '@ds-mo/tokens';
+import '@ds-mo/tokens/dimensions';
 import '@ds-mo/tokens/reset';
 import '@ds-mo/tokens/globals';
 import '@ds-mo/tokens/utilities';

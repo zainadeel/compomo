@@ -55,6 +55,11 @@
 .tab:hover::after  { background: var(--_hover-bg);   transition: none; }
 .tab:active::after { background: var(--_pressed-bg);  transition: none; }
 
+/* Focus ring only — no persistent hover fill from keyboard focus */
+.tab:focus-visible:not(:hover):not(:active)::after {
+  background: transparent;
+}
+
 .tab--selected { color: var(--color-foreground-primary); }
 
 .tab:focus-visible {
@@ -91,11 +96,11 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: var(--dimension-space-075);
-  height: var(--dimension-space-075);
-  border-radius: var(--dimension-radius-full, 9999px);
+  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  border-radius: var(--dimension-radius-half);
   background: var(--_dot);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_dot-ring);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_dot-ring);
   pointer-events: none;
 }
 
