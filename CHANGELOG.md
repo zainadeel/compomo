@@ -9,9 +9,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+* **BarNav:** collapsed tab menu trigger uses **`md`** icon size for `ChevronDown` (was `sm`).
+
 ### Fixed
 
-* **BarNav:** defer the expanded tab strip (and collapsed trigger) until the first overflow measurement so the full tab row does not flash for a frame before collapsing on narrow viewports.
+* **BarNav:** observe the intrinsic-width probe with `ResizeObserver` and allow more measurement retries so narrow hard reloads do not commit an expanded tab row while `ds-tab-group` still reports `scrollWidth === 0`.
 
 ## [0.14.0](https://github.com/zainadeel/compomo/compare/v0.13.0...v0.14.0) (2026-06-08)
 

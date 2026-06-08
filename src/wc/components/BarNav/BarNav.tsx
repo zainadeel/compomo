@@ -102,7 +102,8 @@ export class BarNav {
   @State() private tabLayoutCommitted = false;
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
-  private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
+  /** Tablist scrollWidth is often 0 for the first few frames while `ds-tab-group` hydrates — too few retries commits expanded and never collapses on narrow hard reloads. */
+  private static readonly INTRINSIC_WIDTH_RETRY_MAX = 20;
 
   private leftEl: HTMLElement | null = null;
   private triggerEl: HTMLButtonElement | null = null;
@@ -110,6 +111,7 @@ export class BarNav {
   private visibleTabGroupEl: HTMLDsTabGroupElement | null = null;
   private probeTabGroupEl: HTMLDsTabGroupElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private probeResizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
 
@@ -209,6 +211,20 @@ export class BarNav {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.probeResizeObserver?.disconnect();
+    this.probeResizeObserver = null;
+  }
+
+  /** Re-run overflow when the probe's intrinsic width appears (ResizeObserver does not always fire on the header when the probe is absolutely positioned). */
+  private setupProbeResizeObserver(probeWrap: HTMLElement | null) {
+    this.probeResizeObserver?.disconnect();
+    this.probeResizeObserver = null;
+    if (typeof ResizeObserver === 'undefined' || !probeWrap) return;
+    this.probeResizeObserver = new ResizeObserver(() => {
+      this.intrinsicWidthRetryCount = 0;
+      this.scheduleOverflowCheck();
+    });
+    this.probeResizeObserver.observe(probeWrap);
   }
 
   /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
@@ -451,7 +467,12 @@ export class BarNav {
             }}
           >
             {hasTabs && (
-              <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
+              <div
+                class="bar-nav__tabs-probe"
+                aria-hidden="true"
+                inert
+                ref={el => this.setupProbeResizeObserver(el as HTMLElement | null)}
+              >
                 <ds-tab-group
                   ref={el => {
                     this.probeTabGroupEl = (el as HTMLDsTabGroupElement) ?? null;
@@ -514,7 +535,7 @@ export class BarNav {
                 </span>
                 <ds-icon
                   name="ChevronDown"
-                  size="sm"
+                  size="md"
                   color="inherit"
                   class="bar-nav__tab-trigger-chevron"
                 />
