@@ -1,7 +1,7 @@
 .destructiveMenuItem {
   display: flex;
   align-items: center;
-  padding: var(--dimension-space-075);
+  padding: var(--dimension-space-100);
   background-color: transparent;
   border: none;
   border-radius: var(--dimension-radius-075);

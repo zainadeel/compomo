@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: var(--dimension-space-050);
-  padding: var(--dimension-space-075);
+  padding: var(--dimension-space-100);
   border: none;
   cursor: pointer;
   -webkit-user-select: none;

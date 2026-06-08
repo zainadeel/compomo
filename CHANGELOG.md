@@ -12,6 +12,7 @@
 ### Changed
 
 * **BarNav:** collapsed tab menu trigger uses **`md`** icon size for `ChevronDown` (was `sm`).
+* **Menu:** item stack gap matches PanelNav (`--dimension-space-050`, 4px); section inset and item padding use `--dimension-space-100` (8px).
 
 ### Fixed
 
