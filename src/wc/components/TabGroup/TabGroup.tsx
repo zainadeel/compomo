@@ -1,4 +1,4 @@
-import { Component, Prop, Event, EventEmitter, Element, Listen, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -29,9 +29,38 @@ export class TabGroup {
     return getSelectableTabs(this.tabs);
   }
 
-  private selectTab(id: string) {
+  private selectTab(id: string, options?: { focus?: boolean }) {
     this.value = id;
     this.dsChange.emit(id);
+    if (options?.focus !== false) {
+      this.focusTab(id);
+    }
+  }
+
+  private focusTab(id: string) {
+    const btn = this.el.querySelector(`[data-tab-id="${id}"]`) as HTMLElement | null;
+    btn?.focus({ preventScroll: true });
+  }
+
+  /** Keep focus on the selected tab when value changes externally (e.g. BarNav menu). */
+  @Watch('value')
+  onValueChange(next: string, prev: string | undefined) {
+    if (prev === undefined || next === prev) return;
+
+    requestAnimationFrame(() => {
+      const active = document.activeElement as HTMLElement | null;
+      if (!active || !this.el.contains(active)) return;
+
+      const activeId = active.getAttribute('data-tab-id');
+      if (activeId === next) return;
+
+      const nextTab = this.el.querySelector(`[data-tab-id="${next}"]`) as HTMLElement | null;
+      if (nextTab) {
+        nextTab.focus({ preventScroll: true });
+      } else {
+        active.blur();
+      }
+    });
   }
 
   /**
@@ -84,8 +113,6 @@ export class TabGroup {
       e.preventDefault();
       const next = tabs[nextIdx];
       this.selectTab(next.id);
-      const btn = this.el.querySelector(`[data-tab-id="${next.id}"]`) as HTMLElement | null;
-      btn?.focus();
     }
   }
 

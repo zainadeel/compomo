@@ -57,7 +57,7 @@ function Spacing() {
   );
 }
 
-const SIZE_TOKENS = ['000', '050', '100', '150', '200', '250', '300', '400', '500', '600', '800'] as const;
+const SIZE_TOKENS = ['000', '050', '075', '100', '150', '200', '250', '300', '400', '500', '600', '800'] as const;
 
 function Sizes() {
   return (

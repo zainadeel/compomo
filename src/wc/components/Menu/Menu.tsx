@@ -75,7 +75,7 @@ export class Menu {
       requestAnimationFrame(() => {
         this.calculatePosition();
         this.positionReady = true;
-        this.focusFirstItem();
+        this.focusInitialItem();
         this.setupListeners();
       });
     } else if (this.shouldRender) {
@@ -149,10 +149,15 @@ export class Menu {
     };
   }
 
-  private focusFirstItem() {
+  /** Focus the selected item when present, otherwise the first enabled item. */
+  private focusInitialItem() {
     const flat = this.flatItems;
-    const idx = flat.findIndex(it => !it.isInactive);
-    this.focusedIndex = idx >= 0 ? idx : 0;
+    const selectedIdx = flat.findIndex(it => it.isSelected && !it.isInactive);
+    const firstEnabledIdx = flat.findIndex(it => !it.isInactive);
+    this.focusedIndex = selectedIdx >= 0
+      ? selectedIdx
+      : (firstEnabledIdx >= 0 ? firstEnabledIdx : 0);
+
     requestAnimationFrame(() => {
       const btns = this.el.querySelectorAll<HTMLElement>('.menu-item');
       btns[this.focusedIndex]?.focus();

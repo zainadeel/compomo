@@ -286,11 +286,11 @@
   position: absolute;
   right: 13px;
   top: 13px;
-  width: var(--dimension-space-075, 6px);
-  height: var(--dimension-space-075, 6px);
-  border-radius: var(--dimension-radius-full, 999px);
+  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
+  border-radius: var(--dimension-radius-half);
   background: var(--_nav-dot);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018, 1.5px) var(--_nav-bg);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_nav-bg);
   pointer-events: none;
   transition:
     right var(--_nav-expand-motion),
@@ -300,8 +300,8 @@
 }
 
 .panel-nav--collapsed .panel-nav__item-dot {
-  right: 6px;
-  top: 6px;
+  right: var(--dimension-space-075);
+  top: var(--dimension-space-075);
 }
 
 .panel-nav--animating .panel-nav__item-label {
@@ -376,7 +376,7 @@
   left: var(--_nav-padding-x);
   top: var(--_nav-padding-y);
   padding: var(--dimension-space-075, 6px);
-  border-radius: var(--dimension-radius-half, 9999px);
+  border-radius: var(--dimension-radius-half);
   cursor: pointer;
   color: var(--_nav-fg-secondary);
   box-sizing: border-box;

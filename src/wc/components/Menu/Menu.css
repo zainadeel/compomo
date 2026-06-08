@@ -1,13 +1,15 @@
+/* ── Popup shell ─────────────────────────────────────────────────────────── */
+
 .menu-popup {
   box-sizing: border-box;
-  background-color: var(--color-background-primary);
-  border-radius: var(--dimension-radius-125);
-  box-shadow: var(--effect-elevation-elevated-floating);
   display: flex;
   flex-direction: column;
   min-width: 200px;
   max-width: 600px;
   overflow: hidden;
+  background-color: var(--color-background-primary);
+  border-radius: var(--dimension-radius-075);
+  box-shadow: var(--effect-elevation-elevated-floating);
   animation: menuFadeIn var(--effect-motion-short-2) forwards;
   backface-visibility: hidden;
   will-change: transform;
@@ -27,12 +29,13 @@
   to   { opacity: 0; }
 }
 
-/* Sections */
+/* ── Sections ────────────────────────────────────────────────────────────── */
+
 .menu-section {
-  padding: var(--dimension-space-050);
   display: flex;
   flex-direction: column;
   gap: var(--dimension-space-025);
+  padding: var(--dimension-space-050);
 }
 
 .menu-section--divided {
@@ -40,87 +43,137 @@
 }
 
 .section-header {
-  padding: var(--dimension-space-050) var(--dimension-space-075);
   display: flex;
   align-items: center;
   height: var(--dimension-size-400);
+  padding: var(--dimension-space-050) var(--dimension-space-075);
   -webkit-user-select: none;
   user-select: none;
 }
 
-.section-label { color: var(--color-foreground-secondary); }
+.section-label {
+  color: var(--color-foreground-secondary);
+}
 
-/* Items */
+/* ── Items ───────────────────────────────────────────────────────────────── */
+
 .menu-item {
   display: flex;
   align-items: center;
   gap: var(--dimension-space-050);
+  position: relative;
+  width: 100%;
+  min-height: var(--dimension-size-400);
   padding: var(--dimension-space-075);
+  box-sizing: border-box;
   border: none;
+  border-radius: var(--dimension-radius-025);
   background: transparent;
-  border-radius: var(--dimension-radius-075);
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
   text-align: left;
-  width: 100%;
-  min-height: var(--dimension-size-400);
-  box-sizing: border-box;
-  transition: background-color var(--effect-motion-short-2);
-  position: relative;
   color: inherit;
+  --_hover-bg: var(--color-interaction-hover);
+  --_pressed-bg: var(--color-interaction-pressed);
+  --_selected-bg: var(--color-interaction-active);
 }
 
-.menu-item:hover:not(:disabled) { background-color: var(--color-interaction-hover); }
-.menu-item:active:not(:disabled) { background-color: var(--color-interaction-pressed); }
-.menu-item--focused:not(:disabled) { background-color: var(--color-interaction-hover); }
+.menu-item:has(.menu-item__subtext) {
+  align-items: flex-start;
+}
+
+/* Interaction layer — same ::after pattern as tabs / BarNav trigger */
+.menu-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  transition: background var(--effect-animation-duration-short-3) var(--effect-animation-easing-ease-out);
+}
+
+.menu-item--selected::after {
+  background: var(--_selected-bg);
+  transition: none;
+}
+
+.menu-item:hover:not(:disabled):not(.menu-item--selected)::after,
+.menu-item--focused:not(:disabled):not(.menu-item--selected)::after {
+  background: var(--_hover-bg);
+  transition: none;
+}
+
+.menu-item:active:not(:disabled)::after {
+  background: var(--_pressed-bg);
+  transition: none;
+}
 
 .menu-item:focus-visible {
   outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
-  outline-offset: -2px;
+  outline-offset: var(--dimension-space-025);
 }
 
-.menu-item--selected { background-color: var(--color-interaction-hover); }
-.menu-item--inactive { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-.menu-item--destructive .menu-item__label { color: var(--color-foreground-bold-negative) !important; }
+.menu-item--inactive {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.menu-item--destructive .menu-item__label {
+  color: var(--color-foreground-bold-negative) !important;
+}
 
 .menu-item__content {
-  flex: 1;
+  position: relative;
+  z-index: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--dimension-space-025);
   min-width: 0;
 }
 
-.menu-item__label { color: var(--color-foreground-secondary); }
-.menu-item--selected .menu-item__label { color: var(--color-foreground-primary); }
+.menu-item__label {
+  color: var(--color-foreground-secondary);
+}
+
+.menu-item:has(.menu-item__subtext) .menu-item__label,
+.menu-item--selected .menu-item__label {
+  color: var(--color-foreground-primary);
+}
 
 .menu-item__subtext {
   color: var(--color-foreground-secondary);
   line-height: 1.4;
 }
 
-/* Toggle */
+/* ── Toggle suffix ───────────────────────────────────────────────────────── */
+
 .menu-item__toggle {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
   width: calc(var(--dimension-size-400) + var(--dimension-size-050));
   height: var(--dimension-size-250);
-  background-color: var(--color-background-translucent);
   border-radius: var(--dimension-radius-125);
-  position: relative;
-  flex-shrink: 0;
+  background-color: var(--color-background-translucent);
   transition: background-color var(--effect-motion-short-2);
 }
 
-.menu-item__toggle--on { background-color: var(--color-background-medium-brand); }
+.menu-item__toggle--on {
+  background-color: var(--color-background-medium-brand);
+}
 
 .menu-item__toggle-thumb {
-  width: var(--dimension-size-200);
-  height: var(--dimension-size-200);
-  background-color: var(--color-foreground-on-bold-background-primary);
-  border-radius: 50%;
   position: absolute;
   top: var(--dimension-space-025);
   left: var(--dimension-space-025);
+  width: var(--dimension-size-200);
+  height: var(--dimension-size-200);
+  border-radius: 50%;
+  background-color: var(--color-foreground-on-bold-background-primary);
   transition: transform var(--effect-motion-short-2);
 }
 
