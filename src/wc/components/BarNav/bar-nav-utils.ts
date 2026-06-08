@@ -1,3 +1,4 @@
+import { getSelectableTabs } from '../TabGroup/tab-item-utils';
 import type { BarNavActionItem, BarNavTab } from './BarNav';
 
 export interface BarNavUrlState {
@@ -24,12 +25,13 @@ export function deriveBarNavValueFromUrl(
 
   const remainder = path.slice(basePath.length);
   const seg = remainder.startsWith('/') ? remainder.slice(1).split('/')[0] : '';
+  const selectableTabs = getSelectableTabs(tabs);
 
   if (!seg) {
-    return { value: tabs[0]?.id ?? '', hideTabs: false };
+    return { value: selectableTabs[0]?.id ?? '', hideTabs: false };
   }
 
-  const tab = tabs.find(t => t.id === seg);
+  const tab = selectableTabs.find(t => t.id === seg);
   if (tab) {
     return { value: tab.id, hideTabs: false };
   }

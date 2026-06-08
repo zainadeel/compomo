@@ -78,6 +78,48 @@ export const WithTabs: Story = {
   `,
 };
 
+const fleetAndSafetyTabs = [
+  { id: 'live-map',         label: 'Live Map' },
+  { id: 'location-history', label: 'Location History' },
+  { id: 'trips',            label: 'Trips' },
+  { type: 'divider' as const },
+  { id: 'overview',  label: 'Overview' },
+  { id: 'events',    label: 'Events', dot: true },
+  { id: 'requests',  label: 'Requests' },
+];
+
+export const WithTabDivider: Story = {
+  name: 'Tab divider between groups',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Insert `{ type: \'divider\' }` in the `tabs` array to visually separate two tab groups ' +
+          'within a single tablist. Dividers are skipped for selection, keyboard navigation, and URL matching.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="width:960px" ${ref(el => {
+      if (!el) return;
+      const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
+        tabs: typeof fleetAndSafetyTabs;
+        actions: typeof defaultActions;
+        value: string;
+      } | null;
+      if (!nav) return;
+      nav.tabs = fleetAndSafetyTabs;
+      nav.actions = defaultActions;
+      nav.value = 'live-map';
+      nav.addEventListener('dsTabChange', (e: Event) => {
+        nav.value = (e as CustomEvent<string>).detail;
+      });
+    })}>
+      <ds-bar-nav></ds-bar-nav>
+    </div>
+  `,
+};
+
 export const WithDotOnTab: Story = {
   name: 'Tab dot + action dots (Safety)',
   render: () => html`

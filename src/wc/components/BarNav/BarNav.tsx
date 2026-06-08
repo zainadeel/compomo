@@ -1,6 +1,6 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, h, Host } from '@stencil/core';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
-import type { TabItem } from '../TabGroup/TabGroup';
+import type { TabItem } from '../TabGroup/tab-item-utils';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
@@ -9,13 +9,8 @@ import {
 
 export type BarNavBackground = 'primary' | 'secondary' | 'transparent' | 'translucent';
 
-export interface BarNavTab {
-  id: string;
-  label: string;
-  disabled?: boolean;
-  /** Notification dot on this tab. */
-  dot?: boolean;
-}
+/** Same shape as `TabItem` — supports `{ type: 'divider' }` between tab groups. */
+export type BarNavTab = TabItem;
 
 export interface BarNavActionItem {
   id: string;

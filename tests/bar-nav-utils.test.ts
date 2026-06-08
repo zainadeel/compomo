@@ -60,4 +60,30 @@ describe('deriveBarNavValueFromUrl', () => {
     assert.equal(state.value, 'overview');
     assert.equal(state.hideTabs, false);
   });
+
+  it('skips dividers when defaulting to the first tab', () => {
+    const tabs: BarNavTab[] = [
+      { type: 'divider' },
+      { id: 'overview', label: 'Overview' },
+      { id: 'events', label: 'Events' },
+    ];
+    const state = deriveBarNavValueFromUrl('/dashboard/safety', '/dashboard/safety', tabs);
+    assert.equal(state.value, 'overview');
+    assert.equal(state.hideTabs, false);
+  });
+
+  it('skips dividers when matching URL segments', () => {
+    const tabs: BarNavTab[] = [
+      { id: 'live-map', label: 'Live Map' },
+      { type: 'divider' },
+      { id: 'events', label: 'Events' },
+    ];
+    const state = deriveBarNavValueFromUrl(
+      '/dashboard/safety/events',
+      '/dashboard/safety',
+      tabs,
+    );
+    assert.equal(state.value, 'events');
+    assert.equal(state.hideTabs, false);
+  });
 });

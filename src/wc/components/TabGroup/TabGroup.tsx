@@ -1,16 +1,12 @@
 import { Component, Prop, Event, EventEmitter, Element, Listen, h, Host } from '@stencil/core';
+import {
+  getSelectableTabs,
+  isTabDivider,
+  type TabItem,
+  type TabItemTab,
+} from './tab-item-utils';
 
 export type TabBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
-
-export interface TabItem {
-  id: string;
-  label: string;
-  disabled?: boolean;
-  /** id of the tabpanel this tab controls */
-  panelId?: string;
-  /** Show a notification dot (brand) on the tab — no count, matching panel-nav. */
-  dot?: boolean;
-}
 
 @Component({
   tag: 'ds-tab-group',
@@ -29,6 +25,10 @@ export class TabGroup {
 
   @Event() dsChange!: EventEmitter<string>;
 
+  private get selectableTabs(): TabItemTab[] {
+    return getSelectableTabs(this.tabs);
+  }
+
   private selectTab(id: string) {
     this.value = id;
     this.dsChange.emit(id);
@@ -39,19 +39,21 @@ export class TabGroup {
    * Returns `from` unchanged if no other enabled tab exists.
    */
   private findEnabled(from: number, step: 1 | -1): number {
-    const len = this.tabs.length;
+    const tabs = this.selectableTabs;
+    const len = tabs.length;
     for (let n = 0; n < len; n++) {
       const i = (from + step * (n + 1) + len * (n + 1)) % len;
-      if (!this.tabs[i]?.disabled) return i;
+      if (!tabs[i]?.disabled) return i;
     }
     return from;
   }
 
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
-    if (!this.tabs.length) return;
+    const tabs = this.selectableTabs;
+    if (!tabs.length) return;
 
-    const currentIdx = this.tabs.findIndex(t => t.id === this.value);
+    const currentIdx = tabs.findIndex(t => t.id === this.value);
     const isVertical = this.orientation === 'vertical';
 
     let nextIdx: number | null = null;
@@ -71,16 +73,16 @@ export class TabGroup {
     }
 
     if (e.key === 'Home') {
-      const first = this.tabs.findIndex(t => !t.disabled);
+      const first = tabs.findIndex(t => !t.disabled);
       nextIdx = first === -1 ? null : first;
     } else if (e.key === 'End') {
-      const lastEnabled = [...this.tabs].reverse().findIndex(t => !t.disabled);
-      nextIdx = lastEnabled === -1 ? null : this.tabs.length - 1 - lastEnabled;
+      const lastEnabled = [...tabs].reverse().findIndex(t => !t.disabled);
+      nextIdx = lastEnabled === -1 ? null : tabs.length - 1 - lastEnabled;
     }
 
     if (nextIdx !== null) {
       e.preventDefault();
-      const next = this.tabs[nextIdx];
+      const next = tabs[nextIdx];
       this.selectTab(next.id);
       const btn = this.el.querySelector(`[data-tab-id="${next.id}"]`) as HTMLElement | null;
       btn?.focus();
@@ -106,7 +108,22 @@ export class TabGroup {
           aria-labelledby={this.ariaLabelledby}
           aria-orientation={isVertical ? 'vertical' : undefined}
         >
-          {this.tabs.map(tab => {
+          {this.tabs.map((tab, index) => {
+            if (isTabDivider(tab)) {
+              return (
+                <div
+                  key={`divider-${index}`}
+                  class={{
+                    'tab-divider': true,
+                    'tab-divider--vertical': isVertical,
+                  }}
+                  aria-hidden="true"
+                >
+                  <div class="tab-divider__line" />
+                </div>
+              );
+            }
+
             const isSelected = tab.id === this.value;
             return (
               <button
