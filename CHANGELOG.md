@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/zainadeel/compomo/compare/v0.13.0...v0.14.0) (2026-06-08)
+
+
+### Added
+
+* **BarNav:** harden overflow collapse for SPA integrators ([#138](https://github.com/zainadeel/compomo/issues/138)) ([4ade3d5](https://github.com/zainadeel/compomo/commit/4ade3d5ff9536cf20858d59cac866ab81da59bd8))
+
 ## [0.13.0](https://github.com/zainadeel/compomo/compare/v0.12.0...v0.13.0) (2026-06-08)
 
 
