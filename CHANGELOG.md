@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/zainadeel/compomo/compare/v0.14.0...v0.14.1) (2026-06-08)
+
+
+### Fixed
+
+* defer BarNav tab strip until overflow layout is committed ([#140](https://github.com/zainadeel/compomo/issues/140)) ([6b2d82e](https://github.com/zainadeel/compomo/commit/6b2d82eaf6a541e4ba707906678d9ff0efcf1605))
+
 ## [Unreleased]
 
 ### Fixed
