@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/zainadeel/compomo/compare/v0.12.0...v0.13.0) (2026-06-08)
+
+
+### Added
+
+* **BarNav:** collapse overflowing tabs into menu trigger ([#136](https://github.com/zainadeel/compomo/issues/136)) ([ba40b44](https://github.com/zainadeel/compomo/commit/ba40b44af1ca378f81f0cc29da58996a971825c5))
+
 ## [0.12.0](https://github.com/zainadeel/compomo/compare/v0.11.3...v0.12.0) (2026-06-08)
 
 
