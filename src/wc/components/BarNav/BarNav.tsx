@@ -10,7 +10,7 @@ import {
 } from '@stencil/core';
 import type { MenuItemData } from '../Menu/Menu';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
-import type { TabItem } from '../TabGroup/tab-item-utils';
+import { isTabDivider, type TabItem } from '../TabGroup/tab-item-utils';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
@@ -98,6 +98,8 @@ export class BarNav {
   @State() private hideTabsForDetailRoute = false;
   @State() private tabsCollapsed = false;
   @State() private menuOpen = false;
+  /** When false, defer showing expanded tabs or the collapsed trigger until intrinsic width is measured (avoids a one-frame flash of the full tab row on narrow viewports). */
+  @State() private tabLayoutCommitted = false;
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
   private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
@@ -126,17 +128,30 @@ export class BarNav {
     return !!getActiveTab(this.resolvedTabs, this.effectiveValue)?.dot;
   }
 
+  private digestTabsConfig(tabs: BarNavTab[]): string {
+    return tabs
+      .map(t => (isTabDivider(t) ? '|' : t.id))
+      .join(',');
+  }
+
   @Watch('tabs')
   @Watch('tabsJson')
   @Watch('actions')
   @Watch('actionsJson')
   onPropsChange() {
-    this.resolvedTabs = this.tabsJson
+    const nextTabs = this.tabsJson
       ? parseJsonArrayProp(this.tabsJson, [])
       : (this.tabs ?? []);
-    this.resolvedActions = this.actionsJson
+    const nextActions = this.actionsJson
       ? parseJsonArrayProp(this.actionsJson, [])
       : (this.actions ?? []);
+
+    if (this.digestTabsConfig(nextTabs) !== this.digestTabsConfig(this.resolvedTabs)) {
+      this.tabLayoutCommitted = false;
+    }
+
+    this.resolvedTabs = nextTabs;
+    this.resolvedActions = nextActions;
     this.syncValueFromUrl();
     this.intrinsicWidthRetryCount = 0;
     this.scheduleOverflowCheck();
@@ -278,18 +293,29 @@ export class BarNav {
   }
 
   private updateTabsCollapsed() {
-    if (!this.leftEl || this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
+    if (!this.leftEl) {
+      return;
+    }
+
+    if (this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
       if (this.tabsCollapsed) {
         this.tabsCollapsed = false;
         this.menuOpen = false;
       }
       this.intrinsicWidthRetryCount = 0;
+      this.tabLayoutCommitted = true;
       return;
     }
 
     const intrinsicWidth = this.getTabsIntrinsicWidth();
     if (intrinsicWidth === 0) {
-      this.scheduleIntrinsicWidthRetry();
+      if (this.intrinsicWidthRetryCount >= BarNav.INTRINSIC_WIDTH_RETRY_MAX) {
+        this.intrinsicWidthRetryCount = 0;
+        this.tabsCollapsed = false;
+        this.tabLayoutCommitted = true;
+      } else {
+        this.scheduleIntrinsicWidthRetry();
+      }
       return;
     }
     this.intrinsicWidthRetryCount = 0;
@@ -306,6 +332,8 @@ export class BarNav {
         this.menuOpen = false;
       }
     }
+
+    this.tabLayoutCommitted = true;
   }
 
   private syncMenuAnchor() {
@@ -438,7 +466,7 @@ export class BarNav {
               </div>
             )}
 
-            {hasTabs && !this.tabsCollapsed && (
+            {hasTabs && this.tabLayoutCommitted && !this.tabsCollapsed && (
               <ds-tab-group
                 class="bar-nav__tabs-visible"
                 ref={el => {
@@ -450,11 +478,15 @@ export class BarNav {
               />
             )}
 
+            {hasTabs && !this.tabLayoutCommitted && (
+              <div class="bar-nav__tabs-pending" aria-hidden="true" />
+            )}
+
             {!hasTabs && this.heading && (
               <span class="bar-nav__heading text-body-medium-emphasis">{this.heading}</span>
             )}
 
-            {hasTabs && this.tabsCollapsed && (
+            {hasTabs && this.tabLayoutCommitted && this.tabsCollapsed && (
               <button
                 type="button"
                 class={{

@@ -59,6 +59,15 @@
   min-width: 0;
 }
 
+/* In-flow placeholder while measuring overflow — avoids layout jump; hidden from view/accessibility. */
+.bar-nav__tabs-pending {
+  flex: 1;
+  min-width: 0;
+  height: var(--dimension-size-400);
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Collapsed tab trigger — tab interaction pattern, not ds-button */
 .bar-nav__tab-trigger {
   display: inline-flex;
