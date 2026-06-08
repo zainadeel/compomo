@@ -12,7 +12,7 @@
 ### Changed
 
 * **BarNav:** collapsed tab menu trigger uses **`md`** icon size for `ChevronDown` (was `sm`).
-* **Menu:** item stack gap matches PanelNav (`--dimension-space-050`, 4px); section inset and item padding use `--dimension-space-100` (8px).
+* **Menu:** item stack gap matches PanelNav (`--dimension-space-050`, 4px); section inset uses `--dimension-space-100` (8px). Item padding stays `--dimension-space-075` (6px).
 * **Menu:** drop legacy React `Menu` / `MenuItem` / `DestructiveMenuItem` — **`ds-menu` only**; React `Select` now composes `ds-menu`.
 
 ### Removed
