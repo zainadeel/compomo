@@ -183,3 +183,22 @@ export const TwoTabs: Story = {
     ></ds-tab-group>
   `,
 };
+
+export const WithDivider: Story = {
+  name: 'With divider between groups',
+  render: () => html`
+    <ds-tab-group
+      .tabs=${[
+        { id: 'live-map',         label: 'Live Map' },
+        { id: 'location-history', label: 'Location History' },
+        { id: 'trips',            label: 'Trips' },
+        { type: 'divider' },
+        { id: 'overview', label: 'Overview' },
+        { id: 'events',   label: 'Events', dot: true },
+        { id: 'requests', label: 'Requests' },
+      ]}
+      value="live-map"
+      aria-label="Fleet and safety sections"
+    ></ds-tab-group>
+  `,
+};

@@ -132,3 +132,36 @@
 }
 
 .on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }
+
+/* In-tablist visual group separator — not focusable, skipped by keyboard nav */
+.tab-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--dimension-space-100);
+  height: var(--dimension-size-400);
+  padding-block: var(--dimension-space-075);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.tab-divider__line {
+  width: var(--dimension-stroke-width-012);
+  align-self: stretch;
+  background-color: var(--color-border-secondary);
+}
+
+.tab-divider--vertical {
+  width: auto;
+  height: var(--dimension-space-100);
+  align-self: stretch;
+  padding-block: 0;
+  padding-inline: var(--dimension-space-075);
+}
+
+.tab-divider--vertical .tab-divider__line {
+  width: auto;
+  height: var(--dimension-stroke-width-012);
+  align-self: stretch;
+}
