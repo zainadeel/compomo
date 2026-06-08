@@ -17,7 +17,7 @@ interface LabelWrapProps {
 
 /**
  * Internal utility wrapper used inside interactive components (Button, Tag,
- * Input, Select, MenuItem, etc.) to:
+ * Input, Select, ds-menu items, etc.) to:
  *   1. Kill the inherited line-height strut from body { line-height: 1.5 }
  *   2. Add optical horizontal padding around the text
  *

@@ -736,7 +736,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Dropdown select using Menu internally. Supports placeholder, inactive state, and custom chevron icon.",
+      "description": "Dropdown select using `ds-menu` internally. Supports placeholder, inactive state, and custom chevron icon.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -837,29 +837,19 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Positioned dropdown menu with sections, item selection styles, toggle items, and destructive hold-to-confirm items.",
+      "description": "Positioned dropdown menu (`ds-menu`) with sections, selection, toggle items, and destructive items.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/menu",
         "exports": [
-          "Menu",
-          "MenuItem",
-          "DestructiveMenuItem"
+          "ds-menu"
         ],
         "props": {
-          "isOpen": {
+          "open": {
             "type": "boolean",
-            "required": true
-          },
-          "onClose": {
-            "type": "() => void",
-            "required": true
-          },
-          "anchorRef": {
-            "type": "React.RefObject<HTMLElement | null>",
-            "required": true
+            "required": false
           },
           "items": {
             "type": "MenuItemData[]",
@@ -877,8 +867,12 @@
             "type": "'start' | 'center' | 'end'",
             "required": false
           },
-          "matchAnchorWidth": {
-            "type": "boolean",
+          "anchor": {
+            "type": "HTMLElement",
+            "required": false
+          },
+          "menuWidth": {
+            "type": "string",
             "required": false
           }
         }
@@ -887,11 +881,7 @@
         "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
-      "registryDependencies": [
-        "surface",
-        "text",
-        "toggle"
-      ]
+      "registryDependencies": []
     },
     {
       "name": "tooltip",

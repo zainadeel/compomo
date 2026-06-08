@@ -1,10 +1,19 @@
 import React, { forwardRef, useId, useState, useRef, useEffect, useCallback } from 'react';
 import { Surface } from '@/components/Surface';
 import { Text } from '@/components/Text';
-import { Menu } from '@/components/Menu';
-import type { MenuItemData } from '@/components/Menu';
+import type { MenuItemData } from '../../wc/components/Menu/Menu';
 import type { IconComponent } from '@/types';
 import styles from './Select.module.css';
+import '../../../../dist/components/ds-menu.js';
+
+type DsMenuEl = HTMLElement & {
+  open: boolean;
+  items: MenuItemData[];
+  anchor?: HTMLElement;
+  menuWidth?: string;
+  side?: string;
+  align?: string;
+};
 
 export interface SelectOption {
   label: string;
@@ -43,67 +52,83 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     ref
   ) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(-1);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const menuRef = useRef<DsMenuEl | null>(null);
 
     const reactId = useId();
     const triggerId = id ?? `select-${reactId}`;
-    const listboxId = `${triggerId}-listbox`;
-    const getOptionId = useCallback((index: number) => `${triggerId}-option-${index}`, [triggerId]);
 
     const selectedIndex = options.findIndex(opt => opt.value === value);
     const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : undefined;
     const selectedLabel = selectedOption?.label || placeholder;
 
-    const commitSelection = useCallback(
-      (index: number) => {
-        const option = options[index];
-        if (!option) return;
-        onChange(option.value);
-        setIsMenuOpen(false);
-      },
-      [options, onChange]
-    );
-
-    const openWith = useCallback(
-      (initialIndex: number) => {
-        if (inactive || options.length === 0) return;
-        const clamped = Math.max(0, Math.min(options.length - 1, initialIndex));
-        setActiveIndex(clamped);
-        setIsMenuOpen(true);
-      },
-      [inactive, options.length]
-    );
+    const syncMenuItems = useCallback(() => {
+      const menu = menuRef.current;
+      if (!menu) return;
+      menu.items = options.map(opt => ({
+        label: opt.label,
+        value: String(opt.value),
+        isSelected: opt.value === value,
+      }));
+    }, [options, value]);
 
     useEffect(() => {
-      if (isMenuOpen) {
-        setActiveIndex(prev => {
-          if (prev >= 0 && prev < options.length) return prev;
-          return selectedIndex >= 0 ? selectedIndex : 0;
-        });
-      } else {
-        setActiveIndex(-1);
-      }
-    }, [isMenuOpen, options.length, selectedIndex]);
+      const menu = menuRef.current;
+      const trigger = buttonRef.current;
+      if (!menu || !trigger) return;
 
-    const menuItems: MenuItemData[] = options.map((option, index) => ({
-      label: option.label,
-      onClick: () => commitSelection(index),
-      isSelected: option.value === value,
-    }));
+      menu.anchor = trigger;
+
+      const onSelect = (e: Event) => {
+        const detail = (e as CustomEvent<MenuItemData>).detail;
+        if (detail?.value === undefined) return;
+        const matched = options.find(opt => String(opt.value) === detail.value);
+        onChange(matched?.value ?? detail.value);
+        setIsMenuOpen(false);
+      };
+      const onClose = () => setIsMenuOpen(false);
+
+      menu.addEventListener('dsSelect', onSelect);
+      menu.addEventListener('dsClose', onClose);
+      return () => {
+        menu.removeEventListener('dsSelect', onSelect);
+        menu.removeEventListener('dsClose', onClose);
+      };
+    }, [onChange, options]);
+
+    useEffect(() => {
+      const menu = menuRef.current;
+      if (!menu) return;
+      menu.open = isMenuOpen;
+    }, [isMenuOpen]);
+
+    useEffect(() => {
+      syncMenuItems();
+    }, [syncMenuItems]);
+
+    const openMenu = () => {
+      if (inactive || options.length === 0) return;
+      const menu = menuRef.current;
+      const trigger = buttonRef.current;
+      if (menu && trigger) {
+        menu.menuWidth = `${trigger.offsetWidth}px`;
+        menu.anchor = trigger;
+      }
+      syncMenuItems();
+      setIsMenuOpen(true);
+    };
 
     const handleToggle = () => {
       if (inactive) return;
       if (isMenuOpen) {
         setIsMenuOpen(false);
       } else {
-        openWith(selectedIndex >= 0 ? selectedIndex : 0);
+        openMenu();
       }
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
       if (inactive || options.length === 0) return;
-      const last = options.length - 1;
 
       if (!isMenuOpen) {
         switch (event.key) {
@@ -112,55 +137,20 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           case 'Enter':
           case ' ':
             event.preventDefault();
-            openWith(selectedIndex >= 0 ? selectedIndex : 0);
-            return;
-          case 'Home':
-            event.preventDefault();
-            openWith(0);
-            return;
-          case 'End':
-            event.preventDefault();
-            openWith(last);
-            return;
+            openMenu();
+            break;
           default:
-            return;
+            break;
         }
+        return;
       }
 
-      switch (event.key) {
-        case 'ArrowDown':
-          event.preventDefault();
-          setActiveIndex(prev => Math.min(last, (prev < 0 ? -1 : prev) + 1));
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          setActiveIndex(prev => Math.max(0, (prev < 0 ? options.length : prev) - 1));
-          break;
-        case 'Home':
-          event.preventDefault();
-          setActiveIndex(0);
-          break;
-        case 'End':
-          event.preventDefault();
-          setActiveIndex(last);
-          break;
-        case 'Enter':
-        case ' ':
-          event.preventDefault();
-          if (activeIndex >= 0) commitSelection(activeIndex);
-          break;
-        case 'Escape':
-          event.preventDefault();
-          setIsMenuOpen(false);
-          break;
-        case 'Tab':
-          setIsMenuOpen(false);
-          break;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsMenuOpen(false);
+        buttonRef.current?.focus();
       }
     };
-
-    const activeDescendantId =
-      isMenuOpen && activeIndex >= 0 ? getOptionId(activeIndex) : undefined;
 
     return (
       <div ref={ref} className={`${styles.selectWrapper} ${className || ''}`}>
@@ -180,8 +170,6 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           role="combobox"
           aria-haspopup="listbox"
           aria-expanded={isMenuOpen}
-          aria-controls={isMenuOpen ? listboxId : undefined}
-          aria-activedescendant={activeDescendantId}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
         >
@@ -198,22 +186,13 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             </span>
           )}
         </Surface>
-        <Menu
-          isOpen={isMenuOpen}
-          onClose={() => setIsMenuOpen(false)}
-          anchorRef={buttonRef as React.RefObject<HTMLElement | null>}
-          items={menuItems}
-          side="bottom"
-          align="start"
-          sideOffset={4}
-          alignOffset={-4}
-          matchAnchorWidth
-          matchAnchorWidthOffset={8}
-          role="listbox"
-          id={listboxId}
-          activeIndex={activeIndex}
-          getOptionId={getOptionId}
-        />
+        {React.createElement('ds-menu', {
+          ref: (el: DsMenuEl | null) => {
+            menuRef.current = el;
+          },
+          side: 'bottom',
+          align: 'start',
+        })}
       </div>
     );
   }

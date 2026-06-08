@@ -70,12 +70,7 @@ export type { FieldProps } from './components/Field';
 export { Modal } from './components/Modal';
 export type { ModalProps, ModalWidth } from './components/Modal';
 
-export { Menu } from './components/Menu';
-export type { MenuProps, MenuSection, MenuItemData, MenuSide, MenuAlign } from './components/Menu';
-export { MenuItem } from './components/Menu';
-export type { MenuItemProps, MenuItemSelectionStyle } from './components/Menu';
-export { DestructiveMenuItem } from './components/Menu';
-export type { DestructiveMenuItemProps } from './components/Menu';
+export type { MenuItemData, MenuSection, MenuSide, MenuAlign } from './wc/components/Menu/Menu';
 
 export { Tooltip } from './components/Tooltip';
 export type { TooltipProps, TooltipSide, TooltipAlign } from './components/Tooltip';
