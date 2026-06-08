@@ -25,6 +25,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Unit tests
+        run: npm test
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: E2E tests (BarNav overflow)
+        run: npx playwright test
+
       - name: Verify dist artifacts
         run: |
           for f in \

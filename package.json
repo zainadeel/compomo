@@ -40,7 +40,9 @@
   ],
   "scripts": {
     "build": "stencil build && node scripts/patch-index-types.mjs",
-    "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts",
+    "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts tests/bar-nav-dom-utils.test.ts",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:install": "playwright install chromium",
     "build:docs": "stencil build --docs",
     "dev": "stencil build --dev --watch",
     "storybook": "stencil build && storybook dev -p 6006",
@@ -62,6 +64,7 @@
   "devDependencies": {
     "@ds-mo/icons": "^4.3.1",
     "@ds-mo/tokens": "^2.9.0",
+    "@playwright/test": "^1.55.0",
     "@eslint/js": "^10.0.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@stencil/angular-output-target": "^1.3.1",

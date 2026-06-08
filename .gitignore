@@ -21,5 +21,10 @@ dist
 # Storybook
 storybook-static
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
 # Claude
 .claude/
