@@ -29,7 +29,7 @@
   border-radius: var(--dimension-radius-025);
   background: transparent;
   pointer-events: none;
-  transition: background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
+  transition: none;
 }
 
 .action-btn:hover:not(.inactive)::after  { background: var(--_hover-bg);  transition: none; }

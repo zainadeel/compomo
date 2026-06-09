@@ -28,8 +28,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const SRC    = path.join(ROOT, 'src', 'components');    // legacy React source
-const WC_SRC = path.join(ROOT, 'src', 'wc', 'components'); // Stencil WC source
+const WC_SRC = path.join(ROOT, 'src', 'wc', 'components');
 const OUT = path.join(ROOT, 'public', 'r');
 
 const PKG = '@ds-mo/ui';
@@ -301,7 +300,7 @@ const COMPONENTS = [
   }],
   ['Select', {
     title: 'Select',
-    description: 'Dropdown select using Menu internally. Supports placeholder, inactive state, and custom chevron icon.',
+    description: 'Dropdown select using `ds-menu` internally. Supports placeholder, inactive state, and custom chevron icon.',
     exports: ['Select'],
     types: ['SelectProps', 'SelectOption'],
     props: {
@@ -338,23 +337,24 @@ const COMPONENTS = [
   }],
   ['Menu', {
     title: 'Menu',
-    description: 'Positioned dropdown menu with sections, item selection styles, toggle items, and destructive hold-to-confirm items.',
-    exports: ['Menu', 'MenuItem', 'DestructiveMenuItem'],
-    types: ['MenuProps', 'MenuSection', 'MenuItemData', 'MenuSide', 'MenuAlign', 'MenuItemProps', 'MenuItemSelectionStyle', 'DestructiveMenuItemProps'],
-    files: ['Menu.tsx', 'Menu.module.css', 'MenuItem.tsx', 'MenuItem.module.css', 'DestructiveMenuItem.tsx', 'DestructiveMenuItem.module.css'],
+    tag: 'menu',
+    description: 'Positioned dropdown menu (`ds-menu`) with sections, selection, toggle items, and destructive items.',
+    exports: ['ds-menu'],
+    types: ['MenuItemData', 'MenuSection', 'MenuSide', 'MenuAlign'],
     props: {
-      isOpen: { type: 'boolean', required: true },
-      onClose: { type: '() => void', required: true },
-      anchorRef: { type: 'React.RefObject<HTMLElement | null>', required: true },
+      open: { type: 'boolean', description: 'Controls visibility. Set via JS property.' },
       items: { type: 'MenuItemData[]', description: 'Flat item list (use items or sections, not both).' },
       sections: { type: 'MenuSection[]', description: 'Grouped items with optional headers.' },
       side: { type: "'top' | 'right' | 'bottom' | 'left'", default: "'bottom'" },
       align: { type: "'start' | 'center' | 'end'", default: "'start'" },
-      matchAnchorWidth: { type: 'boolean' },
+      anchor: { type: 'HTMLElement', description: 'Positioning trigger. Set via JS: menuEl.anchor = triggerEl' },
+      menuWidth: { type: 'string', description: 'Optional fixed menu width (e.g. match trigger).' },
     },
+    events: ['dsSelect', 'dsClose'],
+    jsPropNote: 'Assign items, sections, anchor, and open via JS properties after customElements.whenDefined("ds-menu").',
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Surface', 'Text', 'Toggle'],
+    internalDeps: [],
   }],
   ['Tooltip', {
     title: 'Tooltip',
@@ -413,20 +413,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: ['Text', 'Surface', 'Skeleton'],
   }],
-  ['Tab', {
-    title: 'Tab',
-    description: 'Individual tab button with selected state and hover overlay.',
-    exports: ['Tab'],
-    types: ['TabProps'],
-    props: {
-      label: { type: 'string', required: true },
-      isSelected: { type: 'boolean', default: 'false' },
-      onClick: { type: '() => void' },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Text'],
-  }],
   ['EmptyState', {
     title: 'EmptyState',
     description: 'Centered placeholder for empty content, no results, or no access states.',
@@ -469,20 +455,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
-  ['ErrorBoundary', {
-    title: 'ErrorBoundary',
-    description: 'React error boundary with fallback UI and console logging.',
-    exports: ['ErrorBoundary'],
-    types: ['ErrorBoundaryProps'],
-    props: {
-      children: { type: 'React.ReactNode', required: true },
-      fallback: { type: 'React.ReactNode', description: 'Custom error UI.' },
-    },
-    usesTokens: false,
-    usesIcons: false,
-    internalDeps: ['EmptyState'],
-  }],
-
   // Layout
   ['Sidebar', {
     title: 'Sidebar',
@@ -518,11 +490,11 @@ const COMPONENTS = [
   }],
 
   // Classic
-  ['Radio', {
+  ['RadioGroup', {
     title: 'RadioGroup',
-    description: 'Radio selection group with vertical/horizontal layout, per-option inactive, and keyboard navigation.',
-    exports: ['RadioGroup', 'RadioItem'],
-    types: ['RadioGroupProps', 'RadioItemProps', 'RadioOption'],
+    description: 'Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option inactive, and keyboard navigation.',
+    exports: ['ds-radio-group'],
+    types: ['RadioOption'],
     props: {
       value: { type: 'string', required: true },
       onChange: { type: '(value: string) => void', required: true },
@@ -537,17 +509,16 @@ const COMPONENTS = [
   }],
   ['TabGroup', {
     title: 'TabGroup',
-    description: 'Tab orchestrator that wraps Tab components with an animated sliding indicator and active state management.',
-    exports: ['TabGroup'],
-    types: ['TabGroupProps', 'TabGroupTab'],
+    description: 'Horizontal or vertical tab list (`ds-tab-group`) with roving keyboard focus and optional dividers between tab groups.',
+    exports: ['ds-tab-group'],
+    types: ['TabItem'],
     props: {
-      tabs: { type: 'TabGroupTab[]', required: true },
-      activeIndex: { type: 'number', default: '0' },
-      onTabChange: { type: '(index: number) => void' },
+      tabs: { type: 'TabItem[]', required: true, description: 'Tab ids/labels; `{ type: "divider" }` for group breaks.' },
+      value: { type: 'string', description: 'Selected tab id.' },
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Tab'],
+    internalDeps: [],
   }],
   ['Accordion', {
     title: 'Accordion',
@@ -645,22 +616,16 @@ function toKebab(str) {
     .toLowerCase();
 }
 
-function readComponentFiles(dirName, explicitFiles) {
-  // Prefer the Stencil WC source; fall back to the legacy React source.
-  const wcDir   = path.join(WC_SRC, dirName);
-  const legDir  = path.join(SRC, dirName);
-  const isWC    = fs.existsSync(wcDir);
-  const dir     = isWC ? wcDir : legDir;
-  const srcRel  = isWC ? `src/wc/components/${dirName}` : `src/components/${dirName}`;
+function readComponentFiles(dirName) {
+  const dir = path.join(WC_SRC, dirName);
+  const srcRel = `src/wc/components/${dirName}`;
 
   if (!fs.existsSync(dir)) {
-    console.warn(`  ⚠ Directory not found: ${dir}`);
+    console.warn(`  ⚠ WC directory not found: ${dir}`);
     return [];
   }
 
-  // WC source uses auto-scan only — explicit file lists are legacy React paths.
-  const useExplicit = !isWC && explicitFiles;
-  const filenames = useExplicit ? explicitFiles : fs.readdirSync(dir).filter(f =>
+  const filenames = fs.readdirSync(dir).filter(f =>
     (f.endsWith('.tsx') || f.endsWith('.ts') || f.endsWith('.css')) &&
     !f.endsWith('.stories.ts') &&
     !f.endsWith('.stories.tsx') &&
@@ -762,7 +727,7 @@ const registryItems = [];
 
 for (const [dirName, config] of COMPONENTS) {
   const name = toKebab(dirName);
-  const files = readComponentFiles(dirName, config.files);
+  const files = readComponentFiles(dirName);
 
   if (files.length === 0) {
     console.warn(`  ⚠ Skipping ${name}: no files found`);

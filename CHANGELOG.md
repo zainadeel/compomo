@@ -9,9 +9,22 @@
 
 ## [Unreleased]
 
+### Changed
+
+* **BarNav:** collapsed tab menu trigger uses **`md`** icon size for `ChevronDown` (was `sm`).
+* **Menu:** item stack gap matches PanelNav (`--dimension-space-050`, 4px); section inset uses `--dimension-space-100` (8px). Item padding stays `--dimension-space-075` (6px).
+* **Menu:** **`ds-menu` only** — item gap/inset spacing aligned with PanelNav (see above).
+* **Docs:** clarify library model — Stencil custom elements + generated Angular proxies; React hosts use `<ds-*>` directly.
+
+### Removed
+
+* **Legacy React source:** deleted `src/components/` and `react-index.ts` (duplicate pre-Stencil implementations). The shipped library was always `dist/components/` from `src/wc/`.
+* **Registry:** drop React-only `Tab` and `ErrorBoundary` entries; point `RadioGroup` / `TabGroup` at WC source.
+
 ### Fixed
 
-* **BarNav:** defer the expanded tab strip (and collapsed trigger) until the first overflow measurement so the full tab row does not flash for a frame before collapsing on narrow viewports.
+* **BarNav:** observe the intrinsic-width probe with `ResizeObserver` and allow more measurement retries so narrow hard reloads do not commit an expanded tab row while `ds-tab-group` still reports `scrollWidth === 0`.
+* **PanelNav / BarNav / TabGroup:** interaction-layer hover no longer fades out over 200ms when the pointer leaves — instant on/off so fast sweeps across items do not leave trailing highlight flicker.
 
 ## [0.14.0](https://github.com/zainadeel/compomo/compare/v0.13.0...v0.14.0) (2026-06-08)
 

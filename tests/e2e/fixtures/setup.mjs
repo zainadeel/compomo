@@ -26,6 +26,10 @@ window.__setShellWidth = setShellWidth;
 await customElements.whenDefined('ds-bar-nav');
 
 const nav = document.getElementById('nav');
+const shellParam = new URLSearchParams(location.search).get('shell');
+if (shellParam) {
+  setShellWidth(Number(shellParam));
+}
 nav.tabs = manyTabs;
 nav.actions = actions;
 nav.value = 'events';
