@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.2](https://github.com/zainadeel/compomo/compare/v0.14.1...v0.14.2) (2026-06-09)
+
+
+### Fixed
+
+* barnav overflow hard reload, ds-menu spacing, remove legacy react source ([#142](https://github.com/zainadeel/compomo/issues/142)) ([d6e528e](https://github.com/zainadeel/compomo/commit/d6e528ef60a62a96ea9781179e2416b1d9c9d94c))
+
 ## [0.14.1](https://github.com/zainadeel/compomo/compare/v0.14.0...v0.14.1) (2026-06-08)
 
 
