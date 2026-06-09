@@ -91,7 +91,7 @@
   border-radius: inherit;
   background: transparent;
   pointer-events: none;
-  transition: background var(--effect-animation-duration-short-3) var(--effect-animation-easing-ease-out);
+  transition: none;
 }
 
 .menu-item--selected::after {

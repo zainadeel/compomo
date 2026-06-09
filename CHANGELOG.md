@@ -24,6 +24,7 @@
 ### Fixed
 
 * **BarNav:** observe the intrinsic-width probe with `ResizeObserver` and allow more measurement retries so narrow hard reloads do not commit an expanded tab row while `ds-tab-group` still reports `scrollWidth === 0`.
+* **PanelNav / BarNav / TabGroup:** interaction-layer hover no longer fades out over 200ms when the pointer leaves — instant on/off so fast sweeps across items do not leave trailing highlight flicker.
 
 ## [0.14.0](https://github.com/zainadeel/compomo/compare/v0.13.0...v0.14.0) (2026-06-08)
 
