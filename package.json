@@ -62,7 +62,7 @@
     }
   },
   "devDependencies": {
-    "@ds-mo/icons": "^4.3.1",
+    "@ds-mo/icons": "^4.4.0",
     "@ds-mo/tokens": "^2.9.0",
     "@playwright/test": "^1.55.0",
     "@eslint/js": "^10.0.1",

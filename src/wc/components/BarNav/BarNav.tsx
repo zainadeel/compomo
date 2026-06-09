@@ -484,7 +484,7 @@ export class BarNav {
                 </span>
                 <ds-icon
                   name="ChevronDown"
-                  size="sm"
+                  size="md"
                   color="inherit"
                   class="bar-nav__tab-trigger-chevron"
                 />
