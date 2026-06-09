@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.3](https://github.com/zainadeel/compomo/compare/v0.14.2...v0.14.3) (2026-06-09)
+
+
+### Fixed
+
+* barnav md chevron, ds-menu 4px inset, bump icons to 4.4.0 ([#144](https://github.com/zainadeel/compomo/issues/144)) ([6f16e83](https://github.com/zainadeel/compomo/commit/6f16e834e765e39455c36e38044ac509c240f21e))
+
 ## [0.14.2](https://github.com/zainadeel/compomo/compare/v0.14.1...v0.14.2) (2026-06-09)
 
 
