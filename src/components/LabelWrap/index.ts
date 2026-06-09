@@ -1,1 +1,0 @@
-export { LabelWrap } from './LabelWrap';

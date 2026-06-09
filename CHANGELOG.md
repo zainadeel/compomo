@@ -13,11 +13,13 @@
 
 * **BarNav:** collapsed tab menu trigger uses **`md`** icon size for `ChevronDown` (was `sm`).
 * **Menu:** item stack gap matches PanelNav (`--dimension-space-050`, 4px); section inset uses `--dimension-space-100` (8px). Item padding stays `--dimension-space-075` (6px).
-* **Menu:** drop legacy React `Menu` / `MenuItem` / `DestructiveMenuItem` — **`ds-menu` only**; React `Select` now composes `ds-menu`.
+* **Menu:** **`ds-menu` only** — item gap/inset spacing aligned with PanelNav (see above).
+* **Docs:** clarify library model — Stencil custom elements + generated Angular proxies; React hosts use `<ds-*>` directly.
 
 ### Removed
 
-* **React Menu:** `Menu`, `MenuItem`, and `DestructiveMenuItem` React implementations (use `ds-menu` + exported `MenuItemData` / `MenuSection` types).
+* **Legacy React source:** deleted `src/components/` and `react-index.ts` (duplicate pre-Stencil implementations). The shipped library was always `dist/components/` from `src/wc/`.
+* **Registry:** drop React-only `Tab` and `ErrorBoundary` entries; point `RadioGroup` / `TabGroup` at WC source.
 
 ### Fixed
 

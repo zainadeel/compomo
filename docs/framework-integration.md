@@ -1,4 +1,15 @@
-# Framework integration — `ds-panel-nav`
+# Framework integration
+
+CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` emits:
+
+- **`dist/components/`** — `<ds-*>` custom elements (the library every host consumes)
+- **`src/angular/`** — auto-generated Angular proxy directives (`angularOutputTarget`)
+
+There is **no** Stencil React output target. React apps use `<ds-*>` in JSX with `CUSTOM_ELEMENTS_SCHEMA` and set complex props imperatively (`el.tabs = …`), same as motive-webapp-lab.
+
+---
+
+## `ds-panel-nav` first paint
 
 Web components are framework-neutral. SPA frameworks (Angular, React, Vue) bind **JavaScript properties** after the custom element connects. Stencil runs `componentWillLoad` and paints **before** those bindings land.
 
@@ -76,57 +87,3 @@ export class PanelNavHostDirective {
 ## Reference consumer
 
 `motive-webapp-lab` (Angular 19) — shell + `PanelNavHostDirective` + document hint.
-
----
-
-# `ds-bar-nav` — responsive tab overflow
-
-When tabs exceed the left zone width (action icons stay pinned on the right), `ds-bar-nav` **automatically** collapses all tabs into a single tab-styled trigger that opens `ds-menu`. No host configuration is required beyond the existing `tabs` / `value` (or `basePath` + `currentUrl`) bindings.
-
-| Concern | Behavior |
-| --- | --- |
-| Overflow detection | Hidden inert `ds-tab-group` probe + `ResizeObserver` on the header left zone |
-| Dividers | `{ type: 'divider' }` in `tabs` becomes menu section breaks (not routable) |
-| Selection | Same `dsTabChange` event; menu uses `ds-menu` `dsSelect` internally |
-| Expand / collapse | Driven by available width — widen the container to restore the tab row |
-
-## Integrating in SPA dev servers (Angular, Vite, etc.)
-
-Custom elements are registered when your app bundle first imports `@ds-mo/ui` (or per-component paths under `dist/components/`). **Hot module replacement does not reliably replace upgraded custom element definitions.**
-
-After bumping `@ds-mo/ui` (especially BarNav overflow changes):
-
-1. **Stop and restart** the dev server (`ng serve`, `vite`, etc.).
-2. **Hard-reload** the browser (disable cache once if needed).
-
-**Symptom of a stale CE definition:** `ds-bar-nav` renders tabs but never collapses — inspect the DOM and confirm `.bar-nav__tabs-probe` is present under `.bar-nav__left`. If the probe is missing, you are still running an older `ds-bar-nav` chunk.
-
-## Angular imperative `tabs` binding
-
-Same pattern as PanelNav: assign array props after upgrade (`ngAfterViewInit`, route changes). BarNav polls `syncHostPropsIfNeeded` across animation frames when props land late. Replace the `tabs` array reference when content changes.
-
-```ts
-@ViewChild('barNav') barNavRef?: ElementRef<HTMLElement & { tabs: BarNavTab[] }>;
-
-ngAfterViewInit() {
-  customElements.whenDefined('ds-bar-nav').then(() => this.flushBarNav());
-}
-
-private flushBarNav() {
-  const el = this.barNavRef?.nativeElement;
-  if (!el) return;
-  el.tabs = this.barNavTabs;
-  el.actions = this.barNavActions;
-}
-```
-
-## Accessibility (collapsed mode)
-
-- Trigger: `button` with `aria-haspopup="menu"` and `aria-expanded`
-- Menu: `role="menu"` / `menuitem`; selected tab row uses `aria-current="true"` on the active item
-- Keyboard: ArrowDown/Up/Enter/Space opens menu from trigger; Escape closes menu and returns focus to trigger
-- On expand (width increases), focus moves to the selected tab in the visible `ds-tab-group`
-
-## TokoMo tokens
-
-Notification dots require `@ds-mo/tokens` **≥ 2.9.0** (`--dimension-size-075`). Restart the dev server after upgrading tokens so CSS variables resolve (0×0 dots if the variable is missing).

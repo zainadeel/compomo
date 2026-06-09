@@ -1044,41 +1044,6 @@
       ]
     },
     {
-      "name": "tab",
-      "title": "Tab",
-      "description": "Individual tab button with selected state and hover overlay.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab",
-        "exports": [
-          "Tab"
-        ],
-        "props": {
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "isSelected": {
-            "type": "boolean",
-            "required": false
-          },
-          "onClick": {
-            "type": "() => void",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "empty-state",
       "title": "EmptyState",
       "description": "Centered placeholder for empty content, no results, or no access states.",
@@ -1180,37 +1145,6 @@
       "registryDependencies": []
     },
     {
-      "name": "error-boundary",
-      "title": "ErrorBoundary",
-      "description": "React error boundary with fallback UI and console logging.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/error-boundary",
-        "exports": [
-          "ErrorBoundary"
-        ],
-        "props": {
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          },
-          "fallback": {
-            "type": "React.ReactNode",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "empty-state"
-      ]
-    },
-    {
       "name": "sidebar",
       "title": "Sidebar",
       "description": "Resizable navigation sidebar with drag handle, snap-to-collapse, mobile mode, and nested sections/items.",
@@ -1296,17 +1230,16 @@
       ]
     },
     {
-      "name": "radio",
+      "name": "radio-group",
       "title": "RadioGroup",
-      "description": "Radio selection group with vertical/horizontal layout, per-option inactive, and keyboard navigation.",
+      "description": "Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option inactive, and keyboard navigation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-group",
         "exports": [
-          "RadioGroup",
-          "RadioItem"
+          "ds-radio-group"
         ],
         "props": {
           "value": {
@@ -1346,26 +1279,22 @@
     {
       "name": "tab-group",
       "title": "TabGroup",
-      "description": "Tab orchestrator that wraps Tab components with an animated sliding indicator and active state management.",
+      "description": "Horizontal or vertical tab list (`ds-tab-group`) with roving keyboard focus and optional dividers between tab groups.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group",
         "exports": [
-          "TabGroup"
+          "ds-tab-group"
         ],
         "props": {
           "tabs": {
-            "type": "TabGroupTab[]",
+            "type": "TabItem[]",
             "required": true
           },
-          "activeIndex": {
-            "type": "number",
-            "required": false
-          },
-          "onTabChange": {
-            "type": "(index: number) => void",
+          "value": {
+            "type": "string",
             "required": false
           }
         }
@@ -1374,9 +1303,7 @@
         "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
-      "registryDependencies": [
-        "tab"
-      ]
+      "registryDependencies": []
     },
     {
       "name": "accordion",

@@ -10,7 +10,7 @@ import {
 } from '@stencil/core';
 import type { MenuItemData } from '../Menu/Menu';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
-import { isTabDivider, type TabItem } from '../TabGroup/tab-item-utils';
+import type { TabItem } from '../TabGroup/tab-item-utils';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
@@ -102,8 +102,7 @@ export class BarNav {
   @State() private tabLayoutCommitted = false;
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
-  /** Tablist scrollWidth is often 0 for the first few frames while `ds-tab-group` hydrates — too few retries commits expanded and never collapses on narrow hard reloads. */
-  private static readonly INTRINSIC_WIDTH_RETRY_MAX = 20;
+  private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
 
   private leftEl: HTMLElement | null = null;
   private triggerEl: HTMLButtonElement | null = null;
@@ -111,7 +110,6 @@ export class BarNav {
   private visibleTabGroupEl: HTMLDsTabGroupElement | null = null;
   private probeTabGroupEl: HTMLDsTabGroupElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
-  private probeResizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
 
@@ -130,30 +128,17 @@ export class BarNav {
     return !!getActiveTab(this.resolvedTabs, this.effectiveValue)?.dot;
   }
 
-  private digestTabsConfig(tabs: BarNavTab[]): string {
-    return tabs
-      .map(t => (isTabDivider(t) ? '|' : t.id))
-      .join(',');
-  }
-
   @Watch('tabs')
   @Watch('tabsJson')
   @Watch('actions')
   @Watch('actionsJson')
   onPropsChange() {
-    const nextTabs = this.tabsJson
+    this.resolvedTabs = this.tabsJson
       ? parseJsonArrayProp(this.tabsJson, [])
       : (this.tabs ?? []);
-    const nextActions = this.actionsJson
+    this.resolvedActions = this.actionsJson
       ? parseJsonArrayProp(this.actionsJson, [])
       : (this.actions ?? []);
-
-    if (this.digestTabsConfig(nextTabs) !== this.digestTabsConfig(this.resolvedTabs)) {
-      this.tabLayoutCommitted = false;
-    }
-
-    this.resolvedTabs = nextTabs;
-    this.resolvedActions = nextActions;
     this.syncValueFromUrl();
     this.intrinsicWidthRetryCount = 0;
     this.scheduleOverflowCheck();
@@ -211,20 +196,6 @@ export class BarNav {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
-    this.probeResizeObserver?.disconnect();
-    this.probeResizeObserver = null;
-  }
-
-  /** Re-run overflow when the probe's intrinsic width appears (ResizeObserver does not always fire on the header when the probe is absolutely positioned). */
-  private setupProbeResizeObserver(probeWrap: HTMLElement | null) {
-    this.probeResizeObserver?.disconnect();
-    this.probeResizeObserver = null;
-    if (typeof ResizeObserver === 'undefined' || !probeWrap) return;
-    this.probeResizeObserver = new ResizeObserver(() => {
-      this.intrinsicWidthRetryCount = 0;
-      this.scheduleOverflowCheck();
-    });
-    this.probeResizeObserver.observe(probeWrap);
   }
 
   /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
@@ -309,29 +280,18 @@ export class BarNav {
   }
 
   private updateTabsCollapsed() {
-    if (!this.leftEl) {
-      return;
-    }
-
-    if (this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
+    if (!this.leftEl || this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
       if (this.tabsCollapsed) {
         this.tabsCollapsed = false;
         this.menuOpen = false;
       }
       this.intrinsicWidthRetryCount = 0;
-      this.tabLayoutCommitted = true;
       return;
     }
 
     const intrinsicWidth = this.getTabsIntrinsicWidth();
     if (intrinsicWidth === 0) {
-      if (this.intrinsicWidthRetryCount >= BarNav.INTRINSIC_WIDTH_RETRY_MAX) {
-        this.intrinsicWidthRetryCount = 0;
-        this.tabsCollapsed = false;
-        this.tabLayoutCommitted = true;
-      } else {
-        this.scheduleIntrinsicWidthRetry();
-      }
+      this.scheduleIntrinsicWidthRetry();
       return;
     }
     this.intrinsicWidthRetryCount = 0;
@@ -348,8 +308,6 @@ export class BarNav {
         this.menuOpen = false;
       }
     }
-
-    this.tabLayoutCommitted = true;
   }
 
   private syncMenuAnchor() {
@@ -467,12 +425,7 @@ export class BarNav {
             }}
           >
             {hasTabs && (
-              <div
-                class="bar-nav__tabs-probe"
-                aria-hidden="true"
-                inert
-                ref={el => this.setupProbeResizeObserver(el as HTMLElement | null)}
-              >
+              <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
                 <ds-tab-group
                   ref={el => {
                     this.probeTabGroupEl = (el as HTMLDsTabGroupElement) ?? null;
@@ -487,7 +440,7 @@ export class BarNav {
               </div>
             )}
 
-            {hasTabs && this.tabLayoutCommitted && !this.tabsCollapsed && (
+            {hasTabs && !this.tabsCollapsed && (
               <ds-tab-group
                 class="bar-nav__tabs-visible"
                 ref={el => {
@@ -499,15 +452,11 @@ export class BarNav {
               />
             )}
 
-            {hasTabs && !this.tabLayoutCommitted && (
-              <div class="bar-nav__tabs-pending" aria-hidden="true" />
-            )}
-
             {!hasTabs && this.heading && (
               <span class="bar-nav__heading text-body-medium-emphasis">{this.heading}</span>
             )}
 
-            {hasTabs && this.tabLayoutCommitted && this.tabsCollapsed && (
+            {hasTabs && this.tabsCollapsed && (
               <button
                 type="button"
                 class={{
@@ -535,7 +484,7 @@ export class BarNav {
                 </span>
                 <ds-icon
                   name="ChevronDown"
-                  size="md"
+                  size="sm"
                   color="inherit"
                   class="bar-nav__tab-trigger-chevron"
                 />

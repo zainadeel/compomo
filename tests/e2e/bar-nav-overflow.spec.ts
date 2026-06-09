@@ -16,6 +16,7 @@ test.describe('BarNav responsive overflow', () => {
     await expect(page.locator('ds-bar-nav .bar-nav__tabs-probe')).toHaveCount(1);
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
   });
 
   test('wide viewport shows tab row; narrow collapses; widen restores', async ({ page }) => {
