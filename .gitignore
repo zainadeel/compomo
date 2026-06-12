@@ -17,6 +17,8 @@ dist
 # Build
 *.tsbuildinfo
 .stencil/
+src/wc/components/Icon/system-icon-catalog.ts
+src/wc/components/Icon/flag-icon-catalog.ts
 
 # Storybook
 storybook-static

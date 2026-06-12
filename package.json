@@ -39,12 +39,13 @@
     "src/angular"
   ],
   "scripts": {
+    "prebuild": "node scripts/generate-icon-catalog.mjs",
     "build": "stencil build && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs",
-    "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts tests/bar-nav-dom-utils.test.ts tests/icon-resolve.test.ts",
+    "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts tests/bar-nav-dom-utils.test.ts tests/icon-catalog.test.ts",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:install": "playwright install chromium",
     "build:docs": "stencil build --docs",
-    "dev": "stencil build --dev --watch",
+    "dev": "node scripts/generate-icon-catalog.mjs && stencil build --dev --watch",
     "storybook": "stencil build && storybook dev -p 6006",
     "storybook:build": "storybook build",
     "clean": "rm -rf dist",
