@@ -34,7 +34,7 @@ const OUT = path.join(ROOT, 'public', 'r');
 const PKG = '@ds-mo/ui';
 const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
 const TOKENS_PEER = '>=2.9.0';
-const ICONS_PEER = '^5.0.0';
+const ICONS_PEER = '^5.0.1';
 const TRILOGY_INSTALL = `npm install ${PKG} @ds-mo/tokens @ds-mo/icons`;
 
 // ─── Component catalog ─────────────────────────────────────────────────────────

@@ -12,7 +12,7 @@
     "peerDependencies": {
       "required": [
         "@ds-mo/tokens >=2.9.0",
-        "@ds-mo/icons ^5.0.0"
+        "@ds-mo/icons ^5.0.1"
       ],
       "optional": [],
       "frameworks": "None required — works with any framework that supports Custom Elements."

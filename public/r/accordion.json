@@ -26,7 +26,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.0"
+          "@ds-mo/icons ^5.0.1"
         ],
         "optional": [],
         "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."

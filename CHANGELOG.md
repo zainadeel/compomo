@@ -25,7 +25,7 @@
 
 ### Breaking
 
-* **`@ds-mo/icons` is now a required peer dependency** (`^5.0.0`) — same runtime model as `@ds-mo/tokens`. Install all three: `@ds-mo/tokens`, `@ds-mo/icons`, `@ds-mo/ui`.
+* **`@ds-mo/icons` is now a required peer dependency** (`^5.0.1`) — same runtime model as `@ds-mo/tokens`. Install all three: `@ds-mo/tokens`, `@ds-mo/icons`, `@ds-mo/ui`.
 * **`ds-icon` no longer ships a baked-in IcoMo catalog.** Stencil externalizes `@ds-mo/icons`; your app bundler resolves icons from the consumer's installed IcoMo version. IcoMo icon renames (e.g. `Mobile` → `DeviceMobile`) no longer require a CompoMo republish.
 * **`ds-icon` alias resolution:** looks up names via `@ds-mo/icons/meta` (kebab-case, lowercase, and legacy-friendly aliases) before resolving SVG exports.
 
