@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/zainadeel/compomo/compare/v1.0.0...v1.0.1) (2026-06-12)
+
+
+### Fixed
+
+* generate static icon catalog so prod builds keep ds-icon SVGs ([#149](https://github.com/zainadeel/compomo/issues/149)) ([0ee3fe9](https://github.com/zainadeel/compomo/commit/0ee3fe9ee15602af7c61e8e8472b0ae8eb34c895))
+
 ## [1.0.0](https://github.com/zainadeel/compomo/compare/v0.14.3...v1.0.0) (2026-06-12)
 
 
