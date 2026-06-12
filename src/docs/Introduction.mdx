@@ -9,16 +9,13 @@ Composable React UI components styled with [TokoMo](https://github.com/zainadeel
 ## Install
 
 ```bash
-npm install @compomo/ui @ds-mo/tokens
+npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons
 ```
 
-**Required peer dependency:** `@ds-mo/tokens` provides all CSS custom properties (colors, dimensions, typography, effects) that CompoMo components consume. Components will not render correctly without it.
+**Required peer dependencies:**
 
-**Optional:** `@ds-mo/icons` for icon components used via the `icon` prop pattern.
-
-```bash
-npm install @ds-mo/icons
-```
+- **`@ds-mo/tokens`** — CSS custom properties (colors, dimensions, typography, effects).
+- **`@ds-mo/icons`** — runtime SVG catalog for `<ds-icon>` (resolved from your app's IcoMo install, not bundled inside `@ds-mo/ui`).
 
 ## Setup
 

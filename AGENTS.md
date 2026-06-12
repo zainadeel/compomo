@@ -100,7 +100,11 @@ Package `exports`:
 }
 ```
 
-Consumers register custom elements once at app boot, then use the tags anywhere:
+Consumers install the **ds-mo trilogy** and register custom elements once at app boot:
+
+```bash
+npm install @ds-mo/tokens @ds-mo/icons @ds-mo/ui
+```
 
 ```ts
 // React / plain HTML — use <ds-*> tags + JS properties (no React wrapper layer)
@@ -111,6 +115,8 @@ defineCustomElements();
 
 // Angular — Stencil-generated proxy directives from '@ds-mo/ui/angular'
 ```
+
+**Peer dependency model:** `@ds-mo/tokens` and `@ds-mo/icons` are **required** runtime peers — same as tokens, icons are **not** inlined into `dist/`. Stencil externalizes `@ds-mo/icons`; the consumer's bundler resolves SVG exports when bundling `ds-icon`.
 
 **Framework wrappers:** Stencil emits **Angular proxy directives** only (`angularOutputTarget` in `stencil.config.ts`). There is **no** Stencil React output target — React hosts use native custom elements (`CUSTOM_ELEMENTS_SCHEMA` + imperative props). Do not maintain a parallel React component tree in this repo.
 

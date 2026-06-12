@@ -9,7 +9,7 @@
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip",
     "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens",
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
       "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
       "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-tooltip.js';",
       "usage": {
@@ -25,7 +25,8 @@
       ],
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=0.3.0"
+          "@ds-mo/tokens >=2.9.0",
+          "@ds-mo/icons ^5.0.1"
         ],
         "optional": [],
         "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."

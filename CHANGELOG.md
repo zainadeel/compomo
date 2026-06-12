@@ -23,14 +23,11 @@
 
 ## [Unreleased]
 
-### Changed
+### Breaking
 
-* **Menu:** section inset padding uses `--dimension-space-050` (4px; was `--dimension-space-100` / 8px). Item gap stays 4px; item padding stays 6px.
-* **Build:** bump `@ds-mo/icons` to **4.4.0** (IcoMo) for `ds-icon` SVG sources.
-
-### Fixed
-
-* **BarNav:** collapsed tab menu trigger `ChevronDown` uses **`md`** (20px) again — regressed to `sm` (16px) during the #142 squash merge.
+* **`@ds-mo/icons` is now a required peer dependency** (`^5.0.1`) — same runtime model as `@ds-mo/tokens`. Install all three: `@ds-mo/tokens`, `@ds-mo/icons`, `@ds-mo/ui`.
+* **`ds-icon` no longer ships a baked-in IcoMo catalog.** Stencil externalizes `@ds-mo/icons`; your app bundler resolves icons from the consumer's installed IcoMo version. IcoMo icon renames (e.g. `Mobile` → `DeviceMobile`) no longer require a CompoMo republish.
+* **`ds-icon` alias resolution:** looks up names via `@ds-mo/icons/meta` (kebab-case, lowercase, and legacy-friendly aliases) before resolving SVG exports.
 
 ## [0.14.0](https://github.com/zainadeel/compomo/compare/v0.13.0...v0.14.0) (2026-06-08)
 

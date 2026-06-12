@@ -7,16 +7,13 @@ Composable web UI components (Stencil custom elements) styled with [TokoMo](http
 ## Install
 
 ```bash
-npm install @ds-mo/ui @ds-mo/tokens
+npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons
 ```
 
-**Required peer dependency:** `@ds-mo/tokens` provides all CSS custom properties (colors, dimensions, typography, effects) that CompoMo components consume. Components will not render correctly without it.
+**Required peer dependencies:**
 
-**Optional:** `@ds-mo/icons` for icon components passed via the `slot="icon"` pattern.
-
-```bash
-npm install @ds-mo/icons
-```
+- **`@ds-mo/tokens`** — CSS custom properties (colors, dimensions, typography, effects). Components will not render correctly without it.
+- **`@ds-mo/icons`** — SVG sources for `<ds-icon>` and built-in icon props. Resolved at **your app bundle time** from your installed IcoMo version (not baked into `@ds-mo/ui`).
 
 ## Setup
 
@@ -32,10 +29,13 @@ Register custom elements once at app boot:
 
 ```ts
 import { defineCustomElements } from '@ds-mo/ui/loader';
+import '@ds-mo/tokens/css';
 import '@ds-mo/ui/css';
 
 defineCustomElements();
 ```
+
+Your app bundler (Vite, Webpack, esbuild, etc.) must be able to resolve `@ds-mo/icons` when it bundles `ds-icon` — install `@ds-mo/icons` alongside `@ds-mo/ui`.
 
 Then use `<ds-*>` tags in templates. **Angular** can import Stencil-generated proxy directives from `@ds-mo/ui/angular`. **React** uses the custom elements directly (no parallel React component layer) with `CUSTOM_ELEMENTS_SCHEMA` and imperative JS properties where needed.
 

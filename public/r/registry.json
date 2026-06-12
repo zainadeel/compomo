@@ -5,17 +5,16 @@
   "description": "CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Works with React 17+, Angular 12+, and plain HTML. Distributed as an npm package; not copy-paste.",
   "meta": {
     "distribution": "npm",
-    "install": "npm install @ds-mo/ui @ds-mo/tokens",
+    "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
     "register": "import { defineCustomElements } from '@ds-mo/ui/loader'; defineCustomElements();",
     "cssSetup": "import '@ds-mo/tokens/css';  // Design token CSS custom properties\nimport '@ds-mo/ui/css';       // Component styles",
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens >=0.3.0"
+        "@ds-mo/tokens >=2.9.0",
+        "@ds-mo/icons ^5.0.1"
       ],
-      "optional": [
-        "@ds-mo/icons >=0.1.0"
-      ],
+      "optional": [],
       "frameworks": "None required — works with any framework that supports Custom Elements."
     }
   },
