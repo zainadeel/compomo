@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/zainadeel/compomo/compare/v0.14.3...v1.0.0) (2026-06-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* externalize @ds-mo/icons from ds-icon build output ([#147](https://github.com/zainadeel/compomo/issues/147))
+
+### Added
+
+* externalize @ds-mo/icons from ds-icon build output ([#147](https://github.com/zainadeel/compomo/issues/147)) ([014614f](https://github.com/zainadeel/compomo/commit/014614f0844d5746c94154bed70a4aff25718120))
+
 ## [0.14.3](https://github.com/zainadeel/compomo/compare/v0.14.2...v0.14.3) (2026-06-09)
 
 
