@@ -1,9 +1,6 @@
 import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
-import * as SvgIcons from '@ds-mo/icons/svg';
-import * as SvgFlags from '@ds-mo/icons/svg/flags';
-import { resolveIconName } from './icon-resolve';
-
-type SvgRecord = Record<string, string>;
+import { flagIconCatalog } from './flag-icon-catalog';
+import { systemIconCatalog } from './system-icon-catalog';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
@@ -51,10 +48,8 @@ export class Icon {
   @Prop() flag: boolean = false;
 
   private get svgString(): string {
-    const source = this.flag ? (SvgFlags as SvgRecord) : (SvgIcons as SvgRecord);
-    const category = this.flag ? 'flag' : 'system';
-    const resolved = resolveIconName(this.name, category);
-    return source[resolved] ?? '';
+    const source = this.flag ? flagIconCatalog : systemIconCatalog;
+    return source[this.name] ?? '';
   }
 
   private updateSvg() {

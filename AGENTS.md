@@ -118,6 +118,8 @@ defineCustomElements();
 
 **Peer dependency model:** `@ds-mo/tokens` and `@ds-mo/icons` are **required** runtime peers — same as tokens, icons are **not** inlined into `dist/`. Stencil externalizes `@ds-mo/icons`; the consumer's bundler resolves SVG exports when bundling `ds-icon`.
 
+**`ds-icon` names:** Pass canonical IcoMo export keys only (`Bell`, `Chart`, `DeviceMobile`). IcoMo `meta.json` aliases are for discovery/docs — not runtime resolution. `prebuild` generates `system-icon-catalog.ts` / `flag-icon-catalog.ts` with **named imports** per icon so production app bundles retain the full peer catalog (dynamic `icons[name]` alone is tree-shaken).
+
 **Framework wrappers:** Stencil emits **Angular proxy directives** only (`angularOutputTarget` in `stencil.config.ts`). There is **no** Stencil React output target — React hosts use native custom elements (`CUSTOM_ELEMENTS_SCHEMA` + imperative props). Do not maintain a parallel React component tree in this repo.
 
 ---
