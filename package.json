@@ -40,6 +40,8 @@
   ],
   "scripts": {
     "prebuild": "node scripts/generate-icon-catalog.mjs",
+    "pretypecheck": "node scripts/generate-icon-catalog.mjs",
+    "pretest": "node scripts/generate-icon-catalog.mjs",
     "build": "stencil build && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs",
     "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts tests/bar-nav-dom-utils.test.ts tests/icon-catalog.test.ts",
     "test:e2e": "npm run build && playwright test",
