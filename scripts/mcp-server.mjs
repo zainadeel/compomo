@@ -133,11 +133,6 @@ function formatSetupGuide() {
 ${m.install}
 \`\`\`
 
-For icon support (optional):
-\`\`\`bash
-npm install @ds-mo/icons
-\`\`\`
-
 ## 2. Import CSS at your app entry point
 
 \`\`\`tsx
@@ -178,8 +173,7 @@ function MyPage() {
 **Required:**
 ${m.peerDependencies.required.map(d => `- \`${d}\``).join('\n')}
 
-**Optional:**
-${m.peerDependencies.optional.map(d => `- \`${d}\``).join('\n')}
+${m.peerDependencies.optional?.length ? `**Optional:**\n${m.peerDependencies.optional.map(d => `- \`${d}\``).join('\n')}` : ''}
 
 ## 6. Design token architecture
 

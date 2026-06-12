@@ -33,6 +33,9 @@ const OUT = path.join(ROOT, 'public', 'r');
 
 const PKG = '@ds-mo/ui';
 const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
+const TOKENS_PEER = '>=2.9.0';
+const ICONS_PEER = '^5.0.0';
+const TRILOGY_INSTALL = `npm install ${PKG} @ds-mo/tokens @ds-mo/icons`;
 
 // ─── Component catalog ─────────────────────────────────────────────────────────
 
@@ -647,11 +650,8 @@ function readComponentFiles(dirName) {
 function buildConsumptionGuide(config) {
   const guide = {};
 
-  // 1. Install
-  const packages = [PKG];
-  if (config.usesTokens) packages.push('@ds-mo/tokens');
-  if (config.usesIcons) packages.push('@ds-mo/icons');
-  guide.install = `npm install ${packages.join(' ')}`;
+  // 1. Install — tokens + icons are required runtime peers for every consumer
+  guide.install = TRILOGY_INSTALL;
 
   // 2. CSS setup — token CSS vars must be imported once at app root
   if (config.usesTokens) {
@@ -706,8 +706,8 @@ function buildConsumptionGuide(config) {
 
   // 8. Peer dependency summary
   guide.peerDependencies = {
-    required: ['@ds-mo/tokens >=0.3.0'],
-    optional: config.usesIcons ? ['@ds-mo/icons >=0.1.0'] : [],
+    required: [`@ds-mo/tokens ${TOKENS_PEER}`, `@ds-mo/icons ${ICONS_PEER}`],
+    optional: [],
     frameworks: 'None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support.',
   };
 
@@ -804,13 +804,13 @@ const registry = {
   description: `CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Works with React 17+, Angular 12+, and plain HTML. Distributed as an npm package; not copy-paste.`,
   meta: {
     distribution: 'npm',
-    install: `npm install ${PKG} @ds-mo/tokens`,
+    install: TRILOGY_INSTALL,
     register: "import { defineCustomElements } from '@ds-mo/ui/loader'; defineCustomElements();",
     cssSetup: "import '@ds-mo/tokens/css';  // Design token CSS custom properties\nimport '@ds-mo/ui/css';       // Component styles",
     themeSetup: "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     peerDependencies: {
-      required: ['@ds-mo/tokens >=0.3.0'],
-      optional: ['@ds-mo/icons >=0.1.0'],
+      required: [`@ds-mo/tokens ${TOKENS_PEER}`, `@ds-mo/icons ${ICONS_PEER}`],
+      optional: [],
       frameworks: 'None required — works with any framework that supports Custom Elements.',
     },
   },
