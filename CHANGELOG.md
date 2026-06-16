@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/zainadeel/compomo/compare/v1.0.1...v1.0.2) (2026-06-16)
+
+
+### Fixed
+
+* **icons:** remap TwoDevices → DeviceMobileTwo for @ds-mo/icons v6 compat ([#152](https://github.com/zainadeel/compomo/issues/152)) ([0afc476](https://github.com/zainadeel/compomo/commit/0afc4763fc2150c9d82735560540cec094bf60d7))
+
 ## [1.0.1](https://github.com/zainadeel/compomo/compare/v1.0.0...v1.0.1) (2026-06-12)
 
 
