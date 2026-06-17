@@ -43,9 +43,8 @@ export const AllActions: Story = {
   render: () => html`
     <div style="display:flex;gap:var(--dimension-space-050);align-items:center;padding:var(--dimension-space-100)">
       <ds-bar-nav-action icon="MagnifyingGlass" aria-label="Go to / Search"></ds-bar-nav-action>
-      <ds-bar-nav-action icon="MessageBubble"   aria-label="Messages" dot></ds-bar-nav-action>
-      <ds-bar-nav-action icon="Bell"            aria-label="Notifications" dot></ds-bar-nav-action>
-      <ds-bar-nav-action icon="AI"              aria-label="Assistant"></ds-bar-nav-action>
+      <ds-bar-nav-action icon="Inbox"           aria-label="Inbox" dot></ds-bar-nav-action>
+      <ds-bar-nav-action icon="AI"              aria-label="AI Assistant" dot></ds-bar-nav-action>
     </div>
   `,
 };
@@ -54,9 +53,8 @@ export const Selected: Story = {
   render: () => html`
     <div style="display:flex;gap:var(--dimension-space-050);align-items:center;padding:var(--dimension-space-100)">
       <ds-bar-nav-action icon="MagnifyingGlass" aria-label="Search"        selected></ds-bar-nav-action>
-      <ds-bar-nav-action icon="MessageBubble"   aria-label="Messages"      selected dot></ds-bar-nav-action>
-      <ds-bar-nav-action icon="Bell"            aria-label="Notifications" selected dot></ds-bar-nav-action>
-      <ds-bar-nav-action icon="AI"              aria-label="Assistant"     selected></ds-bar-nav-action>
+      <ds-bar-nav-action icon="Inbox"           aria-label="Inbox"         selected dot></ds-bar-nav-action>
+      <ds-bar-nav-action icon="AI"              aria-label="AI Assistant"  selected dot></ds-bar-nav-action>
     </div>
   `,
 };

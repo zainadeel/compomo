@@ -863,6 +863,34 @@ export declare interface DsTabGroup extends Components.DsTabGroup {
 
 
 @ProxyCmp({
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'tabs', 'value']
+})
+@Component({
+  selector: 'ds-tab-group-nav',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'tabs', 'value'],
+  outputs: ['dsChange'],
+  standalone: false
+})
+export class DsTabGroupNav {
+  protected el: HTMLDsTabGroupNavElement;
+  @Output() dsChange = new EventEmitter<CustomEvent<string>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsTabGroupNav extends Components.DsTabGroupNav {
+
+  dsChange: EventEmitter<CustomEvent<string>>;
+}
+
+
+@ProxyCmp({
   inputs: ['columns', 'data', 'emptyMessage', 'loading', 'pageIndex', 'pageSize', 'selectedRows', 'sortState']
 })
 @Component({

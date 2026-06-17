@@ -31,6 +31,7 @@ import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
+import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
@@ -64,6 +65,7 @@ export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
+export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
@@ -748,6 +750,23 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsTabGroupNav {
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        "background": TabGroupNavBackground | undefined;
+        /**
+          * @default 'horizontal'
+         */
+        "orientation": 'horizontal' | 'vertical';
+        /**
+          * @default []
+         */
+        "tabs": TabItem[];
+        /**
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsTable {
         /**
           * @default []
@@ -1037,6 +1056,10 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
 export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTabGroupElement;
+}
+export interface DsTabGroupNavCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTabGroupNavElement;
 }
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1457,6 +1480,23 @@ declare global {
         prototype: HTMLDsTabGroupElement;
         new (): HTMLDsTabGroupElement;
     };
+    interface HTMLDsTabGroupNavElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsTabGroupNavElement extends Components.DsTabGroupNav, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTabGroupNavElementEventMap>(type: K, listener: (this: HTMLDsTabGroupNavElement, ev: DsTabGroupNavCustomEvent<HTMLDsTabGroupNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTabGroupNavElementEventMap>(type: K, listener: (this: HTMLDsTabGroupNavElement, ev: DsTabGroupNavCustomEvent<HTMLDsTabGroupNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTabGroupNavElement: {
+        prototype: HTMLDsTabGroupNavElement;
+        new (): HTMLDsTabGroupNavElement;
+    };
     interface HTMLDsTableElementEventMap {
         "dsSort": { columnId: string };
         "dsRowClick": { row: unknown; rowIndex: number };
@@ -1596,6 +1636,7 @@ declare global {
         "ds-slider": HTMLDsSliderElement;
         "ds-surface": HTMLDsSurfaceElement;
         "ds-tab-group": HTMLDsTabGroupElement;
+        "ds-tab-group-nav": HTMLDsTabGroupNavElement;
         "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
@@ -2338,6 +2379,24 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsTabGroupNav {
+        "ariaLabel"?: string | undefined;
+        "ariaLabelledby"?: string | undefined;
+        "background"?: TabGroupNavBackground | undefined;
+        "onDsChange"?: (event: DsTabGroupNavCustomEvent<string>) => void;
+        /**
+          * @default 'horizontal'
+         */
+        "orientation"?: 'horizontal' | 'vertical';
+        /**
+          * @default []
+         */
+        "tabs"?: TabItem[];
+        /**
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsTable {
         /**
           * @default []
@@ -2797,6 +2856,13 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "orientation": 'horizontal' | 'vertical';
     }
+    interface DsTabGroupNavAttributes {
+        "value": string;
+        "background": TabGroupNavBackground | undefined;
+        "ariaLabel": string | undefined;
+        "ariaLabelledby": string | undefined;
+        "orientation": 'horizontal' | 'vertical';
+    }
     interface DsTableAttributes {
         "loading": boolean;
         "emptyMessage": string;
@@ -2897,6 +2963,7 @@ declare namespace LocalJSX {
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
         "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
+        "ds-tab-group-nav": Omit<DsTabGroupNav, keyof DsTabGroupNavAttributes> & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes]?: DsTabGroupNav[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `attr:${K}`]?: DsTabGroupNavAttributes[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `prop:${K}`]?: DsTabGroupNav[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
@@ -2947,6 +3014,7 @@ declare module "@stencil/core" {
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
+            "ds-tab-group-nav": LocalJSX.IntrinsicElements["ds-tab-group-nav"] & JSXBase.HTMLAttributes<HTMLDsTabGroupNavElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;

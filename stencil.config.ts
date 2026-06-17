@@ -1,5 +1,6 @@
 import { Config } from '@stencil/core';
 import { angularOutputTarget } from '@stencil/angular-output-target';
+import { reactOutputTarget } from '@stencil/react-output-target';
 
 export const config: Config = {
   namespace: 'ds-mo',
@@ -22,6 +23,10 @@ export const config: Config = {
       outputType: 'component',
       directivesProxyFile: 'src/angular/proxies.ts',
       directivesArrayFile: 'src/angular/index.ts',
+    }),
+    reactOutputTarget({
+      outDir: 'src/react',
+      esModules: true,
     }),
   ],
 };

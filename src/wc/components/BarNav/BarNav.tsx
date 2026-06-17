@@ -19,6 +19,7 @@ import {
 import {
   getTabListFromTabGroup,
   queryWithinComponentHost,
+  type QueryableHost,
 } from './bar-nav-dom-utils';
 import {
   getActiveTab,
@@ -100,15 +101,18 @@ export class BarNav {
   @State() private menuOpen = false;
   /** When false, defer showing expanded tabs or the collapsed trigger until intrinsic width is measured (avoids a one-frame flash of the full tab row on narrow viewports). */
   @State() private tabLayoutCommitted = false;
+  @State() private triggerLabelTruncated = false;
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
   private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
 
-  private leftEl: HTMLElement | null = null;
+  private headerEl: HTMLElement | null = null;
   private triggerEl: HTMLButtonElement | null = null;
+  private triggerLabelTextEl: HTMLElement | null = null;
+  private triggerLabelObserver: ResizeObserver | null = null;
   private menuEl: HTMLDsMenuElement | null = null;
-  private visibleTabGroupEl: HTMLDsTabGroupElement | null = null;
-  private probeTabGroupEl: HTMLDsTabGroupElement | null = null;
+  private visibleTabGroupEl: QueryableHost | null = null;
+  private probeTabGroupEl: QueryableHost | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
@@ -170,8 +174,16 @@ export class BarNav {
     if (!collapsed) {
       this.menuOpen = false;
       this.menuEl = null;
+      this.triggerLabelTruncated = false;
+      this.syncTriggerLabelObserver();
     }
     this.scheduleOverflowCheck();
+    if (collapsed) {
+      requestAnimationFrame(() => {
+        this.scheduleOverflowCheck();
+        this.syncTriggerLabelObserver();
+      });
+    }
     if (collapsed || prevCollapsed === undefined || prevCollapsed === collapsed) return;
     requestAnimationFrame(() => this.scheduleOverflowCheck());
     queueMicrotask(() => this.focusVisibleSelectedTab());
@@ -191,11 +203,15 @@ export class BarNav {
   componentDidRender() {
     this.scheduleOverflowCheck();
     this.syncMenuAnchor();
+    if (this.tabsCollapsed) {
+      this.updateTriggerLabelTruncation();
+    }
   }
 
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.syncTriggerLabelObserver(true);
   }
 
   /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
@@ -229,14 +245,10 @@ export class BarNav {
   }
 
   private setupOverflowObserver() {
-    if (typeof ResizeObserver === 'undefined' || !this.leftEl) return;
+    if (typeof ResizeObserver === 'undefined' || !this.headerEl) return;
     this.resizeObserver?.disconnect();
     this.resizeObserver = new ResizeObserver(() => this.scheduleOverflowCheck());
-    this.resizeObserver.observe(this.leftEl);
-    const header = this.leftEl.parentElement;
-    if (header) {
-      this.resizeObserver.observe(header);
-    }
+    this.resizeObserver.observe(this.headerEl);
   }
 
   private scheduleOverflowCheck() {
@@ -245,25 +257,63 @@ export class BarNav {
     requestAnimationFrame(() => {
       this.overflowCheckScheduled = false;
       this.updateTabsCollapsed();
+      this.updateTriggerLabelTruncation();
     });
   }
 
-  /** Width left for tabs after actions — stable while collapsed (unlike leftEl box when hugging the trigger). */
-  private getLeftZoneAvailableWidth(): number {
-    if (!this.leftEl) return 0;
+  private syncTriggerLabelObserver(disconnectOnly = false) {
+    this.triggerLabelObserver?.disconnect();
+    this.triggerLabelObserver = null;
 
-    const header = this.leftEl.parentElement;
-    if (!header?.classList.contains('bar-nav')) {
-      return this.leftEl.clientWidth;
+    if (disconnectOnly || !this.tabsCollapsed || !this.triggerLabelTextEl) {
+      return;
     }
 
-    const headerStyle = getComputedStyle(header);
+    this.updateTriggerLabelTruncation();
+
+    if (typeof ResizeObserver === 'undefined') return;
+
+    this.triggerLabelObserver = new ResizeObserver(() => this.updateTriggerLabelTruncation());
+    this.triggerLabelObserver.observe(this.triggerLabelTextEl);
+    if (this.triggerEl) {
+      this.triggerLabelObserver.observe(this.triggerEl);
+    }
+  }
+
+  private updateTriggerLabelTruncation() {
+    const el = this.triggerLabelTextEl;
+    if (!el || !this.tabsCollapsed) {
+      if (this.triggerLabelTruncated) {
+        this.triggerLabelTruncated = false;
+      }
+      return;
+    }
+
+    const truncated = el.scrollWidth > el.clientWidth + 1;
+    if (truncated !== this.triggerLabelTruncated) {
+      this.triggerLabelTruncated = truncated;
+    }
+  }
+
+  /** Width left for tabs after actions. */
+  private getLeftZoneAvailableWidth(): number {
+    if (!this.headerEl) return 0;
+
+    const headerStyle = getComputedStyle(this.headerEl);
     const gap = parseFloat(headerStyle.columnGap || headerStyle.gap || '0') || 0;
-    const actionsEl = header.querySelector('.bar-nav__actions') as HTMLElement | null;
+    const actionsEl = this.headerEl.querySelector('.bar-nav__actions') as HTMLElement | null;
     const actionsWidth = actionsEl?.offsetWidth ?? 0;
     const horizontalPadding =
       (parseFloat(headerStyle.paddingLeft) || 0) + (parseFloat(headerStyle.paddingRight) || 0);
-    const available = header.clientWidth - horizontalPadding - actionsWidth - (actionsEl ? gap : 0);
+    const spacing = this.tabsCollapsed
+      ? parseFloat(
+          getComputedStyle(this.headerEl).getPropertyValue('--dimension-space-100').trim(),
+        ) || 8
+      : actionsEl
+        ? gap
+        : 0;
+    const available =
+      this.headerEl.clientWidth - horizontalPadding - actionsWidth - spacing;
 
     return Math.max(0, available);
   }
@@ -280,7 +330,7 @@ export class BarNav {
   }
 
   private updateTabsCollapsed() {
-    if (!this.leftEl || this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
+    if (!this.headerEl || this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
       if (this.tabsCollapsed) {
         this.tabsCollapsed = false;
         this.menuOpen = false;
@@ -413,22 +463,24 @@ export class BarNav {
 
     return (
       <Host>
-        <header class={{ 'bar-nav': true, [`bg-${this.background}`]: true }}>
-
-          <div
-            class="bar-nav__left"
-            ref={el => {
-              this.leftEl = el as HTMLElement;
-              if (el && !this.resizeObserver) {
-                this.setupOverflowObserver();
-              }
-            }}
-          >
+        <header
+          class={{
+            'bar-nav': true,
+            [`bg-${this.background}`]: true,
+            'bar-nav--tabs-collapsed': hasTabs && this.tabsCollapsed,
+          }}
+          ref={el => {
+            this.headerEl = el as HTMLElement;
+            if (el && !this.resizeObserver) {
+              this.setupOverflowObserver();
+            }
+          }}
+        >
             {hasTabs && (
               <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
-                <ds-tab-group
+                <ds-tab-group-nav
                   ref={el => {
-                    this.probeTabGroupEl = (el as HTMLDsTabGroupElement) ?? null;
+                    this.probeTabGroupEl = el ?? null;
                     if (el) {
                       this.intrinsicWidthRetryCount = 0;
                       this.scheduleOverflowCheck();
@@ -441,15 +493,17 @@ export class BarNav {
             )}
 
             {hasTabs && !this.tabsCollapsed && (
-              <ds-tab-group
-                class="bar-nav__tabs-visible"
-                ref={el => {
-                  this.visibleTabGroupEl = el as HTMLDsTabGroupElement;
-                }}
-                tabs={this.resolvedTabs}
-                value={this.effectiveValue}
-                onDsChange={(e: Event) => this.handleTabChange(e)}
-              />
+              <div class="bar-nav__left">
+                <ds-tab-group-nav
+                  class="bar-nav__tabs-visible"
+                  ref={el => {
+                    this.visibleTabGroupEl = el ?? null;
+                  }}
+                  tabs={this.resolvedTabs}
+                  value={this.effectiveValue}
+                  onDsChange={(e: Event) => this.handleTabChange(e)}
+                />
+              </div>
             )}
 
             {!hasTabs && this.heading && (
@@ -472,12 +526,30 @@ export class BarNav {
                 onClick={() => this.toggleTabMenu()}
                 onKeyDown={(e: KeyboardEvent) => this.handleTriggerKeyDown(e)}
               >
-                <span class={{
-                  'bar-nav__tab-trigger-label': true,
-                  'bar-nav__tab-trigger-label--dot': this.activeTabHasDot,
-                  'text-body-medium-emphasis': true,
-                }}>
-                  {this.activeTabLabel}
+                <span
+                  class={{
+                    'bar-nav__tab-trigger-label': true,
+                    'bar-nav__tab-trigger-label--dot': this.activeTabHasDot,
+                    'bar-nav__tab-trigger-label--truncated': this.triggerLabelTruncated,
+                  }}
+                >
+                  <span
+                    class={{
+                      'bar-nav__tab-trigger-label-text': true,
+                      'bar-nav__tab-trigger-label-text--truncated': this.triggerLabelTruncated,
+                      'text-body-medium-emphasis': true,
+                    }}
+                    ref={el => {
+                      const next = el ?? null;
+                      if (next === this.triggerLabelTextEl) return;
+                      this.triggerLabelTextEl = next;
+                      if (this.tabsCollapsed) {
+                        this.syncTriggerLabelObserver();
+                      }
+                    }}
+                  >
+                    {this.activeTabLabel}
+                  </span>
                   {this.activeTabHasDot && (
                     <span class="bar-nav__tab-trigger-dot" aria-hidden="true" />
                   )}
@@ -490,7 +562,10 @@ export class BarNav {
                 />
               </button>
             )}
-          </div>
+
+            {hasTabs && this.tabsCollapsed && this.resolvedActions.length > 0 && (
+              <div class="bar-nav__between" aria-hidden="true" />
+            )}
 
           {this.resolvedActions.length > 0 && (
             <div class="bar-nav__actions">
