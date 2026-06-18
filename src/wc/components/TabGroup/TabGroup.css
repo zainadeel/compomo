@@ -10,7 +10,7 @@
   width: max-content;
   max-width: 100%;
   height: var(--dimension-size-400);
-  padding: var(--dimension-space-050);
+  padding: calc(var(--dimension-space-050) - var(--dimension-stroke-width-012));
   background-color: var(--color-background-secondary);
   border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   border-radius: var(--dimension-radius-half);
