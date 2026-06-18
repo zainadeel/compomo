@@ -173,7 +173,7 @@ export class TabGroup {
                 <span class={{
                   tab__label: true,
                   'tab__label--dot': !!tab.dot,
-                  [isSelected ? 'text-body-medium-emphasis' : 'text-body-medium']: true,
+                  [isSelected ? 'text-body-small-emphasis' : 'text-body-small']: true,
                 }}>
                   {tab.label}
                   {tab.dot && <span class="tab__dot" aria-hidden="true" />}

@@ -12,8 +12,8 @@
   height: var(--dimension-size-400);
   padding: var(--dimension-space-050);
   background-color: var(--color-background-secondary);
-  border-radius: var(--dimension-radius-075);
-  box-shadow: var(--effect-elevation-depressed-sm);
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  border-radius: var(--dimension-radius-half);
   box-sizing: border-box;
 }
 
@@ -30,8 +30,8 @@
   gap: var(--dimension-space-050);
   padding: var(--dimension-space-050);
   background-color: transparent;
-  border: none;
-  border-radius: var(--dimension-radius-025);
+  border: var(--dimension-stroke-width-012) solid transparent;
+  border-radius: var(--dimension-radius-half);
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
@@ -53,8 +53,8 @@
 .tab::after {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: var(--dimension-radius-025, 2px);
+  inset: calc(var(--dimension-stroke-width-012) * -1);
+  border-radius: inherit;
   background: transparent;
   pointer-events: none;
   transition: none;
@@ -71,7 +71,7 @@
 .tab--selected {
   color: var(--color-foreground-primary);
   background-color: var(--color-background-primary);
-  box-shadow: var(--effect-elevation-elevated-sm);
+  border-color: var(--color-border-tertiary);
 }
 
 .tab:focus-visible {
