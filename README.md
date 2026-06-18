@@ -50,7 +50,6 @@ Then use `<ds-*>` tags in templates. **Angular** can import Stencil-generated pr
 - **Input** — text input field
 - **Slider** — range slider
 - **Field** — label + input wrapper
-- **LabelWrap** — label + content wrapper with layout variants
 - **Divider** — horizontal or vertical rule
 
 ### Actions

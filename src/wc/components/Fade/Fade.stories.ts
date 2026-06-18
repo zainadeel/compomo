@@ -13,6 +13,7 @@ const meta: Meta = {
   args: {
     side: 'bottom',
     height: '48px',
+    background: 'var(--color-background-secondary)',
   },
 };
 
@@ -21,13 +22,17 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => html`
-    <div style="position: relative; height: 120px; overflow: hidden; background: var(--color-background-secondary); border-radius: 8px; padding: 12px">
+    <div style="position: relative; height: 120px; overflow: hidden; background: ${args['background']}; border-radius: var(--dimension-radius-100); padding: var(--dimension-space-150)">
       <p style="margin: 0; line-height: 1.6">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         Ut enim ad minim veniam, quis nostrud exercitation ullamco.
       </p>
-      <ds-fade side=${args['side']} height=${args['height']}></ds-fade>
+      <ds-fade
+        side=${args['side']}
+        height=${args['height']}
+        background=${args['background']}
+      ></ds-fade>
     </div>
   `,
 };

@@ -61,10 +61,17 @@ const preview: Preview = {
     },
   ],
   parameters: {
-    // Hide the bottom addon panel globally — we only ship @storybook/addon-docs
-    // so the panel has no content and just steals canvas height.
     options: {
-      showPanel: false,
+      // Storybook 10 ships Controls in core; keep the panel visible so
+      // Playground stories can expose their args.
+      showPanel: true,
+      storySort: {
+        order: [
+          'Foundation',
+          ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
+          'Primitives',
+        ],
+      },
     },
     controls: {
       matchers: {

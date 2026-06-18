@@ -10,15 +10,22 @@ const meta: Meta = {
   argTypes: {
     count:      { control: 'number' },
     isSelected: { control: 'boolean' },
+    label:      { control: 'text' },
   },
-  args: { count: 3, isSelected: false },
+  args: { count: 3, isSelected: false, label: '' },
 };
 
 export default meta;
 type Story = StoryObj;
 
 export const Playground: Story = {
-  render: args => html`<ds-badge count=${args['count']} ?is-selected=${args['isSelected']}></ds-badge>`,
+  render: args => html`
+    <ds-badge
+      count=${args['count']}
+      ?is-selected=${args['isSelected']}
+      label=${args['label'] || undefined}
+    ></ds-badge>
+  `,
 };
 
 export const Matrix: Story = {

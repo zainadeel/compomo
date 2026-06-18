@@ -6,17 +6,28 @@ const meta: Meta = {
   title: 'Primitives/Loader',
   tags: ['autodocs'],
   argTypes: {
-    size:  { control: 'number' },
-    label: { control: 'text' },
+    size: {
+      control: { type: 'number', min: 8, max: 64, step: 1 },
+      description: 'Render size in px.',
+    },
+    label: {
+      control: 'text',
+      description: 'Accessible label for standalone loading state.',
+    },
   },
-  args: { size: 20 },
+  args: { size: 20, label: '' },
 };
 
 export default meta;
 type Story = StoryObj;
 
-export const Default: Story = {
-  render: args => html`<ds-loader size=${args['size']}></ds-loader>`,
+export const Playground: Story = {
+  render: args => html`
+    <ds-loader
+      size=${args['size']}
+      label=${args['label'] || undefined}
+    ></ds-loader>
+  `,
 };
 
 export const WithLabel: Story = {

@@ -297,14 +297,14 @@ export declare interface DsCheckbox extends Components.DsCheckbox {
 
 
 @ProxyCmp({
-  inputs: ['orientation']
+  inputs: ['inset', 'length', 'orientation', 'semantic', 'surface']
 })
 @Component({
   selector: 'ds-divider',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['orientation'],
+  inputs: ['inset', 'length', 'orientation', 'semantic', 'surface'],
   standalone: false
 })
 export class DsDivider {
@@ -464,29 +464,6 @@ export declare interface DsInput extends Components.DsInput {
 
   dsClear: EventEmitter<CustomEvent<void>>;
 }
-
-
-@ProxyCmp({
-  inputs: ['size', 'truncate']
-})
-@Component({
-  selector: 'ds-label-wrap',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['size', 'truncate'],
-  standalone: false
-})
-export class DsLabelWrap {
-  protected el: HTMLDsLabelWrapElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsLabelWrap extends Components.DsLabelWrap {}
 
 
 @ProxyCmp({
@@ -965,14 +942,14 @@ export declare interface DsTag extends Components.DsTag {
 
 
 @ProxyCmp({
-  inputs: ['align', 'as', 'color', 'decoration', 'for', 'italic', 'lineTruncation', 'variant', 'wrap']
+  inputs: ['align', 'as', 'color', 'decoration', 'fontFeature', 'for', 'italic', 'lineTruncation', 'variant', 'wrap']
 })
 @Component({
   selector: 'ds-text',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'as', 'color', 'decoration', 'for', 'italic', 'lineTruncation', 'variant', 'wrap'],
+  inputs: ['align', 'as', 'color', 'decoration', 'fontFeature', 'for', 'italic', 'lineTruncation', 'variant', 'wrap'],
   standalone: false
 })
 export class DsText {

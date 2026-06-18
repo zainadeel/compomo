@@ -13,13 +13,12 @@ import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
 import { CardElevation, CardRadius } from "./components/Card/Card";
-import { DividerOrientation } from "./components/Divider/Divider";
+import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { FadeSide } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
-import { LabelWrapSize } from "./components/LabelWrap/LabelWrap";
 import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavVariant } from "./components/PanelNav/PanelNav";
@@ -34,7 +33,7 @@ import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
-import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
+import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
 import { ToastPosition } from "./components/Toast/Toast";
 import { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
 import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
@@ -47,13 +46,12 @@ export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
 export { CardElevation, CardRadius } from "./components/Card/Card";
-export { DividerOrientation } from "./components/Divider/Divider";
+export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { FadeSide } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
-export { LabelWrapSize } from "./components/LabelWrap/LabelWrap";
 export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavVariant } from "./components/PanelNav/PanelNav";
@@ -68,7 +66,7 @@ export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
 export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
-export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextVariant, TextWrap } from "./components/Text/Text";
+export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
 export { ToastPosition } from "./components/Toast/Toast";
 export { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
 export { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
@@ -322,10 +320,30 @@ export namespace Components {
     }
     interface DsDivider {
         /**
+          * Insets the divider from its start/end edges. Accepts spacing token names or any CSS length.
+          * @default 'none'
+         */
+        "inset": DividerInset;
+        /**
+          * Visual line length. Defaults to filling the available axis. Accepts any CSS length.
+          * @default 'auto'
+         */
+        "length": DividerLength;
+        /**
           * Direction of the divider line. Defaults to 'horizontal'.
           * @default 'horizontal'
          */
         "orientation": DividerOrientation;
+        /**
+          * Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default.
+          * @default false
+         */
+        "semantic": boolean;
+        /**
+          * Surface context so the divider uses the right TokoMo divider token.
+          * @default 'default'
+         */
+        "surface": DividerSurface;
     }
     interface DsEmptyState {
         "message": string | undefined;
@@ -416,23 +434,6 @@ export namespace Components {
           * @default ''
          */
         "value": string;
-    }
-    /**
-     * Internal utility wrapper that kills line-height struts and adds optical
-     * horizontal padding. Used inside interactive components (Button, Tag, etc.)
-     * Not intended as a standalone consumer-facing component — internal use only.
-     */
-    interface DsLabelWrap {
-        /**
-          * Typography size — controls optical horizontal padding.
-          * @default 'md'
-         */
-        "size": LabelWrapSize;
-        /**
-          * Enable truncation with ellipsis — use inside full-width containers.
-          * @default false
-         */
-        "truncate": boolean;
     }
     interface DsLoader {
         /**
@@ -849,6 +850,10 @@ export namespace Components {
         "as": TextElement;
         "color": TextColor | undefined;
         "decoration": TextDecoration | undefined;
+        /**
+          * @default 'normal'
+         */
+        "fontFeature": TextFontFeature;
         /**
           * Maps to `for` attribute on <label> elements.
          */
@@ -1287,17 +1292,6 @@ declare global {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
     };
-    /**
-     * Internal utility wrapper that kills line-height struts and adds optical
-     * horizontal padding. Used inside interactive components (Button, Tag, etc.)
-     * Not intended as a standalone consumer-facing component — internal use only.
-     */
-    interface HTMLDsLabelWrapElement extends Components.DsLabelWrap, HTMLStencilElement {
-    }
-    var HTMLDsLabelWrapElement: {
-        prototype: HTMLDsLabelWrapElement;
-        new (): HTMLDsLabelWrapElement;
-    };
     interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
     }
     var HTMLDsLoaderElement: {
@@ -1622,7 +1616,6 @@ declare global {
         "ds-header": HTMLDsHeaderElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
-        "ds-label-wrap": HTMLDsLabelWrapElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-modal": HTMLDsModalElement;
@@ -1921,10 +1914,30 @@ declare namespace LocalJSX {
     }
     interface DsDivider {
         /**
+          * Insets the divider from its start/end edges. Accepts spacing token names or any CSS length.
+          * @default 'none'
+         */
+        "inset"?: DividerInset;
+        /**
+          * Visual line length. Defaults to filling the available axis. Accepts any CSS length.
+          * @default 'auto'
+         */
+        "length"?: DividerLength;
+        /**
           * Direction of the divider line. Defaults to 'horizontal'.
           * @default 'horizontal'
          */
         "orientation"?: DividerOrientation;
+        /**
+          * Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default.
+          * @default false
+         */
+        "semantic"?: boolean;
+        /**
+          * Surface context so the divider uses the right TokoMo divider token.
+          * @default 'default'
+         */
+        "surface"?: DividerSurface;
     }
     interface DsEmptyState {
         "message"?: string | undefined;
@@ -2016,23 +2029,6 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
-    }
-    /**
-     * Internal utility wrapper that kills line-height struts and adds optical
-     * horizontal padding. Used inside interactive components (Button, Tag, etc.)
-     * Not intended as a standalone consumer-facing component — internal use only.
-     */
-    interface DsLabelWrap {
-        /**
-          * Typography size — controls optical horizontal padding.
-          * @default 'md'
-         */
-        "size"?: LabelWrapSize;
-        /**
-          * Enable truncation with ellipsis — use inside full-width containers.
-          * @default false
-         */
-        "truncate"?: boolean;
     }
     interface DsLoader {
         /**
@@ -2495,6 +2491,10 @@ declare namespace LocalJSX {
         "color"?: TextColor | undefined;
         "decoration"?: TextDecoration | undefined;
         /**
+          * @default 'normal'
+         */
+        "fontFeature"?: TextFontFeature;
+        /**
           * Maps to `for` attribute on <label> elements.
          */
         "for"?: string | undefined;
@@ -2715,6 +2715,10 @@ declare namespace LocalJSX {
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
+        "surface": DividerSurface;
+        "inset": DividerInset;
+        "length": DividerLength;
+        "semantic": boolean;
     }
     interface DsEmptyStateAttributes {
         "type": EmptyStateType;
@@ -2752,10 +2756,6 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
-    }
-    interface DsLabelWrapAttributes {
-        "size": LabelWrapSize;
-        "truncate": boolean;
     }
     interface DsLoaderAttributes {
         "size": number;
@@ -2892,6 +2892,7 @@ declare namespace LocalJSX {
         "align": TextAlign | undefined;
         "lineTruncation": string;
         "wrap": TextWrap | undefined;
+        "fontFeature": TextFontFeature;
         "as": TextElement;
         "for": string | undefined;
     }
@@ -2949,7 +2950,6 @@ declare namespace LocalJSX {
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
-        "ds-label-wrap": Omit<DsLabelWrap, keyof DsLabelWrapAttributes> & { [K in keyof DsLabelWrap & keyof DsLabelWrapAttributes]?: DsLabelWrap[K] } & { [K in keyof DsLabelWrap & keyof DsLabelWrapAttributes as `attr:${K}`]?: DsLabelWrapAttributes[K] } & { [K in keyof DsLabelWrap & keyof DsLabelWrapAttributes as `prop:${K}`]?: DsLabelWrap[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
@@ -2995,12 +2995,6 @@ declare module "@stencil/core" {
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
-            /**
-             * Internal utility wrapper that kills line-height struts and adds optical
-             * horizontal padding. Used inside interactive components (Button, Tag, etc.)
-             * Not intended as a standalone consumer-facing component — internal use only.
-             */
-            "ds-label-wrap": LocalJSX.IntrinsicElements["ds-label-wrap"] & JSXBase.HTMLAttributes<HTMLDsLabelWrapElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;

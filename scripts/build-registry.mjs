@@ -124,7 +124,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: true,
-    internalDeps: ['Text', 'Loader', 'LabelWrap'],
+    internalDeps: ['Text', 'Loader'],
   }],
   ['ToggleButton', {
     title: 'ToggleButton',
@@ -582,11 +582,15 @@ const COMPONENTS = [
   }],
   ['Divider', {
     title: 'Divider',
-    description: 'Horizontal or vertical separator line using design tokens.',
+    description: 'Decorative horizontal or vertical visual separator for non-edge-to-edge separation. Supports surface-aware divider tokens, inset, and custom line length.',
     exports: ['Divider'],
-    types: ['DividerProps', 'DividerOrientation'],
+    types: ['DividerProps', 'DividerOrientation', 'DividerSurface', 'DividerInset', 'DividerLength'],
     props: {
       orientation: { type: "'horizontal' | 'vertical'", default: "'horizontal'" },
+      surface: { type: "'default' | 'on-bold-background' | 'on-strong-background' | 'on-medium-background' | 'on-translucent-background' | 'navigation' | 'media' | 'always-dark' | 'inverted'", default: "'default'", description: 'Surface context for the divider color token.' },
+      inset: { type: "'none' | 'space-000' | 'space-012' | 'space-025' | 'space-050' | 'space-075' | 'space-100' | 'space-125' | 'space-150' | 'space-175' | 'space-200' | 'space-250' | 'space-300' | 'space-400' | 'space-600' | 'space-800' | string", default: "'none'", description: 'Start/end inset. Use TokoMo spacing token names or a CSS length.' },
+      length: { type: "'auto' | 'full' | string", default: "'auto'", description: 'Line length along the divider axis.' },
+      semantic: { type: 'boolean', default: 'false', description: 'Expose role=\"separator\". Default is decorative/aria-hidden.' },
     },
     usesTokens: true,
     usesIcons: false,
