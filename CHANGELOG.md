@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/zainadeel/compomo/compare/v1.0.2...v1.1.0) (2026-06-18)
+
+
+### Added
+
+* add react wrappers and tab group variants ([#154](https://github.com/zainadeel/compomo/issues/154)) ([5841604](https://github.com/zainadeel/compomo/commit/5841604a027e2caf893a9dc038bad80e6c635552))
+* add react wrappers and tab group variants ([#156](https://github.com/zainadeel/compomo/issues/156)) ([4e500f8](https://github.com/zainadeel/compomo/commit/4e500f8366a6548595d2ec8316db7cb88fda1b83))
+
 ## [1.0.2](https://github.com/zainadeel/compomo/compare/v1.0.1...v1.0.2) (2026-06-16)
 
 
