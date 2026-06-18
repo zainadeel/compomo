@@ -25,10 +25,6 @@
         {
           "component": "Loader",
           "note": "Used internally by Button. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "LabelWrap",
-          "note": "Used internally by Button. Bundled in @ds-mo/ui."
         }
       ],
       "peerDependencies": {
@@ -119,8 +115,7 @@
   ],
   "registryDependencies": [
     "text",
-    "loader",
-    "label-wrap"
+    "loader"
   ],
   "files": [
     {

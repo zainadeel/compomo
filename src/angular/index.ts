@@ -19,7 +19,6 @@ export const DIRECTIVES = [
   d.DsHeader,
   d.DsIcon,
   d.DsInput,
-  d.DsLabelWrap,
   d.DsLoader,
   d.DsMenu,
   d.DsModal,

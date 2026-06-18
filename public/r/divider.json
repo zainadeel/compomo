@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "divider",
   "title": "Divider",
-  "description": "Horizontal or vertical separator line using design tokens.",
+  "description": "Decorative horizontal or vertical visual separator for non-edge-to-edge separation. Supports surface-aware divider tokens, inset, and custom line length.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -30,6 +30,26 @@
       "orientation": {
         "type": "'horizontal' | 'vertical'",
         "default": "'horizontal'"
+      },
+      "surface": {
+        "type": "'default' | 'on-bold-background' | 'on-strong-background' | 'on-medium-background' | 'on-translucent-background' | 'navigation' | 'media' | 'always-dark' | 'inverted'",
+        "default": "'default'",
+        "description": "Surface context for the divider color token."
+      },
+      "inset": {
+        "type": "'none' | 'space-000' | 'space-012' | 'space-025' | 'space-050' | 'space-075' | 'space-100' | 'space-125' | 'space-150' | 'space-175' | 'space-200' | 'space-250' | 'space-300' | 'space-400' | 'space-600' | 'space-800' | string",
+        "default": "'none'",
+        "description": "Start/end inset. Use TokoMo spacing token names or a CSS length."
+      },
+      "length": {
+        "type": "'auto' | 'full' | string",
+        "default": "'auto'",
+        "description": "Line length along the divider axis."
+      },
+      "semantic": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Expose role=\"separator\". Default is decorative/aria-hidden."
       }
     },
     "exports": [
@@ -37,7 +57,10 @@
     ],
     "types": [
       "DividerProps",
-      "DividerOrientation"
+      "DividerOrientation",
+      "DividerSurface",
+      "DividerInset",
+      "DividerLength"
     ]
   },
   "dependencies": [
@@ -48,12 +71,12 @@
   "files": [
     {
       "path": "src/wc/components/Divider/Divider.css",
-      "content": ":host {\n  display: block;\n  border: none;\n  margin: 0;\n  flex-shrink: 0;\n  background-color: var(--color-border-secondary);\n}\n\n/* Horizontal (default) */\n:host(:not(.vertical)) {\n  width: 100%;\n  height: 1px;\n}\n\n/* Vertical */\n:host(.vertical) {\n  width: 1px;\n  height: 100%;\n  align-self: stretch;\n}\n",
+      "content": ":host {\n  --_divider-color: var(--color-divider-divider);\n  --_divider-inset: 0;\n  --_divider-length: 100%;\n\n  display: block;\n  flex-shrink: 0;\n  width: var(--_divider-length);\n  height: var(--dimension-stroke-width-012);\n  margin: 0 var(--_divider-inset);\n  border: none;\n  background-color: var(--_divider-color);\n}\n\n:host(.divider--vertical) {\n  width: var(--dimension-stroke-width-012);\n  height: var(--_divider-length);\n  min-height: var(--dimension-stroke-width-012);\n  margin: var(--_divider-inset) 0;\n  align-self: stretch;\n}\n\n:host(.divider--vertical.divider--custom-length) {\n  align-self: center;\n}\n\n:host([surface='on-bold-background']),\n:host(.divider--surface-on-bold-background) {\n  --_divider-color: var(--color-divider-on-bold-background);\n}\n\n:host([surface='on-strong-background']),\n:host(.divider--surface-on-strong-background) {\n  --_divider-color: var(--color-divider-on-strong-background);\n}\n\n:host([surface='on-medium-background']),\n:host(.divider--surface-on-medium-background) {\n  --_divider-color: var(--color-divider-on-medium-background);\n}\n\n:host([surface='on-translucent-background']),\n:host(.divider--surface-on-translucent-background) {\n  --_divider-color: var(--color-divider-on-translucent-background);\n}\n\n:host([surface='navigation']),\n:host(.divider--surface-navigation) {\n  --_divider-color: var(--color-navigation-divider);\n}\n\n:host([surface='media']),\n:host(.divider--surface-media) {\n  --_divider-color: var(--color-media-divider);\n}\n\n:host([surface='always-dark']),\n:host(.divider--surface-always-dark) {\n  --_divider-color: var(--color-always-dark-divider);\n}\n\n:host([surface='inverted']),\n:host(.divider--surface-inverted) {\n  --_divider-color: var(--color-inverted-divider);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Divider/Divider.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type DividerOrientation = 'horizontal' | 'vertical';\n\n@Component({\n  tag: 'ds-divider',\n  styleUrl: 'Divider.css',\n  shadow: true,\n})\nexport class Divider {\n  /** Direction of the divider line. Defaults to 'horizontal'. */\n  @Prop() orientation: DividerOrientation = 'horizontal';\n\n  render() {\n    return (\n      <Host\n        role=\"separator\"\n        aria-orientation={this.orientation}\n        class={{ vertical: this.orientation === 'vertical' }}\n      />\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type DividerOrientation = 'horizontal' | 'vertical';\nexport type DividerSurface =\n  | 'default'\n  | 'on-bold-background'\n  | 'on-strong-background'\n  | 'on-medium-background'\n  | 'on-translucent-background'\n  | 'navigation'\n  | 'media'\n  | 'always-dark'\n  | 'inverted';\nexport type DividerInsetToken =\n  | 'space-000'\n  | 'space-012'\n  | 'space-025'\n  | 'space-050'\n  | 'space-075'\n  | 'space-100'\n  | 'space-125'\n  | 'space-150'\n  | 'space-175'\n  | 'space-200'\n  | 'space-250'\n  | 'space-300'\n  | 'space-400'\n  | 'space-600'\n  | 'space-800';\nexport type DividerInset = 'none' | DividerInsetToken | (string & {});\nexport type DividerLength = 'auto' | 'full' | (string & {});\n\nconst INSET_VALUE: Record<'none' | DividerInsetToken, string> = {\n  none: '0',\n  'space-000': 'var(--dimension-space-000)',\n  'space-012': 'var(--dimension-space-012)',\n  'space-025': 'var(--dimension-space-025)',\n  'space-050': 'var(--dimension-space-050)',\n  'space-075': 'var(--dimension-space-075)',\n  'space-100': 'var(--dimension-space-100)',\n  'space-125': 'var(--dimension-space-125)',\n  'space-150': 'var(--dimension-space-150)',\n  'space-175': 'var(--dimension-space-175)',\n  'space-200': 'var(--dimension-space-200)',\n  'space-250': 'var(--dimension-space-250)',\n  'space-300': 'var(--dimension-space-300)',\n  'space-400': 'var(--dimension-space-400)',\n  'space-600': 'var(--dimension-space-600)',\n  'space-800': 'var(--dimension-space-800)',\n};\n\n@Component({\n  tag: 'ds-divider',\n  styleUrl: 'Divider.css',\n  scoped: true,\n})\nexport class Divider {\n  /** Direction of the divider line. Defaults to 'horizontal'. */\n  @Prop() orientation: DividerOrientation = 'horizontal';\n\n  /** Surface context so the divider uses the right TokoMo divider token. */\n  @Prop() surface: DividerSurface = 'default';\n\n  /** Insets the divider from its start/end edges. Accepts spacing token names or any CSS length. */\n  @Prop() inset: DividerInset = 'none';\n\n  /** Visual line length. Defaults to filling the available axis. Accepts any CSS length. */\n  @Prop() length: DividerLength = 'auto';\n\n  /** Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default. */\n  @Prop() semantic: boolean = false;\n\n  private resolveInset(): string {\n    return Object.prototype.hasOwnProperty.call(INSET_VALUE, this.inset)\n      ? INSET_VALUE[this.inset as keyof typeof INSET_VALUE]\n      : this.inset;\n  }\n\n  private resolveLength(): string {\n    return this.length === 'auto' || this.length === 'full'\n      ? '100%'\n      : this.length;\n  }\n\n  render() {\n    const isVertical = this.orientation === 'vertical';\n    const hasCustomLength = this.length !== 'auto' && this.length !== 'full';\n\n    return (\n      <Host\n        role={this.semantic ? 'separator' : undefined}\n        aria-orientation={this.semantic ? this.orientation : undefined}\n        aria-hidden={this.semantic ? undefined : 'true'}\n        class={{\n          divider: true,\n          'divider--vertical': isVertical,\n          'divider--custom-length': hasCustomLength,\n          [`divider--surface-${this.surface}`]: true,\n        }}\n        style={{\n          '--_divider-inset': this.resolveInset(),\n          '--_divider-length': this.resolveLength(),\n        }}\n      />\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

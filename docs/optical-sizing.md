@@ -40,25 +40,7 @@ For Tag, both the leading icon side (left) and the remove-button side (right) ar
 
 ---
 
-## 2. LabelWrap inner padding
-
-**The rule:** text inside a component needs its own small horizontal padding, independent of the component's outer padding. This is the `LabelWrap` utility component.
-
-**Why:** without it, the component's fixed height is inflated by the body `line-height: 1.5` strut — a phantom spacing artifact from inherited typography. `LabelWrap` sets `line-height: 0` to kill the strut, then adds back a small horizontal padding that optically offsets the text from adjacent icons or component edges.
-
-**Values:**
-
-| Size        | Padding         | Reasoning                              |
-|-------------|-----------------|----------------------------------------|
-| MD / LG     | `space-050` = 4px | Standard body scale                  |
-| SM          | `space-025` = 2px | Halved — tighter scale, less air needed |
-| XS (caption)| `space-025` = 2px | Caption scale, same as SM             |
-
-SM was deliberately halved because at the smaller body scale the extra 4px reads as disproportionate. XS was already at 2px so SM was brought in line with it.
-
----
-
-## 3. Rounded (pill) padding correction
+## 2. Rounded (pill) padding correction
 
 **The rule:** pill-shaped components add `space-050` (4px) extra padding on any side that has no content anchor (bare label text at the edge, no icon).
 
@@ -87,7 +69,7 @@ When both an icon and a remove button are present, neither correction applies. W
 
 ---
 
-## 4. Remove / dismiss button hover area
+## 3. Remove / dismiss button hover area
 
 **The rule:** the hover highlight on a small dismiss button (`×`) should maintain the same optical gap to the component edge as the icon has to the component top/bottom — and the hover highlight's border-radius should be tuned per-size so it doesn't visually eat into that gap.
 
@@ -112,7 +94,7 @@ When both an icon and a remove button are present, neither correction applies. W
 
 ---
 
-## 5. Alpha dividers in component groups
+## 4. Alpha dividers in component groups
 
 **The rule:** dividers between grouped components (ButtonGroup, ToggleButtonGroup) must use an alpha color token and must be physically positioned to overlap adjacent button fills — not sit in the gap between them.
 

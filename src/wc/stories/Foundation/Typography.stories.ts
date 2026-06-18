@@ -2,10 +2,10 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import type { TemplateResult } from 'lit';
 import '../../../../dist/components/ds-text.js';
-import type { TextVariant, TextColorToken } from '../../components/Text';
+import type { TextVariant } from '../../components/Text';
 
 const meta: Meta = {
-  title: 'Foundation/Text',
+  title: 'Foundation/Typography',
   parameters: { layout: 'fullscreen' },
 };
 export default meta;
@@ -13,12 +13,12 @@ type Story = StoryObj;
 
 // ── Shared layout helpers ──────────────────────────────────────────────────
 
-const PAGE    = 'font-family: var(--typography-font-family, system-ui); padding: 32px; display: flex; flex-direction: column; gap: 40px; background: var(--color-background-primary, #fff);';
-const SECTION = 'display: flex; flex-direction: column; gap: 4px;';
-const H2      = 'font-size: 18px; font-weight: 600; color: var(--color-foreground-primary); margin: 0 0 16px; letter-spacing: -0.3px; font-family: var(--typography-font-family, system-ui);';
-const ROW     = 'display: flex; align-items: baseline; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--color-border-tertiary);';
-const LBL     = 'font-size: 11px; color: var(--color-foreground-secondary); min-width: 220px; flex-shrink: 0; font-family: monospace; padding-top: 2px;';
-const SPEC    = 'font-size: 11px; color: var(--color-foreground-tertiary); min-width: 140px; flex-shrink: 0; font-family: monospace;';
+const PAGE    = 'font-family: var(--typography-font-family); padding: var(--dimension-space-400); display: flex; flex-direction: column; gap: calc(var(--dimension-space-100) * 5); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
+const SECTION = 'display: flex; flex-direction: column; gap: var(--dimension-space-050);';
+const H2      = 'font-size: var(--typography-fontsize-lg); font-weight: var(--typography-weight-semibold); color: var(--color-foreground-primary); margin: 0 0 var(--dimension-space-200); letter-spacing: var(--typography-letterspacing-negative-half); font-family: var(--typography-font-family);';
+const ROW     = 'display: flex; align-items: baseline; gap: var(--dimension-space-200); padding: var(--dimension-space-125) 0; border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);';
+const LBL     = 'font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary); min-width: 220px; flex-shrink: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding-top: var(--dimension-space-025);';
+const SPEC    = 'font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); min-width: 140px; flex-shrink: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;';
 
 function sectionHead(title: string): TemplateResult {
   return html`<h2 style="${H2}">${title}</h2>`;
@@ -54,41 +54,6 @@ function VariantsStory(): TemplateResult {
             <span style="${LBL}">${variant}</span>
             <span style="${SPEC}">${spec}</span>
             <ds-text variant=${variant} color="primary" as="span">${sample}</ds-text>
-          </div>
-        `)}
-      </div>
-    </div>
-  `;
-}
-
-// ── Colors ─────────────────────────────────────────────────────────────────
-
-const COLORS: { color: TextColorToken; bg?: string; note?: string }[] = [
-  { color: 'primary'   },
-  { color: 'secondary' },
-  { color: 'tertiary'  },
-  { color: 'brand'     },
-  { color: 'negative'  },
-  { color: 'positive'  },
-  { color: 'warning'   },
-  { color: 'caution'   },
-  { color: 'ai'        },
-  { color: 'on-strong', bg: 'var(--color-background-bold-neutral)',  note: 'on strong surface' },
-  { color: 'on-bold',   bg: 'var(--color-background-bold-brand)',    note: 'on bold surface'   },
-  { color: 'inherit',                                                  note: 'inherits from parent' },
-];
-
-function ColorsStory(): TemplateResult {
-  return html`
-    <div style="${PAGE}">
-      ${sectionHead('Colors')}
-      <div style="${SECTION}">
-        ${COLORS.map(({ color, bg, note }) => html`
-          <div style="${ROW}${bg ? ' background: ' + bg + '; border-radius: 4px; padding: 10px 8px;' : ''}">
-            <span style="${LBL}">${color}${note ? html` <em style="font-style:normal;opacity:.7">(${note})</em>` : ''}</span>
-            <ds-text variant="text-body-medium" color=${color} as="span">
-              The quick brown fox jumps over the lazy dog
-            </ds-text>
           </div>
         `)}
       </div>
@@ -136,6 +101,22 @@ function StylesStory(): TemplateResult {
           <span style="${LBL}">italic</span>
           <ds-text variant="text-body-medium" color="primary" ?italic=${true} as="span">
             Italic styled text
+          </ds-text>
+        </div>
+      </div>
+
+      ${sectionHead('Font Features')}
+      <div style="${SECTION}">
+        <div style="${ROW}">
+          <span style="${LBL}">fontFeature="normal" (default)</span>
+          <ds-text variant="text-body-medium" color="primary" as="span">
+            111111 · 888888 · 10:11:12 · 98,765.43
+          </ds-text>
+        </div>
+        <div style="${ROW}">
+          <span style="${LBL}">fontFeature="tabular-nums"</span>
+          <ds-text variant="text-body-medium" color="primary" font-feature="tabular-nums" as="span">
+            111111 · 888888 · 10:11:12 · 98,765.43
           </ds-text>
         </div>
       </div>
@@ -197,6 +178,5 @@ function StylesStory(): TemplateResult {
 
 // ── Story exports ──────────────────────────────────────────────────────────
 
-export const Variants:    Story = { name: 'Variants',            render: () => VariantsStory() };
-export const Colors:      Story = { name: 'Colors',              render: () => ColorsStory()   };
-export const Styles:      Story = { name: 'Decorations & Styles',render: () => StylesStory()   };
+export const Styles:    Story = { name: 'Styles',    render: () => VariantsStory() };
+export const Modifiers: Story = { name: 'Modifiers', render: () => StylesStory()   };

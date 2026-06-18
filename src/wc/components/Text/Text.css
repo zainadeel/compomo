@@ -72,6 +72,11 @@
 
 .text--italic { font-style: italic; }
 
+.text--font-feature-tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
 /* ── Align ──────────────────────────────────────────────────────────────── */
 
 .text--align-left   { text-align: left; }

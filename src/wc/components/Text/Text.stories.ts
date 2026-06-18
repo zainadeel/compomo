@@ -22,16 +22,32 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     variant:       { control: 'select', options: VARIANTS },
-    color:         { control: 'select', options: COLORS },
+    color: {
+      control: 'text',
+      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-brand).`,
+    },
     as:            { control: 'select', options: ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label'] },
     align:         { control: 'select', options: ['left', 'center', 'right'] },
     decoration:    { control: 'select', options: ['none', 'underline', 'dotted-underline'] },
+    fontFeature:   { control: 'select', options: ['normal', 'tabular-nums'] },
     italic:        { control: 'boolean' },
     lineTruncation:{ control: 'select', options: [1, 2, 3, 4, 5, 'none'] },
+    wrap:          { control: 'select', options: ['wrap', 'nowrap', 'balance', 'pretty'] },
+    for:           { control: 'text' },
+    content:       { control: 'text' },
   },
   args: {
     variant: 'text-body-medium',
     color: 'primary',
+    as: 'p',
+    align: 'left',
+    decoration: 'none',
+    fontFeature: 'normal',
+    italic: false,
+    lineTruncation: 'none',
+    wrap: 'wrap',
+    for: '',
+    content: 'The quick brown fox jumps over the lazy dog · 11:11:11 · 88,888.88',
   },
 };
 
@@ -40,9 +56,22 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => html`
-    <ds-text variant=${args['variant']} color=${args['color']} ?italic=${args['italic']}>
-      The quick brown fox jumps over the lazy dog
-    </ds-text>
+    <div style="max-width: 360px;">
+      <ds-text
+        variant=${args['variant']}
+        color=${args['color'] || undefined}
+        as=${args['as']}
+        align=${args['align'] || undefined}
+        decoration=${args['decoration'] === 'none' ? undefined : args['decoration']}
+        font-feature=${args['fontFeature']}
+        line-truncation=${args['lineTruncation']}
+        wrap=${args['wrap']}
+        for=${args['for'] || undefined}
+        ?italic=${args['italic']}
+      >
+        ${args['content']}
+      </ds-text>
+    </div>
   `,
 };
 

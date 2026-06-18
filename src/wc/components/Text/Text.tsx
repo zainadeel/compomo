@@ -26,6 +26,7 @@ export type TextAlign = 'left' | 'center' | 'right';
 export type LineTruncation = 1 | 2 | 3 | 4 | 5 | 'none';
 export type TextWrap = 'wrap' | 'nowrap' | 'balance' | 'pretty';
 export type TextElement = 'p' | 'span' | 'div' | 'label' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type TextFontFeature = 'normal' | 'tabular-nums';
 
 @Component({
   tag: 'ds-text',
@@ -40,6 +41,7 @@ export class Text {
   @Prop() align: TextAlign | undefined;
   @Prop() lineTruncation: LineTruncation = 'none';
   @Prop() wrap: TextWrap | undefined;
+  @Prop() fontFeature: TextFontFeature = 'normal';
   @Prop() as: TextElement = 'p';
   /** Maps to `for` attribute on <label> elements. */
   @Prop() for: string | undefined;
@@ -80,6 +82,7 @@ export class Text {
       'text--align-left':   this.align === 'left',
       'text--align-center': this.align === 'center',
       'text--align-right':  this.align === 'right',
+      'text--font-feature-tabular-nums': this.fontFeature === 'tabular-nums',
     };
 
     const style = this.color && isCustomColor(this.color)

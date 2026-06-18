@@ -262,8 +262,7 @@
       ],
       "registryDependencies": [
         "text",
-        "loader",
-        "label-wrap"
+        "loader"
       ]
     },
     {
@@ -1450,7 +1449,7 @@
     {
       "name": "divider",
       "title": "Divider",
-      "description": "Horizontal or vertical separator line using design tokens.",
+      "description": "Decorative horizontal or vertical visual separator for non-edge-to-edge separation. Supports surface-aware divider tokens, inset, and custom line length.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1462,6 +1461,22 @@
         "props": {
           "orientation": {
             "type": "'horizontal' | 'vertical'",
+            "required": false
+          },
+          "surface": {
+            "type": "'default' | 'on-bold-background' | 'on-strong-background' | 'on-medium-background' | 'on-translucent-background' | 'navigation' | 'media' | 'always-dark' | 'inverted'",
+            "required": false
+          },
+          "inset": {
+            "type": "'none' | 'space-000' | 'space-012' | 'space-025' | 'space-050' | 'space-075' | 'space-100' | 'space-125' | 'space-150' | 'space-175' | 'space-200' | 'space-250' | 'space-300' | 'space-400' | 'space-600' | 'space-800' | string",
+            "required": false
+          },
+          "length": {
+            "type": "'auto' | 'full' | string",
+            "required": false
+          },
+          "semantic": {
+            "type": "boolean",
             "required": false
           }
         }

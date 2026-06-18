@@ -2,9 +2,9 @@
 import { addons } from 'storybook/manager-api';
 
 addons.setConfig({
-  // We only ship @storybook/addon-docs — the bottom panel has no content.
-  // Hide it so the canvas fills the full available height.
-  showPanel: false,
+  // Storybook 10 ships Controls in core; keep the panel visible for
+  // Playground stories.
+  showPanel: true,
   panelPosition: 'bottom',
   // Keep the sidebar and toolbar open.
   showNav: true,

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, TemplateResult } from 'lit';
 
 const meta: Meta = {
-  title: 'Foundation/Colors',
+  title: 'Foundation/Colors Semantic',
   parameters: { layout: 'fullscreen' },
 };
 export default meta;
@@ -16,14 +16,14 @@ const STATES    = ['hover', 'pressed', 'focus', 'active'] as const;
 
 // ── Shared styles (CSS strings) ───────────────────────────────────────────────
 
-const PAGE    = 'font-family: var(--typography-font-family, system-ui); padding: 24px; display: flex; flex-direction: column; gap: 40px;';
-const SECTION = 'display: flex; flex-direction: column; gap: 12px;';
-const H2      = 'font-size: 18px; font-weight: 600; color: var(--color-foreground-primary); margin: 0; letter-spacing: -0.3px;';
-const SUB     = 'font-size: 13px; font-weight: 500; color: var(--color-foreground-secondary); margin: 2px 0 0;';
-const GRID    = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;';
-const SWATCH  = 'display: flex; flex-direction: column; gap: 4px;';
-const COLOR   = 'width: 100%; height: 48px; border-radius: 6px; border: 1px solid var(--color-border-tertiary);';
-const LABEL   = 'font-size: 10px; line-height: 1.3; color: var(--color-foreground-secondary); word-break: break-all;';
+const PAGE    = 'font-family: var(--typography-font-family); padding: var(--dimension-space-300); display: flex; flex-direction: column; gap: calc(var(--dimension-space-100) * 5); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
+const SECTION = 'display: flex; flex-direction: column; gap: var(--dimension-space-150);';
+const H2      = 'font-size: var(--typography-fontsize-lg); font-weight: var(--typography-weight-semibold); color: var(--color-foreground-primary); margin: 0; letter-spacing: var(--typography-letterspacing-negative-half);';
+const SUB     = 'font-size: var(--typography-fontsize-sm); font-weight: var(--typography-weight-medium); color: var(--color-foreground-secondary); margin: var(--dimension-space-025) 0 0;';
+const GRID    = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--dimension-space-100);';
+const SWATCH  = 'display: flex; flex-direction: column; gap: var(--dimension-space-050);';
+const COLOR   = 'width: 100%; height: calc(var(--dimension-size-base) * 6); border-radius: var(--dimension-radius-075); border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);';
+const LABEL   = 'font-size: var(--typography-fontsize-xs); line-height: var(--typography-lineheight-xs); color: var(--color-foreground-secondary); word-break: break-all;';
 
 // ── Helper components ─────────────────────────────────────────────────────────
 
@@ -77,7 +77,7 @@ function BackgroundColors(): TemplateResult {
           ${swatch('color-background-secondary')}
           ${swatch('color-background-shade')}
           ${swatch('color-background-translucent', undefined, 'backdrop-filter: blur(16px);')}
-          ${swatch('color-background-transparent', undefined, 'background: repeating-conic-gradient(#f0f0f0 0% 25%, transparent 0% 50%) 0 0 / 12px 12px;')}
+          ${swatch('color-background-transparent', undefined, 'background: repeating-conic-gradient(var(--color-border-tertiary) 0% 25%, var(--color-background-primary) 0% 50%) 0 0 / 12px 12px;')}
         </div>`)}
 
       ${CONTRASTS.map(contrast => section(
@@ -406,54 +406,6 @@ function InvertedColors(): TemplateResult {
     </div>`;
 }
 
-// ── Data Visualization ────────────────────────────────────────────────────────
-
-function DataVizColors(): TemplateResult {
-  return html`
-    <div style="${PAGE}">
-      ${section('Data — Category (12)', 'Categorical palette for charts and graphs', html`
-        <div style="${GRID} grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));">
-          ${Array.from({ length: 12 }, (_, i) => i + 1).map(n =>
-            swatch(`color-data-category-${n}`, `${n}`))}
-        </div>`)}
-
-      ${section('Data — Sequential Blue', '2, 3, and 4-step blue sequences', html`
-        ${[2, 3, 4].map(steps => html`
-          <div style="margin-bottom: 12px;">
-            <p style="${SUB} margin-bottom: 6px;">${steps}-step</p>
-            <div style="display: flex; gap: 8px;">
-              ${Array.from({ length: steps }, (_, i) => i + 1).map(n => html`
-                <div style="flex: 1;">${swatch(`color-data-sequence-blue-${steps}-${n}`, `${n}`)}</div>`)}
-            </div>
-          </div>`)}
-      `)}
-
-      ${section('Data — Diverging Blue-Orange', '5, 7, and 9-step diverging palettes', html`
-        ${[5, 7, 9].map(steps => html`
-          <div style="margin-bottom: 12px;">
-            <p style="${SUB} margin-bottom: 6px;">${steps}-step</p>
-            <div style="display: flex; gap: 4px;">
-              ${Array.from({ length: steps }, (_, i) => i + 1).map(n => html`
-                <div style="flex: 1;">${swatch(`color-data-diverging-blue-orange-${steps}-${n}`, `${n}`)}</div>`)}
-            </div>
-          </div>`)}
-      `)}
-
-      ${section('Data — Win/Loss', undefined, html`
-        <div style="display: flex; gap: 8px; max-width: 400px;">
-          <div style="flex: 1;">${swatch('color-data-win-loss-win', 'win')}</div>
-          <div style="flex: 1;">${swatch('color-data-win-loss-win-alt', 'win-alt')}</div>
-          <div style="flex: 1;">${swatch('color-data-win-loss-loss', 'loss')}</div>
-        </div>`)}
-
-      ${section('Data — Misc', undefined, html`
-        <div style="display: flex; gap: 8px; max-width: 400px;">
-          ${[1, 2, 3, 4].map(n => html`
-            <div style="flex: 1;">${swatch(`color-data-misc-${n}`, `${n}`)}</div>`)}
-        </div>`)}
-    </div>`;
-}
-
 // ── Color Intent ──────────────────────────────────────────────────────────────
 
 function ColorIntentColors(): TemplateResult {
@@ -473,7 +425,7 @@ function ColorIntentColors(): TemplateResult {
 
       ${hues.map(hue => html`
         <div style="${SECTION}">
-          <h2 style="${H2}">${cap(hue)}${hue === 'magenta' ? ' (+ alt-2 variants)' : ''}</h2>
+          <h2 style="${H2}">${cap(hue)}</h2>
           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
             ${CONTRASTS.map(contrast => html`
               <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -486,19 +438,6 @@ function ColorIntentColors(): TemplateResult {
                 <span style="${LABEL}">bg · border · fg</span>
               </div>`)}
           </div>
-          ${hue === 'magenta' ? html`
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px;">
-              ${CONTRASTS.map(contrast => html`
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <span style="${LABEL} font-weight: 600;">${contrast}-2</span>
-                  <div style="height: 40px; border-radius: 6px; background-color: var(--color-color-intent-magenta-${contrast}-2-background); border: 1px solid var(--color-border-tertiary);"></div>
-                  <div style="height: 40px; border-radius: 6px; background-color: var(--color-background-primary); border: 3px solid var(--color-color-intent-magenta-${contrast}-2-border);"></div>
-                  <div style="height: 40px; border-radius: 6px; background-color: var(--color-color-intent-magenta-${contrast}-2-background); display: flex; align-items: center; justify-content: center; border: none;">
-                    <span style="color: var(--color-color-intent-magenta-${contrast}-2-foreground); font-weight: 700; font-size: 14px;">Aa</span>
-                  </div>
-                  <span style="${LABEL}">bg · border · fg</span>
-                </div>`)}
-            </div>` : ''}
         </div>`)}
 
       ${section('Color Intent — Interactions', 'Overlay states for each background context', html`
@@ -518,13 +457,13 @@ function ColorIntentColors(): TemplateResult {
 
 // ── Domain (Fleet) ────────────────────────────────────────────────────────────
 
-function DomainColors(): TemplateResult {
-  const driverStatuses    = ['driving', 'on-duty', 'off-duty', 'personal-conveyance', 'yard-move'] as const;
-  const entityStatuses    = ['in-motion', 'idling', 'stationary', 'stale', 'immobilized'] as const;
-  const locationIntents   = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution'] as const;
-  const safetyGrades      = ['excellent', 'good', 'fair'] as const;
-  const markerInteraction = ['hover', 'pressed', 'focus'] as const;
+const driverStatuses    = ['driving', 'on-duty', 'off-duty', 'personal-conveyance', 'yard-move'] as const;
+const entityStatuses    = ['in-motion', 'idling', 'stationary', 'stale', 'immobilized'] as const;
+const locationIntents   = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution'] as const;
+const safetyGrades      = ['excellent', 'good', 'fair'] as const;
+const markerInteraction = ['hover', 'pressed', 'focus'] as const;
 
+function DriverStatusColors(): TemplateResult {
   return html`
     <div style="${PAGE}">
       ${section('Driver Status', 'HOS duty-cycle backgrounds and foreground', html`
@@ -546,7 +485,12 @@ function DomainColors(): TemplateResult {
               <span style="${LABEL}">interaction-${state}</span>
             </div>`)}
         </div>`)}
+    </div>`;
+}
 
+function EntityMarkerColors(): TemplateResult {
+  return html`
+    <div style="${PAGE}">
       ${section('Entity Markers', 'Map vehicle/asset markers by motion state', html`
         <div style="${GRID}">
           ${entityStatuses.map(status => swatch(`color-entity-marker-background-${status}`, status))}
@@ -566,7 +510,12 @@ function DomainColors(): TemplateResult {
               <span style="${LABEL}">interaction-${state}</span>
             </div>`)}
         </div>`)}
+    </div>`;
+}
 
+function EntityClusterMarkerColors(): TemplateResult {
+  return html`
+    <div style="${PAGE}">
       ${section('Entity Cluster Marker', 'Grouped asset cluster pin', html`
         <div style="${GRID}">
           ${swatch('color-entity-cluster-marker-background', 'background')}
@@ -584,7 +533,12 @@ function DomainColors(): TemplateResult {
               <span style="${LABEL}">interaction-${state}</span>
             </div>`)}
         </div>`)}
+    </div>`;
+}
 
+function LocationMarkerColors(): TemplateResult {
+  return html`
+    <div style="${PAGE}">
       ${section('Location Markers', 'Map location pins by intent', html`
         <div style="${GRID}">
           ${locationIntents.map(intent => swatch(`color-location-marker-background-${intent}`, intent))}
@@ -604,7 +558,12 @@ function DomainColors(): TemplateResult {
               <span style="${LABEL}">interaction-${state}</span>
             </div>`)}
         </div>`)}
+    </div>`;
+}
 
+function SafetyScoreColors(): TemplateResult {
+  return html`
+    <div style="${PAGE}">
       ${section('Safety Score', 'Driver safety grade surfaces', html`
         <div style="${GRID}">
           ${safetyGrades.map(grade => swatch(`color-safety-score-background-${grade}`, grade))}
@@ -632,78 +591,84 @@ function DomainColors(): TemplateResult {
 
 // ── Surfaces ──────────────────────────────────────────────────────────────────
 
-function SurfacesColors(): TemplateResult {
-  function surfaceBlock(
-    prefix: string,
-    label: string,
-    extraFg?: string,
-  ): TemplateResult {
-    const fgLevels = ['primary', 'secondary', 'tertiary', 'quaternary'] as const;
-    const borderLevels = ['primary', 'secondary', 'tertiary'] as const;
-    const bg = `var(--${prefix}-background)`;
-    const subStyle = `font-size: 13px; font-weight: 500; color: var(--${prefix}-foreground-secondary); margin: 0 0 6px;`;
-    const tinyLabel = `${LABEL} color: var(--${prefix}-foreground-tertiary);`;
+function surfaceBlock(
+  prefix: string,
+  label: string,
+  extraFg?: string,
+): TemplateResult {
+  const fgLevels = ['primary', 'secondary', 'tertiary', 'quaternary'] as const;
+  const borderLevels = ['primary', 'secondary', 'tertiary'] as const;
+  const bg = `var(--${prefix}-background)`;
+  const subStyle = `font-size: 13px; font-weight: 500; color: var(--${prefix}-foreground-secondary); margin: 0 0 6px;`;
+  const tinyLabel = `${LABEL} color: var(--${prefix}-foreground-tertiary);`;
 
-    return html`
-      <div style="background-color: ${bg}; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
-        <h2 style="${H2} color: var(--${prefix}-foreground-primary);">${label}</h2>
+  return html`
+    <div style="background-color: ${bg}; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+      <h2 style="${H2} color: var(--${prefix}-foreground-primary);">${label}</h2>
 
-        <div>
-          <p style="${subStyle}">Foreground</p>
-          <div style="${GRID}">
-            ${fgLevels.map(level => html`
-              <div style="${SWATCH}">
-                <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: ${bg}; border: none;">
-                  <span style="color: var(--${prefix}-foreground-${level}); font-weight: 600; font-size: 16px;">Aa</span>
-                </div>
-                <span style="${tinyLabel}">${level}</span>
-              </div>`)}
-            ${extraFg ? html`
-              <div style="${SWATCH}">
-                <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: ${bg}; border: none;">
-                  <span style="color: var(--${prefix}-foreground-${extraFg}); font-weight: 600; font-size: 16px;">Aa</span>
-                </div>
-                <span style="${tinyLabel}">${extraFg}</span>
-              </div>` : ''}
-          </div>
+      <div>
+        <p style="${subStyle}">Foreground</p>
+        <div style="${GRID}">
+          ${fgLevels.map(level => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: ${bg}; border: none;">
+                <span style="color: var(--${prefix}-foreground-${level}); font-weight: 600; font-size: 16px;">Aa</span>
+              </div>
+              <span style="${tinyLabel}">${level}</span>
+            </div>`)}
+          ${extraFg ? html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: ${bg}; border: none;">
+                <span style="color: var(--${prefix}-foreground-${extraFg}); font-weight: 600; font-size: 16px;">Aa</span>
+              </div>
+              <span style="${tinyLabel}">${extraFg}</span>
+            </div>` : ''}
         </div>
+      </div>
 
-        <div>
-          <p style="${subStyle}">Border</p>
-          <div style="${GRID}">
-            ${borderLevels.map(level => html`
-              <div style="${SWATCH}">
-                <div style="${COLOR} background-color: ${bg}; border: 3px solid var(--${prefix}-border-${level});"></div>
-                <span style="${tinyLabel}">${level}</span>
-              </div>`)}
-          </div>
+      <div>
+        <p style="${subStyle}">Border</p>
+        <div style="${GRID}">
+          ${borderLevels.map(level => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} background-color: ${bg}; border: 3px solid var(--${prefix}-border-${level});"></div>
+              <span style="${tinyLabel}">${level}</span>
+            </div>`)}
         </div>
+      </div>
 
-        <div>
-          <p style="${subStyle}">Divider</p>
-          <div style="height: 1px; background-color: var(--${prefix}-divider); margin: 4px 0;"></div>
-          <span style="${tinyLabel}">${prefix}-divider</span>
+      <div>
+        <p style="${subStyle}">Divider</p>
+        <div style="height: 1px; background-color: var(--${prefix}-divider); margin: 4px 0;"></div>
+        <span style="${tinyLabel}">${prefix}-divider</span>
+      </div>
+
+      <div>
+        <p style="${subStyle}">Interaction</p>
+        <div style="${GRID}">
+          ${STATES.map(state => html`
+            <div style="${SWATCH}">
+              <div style="${COLOR} position: relative; background-color: ${bg}; overflow: hidden; border: none;">
+                <div style="position: absolute; inset: 0; background-color: var(--${prefix}-interaction-${state});"></div>
+              </div>
+              <span style="${tinyLabel}">${state}</span>
+            </div>`)}
         </div>
+      </div>
+    </div>`;
+}
 
-        <div>
-          <p style="${subStyle}">Interaction</p>
-          <div style="${GRID}">
-            ${STATES.map(state => html`
-              <div style="${SWATCH}">
-                <div style="${COLOR} position: relative; background-color: ${bg}; overflow: hidden; border: none;">
-                  <div style="position: absolute; inset: 0; background-color: var(--${prefix}-interaction-${state});"></div>
-                </div>
-                <span style="${tinyLabel}">${state}</span>
-              </div>`)}
-          </div>
-        </div>
-      </div>`;
-  }
-
+function NavigationColors(): TemplateResult {
   return html`
     <div style="${PAGE}">
       ${section('Navigation', 'color-navigation-* — sidebar/topbar surface', html`
         ${surfaceBlock('color-navigation', 'Navigation', 'brand')}`)}
+    </div>`;
+}
+
+function MediaColors(): TemplateResult {
+  return html`
+    <div style="${PAGE}">
       ${section('Media', 'color-media-* — media player surface', html`
         ${surfaceBlock('color-media', 'Media')}`)}
     </div>`;
@@ -761,16 +726,16 @@ function ReferenceColors(): TemplateResult {
 
   const hues = [
     { name: 'Blue (250)',     light: ['light-blue-250-l92-c04-faint','light-blue-250-l70-c18-medium','light-blue-250-l50-c18-bold','light-blue-250-l33-c09-strong'],    dark: ['dark-blue-250-l27-c05-faint','dark-blue-250-l50-c17-medium','dark-blue-250-l65-c20-bold','dark-blue-250-l91-c05-strong'] },
-    { name: 'Red (30)',       light: ['light-red-30-l93-c04-faint','light-red-30-l70-c20-medium','light-red-30-l53-c20-bold','light-red-30-l30-c11-strong'],            dark: ['dark-red-30-l28-c05-faint','dark-red-30-l51-c17-medium','dark-red-30-l70-c20-bold','dark-red-30-l91-c06-strong'] },
-    { name: 'Green (145)',    light: ['light-green-145-l94-c05-faint','light-green-145-l75-c22-medium','light-green-145-l50-c19-bold','light-green-145-l35-c13-strong'], dark: ['dark-green-145-l27-c05-faint','dark-green-145-l50-c17-medium','dark-green-145-l70-c19-bold','dark-green-145-l93-c06-strong'] },
-    { name: 'Orange (60)',    light: ['light-orange-60-l93-c05-faint','light-orange-60-l75-c20-medium','light-orange-60-l52-c13-bold','light-orange-60-l35-c09-strong'], dark: ['dark-orange-60-l28-c05-faint','dark-orange-60-l51-c13-medium','dark-orange-60-l75-c20-bold','dark-orange-60-l92-c06-strong'] },
-    { name: 'Yellow (85)',    light: ['light-yellow-85-l93-c08-faint','light-yellow-85-l85-c20-medium','light-yellow-85-l51-c12-bold','light-yellow-85-l40-c09-strong'], dark: ['dark-yellow-85-l28-c05-faint','dark-yellow-85-l51-c12-medium','dark-yellow-85-l80-c18-bold','dark-yellow-85-l93-c05-strong'] },
     { name: 'Purple (290)',   light: ['light-purple-290-l92-c04-faint','light-purple-290-l75-c15-medium','light-purple-290-l52-c20-bold','light-purple-290-l35-c13-strong'], dark: ['dark-purple-290-l28-c05-faint','dark-purple-290-l52-c17-medium','dark-purple-290-l67-c20-bold','dark-purple-290-l92-c05-strong'] },
-    { name: 'Teal (180)',     light: ['light-teal-180-l94-c05-faint','light-teal-180-l75-c17-medium','light-teal-180-l50-c12-bold','light-teal-180-l35-c09-strong'],   dark: ['dark-teal-180-l27-c05-faint','dark-teal-180-l50-c12-medium','dark-teal-180-l70-c15-bold','dark-teal-180-l93-c08-strong'] },
-    { name: 'Cyan (215)',     light: ['light-cyan-215-l94-c04-faint','light-cyan-215-l75-c17-medium','light-cyan-215-l51-c11-bold','light-cyan-215-l30-c07-strong'],   dark: ['dark-cyan-215-l27-c05-faint','dark-cyan-215-l50-c11-medium','dark-cyan-215-l70-c15-bold','dark-cyan-215-l92-c07-strong'] },
     { name: 'Magenta (325)',  light: ['light-magenta-325-l94-c05-faint','light-magenta-325-l70-c23-medium','light-magenta-325-l54-c20-bold','light-magenta-325-l30-c13-strong'], dark: ['dark-magenta-325-l28-c05-faint','dark-magenta-325-l51-c17-medium','dark-magenta-325-l67-c20-bold','dark-magenta-325-l90-c08-strong'] },
     { name: 'Pink (0)',       light: ['light-pink-0-l93-c05-faint','light-pink-0-l70-c22-medium','light-pink-0-l53-c20-bold','light-pink-0-l29-c10-strong'],           dark: ['dark-pink-0-l28-c05-faint','dark-pink-0-l52-c17-medium','dark-pink-0-l68-c20-bold','dark-pink-0-l92-c05-strong'] },
+    { name: 'Red (30)',       light: ['light-red-30-l93-c04-faint','light-red-30-l70-c20-medium','light-red-30-l53-c20-bold','light-red-30-l30-c11-strong'],            dark: ['dark-red-30-l28-c05-faint','dark-red-30-l51-c17-medium','dark-red-30-l70-c20-bold','dark-red-30-l91-c06-strong'] },
+    { name: 'Orange (60)',    light: ['light-orange-60-l93-c05-faint','light-orange-60-l75-c20-medium','light-orange-60-l52-c13-bold','light-orange-60-l35-c09-strong'], dark: ['dark-orange-60-l28-c05-faint','dark-orange-60-l51-c13-medium','dark-orange-60-l75-c20-bold','dark-orange-60-l92-c06-strong'] },
+    { name: 'Yellow (85)',    light: ['light-yellow-85-l93-c08-faint','light-yellow-85-l85-c20-medium','light-yellow-85-l51-c12-bold','light-yellow-85-l40-c09-strong'], dark: ['dark-yellow-85-l28-c05-faint','dark-yellow-85-l51-c12-medium','dark-yellow-85-l80-c18-bold','dark-yellow-85-l93-c05-strong'] },
     { name: 'Olive (115)',    light: ['light-olive-115-l93-c05-faint','light-olive-115-l85-c22-medium','light-olive-115-l51-c13-bold','light-olive-115-l35-c09-strong'], dark: ['dark-olive-115-l27-c05-faint','dark-olive-115-l51-c13-medium','dark-olive-115-l75-c19-bold','dark-olive-115-l93-c05-strong'] },
+    { name: 'Green (145)',    light: ['light-green-145-l94-c05-faint','light-green-145-l75-c22-medium','light-green-145-l50-c19-bold','light-green-145-l35-c13-strong'], dark: ['dark-green-145-l27-c05-faint','dark-green-145-l50-c17-medium','dark-green-145-l70-c19-bold','dark-green-145-l93-c06-strong'] },
+    { name: 'Teal (180)',     light: ['light-teal-180-l94-c05-faint','light-teal-180-l75-c17-medium','light-teal-180-l50-c12-bold','light-teal-180-l35-c09-strong'],   dark: ['dark-teal-180-l27-c05-faint','dark-teal-180-l50-c12-medium','dark-teal-180-l70-c15-bold','dark-teal-180-l93-c08-strong'] },
+    { name: 'Cyan (215)',     light: ['light-cyan-215-l94-c04-faint','light-cyan-215-l75-c17-medium','light-cyan-215-l51-c11-bold','light-cyan-215-l30-c07-strong'],   dark: ['dark-cyan-215-l27-c05-faint','dark-cyan-215-l50-c11-medium','dark-cyan-215-l70-c15-bold','dark-cyan-215-l92-c07-strong'] },
   ];
 
   return html`
@@ -829,9 +794,16 @@ export const Borders:      Story = { name: 'Borders & Dividers',   render: () =>
 export const Interactions: Story = { name: 'Interactions',         render: () => InteractionColors() };
 export const AlwaysDark:   Story = { name: 'Always Dark',          render: () => AlwaysDarkColors() };
 export const Inverted:     Story = { name: 'Inverted',             render: () => InvertedColors() };
-export const DataViz:      Story = { name: 'Data Visualization',   render: () => DataVizColors() };
 export const ColorIntent:  Story = { name: 'Color Intent',         render: () => ColorIntentColors() };
-export const Domain:       Story = { name: 'Domain (Fleet)',       render: () => DomainColors() };
-export const Surfaces:     Story = { name: 'Surfaces',             render: () => SurfacesColors() };
+export const DriverStatus: Story = { name: 'Driver Status',        render: () => DriverStatusColors() };
+export const EntityMarker: Story = { name: 'Entity Markers',       render: () => EntityMarkerColors() };
+export const EntityClusterMarker: Story = {
+  name: 'Entity Cluster Marker',
+  render: () => EntityClusterMarkerColors(),
+};
+export const LocationMarker: Story = { name: 'Location Markers',    render: () => LocationMarkerColors() };
+export const SafetyScore:  Story = { name: 'Safety Score',         render: () => SafetyScoreColors() };
+export const Navigation:   Story = { name: 'Navigation',           render: () => NavigationColors() };
+export const Media:        Story = { name: 'Media',                render: () => MediaColors() };
 export const Utility:      Story = { name: 'Utility',              render: () => UtilityColors() };
 export const References:   Story = { name: 'References',           render: () => ReferenceColors() };

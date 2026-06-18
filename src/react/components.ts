@@ -21,7 +21,6 @@ export { DsField } from "./ds-field.js";
 export { DsHeader } from "./ds-header.js";
 export { DsIcon } from "./ds-icon.js";
 export { DsInput } from "./ds-input.js";
-export { DsLabelWrap } from "./ds-label-wrap.js";
 export { DsLoader } from "./ds-loader.js";
 export { DsMenu } from "./ds-menu.js";
 export { DsModal } from "./ds-modal.js";
