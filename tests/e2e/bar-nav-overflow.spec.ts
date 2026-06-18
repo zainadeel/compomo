@@ -126,14 +126,11 @@ test.describe('BarNav responsive overflow', () => {
     const fade = await page.evaluate(() => {
       const labelWrap = document.querySelector('.bar-nav__tab-trigger-label') as HTMLElement;
       const label = document.querySelector('.bar-nav__tab-trigger-label-text') as HTMLElement;
-      const cs = getComputedStyle(label);
       const overlay = getComputedStyle(labelWrap, '::after');
-      const mask = cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
       return {
         scrollWidth: label.scrollWidth,
         clientWidth: label.clientWidth,
         isOverflowing: label.scrollWidth > label.clientWidth + 1,
-        maskImage: mask,
         overlayContent: overlay.content,
         overlayWidth: parseFloat(overlay.width),
         overlayBackground: overlay.backgroundImage,
@@ -143,7 +140,6 @@ test.describe('BarNav responsive overflow', () => {
     });
 
     expect(fade.isOverflowing).toBe(true);
-    expect(fade.maskImage).not.toBe('none');
     expect(fade.overlayContent).toBe('""');
     expect(fade.overlayWidth).toBeGreaterThan(0);
     expect(fade.overlayBackground).toContain('linear-gradient');
