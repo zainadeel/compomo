@@ -523,6 +523,19 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
+  ['TabGroupNav', {
+    title: 'TabGroupNav',
+    description: 'Navigation-style tab list (`ds-tab-group-nav`) copied from the original TabGroup behavior for primary/secondary navigation surfaces.',
+    exports: ['ds-tab-group-nav'],
+    types: ['TabItem'],
+    props: {
+      tabs: { type: 'TabItem[]', required: true, description: 'Tab ids/labels; `{ type: "divider" }` for group breaks.' },
+      value: { type: 'string', description: 'Selected tab id.' },
+    },
+    usesTokens: true,
+    usesIcons: false,
+    internalDeps: [],
+  }],
   ['Accordion', {
     title: 'Accordion',
     description: 'Collapsible section list with single or multiple expand mode, animated height transitions, and controlled/uncontrolled state.',

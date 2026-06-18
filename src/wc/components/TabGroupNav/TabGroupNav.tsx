@@ -4,21 +4,21 @@ import {
   isTabDivider,
   type TabItem,
   type TabItemTab,
-} from './tab-item-utils';
+} from '../TabGroup/tab-item-utils';
 
-export type TabBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
+export type TabGroupNavBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
 
 @Component({
-  tag: 'ds-tab-group',
-  styleUrl: 'TabGroup.css',
+  tag: 'ds-tab-group-nav',
+  styleUrl: 'TabGroupNav.css',
   scoped: true,
 })
-export class TabGroup {
+export class TabGroupNav {
   @Element() el!: HTMLElement;
 
   @Prop({ mutable: true }) value: string = '';
   @Prop() tabs: TabItem[] = [];
-  @Prop() background: TabBackground | undefined;
+  @Prop() background: TabGroupNavBackground | undefined;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
   @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';
@@ -127,7 +127,7 @@ export class TabGroup {
     const isVertical = this.orientation === 'vertical';
 
     return (
-      <Host class="tab-group-host">
+      <Host class="tab-group-nav-host">
         <div
           role="tablist"
           class={{ 'tab-list': true, 'tab-list--vertical': isVertical }}
@@ -173,7 +173,7 @@ export class TabGroup {
                 <span class={{
                   tab__label: true,
                   'tab__label--dot': !!tab.dot,
-                  [isSelected ? 'text-body-small-emphasis' : 'text-body-small']: true,
+                  [isSelected ? 'text-body-medium-emphasis' : 'text-body-medium']: true,
                 }}>
                   {tab.label}
                   {tab.dot && <span class="tab__dot" aria-hidden="true" />}

@@ -5,6 +5,7 @@
 .bar-nav {
   display: flex;
   align-items: center;
+  position: relative;
   height: var(--dimension-size-600);
   padding: var(--dimension-space-100);
   gap: var(--dimension-space-100);
@@ -13,16 +14,62 @@
 }
 
 /* Background variants — mirrors ds-header pattern */
-.bg-primary     { background-color: var(--color-background-primary); }
-.bg-secondary   { background-color: var(--color-background-secondary); }
-.bg-transparent { background-color: transparent; }
+.bg-primary     {
+  --_bar-nav-bg: var(--color-background-primary);
+  background-color: var(--_bar-nav-bg);
+}
+.bg-secondary   {
+  --_bar-nav-bg: var(--color-background-secondary);
+  background-color: var(--_bar-nav-bg);
+}
+.bg-transparent {
+  --_bar-nav-bg: var(--color-background-primary);
+  background-color: transparent;
+}
 .bg-translucent {
-  background-color: var(--color-background-translucent);
+  --_bar-nav-bg: var(--color-background-translucent);
+  background-color: var(--_bar-nav-bg);
   backdrop-filter: blur(var(--effect-blur-md));
   -webkit-backdrop-filter: blur(var(--effect-blur-md));
 }
 
-/* Left zone — always consume remaining header width (even when collapsed to a narrow trigger) */
+/* Collapsed — explicit spacer keeps the 8px minimum while the trigger can shrink. */
+.bar-nav--tabs-collapsed {
+  display: flex;
+  gap: 0;
+  align-items: center;
+}
+
+.bar-nav--tabs-collapsed .bar-nav__tab-trigger {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  width: auto;
+  overflow: hidden;
+}
+
+.bar-nav__between {
+  flex: 1 1 0%;
+  min-width: var(--dimension-space-100);
+}
+
+.bar-nav--tabs-collapsed .bar-nav__tab-trigger-label {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.bar-nav--tabs-collapsed .bar-nav__tab-trigger-label-text {
+  display: block;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.bar-nav--tabs-collapsed .bar-nav__actions {
+  flex: 0 0 auto;
+  margin-left: 0;
+}
+
+/* Expanded tabs — consume space between start and actions */
 .bar-nav__left {
   position: relative;
   flex: 1 1 0%;
@@ -32,7 +79,7 @@
   align-items: center;
 }
 
-.bar-nav__left ds-tab-group {
+.bar-nav__left ds-tab-group-nav {
   flex: 1;
   min-width: 0;
 }
@@ -50,7 +97,7 @@
   z-index: -1;
 }
 
-.bar-nav__tabs-probe ds-tab-group {
+.bar-nav__tabs-probe ds-tab-group-nav {
   width: max-content;
 }
 
@@ -68,16 +115,19 @@
   pointer-events: none;
 }
 
-/* Collapsed tab trigger — tab interaction pattern, not ds-button */
+/* Collapsed tab trigger — mirrors TabGroup .tab (+ chevron when collapsed) */
 .bar-nav__tab-trigger {
+  all: unset;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: var(--dimension-space-050);
+  flex: 0 1 auto;
+  min-width: 0;
+  width: max-content;
   max-width: 100%;
   padding: var(--dimension-space-075);
   background-color: transparent;
-  border: none;
   border-radius: var(--dimension-radius-025);
   cursor: pointer;
   -webkit-user-select: none;
@@ -85,10 +135,7 @@
   color: var(--color-foreground-primary);
   position: relative;
   transition: color var(--effect-motion-short-2);
-  flex-shrink: 1;
-  min-width: 0;
   height: var(--dimension-size-400);
-  box-sizing: border-box;
   --_hover-bg: var(--color-interaction-hover);
   --_pressed-bg: var(--color-interaction-pressed);
   --_dot: var(--color-foreground-bold-brand);
@@ -103,6 +150,7 @@
   background: transparent;
   pointer-events: none;
   transition: none;
+  z-index: 2;
 }
 
 .bar-nav__tab-trigger:hover::after {
@@ -128,15 +176,58 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
   padding: 0 var(--dimension-space-025);
+  overflow: hidden;
+  --_fade-right: var(--dimension-space-025);
+  z-index: 1;
+}
+
+.bar-nav__tab-trigger-label--truncated::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: var(--_fade-right);
+  bottom: 0;
+  width: var(--dimension-size-400);
+  background: linear-gradient(to right, transparent, var(--_bar-nav-bg));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bar-nav__tab-trigger-label-text {
+  display: inline-block;
+  max-width: 100%;
+  box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.bar-nav__tab-trigger-label-text--truncated {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - var(--dimension-size-400)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - var(--dimension-size-400)),
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .bar-nav__tab-trigger-label--dot {
   padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
+  --_fade-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
 }
 
 .bar-nav__tab-trigger-dot {
@@ -149,10 +240,13 @@
   background: var(--_dot);
   box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_dot-ring);
   pointer-events: none;
+  z-index: 1;
 }
 
 .bar-nav__tab-trigger-chevron {
+  position: relative;
   flex-shrink: 0;
+  z-index: 1;
 }
 
 /* Fallback heading when no tabs — matches a single (selected) tab so the area
@@ -169,10 +263,11 @@
   text-overflow: ellipsis;
 }
 
-/* Right zone — action buttons, hugging right */
+/* Right zone — pinned to the end; header gap is the min space from tabs/trigger */
 .bar-nav__actions {
   display: flex;
   align-items: center;
   gap: var(--dimension-space-050);
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  margin-left: auto;
 }

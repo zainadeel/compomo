@@ -9,10 +9,20 @@
   overflow: hidden;
   background-color: var(--color-background-primary);
   border-radius: var(--dimension-radius-075);
-  box-shadow: var(--effect-elevation-elevated-floating);
+  /* Split elevation: shadow on shell, inset highlight on ::after (combined token clips with overflow:hidden). */
+  box-shadow: var(--effect-shadow-elevated-floating);
   animation: menuFadeIn var(--effect-motion-short-2) forwards;
   backface-visibility: hidden;
   will-change: transform;
+}
+
+.menu-popup::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--effect-highlight-elevated-floating);
 }
 
 .menu-popup--closing {

@@ -1305,6 +1305,35 @@
       "registryDependencies": []
     },
     {
+      "name": "tab-group-nav",
+      "title": "TabGroupNav",
+      "description": "Navigation-style tab list (`ds-tab-group-nav`) copied from the original TabGroup behavior for primary/secondary navigation surfaces.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group-nav",
+        "exports": [
+          "ds-tab-group-nav"
+        ],
+        "props": {
+          "tabs": {
+            "type": "TabItem[]",
+            "required": true
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
       "name": "accordion",
       "title": "Accordion",
       "description": "Collapsible section list with single or multiple expand mode, animated height transitions, and controlled/uncontrolled state.",

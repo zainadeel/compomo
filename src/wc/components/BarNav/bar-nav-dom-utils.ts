@@ -1,4 +1,4 @@
-type QueryableHost = {
+export type QueryableHost = {
   shadowRoot?: ShadowRoot | null;
   querySelector: (selectors: string) => Element | null;
 };

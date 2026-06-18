@@ -16,10 +16,9 @@ const safetyTabs = [
 ];
 
 const defaultActions = [
-  { id: 'search',        icon: 'MagnifyingGlass', ariaLabel: 'Go to / Search' },
-  { id: 'messages',      icon: 'MessageBubble',   ariaLabel: 'Messages',      dot: true  },
-  { id: 'notifications', icon: 'Bell',            ariaLabel: 'Notifications', dot: true  },
-  { id: 'assistant',     icon: 'AI',              ariaLabel: 'Assistant' },
+  { id: 'search',    icon: 'MagnifyingGlass', ariaLabel: 'Go to / Search' },
+  { id: 'inbox',     icon: 'Inbox',           ariaLabel: 'Inbox',         dot: true  },
+  { id: 'assistant', icon: 'AI',              ariaLabel: 'AI Assistant',  dot: true  },
 ];
 
 const meta: Meta = {
@@ -169,6 +168,48 @@ export const ResponsiveTabCollapse: Story = {
   `,
 };
 
+const truncationTabs = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'events', label: 'Events and notifications', dot: true },
+  { id: 'requests', label: 'Requests' },
+];
+
+export const CollapsedLabelTruncation: Story = {
+  name: 'Collapsed tab label truncation',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Fixed 300px width — tabs collapse and the active label truncates with a right-edge fade ' +
+          'before the chevron. Use this story to review truncation without resizing.',
+      },
+    },
+    layout: 'padded',
+  },
+  render: () => html`
+    <div
+      style="width: 300px; border: 1px dashed var(--color-border-tertiary);"
+      ${ref(el => {
+        if (!el) return;
+        const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
+          tabs: typeof truncationTabs;
+          actions: typeof defaultActions;
+          value: string;
+        } | null;
+        if (!nav) return;
+        nav.tabs = truncationTabs;
+        nav.actions = defaultActions;
+        nav.value = 'events';
+        nav.addEventListener('dsTabChange', (e: Event) => {
+          nav.value = (e as CustomEvent<string>).detail;
+        });
+      })}
+    >
+      <ds-bar-nav></ds-bar-nav>
+    </div>
+  `,
+};
+
 export const WithDotOnTab: Story = {
   name: 'Tab dot + action dots (Safety)',
   render: () => html`
@@ -223,7 +264,7 @@ function assignBarNavAfterUpgrade(
       if (!el || !status) return;
       assign(el);
       requestAnimationFrame(() => {
-        const tabs = el.querySelectorAll('ds-tab-group ds-tab, ds-tab-group button').length;
+        const tabs = el.querySelectorAll('ds-tab-group-nav button').length;
         status.textContent = `${tabs} tabs rendered · basePath=${String(el.basePath)} · currentUrl=${String(el.currentUrl)}`;
       });
     });

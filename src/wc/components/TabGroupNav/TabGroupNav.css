@@ -7,14 +7,6 @@
   align-items: center;
   gap: var(--dimension-space-050);
   position: relative;
-  width: max-content;
-  max-width: 100%;
-  height: var(--dimension-size-400);
-  padding: var(--dimension-space-050);
-  background-color: var(--color-background-secondary);
-  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
-  border-radius: var(--dimension-radius-half);
-  box-sizing: border-box;
 }
 
 /* Vertical orientation */
@@ -28,10 +20,10 @@
   align-items: center;
   justify-content: center;
   gap: var(--dimension-space-050);
-  padding: var(--dimension-space-050);
+  padding: var(--dimension-space-075);
   background-color: transparent;
-  border: var(--dimension-stroke-width-012) solid transparent;
-  border-radius: var(--dimension-radius-half);
+  border: none;
+  border-radius: var(--dimension-radius-025);
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
@@ -40,7 +32,7 @@
   /* Only transition color — hover bg is instant (see ::after below) */
   transition: color var(--effect-motion-short-2);
   flex-shrink: 0;
-  height: var(--dimension-size-300);
+  height: var(--dimension-size-400);
   min-width: var(--dimension-size-400);
   box-sizing: border-box;
   --_hover-bg: var(--color-interaction-hover);
@@ -53,8 +45,8 @@
 .tab::after {
   content: '';
   position: absolute;
-  inset: calc(var(--dimension-stroke-width-012) * -1);
-  border-radius: inherit;
+  inset: 0;
+  border-radius: var(--dimension-radius-025, 2px);
   background: transparent;
   pointer-events: none;
   transition: none;
@@ -68,11 +60,7 @@
   background: transparent;
 }
 
-.tab--selected {
-  color: var(--color-foreground-primary);
-  background-color: var(--color-background-primary);
-  border-color: var(--color-border-tertiary);
-}
+.tab--selected { color: var(--color-foreground-primary); }
 
 .tab:focus-visible {
   outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);

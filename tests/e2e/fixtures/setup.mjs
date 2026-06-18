@@ -12,9 +12,8 @@ const manyTabs = [
 
 const actions = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'messages', icon: 'MessageBubble', ariaLabel: 'Messages', dot: true },
-  { id: 'notifications', icon: 'Bell', ariaLabel: 'Notifications', dot: true },
-  { id: 'assistant', icon: 'AI', ariaLabel: 'Assistant' },
+  { id: 'inbox', icon: 'Inbox', ariaLabel: 'Inbox', dot: true },
+  { id: 'assistant', icon: 'AI', ariaLabel: 'AI Assistant', dot: true },
 ];
 
 function setShellWidth(px) {

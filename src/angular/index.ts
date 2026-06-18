@@ -33,6 +33,7 @@ export const DIRECTIVES = [
   d.DsSlider,
   d.DsSurface,
   d.DsTabGroup,
+  d.DsTabGroupNav,
   d.DsTable,
   d.DsTag,
   d.DsText,
