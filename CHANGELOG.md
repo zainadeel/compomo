@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/zainadeel/compomo/compare/v1.1.0...v1.2.0) (2026-06-18)
+
+
+### Added
+
+* update primitive and foundation stories ([#158](https://github.com/zainadeel/compomo/issues/158)) ([9dea5de](https://github.com/zainadeel/compomo/commit/9dea5de792222aa1baf9cb5ac382dae90ab97130))
+
 ## [1.1.0](https://github.com/zainadeel/compomo/compare/v1.0.2...v1.1.0) (2026-06-18)
 
 
