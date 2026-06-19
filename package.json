@@ -87,7 +87,7 @@
   },
   "devDependencies": {
     "@ds-mo/icons": "^6.0.0",
-    "@ds-mo/tokens": "^2.9.1",
+    "@ds-mo/tokens": "^2.10.0",
     "@eslint/js": "^10.0.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@playwright/test": "^1.55.0",

@@ -87,8 +87,8 @@ export class Banner {
 
   private getElevation(): string {
     return this.floating
-      ? 'var(--effect-elevation-elevated-floating, var(--effect-elevation-floating))'
-      : 'var(--effect-elevation-elevated)';
+      ? 'var(--effect-elevation-elevated-floating)'
+      : 'var(--effect-elevation-elevated-sm)';
   }
 
   render() {

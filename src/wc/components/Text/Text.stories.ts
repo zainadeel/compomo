@@ -24,7 +24,7 @@ const meta: Meta = {
     variant:       { control: 'select', options: VARIANTS },
     color: {
       control: 'text',
-      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-brand).`,
+      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
     },
     as:            { control: 'select', options: ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label'] },
     align:         { control: 'select', options: ['left', 'center', 'right'] },

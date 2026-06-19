@@ -26,7 +26,7 @@
   max-height: calc(100vh - 32px);
   overflow: hidden;
   background-color: var(--color-background-primary);
-  border-radius: var(--dimension-radius-275, 22px);
+  border-radius: var(--dimension-radius-300);
   box-shadow: var(--effect-elevation-elevated-floating);
   animation: modalDialogIn var(--effect-motion-short-2) forwards;
   outline: none;
