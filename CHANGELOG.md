@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/zainadeel/compomo/compare/v1.2.0...v1.3.0) (2026-06-19)
+
+
+### Added
+
+* add chip, figma code connect, and library updates ([#160](https://github.com/zainadeel/compomo/issues/160)) ([dcbdfc1](https://github.com/zainadeel/compomo/commit/dcbdfc1270ac5c4c5341d5f28cd0ccb9b2226557))
+
+
+### Fixed
+
+* avoid code connect ci failing on placeholder figma url ([#162](https://github.com/zainadeel/compomo/issues/162)) ([cc9a0a9](https://github.com/zainadeel/compomo/commit/cc9a0a94f0fed17acf4bb0421a236e03cbfab273))
+
 ## [1.2.0](https://github.com/zainadeel/compomo/compare/v1.1.0...v1.2.0) (2026-06-18)
 
 
