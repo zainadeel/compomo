@@ -1,0 +1,116 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chip",
+  "title": "Chip",
+  "description": "Interactive metadata chip with pressed, inactive, removable, and icon states.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/chip",
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)\n  import '@ds-mo/ui/css';       // Component-level CSS\nFor dark mode: set data-theme=\"dark\" on <html>.",
+      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-chip.js';",
+      "usage": {
+        "html": "<ds-chip></ds-chip>",
+        "react": "<ds-chip></ds-chip>",
+        "angular": "<ds-chip></ds-chip>"
+      },
+      "internalDependencies": [
+        {
+          "component": "Text",
+          "note": "Used internally by Chip. Bundled in @ds-mo/ui."
+        }
+      ],
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens >=2.9.0",
+          "@ds-mo/icons ^5.0.1"
+        ],
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+      }
+    },
+    "props": {
+      "label": {
+        "type": "string",
+        "required": true
+      },
+      "intent": {
+        "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive'",
+        "default": "'neutral'"
+      },
+      "contrast": {
+        "type": "'strong' | 'bold' | 'medium' | 'faint'",
+        "default": "'faint'"
+      },
+      "elevation": {
+        "type": "'none' | 'flat' | 'elevated'",
+        "default": "'none'"
+      },
+      "size": {
+        "type": "'md' | 'sm' | 'xs'",
+        "default": "'md'"
+      },
+      "rounded": {
+        "type": "boolean"
+      },
+      "icon": {
+        "type": "IconComponent"
+      },
+      "removable": {
+        "type": "boolean"
+      },
+      "onRemove": {
+        "type": "() => void"
+      },
+      "pressed": {
+        "type": "boolean",
+        "description": "For filter-chip behavior."
+      },
+      "onPressedChange": {
+        "type": "(pressed: boolean) => void"
+      },
+      "onClick": {
+        "type": "() => void"
+      },
+      "inactive": {
+        "type": "boolean"
+      },
+      "maxWidth": {
+        "type": "string | number"
+      }
+    },
+    "exports": [
+      "Chip"
+    ],
+    "types": [
+      "ChipProps",
+      "ChipIntent",
+      "ChipContrast",
+      "ChipElevation",
+      "ChipSize"
+    ]
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Chip/Chip.css",
+      "content": "@import '../Tag/Tag.css';\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Chip/Chip.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nexport type ChipIntent     = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';\nexport type ChipContrast   = 'strong' | 'bold' | 'medium' | 'faint';\nexport type ChipElevation  = 'none' | 'flat' | 'elevated';\nexport type ChipSize       = 'md' | 'sm' | 'xs';\nexport type ChipBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';\n\nconst TEXT_VARIANT: Record<ChipSize, string> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\nconst ICON_SIZE: Record<ChipSize, number> = { md: 20, sm: 16, xs: 12 };\n\n@Component({\n  tag: 'ds-chip',\n  styleUrl: 'Chip.css',\n  scoped: true,\n})\nexport class Chip {\n  @Prop() label!: string;\n  @Prop() intent: ChipIntent = 'neutral';\n  @Prop() contrast: ChipContrast = 'faint';\n  @Prop() elevation: ChipElevation = 'none';\n  @Prop() size: ChipSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() removable: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n  @Prop() inactive: boolean = false;\n  @Prop() background: ChipBackground | undefined;\n  @Prop({ mutable: true }) pressed: boolean = false;\n\n  /** Fired when the remove button is clicked. */\n  @Event() dsRemove!: EventEmitter<void>;\n  /** Fired when an interactive chip is clicked. */\n  @Event() dsClick!: EventEmitter<void>;\n  /** Fired when the pressed state toggles. */\n  @Event() dsPressedChange!: EventEmitter<boolean>;\n\n  private handleClick = () => {\n    if (this.inactive) return;\n    this.pressed = !this.pressed;\n    this.dsPressedChange.emit(this.pressed);\n    this.dsClick.emit();\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.inactive) return;\n    if (e.key === 'Enter' || e.key === ' ') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  private handleRemove = (e: MouseEvent) => {\n    e.stopPropagation();\n    this.dsRemove.emit();\n  };\n\n  render() {\n    const sz = this.size.toUpperCase() as 'MD' | 'SM' | 'XS';\n    const textVariant = TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n\n    const hostCls: Record<string, boolean> = {\n      'tag': true,\n      [`tag--intent-${this.intent}`]: true,\n      [`tag--contrast-${this.contrast}`]: true,\n      [`tag--elevation-${this.elevation}`]: true,\n      [`tag--size-${this.size}`]: true,\n      'tag--rounded': this.rounded,\n      'tag--rounded-no-icon-left': this.rounded,\n      'tag--rounded-no-remove-right': this.rounded && !this.removable,\n      [`tag--icon-left-${sz}`]: false,\n      [`tag--icon-right-${sz}`]: this.removable,\n      'tag--removable': this.removable,\n      'tag--interactive': true,\n      'tag--inactive': this.inactive,\n      'tag--pressed': this.pressed,\n      'tag--on-medium':      this.background === 'medium',\n      'tag--on-bold':        this.background === 'bold',\n      'tag--on-strong':      this.background === 'strong',\n      'tag--on-always-dark': this.background === 'always-dark',\n    };\n\n    return (\n      <Host\n        class={hostCls}\n        style={maxWidthStyle}\n        onClick={this.handleClick}\n        onKeyDown={this.handleKeyDown}\n        role=\"button\"\n        tabIndex={this.inactive ? -1 : 0}\n        aria-pressed={String(this.pressed)}\n        aria-disabled={this.inactive || undefined}\n      >\n        <span class=\"tag__icon-slot\" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>\n          <slot name=\"icon\" />\n        </span>\n        <span class={{ 'tag__label': true, [textVariant]: true }}>\n          {this.label}\n        </span>\n        {this.removable && (\n          <button\n            type=\"button\"\n            class=\"tag__remove\"\n            onClick={this.handleRemove}\n            aria-label={`Remove ${this.label}`}\n            tabIndex={-1}\n          >\n            <slot name=\"remove-icon\">\n              <span class=\"tag__remove-x\" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>\n                ✕\n              </span>\n            </slot>\n          </button>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

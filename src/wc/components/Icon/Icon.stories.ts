@@ -25,7 +25,7 @@ const meta: Meta = {
     size: { control: 'select', options: SIZES },
     color: {
       control: 'text',
-      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-brand).`,
+      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
     },
     label: { control: 'text' },
     flag: { control: 'boolean' },

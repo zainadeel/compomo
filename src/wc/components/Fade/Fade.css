@@ -1,9 +1,27 @@
 :host {
+  --ds-fade-size: var(--dimension-size-600);
+  --ds-fade-bg: var(--color-background-secondary);
+  --ds-fade-offset: 0;
+
   position: absolute;
   pointer-events: none;
   z-index: 10;
+  opacity: 1;
   transform: translateZ(0);
   backface-visibility: hidden;
+  transition: opacity var(--effect-motion-short-3);
+}
+
+:host(.fade--hidden) {
+  opacity: 0;
+}
+
+:host(.fade--vertical-edge) {
+  height: var(--ds-fade-size);
+}
+
+:host(.fade--horizontal-edge) {
+  width: var(--ds-fade-size);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -11,21 +29,21 @@
 }
 
 :host(.fade--top) {
-  top: 0; left: 0; right: 0;
+  top: var(--ds-fade-offset); left: 0; right: 0;
   background: linear-gradient(to bottom, var(--ds-fade-bg) 0%, var(--ds-fade-bg) 50%, transparent 100%);
 }
 
 :host(.fade--bottom) {
-  bottom: 0; left: 0; right: 0;
+  bottom: var(--ds-fade-offset); left: 0; right: 0;
   background: linear-gradient(to top, var(--ds-fade-bg) 0%, transparent 100%);
 }
 
 :host(.fade--left) {
-  top: 0; bottom: 0; left: 0;
+  top: 0; bottom: 0; left: var(--ds-fade-offset);
   background: linear-gradient(to right, var(--ds-fade-bg) 0%, transparent 100%);
 }
 
 :host(.fade--right) {
-  top: 0; bottom: 0; right: 0;
+  top: 0; bottom: 0; right: var(--ds-fade-offset);
   background: linear-gradient(to left, var(--ds-fade-bg) 0%, transparent 100%);
 }

@@ -517,7 +517,15 @@ export class PanelNav {
           </ds-text>
         </span>
       </span>,
-      item.dot && <span class="panel-nav__item-dot" aria-hidden="true" />,
+      item.dot && (
+        <ds-badge
+          class="panel-nav__item-dot"
+          variant="dot"
+          background="var(--_nav-bg)"
+          label=""
+          aria-hidden="true"
+        />
+      ),
     ];
 
     const sharedProps = {
@@ -604,6 +612,14 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
+            <ds-fade
+              class="panel-nav__footer-fade"
+              side="bottom"
+              size="size-600"
+              background="var(--_nav-bg)"
+              visible={!this.atBottom}
+            />
+
             {/* Left icon button — Gear in dashboard, Dashboard in settings */}
             <button
               type="button"

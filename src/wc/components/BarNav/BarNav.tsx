@@ -551,7 +551,13 @@ export class BarNav {
                     {this.activeTabLabel}
                   </span>
                   {this.activeTabHasDot && (
-                    <span class="bar-nav__tab-trigger-dot" aria-hidden="true" />
+                    <ds-badge
+                      class="bar-nav__tab-trigger-dot"
+                      variant="dot"
+                      background="var(--_dot-ring)"
+                      label=""
+                      aria-hidden="true"
+                    />
                   )}
                 </span>
                 <ds-icon

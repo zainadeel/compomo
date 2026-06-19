@@ -52,14 +52,14 @@
 .onMedium {
   --_hover-bg: var(--color-interaction-on-medium-background-hover);
   --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
-  --_dot-ring: var(--color-background-medium);
+  --_dot-ring: var(--color-background-medium-neutral);
 }
 
 .onBold {
   color: var(--color-foreground-on-bold-background-secondary);
   --_hover-bg: var(--color-interaction-on-bold-background-hover);
   --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
-  --_dot-ring: var(--color-background-bold);
+  --_dot-ring: var(--color-background-bold-neutral);
 }
 
 .onBold.selected { color: var(--color-foreground-on-bold-background-primary); }
@@ -68,7 +68,7 @@
   color: var(--color-foreground-on-bold-background-secondary);
   --_hover-bg: var(--color-interaction-on-strong-background-hover);
   --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
-  --_dot-ring: var(--color-background-strong);
+  --_dot-ring: var(--color-background-strong-neutral);
 }
 
 .onStrong.selected { color: var(--color-foreground-on-bold-background-primary); }
@@ -101,10 +101,5 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  border-radius: var(--dimension-radius-half);
-  background: var(--color-foreground-bold-brand);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_dot-ring);
   pointer-events: none;
 }

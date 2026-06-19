@@ -176,7 +176,15 @@ export class TabGroup {
                   [isSelected ? 'text-body-small-emphasis' : 'text-body-small']: true,
                 }}>
                   {tab.label}
-                  {tab.dot && <span class="tab__dot" aria-hidden="true" />}
+                  {tab.dot && (
+                    <ds-badge
+                      class="tab__dot"
+                      variant="dot"
+                      background="var(--_dot-ring)"
+                      label=""
+                      aria-hidden="true"
+                    />
+                  )}
                 </span>
               </button>
             );

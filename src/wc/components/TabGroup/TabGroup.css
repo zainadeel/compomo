@@ -108,11 +108,6 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  border-radius: var(--dimension-radius-half);
-  background: var(--_dot);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_dot-ring);
   pointer-events: none;
 }
 
@@ -120,13 +115,13 @@
 .on-medium {
   --_hover-bg: var(--color-interaction-on-medium-background-hover);
   --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
-  --_dot-ring: var(--color-background-medium);
+  --_dot-ring: var(--color-background-medium-neutral);
 }
 
 .on-bold {
   --_hover-bg: var(--color-interaction-on-bold-background-hover);
   --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
-  --_dot-ring: var(--color-background-bold);
+  --_dot-ring: var(--color-background-bold-neutral);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -135,7 +130,7 @@
 .on-strong {
   --_hover-bg: var(--color-interaction-on-strong-background-hover);
   --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
-  --_dot-ring: var(--color-background-strong);
+  --_dot-ring: var(--color-background-strong-neutral);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-tag.js';
+import '../../../../dist/components/ds-icon.js';
 
 const INTENTS    = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
 const CONTRASTS  = ['strong', 'bold', 'medium', 'faint'];
@@ -17,10 +18,7 @@ const meta: Meta = {
     elevation: { control: 'select', options: ELEVATIONS },
     size:      { control: 'select', options: SIZES },
     rounded:   { control: 'boolean' },
-    removable: { control: 'boolean' },
-    inactive:  { control: 'boolean' },
-    pressed:   { control: 'boolean' },
-    interactive: { control: 'boolean' },
+    maxWidth:  { control: 'text' },
   },
   args: {
     label:     'Tag',
@@ -29,10 +27,7 @@ const meta: Meta = {
     elevation: 'none',
     size:      'md',
     rounded:   false,
-    removable: false,
-    inactive:  false,
-    pressed:   false,
-    interactive: false,
+    maxWidth:  '',
   },
 };
 
@@ -47,22 +42,19 @@ export const Playground: Story = {
       contrast=${args['contrast']}
       elevation=${args['elevation']}
       size=${args['size']}
+      max-width=${args['maxWidth'] || undefined}
       ?rounded=${args['rounded']}
-      ?removable=${args['removable']}
-      ?inactive=${args['inactive']}
-      ?pressed=${args['pressed']}
-      ?interactive=${args['interactive']}
     ></ds-tag>
   `,
 };
 
 export const IntentMatrix: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; flex-direction: column; gap: var(--dimension-space-100)">
       ${CONTRASTS.map(contrast => html`
         <div>
-          <div style="font-size: 10px; font-family: monospace; color: #888; margin-bottom: 4px">${contrast}</div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <div style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-050)">${contrast}</div>
+          <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
             ${INTENTS.map(intent => html`
               <ds-tag label=${intent} intent=${intent} contrast=${contrast}></ds-tag>
             `)}
@@ -75,11 +67,11 @@ export const IntentMatrix: Story = {
 
 export const Elevations: Story = {
   render: () => html`
-    <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap">
+    <div style="display: flex; gap: var(--dimension-space-200); align-items: center; flex-wrap: wrap">
       ${ELEVATIONS.map(elevation => html`
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
           <ds-tag label=${elevation} intent="brand" contrast="faint" elevation=${elevation}></ds-tag>
-          <span style="font-size: 10px; font-family: monospace; color: #888">${elevation}</span>
+          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary)">${elevation}</span>
         </div>
       `)}
     </div>
@@ -88,33 +80,30 @@ export const Elevations: Story = {
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display: flex; gap: 12px; align-items: center">
+    <div style="display: flex; gap: var(--dimension-space-150); align-items: center">
       ${SIZES.map(size => html`
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
           <ds-tag label=${size} intent="brand" contrast="faint" size=${size}></ds-tag>
-          <span style="font-size: 10px; font-family: monospace; color: #888">${size}</span>
+          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary)">${size}</span>
         </div>
       `)}
     </div>
   `,
 };
 
-export const Removable: Story = {
+export const Rounded: Story = {
   render: () => html`
-    <div style="display: flex; gap: 8px; flex-wrap: wrap">
-      ${SIZES.map(size => html`
-        <ds-tag label="Removable" intent="neutral" contrast="faint" size=${size} removable></ds-tag>
-      `)}
+    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
+      <ds-tag label="Default" intent="neutral" contrast="faint"></ds-tag>
+      <ds-tag label="Rounded" intent="brand" contrast="faint" rounded></ds-tag>
     </div>
   `,
 };
 
-export const Interactive: Story = {
+export const WithIcon: Story = {
   render: () => html`
-    <div style="display: flex; gap: 8px; flex-wrap: wrap">
-      <ds-tag label="Click me" intent="neutral" contrast="faint" interactive></ds-tag>
-      <ds-tag label="Pressed" intent="brand" contrast="faint" interactive pressed></ds-tag>
-      <ds-tag label="Inactive" intent="neutral" contrast="faint" interactive inactive></ds-tag>
-    </div>
+    <ds-tag label="Fleet" intent="brand" contrast="faint" rounded>
+      <ds-icon slot="icon" name="Truck" size="sm" color="inherit"></ds-icon>
+    </ds-tag>
   `,
 };

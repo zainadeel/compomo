@@ -36,14 +36,14 @@ export declare interface DsAccordion extends Components.DsAccordion {
 
 
 @ProxyCmp({
-  inputs: ['count', 'isSelected', 'label']
+  inputs: ['background', 'count', 'isSelected', 'label', 'max', 'surface', 'variant']
 })
 @Component({
   selector: 'ds-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['count', 'isSelected', 'label'],
+  inputs: ['background', 'count', 'isSelected', 'label', 'max', 'surface', 'variant'],
   standalone: false
 })
 export class DsBadge {
@@ -297,6 +297,46 @@ export declare interface DsCheckbox extends Components.DsCheckbox {
 
 
 @ProxyCmp({
+  inputs: ['background', 'contrast', 'elevation', 'inactive', 'intent', 'label', 'maxWidth', 'pressed', 'removable', 'rounded', 'size']
+})
+@Component({
+  selector: 'ds-chip',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['background', 'contrast', 'elevation', 'inactive', 'intent', { name: 'label', required: true }, 'maxWidth', 'pressed', 'removable', 'rounded', 'size'],
+  outputs: ['dsRemove', 'dsClick', 'dsPressedChange'],
+  standalone: false
+})
+export class DsChip {
+  protected el: HTMLDsChipElement;
+  @Output() dsRemove = new EventEmitter<CustomEvent<void>>();
+  @Output() dsClick = new EventEmitter<CustomEvent<void>>();
+  @Output() dsPressedChange = new EventEmitter<CustomEvent<boolean>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsChip extends Components.DsChip {
+  /**
+   * Fired when the remove button is clicked.
+   */
+  dsRemove: EventEmitter<CustomEvent<void>>;
+  /**
+   * Fired when an interactive chip is clicked.
+   */
+  dsClick: EventEmitter<CustomEvent<void>>;
+  /**
+   * Fired when the pressed state toggles.
+   */
+  dsPressedChange: EventEmitter<CustomEvent<boolean>>;
+}
+
+
+@ProxyCmp({
   inputs: ['inset', 'length', 'orientation', 'semantic', 'surface']
 })
 @Component({
@@ -343,14 +383,14 @@ export declare interface DsEmptyState extends Components.DsEmptyState {}
 
 
 @ProxyCmp({
-  inputs: ['background', 'height', 'side']
+  inputs: ['background', 'height', 'side', 'size', 'surface', 'visible']
 })
 @Component({
   selector: 'ds-fade',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'height', { name: 'side', required: true }],
+  inputs: ['background', 'height', 'side', 'size', 'surface', 'visible'],
   standalone: false
 })
 export class DsFade {
@@ -902,22 +942,18 @@ export declare interface DsTable extends Components.DsTable {
 
 
 @ProxyCmp({
-  inputs: ['background', 'contrast', 'elevation', 'inactive', 'intent', 'interactive', 'label', 'maxWidth', 'pressed', 'removable', 'rounded', 'size']
+  inputs: ['contrast', 'elevation', 'intent', 'label', 'maxWidth', 'rounded', 'size']
 })
 @Component({
   selector: 'ds-tag',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'contrast', 'elevation', 'inactive', 'intent', 'interactive', { name: 'label', required: true }, 'maxWidth', 'pressed', 'removable', 'rounded', 'size'],
-  outputs: ['dsRemove', 'dsClick', 'dsPressedChange'],
+  inputs: ['contrast', 'elevation', 'intent', { name: 'label', required: true }, 'maxWidth', 'rounded', 'size'],
   standalone: false
 })
 export class DsTag {
   protected el: HTMLDsTagElement;
-  @Output() dsRemove = new EventEmitter<CustomEvent<void>>();
-  @Output() dsClick = new EventEmitter<CustomEvent<void>>();
-  @Output() dsPressedChange = new EventEmitter<CustomEvent<boolean>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -925,20 +961,7 @@ export class DsTag {
 }
 
 
-export declare interface DsTag extends Components.DsTag {
-  /**
-   * Fired when the remove button is clicked.
-   */
-  dsRemove: EventEmitter<CustomEvent<void>>;
-  /**
-   * Fired when an interactive tag is clicked.
-   */
-  dsClick: EventEmitter<CustomEvent<void>>;
-  /**
-   * Fired when the pressed state toggles.
-   */
-  dsPressedChange: EventEmitter<CustomEvent<boolean>>;
-}
+export declare interface DsTag extends Components.DsTag {}
 
 
 @ProxyCmp({

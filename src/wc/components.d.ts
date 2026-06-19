@@ -6,6 +6,7 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AccordionItemData } from "./components/Accordion/Accordion";
+import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavActionItem, BarNavBackground, BarNavTab } from "./components/BarNav/BarNav";
 import { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
@@ -13,9 +14,10 @@ import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
 import { CardElevation, CardRadius } from "./components/Card/Card";
+import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { FadeSide } from "./components/Fade/Fade";
+import { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
@@ -32,13 +34,14 @@ import { TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
-import { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
+import { TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
 import { ToastPosition } from "./components/Toast/Toast";
 import { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
 import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
+export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavActionItem, BarNavBackground, BarNavTab } from "./components/BarNav/BarNav";
 export { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
@@ -46,9 +49,10 @@ export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
 export { CardElevation, CardRadius } from "./components/Card/Card";
+export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { FadeSide } from "./components/Fade/Fade";
+export { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
@@ -65,7 +69,7 @@ export { TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
-export { TagBackground, TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
+export { TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
 export { ToastPosition } from "./components/Toast/Toast";
 export { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
@@ -89,10 +93,16 @@ export namespace Components {
     }
     interface DsBadge {
         /**
+          * Direct ring background override for component-local surfaces.
+         */
+        "background": string | undefined;
+        /**
+          * Count shown for counter badges. Count 0 hides the badge.
           * @default 0
          */
         "count": number;
         /**
+          * Deprecated alias for selected counter styling. Prefer context-specific color in the parent.
           * @default false
          */
         "isSelected": boolean;
@@ -100,6 +110,21 @@ export namespace Components {
           * Accessible label. Defaults to the count as a string.
          */
         "label": string | undefined;
+        /**
+          * Highest count shown before compacting to "+".
+          * @default 9
+         */
+        "max": number;
+        /**
+          * Surface context for the ring around dots.
+          * @default 'default'
+         */
+        "surface": BadgeSurface;
+        /**
+          * Render as a compact counter or notification dot.
+          * @default 'counter'
+         */
+        "variant": BadgeVariant;
     }
     interface DsBanner {
         /**
@@ -318,6 +343,43 @@ export namespace Components {
         "indeterminate": boolean;
         "label": string;
     }
+    interface DsChip {
+        "background": ChipBackground | undefined;
+        /**
+          * @default 'faint'
+         */
+        "contrast": ChipContrast;
+        /**
+          * @default 'none'
+         */
+        "elevation": ChipElevation;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * @default 'neutral'
+         */
+        "intent": ChipIntent;
+        "label": string;
+        "maxWidth": string | number | undefined;
+        /**
+          * @default false
+         */
+        "pressed": boolean;
+        /**
+          * @default false
+         */
+        "removable": boolean;
+        /**
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * @default 'md'
+         */
+        "size": ChipSize;
+    }
     interface DsDivider {
         /**
           * Insets the divider from its start/end edges. Accepts spacing token names or any CSS length.
@@ -354,15 +416,34 @@ export namespace Components {
     }
     interface DsFade {
         /**
-          * Background color to fade from. Defaults to var(--color-background-secondary).
+          * Direct background override for contexts that already expose a resolved surface var.
           * @default 'var(--color-background-secondary)'
          */
         "background": string;
         /**
-          * Height (or width for left/right) of the fade overlay — any CSS value.
+          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
          */
         "height": string | undefined;
+        /**
+          * Edge where the fade is anchored.
+          * @default 'bottom'
+         */
         "side": FadeSide;
+        /**
+          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
+          * @default 'size-600'
+         */
+        "size": FadeSize;
+        /**
+          * Surface context used to choose the fade target background token.
+          * @default 'default'
+         */
+        "surface": FadeSurface;
+        /**
+          * Controls visibility without removing the element from layout/positioning.
+          * @default true
+         */
+        "visible": boolean;
     }
     interface DsField {
         /**
@@ -801,7 +882,6 @@ export namespace Components {
         "sortState": SortState | undefined;
     }
     interface DsTag {
-        "background": TagBackground | undefined;
         /**
           * @default 'faint'
          */
@@ -811,28 +891,11 @@ export namespace Components {
          */
         "elevation": TagElevation;
         /**
-          * @default false
-         */
-        "inactive": boolean;
-        /**
           * @default 'neutral'
          */
         "intent": TagIntent;
-        /**
-          * Whether the tag has a click/toggle behavior.
-          * @default false
-         */
-        "interactive": boolean;
         "label": string;
         "maxWidth": string | number | undefined;
-        /**
-          * @default false
-         */
-        "pressed": boolean;
-        /**
-          * @default false
-         */
-        "removable": boolean;
         /**
           * @default false
          */
@@ -1022,6 +1085,10 @@ export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCheckboxElement;
 }
+export interface DsChipCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsChipElement;
+}
 export interface DsInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputElement;
@@ -1069,10 +1136,6 @@ export interface DsTabGroupNavCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableElement;
-}
-export interface DsTagCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTagElement;
 }
 export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1237,6 +1300,25 @@ declare global {
     var HTMLDsCheckboxElement: {
         prototype: HTMLDsCheckboxElement;
         new (): HTMLDsCheckboxElement;
+    };
+    interface HTMLDsChipElementEventMap {
+        "dsRemove": void;
+        "dsClick": void;
+        "dsPressedChange": boolean;
+    }
+    interface HTMLDsChipElement extends Components.DsChip, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsChipElementEventMap>(type: K, listener: (this: HTMLDsChipElement, ev: DsChipCustomEvent<HTMLDsChipElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsChipElementEventMap>(type: K, listener: (this: HTMLDsChipElement, ev: DsChipCustomEvent<HTMLDsChipElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsChipElement: {
+        prototype: HTMLDsChipElement;
+        new (): HTMLDsChipElement;
     };
     interface HTMLDsDividerElement extends Components.DsDivider, HTMLStencilElement {
     }
@@ -1510,20 +1592,7 @@ declare global {
         prototype: HTMLDsTableElement;
         new (): HTMLDsTableElement;
     };
-    interface HTMLDsTagElementEventMap {
-        "dsRemove": void;
-        "dsClick": void;
-        "dsPressedChange": boolean;
-    }
     interface HTMLDsTagElement extends Components.DsTag, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsTagElement: {
         prototype: HTMLDsTagElement;
@@ -1609,6 +1678,7 @@ declare global {
         "ds-button-group": HTMLDsButtonGroupElement;
         "ds-card": HTMLDsCardElement;
         "ds-checkbox": HTMLDsCheckboxElement;
+        "ds-chip": HTMLDsChipElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-fade": HTMLDsFadeElement;
@@ -1661,10 +1731,16 @@ declare namespace LocalJSX {
     }
     interface DsBadge {
         /**
+          * Direct ring background override for component-local surfaces.
+         */
+        "background"?: string | undefined;
+        /**
+          * Count shown for counter badges. Count 0 hides the badge.
           * @default 0
          */
         "count"?: number;
         /**
+          * Deprecated alias for selected counter styling. Prefer context-specific color in the parent.
           * @default false
          */
         "isSelected"?: boolean;
@@ -1672,6 +1748,21 @@ declare namespace LocalJSX {
           * Accessible label. Defaults to the count as a string.
          */
         "label"?: string | undefined;
+        /**
+          * Highest count shown before compacting to "+".
+          * @default 9
+         */
+        "max"?: number;
+        /**
+          * Surface context for the ring around dots.
+          * @default 'default'
+         */
+        "surface"?: BadgeSurface;
+        /**
+          * Render as a compact counter or notification dot.
+          * @default 'counter'
+         */
+        "variant"?: BadgeVariant;
     }
     interface DsBanner {
         /**
@@ -1912,6 +2003,55 @@ declare namespace LocalJSX {
         "label": string;
         "onDsChange"?: (event: DsCheckboxCustomEvent<boolean>) => void;
     }
+    interface DsChip {
+        "background"?: ChipBackground | undefined;
+        /**
+          * @default 'faint'
+         */
+        "contrast"?: ChipContrast;
+        /**
+          * @default 'none'
+         */
+        "elevation"?: ChipElevation;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * @default 'neutral'
+         */
+        "intent"?: ChipIntent;
+        "label": string;
+        "maxWidth"?: string | number | undefined;
+        /**
+          * Fired when an interactive chip is clicked.
+         */
+        "onDsClick"?: (event: DsChipCustomEvent<void>) => void;
+        /**
+          * Fired when the pressed state toggles.
+         */
+        "onDsPressedChange"?: (event: DsChipCustomEvent<boolean>) => void;
+        /**
+          * Fired when the remove button is clicked.
+         */
+        "onDsRemove"?: (event: DsChipCustomEvent<void>) => void;
+        /**
+          * @default false
+         */
+        "pressed"?: boolean;
+        /**
+          * @default false
+         */
+        "removable"?: boolean;
+        /**
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * @default 'md'
+         */
+        "size"?: ChipSize;
+    }
     interface DsDivider {
         /**
           * Insets the divider from its start/end edges. Accepts spacing token names or any CSS length.
@@ -1948,15 +2088,34 @@ declare namespace LocalJSX {
     }
     interface DsFade {
         /**
-          * Background color to fade from. Defaults to var(--color-background-secondary).
+          * Direct background override for contexts that already expose a resolved surface var.
           * @default 'var(--color-background-secondary)'
          */
         "background"?: string;
         /**
-          * Height (or width for left/right) of the fade overlay — any CSS value.
+          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
          */
         "height"?: string | undefined;
-        "side": FadeSide;
+        /**
+          * Edge where the fade is anchored.
+          * @default 'bottom'
+         */
+        "side"?: FadeSide;
+        /**
+          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
+          * @default 'size-600'
+         */
+        "size"?: FadeSize;
+        /**
+          * Surface context used to choose the fade target background token.
+          * @default 'default'
+         */
+        "surface"?: FadeSurface;
+        /**
+          * Controls visibility without removing the element from layout/positioning.
+          * @default true
+         */
+        "visible"?: boolean;
     }
     interface DsField {
         /**
@@ -2429,7 +2588,6 @@ declare namespace LocalJSX {
         "sortState"?: SortState | undefined;
     }
     interface DsTag {
-        "background"?: TagBackground | undefined;
         /**
           * @default 'faint'
          */
@@ -2439,40 +2597,11 @@ declare namespace LocalJSX {
          */
         "elevation"?: TagElevation;
         /**
-          * @default false
-         */
-        "inactive"?: boolean;
-        /**
           * @default 'neutral'
          */
         "intent"?: TagIntent;
-        /**
-          * Whether the tag has a click/toggle behavior.
-          * @default false
-         */
-        "interactive"?: boolean;
         "label": string;
         "maxWidth"?: string | number | undefined;
-        /**
-          * Fired when an interactive tag is clicked.
-         */
-        "onDsClick"?: (event: DsTagCustomEvent<void>) => void;
-        /**
-          * Fired when the pressed state toggles.
-         */
-        "onDsPressedChange"?: (event: DsTagCustomEvent<boolean>) => void;
-        /**
-          * Fired when the remove button is clicked.
-         */
-        "onDsRemove"?: (event: DsTagCustomEvent<void>) => void;
-        /**
-          * @default false
-         */
-        "pressed"?: boolean;
-        /**
-          * @default false
-         */
-        "removable"?: boolean;
         /**
           * @default false
          */
@@ -2644,7 +2773,11 @@ declare namespace LocalJSX {
         "expandedIds": string;
     }
     interface DsBadgeAttributes {
+        "variant": BadgeVariant;
         "count": number;
+        "max": number;
+        "surface": BadgeSurface;
+        "background": string | undefined;
         "isSelected": boolean;
         "label": string | undefined;
     }
@@ -2713,6 +2846,19 @@ declare namespace LocalJSX {
         "indeterminate": boolean;
         "inactive": boolean;
     }
+    interface DsChipAttributes {
+        "label": string;
+        "intent": ChipIntent;
+        "contrast": ChipContrast;
+        "elevation": ChipElevation;
+        "size": ChipSize;
+        "rounded": boolean;
+        "removable": boolean;
+        "maxWidth": string;
+        "inactive": boolean;
+        "background": ChipBackground | undefined;
+        "pressed": boolean;
+    }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
         "surface": DividerSurface;
@@ -2726,8 +2872,11 @@ declare namespace LocalJSX {
     }
     interface DsFadeAttributes {
         "side": FadeSide;
+        "size": FadeSize;
         "height": string | undefined;
+        "surface": FadeSurface;
         "background": string;
+        "visible": boolean;
     }
     interface DsFieldAttributes {
         "label": string;
@@ -2877,12 +3026,7 @@ declare namespace LocalJSX {
         "elevation": TagElevation;
         "size": TagSize;
         "rounded": boolean;
-        "removable": boolean;
         "maxWidth": string;
-        "inactive": boolean;
-        "background": TagBackground | undefined;
-        "pressed": boolean;
-        "interactive": boolean;
     }
     interface DsTextAttributes {
         "variant": TextVariant;
@@ -2943,9 +3087,10 @@ declare namespace LocalJSX {
         "ds-button-group": Omit<DsButtonGroup, keyof DsButtonGroupAttributes> & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes]?: DsButtonGroup[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `attr:${K}`]?: DsButtonGroupAttributes[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `prop:${K}`]?: DsButtonGroup[K] };
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
+        "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
-        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
+        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
@@ -2988,6 +3133,7 @@ declare module "@stencil/core" {
             "ds-button-group": LocalJSX.IntrinsicElements["ds-button-group"] & JSXBase.HTMLAttributes<HTMLDsButtonGroupElement>;
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
+            "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;

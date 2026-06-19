@@ -176,7 +176,15 @@ export class TabGroupNav {
                   [isSelected ? 'text-body-medium-emphasis' : 'text-body-medium']: true,
                 }}>
                   {tab.label}
-                  {tab.dot && <span class="tab__dot" aria-hidden="true" />}
+                  {tab.dot && (
+                    <ds-badge
+                      class="tab__dot"
+                      variant="dot"
+                      background="var(--_dot-ring)"
+                      label=""
+                      aria-hidden="true"
+                    />
+                  )}
                 </span>
               </button>
             );

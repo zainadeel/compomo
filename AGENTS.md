@@ -50,6 +50,9 @@ dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + type definitions
   ds-mo/                # Global CSS bundle (ds-mo.css)
 stencil.config.ts       # Stencil build config (output targets, namespace, srcDir)
+figma.config.json       # Figma Code Connect — include globs, Dev Mode snippet label/language
+tsconfig.figma.json     # TypeScript for Code Connect templates only (editor / npm run typecheck:figma)
+code-connect/           # *.figma.ts — hand-written mappings to Figma components (publish via CLI)
 .github/
   workflows/
     build.yml              # PR: npm ci, build (stencil), verify dist artifacts + src unchanged
@@ -71,12 +74,16 @@ npm run build            # Stencil compiler build → dist/
 npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, etc.)
 npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
 npm run test:e2e:install # One-time Chromium for Playwright
-npm run dev              # Stencil build then Storybook dev server on :6006
+npm run dev              # Stencil watch using normal dist output (updates dist/ on source changes)
+npm run storybook        # Full local design loop: start Stencil watch, wait for first build, then run Storybook on :6006
 npm run storybook:build  # Build static Storybook
 npm run typecheck        # tsc --noEmit (Stencil source in src/wc)
 npm run lint             # eslint src/
 npm run registry:build   # Regenerate public/r/ (component registry)
 npm run mcp              # Run the in-repo MCP server
+npm run figma:connect:publish:dry-run # Figma Code Connect — dry-run publish (set FIGMA_ACCESS_TOKEN or --token)
+npm run figma:connect:publish         # Publish Code Connect mappings to Figma
+npm run typecheck:figma               # tsc for code-connect/*.figma.ts only
 npm run clean            # Remove dist/
 ```
 
@@ -139,7 +146,7 @@ import { DsButton, DsBarNav } from '@ds-mo/ui/react';
    - `<PascalName>.css` — scoped styles using TokoMo CSS custom properties only
    - `<PascalName>.stories.ts` — lit-html stories (see Storybook section below)
 2. Run `npm run build` — Stencil auto-discovers the new component by `@Component()` tag.
-3. Verify in Storybook: `npm run dev`.
+3. Verify in Storybook: `npm run storybook`.
 4. Regenerate registry: `npm run registry:build` (commit `public/r/` changes).
 
 **Stencil component skeleton**
@@ -331,6 +338,7 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 | `codeql.yml` | Push/PR to main, weekly Sunday | GitHub CodeQL JS/TS security scan |
 | `release-please.yml` | Push to main | Open release PR on feat/fix; publish to npm via OIDC when release PR merges |
 | `deploy-storybook.yml` | Push to main, manual | Build + deploy Storybook to GitHub Pages |
+| `figma-code-connect.yml` | Push to `main` when `code-connect/` or figma config changes; manual | Publish Code Connect to Figma (`secrets.FIGMA_ACCESS_TOKEN`) |
 | `dependabot.yml` | Monthly | Bump github-actions + npm devDependencies |
 
 ---
@@ -401,3 +409,4 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | Release changelog sections | `release-please-config.json` |
 | PR title rules | `.github/workflows/pr-title.yml` |
 | Storybook deploy | `.github/workflows/deploy-storybook.yml` |
+| Figma Code Connect templates | `code-connect/*.figma.ts`, `figma.config.json` — see README |

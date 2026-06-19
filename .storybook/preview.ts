@@ -70,6 +70,7 @@ const preview: Preview = {
           'Foundation',
           ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
           'Primitives',
+          'Utility',
         ],
       },
     },

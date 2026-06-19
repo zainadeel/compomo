@@ -378,7 +378,7 @@
     {
       "name": "tag",
       "title": "Tag",
-      "description": "Semantic label with intent coloring, removable chip, pressable filter-chip mode, and icon support.",
+      "description": "Static metadata label with intent coloring and optional icon support.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -398,6 +398,66 @@
           },
           "contrast": {
             "type": "'strong' | 'bold' | 'medium' | 'faint'",
+            "required": false
+          },
+          "elevation": {
+            "type": "'none' | 'flat' | 'elevated'",
+            "required": false
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "IconComponent",
+            "required": false
+          },
+          "maxWidth": {
+            "type": "string | number",
+            "required": false
+          }
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "chip",
+      "title": "Chip",
+      "description": "Interactive metadata chip with pressed, inactive, removable, and icon states.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chip",
+        "exports": [
+          "Chip"
+        ],
+        "props": {
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "intent": {
+            "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive'",
+            "required": false
+          },
+          "contrast": {
+            "type": "'strong' | 'bold' | 'medium' | 'faint'",
+            "required": false
+          },
+          "elevation": {
+            "type": "'none' | 'flat' | 'elevated'",
             "required": false
           },
           "size": {
@@ -435,6 +495,10 @@
           "inactive": {
             "type": "boolean",
             "required": false
+          },
+          "maxWidth": {
+            "type": "string | number",
+            "required": false
           }
         }
       },
@@ -450,7 +514,7 @@
     {
       "name": "badge",
       "title": "Badge",
-      "description": "Compact count indicator with selection state.",
+      "description": "Compact counter or notification dot for status and unread indicators.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -460,12 +524,28 @@
           "Badge"
         ],
         "props": {
+          "variant": {
+            "type": "'counter' | 'dot'",
+            "required": false
+          },
           "count": {
             "type": "number",
-            "required": true
+            "required": false
           },
-          "isSelected": {
-            "type": "boolean",
+          "max": {
+            "type": "number",
+            "required": false
+          },
+          "surface": {
+            "type": "'default' | 'primary' | 'secondary' | 'medium' | 'bold' | 'strong' | 'navigation' | 'always-dark'",
+            "required": false
+          },
+          "background": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
             "required": false
           }
         }
@@ -1075,7 +1155,7 @@
     {
       "name": "fade",
       "title": "Fade",
-      "description": "Decorative gradient overlay for scroll edges.",
+      "description": "Decorative edge-fade utility for scrollable content and overflow boundaries.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1087,13 +1167,25 @@
         "props": {
           "side": {
             "type": "'top' | 'bottom' | 'left' | 'right'",
-            "required": true
+            "required": false
           },
-          "height": {
-            "type": "string",
-            "required": true
+          "size": {
+            "type": "'size-000' | 'size-050' | 'size-075' | 'size-100' | 'size-150' | 'size-200' | 'size-250' | 'size-300' | 'size-400' | 'size-500' | 'size-600' | 'size-800' | string",
+            "required": false
+          },
+          "surface": {
+            "type": "'default' | 'primary' | 'secondary' | 'navigation' | 'media' | 'always-dark' | 'inverted'",
+            "required": false
           },
           "background": {
+            "type": "string",
+            "required": false
+          },
+          "visible": {
+            "type": "boolean",
+            "required": false
+          },
+          "height": {
             "type": "string",
             "required": false
           }

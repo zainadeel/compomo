@@ -286,17 +286,10 @@
   position: absolute;
   right: 13px;
   top: 13px;
-  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  border-radius: var(--dimension-radius-half);
-  background: var(--_nav-dot);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_nav-bg);
   pointer-events: none;
   transition:
     right var(--_nav-expand-motion),
-    top var(--_nav-expand-motion),
-    background var(--effect-motion-short-3, 200ms ease),
-    box-shadow var(--effect-motion-short-3, 200ms ease);
+    top var(--_nav-expand-motion);
 }
 
 .panel-nav--collapsed .panel-nav__item-dot {
@@ -347,22 +340,9 @@
   height: calc(var(--_nav-padding-y) * 2 + var(--_nav-item-height) * 2 + var(--dimension-space-050, 4px));
 }
 
-/* Gradient fade — floats above the footer, masks content scrolling under it */
-.panel-nav__footer::before {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  height: calc(var(--dimension-base, 8px) * 6);
-  background: linear-gradient(to bottom, transparent, var(--_nav-bg));
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
-}
-
-.panel-nav--at-bottom .panel-nav__footer::before {
-  opacity: 0;
+/* Edge fade — floats above the footer, masking content scrolling under it. */
+.panel-nav__footer-fade {
+  --ds-fade-offset: 100%;
 }
 
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */

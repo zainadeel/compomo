@@ -17,22 +17,27 @@ function distReloadPlugin(): Plugin {
       server.watcher.add(DIST_DIR);
       let reloadTimer: ReturnType<typeof setTimeout> | null = null;
 
-      server.watcher.on('change', (filePath) => {
+      const invalidateDistModule = (filePath: string) => {
         if (!filePath.startsWith(DIST_DIR) || !filePath.endsWith('.js')) return;
 
-        // Drop Vite's cached transform so iframe reloads pick up the new dist file.
-        const rel = filePath.slice(DIST_DIR.length + 1);
-        for (const id of [filePath, `/dist/components/${rel}`, `../dist/components/${rel}`]) {
-          const mod = server.moduleGraph.getModuleById(id);
-          if (mod) server.moduleGraph.invalidateModule(mod);
+        // Storybook stories import built dist files directly. When Stencil rewrites
+        // those files, invalidate by source file path and then clear the broader
+        // transform graph so Vite doesn't keep serving a stale transformed module.
+        for (const mod of server.moduleGraph.getModulesByFile(filePath) || []) {
+          server.moduleGraph.invalidateModule(mod);
         }
+        server.moduleGraph.invalidateAll();
 
         if (reloadTimer) clearTimeout(reloadTimer);
         reloadTimer = setTimeout(() => {
           server.ws.send({ type: 'full-reload' });
           reloadTimer = null;
         }, 150);
-      });
+      };
+
+      server.watcher.on('add', invalidateDistModule);
+      server.watcher.on('change', invalidateDistModule);
+      server.watcher.on('unlink', invalidateDistModule);
     },
   };
 }

@@ -14,6 +14,7 @@ export { DsButtonGroup } from "./ds-button-group.js";
 export { DsButton } from "./ds-button.js";
 export { DsCard } from "./ds-card.js";
 export { DsCheckbox } from "./ds-checkbox.js";
+export { DsChip } from "./ds-chip.js";
 export { DsDivider } from "./ds-divider.js";
 export { DsEmptyState } from "./ds-empty-state.js";
 export { DsFade } from "./ds-fade.js";
