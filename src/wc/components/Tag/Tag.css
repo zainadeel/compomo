@@ -17,18 +17,13 @@
 
 /* ── Sizes ──────────────────────────────────────────────────────────────── */
 
-:host(.tag--size-md) { height: calc(var(--dimension-size-base) * 7 / 2); padding: 0 var(--dimension-space-075); gap: 0; }
-:host(.tag--size-sm) { height: var(--dimension-size-250);                 padding: 0 var(--dimension-space-050); gap: 0; }
-:host(.tag--size-xs) { height: var(--dimension-size-150);                 padding: 0 var(--dimension-space-012); gap: 0; }
+:host(.tag--size-md) { height: var(--dimension-size-400); padding: 0 var(--dimension-space-075); gap: 0; }
+:host(.tag--size-sm) { height: var(--dimension-size-300); padding: 0 var(--dimension-space-050); gap: 0; }
+:host(.tag--size-xs) { height: var(--dimension-size-200); padding: 0 var(--dimension-space-025); gap: 0; }
 
 /* ── Rounded ────────────────────────────────────────────────────────────── */
 
 :host(.tag--rounded) { border-radius: var(--dimension-radius-half); }
-
-/* Pill padding correction — add space-050 on bare sides */
-:host(.tag--rounded.tag--size-md) { padding-left:  calc(var(--dimension-space-075) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-075) + var(--dimension-space-050)); }
-:host(.tag--rounded.tag--size-sm) { padding-left:  calc(var(--dimension-space-050) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-050) + var(--dimension-space-050)); }
-:host(.tag--rounded.tag--size-xs) { padding-left:  calc(var(--dimension-space-012) + var(--dimension-space-050)); padding-right: calc(var(--dimension-space-012) + var(--dimension-space-050)); }
 
 /* ── Background context ─────────────────────────────────────────────────── */
 
@@ -149,14 +144,9 @@
 
 .tag__label {
   line-height: 0;
-  padding: 0 var(--dimension-space-050);
+  padding: 0 var(--dimension-space-025);
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-:host(.tag--size-sm) .tag__label,
-:host(.tag--size-xs) .tag__label {
-  padding: 0 var(--dimension-space-025);
 }
 
 /* ── Icon slot ──────────────────────────────────────────────────────────── */
@@ -167,8 +157,8 @@
 
 /* ── Remove button ──────────────────────────────────────────────────────── */
 
-:host(.tag--removable) { gap: var(--dimension-space-025); }
-:host(.tag--size-xs.tag--removable) { gap: 0; }
+/* Label↔dismiss spacing only: host `gap` would also space icon↔label (icon slot is display:contents). */
+:host(.tag--removable) .tag__label { padding-inline-end: 0; }
 
 .tag__remove {
   padding: 0;
@@ -183,6 +173,15 @@
   flex-shrink: 0;
   position: relative;
   border-radius: var(--dimension-radius-050);
+}
+
+:host(.tag--size-md.tag--removable) .tag__remove,
+:host(.tag--size-sm.tag--removable) .tag__remove {
+  margin-inline-start: var(--dimension-space-050);
+}
+
+:host(.tag--size-xs.tag--removable) .tag__remove {
+  margin-inline-start: var(--dimension-space-025);
 }
 
 .tag__remove::before {

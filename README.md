@@ -64,8 +64,9 @@ Then use `<ds-*>` tags in templates. **Angular** can import Stencil-generated pr
 - **Radio** — single-select radio input
 
 ### Data display
-- **Tag** — labels with intents, contrasts, removable
-- **Badge** — numeric count indicator
+- **Tag** — static metadata label with intent coloring
+- **Chip** — interactive or removable metadata chip
+- **Badge** — compact counter or notification dot
 - **Table** — sortable, paginated data table
 - **Accordion** — collapsible content sections
 - **Pagination** — page navigation control
@@ -113,3 +114,82 @@ Components that accept icons use named slots:
 ```
 
 Pass any element into `slot="icon"`. Works with `@ds-mo/icons` or any custom SVG element.
+
+## Figma Code Connect
+
+This repo includes [Figma Code Connect](https://developers.figma.com/docs/code-connect/) templates under `code-connect/` so Dev Mode can show curated snippets (e.g. React wrappers from `@ds-mo/ui/react`).
+
+**Prerequisites**
+
+- Node 18+ (same as the rest of the project).
+- A Figma **personal access token** with **Code Connect (Write)** and **File content (Read)**. Set it locally only — never commit it:
+  - `export FIGMA_ACCESS_TOKEN='…'`, or
+  - pass `--token` / `-t` when publishing.
+
+**CLI**
+
+The [`@figma/code-connect`](https://www.npmjs.com/package/@figma/code-connect) package is a devDependency. Use `npx` from the repo root (or install `@figma/code-connect` globally and run `figma connect …`):
+
+```bash
+npx figma connect --help
+```
+
+You should see subcommands including `publish`, `unpublish`, `create`, and `preview`.
+
+**Config**
+
+- `figma.config.json` — include glob `code-connect/**/*.figma.ts`, snippet label `React`, language `jsx`.
+- `tsconfig.figma.json` — optional; point your editor at it for `figma` template typings (`types: ["@figma/code-connect/figma-types"]`).
+
+**Scripts**
+
+```bash
+npm run figma:connect:publish:dry-run   # hits Figma API; needs FIGMA_ACCESS_TOKEN or --token
+npm run figma:connect:publish           # publish mappings (same token requirement)
+npm run figma:connect:preview           # local preview of snippets from templates
+npm run typecheck:figma                 # typecheck template files only
+```
+
+**First publish**
+
+1. In Figma, open your library component (e.g. Icon), **Copy link to selection**, and set the `// url=…` line at the top of `code-connect/DsIcon.figma.ts` to that URL (see `code-connect/README.md`).
+2. Ensure Figma’s GitHub / Code Connect integration points at **this** `compomo` repo and branch.
+3. Run `npm run figma:connect:publish:dry-run`, then `npm run figma:connect:publish`.
+
+Each contributor can use their own `FIGMA_ACCESS_TOKEN` in a local shell or `.env.local` (gitignored); do not commit tokens.
+
+### Dev Mode vs “the template” (why mapping exists)
+
+- **The canvas** is whatever designers built (variant names like `Type = Main`, nested structure, etc.). Code Connect does **not** rewrite your Figma file.
+- **Dev Mode** can show a **link to your repo file** (e.g. `Icon.tsx`) when you connect the repo — that answers “where is this implemented?”
+- The **Code Connect snippet** is the **copy-paste example** Figma shows in Inspect. That text comes from **your published templates** (or from other Figma features like MCP context), not from magically knowing your Stencil prop names.
+
+So: if Figma props already match your API (`intent`, `appearance`), your template can be a thin wrapper and life is easy. If they **do not** match (legacy `Type` vs real `intent`), the template is where you **translate** so the snippet still shows **canonical** usage. You are not making Dev Mode “look like Figma internals” — you are choosing what **engineers should copy** when names diverge.
+
+### GitHub Actions — auto-publish on `main` (optional)
+
+This repo includes [`.github/workflows/figma-code-connect.yml`](.github/workflows/figma-code-connect.yml). It runs `npm run figma:connect:publish` when **`main`** changes under `code-connect/`, `figma.config.json`, or `tsconfig.figma.json`, and on **manual** “Run workflow”.
+
+**1. Create a Figma personal access token**
+
+1. Figma → **Settings** (avatar) → **Security** (or **Personal access tokens** depending on UI).
+2. **Generate new token** with at least **File content (Read)** and **Code Connect (Write)** (same scopes as local publish).
+3. Copy the token once; you will not see it again.
+
+**2. Add it as a GitHub Actions secret**
+
+1. Open the repo on GitHub: `https://github.com/zainadeel/compomo` (or your fork’s **Settings** if you only care about that fork).
+2. **Settings** → **Secrets and variables** → **Actions**.
+3. **New repository secret**
+   - **Name:** `FIGMA_ACCESS_TOKEN` (must match the workflow exactly).
+   - **Secret:** paste the token → **Add secret**.
+
+**3. Confirm the workflow**
+
+- **Actions** tab → **Figma Code Connect** → run **workflow_dispatch** once to verify green, then merge a small change under `code-connect/` to test the `push` path.
+
+If the secret is missing, the publish step fails with Figma’s “no access token” style error until you add it.
+
+### Icon batch files — CompoMo vs IcoMo
+
+**Publish from CompoMo.** The batch JSON and `.figma.batch.ts` live in **this** repo (next to `figma.config.json`), and `figma connect publish` runs here. The **snippet** should show how apps use **`@ds-mo/ui`** (e.g. `<ds-icon name="Bell" />` or `<DsIcon name="Bell" />`). **`name`** values must match **IcoMo** export keys, but the **mapping files and CI job** belong to **CompoMo** because that is the package that owns `<ds-icon>` and the Dev Mode story for product engineers.

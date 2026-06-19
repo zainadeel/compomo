@@ -3,12 +3,40 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  vertical-align: middle;
+
+  --_badge-bg: var(--color-background-bold-brand);
+  --_badge-fg: var(--color-foreground-on-bold-background-primary);
+  --_badge-ring: var(--color-background-secondary);
 }
 
-.badge__text {
-  color: var(--color-foreground-secondary);
+.badge__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  color: var(--_badge-fg);
+  background: var(--_badge-bg);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_badge-ring);
+  white-space: nowrap;
 }
 
-.badge__text--selected {
-  color: var(--color-foreground-primary);
+:host(.badge--dot) .badge__mark {
+  width: var(--dimension-size-075);
+  height: var(--dimension-size-075);
+  border-radius: var(--dimension-radius-half);
+}
+
+:host(.badge--counter) .badge__mark {
+  width: var(--dimension-size-150);
+  height: var(--dimension-size-150);
+  padding: 0;
+  border-radius: var(--dimension-radius-half);
+  font-size: var(--typography-fontsize-xs);
+  line-height: 1;
+}
+
+:host(.badge--selected) {
+  --_badge-bg: var(--color-foreground-primary);
 }

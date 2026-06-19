@@ -58,7 +58,15 @@ export class BarNavAction {
         >
           <span class="action-btn__icon-wrap">
             <ds-icon name={this.icon} size="md" color="inherit" />
-            {this.dot && <span class="action-btn__dot" aria-hidden="true" />}
+            {this.dot && (
+              <ds-badge
+                class="action-btn__dot"
+                variant="dot"
+                background="var(--_dot-ring)"
+                label=""
+                aria-hidden="true"
+              />
+            )}
           </span>
         </button>
       </Host>

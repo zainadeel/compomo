@@ -286,17 +286,10 @@
   position: absolute;
   right: 13px;
   top: 13px;
-  width: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  height: var(--dimension-size-075, calc(var(--dimension-size-base) * 3 / 4));
-  border-radius: var(--dimension-radius-half);
-  background: var(--_nav-dot);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_nav-bg);
   pointer-events: none;
   transition:
     right var(--_nav-expand-motion),
-    top var(--_nav-expand-motion),
-    background var(--effect-motion-short-3, 200ms ease),
-    box-shadow var(--effect-motion-short-3, 200ms ease);
+    top var(--_nav-expand-motion);
 }
 
 .panel-nav--collapsed .panel-nav__item-dot {

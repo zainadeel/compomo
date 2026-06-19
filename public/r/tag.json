@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "tag",
   "title": "Tag",
-  "description": "Semantic label with intent coloring, removable chip, pressable filter-chip mode, and icon support.",
+  "description": "Static metadata label with intent coloring and optional icon support.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -45,6 +45,10 @@
         "type": "'strong' | 'bold' | 'medium' | 'faint'",
         "default": "'faint'"
       },
+      "elevation": {
+        "type": "'none' | 'flat' | 'elevated'",
+        "default": "'none'"
+      },
       "size": {
         "type": "'md' | 'sm' | 'xs'",
         "default": "'md'"
@@ -55,25 +59,8 @@
       "icon": {
         "type": "IconComponent"
       },
-      "removable": {
-        "type": "boolean"
-      },
-      "onRemove": {
-        "type": "() => void"
-      },
-      "pressed": {
-        "type": "boolean",
-        "description": "For filter-chip behavior."
-      },
-      "onPressedChange": {
-        "type": "(pressed: boolean) => void"
-      },
-      "onClick": {
-        "type": "() => void",
-        "description": "Makes tag clickable."
-      },
-      "inactive": {
-        "type": "boolean"
+      "maxWidth": {
+        "type": "string | number"
       }
     },
     "exports": [
@@ -103,7 +90,7 @@
     },
     {
       "path": "src/wc/components/Tag/Tag.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nexport type TagIntent     = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';\nexport type TagContrast   = 'strong' | 'bold' | 'medium' | 'faint';\nexport type TagElevation  = 'none' | 'flat' | 'elevated';\nexport type TagSize       = 'md' | 'sm' | 'xs';\nexport type TagBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';\n\nconst TEXT_VARIANT: Record<TagSize, string> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\nconst ICON_SIZE: Record<TagSize, number> = { md: 20, sm: 16, xs: 12 };\n\n@Component({\n  tag: 'ds-tag',\n  styleUrl: 'Tag.css',\n  scoped: true,\n})\nexport class Tag {\n  @Prop() label!: string;\n  @Prop() intent: TagIntent = 'neutral';\n  @Prop() contrast: TagContrast = 'faint';\n  @Prop() elevation: TagElevation = 'none';\n  @Prop() size: TagSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() removable: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n  @Prop() inactive: boolean = false;\n  @Prop() background: TagBackground | undefined;\n  @Prop({ mutable: true }) pressed: boolean = false;\n  /** Whether the tag has a click/toggle behavior. */\n  @Prop() interactive: boolean = false;\n\n  /** Fired when the remove button is clicked. */\n  @Event() dsRemove!: EventEmitter<void>;\n  /** Fired when an interactive tag is clicked. */\n  @Event() dsClick!: EventEmitter<void>;\n  /** Fired when the pressed state toggles. */\n  @Event() dsPressedChange!: EventEmitter<boolean>;\n\n  private handleClick = () => {\n    if (this.inactive) return;\n    this.pressed = !this.pressed;\n    this.dsPressedChange.emit(this.pressed);\n    this.dsClick.emit();\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.inactive) return;\n    if (e.key === 'Enter' || e.key === ' ') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  private handleRemove = (e: MouseEvent) => {\n    e.stopPropagation();\n    this.dsRemove.emit();\n  };\n\n  render() {\n    const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);\n    const sz = this.size.toUpperCase() as 'MD' | 'SM' | 'XS';\n    const hasIconSlot = true; // always render slot, consumer decides whether to fill it\n    const textVariant = TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n\n    const hostCls: Record<string, boolean> = {\n      'tag': true,\n      [`tag--intent-${this.intent}`]: true,\n      [`tag--contrast-${this.contrast}`]: true,\n      [`tag--elevation-${this.elevation}`]: true,\n      [`tag--size-${this.size}`]: true,\n      'tag--rounded': this.rounded,\n      'tag--rounded-no-icon-left': this.rounded, // consumer overrides via slot presence hack\n      'tag--rounded-no-remove-right': this.rounded && !this.removable,\n      [`tag--icon-left-${sz}`]: false, // toggled by slotchange\n      [`tag--icon-right-${sz}`]: this.removable,\n      'tag--removable': this.removable,\n      'tag--interactive': this.interactive,\n      'tag--inactive': this.inactive,\n      'tag--pressed': this.pressed,\n      'tag--on-medium':      this.background === 'medium',\n      'tag--on-bold':        this.background === 'bold',\n      'tag--on-strong':      this.background === 'strong',\n      'tag--on-always-dark': this.background === 'always-dark',\n    };\n\n    return (\n      <Host\n        class={hostCls}\n        style={maxWidthStyle}\n        onClick={this.interactive ? this.handleClick : undefined}\n        onKeyDown={this.interactive ? this.handleKeyDown : undefined}\n        role={this.interactive ? 'button' : undefined}\n        tabIndex={this.interactive ? (this.inactive ? -1 : 0) : undefined}\n        aria-pressed={this.interactive && this.pressed !== undefined ? String(this.pressed) : undefined}\n        aria-disabled={this.inactive || undefined}\n      >\n        {/* Leading icon slot — consumer provides an icon element */}\n        <span class=\"tag__icon-slot\" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>\n          <slot name=\"icon\" />\n        </span>\n        {/* Label */}\n        <span class={{ 'tag__label': true, [textVariant]: true }}>\n          {this.label}\n        </span>\n        {/* Remove button */}\n        {this.removable && (\n          <button\n            type=\"button\"\n            class=\"tag__remove\"\n            onClick={this.handleRemove}\n            aria-label={`Remove ${this.label}`}\n            tabIndex={-1}\n          >\n            {/* Remove icon slot — defaults to × glyph */}\n            <slot name=\"remove-icon\">\n              <span class=\"tag__remove-x\" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>\n                ✕\n              </span>\n            </slot>\n          </button>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type TagIntent     = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';\nexport type TagContrast   = 'strong' | 'bold' | 'medium' | 'faint';\nexport type TagElevation  = 'none' | 'flat' | 'elevated';\nexport type TagSize       = 'md' | 'sm' | 'xs';\n\nconst TEXT_VARIANT: Record<TagSize, string> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\nconst ICON_SIZE: Record<TagSize, number> = { md: 20, sm: 16, xs: 12 };\n\n@Component({\n  tag: 'ds-tag',\n  styleUrl: 'Tag.css',\n  scoped: true,\n})\nexport class Tag {\n  @Prop() label!: string;\n  @Prop() intent: TagIntent = 'neutral';\n  @Prop() contrast: TagContrast = 'faint';\n  @Prop() elevation: TagElevation = 'none';\n  @Prop() size: TagSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n\n  render() {\n    const sz = this.size.toUpperCase() as 'MD' | 'SM' | 'XS';\n    const textVariant = TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n\n    const hostCls: Record<string, boolean> = {\n      'tag': true,\n      [`tag--intent-${this.intent}`]: true,\n      [`tag--contrast-${this.contrast}`]: true,\n      [`tag--elevation-${this.elevation}`]: true,\n      [`tag--size-${this.size}`]: true,\n      'tag--rounded': this.rounded,\n      'tag--rounded-no-icon-left': this.rounded, // consumer overrides via slot presence hack\n      'tag--rounded-no-remove-right': this.rounded,\n      [`tag--icon-left-${sz}`]: false, // toggled by slotchange\n      [`tag--icon-right-${sz}`]: false,\n    };\n\n    return (\n      <Host\n        class={hostCls}\n        style={maxWidthStyle}\n      >\n        {/* Leading icon slot — consumer provides an icon element */}\n        <span class=\"tag__icon-slot\" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>\n          <slot name=\"icon\" />\n        </span>\n        {/* Label */}\n        <span class={{ 'tag__label': true, [textVariant]: true }}>\n          {this.label}\n        </span>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

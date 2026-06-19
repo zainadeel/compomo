@@ -12,6 +12,7 @@ export const DIRECTIVES = [
   d.DsButtonGroup,
   d.DsCard,
   d.DsCheckbox,
+  d.DsChip,
   d.DsDivider,
   d.DsEmptyState,
   d.DsFade,

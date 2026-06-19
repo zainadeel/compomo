@@ -517,7 +517,15 @@ export class PanelNav {
           </ds-text>
         </span>
       </span>,
-      item.dot && <span class="panel-nav__item-dot" aria-hidden="true" />,
+      item.dot && (
+        <ds-badge
+          class="panel-nav__item-dot"
+          variant="dot"
+          background="var(--_nav-bg)"
+          label=""
+          aria-hidden="true"
+        />
+      ),
     ];
 
     const sharedProps = {
