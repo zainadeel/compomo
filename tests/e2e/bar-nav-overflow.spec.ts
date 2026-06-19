@@ -140,7 +140,8 @@ test.describe('BarNav responsive overflow', () => {
     });
 
     expect(fade.isOverflowing).toBe(true);
-    expect(fade.overlayContent).toBe('""');
+    // Empty `content: ''` serializes as `""` or `none` depending on engine / pseudo-element path.
+    expect(['""', 'none']).toContain(fade.overlayContent);
     expect(fade.overlayWidth).toBeGreaterThan(0);
     expect(fade.overlayBackground).toContain('linear-gradient');
     expect(fade.hasTruncatedClass).toBe(true);
