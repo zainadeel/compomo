@@ -138,7 +138,7 @@ You should see subcommands including `publish`, `unpublish`, `create`, and `prev
 
 **Config**
 
-- `figma.config.json` — include glob `code-connect/**/*.figma.ts`, snippet label `React`, language `jsx`.
+- `figma.config.json` — include glob `code-connect/published/**/*.figma.ts`, snippet label `React`, language `jsx`.
 - `tsconfig.figma.json` — optional; point your editor at it for `figma` template typings (`types: ["@figma/code-connect/figma-types"]`).
 
 **Scripts**
@@ -152,7 +152,7 @@ npm run typecheck:figma                 # typecheck template files only
 
 **First publish**
 
-1. In Figma, open your library component (e.g. Icon), **Copy link to selection**, and set the `// url=…` line at the top of `code-connect/DsIcon.figma.ts` to that URL (see `code-connect/README.md`).
+1. Copy `code-connect/examples/ds-icon.figma.ts` to `code-connect/published/DsIcon.figma.ts`, then set the `// url=…` line from Figma → **Copy link to selection** (see `code-connect/README.md`).
 2. Ensure Figma’s GitHub / Code Connect integration points at **this** `compomo` repo and branch.
 3. Run `npm run figma:connect:publish:dry-run`, then `npm run figma:connect:publish`.
 

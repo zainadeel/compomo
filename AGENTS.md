@@ -52,7 +52,7 @@ dist/                   # Generated — do not edit directly
 stencil.config.ts       # Stencil build config (output targets, namespace, srcDir)
 figma.config.json       # Figma Code Connect — include globs, Dev Mode snippet label/language
 tsconfig.figma.json     # TypeScript for Code Connect templates only (editor / npm run typecheck:figma)
-code-connect/           # *.figma.ts — hand-written mappings to Figma components (publish via CLI)
+code-connect/           # Code Connect: examples/ (unpublished) + published/*.figma.ts (published via CLI)
 .github/
   workflows/
     build.yml              # PR: npm ci, build (stencil), verify dist artifacts + src unchanged
@@ -83,7 +83,7 @@ npm run registry:build   # Regenerate public/r/ (component registry)
 npm run mcp              # Run the in-repo MCP server
 npm run figma:connect:publish:dry-run # Figma Code Connect — dry-run publish (set FIGMA_ACCESS_TOKEN or --token)
 npm run figma:connect:publish         # Publish Code Connect mappings to Figma
-npm run typecheck:figma               # tsc for code-connect/*.figma.ts only
+npm run typecheck:figma               # tsc for code-connect published + examples templates only
 npm run clean            # Remove dist/
 ```
 
@@ -409,4 +409,4 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | Release changelog sections | `release-please-config.json` |
 | PR title rules | `.github/workflows/pr-title.yml` |
 | Storybook deploy | `.github/workflows/deploy-storybook.yml` |
-| Figma Code Connect templates | `code-connect/*.figma.ts`, `figma.config.json` — see README |
+| Figma Code Connect templates | `code-connect/published/*.figma.ts`, `figma.config.json` — see README |

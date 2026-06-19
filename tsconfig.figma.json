@@ -10,5 +10,8 @@
     "jsx": "react-jsx",
     "types": ["@figma/code-connect/figma-types"]
   },
-  "include": ["code-connect/**/*.figma.ts"]
+  "include": [
+    "code-connect/published/**/*.figma.ts",
+    "code-connect/examples/**/*.figma.ts"
+  ]
 }
