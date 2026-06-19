@@ -15,7 +15,7 @@ import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./compon
 import { CardElevation, CardRadius } from "./components/Card/Card";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { FadeSide } from "./components/Fade/Fade";
+import { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
@@ -48,7 +48,7 @@ export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./compon
 export { CardElevation, CardRadius } from "./components/Card/Card";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { FadeSide } from "./components/Fade/Fade";
+export { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
@@ -354,15 +354,34 @@ export namespace Components {
     }
     interface DsFade {
         /**
-          * Background color to fade from. Defaults to var(--color-background-secondary).
+          * Direct background override for contexts that already expose a resolved surface var.
           * @default 'var(--color-background-secondary)'
          */
         "background": string;
         /**
-          * Height (or width for left/right) of the fade overlay — any CSS value.
+          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
          */
         "height": string | undefined;
+        /**
+          * Edge where the fade is anchored.
+          * @default 'bottom'
+         */
         "side": FadeSide;
+        /**
+          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
+          * @default 'size-600'
+         */
+        "size": FadeSize;
+        /**
+          * Surface context used to choose the fade target background token.
+          * @default 'default'
+         */
+        "surface": FadeSurface;
+        /**
+          * Controls visibility without removing the element from layout/positioning.
+          * @default true
+         */
+        "visible": boolean;
     }
     interface DsField {
         /**
@@ -1948,15 +1967,34 @@ declare namespace LocalJSX {
     }
     interface DsFade {
         /**
-          * Background color to fade from. Defaults to var(--color-background-secondary).
+          * Direct background override for contexts that already expose a resolved surface var.
           * @default 'var(--color-background-secondary)'
          */
         "background"?: string;
         /**
-          * Height (or width for left/right) of the fade overlay — any CSS value.
+          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
          */
         "height"?: string | undefined;
-        "side": FadeSide;
+        /**
+          * Edge where the fade is anchored.
+          * @default 'bottom'
+         */
+        "side"?: FadeSide;
+        /**
+          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
+          * @default 'size-600'
+         */
+        "size"?: FadeSize;
+        /**
+          * Surface context used to choose the fade target background token.
+          * @default 'default'
+         */
+        "surface"?: FadeSurface;
+        /**
+          * Controls visibility without removing the element from layout/positioning.
+          * @default true
+         */
+        "visible"?: boolean;
     }
     interface DsField {
         /**
@@ -2726,8 +2764,11 @@ declare namespace LocalJSX {
     }
     interface DsFadeAttributes {
         "side": FadeSide;
+        "size": FadeSize;
         "height": string | undefined;
+        "surface": FadeSurface;
         "background": string;
+        "visible": boolean;
     }
     interface DsFieldAttributes {
         "label": string;
@@ -2945,7 +2986,7 @@ declare namespace LocalJSX {
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
-        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] } & OneOf<"side", DsFade["side"], DsFadeAttributes["side"]>;
+        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };

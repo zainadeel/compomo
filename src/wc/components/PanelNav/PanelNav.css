@@ -347,22 +347,9 @@
   height: calc(var(--_nav-padding-y) * 2 + var(--_nav-item-height) * 2 + var(--dimension-space-050, 4px));
 }
 
-/* Gradient fade — floats above the footer, masks content scrolling under it */
-.panel-nav__footer::before {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  height: calc(var(--dimension-base, 8px) * 6);
-  background: linear-gradient(to bottom, transparent, var(--_nav-bg));
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
-}
-
-.panel-nav--at-bottom .panel-nav__footer::before {
-  opacity: 0;
+/* Edge fade — floats above the footer, masking content scrolling under it. */
+.panel-nav__footer-fade {
+  --ds-fade-offset: 100%;
 }
 
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */

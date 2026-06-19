@@ -604,6 +604,14 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
+            <ds-fade
+              class="panel-nav__footer-fade"
+              side="bottom"
+              size="size-600"
+              background="var(--_nav-bg)"
+              visible={!this.atBottom}
+            />
+
             {/* Left icon button — Gear in dashboard, Dashboard in settings */}
             <button
               type="button"

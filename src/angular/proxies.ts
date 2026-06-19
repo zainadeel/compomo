@@ -343,14 +343,14 @@ export declare interface DsEmptyState extends Components.DsEmptyState {}
 
 
 @ProxyCmp({
-  inputs: ['background', 'height', 'side']
+  inputs: ['background', 'height', 'side', 'size', 'surface', 'visible']
 })
 @Component({
   selector: 'ds-fade',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'height', { name: 'side', required: true }],
+  inputs: ['background', 'height', 'side', 'size', 'surface', 'visible'],
   standalone: false
 })
 export class DsFade {

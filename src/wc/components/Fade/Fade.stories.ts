@@ -2,36 +2,79 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-fade.js';
 
+const SIDES = ['top', 'bottom', 'left', 'right'] as const;
+const SIZES = [
+  'size-000',
+  'size-050',
+  'size-075',
+  'size-100',
+  'size-150',
+  'size-200',
+  'size-250',
+  'size-300',
+  'size-400',
+  'size-500',
+  'size-600',
+  'size-800',
+] as const;
+const SURFACES = ['default', 'primary', 'secondary', 'navigation', 'media', 'always-dark', 'inverted'] as const;
+
 const meta: Meta = {
-  title: 'Primitives/Fade',
+  title: 'Utility/Fade',
   tags: ['autodocs'],
   argTypes: {
-    side:       { control: 'select', options: ['top', 'bottom', 'left', 'right'] },
-    height:     { control: 'text' },
-    background: { control: 'text' },
+    side:       { control: 'select', options: SIDES },
+    size:       { control: 'select', options: SIZES },
+    surface:    { control: 'select', options: SURFACES },
+    background: { control: 'text', description: 'Optional direct background override, e.g. var(--_nav-bg).' },
+    visible:    { control: 'boolean' },
   },
   args: {
     side: 'bottom',
-    height: '48px',
-    background: 'var(--color-background-secondary)',
+    size: 'size-600',
+    surface: 'secondary',
+    background: '',
+    visible: true,
   },
 };
 
 export default meta;
 type Story = StoryObj;
 
+const CARD = 'position: relative; width: 220px; height: 128px; overflow: hidden; border-radius: var(--dimension-radius-100); padding: var(--dimension-space-150); box-sizing: border-box;';
+const COPY = 'margin: 0; line-height: var(--typography-lineheight-md); color: inherit;';
+
+function surfaceBackground(surface: string): string {
+  return surface === 'primary' ? 'var(--color-background-primary)' :
+    surface === 'navigation' ? 'var(--color-navigation-background)' :
+    surface === 'media' ? 'var(--color-media-background)' :
+    surface === 'always-dark' ? 'var(--color-always-dark-background)' :
+    surface === 'inverted' ? 'var(--color-inverted-background)' :
+    'var(--color-background-secondary)';
+}
+
+function surfaceColor(surface: string): string {
+  return surface === 'navigation' ? 'var(--color-navigation-foreground-primary)' :
+    surface === 'media' ? 'var(--color-media-foreground-primary)' :
+    surface === 'always-dark' ? 'var(--color-always-dark-foreground-primary)' :
+    surface === 'inverted' ? 'var(--color-inverted-foreground-primary)' :
+    'var(--color-foreground-primary)';
+}
+
 export const Playground: Story = {
   render: args => html`
-    <div style="position: relative; height: 120px; overflow: hidden; background: ${args['background']}; border-radius: var(--dimension-radius-100); padding: var(--dimension-space-150)">
-      <p style="margin: 0; line-height: 1.6">
+    <div style="${CARD} background: ${args['background'] || surfaceBackground(args['surface'])}; color: ${surfaceColor(args['surface'])};">
+      <p style="${COPY}">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         Ut enim ad minim veniam, quis nostrud exercitation ullamco.
       </p>
       <ds-fade
         side=${args['side']}
-        height=${args['height']}
-        background=${args['background']}
+        size=${args['size']}
+        surface=${args['surface']}
+        background=${args['background'] || undefined}
+        .visible=${args['visible']}
       ></ds-fade>
     </div>
   `,
@@ -39,15 +82,44 @@ export const Playground: Story = {
 
 export const AllSides: Story = {
   render: () => html`
-    <div style="display: flex; gap: 16px; flex-wrap: wrap">
-      ${['bottom', 'top', 'left', 'right'].map(side => html`
+    <div style="display: flex; gap: var(--dimension-space-200); flex-wrap: wrap">
+      ${SIDES.map(side => html`
         <div>
-          <div style="font-size: 11px; font-family: monospace; color: var(--color-foreground-tertiary); margin-bottom: 6px">${side}</div>
-          <div style="position: relative; width: 160px; height: 80px; overflow: hidden; background: var(--color-background-secondary); border-radius: 8px">
-            <ds-fade side=${side} height="40px"></ds-fade>
+          <div style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-075);">${side}</div>
+          <div style="${CARD} width: 180px; height: 104px; background: var(--color-background-secondary);">
+            <p style="${COPY}">Scrollable content edge affordance.</p>
+            <ds-fade side=${side} size="size-500" surface="secondary"></ds-fade>
           </div>
         </div>
       `)}
+    </div>
+  `,
+};
+
+export const Surfaces: Story = {
+  render: () => html`
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--dimension-space-200);">
+      ${SURFACES.map(surface => html`
+        <div style="${CARD} background: ${surfaceBackground(surface)}; color: ${surfaceColor(surface)};">
+          <p style="${COPY}">${surface}</p>
+          <ds-fade side="bottom" size="size-600" surface=${surface}></ds-fade>
+        </div>
+      `)}
+    </div>
+  `,
+};
+
+export const Visibility: Story = {
+  render: () => html`
+    <div style="display: flex; gap: var(--dimension-space-200); flex-wrap: wrap;">
+      <div style="${CARD} background: var(--color-background-secondary);">
+        <p style="${COPY}">Visible while content continues beneath the footer.</p>
+        <ds-fade side="bottom" size="size-600" surface="secondary"></ds-fade>
+      </div>
+      <div style="${CARD} background: var(--color-background-secondary);">
+        <p style="${COPY}">Hidden when scrolled to the edge.</p>
+        <ds-fade side="bottom" size="size-600" surface="secondary" .visible=${false}></ds-fade>
+      </div>
     </div>
   `,
 };
