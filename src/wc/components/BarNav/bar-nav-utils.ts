@@ -1,5 +1,5 @@
 import { getSelectableTabs } from '../TabGroup/tab-item-utils';
-import type { BarNavActionItem, BarNavTab } from './BarNav';
+import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 
 export interface BarNavUrlState {
   /** Tab id derived from the URL, or empty when none applies. */

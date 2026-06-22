@@ -10,7 +10,9 @@ import {
 } from '@stencil/core';
 import type { MenuItemData } from '../Menu/Menu';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
-import type { TabItem } from '../TabGroup/tab-item-utils';
+import type { NavChromeStyle } from '../../nav/nav-chrome';
+import { SHELL_BAR_NAV_VT_NAME } from '../../nav/shell-view-transition';
+import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
@@ -27,23 +29,6 @@ import {
   tabsOverflowContainer,
   tabsToMenuSections,
 } from './bar-nav-tabs-menu-utils';
-
-export type BarNavBackground = 'primary' | 'secondary' | 'transparent' | 'translucent';
-
-/** Same shape as `TabItem` — supports `{ type: 'divider' }` between tab groups. */
-export type BarNavTab = TabItem;
-
-export interface BarNavActionItem {
-  id: string;
-  /** Icon name for <ds-icon>. */
-  icon: string;
-  /** Whether this action button is currently pressed/active. */
-  selected?: boolean;
-  /** Show a notification dot. */
-  dot?: boolean;
-  inactive?: boolean;
-  ariaLabel?: string;
-}
 
 @Component({
   tag: 'ds-bar-nav',
@@ -78,8 +63,9 @@ export class BarNav {
    */
   @Prop() heading: string | undefined;
 
-  /** Surface background variant. */
-  @Prop() background: BarNavBackground = 'secondary';
+  /** Chrome style: `navigation` = navigation tokens, `default` = app tokens.
+   *  Property: `navStyle`. HTML attribute: `nav-style`. */
+  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'default';
 
   /** Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`. */
   @Prop() basePath: string = '';
@@ -455,20 +441,24 @@ export class BarNav {
     }
   }
 
+  private get tabSurface(): BarNavActionBackground | undefined {
+    return this.navStyle === 'navigation' ? 'navigation' : undefined;
+  }
+
   render() {
     const hasTabs = this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
-
-    const bgToActionBg: Partial<Record<BarNavBackground, BarNavActionBackground>> = {};
-    const actionBg: BarNavActionBackground | undefined = bgToActionBg[this.background];
+    const tabSurface = this.tabSurface;
 
     return (
       <Host>
         <header
           class={{
             'bar-nav': true,
-            [`bg-${this.background}`]: true,
+            'bar-nav--navigation': this.navStyle === 'navigation',
+            'bar-nav--default': this.navStyle === 'default',
             'bar-nav--tabs-collapsed': hasTabs && this.tabsCollapsed,
           }}
+          style={{ viewTransitionName: SHELL_BAR_NAV_VT_NAME }}
           ref={el => {
             this.headerEl = el as HTMLElement;
             if (el && !this.resizeObserver) {
@@ -488,6 +478,7 @@ export class BarNav {
                   }}
                   tabs={this.resolvedTabs}
                   value={this.effectiveValue}
+                  background={tabSurface}
                 />
               </div>
             )}
@@ -501,6 +492,7 @@ export class BarNav {
                   }}
                   tabs={this.resolvedTabs}
                   value={this.effectiveValue}
+                  background={tabSurface}
                   onDsChange={(e: Event) => this.handleTabChange(e)}
                 />
               </div>
@@ -554,7 +546,7 @@ export class BarNav {
                     <ds-badge
                       class="bar-nav__tab-trigger-dot"
                       variant="dot"
-                      background="var(--_dot-ring)"
+                      background="var(--_bar-nav-bg)"
                       label=""
                       aria-hidden="true"
                     />
@@ -583,7 +575,7 @@ export class BarNav {
                   dot={action.dot ?? false}
                   inactive={action.inactive}
                   aria-label={action.ariaLabel ?? action.id}
-                  background={actionBg}
+                  background={tabSurface}
                   onDsChange={(e: Event) => this.handleActionChange(action.id, e)}
                 />
               ))}

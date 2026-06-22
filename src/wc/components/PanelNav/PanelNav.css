@@ -21,7 +21,7 @@
   --_nav-label-fade-out-dur:  calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
   --_nav-label-fade-out-motion: var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease);
 
-  /* ─ Colours – dashboard defaults ─ */
+  /* ─ Colours – navigation (default chrome) ─ */
   --_nav-bg:              var(--color-navigation-background);
   --_nav-border:          var(--color-navigation-border-tertiary);
   --_nav-divider:         var(--color-navigation-divider);
@@ -34,9 +34,9 @@
   --_nav-dot:             var(--color-navigation-foreground-brand);
 }
 
-/* ── Settings overrides ──────────────────────────────────────────────────── */
+/* ── Default chrome overrides ────────────────────────────────────────────── */
 
-.panel-nav--settings {
+.panel-nav--default {
   --_nav-bg:           var(--color-background-secondary);
   --_nav-border:       var(--color-border-tertiary);
   --_nav-divider:      var(--color-border-tertiary);
@@ -371,15 +371,15 @@
   outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
 }
 
-/* Dashboard: hover previews settings surface */
-.panel-nav--dashboard .panel-nav__footer-btn:hover {
+/* Navigation: hover previews default chrome */
+.panel-nav--navigation .panel-nav__footer-btn:hover {
   background: var(--color-background-secondary);
   color: var(--color-foreground-secondary);
   transition: none;
 }
 
-/* Settings: hover previews dashboard nav surface */
-.panel-nav--settings .panel-nav__footer-btn:hover {
+/* Default: hover previews navigation chrome */
+.panel-nav--default .panel-nav__footer-btn:hover {
   background: var(--color-navigation-background);
   color: var(--color-navigation-foreground-secondary);
   transition: none;

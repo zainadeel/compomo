@@ -9,29 +9,45 @@ There is **no** Stencil React output target. React apps use `<ds-*>` in JSX with
 
 ---
 
+## Nav chrome `navStyle` (panel + bar)
+
+Primary navigation (`ds-panel-nav`) and secondary navigation (`ds-bar-nav`) share a **`navStyle`** property that picks the token family:
+
+| `navStyle` | Tokens |
+| --- | --- |
+| `navigation` | `--color-navigation-*` (dark nav chrome) |
+| `default` | Standard app surface / foreground / interaction tokens |
+
+**HTML attribute:** `nav-style` (avoids collision with the element's native `style` property).
+
+Bind the **same** `navStyle` on both components from your shell so primary and secondary nav stay visually in sync.
+
+---
+
 ## `ds-panel-nav` first paint
 
 Web components are framework-neutral. SPA frameworks (Angular, React, Vue) bind **JavaScript properties** after the custom element connects. Stencil runs `componentWillLoad` and paints **before** those bindings land.
 
-`ds-panel-nav` keeps an internal `renderedVariant` state for theme surfaces (`dashboard` = dark nav, `settings` = light nav). On hard reload, property-only bindings can produce a one-frame wrong theme unless the host follows the first-paint contract below.
+`ds-panel-nav` keeps an internal `renderedStyle` state for chrome surfaces. On hard reload, property-only bindings can produce a one-frame wrong look unless the host follows the first-paint contract below.
 
 This is a one-time integration pattern per host app — not a reason to avoid web components.
 
 ## First-paint contract
 
-Resolution order in `componentWillLoad` (see `resolvePanelNavVariant`):
+Resolution order in `componentWillLoad` (see `resolvePanelNavStyle`):
 
-1. Host element `variant` **attribute**
-2. `document.documentElement.getAttribute('data-panel-nav-variant')`
-3. `variant` prop default (`dashboard`)
+1. Host element `nav-style` **attribute**
+2. `document.documentElement.getAttribute('data-nav-style')`
+3. `navStyle` prop default (`navigation` for panel nav, `default` for bar nav)
 
-Also set `disable-view-transition` as a **static attribute** when the host app owns view transitions (e.g. Angular Router `withViewTransitions`). It must be present before `variant` is first read.
+Also set `disable-view-transition` as a **static attribute** when the host app owns view transitions (e.g. Angular Router `withViewTransitions`). It must be present before `navStyle` is first read.
 
 | Concern | Requirement |
 | --- | --- |
-| Hard reload variant | Set `data-panel-nav-variant` on `<html>` before importing `ds-panel-nav.js`, **or** stamp `variant` / `disable-view-transition` attributes before the element connects |
+| Hard reload style | Set `data-nav-style` on `<html>` before importing nav components, **or** stamp `nav-style` / `disable-view-transition` attributes before the element connects |
 | Property bindings alone | Not sufficient for first paint |
 | Complex props (`groups`, BarNav `tabs`) | May land one frame late — PanelNav polls via `syncHostPropsIfNeeded` |
+| Bar nav sync | Bind `navStyle` / `nav-style` on `ds-bar-nav` from the same shell state as `ds-panel-nav` |
 
 ## Bootstrap snippet (any framework)
 
@@ -41,19 +57,19 @@ In `index.html` before your app bundle:
 <script>
   (function () {
     var path = location.pathname.split('?')[0] || '';
-    var variant = path.indexOf('/settings') === 0 ? 'settings' : 'dashboard';
-    document.documentElement.setAttribute('data-panel-nav-variant', variant);
+    var style = path.indexOf('/settings') === 0 ? 'default' : 'navigation';
+    document.documentElement.setAttribute('data-nav-style', style);
   })();
 </script>
 ```
 
-Or from application entry (before `import '@ds-mo/ui/dist/components/ds-panel-nav.js'`):
+Or from application entry (before importing nav components):
 
 ```ts
-import { setPanelNavVariantHint } from '@ds-mo/ui'; // source / future dist export
+import { setNavStyleHint } from '@ds-mo/ui/nav';
 
 const path = window.location.pathname.split('?')[0] || '';
-setPanelNavVariantHint(path.startsWith('/settings') ? 'settings' : 'dashboard');
+setNavStyleHint(path.startsWith('/settings') ? 'default' : 'navigation');
 ```
 
 ## Angular
@@ -63,19 +79,27 @@ Use static attributes and/or a thin host directive that stamps attrs in the dire
 ```html
 <ds-panel-nav
   disable-view-transition
-  [attr.variant]="variant"
-  [variant]="variant"
+  [attr.nav-style]="navStyle"
+  [navStyle]="navStyle"
   …
 ></ds-panel-nav>
+
+<ds-bar-nav
+  [attr.nav-style]="navStyle"
+  [navStyle]="navStyle"
+  …
+></ds-bar-nav>
 ```
 
 ```ts
-@Directive({ selector: 'ds-panel-nav', standalone: true })
+@Directive({ selector: 'ds-panel-nav[appPanelNavHost]', standalone: true })
 export class PanelNavHostDirective {
   constructor() {
     const host = inject(ElementRef<HTMLElement>).nativeElement;
+    const style = resolveNavStyleFromUrl(window.location.pathname);
     host.setAttribute('disable-view-transition', '');
-    host.setAttribute('variant', resolveVariantFromUrl());
+    host.setAttribute('nav-style', style);
+    host.setAttribute('router-mode', 'event');
   }
 }
 ```
@@ -84,6 +108,25 @@ export class PanelNavHostDirective {
 
 `useEffect` runs too late for first paint. Use the `index.html` document hint and/or a wrapper that sets attributes on the DOM ref in `useLayoutEffect` on mount only. Prefer the document hint for hard reload.
 
+## Radial style reveal (view transitions)
+
+When crossing between `navigation` and `default` sections, apps can run a **radial reveal** from the panel-nav footer gear. The host owns `document.startViewTransition` — set `disable-view-transition` on `ds-panel-nav` so transitions do not nest.
+
+`ds-bar-nav` registers `view-transition-name: ds-shell-bar-nav`. Use `@ds-mo/ui/nav` helpers so the reveal clips **both** the page and the bar nav:
+
+```ts
+import {
+  ensureShellNavVtStyle,
+  runShellNavStyleRevealOnReady,
+} from '@ds-mo/ui/nav';
+
+ensureShellNavVtStyle();
+const transition = document.startViewTransition(() => {
+  applyShellStyleChange();
+});
+runShellNavStyleRevealOnReady(transition);
+```
+
 ## Reference consumer
 
-`motive-webapp-lab` (Angular 19) — shell + `PanelNavHostDirective` + document hint.
+**motive-webapp-lab** (Angular 22) — shell + `PanelNavHostDirective` + document hint + `view-transitions.ts`.

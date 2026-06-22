@@ -87,14 +87,14 @@ export declare interface DsBanner extends Components.DsBanner {
 
 
 @ProxyCmp({
-  inputs: ['actions', 'actionsJson', 'background', 'basePath', 'currentUrl', 'heading', 'tabs', 'tabsJson', 'value']
+  inputs: ['actions', 'actionsJson', 'basePath', 'currentUrl', 'heading', 'navStyle', 'tabs', 'tabsJson', 'value']
 })
 @Component({
   selector: 'ds-bar-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['actions', 'actionsJson', 'background', 'basePath', 'currentUrl', 'heading', 'tabs', 'tabsJson', 'value'],
+  inputs: ['actions', 'actionsJson', 'basePath', 'currentUrl', 'heading', 'navStyle', 'tabs', 'tabsJson', 'value'],
   outputs: ['dsTabChange', 'dsActionChange'],
   standalone: false
 })
@@ -619,14 +619,14 @@ export declare interface DsPagination extends Components.DsPagination {
 
 
 @ProxyCmp({
-  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'routerMode', 'storageKey', 'userInitial', 'userName', 'variant']
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'navStyle', 'routerMode', 'storageKey', 'userInitial', 'userName']
 })
 @Component({
   selector: 'ds-panel-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'routerMode', 'storageKey', 'userInitial', 'userName', 'variant'],
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'navStyle', 'routerMode', 'storageKey', 'userInitial', 'userName'],
   outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction', 'dsNavUserAction'],
   standalone: false
 })

@@ -8,7 +8,8 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AccordionItemData } from "./components/Accordion/Accordion";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
-import { BarNavActionItem, BarNavBackground, BarNavTab } from "./components/BarNav/BarNav";
+import { BarNavActionItem, BarNavTab } from "./components/BarNav/bar-nav-types";
+import { NavChromeStyle } from "./nav/nav-chrome";
 import { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -23,7 +24,7 @@ import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
 import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 import { ModalWidth } from "./components/Modal/Modal";
-import { PanelNavGroup, PanelNavRouterMode, PanelNavVariant } from "./components/PanelNav/PanelNav";
+import { PanelNavGroup, PanelNavRouterMode } from "./components/PanelNav/panel-nav-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
@@ -43,7 +44,8 @@ import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
-export { BarNavActionItem, BarNavBackground, BarNavTab } from "./components/BarNav/BarNav";
+export { BarNavActionItem, BarNavTab } from "./components/BarNav/bar-nav-types";
+export { NavChromeStyle } from "./nav/nav-chrome";
 export { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -58,7 +60,7 @@ export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
 export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
 export { ModalWidth } from "./components/Modal/Modal";
-export { PanelNavGroup, PanelNavRouterMode, PanelNavVariant } from "./components/PanelNav/PanelNav";
+export { PanelNavGroup, PanelNavRouterMode } from "./components/PanelNav/panel-nav-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
@@ -170,11 +172,6 @@ export namespace Components {
          */
         "actionsJson": string;
         /**
-          * Surface background variant.
-          * @default 'secondary'
-         */
-        "background": BarNavBackground;
-        /**
           * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
           * @default ''
          */
@@ -188,6 +185,11 @@ export namespace Components {
           * Fallback heading shown when no tabs are provided. When tabs are present the heading is hidden.
          */
         "heading": string | undefined;
+        /**
+          * Chrome style: `navigation` = navigation tokens, `default` = app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
+          * @default 'default'
+         */
+        "navStyle": NavChromeStyle;
         /**
           * Tab items for the left section. Set via JS property: `el.tabs = [...]`. Replace the array reference to update.
           * @default []
@@ -619,7 +621,7 @@ export namespace Components {
          */
         "currentUrl": string;
         /**
-          * When `true`, the component does not run its own View Transition on variant change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
+          * When `true`, the component does not run its own View Transition on style change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
           * @default false
          */
         "disableViewTransition": boolean;
@@ -628,6 +630,11 @@ export namespace Components {
           * @default '[]'
          */
         "groups": string | PanelNavGroup[];
+        /**
+          * Chrome style: `navigation` = navigation tokens, `default` = standard app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
+          * @default 'navigation'
+         */
+        "navStyle": NavChromeStyle;
         /**
           * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
           * @default 'anchor'
@@ -648,11 +655,6 @@ export namespace Components {
           * @default ''
          */
         "userName": string;
-        /**
-          * Visual variant: `dashboard` = always-dark surface, `settings` = light surface
-          * @default 'dashboard'
-         */
-        "variant": PanelNavVariant;
     }
     interface DsRadioGroup {
         "ariaLabel": string | undefined;
@@ -1809,11 +1811,6 @@ declare namespace LocalJSX {
          */
         "actionsJson"?: string;
         /**
-          * Surface background variant.
-          * @default 'secondary'
-         */
-        "background"?: BarNavBackground;
-        /**
           * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
           * @default ''
          */
@@ -1827,6 +1824,11 @@ declare namespace LocalJSX {
           * Fallback heading shown when no tabs are provided. When tabs are present the heading is hidden.
          */
         "heading"?: string | undefined;
+        /**
+          * Chrome style: `navigation` = navigation tokens, `default` = app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
+          * @default 'default'
+         */
+        "navStyle"?: NavChromeStyle;
         /**
           * Emitted when an action button is toggled. Detail = { id, selected }.
          */
@@ -2296,7 +2298,7 @@ declare namespace LocalJSX {
          */
         "currentUrl"?: string;
         /**
-          * When `true`, the component does not run its own View Transition on variant change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
+          * When `true`, the component does not run its own View Transition on style change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
           * @default false
          */
         "disableViewTransition"?: boolean;
@@ -2305,6 +2307,11 @@ declare namespace LocalJSX {
           * @default '[]'
          */
         "groups"?: string | PanelNavGroup[];
+        /**
+          * Chrome style: `navigation` = navigation tokens, `default` = standard app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
+          * @default 'navigation'
+         */
+        "navStyle"?: NavChromeStyle;
         /**
           * Emitted when the footer left button (gear / dashboard) is clicked.
          */
@@ -2341,11 +2348,6 @@ declare namespace LocalJSX {
           * @default ''
          */
         "userName"?: string;
-        /**
-          * Visual variant: `dashboard` = always-dark surface, `settings` = light surface
-          * @default 'dashboard'
-         */
-        "variant"?: PanelNavVariant;
     }
     interface DsRadioGroup {
         "ariaLabel"?: string | undefined;
@@ -2795,7 +2797,7 @@ declare namespace LocalJSX {
         "value": string;
         "actionsJson": string;
         "heading": string | undefined;
-        "background": BarNavBackground;
+        "navStyle": NavChromeStyle;
         "basePath": string;
         "currentUrl": string;
     }
@@ -2933,7 +2935,7 @@ declare namespace LocalJSX {
         "inactive": boolean;
     }
     interface DsPanelNavAttributes {
-        "variant": PanelNavVariant;
+        "navStyle": NavChromeStyle;
         "disableViewTransition": boolean;
         "groups": string | PanelNavGroup[];
         "routerMode": PanelNavRouterMode;

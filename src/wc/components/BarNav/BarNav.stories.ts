@@ -26,12 +26,12 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value:      { control: 'select', options: fleetTabs.map(t => t.id) },
-    background: { control: 'select', options: ['primary', 'secondary', 'transparent', 'translucent'] },
+    navStyle:   { control: 'select', options: ['navigation', 'default'] },
     heading:    { control: 'text' },
   },
   args: {
     value: 'live-map',
-    background: 'secondary',
+    navStyle: 'default',
   },
 };
 
@@ -49,7 +49,7 @@ export const Playground: Story = {
     })}>
       <ds-bar-nav
         value=${args['value'] ?? 'live-map'}
-        background=${args['background'] ?? 'secondary'}
+        nav-style=${args['navStyle'] ?? 'default'}
       ></ds-bar-nav>
     </div>
   `,

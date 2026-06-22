@@ -82,6 +82,19 @@
 
 .onAlwaysDark.selected { color: var(--color-always-dark-foreground-primary); }
 
+.onNavigation {
+  color: var(--color-navigation-foreground-secondary);
+  --_hover-bg: var(--color-navigation-interaction-hover);
+  --_pressed-bg: var(--color-navigation-interaction-pressed);
+  --_dot-ring: var(--color-navigation-background);
+}
+
+.onNavigation.selected { color: var(--color-navigation-foreground-primary); }
+
+.onNavigation:focus-visible {
+  outline-color: var(--color-navigation-interaction-focus);
+}
+
 /* ==========================================================================
    Inner layout — icon zone sits above the ::after overlay
    ========================================================================== */

@@ -133,6 +133,24 @@
 
 .on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }
 
+.on-navigation {
+  color: var(--color-navigation-foreground-secondary);
+  --_hover-bg: var(--color-navigation-interaction-hover);
+  --_pressed-bg: var(--color-navigation-interaction-pressed);
+  --_dot: var(--color-navigation-foreground-brand);
+  --_dot-ring: var(--color-navigation-background);
+}
+
+.on-navigation.tab--selected { color: var(--color-navigation-foreground-primary); }
+
+.on-navigation:focus-visible {
+  outline-color: var(--color-navigation-interaction-focus);
+}
+
+.tab-list--on-navigation .tab-divider__line {
+  background-color: var(--color-navigation-border-tertiary);
+}
+
 /* In-tablist visual group separator — not focusable, skipped by keyboard nav */
 .tab-divider {
   display: flex;

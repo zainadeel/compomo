@@ -1,7 +1,12 @@
-export type { PanelNavVariant, PanelNavRouterMode, PanelNavItem, PanelNavGroup } from './PanelNav';
+export type { PanelNavRouterMode, PanelNavItem, PanelNavGroup } from './panel-nav-types';
+export type { NavChromeStyle } from '../../nav/nav-chrome';
 export {
-  PANEL_NAV_VARIANT_HINT_ATTR,
-  clearPanelNavVariantHint,
+  NAV_STYLE_HINT_ATTR,
+  setNavStyleHint,
+  clearNavStyleHint,
+  resolvePanelNavStyle,
+  shouldResyncPanelNavStyle,
   ensurePanelNavVtStyle,
-  setPanelNavVariantHint,
+  deriveActiveIdFromUrl,
+  parsePanelNavGroups,
 } from './panel-nav-utils';
