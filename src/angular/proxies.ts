@@ -36,6 +36,29 @@ export declare interface DsAccordion extends Components.DsAccordion {
 
 
 @ProxyCmp({
+  inputs: ['gradient', 'gradientSrc', 'navStyle']
+})
+@Component({
+  selector: 'ds-app-shell',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['gradient', 'gradientSrc', 'navStyle'],
+  standalone: false
+})
+export class DsAppShell {
+  protected el: HTMLDsAppShellElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsAppShell extends Components.DsAppShell {}
+
+
+@ProxyCmp({
   inputs: ['background', 'count', 'isSelected', 'label', 'max', 'surface', 'variant']
 })
 @Component({

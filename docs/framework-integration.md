@@ -22,6 +22,28 @@ Primary navigation (`ds-panel-nav`) and secondary navigation (`ds-bar-nav`) shar
 
 Bind the **same** `navStyle` on both components from your shell so primary and secondary nav stay visually in sync.
 
+## `ds-app-shell` (optional workspace layout)
+
+Use **`ds-app-shell`** for the workspace chrome only (panel + bar + main) — not the entire app:
+
+```html
+<ds-app-shell nav-style="navigation" gradient>
+  <ds-panel-nav slot="panel" disable-view-transition …></ds-panel-nav>
+  <ds-bar-nav slot="bar" …></ds-bar-nav>
+  <main>…page content…</main>
+</ds-app-shell>
+```
+
+| Feature | Behavior |
+| --- | --- |
+| `navStyle` | Shell propagates to slotted `ds-panel-nav` and `ds-bar-nav` |
+| `gradient` | Static L-shaped radial wash on nav backgrounds only (not main content) |
+| `gradientSrc` | Optional `url(...)` image override (e.g. SVG) instead of built-in radial |
+
+Built-in radial: `128.57% 141.42% at 0% 0%` — transparent → `--color-color-intent-blue-medium-background` (50%) → `--color-color-intent-blue-strong-background` (100%), layer opacity **10%**. Same wash for all `navStyle` values; tokens follow `data-theme`.
+
+Gradient is painted as `background-image` on panel/bar **above** opaque `--_nav-bg`, below labels/icons. Shell sets `--ds-shell-gradient-*` CSS vars sized to the L bounds.
+
 ---
 
 ## `ds-panel-nav` first paint

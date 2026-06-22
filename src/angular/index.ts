@@ -3,6 +3,7 @@ import * as d from './proxies';
 
 export const DIRECTIVES = [
   d.DsAccordion,
+  d.DsAppShell,
   d.DsBadge,
   d.DsBanner,
   d.DsBarNav,

@@ -17,3 +17,17 @@ export {
   runShellNavStyleRevealOnReady,
 } from './shell-view-transition';
 export type { ShellNavRevealOrigin } from './shell-view-transition';
+export {
+  SHELL_GRADIENT_IMAGE_VAR,
+  SHELL_GRADIENT_SIZE_VAR,
+  SHELL_GRADIENT_POSITION_PANEL_VAR,
+  SHELL_GRADIENT_POSITION_BAR_VAR,
+  SHELL_GRADIENT_OPACITY_VAR,
+  SHELL_GRADIENT_OPACITY,
+  buildShellRadialGradient,
+  shellGradientImageForStyle,
+  shellGradientSize,
+  shellGradientPositionPanel,
+  shellGradientPositionBar,
+} from './shell-gradient';
+export type { ShellGradientLayout } from './shell-gradient';
