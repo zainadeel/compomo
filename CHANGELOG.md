@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/zainadeel/compomo/compare/v1.3.0...v1.4.0) (2026-06-22)
+
+
+### Added
+
+* **nav:** sync panel and bar nav chrome via navStyle ([#163](https://github.com/zainadeel/compomo/issues/163)) ([ee70eed](https://github.com/zainadeel/compomo/commit/ee70eed2dbaa664e4d8d81eba990111a4e88cbe2))
+
 ## [1.3.0](https://github.com/zainadeel/compomo/compare/v1.2.0...v1.3.0) (2026-06-19)
 
 
