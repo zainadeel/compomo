@@ -6,7 +6,7 @@ import {
   type TabItemTab,
 } from '../TabGroup/tab-item-utils';
 
-export type TabGroupNavBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
+export type TabGroupNavBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark' | 'navigation';
 
 @Component({
   tag: 'ds-tab-group-nav',
@@ -119,18 +119,24 @@ export class TabGroupNav {
   private getBgClass(): string {
     if (!this.background || this.background === 'faint') return '';
     if (this.background === 'always-dark') return 'on-always-dark';
+    if (this.background === 'navigation') return 'on-navigation';
     return `on-${this.background}`;
   }
 
   render() {
     const bgClass = this.getBgClass();
     const isVertical = this.orientation === 'vertical';
+    const isNavigation = this.background === 'navigation';
 
     return (
       <Host class="tab-group-nav-host">
         <div
           role="tablist"
-          class={{ 'tab-list': true, 'tab-list--vertical': isVertical }}
+          class={{
+            'tab-list': true,
+            'tab-list--vertical': isVertical,
+            'tab-list--on-navigation': isNavigation,
+          }}
           aria-label={this.ariaLabel}
           aria-labelledby={this.ariaLabelledby}
           aria-orientation={isVertical ? 'vertical' : undefined}

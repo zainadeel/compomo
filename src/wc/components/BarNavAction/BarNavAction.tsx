@@ -1,6 +1,6 @@
 import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
 
-export type BarNavActionBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
+export type BarNavActionBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark' | 'navigation';
 
 @Component({
   tag: 'ds-bar-nav-action',
@@ -44,6 +44,7 @@ export class BarNavAction {
       onBold: bg === 'bold',
       onStrong: bg === 'strong',
       onAlwaysDark: bg === 'always-dark',
+      onNavigation: bg === 'navigation',
     };
 
     return (

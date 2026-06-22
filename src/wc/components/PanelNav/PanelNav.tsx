@@ -1,18 +1,22 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
+import type { NavChromeStyle } from '../../nav/nav-chrome';
+import {
+  animateShellNavRadialReveal,
+  ensureShellNavVtStyle,
+  resolveShellNavRevealOrigin,
+  setShellNavRevealOriginVars,
+} from '../../nav/shell-view-transition';
 import {
   deriveActiveIdFromUrl,
-  ensurePanelNavVtStyle,
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
-  resolvePanelNavVariant,
+  resolvePanelNavStyle,
   shouldResyncPanelNavGroups,
-  shouldResyncPanelNavVariant,
+  shouldResyncPanelNavStyle,
 } from './panel-nav-utils';
+import type { PanelNavGroup, PanelNavItem, PanelNavRouterMode } from './panel-nav-types';
 
-// Module-level WeakMaps for per-instance VT state. Using WeakMaps instead of
-// class fields avoids Stencil generating getter-only property descriptors on
-// the host element for private fields, which throws in strict environments.
-// Minimal typings for the View Transitions API, which isn't in our TS lib target.
+// Module-level WeakMaps
 interface ViewTransition {
   finished: Promise<void>;
   skipTransition: () => void;
@@ -24,50 +28,17 @@ type DocumentWithViewTransition = Document & {
 const vtTransitions = new WeakMap<object, ViewTransition>();
 const vtResolvers = new WeakMap<object, () => void>();
 
-/** Parse a CSS <time> value to milliseconds. Handles `s`, `ms`, and unitless
- *  (assumed ms). Critically: `parseFloat('.75s')` is 0.75 — WAAPI treats that as
- *  0.75ms (instant/invisible), so the `s` unit must be scaled to ms. Design
- *  tokens (e.g. `--effect-animation-duration-long-1`) are authored in seconds. */
-function parseCssTimeMs(value: string, fallback: number): number {
-  const v = value.trim();
-  const num = parseFloat(v);
-  if (Number.isNaN(num)) return fallback;
-  if (/ms\s*$/.test(v)) return num;
-  if (/s\s*$/.test(v)) return num * 1000;
-  return num;
-}
-
-export type PanelNavVariant = 'dashboard' | 'settings';
-export type PanelNavRouterMode = 'anchor' | 'event';
-
-export interface PanelNavItem {
-  id: string;
-  icon: string;
-  label: string;
-  /** Show a notification dot badge on the item */
-  dot?: boolean;
-  flag?: boolean;
-  /** Route path used for `currentUrl` matching. In `anchor` mode also sets `<a href>`.
-   *  In `event` mode navigation is delegated to the host via `dsNavSelect`. */
-  href?: string;
-}
-
-export interface PanelNavGroup {
-  id?: string;
-  label?: string;
-  items: PanelNavItem[];
-}
-
 @Component({
   tag: 'ds-panel-nav',
   styleUrl: 'PanelNav.css',
   scoped: true,
 })
 export class PanelNav {
-  /** Visual variant: `dashboard` = always-dark surface, `settings` = light surface */
-  @Prop() variant: PanelNavVariant = 'dashboard';
+  /** Chrome style: `navigation` = navigation tokens, `default` = standard app tokens.
+   *  Property: `navStyle`. HTML attribute: `nav-style`. */
+  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'navigation';
 
-  /** When `true`, the component does not run its own View Transition on variant
+  /** When `true`, the component does not run its own View Transition on style
    *  change — it just updates the rendered surface synchronously. Use this when
    *  the host app orchestrates the page transition itself (e.g. Angular Router's
    *  `withViewTransitions`), so the two don't fight or nest. */
@@ -122,9 +93,9 @@ export class PanelNav {
 
   @Element() el!: HTMLElement;
 
-  /** Mirrors `variant` but is only updated inside the VT callback so the
+  /** Mirrors `style` but is only updated inside the VT callback so the
    *  View Transition captures a clean before/after snapshot. */
-  @State() private renderedVariant: PanelNavVariant = 'dashboard';
+  @State() private renderedStyle: NavChromeStyle = 'navigation';
 
   @State() private parsedGroups: PanelNavGroup[] = [];
   @State() private atBottom = false;
@@ -193,44 +164,35 @@ export class PanelNav {
     this.syncActiveFromUrl();
   }
 
-  @Watch('variant')
-  async onVariantChange(newVal: PanelNavVariant) {
+  @Watch('navStyle')
+  async onNavStyleChange(newVal: NavChromeStyle) {
     // Host app drives the transition (e.g. Angular Router withViewTransitions):
     // just reflect the new surface so the app's transition captures it.
     if (this.effectiveDisableViewTransition) {
-      this.renderedVariant = newVal;
+      this.renderedStyle = newVal;
       return;
     }
 
-    // Skip any in-progress transition immediately so rapid variant changes
-    // (e.g. quick dashboard → settings → dashboard) never leave the nav stuck.
+    // Skip any in-progress transition immediately so rapid style changes never leave the nav stuck.
     vtTransitions.get(this)?.skipTransition();
     vtTransitions.delete(this);
 
     const doc = document as DocumentWithViewTransition;
     if (typeof doc.startViewTransition !== 'function') {
-      this.renderedVariant = newVal;
+      this.renderedStyle = newVal;
       return;
     }
 
-    ensurePanelNavVtStyle();
-
-    const btn = this.el.querySelector('.panel-nav__footer-btn') as HTMLElement | null;
-    const rect = btn?.getBoundingClientRect();
-    const x = rect ? Math.round(rect.left + rect.width / 2) : Math.round(window.innerWidth / 2);
-    const y = rect ? Math.round(rect.top + rect.height / 2) : Math.round(window.innerHeight / 2);
-    const maxR = Math.ceil(Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
-    ));
-
-    document.documentElement.style.setProperty('--vt-x', `${x}px`);
-    document.documentElement.style.setProperty('--vt-y', `${y}px`);
+    ensureShellNavVtStyle();
+    const origin = resolveShellNavRevealOrigin(
+      this.el.querySelector('.panel-nav__footer-btn') as HTMLElement | null,
+    );
+    setShellNavRevealOriginVars(origin);
 
     const transition = doc.startViewTransition(() =>
       new Promise<void>(resolve => {
         vtResolvers.set(this, resolve);
-        this.renderedVariant = newVal;
+        this.renderedStyle = newVal;
       })
     );
 
@@ -240,19 +202,13 @@ export class PanelNav {
       vtResolvers.delete(this);
     });
 
-    transition.ready.then(() => {
-      const durToken = getComputedStyle(document.documentElement)
-        .getPropertyValue('--effect-animation-duration-long-1').trim();
-      const duration = parseCssTimeMs(durToken, 750);
-      document.documentElement.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxR}px at ${x}px ${y}px)`] },
-        { duration, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
-      );
-    }).catch(() => { /* transition was skipped or aborted */ });
+    transition.ready
+      .then(() => animateShellNavRadialReveal(origin))
+      .catch(() => { /* transition was skipped or aborted */ });
   }
 
   componentWillLoad() {
-    this.renderedVariant = resolvePanelNavVariant(this.variant, this.el.getAttribute('variant'));
+    this.renderedStyle = resolvePanelNavStyle(this.navStyle, this.el.getAttribute('nav-style'));
     if (this.storageKey) {
       try {
         const stored = localStorage.getItem(this.storageKey);
@@ -331,7 +287,7 @@ export class PanelNav {
 
   /** Re-parse props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
   private syncHostPropsIfNeeded() {
-    this.syncRenderedVariantIfNeeded();
+    this.syncRenderedStyleIfNeeded();
 
     if (shouldResyncPanelNavGroups(this.parsedGroups, this.groups)) {
       this.onGroupsChange(this.groups);
@@ -340,16 +296,16 @@ export class PanelNav {
     }
   }
 
-  /** Align `renderedVariant` with `variant` when host bindings land after first paint. */
-  private syncRenderedVariantIfNeeded() {
-    if (!shouldResyncPanelNavVariant(this.renderedVariant, this.variant)) return;
+  /** Align `renderedStyle` with `style` when host bindings land after first paint. */
+  private syncRenderedStyleIfNeeded() {
+    if (!shouldResyncPanelNavStyle(this.renderedStyle, this.navStyle)) return;
 
     if (this.effectiveDisableViewTransition) {
       vtTransitions.get(this)?.skipTransition();
       vtTransitions.delete(this);
-      this.renderedVariant = this.variant;
+      this.renderedStyle = this.navStyle;
     } else {
-      void this.onVariantChange(this.variant);
+      void this.onNavStyleChange(this.navStyle);
     }
   }
 
@@ -546,14 +502,14 @@ export class PanelNav {
   }
 
   render() {
-    const isDashboard = this.renderedVariant === 'dashboard';
+    const isNavigation = this.renderedStyle === 'navigation';
     const collapsed = this.collapsed || this.viewportNarrow;
     const { userName, userInitial } = this;
 
     const navCls: Record<string, boolean> = {
       'panel-nav': true,
-      'panel-nav--dashboard': isDashboard,
-      'panel-nav--settings': !isDashboard,
+      'panel-nav--navigation': isNavigation,
+      'panel-nav--default': !isNavigation,
       'panel-nav--collapsed': collapsed,
       'panel-nav--animating': this.isAnimating,
       'panel-nav--at-bottom': this.atBottom,
@@ -561,7 +517,7 @@ export class PanelNav {
 
     return (
       <Host style={{ display: 'block', position: 'relative' }}>
-        <nav class={navCls} aria-label={isDashboard ? 'Main navigation' : 'Settings navigation'}>
+        <nav class={navCls} aria-label={isNavigation ? 'Main navigation' : 'Settings navigation'}>
 
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
           <div class="panel-nav__header">
@@ -620,15 +576,15 @@ export class PanelNav {
               visible={!this.atBottom}
             />
 
-            {/* Left icon button — Gear in dashboard, Dashboard in settings */}
+            {/* Left icon button — Gear in navigation style, Dashboard in default style */}
             <button
               type="button"
               class="panel-nav__footer-btn"
-              title={isDashboard ? 'Settings' : 'Dashboard'}
-              aria-label={isDashboard ? 'Open settings' : 'Go to dashboard'}
+              title={isNavigation ? 'Settings' : 'Dashboard'}
+              aria-label={isNavigation ? 'Open settings' : 'Go to dashboard'}
               onClick={() => this.handleFooterAction()}
             >
-              <ds-icon name={isDashboard ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
+              <ds-icon name={isNavigation ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
             </button>
 
             {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}

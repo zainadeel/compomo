@@ -14,16 +14,15 @@ const marker = '// --- nav type re-exports (patch-index-types.mjs) ---';
 const patch = `
 ${marker}
 export type {
-  PanelNavVariant,
+  NavChromeStyle,
   PanelNavRouterMode,
   PanelNavItem,
   PanelNavGroup,
-} from '../types/components/PanelNav/PanelNav';
+} from '../types/components/PanelNav/panel-nav-types';
 export type {
-  BarNavBackground,
   BarNavTab,
   BarNavActionItem,
-} from '../types/components/BarNav/BarNav';
+} from '../types/components/BarNav/bar-nav-types';
 `;
 
 const existing = readFileSync(indexPath, 'utf8');

@@ -10,27 +10,37 @@
   padding: var(--dimension-space-100);
   gap: var(--dimension-space-100);
   box-sizing: border-box;
-  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--_bar-nav-border);
+  background-color: var(--_bar-nav-bg);
+  color: var(--_bar-nav-fg-primary);
+  transition:
+    background-color var(--effect-motion-short-3),
+    border-color var(--effect-motion-short-3),
+    color var(--effect-motion-short-3);
 }
 
-/* Background variants — mirrors ds-header pattern */
-.bg-primary     {
-  --_bar-nav-bg: var(--color-background-primary);
-  background-color: var(--_bar-nav-bg);
-}
-.bg-secondary   {
+/* Default chrome — matches standard app surfaces (former secondary bar) */
+.bar-nav--default {
   --_bar-nav-bg: var(--color-background-secondary);
-  background-color: var(--_bar-nav-bg);
+  --_bar-nav-border: var(--color-border-tertiary);
+  --_bar-nav-fg-primary: var(--color-foreground-primary);
+  --_bar-nav-fg-secondary: var(--color-foreground-secondary);
+  --_bar-nav-hover: var(--color-interaction-hover);
+  --_bar-nav-pressed: var(--color-interaction-pressed);
+  --_bar-nav-focus: var(--color-interaction-focus);
+  --_bar-nav-dot: var(--color-foreground-bold-brand);
 }
-.bg-transparent {
-  --_bar-nav-bg: var(--color-background-primary);
-  background-color: transparent;
-}
-.bg-translucent {
-  --_bar-nav-bg: var(--color-background-translucent);
-  background-color: var(--_bar-nav-bg);
-  backdrop-filter: blur(var(--effect-blur-md));
-  -webkit-backdrop-filter: blur(var(--effect-blur-md));
+
+/* Navigation chrome — sync with ds-panel-nav navigation style */
+.bar-nav--navigation {
+  --_bar-nav-bg: var(--color-navigation-background);
+  --_bar-nav-border: var(--color-navigation-border-tertiary);
+  --_bar-nav-fg-primary: var(--color-navigation-foreground-primary);
+  --_bar-nav-fg-secondary: var(--color-navigation-foreground-secondary);
+  --_bar-nav-hover: var(--color-navigation-interaction-hover);
+  --_bar-nav-pressed: var(--color-navigation-interaction-pressed);
+  --_bar-nav-focus: var(--color-navigation-interaction-focus);
+  --_bar-nav-dot: var(--color-navigation-foreground-brand);
 }
 
 /* Collapsed — explicit spacer keeps the 8px minimum while the trigger can shrink. */
@@ -132,14 +142,14 @@
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
-  color: var(--color-foreground-primary);
+  color: var(--_bar-nav-fg-primary);
   position: relative;
   transition: color var(--effect-motion-short-2);
   height: var(--dimension-size-400);
-  --_hover-bg: var(--color-interaction-hover);
-  --_pressed-bg: var(--color-interaction-pressed);
-  --_dot: var(--color-foreground-bold-brand);
-  --_dot-ring: var(--color-background-secondary);
+  --_hover-bg: var(--_bar-nav-hover);
+  --_pressed-bg: var(--_bar-nav-pressed);
+  --_dot: var(--_bar-nav-dot);
+  --_dot-ring: var(--_bar-nav-bg);
 }
 
 .bar-nav__tab-trigger::after {
@@ -164,7 +174,7 @@
 }
 
 .bar-nav__tab-trigger:focus-visible {
-  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline: var(--dimension-stroke-width-025) solid var(--_bar-nav-focus);
   outline-offset: var(--dimension-space-025);
 }
 
@@ -252,7 +262,7 @@
   align-items: center;
   height: var(--dimension-size-400);
   padding-inline: var(--dimension-space-100);
-  color: var(--color-foreground-primary);
+  color: var(--_bar-nav-fg-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

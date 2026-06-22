@@ -4,8 +4,9 @@ import type { TemplateResult } from 'lit';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-text.js';
-import type { PanelNavGroup } from './PanelNav';
-import { ensurePanelNavVtStyle } from './panel-nav-utils';
+import type { PanelNavGroup } from './panel-nav-types';
+import { ensureShellNavVtStyle, runShellNavStyleRevealOnReady } from '../../nav/shell-view-transition';
+import type { NavChromeStyle } from '../../nav/nav-chrome';
 
 // ── Sample data (icon names verified against IcoMo) ───────────────────────
 
@@ -78,19 +79,19 @@ const SETTINGS_GROUPS: PanelNavGroup[] = [
 
 // ── Shared story helpers ───────────────────────────────────────────────────
 
-const VARIANT_BG: Record<string, string> = {
-  dashboard: '#0f0f0f',
-  settings:  'var(--color-background-primary)',
+const STYLE_BG: Record<NavChromeStyle, string> = {
+  navigation: '#0f0f0f',
+  default:  'var(--color-background-primary)',
 };
 
-const VARIANT_GROUPS: Record<string, PanelNavGroup[]> = {
-  dashboard: DASHBOARD_GROUPS,
-  settings:  SETTINGS_GROUPS,
+const STYLE_GROUPS: Record<NavChromeStyle, PanelNavGroup[]> = {
+  navigation: DASHBOARD_GROUPS,
+  default:  SETTINGS_GROUPS,
 };
 
-const VARIANT_ACTIVE: Record<string, string> = {
-  dashboard: 'fleet-view',
-  settings:  'user-settings',
+const STYLE_ACTIVE: Record<NavChromeStyle, string> = {
+  navigation: 'fleet-view',
+  default:  'user-settings',
 };
 
 // ── App-level radial reveal ────────────────────────────────────────────────
@@ -98,78 +99,40 @@ const VARIANT_ACTIVE: Record<string, string> = {
 // `disable-view-transition`, so the component's own VT path is off and there is
 // a single driver). Storybook has no router, so the story plays that role here.
 
-/** Parse a CSS <time> value to milliseconds. `parseFloat('.75s')` is 0.75, which
- *  WAAPI treats as 0.75ms (invisible), so the `s` unit must be scaled to ms. */
-function parseCssTimeMs(value: string, fallback: number): number {
-  const v = value.trim();
-  const num = parseFloat(v);
-  if (Number.isNaN(num)) return fallback;
-  if (/ms\s*$/.test(v)) return num;
-  if (/s\s*$/.test(v)) return num * 1000;
-  return num;
-}
-
 type DocWithVT = Document & {
   startViewTransition?: (cb: () => void | Promise<void>) => { ready: Promise<void> };
 };
 
-/** Animate a panel-nav variant change with the radial circle reveal, driven from
+/** Animate a panel-nav style change with the radial circle reveal, driven from
  *  the app side. `applyChange` mutates the nav props; we wait for Stencil to flush
  *  the re-render before the new snapshot is captured so the reveal shows the new
- *  variant rather than the old one. */
-function revealVariant(nav: HTMLElement, applyChange: () => void) {
+ *  style rather than the old one. */
+function revealStyle(nav: HTMLElement, applyChange: () => void) {
   const doc = document as DocWithVT;
   if (typeof doc.startViewTransition !== 'function') {
     applyChange();
     return;
   }
-  ensurePanelNavVtStyle();
+  ensureShellNavVtStyle();
 
-  const btn = nav.querySelector<HTMLElement>('.panel-nav__footer-btn');
-  const rect = btn?.getBoundingClientRect();
-  const x = rect ? Math.round(rect.left + rect.width / 2) : Math.round(window.innerWidth / 2);
-  const y = rect ? Math.round(rect.top + rect.height / 2) : Math.round(window.innerHeight / 2);
-  const maxR = Math.ceil(
-    Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)),
-  );
-
-  document.documentElement.style.setProperty('--vt-x', `${x}px`);
-  document.documentElement.style.setProperty('--vt-y', `${y}px`);
-
-  // The callback MUST settle synchronously. The browser suppresses rendering —
-  // and therefore requestAnimationFrame — until the update callback's promise
-  // resolves, so awaiting a frame here deadlocks until the View Transitions
-  // ~4s update-callback timeout, which then snaps the variant in with no reveal.
-  // Mirror the lab: apply the change and return. Stencil's re-render flushes on
-  // the next frame, alongside the browser capturing the new snapshot.
   const transition = doc.startViewTransition(() => {
     applyChange();
   });
 
-  transition.ready
-    .then(() => {
-      const durToken = getComputedStyle(document.documentElement)
-        .getPropertyValue('--effect-animation-duration-long-1').trim();
-      const duration = parseCssTimeMs(durToken, 750);
-      document.documentElement.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxR}px at ${x}px ${y}px)`] },
-        { duration, easing: 'ease-in-out', fill: 'forwards', pseudoElement: '::view-transition-new(root)' },
-      );
-    })
-    .catch(() => { /* transition skipped or superseded */ });
+  runShellNavStyleRevealOnReady(transition, nav.querySelector('.panel-nav__footer-btn'));
 }
 
-function switchFooterVariant(id: string) {
-  const el = document.getElementById(id) as any;
+function switchFooterStyle(id: string) {
+  const el = document.getElementById(id) as HTMLElement & { navStyle: NavChromeStyle; groups: string | PanelNavGroup[]; activeId: string };
   const wrap = document.getElementById(`${id}-wrap`);
   if (!el) return;
 
-  const next = el.variant === 'dashboard' ? 'settings' : 'dashboard';
-  revealVariant(el, () => {
-    el.variant  = next;
-    el.groups   = JSON.stringify(VARIANT_GROUPS[next]);
-    el.activeId = VARIANT_ACTIVE[next];
-    if (wrap) wrap.style.background = VARIANT_BG[next];
+  const next: NavChromeStyle = el.navStyle === 'navigation' ? 'default' : 'navigation';
+  revealStyle(el, () => {
+    el.navStyle = next;
+    el.groups = JSON.stringify(STYLE_GROUPS[next]);
+    el.activeId = STYLE_ACTIVE[next];
+    if (wrap) wrap.style.background = STYLE_BG[next];
   });
 }
 
@@ -178,12 +141,12 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
     <div id="dash-nav-wrap" style="
       display: flex;
       height: 100vh;
-      background: ${VARIANT_BG['dashboard']};
+      background: ${STYLE_BG['navigation']};
       font-family: var(--typography-font-family, system-ui);
     ">
       <ds-panel-nav
         id="dash-nav"
-        variant="dashboard"
+        nav-style="navigation"
         groups=${JSON.stringify(DASHBOARD_GROUPS)}
         active-id=${activeId}
         user-name="Zain Adeel"
@@ -198,11 +161,11 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
           const el = document.getElementById('dash-nav') as any;
           if (el) el.collapsed = e.detail;
         }}
-        @dsNavFooterAction=${() => switchFooterVariant('dash-nav')}
+        @dsNavFooterAction=${() => switchFooterStyle('dash-nav')}
       ></ds-panel-nav>
 
       <div style="flex:1; padding: 24px; color: rgba(255,255,255,0.5); font-size: 13px;">
-        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch variants.</p>
+        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch styles.</p>
       </div>
     </div>
   `;
@@ -213,12 +176,12 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
     <div id="settings-nav-wrap" style="
       display: flex;
       height: 100vh;
-      background: ${VARIANT_BG['settings']};
+      background: ${STYLE_BG['default']};
       font-family: var(--typography-font-family, system-ui);
     ">
       <ds-panel-nav
         id="settings-nav"
-        variant="settings"
+        nav-style="default"
         groups=${JSON.stringify(SETTINGS_GROUPS)}
         active-id=${activeId}
         user-name="Zain Adeel"
@@ -233,11 +196,11 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
           const el = document.getElementById('settings-nav') as any;
           if (el) el.collapsed = e.detail;
         }}
-        @dsNavFooterAction=${() => switchFooterVariant('settings-nav')}
+        @dsNavFooterAction=${() => switchFooterStyle('settings-nav')}
       ></ds-panel-nav>
 
       <div style="flex:1; padding: 24px; color: var(--color-foreground-secondary); font-size: 13px;">
-        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch variants.</p>
+        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch styles.</p>
       </div>
     </div>
   `;
@@ -264,7 +227,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-exp"
-            variant="dashboard"
+            nav-style="navigation"
             groups=${dashGroups}
             active-id="fleet-view"
             user-name="Zain Adeel"
@@ -287,7 +250,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-col"
-            variant="dashboard"
+            nav-style="navigation"
             groups=${dashGroups}
             active-id="fleet-view"
             user-name="Zain Adeel"
@@ -311,7 +274,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
           <ds-panel-nav
             id="sb-settings-exp"
-            variant="settings"
+            nav-style="default"
             groups=${settingsGroups}
             active-id="user-settings"
             user-name="Zain Adeel"
@@ -334,7 +297,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
           <ds-panel-nav
             id="sb-settings-col"
-            variant="settings"
+            nav-style="default"
             groups=${settingsGroups}
             active-id="user-settings"
             user-name="Zain Adeel"
@@ -436,12 +399,12 @@ export const AngularHostTiming: Story = {
       <div style="
         display: flex;
         height: 100vh;
-        background: ${VARIANT_BG['dashboard']};
+        background: ${STYLE_BG['navigation']};
         font-family: var(--typography-font-family, system-ui);
       ">
         <ds-panel-nav
           id="angular-timing-nav"
-          variant="dashboard"
+          nav-style="navigation"
           router-mode="event"
           user-name="Zain Adeel"
           user-initial="Z"
@@ -477,12 +440,12 @@ export const RouterModeEvent: Story = {
       <div style="
         display: flex;
         height: 100vh;
-        background: ${VARIANT_BG['dashboard']};
+        background: ${STYLE_BG['navigation']};
         font-family: var(--typography-font-family, system-ui);
       ">
         <ds-panel-nav
           id="router-nav"
-          variant="dashboard"
+          nav-style="navigation"
           router-mode="event"
           .groups=${ROUTER_GROUPS}
           current-url=${currentUrl}
@@ -513,20 +476,20 @@ export const RouterModeEvent: Story = {
 };
 
 export const LiveSwitch: Story = {
-  name: 'Live Variant Switch',
+  name: 'Live Style Switch',
   render: () => {
-    let current: 'dashboard' | 'settings' = 'dashboard';
+    let current: NavChromeStyle = 'navigation';
     const toggleLive = () => {
       const nav = document.getElementById('live-nav') as HTMLElement | null;
       const wrap = document.getElementById('live-wrap');
       if (!nav) return;
-      current = current === 'dashboard' ? 'settings' : 'dashboard';
-      revealVariant(nav, () => {
-        const el = nav as any;
-        el.variant  = current;
-        el.groups   = JSON.stringify(VARIANT_GROUPS[current]);
-        el.activeId = VARIANT_ACTIVE[current];
-        if (wrap) wrap.style.background = VARIANT_BG[current];
+      current = current === 'navigation' ? 'default' : 'navigation';
+      revealStyle(nav, () => {
+        const el = nav as HTMLElement & { navStyle: NavChromeStyle; groups: string | PanelNavGroup[]; activeId: string };
+        el.navStyle = current;
+        el.groups = JSON.stringify(STYLE_GROUPS[current]);
+        el.activeId = STYLE_ACTIVE[current];
+        if (wrap) wrap.style.background = STYLE_BG[current];
       });
     };
     return html`
@@ -534,22 +497,22 @@ export const LiveSwitch: Story = {
         display: flex;
         flex-direction: column;
         height: 100vh;
-        background: ${VARIANT_BG['dashboard']};
+        background: ${STYLE_BG['navigation']};
         font-family: var(--typography-font-family, system-ui);
       " id="live-wrap">
         <div style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--color-background-secondary); border-bottom: 1px solid var(--color-border-tertiary);">
           <button
             style="padding: 6px 14px; cursor: pointer; font-size: 13px;"
             @click=${toggleLive}
-          >Toggle variant (same instance)</button>
+          >Toggle style (same instance)</button>
           <span style="font-size: 12px; color: var(--color-foreground-secondary);">
-            Switches dashboard ↔ settings on the same mounted &lt;ds-panel-nav&gt; — no remount.
+            Switches navigation ↔ default on the same mounted &lt;ds-panel-nav&gt; — no remount.
           </span>
         </div>
         <div style="display: flex; flex: 1;">
           <ds-panel-nav
             id="live-nav"
-            variant="dashboard"
+            nav-style="navigation"
             groups=${JSON.stringify(DASHBOARD_GROUPS)}
             active-id="fleet-view"
             user-name="Zain Adeel"

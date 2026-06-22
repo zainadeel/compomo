@@ -1,17 +1,17 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  PANEL_NAV_VARIANT_HINT_ATTR,
+  NAV_STYLE_HINT_ATTR,
   countPanelNavItems,
   deriveActiveIdFromUrl,
   hrefMatchesPath,
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
-  resolvePanelNavVariant,
+  resolvePanelNavStyle,
   shouldResyncPanelNavGroups,
-  shouldResyncPanelNavVariant,
+  shouldResyncPanelNavStyle,
 } from '../src/wc/components/PanelNav/panel-nav-utils';
-import type { PanelNavGroup, PanelNavItem } from '../src/wc/components/PanelNav/PanelNav';
+import type { PanelNavGroup, PanelNavItem } from '../src/wc/components/PanelNav/panel-nav-types';
 
 const ITEMS: PanelNavItem[] = [
   { id: 'fleet-view', icon: 'MapPage', label: 'Fleet View', href: '/dashboard/fleet-view' },
@@ -33,33 +33,33 @@ describe('hrefMatchesPath', () => {
   });
 });
 
-describe('shouldResyncPanelNavVariant', () => {
-  it('returns true when renderedVariant lags variant prop', () => {
-    assert.equal(shouldResyncPanelNavVariant('dashboard', 'settings'), true);
+describe('shouldResyncPanelNavStyle', () => {
+  it('returns true when renderedStyle lags style prop', () => {
+    assert.equal(shouldResyncPanelNavStyle('navigation', 'default'), true);
   });
 
-  it('returns false when renderedVariant matches variant prop', () => {
-    assert.equal(shouldResyncPanelNavVariant('settings', 'settings'), false);
+  it('returns false when renderedStyle matches style prop', () => {
+    assert.equal(shouldResyncPanelNavStyle('default', 'default'), false);
   });
 });
 
-describe('resolvePanelNavVariant', () => {
+describe('resolvePanelNavStyle', () => {
   it('prefers host attribute on hard reload before JS props land', () => {
-    assert.equal(resolvePanelNavVariant('dashboard', 'settings'), 'settings');
+    assert.equal(resolvePanelNavStyle('navigation', 'default'), 'default');
   });
 
   it('falls back to prop when attribute is absent', () => {
-    assert.equal(resolvePanelNavVariant('settings', null), 'settings');
+    assert.equal(resolvePanelNavStyle('default', null), 'default');
   });
 
   it('reads document hint before prop default', () => {
-    assert.equal(resolvePanelNavVariant('dashboard', null, 'settings'), 'settings');
+    assert.equal(resolvePanelNavStyle('navigation', null, 'default'), 'default');
   });
 });
 
-describe('PANEL_NAV_VARIANT_HINT_ATTR', () => {
+describe('NAV_STYLE_HINT_ATTR', () => {
   it('names the document hint attribute', () => {
-    assert.equal(PANEL_NAV_VARIANT_HINT_ATTR, 'data-panel-nav-variant');
+    assert.equal(NAV_STYLE_HINT_ATTR, 'data-nav-style');
   });
 });
 
