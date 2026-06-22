@@ -36,6 +36,10 @@
 
 /* ── Default chrome overrides ────────────────────────────────────────────── */
 
+:host-context(ds-app-shell[gradient]) {
+  --ds-shell-gradient-opacity: 0.1;
+}
+
 .panel-nav--default {
   --_nav-bg:           var(--color-background-secondary);
   --_nav-border:       var(--color-border-tertiary);
@@ -54,19 +58,32 @@
 .panel-nav {
   display: flex;
   flex-direction: column;
+  position: relative;
   width: var(--_nav-width);
   min-width: var(--_nav-width);
   height: 100%;
-  background: var(--_nav-bg);
+  background-color: var(--_nav-bg);
   border-right: var(--dimension-stroke-width-012, 1px) solid var(--_nav-border);
   box-sizing: border-box;
   overflow: hidden;
   transition:
     width var(--_nav-expand-motion),
     min-width var(--_nav-expand-motion),
-    background var(--effect-motion-short-3, 200ms ease),
+    background-color var(--effect-motion-short-3, 200ms ease),
     border-color var(--effect-motion-short-3, 200ms ease);
   font-family: var(--typography-font-family, system-ui);
+}
+
+.panel-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--ds-shell-gradient-opacity, 1);
+  background-image: var(--ds-shell-gradient-image, none);
+  background-size: var(--ds-shell-gradient-size, auto);
+  background-position: var(--ds-shell-gradient-position-panel, 0 0);
+  background-repeat: no-repeat;
 }
 
 .panel-nav--collapsed {

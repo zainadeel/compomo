@@ -75,7 +75,7 @@ npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, e
 npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
 npm run test:e2e:install # One-time Chromium for Playwright
 npm run dev              # Stencil watch using normal dist output (updates dist/ on source changes)
-npm run storybook        # Full local design loop: start Stencil watch, wait for first build, then run Storybook on :6006
+npm run storybook        # Stencil watch + Storybook on :6006 (auto-reloads when dist/ rebuilds)
 npm run storybook:build  # Build static Storybook
 npm run typecheck        # tsc --noEmit (Stencil source in src/wc)
 npm run lint             # eslint src/

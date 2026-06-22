@@ -19,6 +19,22 @@
     color var(--effect-motion-short-3);
 }
 
+:host-context(ds-app-shell[gradient]) {
+  --ds-shell-gradient-opacity: 0.1;
+}
+
+.bar-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--ds-shell-gradient-opacity, 1);
+  background-image: var(--ds-shell-gradient-image, none);
+  background-size: var(--ds-shell-gradient-size, auto);
+  background-position: var(--ds-shell-gradient-position-bar, 0 0);
+  background-repeat: no-repeat;
+}
+
 /* Default chrome — matches standard app surfaces (former secondary bar) */
 .bar-nav--default {
   --_bar-nav-bg: var(--color-background-secondary);

@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { writeBuildStamp } from './write-build-stamp.mjs';
 
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
@@ -42,10 +43,10 @@ const prefixAndPipe = (child, prefix, onLine) => {
   });
 };
 
-const spawnScript = (scriptName, prefix, onLine) => {
+const spawnScript = (scriptName, prefix, onLine, extraEnv = {}) => {
   const child = spawn(npmCmd, ['run', scriptName], {
     stdio: ['inherit', 'pipe', 'pipe'],
-    env: process.env,
+    env: { ...process.env, ...extraEnv },
   });
 
   children.add(child);
@@ -69,12 +70,19 @@ const spawnScript = (scriptName, prefix, onLine) => {
 const startStorybook = () => {
   if (storybookStarted) return;
   storybookStarted = true;
-  spawnScript('storybook:ui', 'storybook');
+  spawnScript('storybook:ui', 'storybook', undefined, { DS_STENCIL_WATCH: '1' });
 };
 
 const watcher = spawnScript('dev', 'stencil', line => {
   if (line.includes('build finished, watching for changes')) {
-    startStorybook();
+    writeBuildStamp();
+    if (!storybookStarted) {
+      startStorybook();
+    } else {
+      process.stdout.write(
+        '[storybook-dev] Stencil rebuild finished — Storybook reloads when dist/.build-stamp updates\n',
+      );
+    }
   }
 });
 

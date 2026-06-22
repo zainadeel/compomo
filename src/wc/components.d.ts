@@ -6,10 +6,10 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AccordionItemData } from "./components/Accordion/Accordion";
+import { NavChromeStyle } from "./nav/nav-chrome";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavActionItem, BarNavTab } from "./components/BarNav/bar-nav-types";
-import { NavChromeStyle } from "./nav/nav-chrome";
 import { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -42,10 +42,10 @@ import { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from 
 import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
+export { NavChromeStyle } from "./nav/nav-chrome";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavActionItem, BarNavTab } from "./components/BarNav/bar-nav-types";
-export { NavChromeStyle } from "./nav/nav-chrome";
 export { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -92,6 +92,23 @@ export namespace Components {
           * @default false
          */
         "multiple": boolean;
+    }
+    interface DsAppShell {
+        /**
+          * When `true`, paints the shared L-shaped radial wash on panel + bar backgrounds.
+          * @default false
+         */
+        "gradient": boolean;
+        /**
+          * Optional custom gradient for `background-image` (e.g. SVG URL). When set, overrides the built-in radial wash.
+          * @default ''
+         */
+        "gradientSrc": string;
+        /**
+          * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
+          * @default 'navigation'
+         */
+        "navStyle": NavChromeStyle;
     }
     interface DsBadge {
         /**
@@ -1169,6 +1186,12 @@ declare global {
         prototype: HTMLDsAccordionElement;
         new (): HTMLDsAccordionElement;
     };
+    interface HTMLDsAppShellElement extends Components.DsAppShell, HTMLStencilElement {
+    }
+    var HTMLDsAppShellElement: {
+        prototype: HTMLDsAppShellElement;
+        new (): HTMLDsAppShellElement;
+    };
     interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
     }
     var HTMLDsBadgeElement: {
@@ -1671,6 +1694,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ds-accordion": HTMLDsAccordionElement;
+        "ds-app-shell": HTMLDsAppShellElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
@@ -1730,6 +1754,23 @@ declare namespace LocalJSX {
          */
         "multiple"?: boolean;
         "onDsExpandedChange"?: (event: DsAccordionCustomEvent<string[]>) => void;
+    }
+    interface DsAppShell {
+        /**
+          * When `true`, paints the shared L-shaped radial wash on panel + bar backgrounds.
+          * @default false
+         */
+        "gradient"?: boolean;
+        /**
+          * Optional custom gradient for `background-image` (e.g. SVG URL). When set, overrides the built-in radial wash.
+          * @default ''
+         */
+        "gradientSrc"?: string;
+        /**
+          * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
+          * @default 'navigation'
+         */
+        "navStyle"?: NavChromeStyle;
     }
     interface DsBadge {
         /**
@@ -2774,6 +2815,11 @@ declare namespace LocalJSX {
         "multiple": boolean;
         "expandedIds": string;
     }
+    interface DsAppShellAttributes {
+        "navStyle": NavChromeStyle;
+        "gradient": boolean;
+        "gradientSrc": string;
+    }
     interface DsBadgeAttributes {
         "variant": BadgeVariant;
         "count": number;
@@ -3080,6 +3126,7 @@ declare namespace LocalJSX {
 
     interface IntrinsicElements {
         "ds-accordion": Omit<DsAccordion, keyof DsAccordionAttributes> & { [K in keyof DsAccordion & keyof DsAccordionAttributes]?: DsAccordion[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `attr:${K}`]?: DsAccordionAttributes[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `prop:${K}`]?: DsAccordion[K] };
+        "ds-app-shell": Omit<DsAppShell, keyof DsAppShellAttributes> & { [K in keyof DsAppShell & keyof DsAppShellAttributes]?: DsAppShell[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `attr:${K}`]?: DsAppShellAttributes[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `prop:${K}`]?: DsAppShell[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
@@ -3126,6 +3173,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ds-accordion": LocalJSX.IntrinsicElements["ds-accordion"] & JSXBase.HTMLAttributes<HTMLDsAccordionElement>;
+            "ds-app-shell": LocalJSX.IntrinsicElements["ds-app-shell"] & JSXBase.HTMLAttributes<HTMLDsAppShellElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
