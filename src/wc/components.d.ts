@@ -28,7 +28,6 @@ import { PanelNavGroup, PanelNavRouterMode } from "./components/PanelNav/panel-n
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
-import { SidebarWidth } from "./components/Sidebar/Sidebar";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -64,7 +63,6 @@ export { PanelNavGroup, PanelNavRouterMode } from "./components/PanelNav/panel-n
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
-export { SidebarWidth } from "./components/Sidebar/Sidebar";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -541,10 +539,10 @@ export namespace Components {
          */
         "label": string | undefined;
         /**
-          * Render size in px. Designed on a 16×16 viewBox; stroke scales proportionally.
-          * @default 20
+          * Render size — number (px) or TokoMo length (`var(--dimension-iconography-md)`, etc.).
+          * @default TOKEN_DEFAULTS.iconographyMd
          */
-        "size": number;
+        "size": number | string;
     }
     interface DsMenu {
         /**
@@ -552,9 +550,10 @@ export namespace Components {
          */
         "align": MenuAlign;
         /**
+          * Cross-axis offset — number (px) or TokoMo length.
           * @default 0
          */
-        "alignOffset": number;
+        "alignOffset": number | string;
         /**
           * External trigger element to position against. Set via JS: menuEl.anchor = buttonEl
          */
@@ -582,9 +581,10 @@ export namespace Components {
          */
         "side": MenuSide;
         /**
-          * @default 4
+          * Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.).
+          * @default TOKEN_DEFAULTS.space050
          */
-        "sideOffset": number;
+        "sideOffset": number | string;
     }
     interface DsModal {
         "heading": string;
@@ -628,7 +628,7 @@ export namespace Components {
          */
         "breakpoint": number;
         /**
-          * Whether the nav is in collapsed (icon-only) state. When `storageKey` is set the component manages this internally — do not also bind it from outside in that mode.
+          * Whether the nav is in collapsed (icon-only) state. Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change.
           * @default false
          */
         "collapsed": boolean;
@@ -658,7 +658,7 @@ export namespace Components {
          */
         "routerMode": PanelNavRouterMode;
         /**
-          * `localStorage` key used to persist the collapsed state across page loads. When set the component is self-managing for collapsed state; `dsNavToggle` still fires for consumers that want to observe the change.
+          * `localStorage` key used to persist the collapsed state across page loads. When set, collapsed state is restored on mount and written on each toggle.
           * @default ''
          */
         "storageKey": string;
@@ -727,24 +727,6 @@ export namespace Components {
           * @default ''
          */
         "value": string;
-    }
-    interface DsSidebar {
-        /**
-          * @default false
-         */
-        "collapsed": boolean;
-        /**
-          * @default false
-         */
-        "mobile": boolean;
-        /**
-          * @default true
-         */
-        "resizable": boolean;
-        /**
-          * @default 'default'
-         */
-        "width": SidebarWidth;
     }
     interface DsSkeleton {
         /**
@@ -1049,13 +1031,15 @@ export namespace Components {
          */
         "align": TooltipAlign;
         /**
+          * Cross-axis offset — number (px) or TokoMo length.
           * @default 0
          */
-        "alignOffset": number;
+        "alignOffset": number | string;
         /**
-          * @default HOVER_DELAY_MS
+          * Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`.
+          * @default TOKEN_DEFAULTS.animationDelayMedium1
          */
-        "delay": number;
+        "delay": number | string;
         "label": string;
         "shortcutKey": string | undefined;
         /**
@@ -1067,9 +1051,10 @@ export namespace Components {
          */
         "side": TooltipSide;
         /**
-          * @default 4
+          * Gap between anchor and tooltip — number (px) or TokoMo length.
+          * @default TOKEN_DEFAULTS.space050
          */
-        "sideOffset": number;
+        "sideOffset": number | string;
     }
 }
 export interface DsAccordionCustomEvent<T> extends CustomEvent<T> {
@@ -1135,10 +1120,6 @@ export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
-}
-export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsSidebarElement;
 }
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1517,24 +1498,6 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
-    interface HTMLDsSidebarElementEventMap {
-        "dsToggle": void;
-        "dsWidthChange": SidebarWidth;
-    }
-    interface HTMLDsSidebarElement extends Components.DsSidebar, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSidebarElementEventMap>(type: K, listener: (this: HTMLDsSidebarElement, ev: DsSidebarCustomEvent<HTMLDsSidebarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSidebarElementEventMap>(type: K, listener: (this: HTMLDsSidebarElement, ev: DsSidebarCustomEvent<HTMLDsSidebarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsSidebarElement: {
-        prototype: HTMLDsSidebarElement;
-        new (): HTMLDsSidebarElement;
-    };
     interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
     }
     var HTMLDsSkeletonElement: {
@@ -1720,7 +1683,6 @@ declare global {
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
-        "ds-sidebar": HTMLDsSidebarElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-surface": HTMLDsSurfaceElement;
@@ -2238,10 +2200,10 @@ declare namespace LocalJSX {
          */
         "label"?: string | undefined;
         /**
-          * Render size in px. Designed on a 16×16 viewBox; stroke scales proportionally.
-          * @default 20
+          * Render size — number (px) or TokoMo length (`var(--dimension-iconography-md)`, etc.).
+          * @default TOKEN_DEFAULTS.iconographyMd
          */
-        "size"?: number;
+        "size"?: number | string;
     }
     interface DsMenu {
         /**
@@ -2249,9 +2211,10 @@ declare namespace LocalJSX {
          */
         "align"?: MenuAlign;
         /**
+          * Cross-axis offset — number (px) or TokoMo length.
           * @default 0
          */
-        "alignOffset"?: number;
+        "alignOffset"?: number | string;
         /**
           * External trigger element to position against. Set via JS: menuEl.anchor = buttonEl
          */
@@ -2281,9 +2244,10 @@ declare namespace LocalJSX {
          */
         "side"?: MenuSide;
         /**
-          * @default 4
+          * Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.).
+          * @default TOKEN_DEFAULTS.space050
          */
-        "sideOffset"?: number;
+        "sideOffset"?: number | string;
     }
     interface DsModal {
         "heading": string;
@@ -2329,7 +2293,7 @@ declare namespace LocalJSX {
          */
         "breakpoint"?: number;
         /**
-          * Whether the nav is in collapsed (icon-only) state. When `storageKey` is set the component manages this internally — do not also bind it from outside in that mode.
+          * Whether the nav is in collapsed (icon-only) state. Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change.
           * @default false
          */
         "collapsed"?: boolean;
@@ -2375,7 +2339,7 @@ declare namespace LocalJSX {
          */
         "routerMode"?: PanelNavRouterMode;
         /**
-          * `localStorage` key used to persist the collapsed state across page loads. When set the component is self-managing for collapsed state; `dsNavToggle` still fires for consumers that want to observe the change.
+          * `localStorage` key used to persist the collapsed state across page loads. When set, collapsed state is restored on mount and written on each toggle.
           * @default ''
          */
         "storageKey"?: string;
@@ -2449,26 +2413,6 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
-    }
-    interface DsSidebar {
-        /**
-          * @default false
-         */
-        "collapsed"?: boolean;
-        /**
-          * @default false
-         */
-        "mobile"?: boolean;
-        "onDsToggle"?: (event: DsSidebarCustomEvent<void>) => void;
-        "onDsWidthChange"?: (event: DsSidebarCustomEvent<SidebarWidth>) => void;
-        /**
-          * @default true
-         */
-        "resizable"?: boolean;
-        /**
-          * @default 'default'
-         */
-        "width"?: SidebarWidth;
     }
     interface DsSkeleton {
         /**
@@ -2788,13 +2732,15 @@ declare namespace LocalJSX {
          */
         "align"?: TooltipAlign;
         /**
+          * Cross-axis offset — number (px) or TokoMo length.
           * @default 0
          */
-        "alignOffset"?: number;
+        "alignOffset"?: number | string;
         /**
-          * @default HOVER_DELAY_MS
+          * Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`.
+          * @default TOKEN_DEFAULTS.animationDelayMedium1
          */
-        "delay"?: number;
+        "delay"?: number | string;
         "label": string;
         "shortcutKey"?: string | undefined;
         /**
@@ -2806,9 +2752,10 @@ declare namespace LocalJSX {
          */
         "side"?: TooltipSide;
         /**
-          * @default 4
+          * Gap between anchor and tooltip — number (px) or TokoMo length.
+          * @default TOKEN_DEFAULTS.space050
          */
-        "sideOffset"?: number;
+        "sideOffset"?: number | string;
     }
 
     interface DsAccordionAttributes {
@@ -2955,15 +2902,15 @@ declare namespace LocalJSX {
         "ariaDescribedby": string | undefined;
     }
     interface DsLoaderAttributes {
-        "size": number;
+        "size": string;
         "label": string | undefined;
     }
     interface DsMenuAttributes {
         "open": boolean;
         "side": MenuSide;
         "align": MenuAlign;
-        "sideOffset": number;
-        "alignOffset": number;
+        "sideOffset": string;
+        "alignOffset": string;
         "menuWidth": string | undefined;
         "minWidth": string | undefined;
         "anchorId": string | undefined;
@@ -3010,12 +2957,6 @@ declare namespace LocalJSX {
         "inactive": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
-    }
-    interface DsSidebarAttributes {
-        "collapsed": boolean;
-        "width": string;
-        "resizable": boolean;
-        "mobile": boolean;
     }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
@@ -3117,9 +3058,9 @@ declare namespace LocalJSX {
         "label": string;
         "side": TooltipSide;
         "align": TooltipAlign;
-        "sideOffset": number;
-        "alignOffset": number;
-        "delay": number;
+        "sideOffset": string;
+        "alignOffset": string;
+        "delay": string;
         "shortcutKey": string | undefined;
         "shortcutKeyPosition": 'start' | 'end';
     }
@@ -3152,7 +3093,6 @@ declare namespace LocalJSX {
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
-        "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
         "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
@@ -3199,7 +3139,6 @@ declare module "@stencil/core" {
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
-            "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;

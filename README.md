@@ -91,7 +91,7 @@ Then use `<ds-*>` tags in templates. **Angular** can import Stencil-generated pr
 
 ### Layout
 - **Header** — page header with left/center/right slots
-- **Sidebar** — collapsible, resizable navigation with sections and items
+- **PanelNav** — collapsible side navigation panel with sections and items
 
 ### Utility
 - **Fade** — gradient overlay

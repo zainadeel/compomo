@@ -2,8 +2,8 @@
 
 .panel-nav {
   /* ─ Sizes ─ */
-  --_nav-width:              200px;
-  --_nav-width-collapsed:    48px;
+  --_nav-width:              var(--dimension-panel-width-2xs);
+  --_nav-width-collapsed:    var(--dimension-size-600);
   --_nav-item-height:        var(--dimension-size-400, 32px);
   --_nav-padding-x:          var(--dimension-space-100, 8px);
   --_nav-padding-y:          var(--dimension-space-100, 8px);

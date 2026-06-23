@@ -206,6 +206,7 @@ export class MyComponent {
 - `strict` mode. No `any`. Export every public prop interface.
 - Prefer string-union types for variant props (`type ButtonIntent = 'brand' | 'positive' | ...`).
 - `@Prop()` with non-primitive types (arrays, objects) must be set via JS property (not HTML attribute). Note this in prop JSDoc.
+- **Spatial and timing props** (`sideOffset`, `alignOffset`, `delay`, durations for JS timers) accept `number | string`: use a number for px/ms (backward compatible), or a TokoMo CSS value / `var(--dimension-*)` / `var(--effect-*)` string (preferred). Resolve at runtime via `src/wc/utils/resolve-css-length-px.ts` and `resolve-css-time-ms.ts` — never hardcode magic numbers that have token equivalents. Named defaults live in `src/wc/utils/token-defaults.ts` (`@ds-mo/tokens/ts` var names only — values still resolve at runtime).
 
 **Storybook stories (Stencil pattern)**
 

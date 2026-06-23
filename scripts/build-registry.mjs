@@ -486,26 +486,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
-  // Layout
-  ['Sidebar', {
-    title: 'Sidebar',
-    description: 'Resizable navigation sidebar with drag handle, snap-to-collapse, mobile mode, and nested sections/items.',
-    exports: ['Sidebar', 'SidebarSection', 'SidebarItem'],
-    types: ['SidebarProps', 'SidebarWidth', 'SidebarSectionProps', 'SidebarItemProps'],
-    files: ['Sidebar.tsx', 'Sidebar.module.css', 'SidebarItem.tsx', 'SidebarSection.tsx'],
-    props: {
-      children: { type: 'React.ReactNode', required: true },
-      isCollapsed: { type: 'boolean', default: 'false' },
-      onToggle: { type: '() => void' },
-      width: { type: "'mini' | 'default' | number", default: "'default'" },
-      resizable: { type: 'boolean', default: 'true' },
-      footer: { type: 'React.ReactNode' },
-      isMobile: { type: 'boolean' },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Text', 'Surface'],
-  }],
   ['Header', {
     title: 'Header',
     description: 'App header bar with background variants.',

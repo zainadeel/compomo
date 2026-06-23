@@ -1,3 +1,5 @@
+import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+
 export type ToastIntent = 'neutral' | 'brand' | 'positive' | 'negative' | 'warning' | 'caution';
 
 export interface ToastData {
@@ -30,10 +32,15 @@ export function getToasts(): ToastData[] {
   return toasts;
 }
 
+function defaultToastDurationMs(): number {
+  return resolveCssTimeMs(TOKEN_DEFAULTS.animationDelayLong2, TOKEN_DEFAULTS.animationDelayLong2);
+}
+
 export const toast = {
   show(options: ToastOptions): string {
     const id = `ds-toast-${++idCounter}`;
-    toasts = [...toasts, { id, intent: 'neutral', duration: 4000, ...options }];
+    const duration = options.duration ?? defaultToastDurationMs();
+    toasts = [...toasts, { id, intent: 'neutral', ...options, duration }];
     emit();
     return id;
   },

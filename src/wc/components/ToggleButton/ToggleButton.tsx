@@ -1,5 +1,6 @@
 import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
 import type { IconSize } from '../Icon/Icon';
+import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
 
 export type ToggleButtonElevation  = 'none' | 'flat' | 'elevated' | 'floating';
 export type ToggleButtonSize       = 'md' | 'sm' | 'xs';
@@ -7,8 +8,11 @@ export type ToggleButtonBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'a
 
 const ICON_SIZE: Record<ToggleButtonSize, IconSize> = { md: 'md', sm: 'sm', xs: 'xs' };
 
-// Pixel size reference for internal layout (icon span font-size)
-const ICON_PX: Record<ToggleButtonSize, number> = { md: 20, sm: 16, xs: 12 };
+const ICON_TOKEN: Record<ToggleButtonSize, string> = {
+  md: TOKEN_DEFAULTS.iconographyMd,
+  sm: TOKEN_DEFAULTS.iconographySm,
+  xs: TOKEN_DEFAULTS.iconographyXs,
+};
 
 const TEXT_CLASS: Record<ToggleButtonSize, string> = {
   md: 'text-body-medium-emphasis',
@@ -68,7 +72,7 @@ export class ToggleButton {
   render() {
     const size = this.size;
     const iconSize = ICON_SIZE[size];
-    const iconPx = ICON_PX[size];
+    const iconPx = resolveCssLengthPx(ICON_TOKEN[size], ICON_TOKEN[size]);
     const textClass = TEXT_CLASS[size];
     const hasIcon = !!this.icon;
     const hasLabel = !!this.label;

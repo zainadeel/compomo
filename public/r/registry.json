@@ -1235,60 +1235,6 @@
       "registryDependencies": []
     },
     {
-      "name": "sidebar",
-      "title": "Sidebar",
-      "description": "Resizable navigation sidebar with drag handle, snap-to-collapse, mobile mode, and nested sections/items.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/sidebar",
-        "exports": [
-          "Sidebar",
-          "SidebarSection",
-          "SidebarItem"
-        ],
-        "props": {
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          },
-          "isCollapsed": {
-            "type": "boolean",
-            "required": false
-          },
-          "onToggle": {
-            "type": "() => void",
-            "required": false
-          },
-          "width": {
-            "type": "'mini' | 'default' | number",
-            "required": false
-          },
-          "resizable": {
-            "type": "boolean",
-            "required": false
-          },
-          "footer": {
-            "type": "React.ReactNode",
-            "required": false
-          },
-          "isMobile": {
-            "type": "boolean",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text",
-        "surface"
-      ]
-    },
-    {
       "name": "header",
       "title": "Header",
       "description": "App header bar with background variants.",

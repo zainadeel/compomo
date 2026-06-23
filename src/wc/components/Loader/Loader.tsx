@@ -1,4 +1,5 @@
 import { Component, Prop, h } from '@stencil/core';
+import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
 
 @Component({
   tag: 'ds-loader',
@@ -6,8 +7,8 @@ import { Component, Prop, h } from '@stencil/core';
   shadow: true,
 })
 export class Loader {
-  /** Render size in px. Designed on a 16×16 viewBox; stroke scales proportionally. */
-  @Prop() size: number = 20;
+  /** Render size — number (px) or TokoMo length (`var(--dimension-iconography-md)`, etc.). */
+  @Prop() size: number | string = TOKEN_DEFAULTS.iconographyMd;
   /**
    * Accessible label for standalone usage. Wraps the spinner in a live region
    * and renders the label visually-hidden. Omit when the host element already
@@ -15,8 +16,12 @@ export class Loader {
    */
   @Prop() label: string | undefined;
 
+  private get sizePx(): number {
+    return resolveCssLengthPx(this.size, TOKEN_DEFAULTS.iconographyMd);
+  }
+
   render() {
-    const px = `${this.size}px`;
+    const px = `${this.sizePx}px`;
     const svg = (
       <svg
         style={{ width: px, height: px }}
