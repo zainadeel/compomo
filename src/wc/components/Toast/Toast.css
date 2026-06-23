@@ -1,11 +1,11 @@
 .toast {
   animation: toastSlideIn var(--effect-motion-short-3) ease-out;
   width: 100%;
-  max-width: 420px;
+  max-width: var(--dimension-panel-width-md);
 }
 
 .toast--exit {
-  animation: toastFadeOut 200ms ease-in forwards;
+  animation: toastFadeOut var(--effect-motion-short-3) ease-in forwards;
 }
 
 .toast-dismiss {

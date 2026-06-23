@@ -1,17 +1,11 @@
+import { parseCssTimeMs } from '../utils/resolve-css-time-ms';
+
 /** `view-transition-name` on `ds-bar-nav` — pairs with root reveal in shell apps. */
 export const SHELL_BAR_NAV_VT_NAME = 'ds-shell-bar-nav';
 
-const VT_STYLE_ID = 'ds-shell-nav-vt-style';
+export { parseCssTimeMs };
 
-/** Parse a CSS <time> value to milliseconds. */
-export function parseCssTimeMs(value: string, fallback: number): number {
-  const v = value.trim();
-  const num = parseFloat(v);
-  if (Number.isNaN(num)) return fallback;
-  if (/ms\s*$/.test(v)) return num;
-  if (/s\s*$/.test(v)) return num * 1000;
-  return num;
-}
+const VT_STYLE_ID = 'ds-shell-nav-vt-style';
 
 /** Suppress default cross-fade and pin new snapshots to a 0px circle for WAAPI reveal. */
 export function ensureShellNavVtStyle(): void {

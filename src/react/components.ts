@@ -31,7 +31,6 @@ export { DsPanelNav } from "./ds-panel-nav.js";
 export { DsRadioGroup } from "./ds-radio-group.js";
 export { DsScrollbar } from "./ds-scrollbar.js";
 export { DsSelect } from "./ds-select.js";
-export { DsSidebar } from "./ds-sidebar.js";
 export { DsSkeleton } from "./ds-skeleton.js";
 export { DsSlider } from "./ds-slider.js";
 export { DsSurface } from "./ds-surface.js";

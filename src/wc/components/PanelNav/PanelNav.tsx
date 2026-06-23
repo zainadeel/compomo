@@ -56,16 +56,14 @@ export class PanelNav {
   @Prop() activeId: string = '';
 
   /** Whether the nav is in collapsed (icon-only) state.
-   *  When `storageKey` is set the component manages this internally —
-   *  do not also bind it from outside in that mode. */
+   *  Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change. */
   @Prop({ mutable: true }) collapsed: boolean = false;
 
   /** Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled. */
   @Prop() breakpoint: number = 0;
 
   /** `localStorage` key used to persist the collapsed state across page loads.
-   *  When set the component is self-managing for collapsed state; `dsNavToggle`
-   *  still fires for consumers that want to observe the change. */
+   *  When set, collapsed state is restored on mount and written on each toggle. */
   @Prop() storageKey: string = '';
 
   /** Current route URL (e.g. `window.location.pathname` or the router's active URL).
@@ -321,14 +319,13 @@ export class PanelNav {
     queueMicrotask(tick);
   }
 
-  /** Centralised toggle: always emits `dsNavToggle`; when `storageKey` is set
-   *  also mutates `collapsed` directly and persists to `localStorage`. */
+  /** Centralised toggle: updates `collapsed`, emits `dsNavToggle`, optionally persists. */
   private applyToggle(next: boolean) {
-    this.dsNavToggle.emit(next);
+    this.collapsed = next;
     if (this.storageKey) {
-      this.collapsed = next;
       try { localStorage.setItem(this.storageKey, String(next)); } catch { /* unavailable */ }
     }
+    this.dsNavToggle.emit(next);
   }
 
   private getAllItems(): PanelNavItem[] {

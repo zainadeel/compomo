@@ -4,8 +4,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-width: 200px;
-  max-width: 600px;
+  min-width: var(--dimension-menu-width-xs);
+  max-width: var(--dimension-panel-width-lg);
   overflow: hidden;
   background-color: var(--color-background-primary);
   border-radius: var(--dimension-radius-075);

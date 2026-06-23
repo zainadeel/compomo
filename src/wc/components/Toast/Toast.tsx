@@ -1,4 +1,5 @@
 import { Component, Prop, State, h, Host } from '@stencil/core';
+import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 import { subscribeToToasts, getToasts, toast as toastService, type ToastData, type ToastIntent } from './toast-service';
 
 export type ToastPosition = 'top-center' | 'top-right' | 'bottom-center' | 'bottom-right';
@@ -32,6 +33,10 @@ export class ToastProvider {
   @State() private items: ToastItemState[] = [];
 
   private unsubscribe: (() => void) | null = null;
+
+  private get fadeOutMs(): number {
+    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+  }
 
   connectedCallback() {
     this.unsubscribe = subscribeToToasts(() => this.syncFromStore());
@@ -80,7 +85,7 @@ export class ToastProvider {
     setTimeout(() => {
       this.items = this.items.filter(i => i.data.id !== id);
       toastService.dismiss(id);
-    }, 200);
+    }, this.fadeOutMs);
   }
 
   private pauseItem(id: string) {
@@ -109,7 +114,7 @@ export class ToastProvider {
       gap: 'var(--dimension-space-075)',
       pointerEvents: 'none',
       padding: 'var(--dimension-space-100)',
-      maxWidth: '480px',
+      maxWidth: `var(${TOKEN_DEFAULTS.panelWidthMd})`,
       width: '100%',
       boxSizing: 'border-box',
     };

@@ -8,7 +8,7 @@ const meta: Meta = {
   argTypes: {
     size: {
       control: { type: 'number', min: 8, max: 64, step: 1 },
-      description: 'Render size in px.',
+      description: 'Render size in px, or set via JS property as a TokoMo length token.',
     },
     label: {
       control: 'text',

@@ -768,39 +768,6 @@ export declare interface DsSelect extends Components.DsSelect {
 
 
 @ProxyCmp({
-  inputs: ['collapsed', 'mobile', 'resizable', 'width']
-})
-@Component({
-  selector: 'ds-sidebar',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['collapsed', 'mobile', 'resizable', 'width'],
-  outputs: ['dsToggle', 'dsWidthChange'],
-  standalone: false
-})
-export class DsSidebar {
-  protected el: HTMLDsSidebarElement;
-  @Output() dsToggle = new EventEmitter<CustomEvent<void>>();
-  @Output() dsWidthChange = new EventEmitter<CustomEvent<IDsSidebarSidebarWidth>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-import type { SidebarWidth as IDsSidebarSidebarWidth } from '@ds-mo/ui';
-
-export declare interface DsSidebar extends Components.DsSidebar {
-
-  dsToggle: EventEmitter<CustomEvent<void>>;
-
-  dsWidthChange: EventEmitter<CustomEvent<IDsSidebarSidebarWidth>>;
-}
-
-
-@ProxyCmp({
   inputs: ['height', 'lines', 'shimmer', 'variant', 'width']
 })
 @Component({

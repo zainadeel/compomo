@@ -29,7 +29,6 @@ export const DIRECTIVES = [
   d.DsRadioGroup,
   d.DsScrollbar,
   d.DsSelect,
-  d.DsSidebar,
   d.DsSkeleton,
   d.DsSlider,
   d.DsSurface,

@@ -1,13 +1,11 @@
 import { Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
+import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type BannerIntent =
   | 'brand' | 'positive' | 'negative' | 'warning' | 'caution'
   | 'ai' | 'neutral' | 'walkthrough' | 'guide';
 
 export type BannerContrast = 'faint' | 'medium' | 'bold' | 'strong';
-
-const FADE_OUT_MS = 200;
-const AUTO_DISMISS_MS = 4000;
 
 @Component({
   tag: 'ds-banner',
@@ -31,6 +29,14 @@ export class Banner {
 
   private dismissTimer: ReturnType<typeof setTimeout> | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+
+  private get fadeOutMs(): number {
+    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+  }
+
+  private get autoDismissMs(): number {
+    return resolveCssTimeMs(TOKEN_DEFAULTS.animationDelayLong2, TOKEN_DEFAULTS.animationDelayLong2);
+  }
 
   componentDidLoad() {
     if (this.floating && this.message) this.scheduleDismiss();
@@ -58,7 +64,7 @@ export class Banner {
     this.dismissTimer = setTimeout(() => {
       this.dismissTimer = null;
       this.beginClose();
-    }, AUTO_DISMISS_MS);
+    }, this.autoDismissMs);
   }
 
   private beginClose() {
@@ -69,7 +75,7 @@ export class Banner {
         this.closing = false;
         this.closeTimer = null;
         this.dsDismiss.emit();
-      }, FADE_OUT_MS);
+      }, this.fadeOutMs);
     } else {
       this.dsDismiss.emit();
     }

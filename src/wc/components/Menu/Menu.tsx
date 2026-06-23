@@ -1,4 +1,5 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
+import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type MenuSide = 'top' | 'right' | 'bottom' | 'left';
 export type MenuAlign = 'start' | 'center' | 'end';
@@ -19,9 +20,6 @@ export interface MenuSection {
   items: MenuItemData[];
 }
 
-const CLOSE_ANIMATION_MS = 220;
-const VP_PAD = 4;
-
 @Component({
   tag: 'ds-menu',
   styleUrl: 'Menu.css',
@@ -35,8 +33,10 @@ export class Menu {
   @Prop() sections: MenuSection[] = [];
   @Prop() side: MenuSide = 'bottom';
   @Prop() align: MenuAlign = 'start';
-  @Prop() sideOffset: number = 4;
-  @Prop() alignOffset: number = 0;
+  /** Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.). */
+  @Prop() sideOffset: number | string = TOKEN_DEFAULTS.space050;
+  /** Cross-axis offset — number (px) or TokoMo length. */
+  @Prop() alignOffset: number | string = 0;
   @Prop() menuWidth: string | undefined;
   @Prop() minWidth: string | undefined;
   /** External trigger element to position against. Set via JS: menuEl.anchor = buttonEl */
@@ -85,8 +85,40 @@ export class Menu {
         this.shouldRender = false;
         this.closing = false;
         this.closeTimer = null;
-      }, CLOSE_ANIMATION_MS);
+      }, this.closeAnimationMs);
     }
+  }
+
+  @Watch('side')
+  @Watch('align')
+  @Watch('sideOffset')
+  @Watch('alignOffset')
+  onPositionPropsChange() {
+    if (this.open) this.calculatePosition();
+  }
+
+  private get viewportPadPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+  }
+
+  private get sideOffsetPx(): number {
+    return resolveCssLengthPx(this.sideOffset, TOKEN_DEFAULTS.space050);
+  }
+
+  private get alignOffsetPx(): number {
+    return resolveCssLengthPx(this.alignOffset, 0);
+  }
+
+  private get popupFallbackWidthPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.menuWidthXs, TOKEN_DEFAULTS.menuWidthXs);
+  }
+
+  private get popupFallbackHeightPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.menuFallbackHeight, TOKEN_DEFAULTS.menuFallbackHeight);
+  }
+
+  private get closeAnimationMs(): number {
+    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private get resolvedAnchor(): HTMLElement | null {
@@ -112,40 +144,43 @@ export class Menu {
     if (!popup) return;
 
     const a = anchorEl.getBoundingClientRect();
-    const pw = popup.offsetWidth || 200;
-    const ph = popup.offsetHeight || 160;
+    const pw = popup.offsetWidth || this.popupFallbackWidthPx;
+    const ph = popup.offsetHeight || this.popupFallbackHeightPx;
+    const sideOffset = this.sideOffsetPx;
+    const alignOffset = this.alignOffsetPx;
+    const vpPad = this.viewportPadPx;
     let x = 0, y = 0;
 
     switch (this.side) {
       case 'top':
-        y = a.top - ph - this.sideOffset;
-        x = this.align === 'start' ? a.left + this.alignOffset
-          : this.align === 'end' ? a.right - pw + this.alignOffset
-          : a.left + a.width / 2 - pw / 2 + this.alignOffset;
+        y = a.top - ph - sideOffset;
+        x = this.align === 'start' ? a.left + alignOffset
+          : this.align === 'end' ? a.right - pw + alignOffset
+          : a.left + a.width / 2 - pw / 2 + alignOffset;
         break;
       case 'bottom':
-        y = a.bottom + this.sideOffset;
-        x = this.align === 'start' ? a.left + this.alignOffset
-          : this.align === 'end' ? a.right - pw + this.alignOffset
-          : a.left + a.width / 2 - pw / 2 + this.alignOffset;
+        y = a.bottom + sideOffset;
+        x = this.align === 'start' ? a.left + alignOffset
+          : this.align === 'end' ? a.right - pw + alignOffset
+          : a.left + a.width / 2 - pw / 2 + alignOffset;
         break;
       case 'left':
-        x = a.left - pw - this.sideOffset;
-        y = this.align === 'start' ? a.top + this.alignOffset
-          : this.align === 'end' ? a.bottom - ph + this.alignOffset
-          : a.top + a.height / 2 - ph / 2 + this.alignOffset;
+        x = a.left - pw - sideOffset;
+        y = this.align === 'start' ? a.top + alignOffset
+          : this.align === 'end' ? a.bottom - ph + alignOffset
+          : a.top + a.height / 2 - ph / 2 + alignOffset;
         break;
       case 'right':
-        x = a.right + this.sideOffset;
-        y = this.align === 'start' ? a.top + this.alignOffset
-          : this.align === 'end' ? a.bottom - ph + this.alignOffset
-          : a.top + a.height / 2 - ph / 2 + this.alignOffset;
+        x = a.right + sideOffset;
+        y = this.align === 'start' ? a.top + alignOffset
+          : this.align === 'end' ? a.bottom - ph + alignOffset
+          : a.top + a.height / 2 - ph / 2 + alignOffset;
         break;
     }
 
     this.pos = {
-      x: Math.min(Math.max(x, VP_PAD), window.innerWidth - pw - VP_PAD),
-      y: Math.min(Math.max(y, VP_PAD), window.innerHeight - ph - VP_PAD),
+      x: Math.min(Math.max(x, vpPad), window.innerWidth - pw - vpPad),
+      y: Math.min(Math.max(y, vpPad), window.innerHeight - ph - vpPad),
     };
   }
 

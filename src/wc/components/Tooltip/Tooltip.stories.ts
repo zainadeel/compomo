@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-tooltip.js';
 import '../../../../dist/components/ds-button.js';
+import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
 
 const meta: Meta = {
   title: 'Overlay/Tooltip',
@@ -10,10 +12,15 @@ const meta: Meta = {
     label:      { control: 'text' },
     side:       { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
     align:      { control: 'select', options: ['start', 'center', 'end'] },
-    sideOffset: { control: 'number' },
+    sideOffset: { control: 'text', description: 'px number or TokoMo length' },
     shortcutKey: { control: 'text' },
   },
-  args: { label: 'Helpful tooltip', side: 'top', align: 'center', sideOffset: 4 },
+  args: {
+    label: 'Helpful tooltip',
+    side: 'top',
+    align: 'center',
+    sideOffset: TOKEN_DEFAULTS.space050,
+  },
 };
 
 export default meta;
@@ -26,8 +33,13 @@ export const Playground: Story = {
         label=${args['label'] ?? 'Helpful tooltip'}
         side=${args['side'] ?? 'top'}
         align=${args['align'] ?? 'center'}
-        side-offset=${args['sideOffset'] ?? 4}
         shortcut-key=${args['shortcutKey'] ?? ''}
+        ${ref(el => {
+          if (!el) return;
+          const tip = el as HTMLElement & { sideOffset: number | string };
+          const raw = args['sideOffset'] ?? TOKEN_DEFAULTS.space050;
+          tip.sideOffset = typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : raw;
+        })}
       >
         <ds-button label="Hover me" intent="brand"></ds-button>
       </ds-tooltip>

@@ -1,14 +1,13 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';
+import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type ModalWidth = 'sm' | 'md' | 'lg';
 
 const WIDTH_MAP: Record<ModalWidth, string> = {
-  sm: 'var(--dimension-modal-width-sm, 400px)',
-  md: 'var(--dimension-modal-width-md, 560px)',
-  lg: 'var(--dimension-modal-width-lg, 720px)',
+  sm: 'var(--dimension-modal-width-sm)',
+  md: 'var(--dimension-modal-width-md)',
+  lg: 'var(--dimension-modal-width-lg)',
 };
-
-const CLOSE_ANIMATION_MS = 220;
 
 const FOCUSABLE_SEL = [
   'a[href]',
@@ -77,7 +76,7 @@ export class Modal {
         this.closeTimer = null;
         this.previousFocus?.focus?.();
         this.previousFocus = null;
-      }, CLOSE_ANIMATION_MS);
+      }, this.closeAnimationMs);
     }
   }
 
@@ -154,6 +153,10 @@ export class Modal {
     return this.modalWidth as string;
   }
 
+  private get closeAnimationMs(): number {
+    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+  }
+
   render() {
     // Always render slots so scoped-mode slot distribution doesn't leak content.
     // The backdrop is hidden via CSS when not active.
@@ -173,7 +176,7 @@ export class Modal {
             aria-labelledby={this.titleId}
             aria-describedby={this.subtitle ? this.subtitleId : undefined}
             tabIndex={-1}
-            style={{ width: `min(${this.resolvedWidth}, calc(100vw - 32px))` }}
+            style={{ width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))` }}
           >
             <div class="modal-header">
               <h2 id={this.titleId} class="text-title-small modal-title">{this.heading}</h2>

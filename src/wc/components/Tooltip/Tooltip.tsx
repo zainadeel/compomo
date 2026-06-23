@@ -1,12 +1,8 @@
 import { Component, Prop, State, Element, Watch, h, Host } from '@stencil/core';
+import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
 export type TooltipAlign = 'start' | 'center' | 'end';
-
-const HOVER_DELAY_MS = 600;
-const INSTANT_REOPEN_MS = 300;
-const FADE_OUT_MS = 200;
-const VP_PAD = 4;
 
 let lastDismissedAt = 0;
 let tooltipIdCounter = 0;
@@ -22,9 +18,12 @@ export class Tooltip {
   @Prop() label!: string;
   @Prop() side: TooltipSide = 'top';
   @Prop() align: TooltipAlign = 'center';
-  @Prop() sideOffset: number = 4;
-  @Prop() alignOffset: number = 0;
-  @Prop() delay: number = HOVER_DELAY_MS;
+  /** Gap between anchor and tooltip — number (px) or TokoMo length. */
+  @Prop() sideOffset: number | string = TOKEN_DEFAULTS.space050;
+  /** Cross-axis offset — number (px) or TokoMo length. */
+  @Prop() alignOffset: number | string = 0;
+  /** Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`. */
+  @Prop() delay: number | string = TOKEN_DEFAULTS.animationDelayMedium1;
   @Prop() shortcutKey: string | undefined;
   @Prop() shortcutKeyPosition: 'start' | 'end' = 'end';
 
@@ -54,8 +53,45 @@ export class Tooltip {
   @Watch('label')
   @Watch('side')
   @Watch('align')
+  @Watch('sideOffset')
+  @Watch('alignOffset')
   onPositionPropsChange() {
     if (this.visible) this.calculatePosition();
+  }
+
+  private get viewportPadPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+  }
+
+  private get sideOffsetPx(): number {
+    return resolveCssLengthPx(this.sideOffset, TOKEN_DEFAULTS.space050);
+  }
+
+  private get alignOffsetPx(): number {
+    return resolveCssLengthPx(this.alignOffset, 0);
+  }
+
+  private get hoverDelayMs(): number {
+    return resolveCssTimeMs(this.delay, TOKEN_DEFAULTS.animationDelayMedium1);
+  }
+
+  private get instantReopenMs(): number {
+    return resolveCssTimeMs(
+      TOKEN_DEFAULTS.animationDurationMedium1,
+      TOKEN_DEFAULTS.animationDurationMedium1,
+    );
+  }
+
+  private get fadeOutMs(): number {
+    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+  }
+
+  private get tooltipFallbackWidthPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.tooltipFallbackWidth, TOKEN_DEFAULTS.tooltipFallbackWidth);
+  }
+
+  private get tooltipFallbackHeightPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.size300, TOKEN_DEFAULTS.size300);
   }
 
   private bindAnchor() {
@@ -88,7 +124,7 @@ export class Tooltip {
 
   private show() {
     this.clearTimers();
-    const instant = Date.now() - lastDismissedAt < INSTANT_REOPEN_MS;
+    const instant = Date.now() - lastDismissedAt < this.instantReopenMs;
     if (instant) {
       this.closing = false;
       this.visible = true;
@@ -100,7 +136,7 @@ export class Tooltip {
       this.closing = false;
       this.visible = true;
       requestAnimationFrame(() => this.calculatePosition());
-    }, this.delay);
+    }, this.hoverDelayMs);
   }
 
   private hide() {
@@ -112,7 +148,7 @@ export class Tooltip {
       this.closeTimer = null;
       this.visible = false;
       this.closing = false;
-    }, FADE_OUT_MS);
+    }, this.fadeOutMs);
   }
 
   private calculatePosition() {
@@ -120,40 +156,43 @@ export class Tooltip {
     const tip = this.el.querySelector('.tooltip-popup') as HTMLElement | null;
     if (!tip) return;
     const a = this.anchor.getBoundingClientRect();
-    const tw = tip.offsetWidth || 80;
-    const th = tip.offsetHeight || 24;
+    const tw = tip.offsetWidth || this.tooltipFallbackWidthPx;
+    const th = tip.offsetHeight || this.tooltipFallbackHeightPx;
+    const sideOffset = this.sideOffsetPx;
+    const alignOffset = this.alignOffsetPx;
+    const vpPad = this.viewportPadPx;
     let x = 0, y = 0;
 
     switch (this.side) {
       case 'top':
-        y = a.top - th - this.sideOffset;
-        x = this.align === 'start' ? a.left + this.alignOffset
-          : this.align === 'end' ? a.right - tw + this.alignOffset
-          : a.left + a.width / 2 - tw / 2 + this.alignOffset;
+        y = a.top - th - sideOffset;
+        x = this.align === 'start' ? a.left + alignOffset
+          : this.align === 'end' ? a.right - tw + alignOffset
+          : a.left + a.width / 2 - tw / 2 + alignOffset;
         break;
       case 'bottom':
-        y = a.bottom + this.sideOffset;
-        x = this.align === 'start' ? a.left + this.alignOffset
-          : this.align === 'end' ? a.right - tw + this.alignOffset
-          : a.left + a.width / 2 - tw / 2 + this.alignOffset;
+        y = a.bottom + sideOffset;
+        x = this.align === 'start' ? a.left + alignOffset
+          : this.align === 'end' ? a.right - tw + alignOffset
+          : a.left + a.width / 2 - tw / 2 + alignOffset;
         break;
       case 'left':
-        x = a.left - tw - this.sideOffset;
-        y = this.align === 'start' ? a.top + this.alignOffset
-          : this.align === 'end' ? a.bottom - th + this.alignOffset
-          : a.top + a.height / 2 - th / 2 + this.alignOffset;
+        x = a.left - tw - sideOffset;
+        y = this.align === 'start' ? a.top + alignOffset
+          : this.align === 'end' ? a.bottom - th + alignOffset
+          : a.top + a.height / 2 - th / 2 + alignOffset;
         break;
       case 'right':
-        x = a.right + this.sideOffset;
-        y = this.align === 'start' ? a.top + this.alignOffset
-          : this.align === 'end' ? a.bottom - th + this.alignOffset
-          : a.top + a.height / 2 - th / 2 + this.alignOffset;
+        x = a.right + sideOffset;
+        y = this.align === 'start' ? a.top + alignOffset
+          : this.align === 'end' ? a.bottom - th + alignOffset
+          : a.top + a.height / 2 - th / 2 + alignOffset;
         break;
     }
 
     this.pos = {
-      x: Math.min(Math.max(x, VP_PAD), window.innerWidth - tw - VP_PAD),
-      y: Math.min(Math.max(y, VP_PAD), window.innerHeight - th - VP_PAD),
+      x: Math.min(Math.max(x, vpPad), window.innerWidth - tw - vpPad),
+      y: Math.min(Math.max(y, vpPad), window.innerHeight - th - vpPad),
     };
   }
 
