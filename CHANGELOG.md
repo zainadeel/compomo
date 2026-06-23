@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/zainadeel/compomo/compare/v1.5.0...v1.6.0) (2026-06-23)
+
+
+### Added
+
+* add token resolve utils and replace hardcoded component values ([#167](https://github.com/zainadeel/compomo/issues/167)) ([d7aef59](https://github.com/zainadeel/compomo/commit/d7aef59c6e423113d17b2b19f6fea545f556d6b1))
+
 ## [1.5.0](https://github.com/zainadeel/compomo/compare/v1.4.0...v1.5.0) (2026-06-22)
 
 
