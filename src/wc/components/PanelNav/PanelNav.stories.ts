@@ -456,9 +456,11 @@ export const RouterModeEvent: Story = {
             const item = ROUTER_GROUPS.flatMap(g => g.items).find(i => i.id === e.detail);
             if (item?.href) navigate(item.href);
           }}
-          @dsNavUserAction=${() => {
+          @dsNavUserAction=${(e: CustomEvent<{ anchor: HTMLElement }>) => {
             const status = document.getElementById('router-user-status');
-            if (status) status.textContent = 'User menu clicked';
+            if (status) {
+              status.textContent = `User menu clicked (anchor: ${e.detail.anchor.id || e.detail.anchor.className})`;
+            }
           }}
         ></ds-panel-nav>
 

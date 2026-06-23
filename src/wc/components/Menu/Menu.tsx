@@ -1,24 +1,10 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
 import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
+import type { MenuItemData, MenuSection } from './menu-types';
 
-export type MenuSide = 'top' | 'right' | 'bottom' | 'left';
-export type MenuAlign = 'start' | 'center' | 'end';
-
-export interface MenuItemData {
-  label: string;
-  value?: string;
-  subtext?: string;
-  isSelected?: boolean;
-  isInactive?: boolean;
-  isDestructive?: boolean;
-  showToggle?: boolean;
-  toggleValue?: boolean;
-}
-
-export interface MenuSection {
-  header?: string;
-  items: MenuItemData[];
-}
+/** rAF retries while the popup mounts or the anchor resolves. */
+const POSITION_RETRY_BUDGET = 8;
 
 @Component({
   tag: 'ds-menu',
@@ -57,12 +43,15 @@ export class Menu {
   private scrollResizeHandler: (() => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private itemEls: HTMLElement[] = [];
+  private positionRetryRaf: number | null = null;
+  private listenersReady = false;
 
   componentDidLoad() {
     if (this.open) this.onOpenChange(true);
   }
 
   disconnectedCallback() {
+    this.cancelPositionRetry();
     this.teardownListeners();
   }
 
@@ -72,15 +61,19 @@ export class Menu {
       this.shouldRender = true;
       this.closing = false;
       this.positionReady = false;
-      requestAnimationFrame(() => {
-        this.calculatePosition();
-        this.positionReady = true;
-        this.focusInitialItem();
-        this.setupListeners();
+      this.listenersReady = false;
+      this.schedulePositionUpdate(() => {
+        if (!this.listenersReady) {
+          this.listenersReady = true;
+          this.focusInitialItem();
+          this.setupListeners();
+        }
       });
     } else if (this.shouldRender) {
+      this.cancelPositionRetry();
       this.closing = true;
       this.teardownListeners();
+      this.listenersReady = false;
       this.closeTimer = setTimeout(() => {
         this.shouldRender = false;
         this.closing = false;
@@ -89,12 +82,18 @@ export class Menu {
     }
   }
 
+  @Watch('anchor')
+  @Watch('anchorId')
+  onAnchorChange() {
+    if (this.open) this.schedulePositionUpdate();
+  }
+
   @Watch('side')
   @Watch('align')
   @Watch('sideOffset')
   @Watch('alignOffset')
   onPositionPropsChange() {
-    if (this.open) this.calculatePosition();
+    if (this.open) this.schedulePositionUpdate();
   }
 
   private get viewportPadPx(): number {
@@ -137,51 +136,61 @@ export class Menu {
     return this.activeSections.flatMap(s => s.items);
   }
 
-  private calculatePosition() {
-    const anchorEl = this.resolvedAnchor;
-    if (!anchorEl) return;
-    const popup = this.el.querySelector('.menu-popup') as HTMLElement | null;
-    if (!popup) return;
-
-    const a = anchorEl.getBoundingClientRect();
-    const pw = popup.offsetWidth || this.popupFallbackWidthPx;
-    const ph = popup.offsetHeight || this.popupFallbackHeightPx;
-    const sideOffset = this.sideOffsetPx;
-    const alignOffset = this.alignOffsetPx;
-    const vpPad = this.viewportPadPx;
-    let x = 0, y = 0;
-
-    switch (this.side) {
-      case 'top':
-        y = a.top - ph - sideOffset;
-        x = this.align === 'start' ? a.left + alignOffset
-          : this.align === 'end' ? a.right - pw + alignOffset
-          : a.left + a.width / 2 - pw / 2 + alignOffset;
-        break;
-      case 'bottom':
-        y = a.bottom + sideOffset;
-        x = this.align === 'start' ? a.left + alignOffset
-          : this.align === 'end' ? a.right - pw + alignOffset
-          : a.left + a.width / 2 - pw / 2 + alignOffset;
-        break;
-      case 'left':
-        x = a.left - pw - sideOffset;
-        y = this.align === 'start' ? a.top + alignOffset
-          : this.align === 'end' ? a.bottom - ph + alignOffset
-          : a.top + a.height / 2 - ph / 2 + alignOffset;
-        break;
-      case 'right':
-        x = a.right + sideOffset;
-        y = this.align === 'start' ? a.top + alignOffset
-          : this.align === 'end' ? a.bottom - ph + alignOffset
-          : a.top + a.height / 2 - ph / 2 + alignOffset;
-        break;
+  private cancelPositionRetry() {
+    if (this.positionRetryRaf !== null) {
+      cancelAnimationFrame(this.positionRetryRaf);
+      this.positionRetryRaf = null;
     }
+  }
 
-    this.pos = {
-      x: Math.min(Math.max(x, vpPad), window.innerWidth - pw - vpPad),
-      y: Math.min(Math.max(y, vpPad), window.innerHeight - ph - vpPad),
+  /** Retry until anchor + popup exist — do not reveal at 0,0 on a failed first pass. */
+  private schedulePositionUpdate(onReady?: () => void) {
+    if (!this.open) return;
+
+    this.cancelPositionRetry();
+    this.positionReady = false;
+
+    let remaining = POSITION_RETRY_BUDGET;
+
+    const attempt = () => {
+      this.positionRetryRaf = null;
+      if (!this.open) return;
+
+      if (this.calculatePosition()) {
+        this.positionReady = true;
+        onReady?.();
+        return;
+      }
+
+      if (remaining > 0) {
+        remaining -= 1;
+        this.positionRetryRaf = requestAnimationFrame(attempt);
+      }
     };
+
+    this.positionRetryRaf = requestAnimationFrame(attempt);
+  }
+
+  /** @returns `true` when anchor and popup were found and `pos` was updated. */
+  private calculatePosition(): boolean {
+    const anchorEl = this.resolvedAnchor;
+    if (!anchorEl) return false;
+    const popup = this.el.querySelector('.menu-popup') as HTMLElement | null;
+    if (!popup) return false;
+
+    this.pos = computeMenuPosition({
+      anchorRect: anchorEl.getBoundingClientRect(),
+      popupWidth: popup.offsetWidth || this.popupFallbackWidthPx,
+      popupHeight: popup.offsetHeight || this.popupFallbackHeightPx,
+      side: this.side,
+      align: this.align,
+      sideOffsetPx: this.sideOffsetPx,
+      alignOffsetPx: this.alignOffsetPx,
+      viewportPadPx: this.viewportPadPx,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+    });
+    return true;
   }
 
   /** Focus the selected item when present, otherwise the first enabled item. */
@@ -208,7 +217,9 @@ export class Menu {
       this.close();
     };
 
-    this.scrollResizeHandler = () => this.calculatePosition();
+    this.scrollResizeHandler = () => {
+      if (this.open) this.calculatePosition();
+    };
 
     document.addEventListener('mousedown', this.clickOutsideHandler, true);
     window.addEventListener('scroll', this.scrollResizeHandler, true);

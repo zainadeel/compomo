@@ -1,5 +1,5 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
-import type { MenuItemData } from '../Menu/Menu';
+import type { MenuItemData } from '../Menu/menu-types';
 
 export interface SelectOption {
   label: string;
