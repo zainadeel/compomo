@@ -22,9 +22,10 @@ import { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
-import { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
+import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
+import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
-import { PanelNavGroup, PanelNavRouterMode } from "./components/PanelNav/panel-nav-types";
+import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
@@ -57,9 +58,10 @@ export { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
-export { MenuAlign, MenuItemData, MenuSection, MenuSide } from "./components/Menu/Menu";
+export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
+export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
-export { PanelNavGroup, PanelNavRouterMode } from "./components/PanelNav/panel-nav-types";
+export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
@@ -1442,7 +1444,7 @@ declare global {
         "dsNavSelect": string;
         "dsNavToggle": boolean;
         "dsNavFooterAction": void;
-        "dsNavUserAction": void;
+        "dsNavUserAction": PanelNavUserActionDetail;
     }
     interface HTMLDsPanelNavElement extends Components.DsPanelNav, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelNavElementEventMap>(type: K, listener: (this: HTMLDsPanelNavElement, ev: DsPanelNavCustomEvent<HTMLDsPanelNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2330,9 +2332,9 @@ declare namespace LocalJSX {
          */
         "onDsNavToggle"?: (event: DsPanelNavCustomEvent<boolean>) => void;
         /**
-          * Emitted when the footer user button is clicked.
+          * Emitted when the footer user button is clicked. Detail includes the anchor for `ds-menu`.
          */
-        "onDsNavUserAction"?: (event: DsPanelNavCustomEvent<void>) => void;
+        "onDsNavUserAction"?: (event: DsPanelNavCustomEvent<PanelNavUserActionDetail>) => void;
         /**
           * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
           * @default 'anchor'

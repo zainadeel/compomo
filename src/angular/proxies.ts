@@ -658,13 +658,15 @@ export class DsPanelNav {
   @Output() dsNavSelect = new EventEmitter<CustomEvent<string>>();
   @Output() dsNavToggle = new EventEmitter<CustomEvent<boolean>>();
   @Output() dsNavFooterAction = new EventEmitter<CustomEvent<void>>();
-  @Output() dsNavUserAction = new EventEmitter<CustomEvent<void>>();
+  @Output() dsNavUserAction = new EventEmitter<CustomEvent<IDsPanelNavPanelNavUserActionDetail>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
   }
 }
 
+
+import type { PanelNavUserActionDetail as IDsPanelNavPanelNavUserActionDetail } from '@ds-mo/ui';
 
 export declare interface DsPanelNav extends Components.DsPanelNav {
   /**
@@ -680,9 +682,9 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
    */
   dsNavFooterAction: EventEmitter<CustomEvent<void>>;
   /**
-   * Emitted when the footer user button is clicked.
+   * Emitted when the footer user button is clicked. Detail includes the anchor for `ds-menu`.
    */
-  dsNavUserAction: EventEmitter<CustomEvent<void>>;
+  dsNavUserAction: EventEmitter<CustomEvent<IDsPanelNavPanelNavUserActionDetail>>;
 }
 
 

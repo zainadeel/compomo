@@ -149,6 +149,34 @@ const transition = document.startViewTransition(() => {
 runShellNavStyleRevealOnReady(transition);
 ```
 
+## External `ds-menu` (e.g. theme / account menu)
+
+When the menu content lives in the app shell (not inside `ds-panel-nav`), use a **stable anchor contract** — not `querySelector` on internal BEM classes.
+
+**Preferred — event detail from `ds-panel-nav`:**
+
+```ts
+panelNav.addEventListener('dsNavUserAction', (e: CustomEvent<{ anchor: HTMLElement }>) => {
+  menu.anchor = e.detail.anchor;
+  menu.side = 'right';
+  menu.align = 'end';
+  menu.sections = themeSections;
+  menu.open = true; // set anchor + placement props before open
+});
+```
+
+`dsNavUserAction` always includes `{ anchor }` — the footer user `<button>` that was clicked.
+
+**Alternative — `anchor-id`:**
+
+The footer user button has a stable id: `ds-panel-nav-user-menu-anchor` (`PANEL_NAV_USER_MENU_ANCHOR_ID`).
+
+```html
+<ds-menu anchor-id="ds-panel-nav-user-menu-anchor" …></ds-menu>
+```
+
+Set `side`, `align`, `sections`, and `anchor`/`anchor-id` **before** `open = true`.
+
 ## Reference consumer
 
 **motive-webapp-lab** (Angular 22) — shell + `PanelNavHostDirective` + document hint + `view-transitions.ts`.

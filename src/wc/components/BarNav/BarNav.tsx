@@ -8,7 +8,7 @@ import {
   h,
   Host,
 } from '@stencil/core';
-import type { MenuItemData } from '../Menu/Menu';
+import type { MenuItemData } from '../Menu/menu-types';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import { SHELL_BAR_NAV_VT_NAME } from '../../nav/shell-view-transition';

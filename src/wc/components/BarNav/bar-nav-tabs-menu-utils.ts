@@ -1,4 +1,4 @@
-import type { MenuSection } from '../Menu/Menu';
+import type { MenuSection } from '../Menu/menu-types';
 import {
   getSelectableTabs,
   isTabDivider,

@@ -20,3 +20,11 @@ export interface PanelNavGroup {
   label?: string;
   items: PanelNavItem[];
 }
+
+/** Stable `id` on the footer user button — use with `ds-menu` `anchor-id`. */
+export const PANEL_NAV_USER_MENU_ANCHOR_ID = 'ds-panel-nav-user-menu-anchor';
+
+/** Detail for `dsNavUserAction` — anchor element for an external `ds-menu`. */
+export interface PanelNavUserActionDetail {
+  anchor: HTMLElement;
+}

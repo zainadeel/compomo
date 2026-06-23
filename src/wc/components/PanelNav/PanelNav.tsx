@@ -14,7 +14,13 @@ import {
   shouldResyncPanelNavGroups,
   shouldResyncPanelNavStyle,
 } from './panel-nav-utils';
-import type { PanelNavGroup, PanelNavItem, PanelNavRouterMode } from './panel-nav-types';
+import {
+  PANEL_NAV_USER_MENU_ANCHOR_ID,
+  type PanelNavGroup,
+  type PanelNavItem,
+  type PanelNavRouterMode,
+  type PanelNavUserActionDetail,
+} from './panel-nav-types';
 
 // Module-level WeakMaps
 interface ViewTransition {
@@ -86,8 +92,8 @@ export class PanelNav {
   /** Emitted when the footer left button (gear / dashboard) is clicked. */
   @Event() dsNavFooterAction!: EventEmitter<void>;
 
-  /** Emitted when the footer user button is clicked. */
-  @Event() dsNavUserAction!: EventEmitter<void>;
+  /** Emitted when the footer user button is clicked. Detail includes the anchor for `ds-menu`. */
+  @Event() dsNavUserAction!: EventEmitter<PanelNavUserActionDetail>;
 
   @Element() el!: HTMLElement;
 
@@ -379,8 +385,9 @@ export class PanelNav {
     this.dsNavFooterAction.emit();
   }
 
-  private handleUserAction() {
-    this.dsNavUserAction.emit();
+  private handleUserAction(e: MouseEvent) {
+    const anchor = e.currentTarget as HTMLElement;
+    this.dsNavUserAction.emit({ anchor });
   }
 
   private clearEdgeOverlayTimer() {
@@ -587,9 +594,10 @@ export class PanelNav {
             {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}
             <button
               type="button"
+              id={PANEL_NAV_USER_MENU_ANCHOR_ID}
               class="panel-nav__item panel-nav__footer-user"
               aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
-              onClick={() => this.handleUserAction()}
+              onClick={(e) => this.handleUserAction(e)}
             >
               <span class="panel-nav__item-label panel-nav__footer-user-label">
                 <span class="panel-nav__item-label-text">
