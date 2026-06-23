@@ -361,6 +361,7 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 - **Do not commit `NPM_TOKEN` or any npm auth** — publishing uses OIDC, no secrets required.
 - **Do not skip `npm install -g npm@latest`** in the publish job — Trusted Publisher requires npm ≥ 11.5.1.
 - **Do not set `NODE_AUTH_TOKEN`** in the publish step — OIDC handles auth; a stray token can conflict.
+- **Do not add `src/wc/*` trees consumed by package `exports`** (e.g. `./nav` importing `../utils`) without listing them in `package.json` `files` — run `npm run verify:pack` before merging.
 
 ---
 

@@ -28,6 +28,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Verify npm pack (nav + utils)
+        run: npm run verify:pack
+
       - name: Verify dist artifacts
         run: |
           for f in \

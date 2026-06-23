@@ -45,6 +45,10 @@
       "types": "./src/wc/nav/index.ts",
       "import": "./src/wc/nav/index.ts"
     },
+    "./utils": {
+      "types": "./src/wc/utils/index.ts",
+      "import": "./src/wc/utils/index.ts"
+    },
     "./dist/components/*": "./dist/components/*"
   },
   "files": [
@@ -55,6 +59,7 @@
     "!src/wc/components/**/*.stories.ts",
     "!src/wc/components/**/*.stories.tsx",
     "src/wc/nav",
+    "src/wc/utils",
     "src/angular",
     "src/react"
   ],
@@ -63,6 +68,7 @@
     "pretypecheck": "node scripts/generate-icon-catalog.mjs",
     "pretest": "node scripts/generate-icon-catalog.mjs",
     "build": "stencil build && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/write-build-stamp.mjs",
+    "verify:pack": "node scripts/verify-npm-pack.mjs && node scripts/verify-nav-import.mjs",
     "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/shell-view-transition.test.ts tests/shell-gradient.test.ts tests/resolve-css-length-px.test.ts tests/resolve-css-time-ms.test.ts tests/overlay-positioning.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts tests/bar-nav-dom-utils.test.ts tests/icon-catalog.test.ts",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:install": "playwright install chromium",
