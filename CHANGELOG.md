@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/zainadeel/compomo/compare/v1.6.1...v1.6.2) (2026-06-23)
+
+
+### Fixed
+
+* **menu:** harden anchor positioning and emit panel-nav user anchor ([#171](https://github.com/zainadeel/compomo/issues/171)) ([05485cb](https://github.com/zainadeel/compomo/commit/05485cb03f83eaec1e2c56e4549ccf5781b650f0))
+
 ## [1.6.1](https://github.com/zainadeel/compomo/compare/v1.6.0...v1.6.1) (2026-06-23)
 
 
