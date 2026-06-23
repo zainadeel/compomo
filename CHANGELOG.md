@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/zainadeel/compomo/compare/v1.6.0...v1.6.1) (2026-06-23)
+
+
+### Fixed
+
+* **packaging:** ship nav utils in npm tarball and verify imports ([#169](https://github.com/zainadeel/compomo/issues/169)) ([743f100](https://github.com/zainadeel/compomo/commit/743f100074f0e575a83071b25d1559a57c3cafcf))
+
 ## [1.6.0](https://github.com/zainadeel/compomo/compare/v1.5.0...v1.6.0) (2026-06-23)
 
 
