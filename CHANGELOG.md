@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.3](https://github.com/zainadeel/compomo/compare/v1.7.2...v1.7.3) (2026-06-29)
+
+
+### Fixed
+
+* **badge:** resolve gradient ring surface in scoped nav light DOM ([dc97904](https://github.com/zainadeel/compomo/commit/dc97904593ec5332362b82cb398b2fa064a6b954))
+* **badge:** resolve gradient ring surface in scoped nav light DOM ([d1b998e](https://github.com/zainadeel/compomo/commit/d1b998ec10499c2f4d88ea93149a7262ccf9b464))
+
 ## [1.7.2](https://github.com/zainadeel/compomo/compare/v1.7.1...v1.7.2) (2026-06-29)
 
 
