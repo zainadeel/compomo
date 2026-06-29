@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.7.1](https://github.com/zainadeel/compomo/compare/v1.7.0...v1.7.1) (2026-06-29)
+
+
+### Fixed
+
+* **ci:** use GITHUB_TOKEN for release-please ([b7559b4](https://github.com/zainadeel/compomo/commit/b7559b434924fb78951d1eec29cffc05996bc8bf))
+* **ci:** use GITHUB_TOKEN for release-please ([4721187](https://github.com/zainadeel/compomo/commit/4721187da94271f050237ae0173095db7a3f05f9))
+
+
+### Reverted
+
+* **ci:** restore RELEASE_PLEASE_TOKEN for release-please ([#180](https://github.com/zainadeel/compomo/issues/180)) ([0c3971c](https://github.com/zainadeel/compomo/commit/0c3971cc533cfc873f4611409c46e1f7e65275af))
+
 ## [1.7.0](https://github.com/zainadeel/compomo/compare/v1.6.3...v1.7.0) (2026-06-29)
 
 
