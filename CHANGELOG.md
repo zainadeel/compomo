@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.4](https://github.com/zainadeel/compomo/compare/v1.7.3...v1.7.4) (2026-06-29)
+
+
+### Fixed
+
+* **badge:** bind gradient ring sync after auto-enable ([97851f9](https://github.com/zainadeel/compomo/commit/97851f9fb97798c34033e59be35dc89b13e17379))
+* **badge:** stamp gradient ring position in render ([e264e22](https://github.com/zainadeel/compomo/commit/e264e22cf9ea64df96f921a1dd96b615cb58d867))
+* **badge:** stamp gradient ring position in render ([a3ca6e8](https://github.com/zainadeel/compomo/commit/a3ca6e8c5c79e674449ae71eb3cfe2d16d684a14))
+
 ## [1.7.3](https://github.com/zainadeel/compomo/compare/v1.7.2...v1.7.3) (2026-06-29)
 
 
