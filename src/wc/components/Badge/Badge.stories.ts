@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { buildShellRadialGradient } from '../../nav/shell-gradient';
 import '../../../../dist/components/ds-badge.js';
 
 const COUNTS = [1, 5, 9, 10, 99];
@@ -62,9 +63,18 @@ const meta: Meta = {
     max:        { control: 'number' },
     surface:    { control: 'select', options: SURFACES },
     background: { control: 'text' },
+    onGradientBackground: { control: 'boolean', name: 'on-gradient-background' },
     label:      { control: 'text' },
   },
-  args: { variant: 'counter', count: 3, max: 9, surface: 'default', background: '', label: '' },
+  args: {
+    variant: 'counter',
+    count: 3,
+    max: 9,
+    surface: 'default',
+    background: '',
+    onGradientBackground: false,
+    label: '',
+  },
 };
 
 export default meta;
@@ -78,6 +88,7 @@ export const Playground: Story = {
       max=${args['max']}
       surface=${args['surface']}
       background=${args['background'] || undefined}
+      ?on-gradient-background=${args['onGradientBackground']}
       label=${args['label'] || undefined}
     ></ds-badge>
   `,
@@ -158,6 +169,67 @@ export const CounterAndDot: Story = {
       `)}
     </div>
   `,
+};
+
+export const OnGradientBackground: Story = {
+  name: 'On gradient background',
+  render: () => {
+    const wash = buildShellRadialGradient();
+    return html`
+      <div
+        style="
+          position: relative;
+          display: flex;
+          gap: var(--dimension-space-400);
+          align-items: center;
+          padding: var(--dimension-space-400);
+          border-radius: var(--dimension-radius-200);
+          background-color: var(--color-navigation-background);
+          --ds-shell-gradient-image: ${wash};
+          --ds-shell-gradient-size: 480px 240px;
+          --ds-shell-gradient-opacity: 0.1;
+        "
+      >
+        <div
+          aria-hidden="true"
+          style="
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: var(--ds-shell-gradient-opacity);
+            background-image: var(--ds-shell-gradient-image);
+            background-size: var(--ds-shell-gradient-size);
+            background-position: 0 0;
+            background-repeat: no-repeat;
+          "
+        ></div>
+        <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
+          <div style="${BADGE_TARGET}; color: var(--color-navigation-foreground-secondary);">
+            <ds-badge
+              style="${BADGE_ANCHOR}"
+              variant="dot"
+              background="var(--color-navigation-background)"
+              label="flat ring"
+            ></ds-badge>
+          </div>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-navigation-foreground-secondary);">flat ring</span>
+        </div>
+        <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
+          <div style="${BADGE_TARGET}; color: var(--color-navigation-foreground-secondary);">
+            <ds-badge
+              style="${BADGE_ANCHOR}; --_badge-gradient-position: 0 0;"
+              variant="dot"
+              background="var(--color-navigation-background)"
+              on-gradient-background
+              label="gradient ring"
+            ></ds-badge>
+          </div>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-navigation-foreground-secondary);">on-gradient-background</span>
+        </div>
+      </div>
+    `;
+  },
 };
 
 export const CustomRing: Story = {

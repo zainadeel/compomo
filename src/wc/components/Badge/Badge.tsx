@@ -1,4 +1,8 @@
-import { Component, Prop, h, Host } from '@stencil/core';
+import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
+import {
+  BADGE_GRADIENT_POSITION_VAR,
+  syncBadgeGradientPosition,
+} from '../../nav/badge-gradient-ring';
 
 export type BadgeVariant = 'counter' | 'dot';
 export type BadgeSurface =
@@ -28,6 +32,8 @@ const SURFACE_RING: Record<BadgeSurface, string> = {
   scoped: true,
 })
 export class Badge {
+  @Element() el!: HTMLElement;
+
   /** Render as a compact counter or notification dot. */
   @Prop() variant: BadgeVariant = 'counter';
 
@@ -43,11 +49,70 @@ export class Badge {
   /** Direct ring background override for component-local surfaces. */
   @Prop() background: string | undefined;
 
+  /**
+   * Ring samples the shell gradient stack (base fill + wash) instead of a flat
+   * `box-shadow`. Use on badges over `ds-app-shell[gradient]` nav chrome.
+   */
+  @Prop({ attribute: 'on-gradient-background', reflect: true }) gradientBackground: boolean = false;
+
   /** Deprecated alias for selected counter styling. Prefer context-specific color in the parent. */
   @Prop() isSelected: boolean = false;
 
   /** Accessible label. Defaults to the count as a string. */
   @Prop() label: string | undefined;
+
+  private gradientObserver: ResizeObserver | null = null;
+  private gradientWindowListener: (() => void) | null = null;
+
+  componentDidLoad() {
+    this.bindGradientRingSync();
+  }
+
+  disconnectedCallback() {
+    this.unbindGradientRingSync();
+    this.el.style.removeProperty(BADGE_GRADIENT_POSITION_VAR);
+  }
+
+  @Watch('gradientBackground')
+  gradientBackgroundChanged() {
+    this.bindGradientRingSync();
+  }
+
+  private bindGradientRingSync() {
+    this.unbindGradientRingSync();
+
+    if (!this.gradientBackground) return;
+
+    const update = () => syncBadgeGradientPosition(this.el);
+    update();
+
+    this.gradientWindowListener = update;
+    window.addEventListener('resize', update);
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this.gradientObserver = new ResizeObserver(update);
+      this.gradientObserver.observe(this.el);
+
+      const shell = this.el.closest('ds-app-shell');
+      if (shell) this.gradientObserver.observe(shell);
+
+      const bar = this.el.closest('ds-bar-nav');
+      if (bar) this.gradientObserver.observe(bar);
+
+      const panel = this.el.closest('ds-panel-nav');
+      if (panel) this.gradientObserver.observe(panel);
+    }
+  }
+
+  private unbindGradientRingSync() {
+    if (this.gradientWindowListener) {
+      window.removeEventListener('resize', this.gradientWindowListener);
+      this.gradientWindowListener = null;
+    }
+
+    this.gradientObserver?.disconnect();
+    this.gradientObserver = null;
+  }
 
   render() {
     const isDot = this.variant === 'dot';
@@ -65,6 +130,7 @@ export class Badge {
           'badge--counter': !isDot,
           'badge--dot': isDot,
           'badge--selected': this.isSelected,
+          'badge--on-gradient-background': this.gradientBackground,
         }}
         aria-label={ariaLabel}
         style={{ '--_badge-ring': ring }}
