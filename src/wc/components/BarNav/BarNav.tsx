@@ -12,7 +12,6 @@ import {
 import type { MenuItemData } from '../Menu/menu-types';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
-import { isShellGradientActive } from '../../nav/badge-gradient-ring';
 import { SHELL_BAR_NAV_VT_NAME } from '../../nav/shell-view-transition';
 import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 import {
@@ -551,7 +550,6 @@ export class BarNav {
                       class="bar-nav__tab-trigger-dot"
                       variant="dot"
                       background="var(--_bar-nav-bg)"
-                      on-gradient-background={isShellGradientActive(this.el)}
                       label=""
                       aria-hidden="true"
                     />

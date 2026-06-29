@@ -1,5 +1,4 @@
 import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
-import { isShellGradientActive } from '../../nav/badge-gradient-ring';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -188,7 +187,6 @@ export class TabGroupNav {
                       class="tab__dot"
                       variant="dot"
                       background="var(--_dot-ring)"
-                      on-gradient-background={isShellGradientActive(this.el)}
                       label=""
                       aria-hidden="true"
                     />
