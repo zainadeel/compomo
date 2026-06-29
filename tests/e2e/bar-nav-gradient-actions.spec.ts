@@ -10,6 +10,9 @@ test.describe('BarNav actions inside gradient shell', () => {
         label: action.getAttribute('aria-label'),
         buttonCount: action.querySelectorAll('button').length,
         badgeGradient: action.querySelector('ds-badge')?.gradientBackground ?? null,
+        badgePosition:
+          action.querySelector('ds-badge')?.style.getPropertyValue('--_badge-gradient-position') ??
+          '',
       })),
     );
 
@@ -18,5 +21,6 @@ test.describe('BarNav actions inside gradient shell', () => {
 
     const dotted = actions.filter(action => action.label !== 'Search');
     expect(dotted.every(action => action.badgeGradient === true)).toBe(true);
+    expect(dotted.every(action => action.badgePosition.length > 0)).toBe(true);
   });
 });

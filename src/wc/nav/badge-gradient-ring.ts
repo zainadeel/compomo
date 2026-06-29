@@ -20,24 +20,26 @@ export function isShellGradientActive(from: HTMLElement): boolean {
 
 /** Bar or panel chrome surface that owns the shell gradient stack. */
 export function findGradientSurface(from: HTMLElement): GradientSurface | null {
-  const barHost = from.closest('ds-bar-nav');
-  if (barHost instanceof HTMLElement && barHost.shadowRoot) {
-    const element = barHost.shadowRoot.querySelector('.bar-nav');
-    if (element instanceof HTMLElement) {
+  const barHost = from.closest('ds-bar-nav') as HTMLElement | null;
+  if (barHost) {
+    const root = barHost.shadowRoot ?? barHost;
+    const element = root.querySelector('.bar-nav');
+    if (element) {
       return {
-        element,
+        element: element as HTMLElement,
         chromeHost: barHost,
         positionVar: SHELL_GRADIENT_POSITION_BAR_VAR,
       };
     }
   }
 
-  const panelHost = from.closest('ds-panel-nav');
-  if (panelHost instanceof HTMLElement && panelHost.shadowRoot) {
-    const element = panelHost.shadowRoot.querySelector('.panel-nav');
-    if (element instanceof HTMLElement) {
+  const panelHost = from.closest('ds-panel-nav') as HTMLElement | null;
+  if (panelHost) {
+    const root = panelHost.shadowRoot ?? panelHost;
+    const element = root.querySelector('.panel-nav');
+    if (element) {
       return {
-        element,
+        element: element as HTMLElement,
         chromeHost: panelHost,
         positionVar: SHELL_GRADIENT_POSITION_PANEL_VAR,
       };
