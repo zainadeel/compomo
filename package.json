@@ -1,6 +1,6 @@
 {
   "name": "@ds-mo/ui",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "CompoMo — composable web components styled with TokoMo design tokens",
   "keywords": [
     "web-components",
