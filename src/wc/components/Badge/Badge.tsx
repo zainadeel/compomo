@@ -1,8 +1,10 @@
-import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Element, State, Watch, h, Host } from '@stencil/core';
 import {
   BADGE_GRADIENT_POSITION_VAR,
+  badgeGradientPosition,
+  findGradientSurface,
   isShellGradientActive,
-  syncBadgeGradientPosition,
+  readShellGradientPosition,
 } from '../../nav/badge-gradient-ring';
 
 export type BadgeVariant = 'counter' | 'dot';
@@ -63,6 +65,9 @@ export class Badge {
   /** Accessible label. Defaults to the count as a string. */
   @Prop() label: string | undefined;
 
+  /** Bumps on resize/layout so render recomputes gradient ring position. */
+  @State() private gradientLayoutVersion = 0;
+
   private gradientObserver: ResizeObserver | null = null;
   private gradientWindowListener: (() => void) | null = null;
 
@@ -70,19 +75,8 @@ export class Badge {
     this.enableShellGradientRingIfNeeded();
   }
 
-  /** Imperative opt-in avoids Stencil aborting parent render for nested badges. */
-  private enableShellGradientRingIfNeeded() {
-    if (!this.gradientBackground && isShellGradientActive(this.el)) {
-      this.gradientBackground = true;
-      return;
-    }
-
-    this.bindGradientRingSync();
-  }
-
   disconnectedCallback() {
     this.unbindGradientRingSync();
-    this.el.style.removeProperty(BADGE_GRADIENT_POSITION_VAR);
   }
 
   @Watch('gradientBackground')
@@ -90,12 +84,25 @@ export class Badge {
     this.bindGradientRingSync();
   }
 
+  /** Imperative opt-in avoids Stencil aborting parent render for nested badges. */
+  private enableShellGradientRingIfNeeded() {
+    if (!this.gradientBackground && isShellGradientActive(this.el)) {
+      this.gradientBackground = true;
+    }
+
+    if (this.gradientBackground) {
+      this.bindGradientRingSync();
+    }
+  }
+
   private bindGradientRingSync() {
     this.unbindGradientRingSync();
 
     if (!this.gradientBackground) return;
 
-    const update = () => syncBadgeGradientPosition(this.el);
+    const update = () => {
+      this.gradientLayoutVersion += 1;
+    };
     update();
 
     this.gradientWindowListener = update;
@@ -126,6 +133,23 @@ export class Badge {
     this.gradientObserver = null;
   }
 
+  private ringHostStyle(ring: string): Record<string, string> {
+    void this.gradientLayoutVersion;
+
+    const style: Record<string, string> = { '--_badge-ring': ring };
+    if (!this.gradientBackground) return style;
+
+    const surface = findGradientSurface(this.el);
+    if (!surface) return style;
+
+    style[BADGE_GRADIENT_POSITION_VAR] = badgeGradientPosition(
+      this.el,
+      surface,
+      readShellGradientPosition(surface),
+    );
+    return style;
+  }
+
   render() {
     const isDot = this.variant === 'dot';
 
@@ -145,7 +169,7 @@ export class Badge {
           'badge--on-gradient-background': this.gradientBackground,
         }}
         aria-label={ariaLabel}
-        style={{ '--_badge-ring': ring }}
+        style={this.ringHostStyle(ring)}
       >
         <span
           class={{
