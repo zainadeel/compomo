@@ -1,6 +1,5 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
-import { isShellGradientActive } from '../../nav/badge-gradient-ring';
 import {
   animateShellNavRadialReveal,
   ensureShellNavVtStyle,
@@ -483,7 +482,6 @@ export class PanelNav {
           class="panel-nav__item-dot"
           variant="dot"
           background="var(--_nav-bg)"
-          on-gradient-background={isShellGradientActive(this.el)}
           label=""
           aria-hidden="true"
         />

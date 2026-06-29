@@ -1,6 +1,7 @@
 import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
 import {
   BADGE_GRADIENT_POSITION_VAR,
+  isShellGradientActive,
   syncBadgeGradientPosition,
 } from '../../nav/badge-gradient-ring';
 
@@ -51,7 +52,8 @@ export class Badge {
 
   /**
    * Ring samples the shell gradient stack (base fill + wash) instead of a flat
-   * `box-shadow`. Use on badges over `ds-app-shell[gradient]` nav chrome.
+   * `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`;
+   * set `on-gradient-background` to opt in/out explicitly.
    */
   @Prop({ attribute: 'on-gradient-background', reflect: true }) gradientBackground: boolean = false;
 
@@ -65,6 +67,16 @@ export class Badge {
   private gradientWindowListener: (() => void) | null = null;
 
   componentDidLoad() {
+    this.enableShellGradientRingIfNeeded();
+  }
+
+  /** Imperative opt-in avoids Stencil aborting parent render for nested badges. */
+  private enableShellGradientRingIfNeeded() {
+    if (!this.gradientBackground && isShellGradientActive(this.el)) {
+      this.gradientBackground = true;
+      return;
+    }
+
     this.bindGradientRingSync();
   }
 

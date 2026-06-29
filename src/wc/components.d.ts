@@ -121,7 +121,7 @@ export namespace Components {
          */
         "count": number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Use on badges over `ds-app-shell[gradient]` nav chrome.
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`; set `on-gradient-background` to opt in/out explicitly.
           * @default false
          */
         "gradientBackground": boolean;
@@ -1752,7 +1752,7 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Use on badges over `ds-app-shell[gradient]` nav chrome.
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`; set `on-gradient-background` to opt in/out explicitly.
           * @default false
          */
         "gradientBackground"?: boolean;

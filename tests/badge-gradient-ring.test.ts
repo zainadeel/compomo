@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   badgeGradientPosition,
+  isShellGradientActive,
   parseCssBackgroundPosition,
 } from '../src/wc/nav/badge-gradient-ring';
 
@@ -47,5 +48,20 @@ describe('badgeGradientPosition', () => {
 
     const position = badgeGradientPosition(badgeHost, surface, '-200px 0');
     assert.equal(position, '-303px -23px');
+  });
+});
+
+describe('isShellGradientActive', () => {
+  it('returns false without a gradient shell ancestor', () => {
+    const el = { closest: () => null } as unknown as HTMLElement;
+    assert.equal(isShellGradientActive(el), false);
+  });
+
+  it('returns true when ancestor shell has gradient', () => {
+    const shell = { hasAttribute: (name: string) => name === 'gradient' };
+    const el = {
+      closest: (tag: string) => (tag === 'ds-app-shell' ? shell : null),
+    } as unknown as HTMLElement;
+    assert.equal(isShellGradientActive(el), true);
   });
 });
