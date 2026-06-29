@@ -8,6 +8,7 @@
   --_badge-bg: var(--color-background-bold-brand);
   --_badge-fg: var(--color-foreground-on-bold-background-primary);
   --_badge-ring: var(--color-background-secondary);
+  --_badge-ring-width: var(--dimension-stroke-width-018);
 }
 
 .badge__mark {
@@ -18,7 +19,7 @@
   box-sizing: border-box;
   color: var(--_badge-fg);
   background: var(--_badge-bg);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-018) var(--_badge-ring);
+  box-shadow: 0 0 0 var(--_badge-ring-width) var(--_badge-ring);
   white-space: nowrap;
 }
 
@@ -39,4 +40,45 @@
 
 :host(.badge--selected) {
   --_badge-bg: var(--color-foreground-primary);
+}
+
+/* Shell gradient ring — base fill + wash donut (option 3). */
+:host(.badge--on-gradient-background) .badge__mark {
+  position: relative;
+  z-index: 0;
+  box-shadow: none;
+  isolation: isolate;
+}
+
+:host(.badge--on-gradient-background) .badge__mark::before,
+:host(.badge--on-gradient-background) .badge__mark::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--_badge-ring-width));
+  border-radius: inherit;
+  box-sizing: border-box;
+  padding: var(--_badge-ring-width);
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+:host(.badge--on-gradient-background) .badge__mark::before {
+  z-index: -2;
+  background-color: var(--_badge-ring);
+}
+
+:host(.badge--on-gradient-background) .badge__mark::after {
+  z-index: -1;
+  background-image: var(--ds-shell-gradient-image, none);
+  background-size: var(--ds-shell-gradient-size, auto);
+  background-position: var(--_badge-gradient-position, 0 0);
+  background-repeat: no-repeat;
+  opacity: var(--ds-shell-gradient-opacity, 1);
 }

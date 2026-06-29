@@ -59,14 +59,14 @@ export declare interface DsAppShell extends Components.DsAppShell {}
 
 
 @ProxyCmp({
-  inputs: ['background', 'count', 'isSelected', 'label', 'max', 'surface', 'variant']
+  inputs: ['background', 'count', 'gradientBackground', 'isSelected', 'label', 'max', 'surface', 'variant']
 })
 @Component({
   selector: 'ds-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'count', 'isSelected', 'label', 'max', 'surface', 'variant'],
+  inputs: ['background', 'count', 'gradientBackground', 'isSelected', 'label', 'max', 'surface', 'variant'],
   standalone: false
 })
 export class DsBadge {

@@ -3,6 +3,7 @@ import {
   Prop,
   Event,
   EventEmitter,
+  Element,
   Watch,
   State,
   h,
@@ -11,6 +12,7 @@ import {
 import type { MenuItemData } from '../Menu/menu-types';
 import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
+import { isShellGradientActive } from '../../nav/badge-gradient-ring';
 import { SHELL_BAR_NAV_VT_NAME } from '../../nav/shell-view-transition';
 import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 import {
@@ -36,6 +38,8 @@ import {
   scoped: true,
 })
 export class BarNav {
+  @Element() el!: HTMLElement;
+
   /**
    * Tab items for the left section.
    * Set via JS property: `el.tabs = [...]`. Replace the array reference to update.
@@ -547,6 +551,7 @@ export class BarNav {
                       class="bar-nav__tab-trigger-dot"
                       variant="dot"
                       background="var(--_bar-nav-bg)"
+                      on-gradient-background={isShellGradientActive(this.el)}
                       label=""
                       aria-hidden="true"
                     />

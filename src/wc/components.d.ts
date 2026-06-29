@@ -121,6 +121,11 @@ export namespace Components {
          */
         "count": number;
         /**
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Use on badges over `ds-app-shell[gradient]` nav chrome.
+          * @default false
+         */
+        "gradientBackground": boolean;
+        /**
           * Deprecated alias for selected counter styling. Prefer context-specific color in the parent.
           * @default false
          */
@@ -1747,6 +1752,11 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Use on badges over `ds-app-shell[gradient]` nav chrome.
+          * @default false
+         */
+        "gradientBackground"?: boolean;
+        /**
           * Deprecated alias for selected counter styling. Prefer context-specific color in the parent.
           * @default false
          */
@@ -2775,6 +2785,7 @@ declare namespace LocalJSX {
         "max": number;
         "surface": BadgeSurface;
         "background": string | undefined;
+        "gradientBackground": boolean;
         "isSelected": boolean;
         "label": string | undefined;
     }

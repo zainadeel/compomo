@@ -1,4 +1,5 @@
-import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Element, h, Host } from '@stencil/core';
+import { isShellGradientActive } from '../../nav/badge-gradient-ring';
 
 export type BarNavActionBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark' | 'navigation';
 
@@ -8,6 +9,8 @@ export type BarNavActionBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'a
   scoped: true,
 })
 export class BarNavAction {
+  @Element() el!: HTMLElement;
+
   /** Icon name passed to <ds-icon>. */
   @Prop() icon: string = '';
 
@@ -64,6 +67,7 @@ export class BarNavAction {
                 class="action-btn__dot"
                 variant="dot"
                 background="var(--_dot-ring)"
+                on-gradient-background={isShellGradientActive(this.el)}
                 label=""
                 aria-hidden="true"
               />

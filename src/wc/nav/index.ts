@@ -31,3 +31,13 @@ export {
   shellGradientPositionBar,
 } from './shell-gradient';
 export type { ShellGradientLayout } from './shell-gradient';
+export {
+  BADGE_GRADIENT_POSITION_VAR,
+  badgeGradientPosition,
+  findGradientSurface,
+  isShellGradientActive,
+  parseCssBackgroundPosition,
+  readShellGradientPosition,
+  syncBadgeGradientPosition,
+} from './badge-gradient-ring';
+export type { GradientSurface } from './badge-gradient-ring';
