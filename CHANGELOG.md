@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.2](https://github.com/zainadeel/compomo/compare/v1.7.1...v1.7.2) (2026-06-29)
+
+
+### Fixed
+
+* **badge:** auto-enable gradient ring after mount to fix dotted nav actions ([#182](https://github.com/zainadeel/compomo/issues/182)) ([dcad962](https://github.com/zainadeel/compomo/commit/dcad96201b04c49be0976dadf77553889e99b19a))
+
 ## [1.7.1](https://github.com/zainadeel/compomo/compare/v1.7.0...v1.7.1) (2026-06-29)
 
 
