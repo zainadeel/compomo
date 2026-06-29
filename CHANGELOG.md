@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/zainadeel/compomo/compare/v1.6.2...v1.6.3) (2026-06-29)
+
+
+### Chores
+
+* release as 1.6.3 ([a4b817d](https://github.com/zainadeel/compomo/commit/a4b817d415bd75e6652619a413c88ece81fd56c1))
+
 ## [1.6.2](https://github.com/zainadeel/compomo/compare/v1.6.1...v1.6.2) (2026-06-23)
 
 
