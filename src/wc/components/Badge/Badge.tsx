@@ -74,10 +74,17 @@ export class Badge {
   private enableShellGradientRingIfNeeded() {
     if (!this.gradientBackground && isShellGradientActive(this.el)) {
       this.gradientBackground = true;
-      return;
     }
 
-    this.bindGradientRingSync();
+    if (this.gradientBackground) {
+      this.bindGradientRingSync();
+    }
+  }
+
+  componentDidRender() {
+    if (this.gradientBackground) {
+      syncBadgeGradientPosition(this.el);
+    }
   }
 
   disconnectedCallback() {
