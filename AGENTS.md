@@ -295,6 +295,10 @@ Current version lives in two places — kept in sync by release-please:
 3. Review and merge the release PR.
 4. Release Please tags `vX.Y.Z`, creates the GitHub Release, and the `publish` job in the same workflow publishes to npm with `--provenance` via **OIDC Trusted Publisher** (no long-lived `NPM_TOKEN` — configured in npm under Package Settings → Trusted Publishers).
 
+**Auth:** `release-please.yml` uses `secrets.RELEASE_PLEASE_TOKEN` — same PAT pattern as TokoMo and IcoMo. Use a classic PAT with `repo` scope (or a fine-grained PAT with Contents + Pull requests + Issues read/write). Re-authorize SSO on the token if the `zainadeel` org requires it.
+
+**Partial failure recovery:** If release-please creates the GitHub tag/release but the job fails on a post-release step (e.g. label cleanup → npm publish skipped), run the **Release Please** workflow manually (`workflow_dispatch`) with the existing tag (e.g. `v1.7.0`). Do **not** switch to `GITHUB_TOKEN` — keep the shared PAT pattern across ds-mo repos.
+
 **Forcing a specific version (`Release-As:` escape hatch):**
 
 Push an empty commit with a `Release-As: X.Y.Z` trailer in the commit message body to `main`:
