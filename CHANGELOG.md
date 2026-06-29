@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.0](https://github.com/zainadeel/compomo/compare/v1.6.3...v1.7.0) (2026-06-29)
+
+
+### Added
+
+* **badge:** add on-gradient-background ring for shell nav chrome ([6cf695b](https://github.com/zainadeel/compomo/commit/6cf695b92a0c283b4611e5da266847e40682af73))
+* **badge:** add on-gradient-background ring for shell nav chrome ([7a89430](https://github.com/zainadeel/compomo/commit/7a89430bc50b5f559880aa7837c76b9e5c558007))
+
 ## [1.6.3](https://github.com/zainadeel/compomo/compare/v1.6.2...v1.6.3) (2026-06-29)
 
 
