@@ -30,7 +30,9 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v5
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          # Use the workflow GITHUB_TOKEN — RELEASE_PLEASE_TOKEN was failing with
+          # "Bad credentials" after creating the GH release, which skipped npm publish.
+          token: ${{ secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
