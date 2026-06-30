@@ -15,7 +15,7 @@ export class PanelTools {
   /** When false, width animates to 0. */
   @Prop({ reflect: true }) open: boolean = false;
 
-  /** Active tool view — `search`, `activity`, `messages`, or `agents`. */
+  /** Active tool view — `search`, `messages`, `stacks`, `activity`, or `agents`. */
   @Prop({ attribute: 'active-tool', reflect: true }) activeTool: PanelToolsToolId | '' = '';
 
   /** Stays true until the close width transition finishes. */
@@ -118,22 +118,32 @@ export class PanelTools {
             <div
               class={{
                 'panel-tools__view': true,
-                'panel-tools__view--active': this.isActiveTool('activity'),
-                'text-body-medium': true,
-              }}
-              hidden={!this.isActiveTool('activity')}
-            >
-              <slot name="activity" />
-            </div>
-            <div
-              class={{
-                'panel-tools__view': true,
                 'panel-tools__view--active': this.isActiveTool('messages'),
                 'text-body-medium': true,
               }}
               hidden={!this.isActiveTool('messages')}
             >
               <slot name="messages" />
+            </div>
+            <div
+              class={{
+                'panel-tools__view': true,
+                'panel-tools__view--active': this.isActiveTool('stacks'),
+                'text-body-medium': true,
+              }}
+              hidden={!this.isActiveTool('stacks')}
+            >
+              <slot name="stacks" />
+            </div>
+            <div
+              class={{
+                'panel-tools__view': true,
+                'panel-tools__view--active': this.isActiveTool('activity'),
+                'text-body-medium': true,
+              }}
+              hidden={!this.isActiveTool('activity')}
+            >
+              <slot name="activity" />
             </div>
             <div
               class={{

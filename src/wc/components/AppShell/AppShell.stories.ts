@@ -46,9 +46,10 @@ const SAFETY_TABS = [
 
 const BAR_ACTIONS = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages', dot: true },
+  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
+  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', dot: true },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
 ];
 
 type DocWithVT = Document & {
