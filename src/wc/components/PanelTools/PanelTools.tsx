@@ -21,8 +21,20 @@ export class PanelTools {
   /** Stays true until the close width transition finishes. */
   @State() private expanded = false;
 
+  /** Suppresses width transition until the host has painted its initial open state. */
+  @State() private readyForMotion = false;
+
   componentWillLoad() {
     if (this.open) this.expanded = true;
+  }
+
+  componentDidLoad() {
+    // Two rAFs: let framework props (e.g. Angular localStorage restore) land before enabling motion.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.readyForMotion = true;
+      });
+    });
   }
 
   connectedCallback() {
@@ -62,7 +74,11 @@ export class PanelTools {
 
     return (
       <Host
-        class={{ 'panel-tools': true, 'panel-tools--open': this.open }}
+        class={{
+          'panel-tools': true,
+          'panel-tools--open': this.open,
+          'panel-tools--ready': this.readyForMotion,
+        }}
         role="complementary"
         aria-label={this.headerLabel() || 'Tools'}
         aria-hidden={showingContent ? null : 'true'}

@@ -13,6 +13,8 @@
   border-bottom: var(--dimension-stroke-width-012) solid var(--_bar-nav-border);
   background-color: var(--_bar-nav-bg);
   color: var(--_bar-nav-fg-primary);
+  -webkit-user-select: none;
+  user-select: none;
   transition:
     background-color var(--effect-motion-short-3),
     border-color var(--effect-motion-short-3),
