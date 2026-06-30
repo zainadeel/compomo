@@ -18,7 +18,7 @@ const safetyTabs = [
 const defaultActions = [
   { id: 'search',    icon: 'MagnifyingGlass', ariaLabel: 'Go to / Search' },
   { id: 'inbox',     icon: 'Inbox',           ariaLabel: 'Inbox',         dot: true  },
-  { id: 'assistant', icon: 'AI',              ariaLabel: 'AI Assistant',  dot: true  },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', dot: true },
 ];
 
 const meta: Meta = {

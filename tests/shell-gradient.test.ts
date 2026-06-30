@@ -11,10 +11,10 @@ import {
 describe('buildShellRadialGradient', () => {
   it('uses unified three-stop radial at top-left', () => {
     const g = buildShellRadialGradient();
-    assert.match(g, /128\.57% 141\.42% at 0% 0%/);
+    assert.match(g, /100% 100% at 0% 0%/);
     assert.match(g, /var\(--color-background-transparent\) 0%/);
-    assert.match(g, /var\(--color-color-intent-blue-medium-background\) 50%/);
     assert.match(g, /var\(--color-color-intent-blue-strong-background\) 100%/);
+    assert.doesNotMatch(g, /50%/);
   });
 });
 

@@ -282,6 +282,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Right zone — pinned to the end; header gap is the min space from tabs/trigger */
