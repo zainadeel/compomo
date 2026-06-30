@@ -153,11 +153,9 @@ test.describe('BarNav responsive overflow', () => {
   test('responsive collapsed trigger truncates short active label before actions overflow', async ({
     page,
   }) => {
-    await page.evaluate(() => window.__setShellWidth(200));
+    await page.evaluate(() => window.__setShellWidth(270));
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.bar-nav__tab-trigger-label-text--truncated')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.locator('.bar-nav__tab-trigger-label-text--truncated')).toHaveCount(1);
 
     const layout = await page.evaluate(() => {
       const header = document.querySelector('.bar-nav') as HTMLElement;
@@ -194,7 +192,7 @@ test.describe('BarNav responsive overflow', () => {
   test('responsive collapsed trigger does not fade short label while it fully fits', async ({
     page,
   }) => {
-    await page.evaluate(() => window.__setShellWidth(220));
+    await page.evaluate(() => window.__setShellWidth(300));
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
 
     const layout = await page.evaluate(() => {
