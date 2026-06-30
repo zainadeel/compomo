@@ -16,11 +16,12 @@ test.describe('BarNav actions inside gradient shell', () => {
       })),
     );
 
-    expect(actions).toHaveLength(3);
+    expect(actions).toHaveLength(5);
     expect(actions.every(action => action.buttonCount === 1)).toBe(true);
 
-    const dotted = actions.filter(action => action.label !== 'Search');
-    expect(dotted.every(action => action.badgeGradient === true)).toBe(true);
-    expect(dotted.every(action => action.badgePosition.length > 0)).toBe(true);
+    const dotted = actions.filter(action => action.badgeGradient === true);
+    expect(dotted).toHaveLength(1);
+    expect(dotted[0].label).toBe('Activity');
+    expect(dotted[0].badgePosition.length).toBeGreaterThan(0);
   });
 });
