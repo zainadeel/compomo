@@ -105,6 +105,7 @@ export class BarNav {
   private resizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
+  private barNavSyncQueued = false;
 
   private get effectiveValue(): string {
     if (this.currentUrl && this.basePath) {
@@ -125,23 +126,10 @@ export class BarNav {
   @Watch('tabsJson')
   @Watch('actions')
   @Watch('actionsJson')
-  onPropsChange() {
-    this.resolvedTabs = this.tabsJson
-      ? parseJsonArrayProp(this.tabsJson, [])
-      : (this.tabs ?? []);
-    this.resolvedActions = this.actionsJson
-      ? parseJsonArrayProp(this.actionsJson, [])
-      : (this.actions ?? []);
-    this.syncValueFromUrl();
-    this.intrinsicWidthRetryCount = 0;
-    this.scheduleOverflowCheck();
-  }
-
   @Watch('currentUrl')
   @Watch('basePath')
-  onUrlChange() {
-    this.syncValueFromUrl();
-    this.scheduleOverflowCheck();
+  onHostPropsChange() {
+    this.scheduleBarNavSync();
   }
 
   @Watch('value')
@@ -179,7 +167,7 @@ export class BarNav {
   }
 
   componentWillLoad() {
-    this.onPropsChange();
+    this.applyHostProps();
   }
 
   componentDidLoad() {
@@ -215,7 +203,7 @@ export class BarNav {
         this.actionsJson,
       )
     ) {
-      this.onPropsChange();
+      this.applyHostProps();
     } else if (this.currentUrl && this.basePath) {
       this.syncValueFromUrl();
     }
@@ -365,6 +353,28 @@ export class BarNav {
 
   private handleMenuClose() {
     this.menuOpen = false;
+  }
+
+  /** Batch tabs/basePath/currentUrl updates so URL derivation never runs with a mixed section. */
+  private scheduleBarNavSync() {
+    if (this.barNavSyncQueued) return;
+    this.barNavSyncQueued = true;
+    queueMicrotask(() => {
+      this.barNavSyncQueued = false;
+      this.applyHostProps();
+    });
+  }
+
+  private applyHostProps() {
+    this.resolvedTabs = this.tabsJson
+      ? parseJsonArrayProp(this.tabsJson, [])
+      : (this.tabs ?? []);
+    this.resolvedActions = this.actionsJson
+      ? parseJsonArrayProp(this.actionsJson, [])
+      : (this.actions ?? []);
+    this.syncValueFromUrl();
+    this.intrinsicWidthRetryCount = 0;
+    this.scheduleOverflowCheck();
   }
 
   private syncMenuSections() {

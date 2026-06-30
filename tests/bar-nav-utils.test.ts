@@ -86,4 +86,27 @@ describe('deriveBarNavValueFromUrl', () => {
     assert.equal(state.value, 'events');
     assert.equal(state.hideTabs, false);
   });
+
+  it('can mis-select when tab ids collide across sections (host must sync props atomically)', () => {
+    const marketplaceTabs: BarNavTab[] = [
+      { id: 'browse', label: 'Browse' },
+      { id: 'manage', label: 'Manage' },
+    ];
+    const analyticsTabs: BarNavTab[] = [
+      { id: 'dashboards', label: 'Dashboards' },
+      { id: 'browse', label: 'Browse' },
+    ];
+    const stale = deriveBarNavValueFromUrl(
+      '/dashboard/marketplace/browse',
+      '/dashboard/marketplace',
+      analyticsTabs,
+    );
+    assert.equal(stale.value, 'browse');
+    const fresh = deriveBarNavValueFromUrl(
+      '/dashboard/analytics/dashboards',
+      '/dashboard/analytics',
+      analyticsTabs,
+    );
+    assert.equal(fresh.value, 'dashboards');
+  });
 });
