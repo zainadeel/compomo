@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.8.0](https://github.com/zainadeel/compomo/compare/v1.7.4...v1.8.0) (2026-06-30)
+
+
+### Added
+
+* **shell:** add panel tools and refine nav chrome ([a661e71](https://github.com/zainadeel/compomo/commit/a661e7131f442e95495eb578c2296a948cb78bb5))
+* **ui:** add stacks panel tool and activity-only action dots ([5d698f7](https://github.com/zainadeel/compomo/commit/5d698f76f0fc04957cb4ff1b7e9ba185a4352892))
+* **ui:** panel tools, nav chrome polish, and shell integration fixes ([d0afc0e](https://github.com/zainadeel/compomo/commit/d0afc0e789e7735361417f1f55e7be8f95b18cbc))
+* **ui:** polish panel tools, panel nav scroll fade, and shell vt motion ([a64b67d](https://github.com/zainadeel/compomo/commit/a64b67d0934f459e0fb6cdc1aca4a7c28200d522))
+
+
+### Fixed
+
+* **bar-nav:** batch prop sync to avoid cross-section tab flash ([b55d539](https://github.com/zainadeel/compomo/commit/b55d53929eaf4cc837e0c3abc2391437fc29129e))
+* **bar-nav:** gate section transitions to prevent tab id flash ([df9d6b7](https://github.com/zainadeel/compomo/commit/df9d6b7ead2e6c3c97e76cae7214be5da175e692))
+* **shell:** prevent bar-nav selection and panel restore flash ([efd59e5](https://github.com/zainadeel/compomo/commit/efd59e576396607af71cba090787dc9ed721076e))
+* **test:** align bar-nav e2e fixtures with section gating ([207c354](https://github.com/zainadeel/compomo/commit/207c35418c9c2a040f566f0329dfaf260fba8bd5))
+* **test:** align bar-nav e2e fixtures with section gating and stacks actions ([060346a](https://github.com/zainadeel/compomo/commit/060346a6af550811186068d8273b029985e87c83))
+
 ## [1.7.4](https://github.com/zainadeel/compomo/compare/v1.7.3...v1.7.4) (2026-06-29)
 
 
