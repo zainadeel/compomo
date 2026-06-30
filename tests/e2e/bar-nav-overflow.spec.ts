@@ -93,7 +93,8 @@ test.describe('BarNav responsive overflow', () => {
         ],
         navActions: [
           { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-          { id: 'inbox', icon: 'Inbox', ariaLabel: 'Inbox', dot: true },
+          { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages', dot: true },
+          { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
           { id: 'agents', icon: 'AI', ariaLabel: 'Agents', dot: true },
         ],
       },

@@ -11,7 +11,10 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-function toolsShell(open: boolean, activeTool: 'search' | 'inbox' | 'agents') {
+function toolsShell(
+  open: boolean,
+  activeTool: 'search' | 'activity' | 'messages' | 'agents',
+) {
   return html`
     <div
       style="
@@ -33,7 +36,8 @@ function toolsShell(open: boolean, activeTool: 'search' | 'inbox' | 'agents') {
       </div>
       <ds-panel-tools ?open=${open} active-tool=${activeTool}>
         <p slot="search">Search content placeholder</p>
-        <p slot="inbox">Inbox content placeholder</p>
+        <p slot="activity">Activity content placeholder</p>
+        <p slot="messages">Messages content placeholder</p>
         <p slot="agents">Agents content placeholder</p>
       </ds-panel-tools>
     </div>
@@ -45,9 +49,14 @@ export const SearchOpen: Story = {
   render: () => toolsShell(true, 'search'),
 };
 
-export const InboxOpen: Story = {
-  name: 'Inbox open',
-  render: () => toolsShell(true, 'inbox'),
+export const ActivityOpen: Story = {
+  name: 'Activity open',
+  render: () => toolsShell(true, 'activity'),
+};
+
+export const MessagesOpen: Story = {
+  name: 'Messages open',
+  render: () => toolsShell(true, 'messages'),
 };
 
 export const AgentsOpen: Story = {

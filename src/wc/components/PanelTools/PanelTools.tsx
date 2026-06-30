@@ -15,7 +15,7 @@ export class PanelTools {
   /** When false, width animates to 0. */
   @Prop({ reflect: true }) open: boolean = false;
 
-  /** Active tool view — `search`, `inbox`, or `agents`. */
+  /** Active tool view — `search`, `activity`, `messages`, or `agents`. */
   @Prop({ attribute: 'active-tool', reflect: true }) activeTool: PanelToolsToolId | '' = '';
 
   /** Stays true until the close width transition finishes. */
@@ -24,14 +24,29 @@ export class PanelTools {
   /** Suppresses width transition until the host has painted its initial open state. */
   @State() private readyForMotion = false;
 
+  private motionEnableGeneration = 0;
+
   componentWillLoad() {
     if (this.open) this.expanded = true;
   }
 
   componentDidLoad() {
-    // Two rAFs: let framework props (e.g. Angular localStorage restore) land before enabling motion.
+    this.deferMotionEnable();
+  }
+
+  disconnectedCallback() {
+    this.el.removeEventListener('transitionend', this.handleTransitionEnd);
+    this.motionEnableGeneration += 1;
+  }
+
+  /** Two rAFs after the last pre-ready prop change — host bindings may land late on refresh. */
+  private deferMotionEnable() {
+    if (this.readyForMotion) return;
+    const generation = ++this.motionEnableGeneration;
     requestAnimationFrame(() => {
+      if (generation !== this.motionEnableGeneration) return;
       requestAnimationFrame(() => {
+        if (generation !== this.motionEnableGeneration) return;
         this.readyForMotion = true;
       });
     });
@@ -41,13 +56,15 @@ export class PanelTools {
     this.el.addEventListener('transitionend', this.handleTransitionEnd);
   }
 
-  disconnectedCallback() {
-    this.el.removeEventListener('transitionend', this.handleTransitionEnd);
-  }
-
   @Watch('open')
   openChanged(isOpen: boolean) {
     if (isOpen) this.expanded = true;
+    this.deferMotionEnable();
+  }
+
+  @Watch('activeTool')
+  activeToolChanged() {
+    this.deferMotionEnable();
   }
 
   private handleTransitionEnd = (event: TransitionEvent) => {
@@ -92,6 +109,7 @@ export class PanelTools {
               class={{
                 'panel-tools__view': true,
                 'panel-tools__view--active': this.isActiveTool('search'),
+                'text-body-medium': true,
               }}
               hidden={!this.isActiveTool('search')}
             >
@@ -100,16 +118,28 @@ export class PanelTools {
             <div
               class={{
                 'panel-tools__view': true,
-                'panel-tools__view--active': this.isActiveTool('inbox'),
+                'panel-tools__view--active': this.isActiveTool('activity'),
+                'text-body-medium': true,
               }}
-              hidden={!this.isActiveTool('inbox')}
+              hidden={!this.isActiveTool('activity')}
             >
-              <slot name="inbox" />
+              <slot name="activity" />
+            </div>
+            <div
+              class={{
+                'panel-tools__view': true,
+                'panel-tools__view--active': this.isActiveTool('messages'),
+                'text-body-medium': true,
+              }}
+              hidden={!this.isActiveTool('messages')}
+            >
+              <slot name="messages" />
             </div>
             <div
               class={{
                 'panel-tools__view': true,
                 'panel-tools__view--active': this.isActiveTool('agents'),
+                'text-body-medium': true,
               }}
               hidden={!this.isActiveTool('agents')}
             >

@@ -7,6 +7,19 @@ export { parseCssTimeMs };
 
 const VT_STYLE_ID = 'ds-shell-nav-vt-style';
 
+/** TokoMo tokens for the dashboard ↔ settings radial reveal (WAAPI). */
+export const SHELL_NAV_REVEAL_DURATION_VAR = '--effect-animation-duration-medium-3';
+export const SHELL_NAV_REVEAL_EASING_VAR = '--effect-animation-easing-ease-in-out';
+
+const SHELL_NAV_REVEAL_DURATION_FALLBACK_MS = 500;
+const SHELL_NAV_REVEAL_EASING_FALLBACK = 'ease-in-out';
+
+function readCssCustomProperty(name: string, fallback: string): string {
+  if (typeof document === 'undefined') return fallback;
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
 /** Suppress default cross-fade and pin new snapshots to a 0px circle for WAAPI reveal. */
 export function ensureShellNavVtStyle(): void {
   if (typeof document === 'undefined') return;
@@ -53,10 +66,16 @@ export function animateShellNavRadialReveal(
   origin: ShellNavRevealOrigin,
   durationMs?: number,
 ): void {
-  const durToken = getComputedStyle(document.documentElement)
-    .getPropertyValue('--effect-animation-duration-long-1')
-    .trim();
-  const duration = durationMs ?? parseCssTimeMs(durToken, 750);
+  const duration =
+    durationMs ??
+    parseCssTimeMs(
+      readCssCustomProperty(SHELL_NAV_REVEAL_DURATION_VAR, '400ms'),
+      SHELL_NAV_REVEAL_DURATION_FALLBACK_MS,
+    );
+  const easing = readCssCustomProperty(
+    SHELL_NAV_REVEAL_EASING_VAR,
+    SHELL_NAV_REVEAL_EASING_FALLBACK,
+  );
   const keyframes = {
     clipPath: [
       `circle(0px at ${origin.x}px ${origin.y}px)`,
@@ -65,7 +84,7 @@ export function animateShellNavRadialReveal(
   };
   const options = {
     duration,
-    easing: 'ease-in-out',
+    easing,
     fill: 'forwards' as const,
   };
 

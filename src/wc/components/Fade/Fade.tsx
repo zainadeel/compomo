@@ -1,4 +1,5 @@
-import { Component, Prop, h, Host } from '@stencil/core';
+import { Component, Prop, Element, State, h, Host } from '@stencil/core';
+import { isShellGradientActive } from '../../nav/badge-gradient-ring';
 
 export type FadeSide = 'top' | 'bottom' | 'left' | 'right';
 export type FadeSurface =
@@ -55,6 +56,11 @@ const SURFACE_BACKGROUND: Record<FadeSurface, string> = {
   scoped: true,
 })
 export class Fade {
+  @Element() el!: HTMLElement;
+
+  /** When under `ds-app-shell[gradient]`, composites the shell wash over the base fade. */
+  @State() private shellGradientChrome: 'panel' | 'bar' | null = null;
+
   /** Edge where the fade is anchored. */
   @Prop() side: FadeSide = 'bottom';
 
@@ -75,6 +81,18 @@ export class Fade {
 
   /** Controls visibility without removing the element from layout/positioning. */
   @Prop() visible: boolean = true;
+
+  componentDidLoad() {
+    this.syncShellGradient();
+  }
+
+  private syncShellGradient() {
+    if (!isShellGradientActive(this.el)) {
+      this.shellGradientChrome = null;
+      return;
+    }
+    this.shellGradientChrome = this.el.closest('ds-bar-nav') ? 'bar' : 'panel';
+  }
 
   private resolveSize(): string {
     if (this.height) return this.height;
@@ -100,6 +118,9 @@ export class Fade {
           'fade--hidden': !this.visible,
           'fade--vertical-edge': isVerticalEdge,
           'fade--horizontal-edge': !isVerticalEdge,
+          'fade--shell-gradient': this.shellGradientChrome !== null,
+          'fade--shell-gradient-panel': this.shellGradientChrome === 'panel',
+          'fade--shell-gradient-bar': this.shellGradientChrome === 'bar',
           [`fade--${this.side}`]: true,
         }}
         style={{

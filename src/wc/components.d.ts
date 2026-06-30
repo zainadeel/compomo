@@ -684,7 +684,7 @@ export namespace Components {
     }
     interface DsPanelTools {
         /**
-          * Active tool view — `search`, `inbox`, or `agents`.
+          * Active tool view — `search`, `activity`, `messages`, or `agents`.
           * @default ''
          */
         "activeTool": PanelToolsToolId | '';
@@ -2389,7 +2389,7 @@ declare namespace LocalJSX {
     }
     interface DsPanelTools {
         /**
-          * Active tool view — `search`, `inbox`, or `agents`.
+          * Active tool view — `search`, `activity`, `messages`, or `agents`.
           * @default ''
          */
         "activeTool"?: PanelToolsToolId | '';

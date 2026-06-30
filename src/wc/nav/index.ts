@@ -9,6 +9,8 @@ export {
 } from './nav-chrome';
 export {
   SHELL_BAR_NAV_VT_NAME,
+  SHELL_NAV_REVEAL_DURATION_VAR,
+  SHELL_NAV_REVEAL_EASING_VAR,
   parseCssTimeMs,
   ensureShellNavVtStyle,
   resolveShellNavRevealOrigin,

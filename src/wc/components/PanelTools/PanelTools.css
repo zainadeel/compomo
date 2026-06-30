@@ -8,18 +8,24 @@
   overflow: hidden;
   border-left: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
   --_panel-tools-width: var(--dimension-panel-width-sm);
-  --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 0.3s);
-  --_panel-tools-expand-motion: var(--_panel-tools-expand-dur)
-    var(--effect-animation-easing-ease-in-out, ease);
-  transition: max-width var(--_panel-tools-expand-motion);
-}
-
-:host(:not(.panel-tools--ready)) {
+  /* Match panel-nav expand timing (medium-1); easing differs by direction below. */
+  --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 300ms);
   transition: none;
 }
 
 :host(.panel-tools--open) {
   max-width: var(--_panel-tools-width);
+}
+
+/* Motion only after ready — restored open state can paint wide before transitions arm. */
+:host(.panel-tools--ready:not(.panel-tools--open)) {
+  transition: max-width var(--_panel-tools-expand-dur)
+    var(--effect-animation-easing-ease-in, ease-in);
+}
+
+:host(.panel-tools--ready.panel-tools--open) {
+  transition: max-width var(--_panel-tools-expand-dur)
+    var(--effect-animation-easing-ease-out, ease-out);
 }
 
 .panel-tools__inner {
@@ -40,6 +46,8 @@
   padding: 0 var(--dimension-space-200);
   border-bottom: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
   color: var(--color-foreground-primary);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .panel-tools__body {
@@ -56,6 +64,21 @@
   box-sizing: border-box;
   padding: var(--dimension-space-200);
   color: var(--color-foreground-secondary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+.panel-tools__view ::slotted(*) {
+  margin: 0;
+  color: var(--color-foreground-secondary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
 }
 
 .panel-tools__view--active {
