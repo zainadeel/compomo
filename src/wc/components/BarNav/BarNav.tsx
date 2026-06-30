@@ -105,6 +105,10 @@ export class BarNav {
   private resizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
+  /** Matches `basePath` once tabs + URL are reconciled for the active section. */
+  @State() private committedSection = '';
+  /** Section waiting for URL + tabs to catch up after a cross-area navigation. */
+  @State() private pendingSection = '';
 
   private get effectiveValue(): string {
     if (this.currentUrl && this.basePath) {
@@ -125,23 +129,10 @@ export class BarNav {
   @Watch('tabsJson')
   @Watch('actions')
   @Watch('actionsJson')
-  onPropsChange() {
-    this.resolvedTabs = this.tabsJson
-      ? parseJsonArrayProp(this.tabsJson, [])
-      : (this.tabs ?? []);
-    this.resolvedActions = this.actionsJson
-      ? parseJsonArrayProp(this.actionsJson, [])
-      : (this.actions ?? []);
-    this.syncValueFromUrl();
-    this.intrinsicWidthRetryCount = 0;
-    this.scheduleOverflowCheck();
-  }
-
   @Watch('currentUrl')
   @Watch('basePath')
-  onUrlChange() {
-    this.syncValueFromUrl();
-    this.scheduleOverflowCheck();
+  onHostPropsChange() {
+    this.applyHostProps();
   }
 
   @Watch('value')
@@ -179,7 +170,7 @@ export class BarNav {
   }
 
   componentWillLoad() {
-    this.onPropsChange();
+    this.applyHostProps();
   }
 
   componentDidLoad() {
@@ -215,7 +206,7 @@ export class BarNav {
         this.actionsJson,
       )
     ) {
-      this.onPropsChange();
+      this.applyHostProps();
     } else if (this.currentUrl && this.basePath) {
       this.syncValueFromUrl();
     }
@@ -367,13 +358,72 @@ export class BarNav {
     this.menuOpen = false;
   }
 
+  /** Batch tabs/basePath/currentUrl updates so URL derivation never runs with a mixed section. */
+  private incomingTabs(): BarNavTab[] {
+    return this.tabsJson
+      ? parseJsonArrayProp(this.tabsJson, [])
+      : (this.tabs ?? []);
+  }
+
+  private incomingActions(): BarNavActionItem[] {
+    return this.actionsJson
+      ? parseJsonArrayProp(this.actionsJson, [])
+      : (this.actions ?? []);
+  }
+
+  private applyHostProps() {
+    const nextBasePath = this.basePath;
+    const sectionChanged =
+      nextBasePath !== '' &&
+      this.committedSection !== '' &&
+      nextBasePath !== this.committedSection;
+
+    if (sectionChanged) {
+      this.urlDerivedValue = '';
+      this.committedSection = '';
+      this.pendingSection = nextBasePath;
+      this.resolvedTabs = [];
+      this.resolvedActions = this.incomingActions();
+      return;
+    }
+
+    if (this.pendingSection) {
+      if (!nextBasePath || nextBasePath !== this.pendingSection) {
+        return;
+      }
+      if (!this.currentUrl.startsWith(this.pendingSection)) {
+        return;
+      }
+      const tabs = this.incomingTabs();
+      if (tabs.length === 0) {
+        return;
+      }
+      this.pendingSection = '';
+    }
+
+    this.resolvedTabs = this.incomingTabs();
+    this.resolvedActions = this.incomingActions();
+    this.syncValueFromUrl();
+    this.committedSection = nextBasePath;
+    this.intrinsicWidthRetryCount = 0;
+    this.scheduleOverflowCheck();
+  }
+
   private syncMenuSections() {
     if (!this.menuEl) return;
     this.menuEl.sections = tabsToMenuSections(this.resolvedTabs, this.effectiveValue);
   }
 
   private syncValueFromUrl() {
+    const tabs = this.incomingTabs();
+
     if (!this.currentUrl || !this.basePath) {
+      this.urlDerivedValue = '';
+      this.hideTabsForDetailRoute = false;
+      return;
+    }
+
+    if (!this.currentUrl.startsWith(this.basePath)) {
       this.urlDerivedValue = '';
       this.hideTabsForDetailRoute = false;
       return;
@@ -382,7 +432,7 @@ export class BarNav {
     const { value, hideTabs } = deriveBarNavValueFromUrl(
       this.currentUrl,
       this.basePath,
-      this.resolvedTabs,
+      tabs,
     );
     this.urlDerivedValue = value;
     this.hideTabsForDetailRoute = hideTabs;
@@ -449,8 +499,12 @@ export class BarNav {
   }
 
   render() {
-    const hasTabs = this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
+    const sectionReady =
+      this.basePath !== '' && this.committedSection === this.basePath;
+    const hasTabs =
+      sectionReady && this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
     const tabSurface = this.tabSurface;
+    const tabGroupKey = this.basePath || 'no-section';
 
     return (
       <Host>
@@ -472,6 +526,7 @@ export class BarNav {
             {hasTabs && (
               <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
                 <ds-tab-group-nav
+                  key={`probe-${tabGroupKey}`}
                   ref={el => {
                     this.probeTabGroupEl = el ?? null;
                     if (el) {
@@ -489,6 +544,7 @@ export class BarNav {
             {hasTabs && !this.tabsCollapsed && (
               <div class="bar-nav__left">
                 <ds-tab-group-nav
+                  key={`visible-${tabGroupKey}`}
                   class="bar-nav__tabs-visible"
                   ref={el => {
                     this.visibleTabGroupEl = el ?? null;

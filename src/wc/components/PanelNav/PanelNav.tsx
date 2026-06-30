@@ -37,6 +37,7 @@ const vtResolvers = new WeakMap<object, () => void>();
 @Component({
   tag: 'ds-panel-nav',
   styleUrl: 'PanelNav.css',
+  styleUrls: ['../../utils/scroll-edge-fade.css'],
   scoped: true,
 })
 export class PanelNav {
@@ -550,7 +551,15 @@ export class PanelNav {
           </div>
 
           {/* ── Scrollable body ── */}
-          <div class="panel-nav__body" onScroll={e => this.handleBodyScroll(e)}>
+          <div
+            class={{
+              'panel-nav__body': true,
+              'scroll-edge-fade': true,
+              'scroll-edge-fade--bottom': true,
+              'scroll-edge-fade--at-end': this.atBottom,
+            }}
+            onScroll={e => this.handleBodyScroll(e)}
+          >
             {(() => {
               let flatIdx = 0;
               return this.parsedGroups.map(group => (
@@ -572,14 +581,6 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
-            <ds-fade
-              class="panel-nav__footer-fade"
-              side="bottom"
-              size="size-600"
-              background="var(--_nav-bg)"
-              visible={!this.atBottom}
-            />
-
             {/* Left icon button — Gear in navigation style, Dashboard in default style */}
             <button
               type="button"

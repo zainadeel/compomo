@@ -47,3 +47,67 @@
   top: 0; bottom: 0; right: var(--ds-fade-offset);
   background: linear-gradient(to left, var(--ds-fade-bg) 0%, transparent 100%);
 }
+
+/* Shell gradient — base fill + wash (matches panel-nav / bar-nav ::before stacks). */
+:host(.fade--shell-gradient) {
+  background: transparent;
+}
+
+:host(.fade--shell-gradient)::before,
+:host(.fade--shell-gradient)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+:host(.fade--shell-gradient.fade--top)::before {
+  background: linear-gradient(to bottom, var(--ds-fade-bg) 0%, var(--ds-fade-bg) 50%, transparent 100%);
+}
+
+:host(.fade--shell-gradient.fade--bottom)::before {
+  background: linear-gradient(to top, var(--ds-fade-bg) 0%, transparent 100%);
+}
+
+:host(.fade--shell-gradient.fade--left)::before {
+  background: linear-gradient(to right, var(--ds-fade-bg) 0%, transparent 100%);
+}
+
+:host(.fade--shell-gradient.fade--right)::before {
+  background: linear-gradient(to left, var(--ds-fade-bg) 0%, transparent 100%);
+}
+
+:host(.fade--shell-gradient)::after {
+  opacity: var(--ds-shell-gradient-opacity, 1);
+  background-image: var(--ds-shell-gradient-image, none);
+  background-size: var(--ds-shell-gradient-size, auto);
+  background-repeat: no-repeat;
+}
+
+:host(.fade--shell-gradient.fade--shell-gradient-panel)::after {
+  background-position: var(--ds-shell-gradient-position-panel, 0 0);
+}
+
+:host(.fade--shell-gradient.fade--shell-gradient-bar)::after {
+  background-position: var(--ds-shell-gradient-position-bar, 0 0);
+}
+
+:host(.fade--shell-gradient.fade--top)::after {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%);
+}
+
+:host(.fade--shell-gradient.fade--bottom)::after {
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, transparent 100%);
+}
+
+:host(.fade--shell-gradient.fade--left)::after {
+  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+}
+
+:host(.fade--shell-gradient.fade--right)::after {
+  -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 0%, transparent 100%);
+}

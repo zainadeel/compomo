@@ -1,0 +1,73 @@
+/**
+ * Scroll-edge alpha fade — apply to overflow scroll containers.
+ * Pair with `.scroll-edge-fade--at-end` when the relevant edge is flush (no fade).
+ *
+ * @see scroll-edge-fade.ts for programmatic mask helpers.
+ */
+
+.scroll-edge-fade {
+  --ds-scroll-edge-fade-size: var(--dimension-size-600);
+}
+
+.scroll-edge-fade--top {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent 100%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.scroll-edge-fade--bottom {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.scroll-edge-fade--left {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.scroll-edge-fade--right {
+  -webkit-mask-image: linear-gradient(
+    to left,
+    #000 0,
+    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to left,
+    #000 0,
+    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.scroll-edge-fade--at-end {
+  -webkit-mask-image: none;
+  mask-image: none;
+}

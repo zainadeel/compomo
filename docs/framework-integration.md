@@ -40,7 +40,7 @@ Use **`ds-app-shell`** for the workspace chrome only (panel + bar + main) — no
 | `gradient` | Static L-shaped radial wash on nav backgrounds only (not main content) |
 | `gradientSrc` | Optional `url(...)` image override (e.g. SVG) instead of built-in radial |
 
-Built-in radial: `128.57% 141.42% at 0% 0%` — transparent → `--color-color-intent-blue-medium-background` (50%) → `--color-color-intent-blue-strong-background` (100%), layer opacity **10%**. Same wash for all `navStyle` values; tokens follow `data-theme`.
+Built-in radial: `100% 100% at 0% 0%` — transparent (0%) → `--color-color-intent-blue-strong-background` (100%), layer opacity **10%**. Same wash for all `navStyle` values; tokens follow `data-theme`.
 
 Gradient is painted as `background-image` on panel/bar **above** opaque `--_nav-bg`, below labels/icons. Shell sets `--ds-shell-gradient-*` CSS vars sized to the L bounds.
 

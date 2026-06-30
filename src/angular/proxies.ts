@@ -689,6 +689,29 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
 
 
 @ProxyCmp({
+  inputs: ['activeTool', 'open']
+})
+@Component({
+  selector: 'ds-panel-tools',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['activeTool', 'open'],
+  standalone: false
+})
+export class DsPanelTools {
+  protected el: HTMLDsPanelToolsElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsPanelTools extends Components.DsPanelTools {}
+
+
+@ProxyCmp({
   inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'inactive', 'options', 'value']
 })
 @Component({

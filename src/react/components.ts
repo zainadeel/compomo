@@ -28,6 +28,7 @@ export { DsMenu } from "./ds-menu.js";
 export { DsModal } from "./ds-modal.js";
 export { DsPagination } from "./ds-pagination.js";
 export { DsPanelNav } from "./ds-panel-nav.js";
+export { DsPanelTools } from "./ds-panel-tools.js";
 export { DsRadioGroup } from "./ds-radio-group.js";
 export { DsScrollbar } from "./ds-scrollbar.js";
 export { DsSelect } from "./ds-select.js";

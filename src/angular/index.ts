@@ -26,6 +26,7 @@ export const DIRECTIVES = [
   d.DsModal,
   d.DsPagination,
   d.DsPanelNav,
+  d.DsPanelTools,
   d.DsRadioGroup,
   d.DsScrollbar,
   d.DsSelect,

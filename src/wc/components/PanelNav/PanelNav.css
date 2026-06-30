@@ -357,11 +357,6 @@
   height: calc(var(--_nav-padding-y) * 2 + var(--_nav-item-height) * 2 + var(--dimension-space-050, 4px));
 }
 
-/* Edge fade — floats above the footer, masking content scrolling under it. */
-.panel-nav__footer-fade {
-  --ds-fade-offset: 100%;
-}
-
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */
 
 .panel-nav__footer-btn {

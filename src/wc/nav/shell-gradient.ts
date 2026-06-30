@@ -10,14 +10,14 @@ export const SHELL_GRADIENT_OPACITY_VAR = '--ds-shell-gradient-opacity';
 /** Layer opacity for the nav gradient wash. */
 export const SHELL_GRADIENT_OPACITY = '0.1';
 
-const GRADIENT_GEOMETRY = '128.57% 141.42% at 0% 0%';
+const GRADIENT_GEOMETRY = '100% 100% at 0% 0%';
 
 /**
  * Unified shell radial — same wash for all nav chrome styles.
  * Tokens follow `data-theme` (light/dark blue intent).
  */
 export function buildShellRadialGradient(): string {
-  return `radial-gradient(${GRADIENT_GEOMETRY}, var(--color-background-transparent) 0%, var(--color-color-intent-blue-medium-background) 50%, var(--color-color-intent-blue-strong-background) 100%)`;
+  return `radial-gradient(${GRADIENT_GEOMETRY}, var(--color-background-transparent) 0%, var(--color-color-intent-blue-strong-background) 100%)`;
 }
 
 /** Built-in radial image (optional `gradientSrc` on shell overrides). */

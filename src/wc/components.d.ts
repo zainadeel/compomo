@@ -26,6 +26,7 @@ import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+import { PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
@@ -62,6 +63,7 @@ export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+export { PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
@@ -679,6 +681,18 @@ export namespace Components {
           * @default ''
          */
         "userName": string;
+    }
+    interface DsPanelTools {
+        /**
+          * Active tool view — `search`, `messages`, `stacks`, `activity`, or `agents`.
+          * @default ''
+         */
+        "activeTool": PanelToolsToolId | '';
+        /**
+          * When false, width animates to 0.
+          * @default false
+         */
+        "open": boolean;
     }
     interface DsRadioGroup {
         "ariaLabel": string | undefined;
@@ -1465,6 +1479,12 @@ declare global {
         prototype: HTMLDsPanelNavElement;
         new (): HTMLDsPanelNavElement;
     };
+    interface HTMLDsPanelToolsElement extends Components.DsPanelTools, HTMLStencilElement {
+    }
+    var HTMLDsPanelToolsElement: {
+        prototype: HTMLDsPanelToolsElement;
+        new (): HTMLDsPanelToolsElement;
+    };
     interface HTMLDsRadioGroupElementEventMap {
         "dsChange": string;
     }
@@ -1687,6 +1707,7 @@ declare global {
         "ds-modal": HTMLDsModalElement;
         "ds-pagination": HTMLDsPaginationElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
+        "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
@@ -2366,6 +2387,18 @@ declare namespace LocalJSX {
          */
         "userName"?: string;
     }
+    interface DsPanelTools {
+        /**
+          * Active tool view — `search`, `messages`, `stacks`, `activity`, or `agents`.
+          * @default ''
+         */
+        "activeTool"?: PanelToolsToolId | '';
+        /**
+          * When false, width animates to 0.
+          * @default false
+         */
+        "open"?: boolean;
+    }
     interface DsRadioGroup {
         "ariaLabel"?: string | undefined;
         "ariaLabelledby"?: string | undefined;
@@ -2953,6 +2986,10 @@ declare namespace LocalJSX {
         "userName": string;
         "userInitial": string;
     }
+    interface DsPanelToolsAttributes {
+        "open": boolean;
+        "activeTool": PanelToolsToolId | '';
+    }
     interface DsRadioGroupAttributes {
         "value": string;
         "direction": 'vertical' | 'horizontal';
@@ -3103,6 +3140,7 @@ declare namespace LocalJSX {
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
+        "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
@@ -3149,6 +3187,7 @@ declare module "@stencil/core" {
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
+            "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;

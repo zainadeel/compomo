@@ -169,8 +169,13 @@ export class AppShell {
             <div class="app-shell__bar">
               <slot name="bar" />
             </div>
-            <div class="app-shell__content">
-              <slot />
+            <div class="app-shell__workspace">
+              <div class="app-shell__content">
+                <slot />
+              </div>
+              <div class="app-shell__tools">
+                <slot name="tools" />
+              </div>
             </div>
           </div>
         </div>

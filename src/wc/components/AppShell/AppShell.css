@@ -48,8 +48,29 @@
   display: block;
 }
 
-.app-shell__content {
+.app-shell__workspace {
+  display: flex;
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
+}
+
+.app-shell__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
   overflow: auto;
+}
+
+.app-shell__tools {
+  flex: 0 0 auto;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+}
+
+.app-shell__tools ::slotted(ds-panel-tools) {
+  display: block;
+  height: 100%;
+  min-height: 0;
 }
