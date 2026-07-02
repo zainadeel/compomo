@@ -110,8 +110,7 @@ export const Interactive: Story = {
     docs: {
       description: {
         story:
-          'Click rail icons to toggle the drawer. `open` and rail selection update immediately ' +
-          '(like panel-nav collapse); the drawer width animation can reverse mid-flight.',
+          'Rail selection follows `open` immediately; drawer content stays visible and slides out during close.',
       },
     },
   },

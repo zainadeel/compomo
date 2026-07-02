@@ -99,18 +99,27 @@ export class PanelTools {
     this.motion = 'idle';
   };
 
-  /** Mirrors panel-nav: selection follows `open` immediately, not the in-flight clip animation. */
-  private isToolActive(id: PanelToolsToolId): boolean {
+  /** Rail selection follows `open` immediately — independent of the slide animation. */
+  private isRailSelected(id: PanelToolsToolId): boolean {
     return this.open && this.activeTool === id;
   }
 
+  /** Drawer body stays mounted while the clip frame animates closed. */
+  private isDrawerPresent(): boolean {
+    return this.open || this.motion === 'closing';
+  }
+
+  private isViewActive(id: PanelToolsToolId): boolean {
+    return this.isDrawerPresent() && this.activeTool === id;
+  }
+
   private headerLabel(): string {
-    if (!this.open || !this.activeTool) return '';
+    if (!this.isDrawerPresent() || !this.activeTool) return '';
     return PANEL_TOOLS_LABELS[this.activeTool as PanelToolsToolId] ?? '';
   }
 
   private handleToolChange = (id: PanelToolsToolId) => {
-    const selected = !this.isToolActive(id);
+    const selected = !this.isRailSelected(id);
     if (selected) {
       this.open = true;
       this.activeTool = id;
@@ -126,7 +135,7 @@ export class PanelTools {
         key={item.id}
         class="panel-tools__rail-action"
         icon={item.icon}
-        selected={this.isToolActive(item.id)}
+        selected={this.isRailSelected(item.id)}
         dot={item.dot ?? false}
         inactive={item.inactive}
         aria-label={item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id]}
@@ -140,7 +149,7 @@ export class PanelTools {
     const railItems = this.railItems;
     const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
     const bodyItems = railItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
-    const showDrawerChrome = this.open || this.motion === 'closing';
+    const showDrawerChrome = this.isDrawerPresent();
 
     return (
       <Host
@@ -160,7 +169,7 @@ export class PanelTools {
               'panel-tools__drawer': true,
               'panel-tools__drawer--visible': showDrawerChrome,
             }}
-            aria-hidden={this.open ? null : 'true'}
+            aria-hidden={showDrawerChrome ? null : 'true'}
           >
             <div class="panel-tools__drawer-surface">
               <header class="panel-tools__header">
@@ -170,50 +179,50 @@ export class PanelTools {
                 <div
                   class={{
                     'panel-tools__view': true,
-                    'panel-tools__view--active': this.isToolActive('search'),
+                    'panel-tools__view--active': this.isViewActive('search'),
                     'text-body-medium': true,
                   }}
-                  hidden={!this.isToolActive('search')}
+                  hidden={!this.isViewActive('search')}
                 >
                   <slot name="search" />
                 </div>
                 <div
                   class={{
                     'panel-tools__view': true,
-                    'panel-tools__view--active': this.isToolActive('messages'),
+                    'panel-tools__view--active': this.isViewActive('messages'),
                     'text-body-medium': true,
                   }}
-                  hidden={!this.isToolActive('messages')}
+                  hidden={!this.isViewActive('messages')}
                 >
                   <slot name="messages" />
                 </div>
                 <div
                   class={{
                     'panel-tools__view': true,
-                    'panel-tools__view--active': this.isToolActive('stacks'),
+                    'panel-tools__view--active': this.isViewActive('stacks'),
                     'text-body-medium': true,
                   }}
-                  hidden={!this.isToolActive('stacks')}
+                  hidden={!this.isViewActive('stacks')}
                 >
                   <slot name="stacks" />
                 </div>
                 <div
                   class={{
                     'panel-tools__view': true,
-                    'panel-tools__view--active': this.isToolActive('activity'),
+                    'panel-tools__view--active': this.isViewActive('activity'),
                     'text-body-medium': true,
                   }}
-                  hidden={!this.isToolActive('activity')}
+                  hidden={!this.isViewActive('activity')}
                 >
                   <slot name="activity" />
                 </div>
                 <div
                   class={{
                     'panel-tools__view': true,
-                    'panel-tools__view--active': this.isToolActive('agents'),
+                    'panel-tools__view--active': this.isViewActive('agents'),
                     'text-body-medium': true,
                   }}
-                  hidden={!this.isToolActive('agents')}
+                  hidden={!this.isViewActive('agents')}
                 >
                   <slot name="agents" />
                 </div>
