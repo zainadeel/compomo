@@ -95,17 +95,12 @@ export function readShellGradientPosition(surface: GradientSurface): string {
   return styles.getPropertyValue(surface.positionVar).trim() || '0 0';
 }
 
-/** Stamp `--_badge-gradient-position` on the badge host. */
+/** Stamp `--_badge-gradient-position` on the badge host (fixed viewport chrome). */
 export function syncBadgeGradientPosition(badgeHost: HTMLElement): void {
-  const surface = findGradientSurface(badgeHost);
-  if (!surface) {
+  if (!isShellGradientActive(badgeHost)) {
     badgeHost.style.removeProperty(BADGE_GRADIENT_POSITION_VAR);
     return;
   }
 
-  const shellPosition = readShellGradientPosition(surface);
-  badgeHost.style.setProperty(
-    BADGE_GRADIENT_POSITION_VAR,
-    badgeGradientPosition(badgeHost, surface, shellPosition),
-  );
+  badgeHost.style.setProperty(BADGE_GRADIENT_POSITION_VAR, '0 0');
 }

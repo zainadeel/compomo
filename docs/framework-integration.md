@@ -28,7 +28,7 @@ Bind the **same** `navStyle` on shell, panel, and bar so they stay in sync.
 
 ```html
 <ds-app-shell nav-style="dashboard" gradient>
-  <ds-panel-nav slot="panel" disable-view-transition …></ds-panel-nav>
+  <ds-panel-nav slot="panel" …></ds-panel-nav>
   <ds-bar-nav slot="bar" …></ds-bar-nav>
   <main>…page content…</main>
 </ds-app-shell>
@@ -51,7 +51,6 @@ SPA frameworks bind **JavaScript properties** after the custom element connects.
 | Concern | Requirement |
 | --- | --- |
 | Hard reload style | Set `data-nav-style` on `<html>` before importing nav components, **or** stamp `nav-style` before the element connects |
-| Router-owned VT | Set `disable-view-transition` as a static attribute when the host app uses `withViewTransitions` |
 
 ## Bootstrap snippet
 
@@ -69,23 +68,10 @@ SPA frameworks bind **JavaScript properties** after the custom element connects.
 
 ```html
 <ds-panel-nav
-  disable-view-transition
   [attr.nav-style]="navStyle"
   [navStyle]="navStyle"
   …
 ></ds-panel-nav>
-```
-
-## Radial reveal (view transitions)
-
-When crossing between `dashboard` and `settings`, the host runs a **radial reveal** from the panel-nav footer gear. Set `disable-view-transition` on `ds-panel-nav` so transitions do not nest.
-
-```ts
-import { ensureShellNavVtStyle, runShellNavStyleRevealOnReady } from '@ds-mo/ui/nav';
-
-ensureShellNavVtStyle();
-const transition = document.startViewTransition(() => applyShellStyleChange());
-runShellNavStyleRevealOnReady(transition);
 ```
 
 ## External `ds-menu`
@@ -94,4 +80,4 @@ Use `dsNavUserAction` detail `{ anchor }` or `anchor-id="ds-panel-nav-user-menu-
 
 ## Reference consumer
 
-**motive-webapp-lab** — shell + `PanelNavHostDirective` + document hint + `view-transitions.ts`.
+**motive-webapp-lab** — shell + `PanelNavHostDirective` + document hint.

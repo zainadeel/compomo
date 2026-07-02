@@ -91,34 +91,11 @@ describe('findGradientSurface', () => {
 });
 
 describe('syncBadgeGradientPosition', () => {
-  it('stamps --_badge-gradient-position when chrome surface resolves', () => {
-    const barSurface = {
-      getBoundingClientRect: () => ({
-        left: 200,
-        top: 0,
-        width: 800,
-        height: 48,
-        right: 1000,
-        bottom: 48,
-      }),
-    } as HTMLElement;
-
-    const barNav = {
-      shadowRoot: null,
-      querySelector: () => barSurface,
-    } as unknown as HTMLElement;
-
+  it('stamps 0 0 when gradient shell is active', () => {
     const badgeHost = {
       style: { getPropertyValue: () => '', setProperty: () => {}, removeProperty: () => {} },
-      closest: (tag: string) => (tag === 'ds-bar-nav' ? barNav : null),
-      getBoundingClientRect: () => ({
-        left: 1100,
-        top: 20,
-        width: 6,
-        height: 6,
-        right: 1106,
-        bottom: 26,
-      }),
+      closest: (tag: string) =>
+        tag === 'ds-app-shell' ? { hasAttribute: (name: string) => name === 'gradient' } : null,
     } as unknown as HTMLElement;
 
     const setCalls: string[] = [];
@@ -126,23 +103,23 @@ describe('syncBadgeGradientPosition', () => {
       setCalls.push(`${name}=${value}`);
     };
 
-    const originalGetComputedStyle = globalThis.getComputedStyle;
-    globalThis.getComputedStyle = ((el: Element) => {
-      if (el === barNav) {
-        return {
-          getPropertyValue: (name: string) =>
-            name === SHELL_GRADIENT_POSITION_BAR_VAR ? '-200px 0' : '',
-        } as CSSStyleDeclaration;
-      }
-      return originalGetComputedStyle(el);
-    }) as typeof getComputedStyle;
+    syncBadgeGradientPosition(badgeHost);
+    assert.equal(setCalls.length, 1);
+    assert.equal(setCalls[0], '--_badge-gradient-position=0 0');
+  });
 
-    try {
-      syncBadgeGradientPosition(badgeHost);
-      assert.equal(setCalls.length, 1);
-      assert.equal(setCalls[0], '--_badge-gradient-position=-1103px -23px');
-    } finally {
-      globalThis.getComputedStyle = originalGetComputedStyle;
-    }
+  it('clears position outside a gradient shell', () => {
+    const badgeHost = {
+      style: { getPropertyValue: () => '', setProperty: () => {}, removeProperty: () => {} },
+      closest: () => null,
+    } as unknown as HTMLElement;
+
+    let removed = false;
+    badgeHost.style.removeProperty = () => {
+      removed = true;
+    };
+
+    syncBadgeGradientPosition(badgeHost);
+    assert.equal(removed, true);
   });
 });

@@ -1,10 +1,7 @@
 import { Component, Prop, Element, State, Watch, h, Host } from '@stencil/core';
 import {
   BADGE_GRADIENT_POSITION_VAR,
-  badgeGradientPosition,
-  findGradientSurface,
   isShellGradientActive,
-  readShellGradientPosition,
 } from '../../nav/badge-gradient-ring';
 
 export type BadgeVariant = 'counter' | 'dot';
@@ -137,16 +134,10 @@ export class Badge {
     void this.gradientLayoutVersion;
 
     const style: Record<string, string> = { '--_badge-ring': ring };
-    if (!this.gradientBackground) return style;
+    if (!this.gradientBackground || !isShellGradientActive(this.el)) return style;
 
-    const surface = findGradientSurface(this.el);
-    if (!surface) return style;
-
-    style[BADGE_GRADIENT_POSITION_VAR] = badgeGradientPosition(
-      this.el,
-      surface,
-      readShellGradientPosition(surface),
-    );
+    /* Shell chrome wash uses background-attachment: fixed at viewport origin. */
+    style[BADGE_GRADIENT_POSITION_VAR] = '0 0';
     return style;
   }
 

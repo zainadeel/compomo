@@ -6,10 +6,6 @@ import '../../../../dist/components/ds-app-shell.js';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
-import {
-  ensureShellNavVtStyle,
-  runShellNavStyleRevealOnReady,
-} from '../../nav/shell-view-transition';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
 import type { PanelToolsItem } from '../PanelTools/panel-tools-types';
@@ -92,23 +88,6 @@ function toggleSection(shellId: string) {
   applySection(shellId, next);
 }
 
-function toggleSectionWithViewTransition(shellId: string) {
-  const shell = document.getElementById(shellId) as HTMLElement & { navStyle: NavChromeStyle } | null;
-  if (!shell) return;
-
-  const next: NavChromeStyle = shell.navStyle === 'dashboard' ? 'settings' : 'dashboard';
-  const apply = () => applySection(shellId, next);
-
-  if (!document.startViewTransition) {
-    apply();
-    return;
-  }
-
-  ensureShellNavVtStyle();
-  const transition = document.startViewTransition(apply);
-  runShellNavStyleRevealOnReady(transition);
-}
-
 function shellLayout(shellId: string, gradient: boolean): TemplateResult {
   return html`
     <div
@@ -122,7 +101,6 @@ function shellLayout(shellId: string, gradient: boolean): TemplateResult {
         <ds-panel-nav
           slot="panel"
           nav-style="dashboard"
-          disable-view-transition
           groups=${JSON.stringify(DASHBOARD_GROUPS)}
           active-id="safety"
           user-name="Zain Adeel"
@@ -163,55 +141,4 @@ export const WithGradient: Story = {
 export const NoGradient: Story = {
   name: 'No gradient',
   render: () => shellLayout('shell-plain', false),
-};
-
-export const SectionViewTransition: Story = {
-  name: 'Section view transition',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Host-owned radial reveal when crossing `dashboard` ↔ `settings`. ' +
-          'Uses `document.startViewTransition` + `runShellNavStyleRevealOnReady` from `@ds-mo/ui/nav`. ' +
-          'Panel-nav sets `disable-view-transition` so the router (or Storybook) owns the animation.',
-      },
-    },
-  },
-  render: () => html`
-    <div
-      style="
-        height: 100vh;
-        background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
-      "
-    >
-      <ds-app-shell id="shell-vt" nav-style="dashboard" gradient style="height: 100%;">
-        <ds-panel-nav
-          slot="panel"
-          nav-style="dashboard"
-          disable-view-transition
-          groups=${JSON.stringify(DASHBOARD_GROUPS)}
-          active-id="safety"
-          user-name="Zain Adeel"
-          user-initial="Z"
-          @dsNavFooterAction=${() => toggleSectionWithViewTransition('shell-vt')}
-        ></ds-panel-nav>
-        <ds-bar-nav slot="bar" nav-style="dashboard" ${ref(wireBarNav)}></ds-bar-nav>
-        <ds-panel-tools slot="tools" ${ref(wirePanelTools)}>
-          <p slot="agents">Agents tool content</p>
-        </ds-panel-tools>
-        <div style="padding: var(--dimension-space-400); color: var(--color-foreground-primary);">
-          <p style="margin: 0 0 8px;">
-            Click the footer gear or the button below to run the radial reveal.
-          </p>
-          <button
-            style="padding: 6px 14px; cursor: pointer; font-size: 13px;"
-            @click=${() => toggleSectionWithViewTransition('shell-vt')}
-          >
-            Toggle section with view transition
-          </button>
-        </div>
-      </ds-app-shell>
-    </div>
-  `,
 };

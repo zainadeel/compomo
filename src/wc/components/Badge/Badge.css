@@ -78,7 +78,8 @@
   z-index: -1;
   background-image: var(--ds-shell-gradient-image, none);
   background-size: var(--ds-shell-gradient-size, auto);
-  background-position: var(--_badge-gradient-position, 0 0);
+  background-position: 0 0;
   background-repeat: no-repeat;
+  background-attachment: fixed;
   opacity: var(--ds-shell-gradient-opacity, 1);
 }

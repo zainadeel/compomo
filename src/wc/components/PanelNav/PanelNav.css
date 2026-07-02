@@ -54,8 +54,6 @@
   --_nav-pressed:      var(--color-interaction-pressed);
   --_nav-focus:        var(--color-interaction-focus);
   --_nav-dot:          var(--color-foreground-bold-brand);
-  --_nav-footer-preview-bg: var(--_nav-hover);
-  --_nav-footer-preview-fg: var(--_nav-fg-secondary);
 }
 
 /* ── Shell ───────────────────────────────────────────────────────────────── */
@@ -371,27 +369,35 @@
   left: var(--_nav-padding-x);
   top: var(--_nav-padding-y);
   padding: var(--dimension-space-075, 6px);
-  border-radius: var(--dimension-radius-half);
+  border-radius: var(--dimension-radius-025, 2px);
   cursor: pointer;
   color: var(--_nav-fg-secondary);
   box-sizing: border-box;
   background: transparent;
-  transition:
-    background var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease),
-    color var(--effect-animation-duration-short-3, 200ms) var(--effect-animation-easing-ease-out, ease);
+  transition: color var(--effect-motion-short-3, 200ms ease);
 }
 
-.panel-nav__footer-btn:focus-visible {
+.panel-nav__footer-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--dimension-radius-025, 2px);
+  background: transparent;
+  pointer-events: none;
+  transition: none;
+}
+
+.panel-nav__footer-btn:hover::after  { background: var(--_nav-hover);   transition: none; }
+.panel-nav__footer-btn:active::after { background: var(--_nav-pressed); transition: none; }
+.panel-nav__footer-btn:focus-visible { outline: none; }
+.panel-nav__footer-btn:focus-visible::after {
   outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
   outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
 }
 
-/* Footer gear: hover previews destination section (same tokens until textures diverge). */
-.panel-nav--dashboard .panel-nav__footer-btn:hover,
-.panel-nav--settings .panel-nav__footer-btn:hover {
-  background: var(--_nav-footer-preview-bg);
-  color: var(--_nav-footer-preview-fg);
-  transition: none;
+.panel-nav__footer-btn ds-icon {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Footer user — absolutely positioned, slides from row to below gear ───── */

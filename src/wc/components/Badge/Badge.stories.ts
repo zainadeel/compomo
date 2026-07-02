@@ -177,8 +177,8 @@ export const OnGradientBackground: Story = {
     docs: {
       description: {
         story:
-          'Dot rings on gradient chrome use `on-gradient-background` so `--_badge-gradient-position` samples the shell wash. ' +
-          'Prefer this inside `ds-app-shell[gradient]` in product layouts.',
+          'Dot rings on gradient chrome use `on-gradient-background` with `background-attachment: fixed` ' +
+          'so the wash aligns with `ds-app-shell` viewport chrome.',
       },
     },
   },
