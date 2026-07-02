@@ -110,8 +110,8 @@ export const Interactive: Story = {
     docs: {
       description: {
         story:
-          'Click rail icons to toggle the drawer. `dsToolChange` emits `{ id, selected }` — ' +
-          'hosts mirror selection into `open` and `activeTool`.',
+          'Click rail icons to toggle the drawer. `open` and rail selection update immediately ' +
+          '(like panel-nav collapse); the drawer width animation can reverse mid-flight.',
       },
     },
   },

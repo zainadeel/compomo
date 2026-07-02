@@ -37,9 +37,6 @@ export class PanelTools {
     selected: boolean;
   }>;
 
-  /** Stays true until the close width transition finishes. */
-  @State() private expanded = false;
-
   /** Arms open vs close easing for the in-flight width transition. */
   @State() private motion: 'opening' | 'closing' | 'idle' = 'idle';
 
@@ -50,13 +47,6 @@ export class PanelTools {
 
   private get railItems(): PanelToolsItem[] {
     return parsePanelToolsItems(this.items, this.itemsJson);
-  }
-
-  componentWillLoad() {
-    if (this.open) {
-      this.expanded = true;
-      this.motion = 'idle';
-    }
   }
 
   disconnectedCallback() {
@@ -82,7 +72,6 @@ export class PanelTools {
 
   @Watch('open')
   openChanged(isOpen: boolean, wasOpen?: boolean) {
-    if (isOpen) this.expanded = true;
     if (this.readyForMotion && wasOpen !== undefined && wasOpen !== isOpen) {
       this.motion = isOpen ? 'opening' : 'closing';
     }
@@ -101,33 +90,23 @@ export class PanelTools {
   @Watch('items')
   @Watch('itemsJson')
   itemsChanged() {
-    // Force rail buttons to re-read `selected` from the host items prop.
     this.deferMotionEnable();
   }
 
   private handleTransitionEnd = (event: TransitionEvent) => {
     if (event.target !== this.el.querySelector('.panel-tools__drawer')) return;
     if (event.propertyName !== 'max-width') return;
-    if (!this.open) this.expanded = false;
     this.motion = 'idle';
   };
 
-  private isShowingDrawer(): boolean {
-    return this.open || this.expanded;
-  }
-
-  private isActiveTool(id: PanelToolsToolId): boolean {
-    return this.isShowingDrawer() && this.activeTool === id;
+  /** Mirrors panel-nav: selection follows `open` immediately, not the in-flight clip animation. */
+  private isToolActive(id: PanelToolsToolId): boolean {
+    return this.open && this.activeTool === id;
   }
 
   private headerLabel(): string {
-    if (!this.activeTool) return '';
+    if (!this.open || !this.activeTool) return '';
     return PANEL_TOOLS_LABELS[this.activeTool as PanelToolsToolId] ?? '';
-  }
-
-  /** Drawer still counts as active while the close width transition runs. */
-  private isToolActive(id: PanelToolsToolId): boolean {
-    return this.isShowingDrawer() && this.activeTool === id;
   }
 
   private handleToolChange = (id: PanelToolsToolId) => {
@@ -157,11 +136,11 @@ export class PanelTools {
   }
 
   render() {
-    const showingDrawer = this.isShowingDrawer();
     const headerLabel = this.headerLabel();
     const railItems = this.railItems;
     const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
     const bodyItems = railItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
+    const showDrawerChrome = this.open || this.motion === 'closing';
 
     return (
       <Host
@@ -179,66 +158,66 @@ export class PanelTools {
           <div
             class={{
               'panel-tools__drawer': true,
-              'panel-tools__drawer--visible': showingDrawer,
+              'panel-tools__drawer--visible': showDrawerChrome,
             }}
-            aria-hidden={showingDrawer ? null : 'true'}
+            aria-hidden={this.open ? null : 'true'}
           >
             <div class="panel-tools__drawer-surface">
               <header class="panel-tools__header">
                 <span class="panel-tools__title text-body-medium-emphasis">{headerLabel}</span>
               </header>
               <div class="panel-tools__body">
-              <div
-                class={{
-                  'panel-tools__view': true,
-                  'panel-tools__view--active': this.isActiveTool('search'),
-                  'text-body-medium': true,
-                }}
-                hidden={!this.isActiveTool('search')}
-              >
-                <slot name="search" />
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isToolActive('search'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isToolActive('search')}
+                >
+                  <slot name="search" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isToolActive('messages'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isToolActive('messages')}
+                >
+                  <slot name="messages" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isToolActive('stacks'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isToolActive('stacks')}
+                >
+                  <slot name="stacks" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isToolActive('activity'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isToolActive('activity')}
+                >
+                  <slot name="activity" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isToolActive('agents'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isToolActive('agents')}
+                >
+                  <slot name="agents" />
+                </div>
               </div>
-              <div
-                class={{
-                  'panel-tools__view': true,
-                  'panel-tools__view--active': this.isActiveTool('messages'),
-                  'text-body-medium': true,
-                }}
-                hidden={!this.isActiveTool('messages')}
-              >
-                <slot name="messages" />
-              </div>
-              <div
-                class={{
-                  'panel-tools__view': true,
-                  'panel-tools__view--active': this.isActiveTool('stacks'),
-                  'text-body-medium': true,
-                }}
-                hidden={!this.isActiveTool('stacks')}
-              >
-                <slot name="stacks" />
-              </div>
-              <div
-                class={{
-                  'panel-tools__view': true,
-                  'panel-tools__view--active': this.isActiveTool('activity'),
-                  'text-body-medium': true,
-                }}
-                hidden={!this.isActiveTool('activity')}
-              >
-                <slot name="activity" />
-              </div>
-              <div
-                class={{
-                  'panel-tools__view': true,
-                  'panel-tools__view--active': this.isActiveTool('agents'),
-                  'text-body-medium': true,
-                }}
-                hidden={!this.isActiveTool('agents')}
-              >
-                <slot name="agents" />
-              </div>
-            </div>
             </div>
           </div>
 
