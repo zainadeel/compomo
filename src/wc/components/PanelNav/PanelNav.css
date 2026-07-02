@@ -21,26 +21,7 @@
   --_nav-label-fade-out-dur:  calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
   --_nav-label-fade-out-motion: var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease);
 
-  /* ─ Colours – navigation (default chrome) ─ */
-  --_nav-bg:              var(--color-navigation-background);
-  --_nav-border:          var(--color-navigation-border-tertiary);
-  --_nav-divider:         var(--color-navigation-divider);
-  --_nav-fg-primary:      var(--color-navigation-foreground-primary);
-  --_nav-fg-secondary:    var(--color-navigation-foreground-secondary);
-  --_nav-fg-tertiary:     var(--color-navigation-foreground-tertiary);
-  --_nav-hover:           var(--color-navigation-interaction-hover);
-  --_nav-pressed:         var(--color-navigation-interaction-pressed);
-  --_nav-focus:           var(--color-navigation-interaction-focus);
-  --_nav-dot:             var(--color-navigation-foreground-brand);
-}
-
-/* ── Default chrome overrides ────────────────────────────────────────────── */
-
-:host-context(ds-app-shell[gradient]) {
-  --ds-shell-gradient-opacity: 0.1;
-}
-
-.panel-nav--default {
+  /* ─ Colours – default chrome (app surfaces) ─ */
   --_nav-bg:           var(--color-background-secondary);
   --_nav-border:       var(--color-border-tertiary);
   --_nav-divider:      var(--color-border-tertiary);
@@ -51,6 +32,30 @@
   --_nav-pressed:      var(--color-interaction-pressed);
   --_nav-focus:        var(--color-interaction-focus);
   --_nav-dot:          var(--color-foreground-bold-brand);
+}
+
+/* ── Default chrome overrides ────────────────────────────────────────────── */
+
+/* Shell-owned chrome (bg + wash + grid) — panel is a transparent frame. */
+:host-context(ds-app-shell[gradient]) .panel-nav {
+  background-color: transparent;
+}
+
+/* Style slots — same app tokens for now; hook texture/glyph layers on these classes later. */
+.panel-nav--dashboard,
+.panel-nav--settings {
+  --_nav-bg:           var(--color-background-secondary);
+  --_nav-border:       var(--color-border-tertiary);
+  --_nav-divider:      var(--color-border-tertiary);
+  --_nav-fg-primary:   var(--color-foreground-primary);
+  --_nav-fg-secondary: var(--color-foreground-secondary);
+  --_nav-fg-tertiary:  var(--color-foreground-tertiary);
+  --_nav-hover:        var(--color-interaction-hover);
+  --_nav-pressed:      var(--color-interaction-pressed);
+  --_nav-focus:        var(--color-interaction-focus);
+  --_nav-dot:          var(--color-foreground-bold-brand);
+  --_nav-footer-preview-bg: var(--_nav-hover);
+  --_nav-footer-preview-fg: var(--_nav-fg-secondary);
 }
 
 /* ── Shell ───────────────────────────────────────────────────────────────── */
@@ -65,25 +70,21 @@
   background-color: var(--_nav-bg);
   border-right: var(--dimension-stroke-width-012, 1px) solid var(--_nav-border);
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
   transition:
     width var(--_nav-expand-motion),
     min-width var(--_nav-expand-motion),
     background-color var(--effect-motion-short-3, 200ms ease),
     border-color var(--effect-motion-short-3, 200ms ease);
   font-family: var(--typography-font-family, system-ui);
+  isolation: isolate;
 }
 
-.panel-nav::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: var(--ds-shell-gradient-opacity, 1);
-  background-image: var(--ds-shell-gradient-image, none);
-  background-size: var(--ds-shell-gradient-size, auto);
-  background-position: var(--ds-shell-gradient-position-panel, 0 0);
-  background-repeat: no-repeat;
+.panel-nav__header,
+.panel-nav__body,
+.panel-nav__footer {
+  position: relative;
+  z-index: 3;
 }
 
 .panel-nav--collapsed {
@@ -138,14 +139,14 @@
   outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
 }
 
-/* Logo — visible by default, hidden on hover */
+/* Logo — visible by default; instant swap to toggle on hover (no crossfade overlap) */
 .panel-nav__header-logo {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 1;
-  transition: opacity var(--effect-motion-short-2, 100ms ease);
+  opacity: 1;
 }
 
 .panel-nav__m-mark {
@@ -154,18 +155,20 @@
   display: block;
 }
 
-/* Toggle icon — hidden by default, revealed on hover */
+/* Toggle icon — stacked on logo; opacity swap matches hover bg (instant) */
 .panel-nav__header-toggle {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .panel-nav__header-btn:hover .panel-nav__header-logo { opacity: 0; }
-.panel-nav__header-btn:hover .panel-nav__header-toggle { display: flex; }
+.panel-nav__header-btn:hover .panel-nav__header-toggle { opacity: 1; }
 
 /* ── Scrollable body ─────────────────────────────────────────────────────── */
 
@@ -383,17 +386,11 @@
   outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
 }
 
-/* Navigation: hover previews default chrome */
-.panel-nav--navigation .panel-nav__footer-btn:hover {
-  background: var(--color-background-secondary);
-  color: var(--color-foreground-secondary);
-  transition: none;
-}
-
-/* Default: hover previews navigation chrome */
-.panel-nav--default .panel-nav__footer-btn:hover {
-  background: var(--color-navigation-background);
-  color: var(--color-navigation-foreground-secondary);
+/* Footer gear: hover previews destination section (same tokens until textures diverge). */
+.panel-nav--dashboard .panel-nav__footer-btn:hover,
+.panel-nav--settings .panel-nav__footer-btn:hover {
+  background: var(--_nav-footer-preview-bg);
+  color: var(--_nav-footer-preview-fg);
   transition: none;
 }
 
@@ -508,6 +505,7 @@
 
 /* ── Drag-to-resize handle ───────────────────────────────────────────────── */
 
+/* The resize overlay line — extends past the right edge; keep above workspace content */
 .panel-nav__resize-handle {
   position: absolute;
   top: 0;
@@ -515,7 +513,7 @@
   right: var(--dimension-space-n050, -4px);
   bottom: 0;
   width: var(--dimension-space-100, 8px);
-  z-index: 10;
+  z-index: 20;
   cursor: ew-resize;
   touch-action: none;
   /* Needs a real background for Safari hit-testing */
@@ -530,7 +528,7 @@
   background: rgba(0, 0, 0, 0.001);
 }
 
-/* The brand-bold overlay line */
+/* Resize overlay line */
 .panel-nav__resize-handle::after {
   content: '';
   position: absolute;
@@ -539,7 +537,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: var(--dimension-stroke-width-025, 2px);
-  background: var(--color-background-bold-brand);
+  background: var(--color-foreground-primary);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--effect-motion-short-2, 100ms ease-in-out);

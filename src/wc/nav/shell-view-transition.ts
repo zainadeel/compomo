@@ -10,7 +10,6 @@ const VT_STYLE_ID = 'ds-shell-nav-vt-style';
 /** TokoMo tokens for the dashboard ↔ settings radial reveal (WAAPI). */
 export const SHELL_NAV_REVEAL_DURATION_VAR = '--effect-animation-duration-medium-3';
 export const SHELL_NAV_REVEAL_EASING_VAR = '--effect-animation-easing-ease-in-out';
-
 const SHELL_NAV_REVEAL_DURATION_FALLBACK_MS = 500;
 const SHELL_NAV_REVEAL_EASING_FALLBACK = 'ease-in-out';
 
@@ -23,16 +22,24 @@ function readCssCustomProperty(name: string, fallback: string): string {
 /** Suppress default cross-fade and pin new snapshots to a 0px circle for WAAPI reveal. */
 export function ensureShellNavVtStyle(): void {
   if (typeof document === 'undefined') return;
-  if (document.getElementById(VT_STYLE_ID)) return;
+
+  const content = [
+    '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}',
+    `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}),::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){animation:none;mix-blend-mode:normal}`,
+    `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}){z-index:1}`,
+    `::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){z-index:2;clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}`,
+    '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
+  ].join('\n');
+
+  const existing = document.getElementById(VT_STYLE_ID) as HTMLStyleElement | null;
+  if (existing) {
+    if (existing.textContent !== content) existing.textContent = content;
+    return;
+  }
 
   const style = document.createElement('style');
   style.id = VT_STYLE_ID;
-  style.textContent = [
-    '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}',
-    `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}),::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){animation:none;mix-blend-mode:normal}`,
-    '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
-    `::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}`,
-  ].join('\n');
+  style.textContent = content;
   document.head.appendChild(style);
 }
 

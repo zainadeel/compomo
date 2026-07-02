@@ -12,7 +12,6 @@ export {
   clearNavStyleHint,
   resolvePanelNavStyle,
   shouldResyncPanelNavStyle,
-  ensurePanelNavVtStyle,
   deriveActiveIdFromUrl,
   parsePanelNavGroups,
 } from './panel-nav-utils';

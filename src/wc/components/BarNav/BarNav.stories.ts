@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-bar-nav.js';
+import '../../../../dist/components/ds-app-shell.js';
+import type { NavChromeStyle } from '../../nav/nav-chrome';
 
 const fleetTabs = [
   { id: 'live-map',          label: 'Live Map' },
@@ -28,12 +30,10 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value:      { control: 'select', options: fleetTabs.map(t => t.id) },
-    navStyle:   { control: 'select', options: ['navigation', 'default'] },
     heading:    { control: 'text' },
   },
   args: {
     value: 'live-map',
-    navStyle: 'default',
   },
 };
 
@@ -51,7 +51,6 @@ export const Playground: Story = {
     })}>
       <ds-bar-nav
         value=${args['value'] ?? 'live-map'}
-        nav-style=${args['navStyle'] ?? 'default'}
       ></ds-bar-nav>
     </div>
   `,
@@ -396,6 +395,118 @@ export const AngularImperativeAssignment: Story = {
       })}>
         <ds-bar-nav></ds-bar-nav>
       </div>
+    </div>
+  `,
+};
+
+function wireBarNavTabs(nav: HTMLElement & { tabs: typeof safetyTabs; actions: typeof defaultActions; value: string }) {
+  nav.tabs = safetyTabs;
+  nav.actions = defaultActions;
+  nav.value = 'events';
+  nav.addEventListener('dsTabChange', (e: Event) => {
+    nav.value = (e as CustomEvent<string>).detail;
+  });
+}
+
+export const NavStyleSlots: Story = {
+  name: 'Nav style slots',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`navStyle` is `dashboard` or `settings` — shared app-surface tokens with BEM hooks for future texture layers. ' +
+          'Color is unified today; classes differ for host styling.',
+      },
+    },
+    layout: 'fullscreen',
+  },
+  render: () => html`
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--dimension-space-300);
+        padding: var(--dimension-space-300);
+        min-height: 100vh;
+        box-sizing: border-box;
+        background: var(--color-background-secondary);
+        font-family: var(--typography-font-family, system-ui);
+      "
+    >
+      ${(['dashboard', 'settings'] as NavChromeStyle[]).map(style => html`
+        <div style="display: flex; flex-direction: column; gap: var(--dimension-space-100); min-width: 0;">
+          <span style="font-size: 12px; font-weight: 500; color: var(--color-foreground-secondary);">
+            nav-style="${style}"
+          </span>
+          <div
+            style="
+              border: 1px solid var(--color-border-tertiary);
+              border-radius: var(--dimension-radius-100);
+              overflow: hidden;
+              background: var(--color-background-primary);
+            "
+            ${ref(el => {
+              if (!el) return;
+              const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
+                tabs: typeof safetyTabs;
+                actions: typeof defaultActions;
+                value: string;
+                navStyle: NavChromeStyle;
+              } | null;
+              if (!nav) return;
+              nav.navStyle = style;
+              wireBarNavTabs(nav);
+            })}
+          >
+            <ds-bar-nav nav-style=${style}></ds-bar-nav>
+          </div>
+        </div>
+      `)}
+    </div>
+  `,
+};
+
+export const InGradientShell: Story = {
+  name: 'In gradient shell',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Inside `ds-app-shell[gradient]`, bar-nav is transparent — the shell chrome layer paints the L-gradient wash. ' +
+          'Header actions may live on `ds-panel-tools` in product shells; bar-nav still supports inline actions for simpler layouts.',
+      },
+    },
+    layout: 'fullscreen',
+  },
+  render: () => html`
+    <div
+      style="
+        height: 100vh;
+        background: var(--color-background-primary);
+        font-family: var(--typography-font-family, system-ui);
+      "
+    >
+      <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
+        <div
+          slot="bar"
+          style="display: flex; flex-direction: column; min-width: 0; width: 100%;"
+          ${ref(el => {
+            if (!el) return;
+            const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
+              tabs: typeof safetyTabs;
+              actions: typeof defaultActions;
+              value: string;
+            } | null;
+            if (!nav) return;
+            wireBarNavTabs(nav);
+          })}
+        >
+          <ds-bar-nav nav-style="dashboard"></ds-bar-nav>
+        </div>
+        <div style="padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
+          Bar-nav over shell chrome — gradient is fixed to the viewport behind transparent nav surfaces.
+        </div>
+      </ds-app-shell>
     </div>
   `,
 };

@@ -173,6 +173,15 @@ export const CounterAndDot: Story = {
 
 export const OnGradientBackground: Story = {
   name: 'On gradient background',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Dot rings on gradient chrome use `on-gradient-background` so `--_badge-gradient-position` samples the shell wash. ' +
+          'Prefer this inside `ds-app-shell[gradient]` in product layouts.',
+      },
+    },
+  },
   render: () => {
     const wash = buildShellRadialGradient();
     return html`
@@ -184,7 +193,7 @@ export const OnGradientBackground: Story = {
           align-items: center;
           padding: var(--dimension-space-400);
           border-radius: var(--dimension-radius-200);
-          background-color: var(--color-navigation-background);
+          background-color: var(--color-background-secondary);
           --ds-shell-gradient-image: ${wash};
           --ds-shell-gradient-size: 480px 240px;
           --ds-shell-gradient-opacity: 0.1;
@@ -202,30 +211,31 @@ export const OnGradientBackground: Story = {
             background-size: var(--ds-shell-gradient-size);
             background-position: 0 0;
             background-repeat: no-repeat;
+            background-attachment: fixed;
           "
         ></div>
         <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
-          <div style="${BADGE_TARGET}; color: var(--color-navigation-foreground-secondary);">
+          <div style="${BADGE_TARGET}; color: var(--color-foreground-secondary);">
             <ds-badge
               style="${BADGE_ANCHOR}"
               variant="dot"
-              background="var(--color-navigation-background)"
+              background="var(--color-background-secondary)"
               label="flat ring"
             ></ds-badge>
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-navigation-foreground-secondary);">flat ring</span>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">flat ring</span>
         </div>
         <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
-          <div style="${BADGE_TARGET}; color: var(--color-navigation-foreground-secondary);">
+          <div style="${BADGE_TARGET}; color: var(--color-foreground-secondary);">
             <ds-badge
               style="${BADGE_ANCHOR}; --_badge-gradient-position: 0 0;"
               variant="dot"
-              background="var(--color-navigation-background)"
+              background="var(--color-background-secondary)"
               on-gradient-background
               label="gradient ring"
             ></ds-badge>
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-navigation-foreground-secondary);">on-gradient-background</span>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">on-gradient-background</span>
         </div>
       </div>
     `;

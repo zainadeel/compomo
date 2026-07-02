@@ -7,7 +7,6 @@ import {
   setNavStyleHint,
   shouldResyncNavChromeStyle,
 } from '../../nav/nav-chrome';
-import { ensureShellNavVtStyle } from '../../nav/shell-view-transition';
 
 export type { NavChromeStyle } from '../../nav/nav-chrome';
 export {
@@ -18,18 +17,6 @@ export {
   resolveNavChromeStyle as resolvePanelNavStyle,
   shouldResyncNavChromeStyle as shouldResyncPanelNavStyle,
 };
-
-/** @deprecated Use `setNavStyleHint` */
-export const setPanelNavStyleHint = setNavStyleHint;
-
-/** @deprecated Use `clearNavStyleHint` */
-export const clearPanelNavStyleHint = clearNavStyleHint;
-
-/** @deprecated Use `NAV_STYLE_HINT_ATTR` */
-export const PANEL_NAV_STYLE_HINT_ATTR = NAV_STYLE_HINT_ATTR;
-
-/** @deprecated Use `ensureShellNavVtStyle` */
-export const ensurePanelNavVtStyle = ensureShellNavVtStyle;
 
 /** Whether `path` matches `href` at a segment boundary (exact or child path). */
 export function hrefMatchesPath(path: string, href: string): boolean {

@@ -26,7 +26,7 @@ import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
-import { PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
@@ -63,7 +63,7 @@ export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
-export { PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
@@ -97,7 +97,7 @@ export namespace Components {
     }
     interface DsAppShell {
         /**
-          * When `true`, paints the shared L-shaped radial wash on panel + bar backgrounds.
+          * When `true`, paints the shared chrome surface (bg + wash + grid) behind panel, bar, and tools.
           * @default false
          */
         "gradient": boolean;
@@ -108,7 +108,7 @@ export namespace Components {
         "gradientSrc": string;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
-          * @default 'navigation'
+          * @default 'dashboard'
          */
         "navStyle": NavChromeStyle;
     }
@@ -210,8 +210,8 @@ export namespace Components {
          */
         "heading": string | undefined;
         /**
-          * Chrome style: `navigation` = navigation tokens, `default` = app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
-          * @default 'default'
+          * Style slot: `dashboard` or `settings`. Colors match for now.
+          * @default 'dashboard'
          */
         "navStyle": NavChromeStyle;
         /**
@@ -647,7 +647,7 @@ export namespace Components {
          */
         "currentUrl": string;
         /**
-          * When `true`, the component does not run its own View Transition on style change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
+          * When `true`, style changes apply synchronously — host app owns view transitions.
           * @default false
          */
         "disableViewTransition": boolean;
@@ -657,8 +657,8 @@ export namespace Components {
          */
         "groups": string | PanelNavGroup[];
         /**
-          * Chrome style: `navigation` = navigation tokens, `default` = standard app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
-          * @default 'navigation'
+          * Style slot: `dashboard` or `settings`. Colors match for now; class hooks reserved for texture/glyph layers. Property: `navStyle`. Attribute: `nav-style`.
+          * @default 'dashboard'
          */
         "navStyle": NavChromeStyle;
         /**
@@ -684,12 +684,22 @@ export namespace Components {
     }
     interface DsPanelTools {
         /**
-          * Active tool view — `search`, `messages`, `stacks`, `activity`, or `agents`.
+          * Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`.
           * @default ''
          */
         "activeTool": PanelToolsToolId | '';
         /**
-          * When false, width animates to 0.
+          * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
+          * @default []
+         */
+        "items": PanelToolsItem[];
+        /**
+          * JSON fallback for `items` — useful when framework bindings don't propagate arrays.
+          * @default ''
+         */
+        "itemsJson": string;
+        /**
+          * When false, only the icon rail is shown.
           * @default false
          */
         "open": boolean;
@@ -1134,6 +1144,10 @@ export interface DsPanelNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelNavElement;
 }
+export interface DsPanelToolsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelToolsElement;
+}
 export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioGroupElement;
@@ -1479,7 +1493,21 @@ declare global {
         prototype: HTMLDsPanelNavElement;
         new (): HTMLDsPanelNavElement;
     };
+    interface HTMLDsPanelToolsElementEventMap {
+        "dsToolChange": {
+    id: PanelToolsToolId;
+    selected: boolean;
+  };
+    }
     interface HTMLDsPanelToolsElement extends Components.DsPanelTools, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPanelToolsElementEventMap>(type: K, listener: (this: HTMLDsPanelToolsElement, ev: DsPanelToolsCustomEvent<HTMLDsPanelToolsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPanelToolsElementEventMap>(type: K, listener: (this: HTMLDsPanelToolsElement, ev: DsPanelToolsCustomEvent<HTMLDsPanelToolsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsPanelToolsElement: {
         prototype: HTMLDsPanelToolsElement;
@@ -1747,7 +1775,7 @@ declare namespace LocalJSX {
     }
     interface DsAppShell {
         /**
-          * When `true`, paints the shared L-shaped radial wash on panel + bar backgrounds.
+          * When `true`, paints the shared chrome surface (bg + wash + grid) behind panel, bar, and tools.
           * @default false
          */
         "gradient"?: boolean;
@@ -1758,7 +1786,7 @@ declare namespace LocalJSX {
         "gradientSrc"?: string;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
-          * @default 'navigation'
+          * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
     }
@@ -1861,8 +1889,8 @@ declare namespace LocalJSX {
          */
         "heading"?: string | undefined;
         /**
-          * Chrome style: `navigation` = navigation tokens, `default` = app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
-          * @default 'default'
+          * Style slot: `dashboard` or `settings`. Colors match for now.
+          * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
         /**
@@ -2336,7 +2364,7 @@ declare namespace LocalJSX {
          */
         "currentUrl"?: string;
         /**
-          * When `true`, the component does not run its own View Transition on style change — it just updates the rendered surface synchronously. Use this when the host app orchestrates the page transition itself (e.g. Angular Router's `withViewTransitions`), so the two don't fight or nest.
+          * When `true`, style changes apply synchronously — host app owns view transitions.
           * @default false
          */
         "disableViewTransition"?: boolean;
@@ -2346,8 +2374,8 @@ declare namespace LocalJSX {
          */
         "groups"?: string | PanelNavGroup[];
         /**
-          * Chrome style: `navigation` = navigation tokens, `default` = standard app tokens. Property: `navStyle`. HTML attribute: `nav-style`.
-          * @default 'navigation'
+          * Style slot: `dashboard` or `settings`. Colors match for now; class hooks reserved for texture/glyph layers. Property: `navStyle`. Attribute: `nav-style`.
+          * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
         /**
@@ -2389,12 +2417,29 @@ declare namespace LocalJSX {
     }
     interface DsPanelTools {
         /**
-          * Active tool view — `search`, `messages`, `stacks`, `activity`, or `agents`.
+          * Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`.
           * @default ''
          */
         "activeTool"?: PanelToolsToolId | '';
         /**
-          * When false, width animates to 0.
+          * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
+          * @default []
+         */
+        "items"?: PanelToolsItem[];
+        /**
+          * JSON fallback for `items` — useful when framework bindings don't propagate arrays.
+          * @default ''
+         */
+        "itemsJson"?: string;
+        /**
+          * Emitted when a rail button is toggled. Detail = { id, selected }.
+         */
+        "onDsToolChange"?: (event: DsPanelToolsCustomEvent<{
+    id: PanelToolsToolId;
+    selected: boolean;
+  }>) => void;
+        /**
+          * When false, only the icon rail is shown.
           * @default false
          */
         "open"?: boolean;
@@ -2832,11 +2877,11 @@ declare namespace LocalJSX {
         "dismissLabel": string;
     }
     interface DsBarNavAttributes {
+        "navStyle": NavChromeStyle;
         "tabsJson": string;
         "value": string;
         "actionsJson": string;
         "heading": string | undefined;
-        "navStyle": NavChromeStyle;
         "basePath": string;
         "currentUrl": string;
     }
@@ -2989,6 +3034,7 @@ declare namespace LocalJSX {
     interface DsPanelToolsAttributes {
         "open": boolean;
         "activeTool": PanelToolsToolId | '';
+        "itemsJson": string;
     }
     interface DsRadioGroupAttributes {
         "value": string;

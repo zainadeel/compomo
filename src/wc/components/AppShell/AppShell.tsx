@@ -7,7 +7,7 @@ import {
   SHELL_GRADIENT_POSITION_BAR_VAR,
   SHELL_GRADIENT_POSITION_PANEL_VAR,
   SHELL_GRADIENT_SIZE_VAR,
-  shellGradientImageForStyle,
+  buildShellRadialGradient,
   shellGradientPositionBar,
   shellGradientPositionPanel,
   shellGradientSize,
@@ -20,9 +20,9 @@ import {
 })
 export class AppShell {
   /** Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`. */
-  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'navigation';
+  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'dashboard';
 
-  /** When `true`, paints the shared L-shaped radial wash on panel + bar backgrounds. */
+  /** When `true`, paints the shared chrome surface (bg + wash + grid) behind panel, bar, and tools. */
   @Prop({ reflect: true }) gradient: boolean = false;
 
   /**
@@ -38,12 +38,12 @@ export class AppShell {
   componentDidLoad() {
     this.syncSlottedNavStyle();
     this.connectMetricsObserver();
-    this.scheduleGradientVars();
+    this.scheduleChromeSync();
   }
 
-  private scheduleGradientVars() {
-    this.updateGradientVars();
-    requestAnimationFrame(() => this.updateGradientVars());
+  private scheduleChromeSync() {
+    this.syncChrome();
+    requestAnimationFrame(() => this.syncChrome());
   }
 
   disconnectedCallback() {
@@ -56,38 +56,7 @@ export class AppShell {
   @Watch('gradientSrc')
   onShellPropsChange() {
     this.syncSlottedNavStyle();
-    this.scheduleGradientVars();
-  }
-
-  private connectMetricsObserver() {
-    this.resizeObserver = new ResizeObserver(() => this.scheduleGradientVars());
-    this.resizeObserver.observe(this.el);
-    const panelWrap = this.el.querySelector('.app-shell__panel');
-    const barWrap = this.el.querySelector('.app-shell__bar');
-    if (panelWrap) this.resizeObserver.observe(panelWrap);
-    if (barWrap) this.resizeObserver.observe(barWrap);
-    this.scheduleGradientVars();
-  }
-
-  private applyGradientVars(target: HTMLElement, vars: Record<string, string | null>) {
-    const style = target.style;
-    for (const [name, value] of Object.entries(vars)) {
-      if (value === null) style.removeProperty(name);
-      else style.setProperty(name, value);
-    }
-  }
-
-  private clearGradientVars(targets: HTMLElement[]) {
-    const keys = [
-      SHELL_GRADIENT_IMAGE_VAR,
-      SHELL_GRADIENT_SIZE_VAR,
-      SHELL_GRADIENT_POSITION_PANEL_VAR,
-      SHELL_GRADIENT_POSITION_BAR_VAR,
-      SHELL_GRADIENT_OPACITY_VAR,
-    ];
-    for (const target of targets) {
-      for (const key of keys) target.style.removeProperty(key);
-    }
+    this.scheduleChromeSync();
   }
 
   private syncSlottedNavStyle() {
@@ -103,31 +72,76 @@ export class AppShell {
     }
   }
 
-  private updateGradientVars() {
+  private connectMetricsObserver() {
+    this.resizeObserver = new ResizeObserver(() => this.scheduleChromeSync());
+    this.resizeObserver.observe(this.el);
+    const panelWrap = this.el.querySelector('.app-shell__panel');
+    if (panelWrap) this.resizeObserver.observe(panelWrap);
+    this.scheduleChromeSync();
+  }
+
+  private applyGradientVars(target: HTMLElement, vars: Record<string, string | null>) {
+    const style = target.style;
+    for (const [name, value] of Object.entries(vars)) {
+      if (value === null) style.removeProperty(name);
+      else style.setProperty(name, value);
+    }
+  }
+
+  private clearGradientPaintVars(targets: HTMLElement[]) {
+    const keys = [
+      SHELL_GRADIENT_IMAGE_VAR,
+      SHELL_GRADIENT_SIZE_VAR,
+      SHELL_GRADIENT_OPACITY_VAR,
+    ];
+    for (const target of targets) {
+      for (const key of keys) target.style.removeProperty(key);
+    }
+  }
+
+  /** Panel/bar wash offsets for scroll fades and badge rings. */
+  private syncChromeLayoutVars(
+    panel: HTMLElement | null,
+    bar: HTMLElement | null,
+    panelPosition: string,
+    barPosition: string,
+  ) {
+    if (panel) {
+      panel.style.setProperty(SHELL_GRADIENT_POSITION_PANEL_VAR, panelPosition);
+    }
+    if (bar) {
+      bar.style.setProperty(SHELL_GRADIENT_POSITION_BAR_VAR, barPosition);
+    }
+  }
+
+  private syncChrome() {
     const panel = this.el.querySelector('ds-panel-nav') as HTMLElement | null;
     const bar = this.el.querySelector('ds-bar-nav') as HTMLElement | null;
     const targets = [this.el, panel, bar].filter((el): el is HTMLElement => el !== null);
 
+    const shellRect = this.el.getBoundingClientRect();
+    const panelWrap = this.el.querySelector('.app-shell__panel') as HTMLElement | null;
+    const panelWidth = panelWrap?.getBoundingClientRect().width ?? 0;
+
+    const panelPosition = shellGradientPositionPanel();
+    const barPosition = shellGradientPositionBar(panelWidth);
+
+    this.syncChromeLayoutVars(panel, bar, panelPosition, barPosition);
+
     if (!this.gradient) {
-      this.clearGradientVars(targets);
+      this.clearGradientPaintVars(targets);
       return;
     }
 
     const image = this.gradientSrc.trim()
       ? `url(${this.gradientSrc.trim()})`
-      : shellGradientImageForStyle(this.navStyle);
-
-    const shellRect = this.el.getBoundingClientRect();
-    const panelWrap = this.el.querySelector('.app-shell__panel') as HTMLElement | null;
-    const panelWidth = panelWrap?.getBoundingClientRect().width ?? 0;
+      : buildShellRadialGradient();
 
     const size = shellGradientSize({
       width: shellRect.width,
       height: shellRect.height,
       panelWidth,
     });
-    const panelPosition = shellGradientPositionPanel();
-    const barPosition = shellGradientPositionBar(panelWidth);
     const opacity = SHELL_GRADIENT_OPACITY;
 
     for (const target of targets) {
@@ -157,25 +171,27 @@ export class AppShell {
     const shellCls: Record<string, boolean> = {
       'app-shell': true,
       'app-shell--gradient': this.gradient,
+      [`app-shell--${this.navStyle}`]: true,
     };
 
     return (
       <Host class={shellCls}>
         <div class="app-shell__row">
+          {this.gradient ? <div class="app-shell__chrome" aria-hidden="true" /> : null}
           <div class="app-shell__panel">
             <slot name="panel" />
           </div>
           <div class="app-shell__main">
-            <div class="app-shell__bar">
-              <slot name="bar" />
-            </div>
-            <div class="app-shell__workspace">
+            <div class="app-shell__stack">
+              <div class="app-shell__bar">
+                <slot name="bar" />
+              </div>
               <div class="app-shell__content">
                 <slot />
               </div>
-              <div class="app-shell__tools">
-                <slot name="tools" />
-              </div>
+            </div>
+            <div class="app-shell__tools">
+              <slot name="tools" />
             </div>
           </div>
         </div>

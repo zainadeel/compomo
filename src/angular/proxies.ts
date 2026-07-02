@@ -689,18 +689,20 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
 
 
 @ProxyCmp({
-  inputs: ['activeTool', 'open']
+  inputs: ['activeTool', 'items', 'itemsJson', 'open']
 })
 @Component({
   selector: 'ds-panel-tools',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeTool', 'open'],
+  inputs: ['activeTool', 'items', 'itemsJson', 'open'],
+  outputs: ['dsToolChange'],
   standalone: false
 })
 export class DsPanelTools {
   protected el: HTMLDsPanelToolsElement;
+  @Output() dsToolChange = new EventEmitter<CustomEvent<{ id: IDsPanelToolsPanelToolsToolId; selected: boolean; }>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -708,7 +710,14 @@ export class DsPanelTools {
 }
 
 
-export declare interface DsPanelTools extends Components.DsPanelTools {}
+import type { PanelToolsToolId as IDsPanelToolsPanelToolsToolId } from '@ds-mo/ui';
+
+export declare interface DsPanelTools extends Components.DsPanelTools {
+  /**
+   * Emitted when a rail button is toggled. Detail = { id, selected }.
+   */
+  dsToolChange: EventEmitter<CustomEvent<{ id: IDsPanelToolsPanelToolsToolId; selected: boolean; }>>;
+}
 
 
 @ProxyCmp({

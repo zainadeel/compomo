@@ -2,8 +2,9 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildShellRadialGradient,
-  shellGradientImageForStyle,
+  shellGradientImage,
   shellGradientPositionBar,
+  shellChromeSurfacePosition,
   shellGradientSize,
   SHELL_GRADIENT_OPACITY,
 } from '../src/wc/nav/shell-gradient';
@@ -18,10 +19,9 @@ describe('buildShellRadialGradient', () => {
   });
 });
 
-describe('shellGradientImageForStyle', () => {
-  it('returns the same built-in radial for all nav styles', () => {
-    assert.equal(shellGradientImageForStyle('navigation'), buildShellRadialGradient());
-    assert.equal(shellGradientImageForStyle('default'), buildShellRadialGradient());
+describe('shellGradientImage', () => {
+  it('returns the built-in radial wash', () => {
+    assert.equal(shellGradientImage(), buildShellRadialGradient());
   });
 });
 
@@ -40,5 +40,12 @@ describe('shellGradientSize', () => {
 describe('shellGradientPositionBar', () => {
   it('offsets by panel width for L alignment', () => {
     assert.equal(shellGradientPositionBar(200), '-200px 0');
+  });
+});
+
+describe('shellChromeSurfacePosition', () => {
+  it('offsets by rect origin for shell-row alignment', () => {
+    assert.equal(shellChromeSurfacePosition(200, 0), '-200px 0px');
+    assert.equal(shellChromeSurfacePosition(1200.4, 48.6), '-1200px -49px');
   });
 });

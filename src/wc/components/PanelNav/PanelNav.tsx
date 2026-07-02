@@ -1,12 +1,6 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import {
-  animateShellNavRadialReveal,
-  ensureShellNavVtStyle,
-  resolveShellNavRevealOrigin,
-  setShellNavRevealOriginVars,
-} from '../../nav/shell-view-transition';
-import {
   deriveActiveIdFromUrl,
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
@@ -22,18 +16,6 @@ import {
   type PanelNavUserActionDetail,
 } from './panel-nav-types';
 
-// Module-level WeakMaps
-interface ViewTransition {
-  finished: Promise<void>;
-  skipTransition: () => void;
-}
-type DocumentWithViewTransition = Document & {
-  startViewTransition?: (callback: () => void | Promise<void>) => ViewTransition;
-};
-
-const vtTransitions = new WeakMap<object, ViewTransition>();
-const vtResolvers = new WeakMap<object, () => void>();
-
 @Component({
   tag: 'ds-panel-nav',
   styleUrl: 'PanelNav.css',
@@ -41,14 +23,11 @@ const vtResolvers = new WeakMap<object, () => void>();
   scoped: true,
 })
 export class PanelNav {
-  /** Chrome style: `navigation` = navigation tokens, `default` = standard app tokens.
-   *  Property: `navStyle`. HTML attribute: `nav-style`. */
-  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'navigation';
+  /** Style slot: `dashboard` or `settings`. Colors match for now;
+   *  class hooks reserved for texture/glyph layers. Property: `navStyle`. Attribute: `nav-style`. */
+  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'dashboard';
 
-  /** When `true`, the component does not run its own View Transition on style
-   *  change — it just updates the rendered surface synchronously. Use this when
-   *  the host app orchestrates the page transition itself (e.g. Angular Router's
-   *  `withViewTransitions`), so the two don't fight or nest. */
+  /** When `true`, style changes apply synchronously — host app owns view transitions. */
   @Prop() disableViewTransition: boolean = false;
 
   /** Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute. */
@@ -98,10 +77,7 @@ export class PanelNav {
 
   @Element() el!: HTMLElement;
 
-  /** Mirrors `style` but is only updated inside the VT callback so the
-   *  View Transition captures a clean before/after snapshot. */
-  @State() private renderedStyle: NavChromeStyle = 'navigation';
-
+  @State() private renderedStyle: NavChromeStyle = 'dashboard';
   @State() private parsedGroups: PanelNavGroup[] = [];
   @State() private atBottom = false;
   @State() private isAnimating = false;
@@ -131,7 +107,6 @@ export class PanelNav {
     return this.urlDerivedActiveId || this.activeId;
   }
 
-  /** Host may set `disable-view-transition` as an attribute before the JS prop lands. */
   private get effectiveDisableViewTransition(): boolean {
     return resolvePanelNavDisableVt(
       this.disableViewTransition,
@@ -170,46 +145,8 @@ export class PanelNav {
   }
 
   @Watch('navStyle')
-  async onNavStyleChange(newVal: NavChromeStyle) {
-    // Host app drives the transition (e.g. Angular Router withViewTransitions):
-    // just reflect the new surface so the app's transition captures it.
-    if (this.effectiveDisableViewTransition) {
-      this.renderedStyle = newVal;
-      return;
-    }
-
-    // Skip any in-progress transition immediately so rapid style changes never leave the nav stuck.
-    vtTransitions.get(this)?.skipTransition();
-    vtTransitions.delete(this);
-
-    const doc = document as DocumentWithViewTransition;
-    if (typeof doc.startViewTransition !== 'function') {
-      this.renderedStyle = newVal;
-      return;
-    }
-
-    ensureShellNavVtStyle();
-    const origin = resolveShellNavRevealOrigin(
-      this.el.querySelector('.panel-nav__footer-btn') as HTMLElement | null,
-    );
-    setShellNavRevealOriginVars(origin);
-
-    const transition = doc.startViewTransition(() =>
-      new Promise<void>(resolve => {
-        vtResolvers.set(this, resolve);
-        this.renderedStyle = newVal;
-      })
-    );
-
-    vtTransitions.set(this, transition);
-    transition.finished.finally(() => {
-      if (vtTransitions.get(this) === transition) vtTransitions.delete(this);
-      vtResolvers.delete(this);
-    });
-
-    transition.ready
-      .then(() => animateShellNavRadialReveal(origin))
-      .catch(() => { /* transition was skipped or aborted */ });
+  onNavStyleChange(newVal: NavChromeStyle) {
+    this.renderedStyle = newVal;
   }
 
   componentWillLoad() {
@@ -229,16 +166,6 @@ export class PanelNav {
     this.scheduleDeferredHostPropSync();
     this.checkScroll();
     if (this.breakpoint > 0) this.connectResizeObserver();
-  }
-
-  componentDidRender() {
-    // If a view transition callback is waiting for the render to complete,
-    // resolve it now so the "after" snapshot is taken at exactly the right moment.
-    const resolve = vtResolvers.get(this);
-    if (resolve) {
-      vtResolvers.delete(this);
-      resolve();
-    }
   }
 
   disconnectedCallback() {
@@ -292,25 +219,14 @@ export class PanelNav {
 
   /** Re-parse props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
   private syncHostPropsIfNeeded() {
-    this.syncRenderedStyleIfNeeded();
+    if (shouldResyncPanelNavStyle(this.renderedStyle, this.navStyle)) {
+      this.renderedStyle = this.navStyle;
+    }
 
     if (shouldResyncPanelNavGroups(this.parsedGroups, this.groups)) {
       this.onGroupsChange(this.groups);
     } else if (this.currentUrl) {
       this.syncActiveFromUrl();
-    }
-  }
-
-  /** Align `renderedStyle` with `style` when host bindings land after first paint. */
-  private syncRenderedStyleIfNeeded() {
-    if (!shouldResyncPanelNavStyle(this.renderedStyle, this.navStyle)) return;
-
-    if (this.effectiveDisableViewTransition) {
-      vtTransitions.get(this)?.skipTransition();
-      vtTransitions.delete(this);
-      this.renderedStyle = this.navStyle;
-    } else {
-      void this.onNavStyleChange(this.navStyle);
     }
   }
 
@@ -507,14 +423,16 @@ export class PanelNav {
   }
 
   render() {
-    const isNavigation = this.renderedStyle === 'navigation';
+    const chromeStyle = this.renderedStyle;
+    const isDashboardChrome = chromeStyle === 'dashboard';
+    const isDashboard = this.navStyle === 'dashboard';
     const collapsed = this.collapsed || this.viewportNarrow;
     const { userName, userInitial } = this;
 
     const navCls: Record<string, boolean> = {
       'panel-nav': true,
-      'panel-nav--navigation': isNavigation,
-      'panel-nav--default': !isNavigation,
+      'panel-nav--dashboard': isDashboard,
+      'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,
       'panel-nav--animating': this.isAnimating,
       'panel-nav--at-bottom': this.atBottom,
@@ -522,7 +440,10 @@ export class PanelNav {
 
     return (
       <Host style={{ display: 'block', position: 'relative' }}>
-        <nav class={navCls} aria-label={isNavigation ? 'Main navigation' : 'Settings navigation'}>
+        <nav
+          class={navCls}
+          aria-label={isDashboardChrome ? 'Dashboard navigation' : 'Settings navigation'}
+        >
 
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
           <div class="panel-nav__header">
@@ -581,15 +502,14 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
-            {/* Left icon button — Gear in navigation style, Dashboard in default style */}
             <button
               type="button"
               class="panel-nav__footer-btn"
-              title={isNavigation ? 'Settings' : 'Dashboard'}
-              aria-label={isNavigation ? 'Open settings' : 'Go to dashboard'}
+              title={isDashboardChrome ? 'Settings' : 'Dashboard'}
+              aria-label={isDashboardChrome ? 'Open settings' : 'Go to dashboard'}
               onClick={() => this.handleFooterAction()}
             >
-              <ds-icon name={isNavigation ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
+              <ds-icon name={isDashboardChrome ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
             </button>
 
             {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}

@@ -19,26 +19,8 @@
     background-color var(--effect-motion-short-3),
     border-color var(--effect-motion-short-3),
     color var(--effect-motion-short-3);
-}
-
-:host-context(ds-app-shell[gradient]) {
-  --ds-shell-gradient-opacity: 0.1;
-}
-
-.bar-nav::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: var(--ds-shell-gradient-opacity, 1);
-  background-image: var(--ds-shell-gradient-image, none);
-  background-size: var(--ds-shell-gradient-size, auto);
-  background-position: var(--ds-shell-gradient-position-bar, 0 0);
-  background-repeat: no-repeat;
-}
-
-/* Default chrome — matches standard app surfaces (former secondary bar) */
-.bar-nav--default {
+  isolation: isolate;
+  /* Default chrome — app surfaces */
   --_bar-nav-bg: var(--color-background-secondary);
   --_bar-nav-border: var(--color-border-tertiary);
   --_bar-nav-fg-primary: var(--color-foreground-primary);
@@ -49,16 +31,27 @@
   --_bar-nav-dot: var(--color-foreground-bold-brand);
 }
 
-/* Navigation chrome — sync with ds-panel-nav navigation style */
-.bar-nav--navigation {
-  --_bar-nav-bg: var(--color-navigation-background);
-  --_bar-nav-border: var(--color-navigation-border-tertiary);
-  --_bar-nav-fg-primary: var(--color-navigation-foreground-primary);
-  --_bar-nav-fg-secondary: var(--color-navigation-foreground-secondary);
-  --_bar-nav-hover: var(--color-navigation-interaction-hover);
-  --_bar-nav-pressed: var(--color-navigation-interaction-pressed);
-  --_bar-nav-focus: var(--color-navigation-interaction-focus);
-  --_bar-nav-dot: var(--color-navigation-foreground-brand);
+/* Style slots — same app tokens for now; hook texture/glyph layers later. */
+.bar-nav--dashboard,
+.bar-nav--settings {
+  --_bar-nav-bg: var(--color-background-secondary);
+  --_bar-nav-border: var(--color-border-tertiary);
+  --_bar-nav-fg-primary: var(--color-foreground-primary);
+  --_bar-nav-fg-secondary: var(--color-foreground-secondary);
+  --_bar-nav-hover: var(--color-interaction-hover);
+  --_bar-nav-pressed: var(--color-interaction-pressed);
+  --_bar-nav-focus: var(--color-interaction-focus);
+  --_bar-nav-dot: var(--color-foreground-bold-brand);
+}
+
+/* Shell-owned chrome (bg + wash + grid) — bar is a transparent frame. */
+:host-context(ds-app-shell[gradient]) .bar-nav {
+  background-color: transparent;
+}
+
+.bar-nav > :not(.bar-nav__tabs-probe) {
+  position: relative;
+  z-index: 3;
 }
 
 /* Collapsed — explicit spacer keeps the 8px minimum while the trigger can shrink. */
