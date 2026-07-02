@@ -14,11 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "declarationMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "declarationMap": true
   },
   "include": ["src/wc"],
   "exclude": ["node_modules", "dist", "**/*.stories.ts", "**/*.stories.tsx"]
