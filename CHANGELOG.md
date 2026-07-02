@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/zainadeel/compomo/compare/v1.8.0...v1.8.1) (2026-07-02)
+
+
+### Fixed
+
+* **build:** remove deprecated baseUrl for TypeScript 6 ([aa2c8fa](https://github.com/zainadeel/compomo/commit/aa2c8fa9994fe53b11cc695c456d9612aca24f73))
+
 ## [1.8.0](https://github.com/zainadeel/compomo/compare/v1.7.4...v1.8.0) (2026-06-30)
 
 
