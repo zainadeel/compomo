@@ -11,7 +11,6 @@ import {
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import type { MenuItemData } from '../Menu/menu-types';
-import { SHELL_BAR_NAV_VT_NAME } from '../../nav/shell-view-transition';
 import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
@@ -508,7 +507,6 @@ export class BarNav {
             'bar-nav--settings': this.navStyle === 'settings',
             'bar-nav--tabs-collapsed': hasTabs && this.tabsCollapsed,
           }}
-          style={{ viewTransitionName: SHELL_BAR_NAV_VT_NAME }}
           ref={el => {
             this.headerEl = el as HTMLElement;
             if (el && !this.resizeObserver) {
