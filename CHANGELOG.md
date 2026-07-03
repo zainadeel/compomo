@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.2](https://github.com/zainadeel/compomo/compare/v1.11.1...v1.11.2) (2026-07-03)
+
+
+### Fixed
+
+* **shell:** add inert on closed panel-tools drawer for a11y ([1058ac7](https://github.com/zainadeel/compomo/commit/1058ac79a725a07e51875d136e7f1cf68751e7f3))
+* **shell:** add inert on closed panel-tools drawer for a11y ([3b09941](https://github.com/zainadeel/compomo/commit/3b0994101a19abe0183757480d9b4bae40c28966))
+
 ## [1.11.1](https://github.com/zainadeel/compomo/compare/v1.11.0...v1.11.1) (2026-07-03)
 
 
