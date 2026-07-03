@@ -40,6 +40,9 @@ export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-tr
 export {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
+  ChromeTransitionDepth,
+  createRafCoalescer,
+  readChromeTransitionSource,
 } from './chrome-transition';
 export {
   barGradientPositionFromPanelWidth,

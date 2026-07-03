@@ -31,7 +31,9 @@ import {
 import {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
-  type ChromeTransitionDetail,
+  ChromeTransitionDepth,
+  createRafCoalescer,
+  readChromeTransitionSource,
 } from '../../nav/chrome-transition';
 import { readCssVarWidthPx } from '../../nav/shell-chrome-metrics';
 
@@ -107,9 +109,12 @@ export class BarNav {
   private visibleTabGroupEl: QueryableHost | null = null;
   private probeTabGroupEl: QueryableHost | null = null;
   private resizeObserver: ResizeObserver | null = null;
-  private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
-  private chromeTransitionDepth = 0;
+  private readonly panelNavTransition = new ChromeTransitionDepth();
+  private readonly overflowCoalescer = createRafCoalescer(() => {
+    this.updateTabsCollapsed();
+    this.updateTriggerLabelTruncation();
+  });
   private chromeTransitionShell: HTMLElement | null = null;
   private toolsDrawerOpening = false;
   /** Matches `basePath` once tabs + URL are reconciled for the active section. */
@@ -189,7 +194,7 @@ export class BarNav {
   }
 
   componentDidRender() {
-    if (this.chromeTransitionDepth > 0) {
+    if (this.panelNavTransition.isActive) {
       this.syncMenuAnchor();
       return;
     }
@@ -203,6 +208,7 @@ export class BarNav {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.overflowCoalescer.cancel();
     this.syncTriggerLabelObserver(true);
     this.unbindChromeTransitionListeners();
   }
@@ -229,9 +235,9 @@ export class BarNav {
   }
 
   private onChromeTransitionStart = (event: Event) => {
-    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+    const source = readChromeTransitionSource(event);
     if (source === 'panel-nav') {
-      this.chromeTransitionDepth += 1;
+      this.panelNavTransition.enter();
       return;
     }
     if (source === 'panel-tools') {
@@ -246,10 +252,10 @@ export class BarNav {
   };
 
   private onChromeTransitionEnd = (event: Event) => {
-    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+    const source = readChromeTransitionSource(event);
     if (source === 'panel-nav') {
-      this.chromeTransitionDepth = Math.max(0, this.chromeTransitionDepth - 1);
-      if (this.chromeTransitionDepth === 0) {
+      this.panelNavTransition.exit();
+      if (!this.panelNavTransition.isActive) {
         this.scheduleOverflowCheck();
       }
       return;
@@ -295,22 +301,15 @@ export class BarNav {
     if (typeof ResizeObserver === 'undefined' || !this.headerEl) return;
     this.resizeObserver?.disconnect();
     this.resizeObserver = new ResizeObserver(() => {
-      if (this.chromeTransitionDepth > 0) return;
+      if (this.panelNavTransition.isActive) return;
       this.scheduleOverflowCheck();
     });
     this.resizeObserver.observe(this.headerEl);
   }
 
   private scheduleOverflowCheck() {
-    if (this.chromeTransitionDepth > 0) return;
-    if (this.overflowCheckScheduled) return;
-    this.overflowCheckScheduled = true;
-    requestAnimationFrame(() => {
-      this.overflowCheckScheduled = false;
-      if (this.chromeTransitionDepth > 0) return;
-      this.updateTabsCollapsed();
-      this.updateTriggerLabelTruncation();
-    });
+    if (this.panelNavTransition.isActive) return;
+    this.overflowCoalescer.schedule();
   }
 
   private syncTriggerLabelObserver(disconnectOnly = false) {

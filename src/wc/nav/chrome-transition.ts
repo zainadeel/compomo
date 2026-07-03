@@ -8,3 +8,49 @@ export type ChromeTransitionSource = 'panel-nav' | 'panel-tools';
 export interface ChromeTransitionDetail {
   source: ChromeTransitionSource;
 }
+
+/** Reference-counted gate — used while panel-nav width is transitioning. */
+export class ChromeTransitionDepth {
+  private depth = 0;
+
+  enter(): void {
+    this.depth += 1;
+  }
+
+  exit(): void {
+    this.depth = Math.max(0, this.depth - 1);
+  }
+
+  get isActive(): boolean {
+    return this.depth > 0;
+  }
+}
+
+export interface RafCoalescer {
+  schedule(): void;
+  cancel(): void;
+}
+
+/** Coalesce bursty layout work (ResizeObserver, prop churn) to one callback per frame. */
+export function createRafCoalescer(onFrame: () => void): RafCoalescer {
+  let rafId = 0;
+  return {
+    schedule() {
+      if (rafId !== 0) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        onFrame();
+      });
+    },
+    cancel() {
+      if (rafId !== 0) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    },
+  };
+}
+
+export function readChromeTransitionSource(event: Event): ChromeTransitionSource | undefined {
+  return (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+}
