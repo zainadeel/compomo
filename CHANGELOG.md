@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.11.1](https://github.com/zainadeel/compomo/compare/v1.11.0...v1.11.1) (2026-07-03)
+
+
+### Fixed
+
+* **panel-tools:** match nav chrome surface in no-chrome shell ([3c43672](https://github.com/zainadeel/compomo/commit/3c43672af3a53875ed56cd1cab52dea58334f192))
+
+
+### Performance
+
+* **phase3:** tools drawer paint skip and chrome sync utilities ([5dc256c](https://github.com/zainadeel/compomo/commit/5dc256c01022bd0a3e65874b2122ede87a43c468))
+* **phase3:** tools drawer paint skip and chrome sync utilities ([dec1497](https://github.com/zainadeel/compomo/commit/dec14975719d6b4fb30229d359af98cd07d2daff))
+
 ## [1.11.0](https://github.com/zainadeel/compomo/compare/v1.10.1...v1.11.0) (2026-07-03)
 
 
