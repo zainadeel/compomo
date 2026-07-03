@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.1](https://github.com/zainadeel/compomo/compare/v2.1.0...v2.1.1) (2026-07-03)
+
+
+### Fixed
+
+* **tab-group:** tighten pill tab divider spacing and line height ([faad069](https://github.com/zainadeel/compomo/commit/faad0691ad48b16dba270a7ee18350390205dba1))
+* **tab-group:** tighten pill tab divider spacing and line height ([ec3969a](https://github.com/zainadeel/compomo/commit/ec3969af5ba31bed4f5d0537e52b7338bc46b1e5))
+
 ## [2.1.0](https://github.com/zainadeel/compomo/compare/v2.0.0...v2.1.0) (2026-07-03)
 
 
