@@ -1,9 +1,18 @@
 name: Deploy Storybook to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch: # allow manual trigger from Actions tab
+  workflow_call:
+    inputs:
+      ref:
+        description: Git tag or SHA to build and deploy (defaults to the triggering commit)
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git tag or SHA to build and deploy (optional — defaults to main)
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -25,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -44,8 +55,6 @@ jobs:
           # GitHub Pages project sites live at /RepoName/ — Storybook
           # needs this so all asset paths resolve correctly.
           STORYBOOK_BASE_URL: /compomo/
-          # Stamped into the Storybook chrome so designers know which build they are viewing.
-          STORYBOOK_BUILT_AT: ${{ github.event.head_commit.timestamp || github.run_started_at }}
 
       - name: Build component registry
         run: npm run registry:build

@@ -59,7 +59,7 @@ code-connect/           # Code Connect: examples/ (unpublished) + published/*.fi
     codeql.yml             # JS/TS security scan — PR + push + weekly Sunday cron
     pr-title.yml           # Lints PR titles as conventional commits
     release-please.yml     # Opens release PRs on feat/fix; publishes to npm on merge (OIDC)
-    deploy-storybook.yml   # stencil build → storybook build → deploy to GitHub Pages
+    deploy-storybook.yml   # storybook → GitHub Pages (after npm publish or manual dispatch)
   dependabot.yml           # Monthly bumps for github-actions + npm
 release-please-config.json      # Release Please config (node, changelog sections)
 .release-please-manifest.json   # Pinned current version
@@ -342,7 +342,7 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 | `pr-title.yml` | PR opened/edited | Enforce conventional-commit PR titles (lowercase subject) |
 | `codeql.yml` | Push/PR to main, weekly Sunday | GitHub CodeQL JS/TS security scan |
 | `release-please.yml` | Push to main | Open release PR on feat/fix; publish to npm via OIDC when release PR merges |
-| `deploy-storybook.yml` | Push to main, manual | Build + deploy Storybook to GitHub Pages |
+| `deploy-storybook.yml` | After successful npm publish (release-please), manual | Build + deploy Storybook to GitHub Pages |
 | `figma-code-connect.yml` | Push to `main` when `code-connect/` or figma config changes; manual | Publish Code Connect to Figma (`secrets.FIGMA_ACCESS_TOKEN`) |
 | `dependabot.yml` | Monthly | Bump github-actions + npm devDependencies |
 
