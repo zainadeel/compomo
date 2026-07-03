@@ -2,9 +2,9 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Docs/Introduction" />
 
-# CompoMo — `@compomo/ui`
+# CompoMo — `@ds-mo/ui`
 
-Composable React UI components styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens.
+Stencil web components (`<ds-*>`) styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens. Stencil also generates **Angular** proxy directives and **React** wrappers from the same source.
 
 ## Install
 
@@ -21,74 +21,41 @@ npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons
 
 Import TokoMo tokens globally (once, at your app root):
 
-```tsx
-import '@ds-mo/tokens';        // all tokens (colors, dimensions, typography, effects)
-import '@ds-mo/tokens/reset';   // CSS reset
-import '@ds-mo/tokens/globals'; // global styles
+```ts
+import '@ds-mo/tokens';
+import '@ds-mo/tokens/reset';
+import '@ds-mo/tokens/globals';
 ```
 
-Then import CompoMo components:
+Register the custom elements you use (each module auto-defines its tag):
 
-```tsx
-import { Button, Text, Surface, Card } from '@compomo/ui';
+```ts
+import '@ds-mo/ui/dist/components/ds-button.js';
+import '@ds-mo/ui/dist/components/ds-text.js';
 ```
 
-## Components
+**Angular:** `import { DsButton } from '@ds-mo/ui/angular'` (or module that re-exports proxies).
 
-### Primitives
-- **Text** — typography with variant system, semantic colors, truncation, wrap modes
-- **Surface** — container with backgrounds, elevation, edges, radius, interactive states
-- **Card** — elevated content container with header/footer slots
-- **Input** — text input field
-- **Slider** — range slider
-- **Field** — label + input wrapper
+**React:** `import { DsButton, DsText } from '@ds-mo/ui/react'`.
 
-### Components
-- **Button** — primary/secondary/tertiary with intents, sizes, icon support
-- **Tag** — labels with intents, contrasts, removable
-- **Badge** — numeric count indicator
-- **Toggle** — on/off switch
-- **Checkbox** — with label and indeterminate state
-- **Modal** — dialog with title, subtitle, footer slots
-- **Menu** — dropdown with sections, selection, positioning
-- **Tooltip** — hover tooltip with shortcut key support
-- **Select** — dropdown select
-- **Banner** — notification bar with intents, toast mode
-- **Tab** — tab button with selection state
-- **Table** — sortable, paginated data table
-- **EmptyState** — placeholder states
-
-### Layout
-- **Header** — page header with left/center/right slots
-- **PanelNav** — collapsible side navigation panel with sections and items
-
-### Utility
-- **Fade** — gradient overlay
-- **Scrollbar** — custom scrollbar
-- **ErrorBoundary** — error catch with fallback
-
-## Token dependency
-
-All styling uses TokoMo CSS custom properties. No hardcoded colors, sizes, or shadows — everything maps to the token system. Components will render unstyled if `@ds-mo/tokens` is not imported.
-
-## Icon pattern
-
-Components that accept icons use the typed prop pattern:
-
-```tsx
-icon?: React.ComponentType<{ size?: number | string }>
-```
-
-Pass any component that accepts a `size` prop. Works with `@ds-mo/icons` or custom SVG components.
+See [framework integration](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md) for shell/nav first-paint rules.
 
 ## Architecture
 
 ```
-TokoMo (@ds-mo/tokens)     <- CSS variables, JSON, TypeScript constants; source is Figma
-    |
-IcoMo (@ds-mo/icons)       <- 380+ React icon components; source SVGs are Figma exports
-    |
-CompoMo (@compomo/ui)      <- This library; consumes tokens + icons
-    |
-Apps (Webapp, Dashboard)
+TokoMo (@ds-mo/tokens)  ← CSS variables, JSON, TypeScript; source is Figma
+    ↓
+IcoMo (@ds-mo/icons)    ← SVG catalog; peer dependency at app bundle time
+    ↓
+CompoMo (@ds-mo/ui)     ← Stencil <ds-*> + generated Angular/React wrappers
+    ↓
+Apps (Webapp, lab, …)
 ```
+
+## Icon pattern
+
+Use `<ds-icon name="ArrowRight" />` with IcoMo export keys, or slot an icon into `slot="icon"` on buttons and similar components.
+
+## Token dependency
+
+All styling uses TokoMo CSS custom properties. Components render unstyled if `@ds-mo/tokens` is not imported.

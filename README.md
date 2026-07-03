@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@ds-mo/ui.svg)](https://www.npmjs.com/package/@ds-mo/ui)
 
-Composable web UI components (Stencil custom elements) styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens. Works in any framework — ships Angular proxies out of the box.
+Composable web UI components (Stencil custom elements) styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens. Works in any framework — ships **Stencil-generated** Angular proxies and React wrappers alongside the `<ds-*>` custom elements.
 
 ## Install
 
@@ -19,84 +19,60 @@ npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons
 
 Import TokoMo tokens globally (once, at your app root):
 
-```tsx
-import '@ds-mo/tokens';        // all tokens (colors, dimensions, typography, effects)
-import '@ds-mo/tokens/reset';   // CSS reset
-import '@ds-mo/tokens/globals'; // global styles
+```ts
+import '@ds-mo/tokens';
+import '@ds-mo/tokens/reset';
+import '@ds-mo/tokens/globals';
 ```
 
-Register custom elements once at app boot:
+Register the custom elements you render (each import auto-defines its tag):
 
 ```ts
-import { defineCustomElements } from '@ds-mo/ui/loader';
-import '@ds-mo/tokens/css';
-import '@ds-mo/ui/css';
-
-defineCustomElements();
+import '@ds-mo/ui/dist/components/ds-button.js';
+import '@ds-mo/ui/dist/components/ds-bar-nav.js';
+// …import only the <ds-*> tags your app uses
 ```
 
-Your app bundler (Vite, Webpack, esbuild, etc.) must be able to resolve `@ds-mo/icons` when it bundles `ds-icon` — install `@ds-mo/icons` alongside `@ds-mo/ui`.
+Your app bundler must resolve `@ds-mo/icons` when it bundles `ds-icon` — install `@ds-mo/icons` alongside `@ds-mo/ui`.
 
-Then use `<ds-*>` tags in templates. **Angular** can import Stencil-generated proxy directives from `@ds-mo/ui/angular`. **React** uses the custom elements directly (no parallel React component layer) with `CUSTOM_ELEMENTS_SCHEMA` and imperative JS properties where needed.
+### Framework wrappers (optional)
 
-**SPA hosts (Angular / React):** `ds-panel-nav` and `ds-bar-nav` need a [first-paint integration contract](docs/framework-integration.md) on hard reload — set a document variant hint or element attributes before the custom element upgrades.
+| Host | Import | Usage |
+| --- | --- | --- |
+| **Angular** | `@ds-mo/ui/angular` | Stencil proxy directives — property/event bindings in templates |
+| **React** | `@ds-mo/ui/react` | `DsButton`, `DsBarNav`, … — thin wrappers around the same custom elements |
+| **Any** | `@ds-mo/ui/dist/components/ds-*.js` | Use `<ds-*>` directly (motive-webapp-lab pattern) |
+
+There is **no** published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` bundle — styles ship scoped inside each custom-element module.
+
+**SPA hosts (Angular / React):** `ds-panel-nav` and `ds-bar-nav` need a [first-paint integration contract](docs/framework-integration.md) on hard reload — seed bar-nav state and stamp `data-nav-style` before custom elements upgrade.
 
 ## Components
 
+All tags are `ds-*` custom elements. Grouped by role (see Storybook for props and stories):
+
 ### Primitives
-- **Text** — typography with variant system, semantic colors, truncation, wrap modes
-- **Surface** — container with backgrounds, elevation, edges, radius, interactive states
-- **Card** — elevated content container with header/footer slots
-- **Input** — text input field
-- **Slider** — range slider
-- **Field** — label + input wrapper
-- **Divider** — horizontal or vertical rule
+- **Text**, **Surface**, **Card**, **Input**, **Slider**, **Field**, **Divider**, **Icon**
 
 ### Actions
-- **Button** — primary/secondary/tertiary with intents, sizes, icon support
-- **ButtonGroup** — grouped button row with shared borders
-- **ToggleButton** — two-state selectable button
-- **ToggleButtonGroup** — radio-style group of toggle buttons
+- **Button** — `primary` / `secondary` variants, intents, sizes, icon slot
+- **ButtonGroup**, **ToggleButton**, **ToggleButtonGroup**
 
 ### Controls
-- **Toggle** — on/off switch
-- **Checkbox** — with label and indeterminate state
-- **Radio** — single-select radio input
+- **Toggle**, **Checkbox**, **RadioGroup**
 
 ### Data display
-- **Tag** — static metadata label with intent coloring
-- **Chip** — interactive or removable metadata chip
-- **Badge** — compact counter or notification dot
-- **Table** — sortable, paginated data table
-- **Accordion** — collapsible content sections
-- **Pagination** — page navigation control
+- **Tag**, **Chip**, **Badge**, **Table**, **Accordion**, **Pagination**
 
 ### Overlays
-- **Modal** — dialog with title, subtitle, footer slots
-- **Menu** — dropdown with sections, selection, positioning
-- **Tooltip** — hover tooltip with shortcut key support
-- **Select** — dropdown select
-- **Toast** — transient notification
-- **Banner** — notification bar with intents, toast mode
+- **Modal**, **Menu**, **Tooltip**, **Select**, **ToastProvider** (`ds-toast-provider`), **Banner**
 
 ### Navigation
-- **Tab** — tab button with selection state
-- **TabGroup** — grouped tabs with shared selection
-- **Breadcrumb** — path navigation
+- **TabGroup** (pill), **TabGroupNav** (underline), **Breadcrumb**
+- **AppShell**, **PanelNav**, **BarNav**, **BarNavAction**, **PanelTools**
 
-### Status
-- **EmptyState** — placeholder states
-- **Loader** — loading indicator
-- **Skeleton** — content placeholder
-
-### Layout
-- **Header** — page header with left/center/right slots
-- **PanelNav** — collapsible side navigation panel with sections and items
-
-### Utility
-- **Fade** — gradient overlay
-- **Scrollbar** — custom scrollbar
-- **ErrorBoundary** — error catch with fallback
+### Status & layout
+- **EmptyState**, **Loader**, **Skeleton**, **Header**, **Fade**, **Scrollbar**
 
 ## Token dependency
 
@@ -104,16 +80,16 @@ All styling uses TokoMo CSS custom properties. No hardcoded colors, sizes, or sh
 
 ## Icon pattern
 
-Components that accept icons use named slots:
+Components that accept icons use a named `icon` slot:
 
 ```html
 <ds-button>
-  <ds-icon-arrow-right slot="icon"></ds-icon-arrow-right>
+  <ds-icon name="ArrowRight" slot="icon"></ds-icon>
   Save
 </ds-button>
 ```
 
-Pass any element into `slot="icon"`. Works with `@ds-mo/icons` or any custom SVG element.
+`name` must be a canonical IcoMo export key (`ArrowRight`, `Bell`, …). You can also slot any custom SVG element.
 
 ## Figma Code Connect
 
@@ -121,7 +97,7 @@ This repo includes [Figma Code Connect](https://developers.figma.com/docs/code-c
 
 **Prerequisites**
 
-- Node 18+ (same as the rest of the project).
+- Node **20.19+** or **22.12+** (see `package.json` `engines` and `.nvmrc`).
 - A Figma **personal access token** with **Code Connect (Write)** and **File content (Read)**. Set it locally only — never commit it:
   - `export FIGMA_ACCESS_TOKEN='…'`, or
   - pass `--token` / `-t` when publishing.
@@ -161,7 +137,7 @@ Each contributor can use their own `FIGMA_ACCESS_TOKEN` in a local shell or `.en
 ### Dev Mode vs “the template” (why mapping exists)
 
 - **The canvas** is whatever designers built (variant names like `Type = Main`, nested structure, etc.). Code Connect does **not** rewrite your Figma file.
-- **Dev Mode** can show a **link to your repo file** (e.g. `Icon.tsx`) when you connect the repo — that answers “where is this implemented?”
+- **Dev Mode** can show a **link to your repo file** (e.g. `src/wc/components/Icon/Icon.tsx`) when you connect the repo — that answers “where is this implemented?”
 - The **Code Connect snippet** is the **copy-paste example** Figma shows in Inspect. That text comes from **your published templates** (or from other Figma features like MCP context), not from magically knowing your Stencil prop names.
 
 So: if Figma props already match your API (`intent`, `appearance`), your template can be a thin wrapper and life is easy. If they **do not** match (legacy `Type` vs real `intent`), the template is where you **translate** so the snippet still shows **canonical** usage. You are not making Dev Mode “look like Figma internals” — you are choosing what **engineers should copy** when names diverge.
@@ -192,4 +168,4 @@ If the secret is missing, the publish step fails with Figma’s “no access tok
 
 ### Icon batch files — CompoMo vs IcoMo
 
-**Publish from CompoMo.** The batch JSON and `.figma.batch.ts` live in **this** repo (next to `figma.config.json`), and `figma connect publish` runs here. The **snippet** should show how apps use **`@ds-mo/ui`** (e.g. `<ds-icon name="Bell" />` or `<DsIcon name="Bell" />`). **`name`** values must match **IcoMo** export keys, but the **mapping files and CI job** belong to **CompoMo** because that is the package that owns `<ds-icon>` and the Dev Mode story for product engineers.
+**Publish from CompoMo.** Code Connect templates live under `code-connect/published/` (see `code-connect/examples/` for starters). `figma connect publish` runs from this repo. Snippets should show **`@ds-mo/ui`** usage (e.g. `<ds-icon name="Bell" />` or `<DsIcon name="Bell" />` from `@ds-mo/ui/react`). **`name`** values must match **IcoMo** export keys.
