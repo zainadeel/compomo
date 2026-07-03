@@ -88,7 +88,11 @@ function toggleSection(shellId: string) {
   applySection(shellId, next);
 }
 
-function shellLayout(shellId: string, gradient: boolean): TemplateResult {
+function shellLayout(
+  shellId: string,
+  options: { gradient?: boolean; grid?: boolean },
+): TemplateResult {
+  const { gradient = false, grid = false } = options;
   return html`
     <div
       style="
@@ -97,7 +101,13 @@ function shellLayout(shellId: string, gradient: boolean): TemplateResult {
         font-family: var(--typography-font-family, system-ui);
       "
     >
-      <ds-app-shell id=${shellId} nav-style="dashboard" ?gradient=${gradient} style="height: 100%;">
+      <ds-app-shell
+        id=${shellId}
+        nav-style="dashboard"
+        ?gradient=${gradient}
+        ?grid=${grid}
+        style="height: 100%;"
+      >
         <ds-panel-nav
           slot="panel"
           nav-style="dashboard"
@@ -134,11 +144,21 @@ export default meta;
 type Story = StoryObj;
 
 export const WithGradient: Story = {
-  name: 'With gradient',
-  render: () => shellLayout('shell-gradient', true),
+  name: 'Gradient wash only',
+  render: () => shellLayout('shell-gradient', { gradient: true, grid: false }),
+};
+
+export const WithGradientAndGrid: Story = {
+  name: 'Gradient wash + grid',
+  render: () => shellLayout('shell-gradient-grid', { gradient: true, grid: true }),
+};
+
+export const WithGridOnly: Story = {
+  name: 'Grid only',
+  render: () => shellLayout('shell-grid', { gradient: false, grid: true }),
 };
 
 export const NoGradient: Story = {
-  name: 'No gradient',
-  render: () => shellLayout('shell-plain', false),
+  name: 'No chrome',
+  render: () => shellLayout('shell-plain', { gradient: false, grid: false }),
 };

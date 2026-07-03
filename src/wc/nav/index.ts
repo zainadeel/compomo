@@ -33,6 +33,7 @@ export {
   shellGradientPositionPanel,
   shellGradientPositionBar,
   shellChromeSurfacePosition,
+  shellChromeLayerActive,
 } from './shell-gradient';
 export type { ShellGradientLayout } from './shell-gradient';
 export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-transition';

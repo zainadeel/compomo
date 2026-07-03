@@ -99,7 +99,7 @@ export namespace Components {
     }
     interface DsAppShell {
         /**
-          * When `true`, paints the shared chrome surface (bg + wash + grid) behind panel, bar, and tools.
+          * When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout).
           * @default false
          */
         "gradient": boolean;
@@ -108,6 +108,11 @@ export namespace Components {
           * @default ''
          */
         "gradientSrc": string;
+        /**
+          * When `true`, paints the diagonal grid overlay on the shared chrome layer. Independent of `gradient`.
+          * @default false
+         */
+        "grid": boolean;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
@@ -1781,7 +1786,7 @@ declare namespace LocalJSX {
     }
     interface DsAppShell {
         /**
-          * When `true`, paints the shared chrome surface (bg + wash + grid) behind panel, bar, and tools.
+          * When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout).
           * @default false
          */
         "gradient"?: boolean;
@@ -1790,6 +1795,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "gradientSrc"?: string;
+        /**
+          * When `true`, paints the diagonal grid overlay on the shared chrome layer. Independent of `gradient`.
+          * @default false
+         */
+        "grid"?: boolean;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
@@ -2871,6 +2881,7 @@ declare namespace LocalJSX {
     interface DsAppShellAttributes {
         "navStyle": NavChromeStyle;
         "gradient": boolean;
+        "grid": boolean;
         "gradientSrc": string;
     }
     interface DsBadgeAttributes {
