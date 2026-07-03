@@ -129,11 +129,6 @@
   min-width: 0;
 }
 
-/* Synchronous hide while tools drawer opens — Stencil collapse state paints a frame later. */
-:host(.bar-nav--tools-drawer-opening) .bar-nav__left {
-  display: none;
-}
-
 /* In-flow placeholder while measuring overflow — avoids layout jump; hidden from view/accessibility. */
 .bar-nav__tabs-pending {
   flex: 1;

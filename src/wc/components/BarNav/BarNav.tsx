@@ -36,7 +36,6 @@ import {
   readChromeTransitionSource,
   readChromeTransitionPhase,
 } from '../../nav/chrome-transition';
-import { readCssVarWidthPx } from '../../nav/shell-chrome-metrics';
 
 @Component({
   tag: 'ds-bar-nav',
@@ -118,7 +117,6 @@ export class BarNav {
     this.updateTriggerLabelTruncation();
   });
   private chromeTransitionShell: HTMLElement | null = null;
-  private toolsDrawerOpening = false;
   /** Matches `basePath` once tabs + URL are reconciled for the active section. */
   @State() private committedSection = '';
   /** Section waiting for URL + tabs to catch up after a cross-area navigation. */
@@ -246,25 +244,12 @@ export class BarNav {
       const phase = readChromeTransitionPhase(event) ?? 'opening';
       if (phase === 'closing') {
         this.panelToolsTransition.enter();
-        return;
       }
-
-      this.toolsDrawerOpening = true;
-      this.el.classList.add('bar-nav--tools-drawer-opening');
-      if (this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute) {
-        this.tabsCollapsed = true;
-        this.menuOpen = false;
-      }
-      this.scheduleOverflowCheck();
     }
   };
 
   private chromeOverflowPaused(): boolean {
-    return (
-      this.panelNavTransition.isActive ||
-      this.panelToolsTransition.isActive ||
-      this.toolsDrawerOpening
-    );
+    return this.panelNavTransition.isActive || this.panelToolsTransition.isActive;
   }
 
   private onChromeTransitionEnd = (event: Event) => {
@@ -277,8 +262,6 @@ export class BarNav {
       return;
     }
     if (source === 'panel-tools') {
-      this.toolsDrawerOpening = false;
-      this.el.classList.remove('bar-nav--tools-drawer-opening');
       this.panelToolsTransition.exit();
       this.scheduleOverflowCheck();
     }
@@ -383,20 +366,7 @@ export class BarNav {
     const available =
       this.headerEl.clientWidth - horizontalPadding - actionsWidth - spacing;
 
-    return Math.max(0, available - this.toolsDrawerOpeningReservePx());
-  }
-
-  /** While the tools drawer is opening, reserve width not yet claimed by flex shrink. */
-  private toolsDrawerOpeningReservePx(): number {
-    if (!this.toolsDrawerOpening) return 0;
-
-    const tools = this.el.closest('ds-app-shell')?.querySelector('ds-panel-tools') as HTMLElement | null;
-    if (!tools) return 0;
-
-    const drawerTarget = readCssVarWidthPx(tools, '--_panel-tools-drawer-width');
-    const drawerNow =
-      tools.querySelector('.panel-tools__drawer')?.getBoundingClientRect().width ?? 0;
-    return Math.max(0, drawerTarget - drawerNow);
+    return Math.max(0, available);
   }
 
   private getTabsIntrinsicWidth(): number {
