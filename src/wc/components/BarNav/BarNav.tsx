@@ -100,6 +100,7 @@ export class BarNav {
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
   private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
+  private static readonly TAB_LAYOUT_COMMIT_MAX_FRAMES = 16;
   private static readonly OVERFLOW_HYSTERESIS_PX = 8;
 
   private headerEl: HTMLElement | null = null;
@@ -111,6 +112,7 @@ export class BarNav {
   private probeTabGroupEl: QueryableHost | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private intrinsicWidthRetryCount = 0;
+  private tabLayoutPendingFrames = 0;
   private readonly panelNavTransition = new ChromeTransitionDepth();
   private readonly panelToolsTransition = new ChromeTransitionDepth();
   private readonly overflowCoalescer = createRafCoalescer(() => {
@@ -147,6 +149,7 @@ export class BarNav {
     this.tabsCollapsed = false;
     this.menuOpen = false;
     this.intrinsicWidthRetryCount = 0;
+    this.tabLayoutPendingFrames = 0;
   }
 
   @Watch('tabs')
@@ -392,6 +395,16 @@ export class BarNav {
     requestAnimationFrame(() => this.scheduleOverflowCheck());
   }
 
+  private forceTabLayoutCommit(fallbackCollapsed: boolean) {
+    this.intrinsicWidthRetryCount = 0;
+    this.tabLayoutPendingFrames = 0;
+    this.tabsCollapsed = fallbackCollapsed;
+    if (!fallbackCollapsed) {
+      this.menuOpen = false;
+    }
+    this.tabLayoutCommitted = true;
+  }
+
   private updateTabsCollapsed() {
     if (!this.headerEl || this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
       if (this.tabsCollapsed) {
@@ -399,22 +412,25 @@ export class BarNav {
         this.menuOpen = false;
       }
       this.intrinsicWidthRetryCount = 0;
+      this.tabLayoutPendingFrames = 0;
       this.tabLayoutCommitted = true;
       return;
     }
 
     const intrinsicWidth = this.getTabsIntrinsicWidth();
     if (intrinsicWidth === 0) {
+      this.tabLayoutPendingFrames += 1;
       if (this.intrinsicWidthRetryCount >= BarNav.INTRINSIC_WIDTH_RETRY_MAX) {
-        this.intrinsicWidthRetryCount = 0;
-        this.tabsCollapsed = false;
-        this.tabLayoutCommitted = true;
+        this.forceTabLayoutCommit(false);
+      } else if (this.tabLayoutPendingFrames >= BarNav.TAB_LAYOUT_COMMIT_MAX_FRAMES) {
+        this.forceTabLayoutCommit(false);
       } else {
         this.scheduleIntrinsicWidthRetry();
       }
       return;
     }
     this.intrinsicWidthRetryCount = 0;
+    this.tabLayoutPendingFrames = 0;
 
     const shouldCollapse = tabsOverflowContainer(
       intrinsicWidth,
@@ -623,9 +639,12 @@ export class BarNav {
                 <ds-tab-group-nav
                   key={`probe-${tabGroupKey}`}
                   ref={el => {
-                    this.probeTabGroupEl = el ?? null;
-                    if (el) {
+                    const next = el ?? null;
+                    if (next === this.probeTabGroupEl) return;
+                    this.probeTabGroupEl = next;
+                    if (next) {
                       this.intrinsicWidthRetryCount = 0;
+                      this.tabLayoutPendingFrames = 0;
                       this.scheduleOverflowCheck();
                     }
                   }}

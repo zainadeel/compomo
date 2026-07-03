@@ -123,8 +123,14 @@ export class PanelNav {
   }
 
   @Watch('collapsed')
+  onCollapsedChange(_next: boolean, prev: boolean | undefined) {
+    if (prev === undefined) return;
+    this.startCollapseAnimation();
+  }
+
   @Watch('viewportNarrow')
-  onCollapsedChange() {
+  onViewportNarrowChange(_next: boolean, prev: boolean | undefined) {
+    if (prev === undefined) return;
     this.startCollapseAnimation();
   }
 
@@ -191,17 +197,34 @@ export class PanelNav {
     this.isAnimating = true;
     this.dsChromeTransitionStart.emit({ source: 'panel-nav' });
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
+    const widthBefore = panel?.getBoundingClientRect().width ?? 0;
     if (this.transitionEndHandler) {
       panel?.removeEventListener('transitionend', this.transitionEndHandler);
     }
     this.transitionEndHandler = (e: TransitionEvent) => {
       if (e.propertyName === 'width') {
-        this.isAnimating = false;
-        this.dsChromeTransitionEnd.emit({ source: 'panel-nav' });
-        panel?.removeEventListener('transitionend', this.transitionEndHandler!);
+        this.finishCollapseAnimation(panel);
       }
     };
     panel?.addEventListener('transitionend', this.transitionEndHandler);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!this.isAnimating) return;
+        const widthAfter = panel?.getBoundingClientRect().width ?? 0;
+        if (Math.abs(widthAfter - widthBefore) < 1) {
+          this.finishCollapseAnimation(panel);
+        }
+      });
+    });
+  }
+
+  private finishCollapseAnimation(panel: HTMLElement | null) {
+    if (!this.isAnimating) return;
+    this.isAnimating = false;
+    this.dsChromeTransitionEnd.emit({ source: 'panel-nav' });
+    if (this.transitionEndHandler) {
+      panel?.removeEventListener('transitionend', this.transitionEndHandler);
+    }
   }
 
   private connectResizeObserver() {
