@@ -39,18 +39,21 @@ Bind the **same** `navStyle` on shell, panel, and bar so they stay in sync.
 
 Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). Tool shortcuts (search, messages, agents, …) live on **`ds-panel-tools`**, not inline on the bar.
 
-### `ds-panel-tools` — composable drawer body
+### `ds-panel-tools` — one named slot per tool
 
-The sliding drawer exposes a **default slot** for host-composed content. The rail still uses `items` + `active-tool`; swap drawer markup in the host when `dsToolChange` fires (or bind `activeTool` in your framework).
+Each rail tool (`search`, `agents`, `messages`, `stacks`, `activity`) has a **named slot** for its own composed UI. Mount all tool panels in the host; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open (and keeps it visible during the close slide).
 
 ```html
 <ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>
-  <!-- Host composes one body; switch on active-tool -->
-  <section>Agents panel content</section>
+  <app-search-panel slot="search" />
+  <app-agents-panel slot="agents" />
+  <app-messages-panel slot="messages" />
+  <app-stacks-panel slot="stacks" />
+  <app-activity-panel slot="activity" />
 </ds-panel-tools>
 ```
 
-The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]` until a future `drawer-title` prop is added.
+The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open.
 
 ## `ds-app-shell` (optional workspace layout)
 

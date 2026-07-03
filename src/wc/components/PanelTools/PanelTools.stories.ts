@@ -3,7 +3,7 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-panel-tools.js';
 import '../../../../dist/components/ds-app-shell.js';
-import { PANEL_TOOLS_LABELS, type PanelToolsItem, type PanelToolsToolId } from './panel-tools-types';
+import type { PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
 
 const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
@@ -21,7 +21,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Tool rail + sliding drawer. Drawer body is a **default slot** — compose any markup in the host and swap content when `active-tool` changes.',
+          'Tool rail + sliding drawer. Each tool has a **named slot** (`search`, `agents`, `messages`, `stacks`, `activity`) for its own composed UI. The component shows the active tool’s slot while the drawer is open; closing slides the drawer shut without unmounting slotted content.',
       },
     },
   },
@@ -29,16 +29,6 @@ const meta: Meta = {
 
 export default meta;
 type Story = StoryObj;
-
-function drawerPlaceholder(activeTool: PanelToolsToolId) {
-  const label = PANEL_TOOLS_LABELS[activeTool];
-  return html`
-    <p style="margin: 0;">
-      Compose drawer content in the host — swap when <code>active-tool</code> changes.
-      Active: <strong>${label}</strong>
-    </p>
-  `;
-}
 
 function toolsShell(open: boolean, activeTool: PanelToolsToolId) {
   const items = RAIL_ITEMS.map(item => ({
@@ -82,7 +72,11 @@ function toolsShell(open: boolean, activeTool: PanelToolsToolId) {
         </div>
       </div>
       <ds-panel-tools ?open=${open} active-tool=${activeTool} .items=${items}>
-        ${drawerPlaceholder(activeTool)}
+        <p slot="search">Search tool UI — compose a full feature panel here.</p>
+        <p slot="messages">Messages tool UI</p>
+        <p slot="stacks">Stacks tool UI</p>
+        <p slot="activity">Activity tool UI</p>
+        <p slot="agents">Agents tool UI</p>
       </ds-panel-tools>
     </div>
   `;
@@ -124,7 +118,7 @@ export const Interactive: Story = {
     docs: {
       description: {
         story:
-          'Rail selection follows `open` immediately; drawer content stays visible and slides out during close. Host updates default-slot children when `active-tool` changes.',
+          'Rail selection follows `open` immediately. Each tool’s slotted UI stays mounted when switching tools or closing the drawer.',
       },
     },
   },
@@ -144,20 +138,11 @@ export const Interactive: Story = {
           items: PanelToolsItem[];
         } | null;
         const status = root.querySelector('#panel-tools-status');
-        const body = root.querySelector('#panel-tools-body');
-        if (!tools || !status || !body) return;
-
-        const renderBody = (tool: PanelToolsToolId | '') => {
-          body.textContent =
-            tool && tools.open
-              ? `${PANEL_TOOLS_LABELS[tool as PanelToolsToolId]} — host-composed drawer body`
-              : '';
-        };
+        if (!tools || !status) return;
 
         tools.items = RAIL_ITEMS.map(item => ({ ...item, selected: false }));
         tools.open = false;
         tools.activeTool = '';
-        renderBody('');
 
         tools.addEventListener('dsToolChange', (e: Event) => {
           const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>).detail;
@@ -167,8 +152,9 @@ export const Interactive: Story = {
             ...item,
             selected: selected && item.id === id,
           }));
-          renderBody(selected ? id : '');
-          status.textContent = selected ? `open · activeTool="${id}"` : 'closed';
+          status.textContent = selected
+            ? `open · activeTool="${id}"`
+            : 'closed';
         });
       })}
     >
@@ -177,7 +163,11 @@ export const Interactive: Story = {
         <p style="margin: 0; font-size: 12px;" id="panel-tools-status">closed</p>
       </div>
       <ds-panel-tools>
-        <div id="panel-tools-body"></div>
+        <p slot="search">Search content</p>
+        <p slot="messages">Messages content</p>
+        <p slot="stacks">Stacks content</p>
+        <p slot="activity">Activity content</p>
+        <p slot="agents">Agents content</p>
       </ds-panel-tools>
     </div>
   `,
@@ -215,7 +205,7 @@ export const InGradientShell: Story = {
             selected: item.id === 'agents',
           }))}
         >
-          <p>Agents drawer over shell chrome — default slot content</p>
+          <p slot="agents">Agents drawer over shell chrome</p>
         </ds-panel-tools>
       </ds-app-shell>
     </div>

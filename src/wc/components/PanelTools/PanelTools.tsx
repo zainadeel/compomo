@@ -122,6 +122,10 @@ export class PanelTools {
     return this.open || this.motion === 'closing';
   }
 
+  private isViewActive(id: PanelToolsToolId): boolean {
+    return this.isDrawerPresent() && this.activeTool === id;
+  }
+
   private headerLabel(): string {
     if (!this.isDrawerPresent() || !this.activeTool) return '';
     return PANEL_TOOLS_LABELS[this.activeTool as PanelToolsToolId] ?? '';
@@ -188,11 +192,56 @@ export class PanelTools {
                 <span class="panel-tools__title text-body-medium-emphasis">{headerLabel}</span>
               </header>
               <div class="panel-tools__body">
-                {showDrawerChrome ? (
-                  <div class="panel-tools__content text-body-medium">
-                    <slot />
-                  </div>
-                ) : null}
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isViewActive('search'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isViewActive('search')}
+                >
+                  <slot name="search" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isViewActive('messages'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isViewActive('messages')}
+                >
+                  <slot name="messages" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isViewActive('stacks'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isViewActive('stacks')}
+                >
+                  <slot name="stacks" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isViewActive('activity'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isViewActive('activity')}
+                >
+                  <slot name="activity" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isViewActive('agents'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isViewActive('agents')}
+                >
+                  <slot name="agents" />
+                </div>
               </div>
             </div>
           </div>
