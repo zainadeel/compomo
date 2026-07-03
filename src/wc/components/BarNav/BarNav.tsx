@@ -9,10 +9,8 @@ import {
   h,
   Host,
 } from '@stencil/core';
-import type { MenuItemData } from '../Menu/menu-types';
-import type { BarNavActionBackground } from '../BarNavAction/BarNavAction';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
-import { SHELL_BAR_NAV_VT_NAME } from '../../nav/shell-view-transition';
+import type { MenuItemData } from '../Menu/menu-types';
 import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
@@ -37,6 +35,9 @@ import {
   scoped: true,
 })
 export class BarNav {
+  /** Style slot: `dashboard` or `settings`. Colors match for now. */
+  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'dashboard';
+
   @Element() el!: HTMLElement;
 
   /**
@@ -65,10 +66,6 @@ export class BarNav {
    * When tabs are present the heading is hidden.
    */
   @Prop() heading: string | undefined;
-
-  /** Chrome style: `navigation` = navigation tokens, `default` = app tokens.
-   *  Property: `navStyle`. HTML attribute: `nav-style`. */
-  @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'default';
 
   /** Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`. */
   @Prop() basePath: string = '';
@@ -494,16 +491,11 @@ export class BarNav {
     }
   }
 
-  private get tabSurface(): BarNavActionBackground | undefined {
-    return this.navStyle === 'navigation' ? 'navigation' : undefined;
-  }
-
   render() {
     const sectionReady =
       this.basePath !== '' && this.committedSection === this.basePath;
     const hasTabs =
       sectionReady && this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
-    const tabSurface = this.tabSurface;
     const tabGroupKey = this.basePath || 'no-section';
 
     return (
@@ -511,11 +503,10 @@ export class BarNav {
         <header
           class={{
             'bar-nav': true,
-            'bar-nav--navigation': this.navStyle === 'navigation',
-            'bar-nav--default': this.navStyle === 'default',
+            'bar-nav--dashboard': this.navStyle === 'dashboard',
+            'bar-nav--settings': this.navStyle === 'settings',
             'bar-nav--tabs-collapsed': hasTabs && this.tabsCollapsed,
           }}
-          style={{ viewTransitionName: SHELL_BAR_NAV_VT_NAME }}
           ref={el => {
             this.headerEl = el as HTMLElement;
             if (el && !this.resizeObserver) {
@@ -536,7 +527,6 @@ export class BarNav {
                   }}
                   tabs={this.resolvedTabs}
                   value={this.effectiveValue}
-                  background={tabSurface}
                 />
               </div>
             )}
@@ -551,7 +541,6 @@ export class BarNav {
                   }}
                   tabs={this.resolvedTabs}
                   value={this.effectiveValue}
-                  background={tabSurface}
                   onDsChange={(e: Event) => this.handleTabChange(e)}
                 />
               </div>
@@ -634,7 +623,6 @@ export class BarNav {
                   dot={action.dot ?? false}
                   inactive={action.inactive}
                   aria-label={action.ariaLabel ?? action.id}
-                  background={tabSurface}
                   onDsChange={(e: Event) => this.handleActionChange(action.id, e)}
                 />
               ))}

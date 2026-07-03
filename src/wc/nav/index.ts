@@ -25,12 +25,14 @@ export {
   SHELL_GRADIENT_POSITION_PANEL_VAR,
   SHELL_GRADIENT_POSITION_BAR_VAR,
   SHELL_GRADIENT_OPACITY_VAR,
+  SHELL_CHROME_SURFACE_POSITION_VAR,
   SHELL_GRADIENT_OPACITY,
   buildShellRadialGradient,
-  shellGradientImageForStyle,
+  shellGradientImage,
   shellGradientSize,
   shellGradientPositionPanel,
   shellGradientPositionBar,
+  shellChromeSurfacePosition,
 } from './shell-gradient';
 export type { ShellGradientLayout } from './shell-gradient';
 export {

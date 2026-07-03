@@ -1,16 +1,14 @@
-/** Visual chrome family for primary/secondary navigation surfaces. */
-export type NavChromeStyle = 'navigation' | 'default';
+/** Nav chrome style slot — dashboard vs settings. Colors unified for now; texture hooks use the class. */
+export type NavChromeStyle = 'dashboard' | 'settings';
 
-/** `document.documentElement` attribute for pre-bootstrap style hints (SPA hard reload). */
+/** Document hint for first paint before framework props land. */
 export const NAV_STYLE_HINT_ATTR = 'data-nav-style';
 
-/** Parse `nav-style` from a host or document hint attribute value. */
 export function readNavStyleAttr(attr: string | null): NavChromeStyle | undefined {
-  if (attr === 'navigation' || attr === 'default') return attr;
+  if (attr === 'dashboard' || attr === 'settings') return attr;
   return undefined;
 }
 
-/** Set a document-level style hint before nav custom elements upgrade (hard reload). */
 export function setNavStyleHint(style: NavChromeStyle): void {
   if (typeof document === 'undefined') return;
   document.documentElement.setAttribute(NAV_STYLE_HINT_ATTR, style);
@@ -21,22 +19,26 @@ export function clearNavStyleHint(): void {
   document.documentElement.removeAttribute(NAV_STYLE_HINT_ATTR);
 }
 
-/** Resolve initial nav chrome style — host attr, then document hint, then prop default. */
 export function resolveNavChromeStyle(
   styleProp: NavChromeStyle,
-  styleAttr: string | null,
-  documentStyleAttr: string | null = typeof document !== 'undefined'
-    ? document.documentElement.getAttribute(NAV_STYLE_HINT_ATTR)
-    : null,
+  hostAttr: string | null,
+  docHint?: string | null,
 ): NavChromeStyle {
-  return (
-    readNavStyleAttr(styleAttr) ??
-    readNavStyleAttr(documentStyleAttr) ??
-    styleProp
-  );
+  const fromHost = readNavStyleAttr(hostAttr);
+  if (fromHost) return fromHost;
+
+  const hint =
+    docHint !== undefined
+      ? docHint
+      : typeof document !== 'undefined'
+        ? document.documentElement.getAttribute(NAV_STYLE_HINT_ATTR)
+        : null;
+  const fromHint = readNavStyleAttr(hint);
+  if (fromHint) return fromHint;
+
+  return styleProp;
 }
 
-/** True when internal rendered surface lags the host `style` prop. */
 export function shouldResyncNavChromeStyle(
   renderedStyle: NavChromeStyle,
   style: NavChromeStyle,

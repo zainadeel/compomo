@@ -4,50 +4,90 @@
   box-sizing: border-box;
   height: 100%;
   min-height: 0;
-  max-width: 0;
-  overflow: hidden;
-  border-left: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
-  --_panel-tools-width: var(--dimension-panel-width-sm);
-  /* Match panel-nav expand timing (medium-1); easing differs by direction below. */
+  --_panel-tools-rail-width: var(--dimension-size-600);
+  --_panel-tools-drawer-width: var(--dimension-panel-width-sm);
+  --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
+  /* Match panel-nav expand timing (medium-1); easing differs by direction. */
   --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 300ms);
+}
+
+.panel-tools__layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+/* Clip frame — only max-width animates (slide reveal, same as pre-rail :host). */
+.panel-tools__drawer {
+  flex: 0 0 auto;
+  max-width: 0;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
   transition: none;
 }
 
-:host(.panel-tools--open) {
-  max-width: var(--_panel-tools-width);
-}
-
-/* Motion only after ready — restored open state can paint wide before transitions arm. */
-:host(.panel-tools--ready:not(.panel-tools--open)) {
-  transition: max-width var(--_panel-tools-expand-dur)
-    var(--effect-animation-easing-ease-in, ease-in);
-}
-
-:host(.panel-tools--ready.panel-tools--open) {
+:host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__drawer {
   transition: max-width var(--_panel-tools-expand-dur)
     var(--effect-animation-easing-ease-out, ease-out);
 }
 
-.panel-tools__inner {
+:host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__drawer {
+  transition: max-width var(--_panel-tools-expand-dur)
+    var(--effect-animation-easing-ease-in, ease-in);
+}
+
+:host(.panel-tools--open) .panel-tools__drawer {
+  max-width: var(--_panel-tools-drawer-width);
+}
+
+.panel-tools__drawer--visible {
+  border-left: var(--_panel-tools-border);
+}
+
+/* Fixed-width surface — stays 400px while the clip frame opens/closes. */
+.panel-tools__drawer-surface {
   display: flex;
   flex-direction: column;
-  width: var(--_panel-tools-width);
+  width: var(--_panel-tools-drawer-width);
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
   background-color: var(--color-background-primary);
 }
 
+/* Shell-owned chrome (bg + wash + grid) — drawer is a transparent frame. */
+:host-context(ds-app-shell[gradient]) .panel-tools__drawer-surface {
+  background-color: transparent;
+}
+
+/* Aligns with ds-bar-nav row — same height, inset, border, and title token. */
 .panel-tools__header {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   height: var(--dimension-size-600);
-  padding: 0 var(--dimension-space-200);
-  border-bottom: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
+  padding: var(--dimension-space-100);
+  border-bottom: var(--_panel-tools-border);
   color: var(--color-foreground-primary);
+  box-sizing: border-box;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.panel-tools__title {
+  display: inline-flex;
+  align-items: center;
+  height: var(--dimension-size-400);
+  padding-inline: var(--dimension-space-100);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .panel-tools__body {
@@ -83,4 +123,54 @@
 
 .panel-tools__view--active {
   display: block;
+}
+
+/* Rail — mirrors collapsed panel-nav width, padding, and item rhythm. */
+.panel-tools__rail {
+  flex: 0 0 var(--_panel-tools-rail-width);
+  width: var(--_panel-tools-rail-width);
+  min-width: var(--_panel-tools-rail-width);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  border-left: var(--_panel-tools-border);
+}
+
+.panel-tools__rail-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-bottom: var(--_panel-tools-border);
+}
+
+.panel-tools__rail-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  padding: var(--dimension-space-100);
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+.panel-tools__rail-body::-webkit-scrollbar {
+  display: none;
+}
+
+.panel-tools__rail-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--dimension-size-400);
+  flex-shrink: 0;
 }

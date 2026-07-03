@@ -14,17 +14,76 @@
   font-family: var(--typography-font-family, system-ui);
 }
 
+:host(.app-shell--gradient) {
+  --_shell-chrome-bg: var(--color-background-secondary);
+  --_shell-chrome-grid-cell: var(--dimension-size-050);
+  --_shell-chrome-grid-stroke: var(--dimension-stroke-width-012);
+  --_shell-chrome-grid-line: var(--color-foreground-quaternary);
+  --_shell-chrome-grid-opacity: 0.1;
+}
+
 .app-shell__row {
   display: flex;
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
+  position: relative;
+}
+
+/*
+ * One chrome layer behind the shell row. Wash + grid use background-attachment: fixed
+ * so the pattern is locked to the viewport — panel/tools collapse only changes the
+ * transparent window, not the pattern phase.
+ */
+.app-shell__chrome {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+:host(.app-shell--gradient) .app-shell__chrome {
+  background-color: var(--_shell-chrome-bg);
+}
+
+/* Layer stack (bottom → top): bg → wash (::before) → grid (::after) */
+:host(.app-shell--gradient) .app-shell__chrome::before,
+:host(.app-shell--gradient) .app-shell__chrome::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-position: 0 0;
+  background-attachment: fixed;
+}
+
+:host(.app-shell--gradient) .app-shell__chrome::before {
+  z-index: 1;
+  opacity: var(--ds-shell-gradient-opacity, 1);
+  background-image: var(--ds-shell-gradient-image, none);
+  background-size: var(--ds-shell-gradient-size, auto);
+  background-repeat: no-repeat;
+}
+
+:host(.app-shell--gradient) .app-shell__chrome::after {
+  z-index: 2;
+  opacity: var(--_shell-chrome-grid-opacity);
+  background-image: repeating-linear-gradient(
+    120deg,
+    var(--_shell-chrome-grid-line) 0,
+    var(--_shell-chrome-grid-line) var(--_shell-chrome-grid-stroke),
+    transparent var(--_shell-chrome-grid-stroke),
+    transparent var(--_shell-chrome-grid-cell)
+  );
 }
 
 .app-shell__panel {
   flex: 0 0 auto;
   min-height: 0;
   height: 100%;
+  position: relative;
+  /* Above main so resize handle line can paint over the workspace edge */
+  z-index: 2;
 }
 
 .app-shell__panel ::slotted(ds-panel-nav) {
@@ -33,6 +92,16 @@
 }
 
 .app-shell__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  z-index: 1;
+}
+
+.app-shell__stack {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
@@ -48,18 +117,18 @@
   display: block;
 }
 
-.app-shell__workspace {
-  display: flex;
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-}
-
 .app-shell__content {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
   overflow: auto;
+}
+
+/* Opaque page surface — masks the fixed chrome layer in the content column. */
+:host(.app-shell--gradient) .app-shell__content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-background-primary);
 }
 
 .app-shell__tools {

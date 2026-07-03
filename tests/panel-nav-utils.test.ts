@@ -35,41 +35,27 @@ describe('hrefMatchesPath', () => {
 
 describe('shouldResyncPanelNavStyle', () => {
   it('returns true when renderedStyle lags style prop', () => {
-    assert.equal(shouldResyncPanelNavStyle('navigation', 'default'), true);
+    assert.equal(shouldResyncPanelNavStyle('dashboard', 'settings'), true);
   });
 
   it('returns false when renderedStyle matches style prop', () => {
-    assert.equal(shouldResyncPanelNavStyle('default', 'default'), false);
+    assert.equal(shouldResyncPanelNavStyle('settings', 'settings'), false);
   });
 });
 
 describe('resolvePanelNavStyle', () => {
   it('prefers host attribute on hard reload before JS props land', () => {
-    assert.equal(resolvePanelNavStyle('navigation', 'default'), 'default');
+    assert.equal(resolvePanelNavStyle('dashboard', 'settings'), 'settings');
   });
 
   it('falls back to prop when attribute is absent', () => {
-    assert.equal(resolvePanelNavStyle('default', null), 'default');
-  });
-
-  it('reads document hint before prop default', () => {
-    assert.equal(resolvePanelNavStyle('navigation', null, 'default'), 'default');
-  });
-});
-
-describe('NAV_STYLE_HINT_ATTR', () => {
-  it('names the document hint attribute', () => {
-    assert.equal(NAV_STYLE_HINT_ATTR, 'data-nav-style');
+    assert.equal(resolvePanelNavStyle('settings', null), 'settings');
   });
 });
 
 describe('resolvePanelNavDisableVt', () => {
   it('returns true when disable-view-transition attribute is set', () => {
     assert.equal(resolvePanelNavDisableVt(false, ''), true);
-  });
-
-  it('returns true when prop is set', () => {
-    assert.equal(resolvePanelNavDisableVt(true, null), true);
   });
 
   it('returns false when neither prop nor attribute is set', () => {

@@ -4,9 +4,8 @@ import type { TemplateResult } from 'lit';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-text.js';
-import type { PanelNavGroup } from './panel-nav-types';
-import { ensureShellNavVtStyle, runShellNavStyleRevealOnReady } from '../../nav/shell-view-transition';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
+import type { PanelNavGroup } from './panel-nav-types';
 
 // ── Sample data (icon names verified against IcoMo) ───────────────────────
 
@@ -79,61 +78,28 @@ const SETTINGS_GROUPS: PanelNavGroup[] = [
 
 // ── Shared story helpers ───────────────────────────────────────────────────
 
-const STYLE_BG: Record<NavChromeStyle, string> = {
-  navigation: '#0f0f0f',
-  default:  'var(--color-background-primary)',
-};
-
 const STYLE_GROUPS: Record<NavChromeStyle, PanelNavGroup[]> = {
-  navigation: DASHBOARD_GROUPS,
-  default:  SETTINGS_GROUPS,
+  dashboard: DASHBOARD_GROUPS,
+  settings: SETTINGS_GROUPS,
 };
 
 const STYLE_ACTIVE: Record<NavChromeStyle, string> = {
-  navigation: 'fleet-view',
-  default:  'user-settings',
+  dashboard: 'fleet-view',
+  settings: 'user-settings',
 };
-
-// ── App-level radial reveal ────────────────────────────────────────────────
-// Real apps drive the panel-nav reveal at the app/router level (the nav sets
-// `disable-view-transition`, so the component's own VT path is off and there is
-// a single driver). Storybook has no router, so the story plays that role here.
-
-type DocWithVT = Document & {
-  startViewTransition?: (cb: () => void | Promise<void>) => { ready: Promise<void> };
-};
-
-/** Animate a panel-nav style change with the radial circle reveal, driven from
- *  the app side. `applyChange` mutates the nav props; we wait for Stencil to flush
- *  the re-render before the new snapshot is captured so the reveal shows the new
- *  style rather than the old one. */
-function revealStyle(nav: HTMLElement, applyChange: () => void) {
-  const doc = document as DocWithVT;
-  if (typeof doc.startViewTransition !== 'function') {
-    applyChange();
-    return;
-  }
-  ensureShellNavVtStyle();
-
-  const transition = doc.startViewTransition(() => {
-    applyChange();
-  });
-
-  runShellNavStyleRevealOnReady(transition, nav.querySelector('.panel-nav__footer-btn'));
-}
 
 function switchFooterStyle(id: string) {
-  const el = document.getElementById(id) as HTMLElement & { navStyle: NavChromeStyle; groups: string | PanelNavGroup[]; activeId: string };
-  const wrap = document.getElementById(`${id}-wrap`);
+  const el = document.getElementById(id) as HTMLElement & {
+    navStyle: NavChromeStyle;
+    groups: string | PanelNavGroup[];
+    activeId: string;
+  };
   if (!el) return;
 
-  const next: NavChromeStyle = el.navStyle === 'navigation' ? 'default' : 'navigation';
-  revealStyle(el, () => {
-    el.navStyle = next;
-    el.groups = JSON.stringify(STYLE_GROUPS[next]);
-    el.activeId = STYLE_ACTIVE[next];
-    if (wrap) wrap.style.background = STYLE_BG[next];
-  });
+  const next: NavChromeStyle = el.navStyle === 'dashboard' ? 'settings' : 'dashboard';
+  el.navStyle = next;
+  el.groups = JSON.stringify(STYLE_GROUPS[next]);
+  el.activeId = STYLE_ACTIVE[next];
 }
 
 function interactiveDashboard(activeId = 'fleet-view', collapsed = false): TemplateResult {
@@ -141,17 +107,16 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
     <div id="dash-nav-wrap" style="
       display: flex;
       height: 100vh;
-      background: ${STYLE_BG['navigation']};
+      background: var(--color-background-primary);
       font-family: var(--typography-font-family, system-ui);
     ">
       <ds-panel-nav
         id="dash-nav"
-        nav-style="navigation"
+        nav-style="dashboard"
         groups=${JSON.stringify(DASHBOARD_GROUPS)}
         active-id=${activeId}
         user-name="Zain Adeel"
         user-initial="Z"
-        disable-view-transition
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('dash-nav') as any;
@@ -165,7 +130,7 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
       ></ds-panel-nav>
 
       <div style="flex:1; padding: 24px; color: rgba(255,255,255,0.5); font-size: 13px;">
-        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch styles.</p>
+        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch sections.</p>
       </div>
     </div>
   `;
@@ -176,17 +141,16 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
     <div id="settings-nav-wrap" style="
       display: flex;
       height: 100vh;
-      background: ${STYLE_BG['default']};
+      background: var(--color-background-primary);
       font-family: var(--typography-font-family, system-ui);
     ">
       <ds-panel-nav
         id="settings-nav"
-        nav-style="default"
+        nav-style="settings"
         groups=${JSON.stringify(SETTINGS_GROUPS)}
         active-id=${activeId}
         user-name="Zain Adeel"
         user-initial="Z"
-        disable-view-transition
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('settings-nav') as any;
@@ -200,7 +164,7 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
       ></ds-panel-nav>
 
       <div style="flex:1; padding: 24px; color: var(--color-foreground-secondary); font-size: 13px;">
-        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch styles.</p>
+        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch sections.</p>
       </div>
     </div>
   `;
@@ -227,7 +191,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-exp"
-            nav-style="navigation"
+            nav-style="dashboard"
             groups=${dashGroups}
             active-id="fleet-view"
             user-name="Zain Adeel"
@@ -250,7 +214,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-col"
-            nav-style="navigation"
+            nav-style="dashboard"
             groups=${dashGroups}
             active-id="fleet-view"
             user-name="Zain Adeel"
@@ -274,7 +238,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
           <ds-panel-nav
             id="sb-settings-exp"
-            nav-style="default"
+            nav-style="settings"
             groups=${settingsGroups}
             active-id="user-settings"
             user-name="Zain Adeel"
@@ -297,7 +261,7 @@ function sideBySide(): TemplateResult {
         <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
           <ds-panel-nav
             id="sb-settings-col"
-            nav-style="default"
+            nav-style="settings"
             groups=${settingsGroups}
             active-id="user-settings"
             user-name="Zain Adeel"
@@ -399,16 +363,15 @@ export const AngularHostTiming: Story = {
       <div style="
         display: flex;
         height: 100vh;
-        background: ${STYLE_BG['navigation']};
+        background: var(--color-background-primary);
         font-family: var(--typography-font-family, system-ui);
       ">
         <ds-panel-nav
           id="angular-timing-nav"
-          nav-style="navigation"
+          nav-style="dashboard"
           router-mode="event"
           user-name="Zain Adeel"
           user-initial="Z"
-          disable-view-transition
         ></ds-panel-nav>
         <div style="flex:1; padding:24px; color:rgba(255,255,255,0.55); font-size:13px;">
           <p style="margin:0 0 8px;">
@@ -440,18 +403,17 @@ export const RouterModeEvent: Story = {
       <div style="
         display: flex;
         height: 100vh;
-        background: ${STYLE_BG['navigation']};
+        background: var(--color-background-primary);
         font-family: var(--typography-font-family, system-ui);
       ">
         <ds-panel-nav
           id="router-nav"
-          nav-style="navigation"
+          nav-style="dashboard"
           router-mode="event"
           .groups=${ROUTER_GROUPS}
           current-url=${currentUrl}
           user-name="Zain Adeel"
           user-initial="Z"
-          disable-view-transition
           @dsNavSelect=${(e: CustomEvent<string>) => {
             const item = ROUTER_GROUPS.flatMap(g => g.items).find(i => i.id === e.detail);
             if (item?.href) navigate(item.href);
@@ -478,48 +440,34 @@ export const RouterModeEvent: Story = {
 };
 
 export const LiveSwitch: Story = {
-  name: 'Live Style Switch',
+  name: 'Live section switch',
   render: () => {
-    let current: NavChromeStyle = 'navigation';
-    const toggleLive = () => {
-      const nav = document.getElementById('live-nav') as HTMLElement | null;
-      const wrap = document.getElementById('live-wrap');
-      if (!nav) return;
-      current = current === 'navigation' ? 'default' : 'navigation';
-      revealStyle(nav, () => {
-        const el = nav as HTMLElement & { navStyle: NavChromeStyle; groups: string | PanelNavGroup[]; activeId: string };
-        el.navStyle = current;
-        el.groups = JSON.stringify(STYLE_GROUPS[current]);
-        el.activeId = STYLE_ACTIVE[current];
-        if (wrap) wrap.style.background = STYLE_BG[current];
-      });
-    };
+    const toggleLive = () => switchFooterStyle('live-nav');
     return html`
       <div style="
         display: flex;
         flex-direction: column;
         height: 100vh;
-        background: ${STYLE_BG['navigation']};
+        background: var(--color-background-primary);
         font-family: var(--typography-font-family, system-ui);
       " id="live-wrap">
         <div style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--color-background-secondary); border-bottom: 1px solid var(--color-border-tertiary);">
           <button
             style="padding: 6px 14px; cursor: pointer; font-size: 13px;"
             @click=${toggleLive}
-          >Toggle style (same instance)</button>
+          >Toggle section (same instance)</button>
           <span style="font-size: 12px; color: var(--color-foreground-secondary);">
-            Switches navigation ↔ default on the same mounted &lt;ds-panel-nav&gt; — no remount.
+            Switches dashboard ↔ settings groups on the same mounted &lt;ds-panel-nav&gt;.
           </span>
         </div>
         <div style="display: flex; flex: 1;">
           <ds-panel-nav
             id="live-nav"
-            nav-style="navigation"
+            nav-style="dashboard"
             groups=${JSON.stringify(DASHBOARD_GROUPS)}
             active-id="fleet-view"
             user-name="Zain Adeel"
             user-initial="Z"
-            disable-view-transition
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('live-nav') as any;
               if (el) el.activeId = e.detail;

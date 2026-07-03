@@ -7,20 +7,21 @@
 
 /* eslint-disable */
 
-import type { StencilReactComponent } from '@stencil/react-output-target/runtime';
+import type { EventName, StencilReactComponent } from '@stencil/react-output-target/runtime';
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
+import { type DsPanelToolsCustomEvent, type PanelToolsToolId } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsPanelTools as DsPanelToolsElement, defineCustomElement as defineDsPanelTools } from "@ds-mo/ui/dist/components/ds-panel-tools.js";
 
-export type DsPanelToolsEvents = NonNullable<unknown>;
+export type DsPanelToolsEvents = { onDsToolChange: EventName<DsPanelToolsCustomEvent<{ id: PanelToolsToolId; selected: boolean; }>> };
 
 export const DsPanelTools: StencilReactComponent<DsPanelToolsElement, DsPanelToolsEvents, Components.DsPanelTools> = /*@__PURE__*/ createComponent<DsPanelToolsElement, DsPanelToolsEvents, Components.DsPanelTools>({
     tagName: 'ds-panel-tools',
     elementClass: DsPanelToolsElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsPanelToolsEvents,
+    events: { onDsToolChange: 'dsToolChange' } as DsPanelToolsEvents,
     defineCustomElement: defineDsPanelTools
 });

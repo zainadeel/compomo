@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-fade.js';
+import '../../../../dist/components/ds-app-shell.js';
 
 const SIDES = ['top', 'bottom', 'left', 'right'] as const;
 const SIZES = [
@@ -120,6 +121,61 @@ export const Visibility: Story = {
         <p style="${COPY}">Hidden when scrolled to the edge.</p>
         <ds-fade side="bottom" size="size-600" surface="secondary" .visible=${false}></ds-fade>
       </div>
+    </div>
+  `,
+};
+
+export const ShellGradientChrome: Story = {
+  name: 'Shell gradient chrome',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'Inside `ds-app-shell[gradient]`, fades on panel-nav scroll regions inherit the fixed shell wash ' +
+          'via `fade--shell-gradient` modifiers — edges stay aligned with the viewport-locked chrome layer.',
+      },
+    },
+  },
+  render: () => html`
+    <div
+      style="
+        height: 100vh;
+        background: var(--color-background-primary);
+        font-family: var(--typography-font-family, system-ui);
+      "
+    >
+      <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
+        <div
+          slot="panel"
+          style="
+            position: relative;
+            width: var(--dimension-size-2400);
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+          "
+        >
+          <div
+            style="
+              height: 100%;
+              overflow-y: auto;
+              padding: var(--dimension-space-200);
+              box-sizing: border-box;
+            "
+          >
+            ${Array.from({ length: 18 }, (_, i) => html`
+              <p style="margin: 0 0 var(--dimension-space-150); color: var(--color-foreground-secondary); font-size: 13px;">
+                Scroll item ${i + 1}
+              </p>
+            `)}
+          </div>
+          <ds-fade side="bottom" size="size-600" surface="secondary"></ds-fade>
+        </div>
+        <div style="padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
+          Scroll the panel column — bottom fade samples shell gradient chrome.
+        </div>
+      </ds-app-shell>
     </div>
   `,
 };

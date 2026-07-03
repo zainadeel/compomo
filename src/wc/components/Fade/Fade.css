@@ -82,14 +82,8 @@
   background-image: var(--ds-shell-gradient-image, none);
   background-size: var(--ds-shell-gradient-size, auto);
   background-repeat: no-repeat;
-}
-
-:host(.fade--shell-gradient.fade--shell-gradient-panel)::after {
-  background-position: var(--ds-shell-gradient-position-panel, 0 0);
-}
-
-:host(.fade--shell-gradient.fade--shell-gradient-bar)::after {
-  background-position: var(--ds-shell-gradient-position-bar, 0 0);
+  background-position: 0 0;
+  background-attachment: fixed;
 }
 
 :host(.fade--shell-gradient.fade--top)::after {
