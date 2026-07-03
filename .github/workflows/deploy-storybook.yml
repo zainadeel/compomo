@@ -16,8 +16,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -25,7 +29,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: '20'
           cache: npm
 
       - name: Install dependencies
@@ -40,6 +44,8 @@ jobs:
           # GitHub Pages project sites live at /RepoName/ — Storybook
           # needs this so all asset paths resolve correctly.
           STORYBOOK_BASE_URL: /compomo/
+          # Stamped into the Storybook chrome so designers know which build they are viewing.
+          STORYBOOK_BUILT_AT: ${{ github.event.head_commit.timestamp || github.run_started_at }}
 
       - name: Build component registry
         run: npm run registry:build
@@ -47,18 +53,14 @@ jobs:
       - name: Copy registry into Storybook output
         run: cp -r public/r storybook-static/r
 
-      - name: Upload Pages artifact
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: storybook-static
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
