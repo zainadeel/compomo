@@ -122,6 +122,11 @@ test.describe('BarNav responsive overflow', () => {
 
     await page.evaluate(() => window.__setShellWidth(180));
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
+    // ResizeObserver applies truncation classes one frame after layout.
+    await expect(page.locator('.bar-nav__tab-trigger-label--truncated')).toHaveCount(1, {
+      timeout: 5000,
+    });
+    await expect(page.locator('.bar-nav__tab-trigger-label-text--truncated')).toHaveCount(1);
 
     const fade = await page.evaluate(() => {
       const labelWrap = document.querySelector('.bar-nav__tab-trigger-label') as HTMLElement;
@@ -131,18 +136,12 @@ test.describe('BarNav responsive overflow', () => {
       const maskImage = cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
       return {
         isOverflowing: label.scrollWidth > label.clientWidth + 1,
-        hasTruncatedWrapClass: labelWrap.classList.contains(
-          'bar-nav__tab-trigger-label--truncated',
-        ),
-        hasTruncatedClass: label.classList.contains('bar-nav__tab-trigger-label-text--truncated'),
         maskImage,
         overlayBackground: overlay.backgroundImage,
       };
     });
 
     expect(fade.isOverflowing).toBe(true);
-    expect(fade.hasTruncatedWrapClass).toBe(true);
-    expect(fade.hasTruncatedClass).toBe(true);
     expect(fade.maskImage).toContain('linear-gradient');
     expect(fade.overlayBackground).toContain('linear-gradient');
   });
