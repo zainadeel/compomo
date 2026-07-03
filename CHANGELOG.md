@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1](https://github.com/zainadeel/compomo/compare/v1.9.0...v1.9.1) (2026-07-03)
+
+
+### Fixed
+
+* **ci:** align Pages deploy with IcoMo/TokoMo and stamp Storybook build ([3d64377](https://github.com/zainadeel/compomo/commit/3d64377d5b292b7f4eda161050f0acc9280259bc))
+* **ci:** align Pages deploy with IcoMo/TokoMo and stamp Storybook build ([4c852dc](https://github.com/zainadeel/compomo/commit/4c852dc534475aa37c6306df76ce63cecf7ff795))
+
 ## [1.9.0](https://github.com/zainadeel/compomo/compare/v1.8.1...v1.9.0) (2026-07-03)
 
 
