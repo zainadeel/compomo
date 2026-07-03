@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.1](https://github.com/zainadeel/compomo/compare/v1.10.0...v1.10.1) (2026-07-03)
+
+
+### Performance
+
+* **shell:** harden chrome sync and fix tools drawer tab overlap ([b2d38ad](https://github.com/zainadeel/compomo/commit/b2d38addb40f3a7dd98635685f554c2c519049b9))
+* **shell:** harden chrome sync and fix tools drawer tab overlap ([074f013](https://github.com/zainadeel/compomo/commit/074f013e68e17c12be1d95a37616b8d2c5109e0b))
+
 ## [1.10.0](https://github.com/zainadeel/compomo/compare/v1.9.1...v1.10.0) (2026-07-03)
 
 
