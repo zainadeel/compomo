@@ -682,20 +682,21 @@ function buildConsumptionGuide(config) {
   if (config.usesTokens) {
     guide.cssSetup = [
       "Import at your app entry point:",
-      "  import '@ds-mo/tokens/css';   // CSS custom properties (colors, dimensions, effects, typography)",
-      "  import '@ds-mo/ui/css';       // Component-level CSS",
+      "  import '@ds-mo/tokens';        // or @ds-mo/tokens/css",
+      "  import '@ds-mo/tokens/reset';",
+      "  import '@ds-mo/tokens/globals';",
       "For dark mode: set data-theme=\"dark\" on <html>.",
+      "Component CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
     ].join('\n');
   }
 
-  // 3. Register custom elements (once at app boot, framework-agnostic)
+  // 3. Register custom elements (import each tag you render — auto-define on import)
   guide.register = [
-    "// Register all custom elements once at your app entry point:",
-    "import { defineCustomElements } from '@ds-mo/ui/loader';",
-    "defineCustomElements();",
-    "",
-    "// Or import individual components for tree-shaking:",
+    "// Import only the <ds-*> tags your app uses:",
     `import '@ds-mo/ui/dist/components/ds-${toKebab(config.title)}.js';`,
+    "",
+    "// Angular: import proxies from '@ds-mo/ui/angular'",
+    "// React: import { DsButton, … } from '@ds-mo/ui/react'",
   ].join('\n');
 
   // 4. Usage pattern (HTML / JSX / Angular template)
@@ -830,8 +831,8 @@ const registry = {
   meta: {
     distribution: 'npm',
     install: TRILOGY_INSTALL,
-    register: "import { defineCustomElements } from '@ds-mo/ui/loader'; defineCustomElements();",
-    cssSetup: "import '@ds-mo/tokens/css';  // Design token CSS custom properties\nimport '@ds-mo/ui/css';       // Component styles",
+    register: "import '@ds-mo/ui/dist/components/ds-button.js'; // import each <ds-*> tag you use",
+    cssSetup: "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
     themeSetup: "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     peerDependencies: {
       required: [`@ds-mo/tokens ${TOKENS_PEER}`, `@ds-mo/icons ${ICONS_PEER}`],

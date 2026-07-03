@@ -2,10 +2,21 @@
 
 CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` emits:
 
-- **`dist/components/`** — `<ds-*>` custom elements (the library every host consumes)
+- **`dist/components/`** — `<ds-*>` custom elements (canonical; auto-define on import)
 - **`src/angular/`** — auto-generated Angular proxy directives (`angularOutputTarget`)
+- **`src/react/`** — auto-generated React wrappers (`reactOutputTarget`)
 
-There is **no** Stencil React output target. React apps use `<ds-*>` in JSX with `CUSTOM_ELEMENTS_SCHEMA` and set complex props imperatively (`el.tabs = …`), same as motive-webapp-lab.
+**Consumption options:**
+
+| Host | Package subpath | Notes |
+| --- | --- | --- |
+| Any | `@ds-mo/ui/dist/components/ds-*.js` | Tree-shake per tag; motive-webapp-lab uses this |
+| Angular | `@ds-mo/ui/angular` | Template property/event bindings |
+| React | `@ds-mo/ui/react` | `DsButton`, `DsBarNav`, … |
+
+There is no published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` export. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle.
+
+On hard reload, seed **all** bar-nav props (`basePath`, `tabs`, `currentUrl`) before the custom element upgrades — not only `currentUrl`. See motive-webapp-lab `shellChromeStateForPath()`.
 
 ---
 

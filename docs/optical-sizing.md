@@ -28,7 +28,9 @@ edge padding = (height − iconSize) / 2
 
 Note the asymmetry: the label side keeps its normal token value; only the icon side is corrected. XS happens to already be correct since the base token matches the gap.
 
-**Tag (`iconLeft` / `iconRight` — leading icon or remove button):**
+**Tag / Chip (`iconLeft` / `iconRight` — leading icon or remove button):**
+
+Shared `tag--*` CSS applies to both `ds-tag` and `ds-chip`. Optical gap classes:
 
 | Size | Height | Icon | Optical gap | CSS class     |
 |------|--------|------|-------------|---------------|
@@ -36,7 +38,11 @@ Note the asymmetry: the label side keeps its normal token value; only the icon s
 | SM   | 20px   | 16px | 2px         | `iconLeftSM` / `iconRightSM` = `space-025` |
 | MD   | 28px   | 20px | 4px         | `iconLeftMD` / `iconRightMD` = `space-050` |
 
-For Tag, both the leading icon side (left) and the remove-button side (right) are corrected independently. The classes are applied conditionally in TSX based on whether an icon or remove button is present.
+**`ds-chip`:** `tag--icon-right-{SIZE}` is applied when `removable` is true (remove button). Leading-icon classes (`tag--icon-left-*`) are not toggled yet — slot detection is TODO.
+
+**`ds-tag`:** same CSS; TSX does not render a remove button and does not toggle icon optical classes yet.
+
+For Chip, the remove-button side (right) is corrected when `removable` is set. Leading-icon correction will apply once slot presence is wired.
 
 ---
 
@@ -56,16 +62,16 @@ iconAndLabel: left  = icon-edge padding + space-050
               right = base + space-050
 ```
 
-**Tag (rounded — pill padding correction classes):**
+**Tag / Chip (rounded — pill padding correction classes):**
 
-Applied conditionally in TSX:
+Host classes `tag--rounded-no-icon-left` and `tag--rounded-no-remove-right` add `space-050` on bare label edges.
 
-| Condition            | Class applied          |
-|----------------------|------------------------|
-| No leading icon      | `roundedLeft{Size}`    |
-| No trailing remove   | `roundedRight{Size}`   |
+| Component   | No leading icon (left)     | No remove button (right)        |
+|-------------|----------------------------|---------------------------------|
+| `ds-chip`   | `tag--rounded-no-icon-left` when `rounded` (icon slot TODO) | `tag--rounded-no-remove-right` when `rounded && !removable` |
+| `ds-tag`    | same class when `rounded`  | same when `rounded` (no remove UI yet) |
 
-When both an icon and a remove button are present, neither correction applies. When neither is present (label only), both apply.
+When both an icon and a remove button are present, neither trailing correction applies on Chip. When neither is present (label only), both can apply.
 
 ---
 
@@ -75,7 +81,7 @@ When both an icon and a remove button are present, neither correction applies. W
 
 **Structure:** a `::before` pseudo-element on the remove button carries the hover background, sized via `inset` (negative margin on all sides). The button itself has `padding: 0`.
 
-**Values (Tag remove button):**
+**Values (`ds-chip` remove button):**
 
 | Tag size | Icon size | Tag height | Optical gap | `inset` | Hover area | `::before` radius |
 |----------|-----------|------------|-------------|---------|------------|-------------------|

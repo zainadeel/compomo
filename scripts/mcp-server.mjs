@@ -3,7 +3,7 @@
 /**
  * CompoMo MCP Server
  *
- * A Model Context Protocol server that exposes the @compomo/ui component library
+ * A Model Context Protocol server that exposes the @ds-mo/ui component library
  * to AI coding tools (Claude Code, Cursor, Windsurf, VS Code).
  *
  * Unlike the shadcn MCP server (which copies source files), this server guides
@@ -15,7 +15,7 @@
  * Tools:
  *   list_components     — Browse all available components
  *   get_component       — Detailed component info (props, usage, source)
- *   get_setup_guide     — Project setup instructions for @compomo/ui
+ *   get_setup_guide     — Project setup instructions for @ds-mo/ui
  *   get_component_source — Full source code for AI reference
  *
  * Registry data is re-read from disk on every call so the MCP server always
@@ -66,7 +66,7 @@ function loadComponent(name) {
 
 function formatComponentList(items) {
   const lines = items.map(item => {
-    const deps = item.dependencies?.filter(d => d !== '@compomo/ui') ?? [];
+    const deps = item.dependencies?.filter(d => d !== '@ds-mo/ui') ?? [];
     const depsNote = deps.length ? ` (also needs ${deps.join(', ')})` : '';
     return `- **${item.title}** (\`${item.name}\`)${depsNote}\n  ${item.description}`;
   });
@@ -125,7 +125,7 @@ function formatComponentDetail(comp) {
 
 function formatSetupGuide() {
   const m = loadRegistry().meta;
-  return `# @compomo/ui — Project Setup Guide
+  return `# @ds-mo/ui — Project Setup Guide
 
 ## 1. Install packages
 
@@ -140,7 +140,13 @@ ${m.install}
 ${m.cssSetup}
 \`\`\`
 
-## 3. Theme support
+## 3. Register custom elements
+
+\`\`\`tsx
+${m.register}
+\`\`\`
+
+## 4. Theme support
 
 ${m.themeSetup}
 
@@ -149,33 +155,33 @@ ${m.themeSetup}
 document.documentElement.setAttribute('data-theme', 'dark');
 \`\`\`
 
-## 4. Use components
+## 5. Use components
+
+**React wrappers** (Stencil-generated):
 
 \`\`\`tsx
-import { Button, Input, Modal, Tag } from '@compomo/ui';
-import { ArrowRight } from '@ds-mo/icons';
+import { DsButton, DsText } from '@ds-mo/ui/react';
+import '@ds-mo/tokens';
 
 function MyPage() {
-  return (
-    <Button
-      label="Continue"
-      icon={ArrowRight}
-      intent="brand"
-      size="md"
-      onClick={() => {}}
-    />
-  );
+  return <DsButton>Continue</DsButton>;
 }
 \`\`\`
 
-## 5. Peer dependencies
+**Custom elements** (any framework):
+
+\`\`\`html
+<ds-button>Continue</ds-button>
+\`\`\`
+
+## 6. Peer dependencies
 
 **Required:**
 ${m.peerDependencies.required.map(d => `- \`${d}\``).join('\n')}
 
 ${m.peerDependencies.optional?.length ? `**Optional:**\n${m.peerDependencies.optional.map(d => `- \`${d}\``).join('\n')}` : ''}
 
-## 6. Design token architecture
+## 7. Design token architecture
 
 Components use CSS custom properties from \`@ds-mo/tokens\`:
 - \`var(--color-*)\` — colors (foreground, background, border, interaction)
@@ -185,12 +191,12 @@ Components use CSS custom properties from \`@ds-mo/tokens\`:
 
 Never hardcode these values. The tokens support light/dark theming automatically.
 
-## 7. Important
+## 8. Important
 
-- Components are imported from \`@compomo/ui\`, NOT copied as source files
-- The library uses CSS Modules internally — styles are bundled in \`@compomo/ui/css\`
-- Icons are tree-shakeable: \`import { ArrowRight } from '@ds-mo/icons'\`
-- All interactive components support \`inactive\` prop (not \`disabled\`) and \`forwardRef\`
+- Source of truth is Stencil \`<ds-*>\` custom elements in \`dist/components/\`
+- Angular: \`@ds-mo/ui/angular\` proxies; React: \`@ds-mo/ui/react\` wrappers
+- No \`@ds-mo/ui/loader\` or global \`@ds-mo/ui/css\` — import per-component JS modules
+- Icons: \`@ds-mo/icons\` is a required peer; \`<ds-icon name="Bell" />\` uses IcoMo export keys
 `;
 }
 
@@ -206,7 +212,7 @@ server.registerTool(
   'list_components',
   {
     title: 'List Components',
-    description: 'List all available components in the @compomo/ui design system library. Returns component names, descriptions, and required packages.',
+    description: 'List all available components in the @ds-mo/ui design system library. Returns component names, descriptions, and required packages.',
     inputSchema: {
       search: z.string().optional().describe('Optional text to filter components by name or description.'),
     },
@@ -229,7 +235,7 @@ server.registerTool(
       };
     }
 
-    const text = `# @compomo/ui — ${items.length} component${items.length === 1 ? '' : 's'}${search ? ` matching "${search}"` : ''}\n\n${formatComponentList(items)}`;
+    const text = `# @ds-mo/ui — ${items.length} component${items.length === 1 ? '' : 's'}${search ? ` matching "${search}"` : ''}\n\n${formatComponentList(items)}`;
 
     return { content: [{ type: 'text', text }] };
   }
@@ -240,7 +246,7 @@ server.registerTool(
   'get_component',
   {
     title: 'Get Component',
-    description: 'Get detailed information about a specific @compomo/ui component including props API, import statements, setup instructions, peer dependencies, and full source code for reference.',
+    description: 'Get detailed information about a specific @ds-mo/ui component including props API, import statements, setup instructions, peer dependencies, and full source code for reference.',
     inputSchema: {
       name: z.string().describe('Component name in kebab-case (e.g., "button", "tab-group", "toggle-button") or PascalCase (e.g., "Button", "TabGroup").'),
     },
@@ -277,7 +283,7 @@ server.registerTool(
   'get_setup_guide',
   {
     title: 'Get Setup Guide',
-    description: 'Get the full project setup guide for @compomo/ui — install commands, CSS imports, theme configuration, and design token architecture.',
+    description: 'Get the full project setup guide for @ds-mo/ui — install commands, CSS imports, theme configuration, and design token architecture.',
   },
   async () => {
     return { content: [{ type: 'text', text: formatSetupGuide() }] };
@@ -289,7 +295,7 @@ server.registerTool(
   'get_component_source',
   {
     title: 'Get Component Source',
-    description: 'Get the full source code of a @compomo/ui component for reference. Use this to understand implementation patterns, not to copy the code into a project.',
+    description: 'Get the full source code of a @ds-mo/ui component for reference. Use this to understand implementation patterns, not to copy the code into a project.',
     inputSchema: {
       name: z.string().describe('Component name in kebab-case (e.g., "button", "modal").'),
     },
@@ -313,7 +319,7 @@ server.registerTool(
       return `### ${f.path}\n\n\`\`\`${lang}\n${f.content}\n\`\`\``;
     });
 
-    const header = `# ${comp.meta.exports.join(', ')} — Source Reference\n\n> This is reference code. Import from \`@compomo/ui\` instead of copying.\n> \`${comp.meta.consumption.import}\``;
+    const header = `# ${comp.meta.exports.join(', ')} — Source Reference\n\n> This is reference code. Import from \`@ds-mo/ui\` instead of copying.\n> \`${comp.meta.consumption.import}\``;
 
     return { content: [{ type: 'text', text: `${header}\n\n${sections.join('\n\n')}` }] };
   }

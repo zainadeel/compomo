@@ -10,7 +10,7 @@
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
     "consumption": {
       "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "register": "// Register all custom elements once at your app entry point:\nimport { defineCustomElements } from '@ds-mo/ui/loader';\ndefineCustomElements();\n\n// Or import individual components for tree-shaking:\nimport '@ds-mo/ui/dist/components/ds-loader.js';",
+      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-loader.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
       "usage": {
         "html": "<ds-loader></ds-loader>",
         "react": "<ds-loader></ds-loader>",

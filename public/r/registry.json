@@ -6,8 +6,8 @@
   "meta": {
     "distribution": "npm",
     "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-    "register": "import { defineCustomElements } from '@ds-mo/ui/loader'; defineCustomElements();",
-    "cssSetup": "import '@ds-mo/tokens/css';  // Design token CSS custom properties\nimport '@ds-mo/ui/css';       // Component styles",
+    "register": "import '@ds-mo/ui/dist/components/ds-button.js'; // import each <ds-*> tag you use",
+    "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [

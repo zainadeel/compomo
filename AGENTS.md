@@ -10,12 +10,11 @@ Keep this file as the single source of truth for project conventions. Update it 
 
 CompoMo is an npm package (`@ds-mo/ui`) that ships a **framework-agnostic web component library** authored with [Stencil.js](https://stenciljs.com/). It provides:
 
-- Custom elements (`<ds-*>`) consumable from React 19, Angular 12+, or plain HTML
-- Per-component ESM files in `dist/components/` (tree-shakeable)
+- Custom elements (`<ds-*>`) consumable from React 18+, Angular 12+, or plain HTML
+- Per-component ESM files in `dist/components/` (tree-shakeable; auto-define on import)
 - Auto-generated Angular proxy directives via `@stencil/angular-output-target` in `src/angular/`
 - Auto-generated React wrappers via `@stencil/react-output-target` in `src/react/`
-- A global CSS bundle at `dist/ds-mo/ds-mo.css` (token-driven, no hardcoded values)
-- TypeScript definitions at `dist/components/index.d.ts`
+- TypeScript declarations at `src/wc/components.d.ts` (package `"types"` entry)
 - A component registry (`public/r/`) consumed by the in-repo MCP server for AI-assisted component discovery
 
 It's the **top layer** of the ds-mo design-system trilogy: `@ds-mo/tokens` → `@ds-mo/icons` → `@ds-mo/ui` (CompoMo). TokoMo and IcoMo ship the foundation; CompoMo composes them into reusable UI primitives.
@@ -37,18 +36,17 @@ src/
   angular/              # Auto-generated Angular proxies (proxies.ts, index.ts) — do not edit
   react/                # Auto-generated React wrappers — do not edit
   stories/              # Token showcase stories (Colors, Typography, Effects, …)
-  docs/                 # Storybook MDX docs (ColorUsage, ElevationUsage, …)
-  global.css            # Global CSS: @import '@ds-mo/tokens/css'
+  docs/                 # Storybook MDX docs (ColorUsage, ElevationUsage, Introduction, …)
+  global.css            # Stencil global imports (lives at src/global.css — token CSS)
 .storybook/             # Storybook config
 scripts/
   build-registry.mjs    # Builds public/r/ — component metadata registry
   mcp-server.mjs        # MCP server serving the registry to AI clients
 public/
   r/                    # Generated registry (committed, rebuilt on dev/build)
-docs/                   # Storybook reference docs source
+docs/                   # Framework integration + optical-sizing reference (not Storybook source)
 dist/                   # Generated — do not edit directly
-  components/           # Per-component ESM files + type definitions
-  ds-mo/                # Global CSS bundle (ds-mo.css)
+  components/           # Per-component ESM files + patched index.d.ts
 stencil.config.ts       # Stencil build config (output targets, namespace, srcDir)
 figma.config.json       # Figma Code Connect — include globs, Dev Mode snippet label/language
 tsconfig.figma.json     # TypeScript for Code Connect templates only (editor / npm run typecheck:figma)
@@ -94,38 +92,42 @@ npm run clean            # Remove dist/
 The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 
 1. Transpiles every `@Component()` class in `src/wc/components/**/*.tsx` to native Custom Elements
-2. Emits per-component ESM files to `dist/components/` (auto-define mode — `customElementsExportBehavior: 'auto-define-custom-elements'`)
-3. Bundles global CSS (token imports + component styles) → `dist/ds-mo/ds-mo.css`
-4. Generates TypeScript declarations → `dist/components/index.d.ts`
-5. Runs Angular output target → regenerates `src/angular/proxies.ts` and `src/angular/index.ts`
-6. Runs React output target → regenerates `src/react/`
+2. Emits per-component ESM files to `dist/components/` (`dist-custom-elements` — auto-define on import)
+3. Generates TypeScript declarations → `src/wc/components.d.ts` (+ `scripts/patch-index-types.mjs` augments `dist/components/index.d.ts`)
+4. Runs Angular output target → regenerates `src/angular/` (commit if CI reports dirty `src/`)
+5. Runs React output target → regenerates `src/react/` (commit if CI reports dirty `src/`)
+
+There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
 Package `exports`:
 
 ```jsonc
 {
-  ".":          { "import": "./dist/components/index.js", "types": "./dist/components/index.d.ts" },
-  "./angular":  { "import": "./src/angular/index.ts", "types": "./src/angular/index.ts" },
-  "./react":    { "import": "./src/react/components.ts", "types": "./src/react/components.ts" },
-  "./css":      "./dist/ds-mo/ds-mo.css"
+  ".":               { "import": "./dist/components/index.js", "types": "./src/wc/components.d.ts" },
+  "./angular":       { "import": "./src/angular/index.ts", "types": "./src/angular/index.ts" },
+  "./react":         { "import": "./src/react/components.ts", "types": "./src/react/components.ts" },
+  "./dist/components": { "import": "./dist/components/index.js", "types": "./src/wc/components.d.ts" },
+  "./nav":           { "import": "./src/wc/nav/index.ts", "types": "./src/wc/nav/index.ts" },
+  "./utils":         { "import": "./src/wc/utils/index.ts", "types": "./src/wc/utils/index.ts" },
+  "./dist/components/*": "./dist/components/*"
 }
 ```
 
-Consumers install the **ds-mo trilogy** and register custom elements once at app boot:
+Consumers install the **ds-mo trilogy** and import the tags they render:
 
 ```bash
 npm install @ds-mo/tokens @ds-mo/icons @ds-mo/ui
 ```
 
 ```ts
-// Plain HTML / direct custom elements
-import { defineCustomElements } from '@ds-mo/ui/loader';
-import '@ds-mo/tokens/css';
-import '@ds-mo/ui/css';
-defineCustomElements();
+// Custom elements — import each tag you use (auto-defines)
+import '@ds-mo/ui/dist/components/ds-button.js';
+import '@ds-mo/tokens';
 
-// Angular — Stencil-generated proxy directives from '@ds-mo/ui/angular'
-// React — Stencil-generated wrappers from '@ds-mo/ui/react'
+// Angular — Stencil-generated proxy directives
+import { DsButton } from '@ds-mo/ui/angular';
+
+// React — Stencil-generated wrappers
 import { DsButton, DsBarNav } from '@ds-mo/ui/react';
 ```
 
@@ -278,7 +280,7 @@ See `release-please-config.json` for the type → changelog section mapping.
 
 ## Versioning
 
-Pre-1.0: breaking renames / prop removals ship as **minor** bumps. Once we hit `1.0.0`, breaking changes go behind majors.
+Follow semver: breaking API changes require a **major** bump (`@ds-mo/ui` is post-1.0).
 
 Current version lives in two places — kept in sync by release-please:
 - `package.json` `"version"`
@@ -319,18 +321,7 @@ Release-please will open a release PR at that exact version. Useful when only `c
 
 ## npm Trusted Publisher setup
 
-Must be done manually by the package owner once. Because `@ds-mo/ui` has never been published, an initial manual publish is required first (Trusted Publisher can only be configured on an existing package):
-
-1. **Initial manual publish (first-time only):** `npm publish --access public` from a clean checkout at the current `package.json` version (this is the one and only manual publish ever).
-2. Go to https://www.npmjs.com/package/@ds-mo/ui/access
-3. Scroll to **Trusted Publishers** → **Add a publisher**
-4. Publisher: `GitHub Actions`
-5. GitHub org/user: `zainadeel`
-6. Repository: `compomo`
-7. Workflow filename: `release-please.yml` (no path prefix)
-8. Environment: _(leave blank)_
-9. Click **Save** and reload to confirm.
-10. Bump via `Release-As:` (pick a version higher than the manual publish, e.g. `0.2.0`) to drive the first automated release.
+`@ds-mo/ui` is published on npm (see `release-please.yml`). Trusted Publisher OIDC is configured on the package — **do not** run `npm publish` manually for routine releases.
 
 ---
 
@@ -356,7 +347,7 @@ Must be done manually by the package owner once. Because `@ds-mo/ui` has never b
 - **Do not edit `src/wc/components.d.ts`** — auto-generated by Stencil.
 - **Do not hand-add React wrapper components** — new UI goes in `src/wc/components/`; React wrappers are generated automatically.
 - **Do not hardcode colors, spacing, or other design values** — always use `@ds-mo/tokens` CSS custom properties. Hardcoding breaks theming.
-- **Do not use `shadow: true`** in `@Component()` — all components use `scoped: true` (light DOM) so token CSS variables penetrate naturally without piercing selectors.
+- **Default to `scoped: true`** in `@Component()` so token CSS variables penetrate naturally. Use `shadow: true` only where required (e.g. `ds-loader`, `ds-toggle`, `ds-skeleton`).
 - **Do not name a `@Prop()` `title`** — it's a reserved HTML attribute and causes Stencil a build warning. Use `heading` or another name.
 - **Do not rely on `@Watch` firing for the initial prop value** — it only fires on subsequent changes. Call the handler explicitly in `componentDidLoad()` for initial state (e.g. `if (this.open) this.onOpenChange(true)`).
 - **Do not re-export service singletons from a file that has `@Component()`** — Stencil enforces one export per file. Put services in a separate `*.ts` file.
