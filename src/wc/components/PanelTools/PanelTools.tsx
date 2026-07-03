@@ -182,6 +182,7 @@ export class PanelTools {
               'panel-tools__drawer--visible': showDrawerChrome,
             }}
             aria-hidden={showDrawerChrome ? null : 'true'}
+            inert={showDrawerChrome ? undefined : true}
           >
             <div class="panel-tools__drawer-surface">
               <header class="panel-tools__header">

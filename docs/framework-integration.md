@@ -116,9 +116,11 @@ Stencil runs `componentWillLoad` before framework property bindings land. Follow
 
 When the drawer is **fully closed** (`open=false`, not animating), slot content inside `.panel-tools__body` uses `content-visibility: auto` to skip paint. The flag is **cleared** during `motion-opening` and `motion-closing` so open/close slides stay WYSIWYG — content remains mounted and paints with the clip frame.
 
+The drawer surface also sets `aria-hidden="true"` and the **`inert`** attribute while closed so slotted focusables cannot receive keyboard focus behind the rail.
+
 ## External `ds-menu`
 
-Use `dsNavUserAction` detail `{ anchor }` or `anchor-id="ds-panel-nav-user-menu-anchor"`.
+Bind `[open]`, `[sections]`, `[anchor]`, `side`, `align`, and offsets in the host template. Use `dsNavUserAction` detail `{ anchor }` — do not open without a resolved anchor. Theme menu example: **motive-webapp-lab** `shell.component.ts` (`userMenuVisible` getter).
 
 ## Reference consumer
 
