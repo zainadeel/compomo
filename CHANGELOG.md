@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/zainadeel/compomo/compare/v1.10.1...v1.11.0) (2026-07-03)
+
+
+### Added
+
+* **app-shell:** add independent grid prop alongside gradient wash ([06bf9b9](https://github.com/zainadeel/compomo/commit/06bf9b963a9dcc71ff3468e54c3599dd9e4ffd36))
+* **app-shell:** add independent grid prop alongside gradient wash ([81f71f7](https://github.com/zainadeel/compomo/commit/81f71f74676c6eb4a12168a66f2102ce336e5201))
+
 ## [1.10.1](https://github.com/zainadeel/compomo/compare/v1.10.0...v1.10.1) (2026-07-03)
 
 
