@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/zainadeel/compomo/compare/v1.9.1...v1.10.0) (2026-07-03)
+
+
+### Added
+
+* **storybook:** show package name and version in sidebar title ([c3a3fbf](https://github.com/zainadeel/compomo/commit/c3a3fbf7296e9c1b937f3a70f0abfb83f2f03e7e))
+
+
+### Fixed
+
+* **ci:** deploy Storybook to Pages only after successful npm publish ([a401e68](https://github.com/zainadeel/compomo/commit/a401e683aab96710bd3e14652c75415bca9032a6))
+* **ci:** deploy Storybook to Pages only after successful npm publish ([4c1ba61](https://github.com/zainadeel/compomo/commit/4c1ba618fb81fb4adb45882dc9461e246a87c9de))
+
 ## [1.9.1](https://github.com/zainadeel/compomo/compare/v1.9.0...v1.9.1) (2026-07-03)
 
 
