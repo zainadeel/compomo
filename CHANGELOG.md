@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.11.5](https://github.com/zainadeel/compomo/compare/v1.11.4...v1.11.5) (2026-07-03)
+
+
+### Fixed
+
+* **ci:** use existing wretry.action v3.8.0 tag for Pages deploy ([fe79437](https://github.com/zainadeel/compomo/commit/fe79437d0ffa8bc003912576f3c93a64926ea891))
+* **ci:** use valid wretry.action tag for Pages deploy ([fcdef90](https://github.com/zainadeel/compomo/commit/fcdef90018226a89ac5a1c358500e0232f561e59))
+
+
+### Documentation
+
+* align optical-sizing Tag section with ds-chip implementation ([b5deba3](https://github.com/zainadeel/compomo/commit/b5deba39b52cb5a03addda809a7115be173c2b16))
+* align package docs with Stencil Angular and React outputs ([67d0f71](https://github.com/zainadeel/compomo/commit/67d0f7175d90aaec6c61b7d6dcaecb103865e1d2))
+* align README, AGENTS, and integration guides with Stencil outputs ([1e5262c](https://github.com/zainadeel/compomo/commit/1e5262c4647503e60813824048de1a944d8a67f5))
+
 ## [1.11.4](https://github.com/zainadeel/compomo/compare/v1.11.3...v1.11.4) (2026-07-03)
 
 
