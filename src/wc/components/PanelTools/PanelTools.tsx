@@ -82,7 +82,10 @@ export class PanelTools {
   openChanged(isOpen: boolean, wasOpen?: boolean) {
     if (this.readyForMotion && wasOpen !== undefined && wasOpen !== isOpen) {
       this.motion = isOpen ? 'opening' : 'closing';
-      this.dsChromeTransitionStart.emit({ source: 'panel-tools' });
+      this.dsChromeTransitionStart.emit({
+        source: 'panel-tools',
+        phase: isOpen ? 'opening' : 'closing',
+      });
     }
     this.deferMotionEnable();
   }

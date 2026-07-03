@@ -34,8 +34,9 @@ export {
   shellGradientPositionBar,
   shellChromeSurfacePosition,
   shellChromeLayerActive,
+  readShellViewportDimensions,
 } from './shell-gradient';
-export type { ShellGradientLayout } from './shell-gradient';
+export type { ShellGradientLayout, ShellViewportDimensions } from './shell-gradient';
 export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-transition';
 export {
   CHROME_TRANSITION_END,
@@ -43,6 +44,7 @@ export {
   ChromeTransitionDepth,
   createRafCoalescer,
   readChromeTransitionSource,
+  readChromeTransitionPhase,
 } from './chrome-transition';
 export {
   barGradientPositionFromPanelWidth,

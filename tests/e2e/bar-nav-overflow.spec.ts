@@ -16,6 +16,58 @@ test.describe('BarNav responsive overflow', () => {
     await expect(page.locator('ds-bar-nav .bar-nav__tabs-probe')).toHaveCount(1);
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__tabs-pending')).toHaveCount(0);
+  });
+
+  test('section tab swap commits overflow before showing expanded row', async ({ page }) => {
+    const fewTabs = [
+      { id: 'live-map', label: 'Live Map' },
+      { id: 'trips', label: 'Trips' },
+    ];
+    const manyTabs = [
+      { id: 'live-map', label: 'Live Map' },
+      { id: 'location-history', label: 'Location History' },
+      { id: 'trips', label: 'Trips' },
+      { type: 'divider' },
+      { id: 'overview', label: 'Overview' },
+      { id: 'events', label: 'Events', dot: true },
+      { id: 'requests', label: 'Requests' },
+    ];
+
+    await page.evaluate(() => window.__setShellWidth(720));
+    await page.evaluate(
+      ({ fewTabs, basePath }) => {
+        const nav = document.getElementById('nav') as HTMLElement & {
+          basePath: string;
+          currentUrl: string;
+          tabs: typeof fewTabs;
+          value: string;
+        };
+        nav.basePath = basePath;
+        nav.currentUrl = `${basePath}/live-map`;
+        nav.tabs = fewTabs;
+        nav.value = 'live-map';
+      },
+      { fewTabs, basePath: '/e2e/fleet-view' },
+    );
+    await expect(page.locator('.bar-nav__tabs-visible')).toBeVisible({ timeout: 5000 });
+
+    await page.evaluate(() => window.__setShellWidth(360));
+    await page.evaluate(
+      ({ manyTabs, basePath }) => {
+        const nav = document.getElementById('nav') as HTMLElement & {
+          basePath: string;
+          currentUrl: string;
+          tabs: typeof manyTabs;
+        };
+        nav.basePath = `${basePath}-safety`;
+        nav.currentUrl = `${basePath}-safety/events`;
+        nav.tabs = manyTabs;
+      },
+      { manyTabs, basePath: '/e2e/fleet-view' },
+    );
+
+    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
   });
 

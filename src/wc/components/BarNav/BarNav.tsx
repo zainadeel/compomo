@@ -11,6 +11,7 @@ import {
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import type { MenuItemData } from '../Menu/menu-types';
+import { isTabDivider } from '../TabGroup/tab-item-utils';
 import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
@@ -34,8 +35,8 @@ import {
   ChromeTransitionDepth,
   createRafCoalescer,
   readChromeTransitionSource,
+  readChromeTransitionPhase,
 } from '../../nav/chrome-transition';
-import { readCssVarWidthPx } from '../../nav/shell-chrome-metrics';
 
 @Component({
   tag: 'ds-bar-nav',
@@ -111,12 +112,12 @@ export class BarNav {
   private resizeObserver: ResizeObserver | null = null;
   private intrinsicWidthRetryCount = 0;
   private readonly panelNavTransition = new ChromeTransitionDepth();
+  private readonly panelToolsTransition = new ChromeTransitionDepth();
   private readonly overflowCoalescer = createRafCoalescer(() => {
     this.updateTabsCollapsed();
     this.updateTriggerLabelTruncation();
   });
   private chromeTransitionShell: HTMLElement | null = null;
-  private toolsDrawerOpening = false;
   /** Matches `basePath` once tabs + URL are reconciled for the active section. */
   @State() private committedSection = '';
   /** Section waiting for URL + tabs to catch up after a cross-area navigation. */
@@ -135,6 +136,17 @@ export class BarNav {
 
   private get activeTabHasDot(): boolean {
     return !!getActiveTab(this.resolvedTabs, this.effectiveValue)?.dot;
+  }
+
+  private digestTabsConfig(tabs: BarNavTab[]): string {
+    return tabs.map(t => (isTabDivider(t) ? '|' : t.id)).join(',');
+  }
+
+  private resetTabOverflowLayout() {
+    this.tabLayoutCommitted = false;
+    this.tabsCollapsed = false;
+    this.menuOpen = false;
+    this.intrinsicWidthRetryCount = 0;
   }
 
   @Watch('tabs')
@@ -194,7 +206,7 @@ export class BarNav {
   }
 
   componentDidRender() {
-    if (this.panelNavTransition.isActive) {
+    if (this.chromeOverflowPaused()) {
       this.syncMenuAnchor();
       return;
     }
@@ -241,15 +253,16 @@ export class BarNav {
       return;
     }
     if (source === 'panel-tools') {
-      this.toolsDrawerOpening = true;
-      this.el.classList.add('bar-nav--tools-drawer-opening');
-      if (this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute) {
-        this.tabsCollapsed = true;
-        this.menuOpen = false;
+      const phase = readChromeTransitionPhase(event) ?? 'opening';
+      if (phase === 'closing') {
+        this.panelToolsTransition.enter();
       }
-      this.scheduleOverflowCheck();
     }
   };
+
+  private chromeOverflowPaused(): boolean {
+    return this.panelNavTransition.isActive || this.panelToolsTransition.isActive;
+  }
 
   private onChromeTransitionEnd = (event: Event) => {
     const source = readChromeTransitionSource(event);
@@ -261,8 +274,7 @@ export class BarNav {
       return;
     }
     if (source === 'panel-tools') {
-      this.toolsDrawerOpening = false;
-      this.el.classList.remove('bar-nav--tools-drawer-opening');
+      this.panelToolsTransition.exit();
       this.scheduleOverflowCheck();
     }
   };
@@ -301,14 +313,14 @@ export class BarNav {
     if (typeof ResizeObserver === 'undefined' || !this.headerEl) return;
     this.resizeObserver?.disconnect();
     this.resizeObserver = new ResizeObserver(() => {
-      if (this.panelNavTransition.isActive) return;
+      if (this.chromeOverflowPaused()) return;
       this.scheduleOverflowCheck();
     });
     this.resizeObserver.observe(this.headerEl);
   }
 
   private scheduleOverflowCheck() {
-    if (this.panelNavTransition.isActive) return;
+    if (this.chromeOverflowPaused()) return;
     this.overflowCoalescer.schedule();
   }
 
@@ -366,20 +378,7 @@ export class BarNav {
     const available =
       this.headerEl.clientWidth - horizontalPadding - actionsWidth - spacing;
 
-    return Math.max(0, available - this.toolsDrawerOpeningReservePx());
-  }
-
-  /** While the tools drawer is opening, reserve width not yet claimed by flex shrink. */
-  private toolsDrawerOpeningReservePx(): number {
-    if (!this.toolsDrawerOpening) return 0;
-
-    const tools = this.el.closest('ds-app-shell')?.querySelector('ds-panel-tools') as HTMLElement | null;
-    if (!tools) return 0;
-
-    const drawerTarget = readCssVarWidthPx(tools, '--_panel-tools-drawer-width');
-    const drawerNow =
-      tools.querySelector('.panel-tools__drawer')?.getBoundingClientRect().width ?? 0;
-    return Math.max(0, drawerTarget - drawerNow);
+    return Math.max(0, available);
   }
 
   private getTabsIntrinsicWidth(): number {
@@ -400,12 +399,19 @@ export class BarNav {
         this.menuOpen = false;
       }
       this.intrinsicWidthRetryCount = 0;
+      this.tabLayoutCommitted = true;
       return;
     }
 
     const intrinsicWidth = this.getTabsIntrinsicWidth();
     if (intrinsicWidth === 0) {
-      this.scheduleIntrinsicWidthRetry();
+      if (this.intrinsicWidthRetryCount >= BarNav.INTRINSIC_WIDTH_RETRY_MAX) {
+        this.intrinsicWidthRetryCount = 0;
+        this.tabsCollapsed = false;
+        this.tabLayoutCommitted = true;
+      } else {
+        this.scheduleIntrinsicWidthRetry();
+      }
       return;
     }
     this.intrinsicWidthRetryCount = 0;
@@ -423,6 +429,8 @@ export class BarNav {
         this.menuOpen = false;
       }
     }
+
+    this.tabLayoutCommitted = true;
   }
 
   private syncMenuAnchor() {
@@ -469,6 +477,7 @@ export class BarNav {
       this.pendingSection = nextBasePath;
       this.resolvedTabs = [];
       this.resolvedActions = this.incomingActions();
+      this.resetTabOverflowLayout();
       return;
     }
 
@@ -486,11 +495,17 @@ export class BarNav {
       this.pendingSection = '';
     }
 
-    this.resolvedTabs = this.incomingTabs();
+    const tabs = this.incomingTabs();
+    const tabsConfigChanged =
+      this.digestTabsConfig(tabs) !== this.digestTabsConfig(this.resolvedTabs);
+
+    this.resolvedTabs = tabs;
     this.resolvedActions = this.incomingActions();
     this.syncValueFromUrl();
     this.committedSection = nextBasePath;
-    this.intrinsicWidthRetryCount = 0;
+    if (tabsConfigChanged) {
+      this.resetTabOverflowLayout();
+    }
     this.scheduleOverflowCheck();
   }
 
@@ -593,7 +608,8 @@ export class BarNav {
             'bar-nav': true,
             'bar-nav--dashboard': this.navStyle === 'dashboard',
             'bar-nav--settings': this.navStyle === 'settings',
-            'bar-nav--tabs-collapsed': hasTabs && this.tabsCollapsed,
+            'bar-nav--tabs-collapsed':
+              hasTabs && this.tabLayoutCommitted && this.tabsCollapsed,
           }}
           ref={el => {
             this.headerEl = el as HTMLElement;
@@ -619,7 +635,7 @@ export class BarNav {
               </div>
             )}
 
-            {hasTabs && !this.tabsCollapsed && (
+            {hasTabs && this.tabLayoutCommitted && !this.tabsCollapsed && (
               <div class="bar-nav__left">
                 <ds-tab-group-nav
                   key={`visible-${tabGroupKey}`}
@@ -634,11 +650,15 @@ export class BarNav {
               </div>
             )}
 
+            {hasTabs && !this.tabLayoutCommitted && (
+              <div class="bar-nav__tabs-pending" aria-hidden="true" />
+            )}
+
             {!hasTabs && this.heading && (
               <span class="bar-nav__heading text-body-medium-emphasis">{this.heading}</span>
             )}
 
-            {hasTabs && this.tabsCollapsed && (
+            {hasTabs && this.tabLayoutCommitted && this.tabsCollapsed && (
               <button
                 type="button"
                 class={{
@@ -697,7 +717,10 @@ export class BarNav {
               </button>
             )}
 
-            {hasTabs && this.tabsCollapsed && this.resolvedActions.length > 0 && (
+            {hasTabs &&
+              this.tabLayoutCommitted &&
+              this.tabsCollapsed &&
+              this.resolvedActions.length > 0 && (
               <div class="bar-nav__between" aria-hidden="true" />
             )}
 
@@ -719,7 +742,7 @@ export class BarNav {
 
         </header>
 
-        {hasTabs && this.tabsCollapsed && (
+        {hasTabs && this.tabLayoutCommitted && this.tabsCollapsed && (
           <ds-menu
             ref={el => {
               this.menuEl = (el as HTMLDsMenuElement) ?? null;

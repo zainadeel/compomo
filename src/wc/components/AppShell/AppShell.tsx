@@ -21,6 +21,7 @@ import {
   SHELL_GRADIENT_POSITION_PANEL_VAR,
   SHELL_GRADIENT_SIZE_VAR,
   buildShellRadialGradient,
+  readShellViewportDimensions,
   shellGradientPositionBar,
   shellGradientPositionPanel,
   shellGradientSize,
@@ -53,12 +54,21 @@ export class AppShell {
   private readonly panelNavTransition = new ChromeTransitionDepth();
   private readonly chromeSyncCoalescer = createRafCoalescer(() => this.syncChrome());
   private panelWidthTokens: PanelNavWidthTokens = { expandedPx: 0, collapsedPx: 0 };
-  private cachedShellWidth = 0;
-  private cachedShellHeight = 0;
+  private cachedViewportWidth = 0;
+  private cachedViewportHeight = 0;
+  private onWindowResize = () => {
+    if (this.panelNavTransition.isActive) return;
+    this.scheduleChromeSync();
+  };
+  private onVisualViewportChange = () => {
+    if (this.panelNavTransition.isActive) return;
+    this.scheduleChromeSync();
+  };
 
   componentDidLoad() {
     this.syncSlottedNavStyle();
     this.connectMetricsObserver();
+    this.connectViewportListeners();
     this.el.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.addEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
     requestAnimationFrame(() => {
@@ -70,6 +80,7 @@ export class AppShell {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.disconnectViewportListeners();
     this.chromeSyncCoalescer.cancel();
     this.el.removeEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.removeEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
@@ -88,8 +99,9 @@ export class AppShell {
     if (readChromeTransitionSource(event) !== 'panel-nav') return;
 
     this.panelNavTransition.enter();
-    this.cachedShellWidth = this.el.clientWidth;
-    this.cachedShellHeight = this.el.clientHeight;
+    const viewport = readShellViewportDimensions();
+    this.cachedViewportWidth = viewport.width;
+    this.cachedViewportHeight = viewport.height;
     this.syncChrome();
   };
 
@@ -128,6 +140,30 @@ export class AppShell {
     this.resizeObserver.observe(this.el);
     const panelWrap = this.el.querySelector('.app-shell__panel');
     if (panelWrap) this.resizeObserver.observe(panelWrap);
+  }
+
+  private connectViewportListeners() {
+    if (typeof window === 'undefined') return;
+
+    window.addEventListener('resize', this.onWindowResize, { passive: true });
+
+    const visual = window.visualViewport;
+    if (visual) {
+      visual.addEventListener('resize', this.onVisualViewportChange, { passive: true });
+      visual.addEventListener('scroll', this.onVisualViewportChange, { passive: true });
+    }
+  }
+
+  private disconnectViewportListeners() {
+    if (typeof window === 'undefined') return;
+
+    window.removeEventListener('resize', this.onWindowResize);
+
+    const visual = window.visualViewport;
+    if (visual) {
+      visual.removeEventListener('resize', this.onVisualViewportChange);
+      visual.removeEventListener('scroll', this.onVisualViewportChange);
+    }
   }
 
   private cachePanelWidthTokens() {
@@ -190,16 +226,16 @@ export class AppShell {
     return 0;
   }
 
-  private resolveShellDimensions(): { width: number; height: number } {
-    if (this.panelNavTransition.isActive && this.cachedShellWidth > 0) {
+  /** Fixed-attachment wash/grid size — always the viewport, never the shell element box. */
+  private resolveViewportDimensions(): { width: number; height: number } {
+    if (this.panelNavTransition.isActive && this.cachedViewportWidth > 0) {
       return {
-        width: this.cachedShellWidth,
-        height: this.cachedShellHeight || this.el.clientHeight,
+        width: this.cachedViewportWidth,
+        height: this.cachedViewportHeight,
       };
     }
 
-    const rect = this.el.getBoundingClientRect();
-    return { width: rect.width, height: rect.height };
+    return readShellViewportDimensions();
   }
 
   private chromeLayerActive(): boolean {
@@ -228,7 +264,7 @@ export class AppShell {
       return;
     }
 
-    const { width: shellWidth, height: shellHeight } = this.resolveShellDimensions();
+    const viewport = this.resolveViewportDimensions();
     const panelWidth = this.resolvePanelWidthPx(panelNav);
 
     const panelPosition = shellGradientPositionPanel();
@@ -241,9 +277,8 @@ export class AppShell {
       : buildShellRadialGradient();
 
     const size = shellGradientSize({
-      width: shellWidth,
-      height: shellHeight,
-      panelWidth,
+      width: viewport.width,
+      height: viewport.height,
     });
     const opacity = SHELL_GRADIENT_OPACITY;
 
