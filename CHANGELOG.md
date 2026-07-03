@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.9.0](https://github.com/zainadeel/compomo/compare/v1.8.1...v1.9.0) (2026-07-03)
+
+
+### Added
+
+* **nav:** unify shell chrome and dashboard/settings nav slots ([1a16191](https://github.com/zainadeel/compomo/commit/1a16191dd9fde0cbc29eff4fdbd02cd1f0bd00c8))
+* **nav:** unify shell chrome and dashboard/settings nav slots ([c31b2e5](https://github.com/zainadeel/compomo/commit/c31b2e5cdf57c1a9ea9321125fd02d60bd94618a))
+
+
+### Fixed
+
+* **nav:** remove bar-nav view-transition snapshot hook ([197341e](https://github.com/zainadeel/compomo/commit/197341e83941b15ec81dbfd9d9af93c0bf65d17c))
+* **nav:** simplify footer gear and fix gradient badge rings ([73c7ca5](https://github.com/zainadeel/compomo/commit/73c7ca5606d2f7b54803452f922f5fb12931b90e))
+* **panel-tools:** keep drawer content visible during close slide ([6d30f25](https://github.com/zainadeel/compomo/commit/6d30f2567126e5cca0ed00d6aa547e059caa61cb))
+* **panel-tools:** match panel-nav instant toggle responsiveness ([80af1a7](https://github.com/zainadeel/compomo/commit/80af1a70e370cefb93153c817965136ba2bd2adf))
+
 ## [1.8.1](https://github.com/zainadeel/compomo/compare/v1.8.0...v1.8.1) (2026-07-02)
 
 
