@@ -1,6 +1,17 @@
 import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import {
+  CHROME_TRANSITION_END,
+  CHROME_TRANSITION_START,
+  type ChromeTransitionDetail,
+} from '../../nav/chrome-transition';
+import {
+  isPanelNavCollapsed,
+  panelWidthPxFromTokens,
+  readPanelNavWidthTokens,
+  type PanelNavWidthTokens,
+} from '../../nav/shell-chrome-metrics';
+import {
   SHELL_GRADIENT_IMAGE_VAR,
   SHELL_GRADIENT_OPACITY,
   SHELL_GRADIENT_OPACITY_VAR,
@@ -34,21 +45,32 @@ export class AppShell {
   @Element() el!: HTMLElement;
 
   private resizeObserver: ResizeObserver | null = null;
+  private chromeSyncRafId = 0;
+  private chromeTransitionDepth = 0;
+  private panelWidthTokens: PanelNavWidthTokens = { expandedPx: 0, collapsedPx: 0 };
+  private cachedShellWidth = 0;
+  private cachedShellHeight = 0;
 
   componentDidLoad() {
     this.syncSlottedNavStyle();
     this.connectMetricsObserver();
-    this.scheduleChromeSync();
-  }
-
-  private scheduleChromeSync() {
-    this.syncChrome();
-    requestAnimationFrame(() => this.syncChrome());
+    this.el.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
+    this.el.addEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
+    requestAnimationFrame(() => {
+      this.cachePanelWidthTokens();
+      this.scheduleChromeSync();
+    });
   }
 
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    if (this.chromeSyncRafId) {
+      cancelAnimationFrame(this.chromeSyncRafId);
+      this.chromeSyncRafId = 0;
+    }
+    this.el.removeEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
+    this.el.removeEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
   }
 
   @Watch('navStyle')
@@ -57,6 +79,35 @@ export class AppShell {
   onShellPropsChange() {
     this.syncSlottedNavStyle();
     this.scheduleChromeSync();
+  }
+
+  private onChromeTransitionStart = (event: Event) => {
+    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+    if (source === 'panel-nav') {
+      this.chromeTransitionDepth += 1;
+      this.cachedShellWidth = this.el.clientWidth;
+      this.cachedShellHeight = this.el.clientHeight;
+      this.syncChrome();
+    }
+  };
+
+  private onChromeTransitionEnd = (event: Event) => {
+    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+    if (source !== 'panel-nav') return;
+
+    this.chromeTransitionDepth = Math.max(0, this.chromeTransitionDepth - 1);
+    if (this.chromeTransitionDepth === 0) {
+      this.scheduleChromeSync();
+    }
+  };
+
+  /** Coalesce ResizeObserver bursts to one layout read per frame. */
+  private scheduleChromeSync() {
+    if (this.chromeSyncRafId) return;
+    this.chromeSyncRafId = requestAnimationFrame(() => {
+      this.chromeSyncRafId = 0;
+      this.syncChrome();
+    });
   }
 
   private syncSlottedNavStyle() {
@@ -73,11 +124,19 @@ export class AppShell {
   }
 
   private connectMetricsObserver() {
-    this.resizeObserver = new ResizeObserver(() => this.scheduleChromeSync());
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chromeTransitionDepth > 0) return;
+      this.scheduleChromeSync();
+    });
     this.resizeObserver.observe(this.el);
     const panelWrap = this.el.querySelector('.app-shell__panel');
     if (panelWrap) this.resizeObserver.observe(panelWrap);
-    this.scheduleChromeSync();
+  }
+
+  private cachePanelWidthTokens() {
+    const navRoot = this.el.querySelector('ds-panel-nav .panel-nav') as HTMLElement | null;
+    if (!navRoot) return;
+    this.panelWidthTokens = readPanelNavWidthTokens(navRoot);
   }
 
   private applyGradientVars(target: HTMLElement, vars: Record<string, string | null>) {
@@ -114,19 +173,50 @@ export class AppShell {
     }
   }
 
-  private syncChrome() {
-    const panel = this.el.querySelector('ds-panel-nav') as HTMLElement | null;
-    const bar = this.el.querySelector('ds-bar-nav') as HTMLElement | null;
-    const targets = [this.el, panel, bar].filter((el): el is HTMLElement => el !== null);
+  private resolvePanelWidthPx(panelNav: HTMLElement | null): number {
+    const navRoot = panelNav?.querySelector('.panel-nav') as HTMLElement | null;
 
-    const shellRect = this.el.getBoundingClientRect();
+    if (this.chromeTransitionDepth > 0 && this.panelWidthTokens.expandedPx > 0) {
+      const collapsed = isPanelNavCollapsed(panelNav, navRoot);
+      return panelWidthPxFromTokens(this.panelWidthTokens, collapsed);
+    }
+
     const panelWrap = this.el.querySelector('.app-shell__panel') as HTMLElement | null;
-    const panelWidth = panelWrap?.getBoundingClientRect().width ?? 0;
+    const measured = panelWrap?.getBoundingClientRect().width ?? 0;
+    if (measured > 0) return measured;
+
+    if (this.panelWidthTokens.expandedPx > 0) {
+      const collapsed = isPanelNavCollapsed(panelNav, navRoot);
+      return panelWidthPxFromTokens(this.panelWidthTokens, collapsed);
+    }
+
+    return 0;
+  }
+
+  private resolveShellDimensions(): { width: number; height: number } {
+    if (this.chromeTransitionDepth > 0 && this.cachedShellWidth > 0) {
+      return {
+        width: this.cachedShellWidth,
+        height: this.cachedShellHeight || this.el.clientHeight,
+      };
+    }
+
+    const rect = this.el.getBoundingClientRect();
+    return { width: rect.width, height: rect.height };
+  }
+
+  private syncChrome() {
+    const panelNav = this.el.querySelector('ds-panel-nav') as HTMLElement | null;
+    const bar = this.el.querySelector('ds-bar-nav') as HTMLElement | null;
+    const targets = [this.el, panelNav, bar].filter((el): el is HTMLElement => el !== null);
+
+    const { width: shellWidth, height: shellHeight } = this.resolveShellDimensions();
+    const panelWidth = this.resolvePanelWidthPx(panelNav);
 
     const panelPosition = shellGradientPositionPanel();
     const barPosition = shellGradientPositionBar(panelWidth);
 
-    this.syncChromeLayoutVars(panel, bar, panelPosition, barPosition);
+    this.syncChromeLayoutVars(panelNav, bar, panelPosition, barPosition);
 
     if (!this.gradient) {
       this.clearGradientPaintVars(targets);
@@ -138,8 +228,8 @@ export class AppShell {
       : buildShellRadialGradient();
 
     const size = shellGradientSize({
-      width: shellRect.width,
-      height: shellRect.height,
+      width: shellWidth,
+      height: shellHeight,
       panelWidth,
     });
     const opacity = SHELL_GRADIENT_OPACITY;
