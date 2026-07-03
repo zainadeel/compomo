@@ -12,7 +12,7 @@ import {
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import type { MenuItemData } from '../Menu/menu-types';
 import { isTabDivider } from '../TabGroup/tab-item-utils';
-import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
+import type { BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
@@ -62,15 +62,6 @@ export class BarNav {
   @Prop({ mutable: true }) value: string = '';
 
   /**
-   * Action items rendered in the right section.
-   * Set via JS property: `el.actions = [...]`. Replace the array reference to update.
-   */
-  @Prop() actions: BarNavActionItem[] = [];
-
-  /** JSON fallback for `actions` — useful when framework bindings don't propagate arrays. */
-  @Prop({ attribute: 'actions-json' }) actionsJson: string = '';
-
-  /**
    * Fallback heading shown when no tabs are provided.
    * When tabs are present the heading is hidden.
    */
@@ -85,11 +76,7 @@ export class BarNav {
   /** Emitted when the active tab changes. Detail = tab id. */
   @Event() dsTabChange!: EventEmitter<string>;
 
-  /** Emitted when an action button is toggled. Detail = { id, selected }. */
-  @Event() dsActionChange!: EventEmitter<{ id: string; selected: boolean }>;
-
   @State() private resolvedTabs: BarNavTab[] = [];
-  @State() private resolvedActions: BarNavActionItem[] = [];
   @State() private urlDerivedValue: string = '';
   @State() private hideTabsForDetailRoute = false;
   @State() private tabsCollapsed = false;
@@ -154,8 +141,6 @@ export class BarNav {
 
   @Watch('tabs')
   @Watch('tabsJson')
-  @Watch('actions')
-  @Watch('actionsJson')
   @Watch('currentUrl')
   @Watch('basePath')
   onHostPropsChange() {
@@ -284,16 +269,7 @@ export class BarNav {
 
   /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
   private syncHostPropsIfNeeded() {
-    if (
-      shouldResyncBarNavProps(
-        this.resolvedTabs,
-        this.tabs,
-        this.tabsJson,
-        this.resolvedActions,
-        this.actions,
-        this.actionsJson,
-      )
-    ) {
+    if (shouldResyncBarNavProps(this.resolvedTabs, this.tabs, this.tabsJson)) {
       this.applyHostProps();
     } else if (this.currentUrl && this.basePath) {
       this.syncValueFromUrl();
@@ -361,27 +337,15 @@ export class BarNav {
     }
   }
 
-  /** Width left for tabs after actions. */
+  /** Width available for the tab row or collapsed trigger. */
   private getLeftZoneAvailableWidth(): number {
     if (!this.headerEl) return 0;
 
     const headerStyle = getComputedStyle(this.headerEl);
-    const gap = parseFloat(headerStyle.columnGap || headerStyle.gap || '0') || 0;
-    const actionsEl = this.headerEl.querySelector('.bar-nav__actions') as HTMLElement | null;
-    const actionsWidth = actionsEl?.offsetWidth ?? 0;
     const horizontalPadding =
       (parseFloat(headerStyle.paddingLeft) || 0) + (parseFloat(headerStyle.paddingRight) || 0);
-    const spacing = this.tabsCollapsed
-      ? parseFloat(
-          getComputedStyle(this.headerEl).getPropertyValue('--dimension-space-100').trim(),
-        ) || 8
-      : actionsEl
-        ? gap
-        : 0;
-    const available =
-      this.headerEl.clientWidth - horizontalPadding - actionsWidth - spacing;
 
-    return Math.max(0, available);
+    return Math.max(0, this.headerEl.clientWidth - horizontalPadding);
   }
 
   private getTabsIntrinsicWidth(): number {
@@ -474,12 +438,6 @@ export class BarNav {
       : (this.tabs ?? []);
   }
 
-  private incomingActions(): BarNavActionItem[] {
-    return this.actionsJson
-      ? parseJsonArrayProp(this.actionsJson, [])
-      : (this.actions ?? []);
-  }
-
   private applyHostProps() {
     const nextBasePath = this.basePath;
     const sectionChanged =
@@ -492,7 +450,6 @@ export class BarNav {
       this.committedSection = '';
       this.pendingSection = nextBasePath;
       this.resolvedTabs = [];
-      this.resolvedActions = this.incomingActions();
       this.resetTabOverflowLayout();
       return;
     }
@@ -516,7 +473,6 @@ export class BarNav {
       this.digestTabsConfig(tabs) !== this.digestTabsConfig(this.resolvedTabs);
 
     this.resolvedTabs = tabs;
-    this.resolvedActions = this.incomingActions();
     this.syncValueFromUrl();
     this.committedSection = nextBasePath;
     if (tabsConfigChanged) {
@@ -570,11 +526,6 @@ export class BarNav {
 
   private handleTabChange(e: Event) {
     this.selectTab((e as CustomEvent<string>).detail);
-  }
-
-  private handleActionChange(actionId: string, e: Event) {
-    const selected = (e as CustomEvent<boolean>).detail;
-    this.dsActionChange.emit({ id: actionId, selected });
   }
 
   private toggleTabMenu() {
@@ -735,29 +686,6 @@ export class BarNav {
                 />
               </button>
             )}
-
-            {hasTabs &&
-              this.tabLayoutCommitted &&
-              this.tabsCollapsed &&
-              this.resolvedActions.length > 0 && (
-              <div class="bar-nav__between" aria-hidden="true" />
-            )}
-
-          {this.resolvedActions.length > 0 && (
-            <div class="bar-nav__actions">
-              {this.resolvedActions.map(action => (
-                <ds-bar-nav-action
-                  key={action.id}
-                  icon={action.icon}
-                  selected={action.selected ?? false}
-                  dot={action.dot ?? false}
-                  inactive={action.inactive}
-                  aria-label={action.ariaLabel ?? action.id}
-                  onDsChange={(e: Event) => this.handleActionChange(action.id, e)}
-                />
-              ))}
-            </div>
-          )}
 
         </header>
 

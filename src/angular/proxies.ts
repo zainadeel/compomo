@@ -110,21 +110,20 @@ export declare interface DsBanner extends Components.DsBanner {
 
 
 @ProxyCmp({
-  inputs: ['actions', 'actionsJson', 'basePath', 'currentUrl', 'heading', 'navStyle', 'tabs', 'tabsJson', 'value']
+  inputs: ['basePath', 'currentUrl', 'heading', 'navStyle', 'tabs', 'tabsJson', 'value']
 })
 @Component({
   selector: 'ds-bar-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['actions', 'actionsJson', 'basePath', 'currentUrl', 'heading', 'navStyle', 'tabs', 'tabsJson', 'value'],
-  outputs: ['dsTabChange', 'dsActionChange'],
+  inputs: ['basePath', 'currentUrl', 'heading', 'navStyle', 'tabs', 'tabsJson', 'value'],
+  outputs: ['dsTabChange'],
   standalone: false
 })
 export class DsBarNav {
   protected el: HTMLDsBarNavElement;
   @Output() dsTabChange = new EventEmitter<CustomEvent<string>>();
-  @Output() dsActionChange = new EventEmitter<CustomEvent<{ id: string; selected: boolean }>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -137,10 +136,6 @@ export declare interface DsBarNav extends Components.DsBarNav {
    * Emitted when the active tab changes. Detail = tab id.
    */
   dsTabChange: EventEmitter<CustomEvent<string>>;
-  /**
-   * Emitted when an action button is toggled. Detail = { id, selected }.
-   */
-  dsActionChange: EventEmitter<CustomEvent<{ id: string; selected: boolean }>>;
 }
 
 

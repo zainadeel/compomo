@@ -12,14 +12,6 @@ const manyTabs = [
   { id: 'requests', label: 'Requests' },
 ];
 
-const actions = [
-  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
-  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
-];
-
 function setShellWidth(px) {
   document.getElementById('shell').style.setProperty('--shell-width', `${px}px`);
 }
@@ -36,6 +28,5 @@ if (shellParam) {
 nav.basePath = BASE_PATH;
 nav.currentUrl = `${BASE_PATH}/events`;
 nav.tabs = manyTabs;
-nav.actions = actions;
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));

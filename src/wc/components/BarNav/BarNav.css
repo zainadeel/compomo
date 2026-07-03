@@ -56,7 +56,7 @@
   z-index: 3;
 }
 
-/* Collapsed — explicit spacer keeps the 8px minimum while the trigger can shrink. */
+/* Collapsed — trigger grows to fill the header row. */
 .bar-nav--tabs-collapsed {
   display: flex;
   gap: 0;
@@ -64,16 +64,11 @@
 }
 
 .bar-nav--tabs-collapsed .bar-nav__tab-trigger {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-width: 0;
   max-width: 100%;
   width: auto;
   overflow: hidden;
-}
-
-.bar-nav__between {
-  flex: 1 1 0%;
-  min-width: var(--dimension-space-100);
 }
 
 .bar-nav--tabs-collapsed .bar-nav__tab-trigger-label {
@@ -87,12 +82,7 @@
   min-width: 0;
 }
 
-.bar-nav--tabs-collapsed .bar-nav__actions {
-  flex: 0 0 auto;
-  margin-left: 0;
-}
-
-/* Expanded tabs — consume space between start and actions */
+/* Expanded tabs — consume full header width */
 .bar-nav__left {
   position: relative;
   flex: 1 1 0%;
@@ -281,13 +271,4 @@
   text-overflow: ellipsis;
   -webkit-user-select: none;
   user-select: none;
-}
-
-/* Right zone — pinned to the end; header gap is the min space from tabs/trigger */
-.bar-nav__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--dimension-space-050);
-  flex: 0 0 auto;
-  margin-left: auto;
 }

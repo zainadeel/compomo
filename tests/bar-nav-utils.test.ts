@@ -4,7 +4,7 @@ import {
   deriveBarNavValueFromUrl,
   shouldResyncBarNavProps,
 } from '../src/wc/components/BarNav/bar-nav-utils';
-import type { BarNavTab } from '../src/wc/components/BarNav/BarNav';
+import type { BarNavTab } from '../src/wc/components/BarNav/bar-nav-types';
 
 const SAFETY_TABS: BarNavTab[] = [
   { id: 'overview', label: 'Overview' },
@@ -20,17 +20,12 @@ const FUEL_TABS: BarNavTab[] = [
 describe('shouldResyncBarNavProps', () => {
   it('returns true when resolved tabs are empty but host tabs have items', () => {
     const tabs: BarNavTab[] = [{ id: 'overview', label: 'Overview' }];
-    assert.equal(shouldResyncBarNavProps([], tabs, '', [], [], ''), true);
+    assert.equal(shouldResyncBarNavProps([], tabs, ''), true);
   });
 
   it('returns false when resolved tabs already match host tabs', () => {
     const tabs: BarNavTab[] = [{ id: 'overview', label: 'Overview' }];
-    assert.equal(shouldResyncBarNavProps(tabs, tabs, '', [], [], ''), false);
-  });
-
-  it('returns true when resolved actions are empty but host actions have items', () => {
-    const actions = [{ id: 'search', icon: 'MagnifyingGlass' }];
-    assert.equal(shouldResyncBarNavProps([], [], '', [], actions, ''), true);
+    assert.equal(shouldResyncBarNavProps(tabs, tabs, ''), false);
   });
 });
 

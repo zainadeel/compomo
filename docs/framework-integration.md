@@ -35,6 +35,26 @@ Primary navigation (`ds-panel-nav`) and secondary navigation (`ds-bar-nav`) shar
 
 Bind the **same** `navStyle` on shell, panel, and bar so they stay in sync.
 
+### `ds-bar-nav` — tabs only
+
+Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). Tool shortcuts (search, messages, agents, …) live on **`ds-panel-tools`**, not inline on the bar.
+
+### `ds-panel-tools` — one named slot per tool
+
+Each rail tool (`search`, `agents`, `messages`, `stacks`, `activity`) has a **named slot** for its own composed UI. Mount all tool panels in the host; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open (and keeps it visible during the close slide).
+
+```html
+<ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>
+  <app-search-panel slot="search" />
+  <app-agents-panel slot="agents" />
+  <app-messages-panel slot="messages" />
+  <app-stacks-panel slot="stacks" />
+  <app-activity-panel slot="activity" />
+</ds-panel-tools>
+```
+
+The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open.
+
 ## `ds-app-shell` (optional workspace layout)
 
 ```html

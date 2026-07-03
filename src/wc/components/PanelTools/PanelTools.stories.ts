@@ -16,7 +16,15 @@ const RAIL_ITEMS: PanelToolsItem[] = [
 const meta: Meta = {
   title: 'Navigation/PanelTools',
   tags: ['autodocs'],
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component:
+          'Tool rail + sliding drawer. Each tool has a **named slot** (`search`, `agents`, `messages`, `stacks`, `activity`) for its own composed UI. The component shows the active tool’s slot while the drawer is open; closing slides the drawer shut without unmounting slotted content.',
+      },
+    },
+  },
 };
 
 export default meta;
@@ -64,11 +72,11 @@ function toolsShell(open: boolean, activeTool: PanelToolsToolId) {
         </div>
       </div>
       <ds-panel-tools ?open=${open} active-tool=${activeTool} .items=${items}>
-        <p slot="search">Search content placeholder</p>
-        <p slot="messages">Messages content placeholder</p>
-        <p slot="stacks">Stacks content placeholder</p>
-        <p slot="activity">Activity content placeholder</p>
-        <p slot="agents">Agents content placeholder</p>
+        <p slot="search">Search tool UI — compose a full feature panel here.</p>
+        <p slot="messages">Messages tool UI</p>
+        <p slot="stacks">Stacks tool UI</p>
+        <p slot="activity">Activity tool UI</p>
+        <p slot="agents">Agents tool UI</p>
       </ds-panel-tools>
     </div>
   `;
@@ -110,7 +118,7 @@ export const Interactive: Story = {
     docs: {
       description: {
         story:
-          'Rail selection follows `open` immediately; drawer content stays visible and slides out during close.',
+          'Rail selection follows `open` immediately. Each tool’s slotted UI stays mounted when switching tools or closing the drawer.',
       },
     },
   },

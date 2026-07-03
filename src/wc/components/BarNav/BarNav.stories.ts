@@ -17,14 +17,6 @@ const safetyTabs = [
   { id: 'requests',  label: 'Requests' },
 ];
 
-const defaultActions = [
-  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Go to / Search' },
-  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
-  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
-];
-
 const meta: Meta = {
   title: 'Navigation/BarNav',
   tags: ['autodocs'],
@@ -47,7 +39,6 @@ export const Playground: Story = {
       const nav = el.querySelector('ds-bar-nav') as any;
       if (!nav) return;
       nav.tabs    = fleetTabs;
-      nav.actions = defaultActions;
     })}>
       <ds-bar-nav
         value=${args['value'] ?? 'live-map'}
@@ -64,14 +55,7 @@ export const WithTabs: Story = {
       const nav = el.querySelector('ds-bar-nav') as any;
       if (!nav) return;
       nav.tabs    = fleetTabs;
-      nav.actions = defaultActions;
       nav.addEventListener('dsTabChange', (e: CustomEvent) => { nav.value = e.detail; });
-      nav.addEventListener('dsActionChange', (e: CustomEvent) => {
-        const updated = nav.actions.map((a: any) =>
-          a.id === e.detail.id ? { ...a, selected: e.detail.selected } : a
-        );
-        nav.actions = updated;
-      });
     })}>
       <ds-bar-nav value="live-map"></ds-bar-nav>
     </div>
@@ -104,12 +88,10 @@ export const WithTabDivider: Story = {
       if (!el) return;
       const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
         tabs: typeof fleetAndSafetyTabs;
-        actions: typeof defaultActions;
         value: string;
       } | null;
       if (!nav) return;
       nav.tabs = fleetAndSafetyTabs;
-      nav.actions = defaultActions;
       nav.value = 'live-map';
       nav.addEventListener('dsTabChange', (e: Event) => {
         nav.value = (e as CustomEvent<string>).detail;
@@ -135,7 +117,7 @@ export const ResponsiveTabCollapse: Story = {
     docs: {
       description: {
         story:
-          'When tabs overflow the left zone (actions stay pinned on the right), all tabs collapse ' +
+          'When tabs overflow the header width, all tabs collapse ' +
           'into a single tab-styled trigger with the active label and ChevronDown. Opens `ds-menu` for selection.',
       },
     },
@@ -148,12 +130,10 @@ export const ResponsiveTabCollapse: Story = {
         if (!el) return;
         const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
           tabs: typeof manyTabs;
-          actions: typeof defaultActions;
           value: string;
         } | null;
         if (!nav) return;
         nav.tabs = manyTabs;
-        nav.actions = defaultActions;
         nav.value = 'events';
         nav.addEventListener('dsTabChange', (e: Event) => {
           nav.value = (e as CustomEvent<string>).detail;
@@ -162,7 +142,7 @@ export const ResponsiveTabCollapse: Story = {
     >
       <p style="font-size:12px; color:var(--color-foreground-secondary); margin:0 0 12px;">
         Drag the container edge to resize — narrow widths collapse tabs into a menu trigger.
-        Events is selected by default to show its notification dot (also on action icons).
+        Events is selected by default to show its notification dot.
       </p>
       <ds-bar-nav></ds-bar-nav>
     </div>
@@ -194,12 +174,10 @@ export const CollapsedLabelTruncation: Story = {
         if (!el) return;
         const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
           tabs: typeof truncationTabs;
-          actions: typeof defaultActions;
           value: string;
         } | null;
         if (!nav) return;
         nav.tabs = truncationTabs;
-        nav.actions = defaultActions;
         nav.value = 'events';
         nav.addEventListener('dsTabChange', (e: Event) => {
           nav.value = (e as CustomEvent<string>).detail;
@@ -212,14 +190,13 @@ export const CollapsedLabelTruncation: Story = {
 };
 
 export const WithDotOnTab: Story = {
-  name: 'Tab dot + action dots (Safety)',
+  name: 'Tab dot (Safety)',
   render: () => html`
     <div style="width:900px" ${ref(el => {
       if (!el) return;
       const nav = el.querySelector('ds-bar-nav') as any;
       if (!nav) return;
       nav.tabs    = safetyTabs;
-      nav.actions = defaultActions;
     })}>
       <ds-bar-nav value="overview"></ds-bar-nav>
     </div>
@@ -233,22 +210,8 @@ export const HeadingFallback: Story = {
       if (!el) return;
       const nav = el.querySelector('ds-bar-nav') as any;
       if (!nav) return;
-      nav.actions = defaultActions;
     })}>
       <ds-bar-nav heading="Dashboard"></ds-bar-nav>
-    </div>
-  `,
-};
-
-export const ActionsOnly: Story = {
-  render: () => html`
-    <div style="width:600px" ${ref(el => {
-      if (!el) return;
-      const nav = el.querySelector('ds-bar-nav') as any;
-      if (!nav) return;
-      nav.actions = defaultActions;
-    })}>
-      <ds-bar-nav></ds-bar-nav>
     </div>
   `,
 };
@@ -286,7 +249,6 @@ export const AngularHostTiming: Story = {
   render: () => {
     assignBarNavAfterUpgrade('angular-bar-nav', 'angular-bar-status', el => {
       el.tabs = safetyTabs;
-      el.actions = defaultActions;
       el.basePath = '/dashboard/safety';
       el.currentUrl = '/dashboard/safety/events';
       el.heading = 'Safety';
@@ -337,11 +299,9 @@ export const UrlDrivenTabs: Story = {
           if (!el) return;
           const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
             tabs: typeof safetyTabs;
-            actions: typeof defaultActions;
-          } | null;
+            } | null;
           if (!nav) return;
           nav.tabs = safetyTabs;
-          nav.actions = defaultActions;
         })}>
           <ds-bar-nav
             id="url-bar-nav"
@@ -362,7 +322,7 @@ export const AngularImperativeAssignment: Story = {
       description: {
         story:
           'Angular template bindings for array props on custom elements can be unreliable. ' +
-          'Assign `el.tabs` and `el.actions` imperatively (e.g. in `ngAfterViewInit` and on route changes). ' +
+          'Assign `el.tabs` imperatively (e.g. in `ngAfterViewInit` and on route changes). ' +
           'The generated `DsBarNav` proxy uses property setters for this pattern.',
       },
     },
@@ -370,38 +330,29 @@ export const AngularImperativeAssignment: Story = {
   render: () => html`
     <div style="width:900px; font-family: var(--typography-font-family, system-ui);">
       <p style="font-size:13px; color:var(--color-foreground-secondary); margin:0 0 12px;">
-        Tabs and actions are assigned via <code>el.tabs = [...]</code> in a ref callback — mimics Angular imperative binding.
+        Tabs are assigned via <code>el.tabs = [...]</code> in a ref callback — mimics Angular imperative binding.
       </p>
       <div ${ref(el => {
         if (!el) return;
         const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
           tabs: typeof fleetTabs;
-          actions: typeof defaultActions;
           value: string;
         } | null;
         if (!nav) return;
         nav.tabs = fleetTabs;
-        nav.actions = defaultActions;
         nav.value = 'live-map';
         nav.addEventListener('dsTabChange', (e: Event) => {
           nav.value = (e as CustomEvent<string>).detail;
         });
-        nav.addEventListener('dsActionChange', (e: Event) => {
-          const { id, selected } = (e as CustomEvent<{ id: string; selected: boolean }>).detail;
-          nav.actions = nav.actions.map(a =>
-            a.id === id ? { ...a, selected } : a,
-          );
-        });
-      })}>
+        })}>
         <ds-bar-nav></ds-bar-nav>
       </div>
     </div>
   `,
 };
 
-function wireBarNavTabs(nav: HTMLElement & { tabs: typeof safetyTabs; actions: typeof defaultActions; value: string }) {
+function wireBarNavTabs(nav: HTMLElement & { tabs: typeof safetyTabs; value: string }) {
   nav.tabs = safetyTabs;
-  nav.actions = defaultActions;
   nav.value = 'events';
   nav.addEventListener('dsTabChange', (e: Event) => {
     nav.value = (e as CustomEvent<string>).detail;
@@ -449,7 +400,6 @@ export const NavStyleSlots: Story = {
               if (!el) return;
               const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
                 tabs: typeof safetyTabs;
-                actions: typeof defaultActions;
                 value: string;
                 navStyle: NavChromeStyle;
               } | null;
@@ -473,7 +423,7 @@ export const InGradientShell: Story = {
       description: {
         story:
           'Inside `ds-app-shell[gradient]`, bar-nav is transparent — the shell chrome layer paints the L-gradient wash. ' +
-          'Header actions may live on `ds-panel-tools` in product shells; bar-nav still supports inline actions for simpler layouts.',
+          'Product shells put tool shortcuts on `ds-panel-tools` — bar-nav is tabs (and optional heading) only.',
       },
     },
     layout: 'fullscreen',
@@ -494,7 +444,6 @@ export const InGradientShell: Story = {
             if (!el) return;
             const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
               tabs: typeof safetyTabs;
-              actions: typeof defaultActions;
               value: string;
             } | null;
             if (!nav) return;
