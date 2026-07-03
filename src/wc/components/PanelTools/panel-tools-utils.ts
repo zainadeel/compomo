@@ -29,3 +29,10 @@ export function shouldResyncPanelToolsItems(
     );
   });
 }
+
+export type PanelToolsMotion = 'opening' | 'closing' | 'idle';
+
+/** True when the drawer clip is fully closed — safe to skip painting slot content. */
+export function panelToolsDrawerResting(open: boolean, motion: PanelToolsMotion): boolean {
+  return !open && motion === 'idle';
+}

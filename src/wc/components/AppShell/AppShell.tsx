@@ -3,7 +3,9 @@ import type { NavChromeStyle } from '../../nav/nav-chrome';
 import {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
-  type ChromeTransitionDetail,
+  ChromeTransitionDepth,
+  createRafCoalescer,
+  readChromeTransitionSource,
 } from '../../nav/chrome-transition';
 import {
   isPanelNavCollapsed,
@@ -48,8 +50,8 @@ export class AppShell {
   @Element() el!: HTMLElement;
 
   private resizeObserver: ResizeObserver | null = null;
-  private chromeSyncRafId = 0;
-  private chromeTransitionDepth = 0;
+  private readonly panelNavTransition = new ChromeTransitionDepth();
+  private readonly chromeSyncCoalescer = createRafCoalescer(() => this.syncChrome());
   private panelWidthTokens: PanelNavWidthTokens = { expandedPx: 0, collapsedPx: 0 };
   private cachedShellWidth = 0;
   private cachedShellHeight = 0;
@@ -68,10 +70,7 @@ export class AppShell {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
-    if (this.chromeSyncRafId) {
-      cancelAnimationFrame(this.chromeSyncRafId);
-      this.chromeSyncRafId = 0;
-    }
+    this.chromeSyncCoalescer.cancel();
     this.el.removeEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.removeEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
   }
@@ -86,32 +85,26 @@ export class AppShell {
   }
 
   private onChromeTransitionStart = (event: Event) => {
-    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
-    if (source === 'panel-nav') {
-      this.chromeTransitionDepth += 1;
-      this.cachedShellWidth = this.el.clientWidth;
-      this.cachedShellHeight = this.el.clientHeight;
-      this.syncChrome();
-    }
+    if (readChromeTransitionSource(event) !== 'panel-nav') return;
+
+    this.panelNavTransition.enter();
+    this.cachedShellWidth = this.el.clientWidth;
+    this.cachedShellHeight = this.el.clientHeight;
+    this.syncChrome();
   };
 
   private onChromeTransitionEnd = (event: Event) => {
-    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
-    if (source !== 'panel-nav') return;
+    if (readChromeTransitionSource(event) !== 'panel-nav') return;
 
-    this.chromeTransitionDepth = Math.max(0, this.chromeTransitionDepth - 1);
-    if (this.chromeTransitionDepth === 0) {
+    this.panelNavTransition.exit();
+    if (!this.panelNavTransition.isActive) {
       this.scheduleChromeSync();
     }
   };
 
   /** Coalesce ResizeObserver bursts to one layout read per frame. */
   private scheduleChromeSync() {
-    if (this.chromeSyncRafId) return;
-    this.chromeSyncRafId = requestAnimationFrame(() => {
-      this.chromeSyncRafId = 0;
-      this.syncChrome();
-    });
+    this.chromeSyncCoalescer.schedule();
   }
 
   private syncSlottedNavStyle() {
@@ -129,7 +122,7 @@ export class AppShell {
 
   private connectMetricsObserver() {
     this.resizeObserver = new ResizeObserver(() => {
-      if (this.chromeTransitionDepth > 0) return;
+      if (this.panelNavTransition.isActive) return;
       this.scheduleChromeSync();
     });
     this.resizeObserver.observe(this.el);
@@ -180,7 +173,7 @@ export class AppShell {
   private resolvePanelWidthPx(panelNav: HTMLElement | null): number {
     const navRoot = panelNav?.querySelector('.panel-nav') as HTMLElement | null;
 
-    if (this.chromeTransitionDepth > 0 && this.panelWidthTokens.expandedPx > 0) {
+    if (this.panelNavTransition.isActive && this.panelWidthTokens.expandedPx > 0) {
       const collapsed = isPanelNavCollapsed(panelNav, navRoot);
       return panelWidthPxFromTokens(this.panelWidthTokens, collapsed);
     }
@@ -198,7 +191,7 @@ export class AppShell {
   }
 
   private resolveShellDimensions(): { width: number; height: number } {
-    if (this.chromeTransitionDepth > 0 && this.cachedShellWidth > 0) {
+    if (this.panelNavTransition.isActive && this.cachedShellWidth > 0) {
       return {
         width: this.cachedShellWidth,
         height: this.cachedShellHeight || this.el.clientHeight,

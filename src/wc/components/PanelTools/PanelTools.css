@@ -8,6 +8,7 @@
   --_panel-tools-rail-width: var(--dimension-size-600);
   --_panel-tools-drawer-width: var(--dimension-panel-width-sm);
   --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
+  --_panel-tools-surface-bg: var(--color-background-secondary);
   /* Match panel-nav expand timing (medium-1); easing differs by direction. */
   --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 300ms);
 }
@@ -59,12 +60,14 @@
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
-  background-color: var(--color-background-primary);
+  background-color: var(--_panel-tools-surface-bg);
 }
 
-/* Shell-owned chrome (bg + wash + grid) — drawer is a transparent frame. */
+/* Shell-owned chrome (bg + wash +/or grid) — drawer + rail are transparent frames. */
 :host-context(ds-app-shell[gradient]) .panel-tools__drawer-surface,
-:host-context(ds-app-shell[grid]) .panel-tools__drawer-surface {
+:host-context(ds-app-shell[grid]) .panel-tools__drawer-surface,
+:host-context(ds-app-shell[gradient]) .panel-tools__rail,
+:host-context(ds-app-shell[grid]) .panel-tools__rail {
   background-color: transparent;
 }
 
@@ -97,6 +100,12 @@
   min-height: 0;
   overflow: auto;
   position: relative;
+}
+
+/* Skip paint while fully closed; cleared during open/close motion for WYSIWYG slide. */
+:host(.panel-tools--drawer-resting) .panel-tools__body {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
 }
 
 .panel-tools__view {
@@ -138,6 +147,7 @@
   height: 100%;
   min-height: 0;
   border-left: var(--_panel-tools-border);
+  background-color: var(--_panel-tools-surface-bg);
 }
 
 .panel-tools__rail-header {

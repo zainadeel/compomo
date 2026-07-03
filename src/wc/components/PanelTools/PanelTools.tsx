@@ -6,7 +6,7 @@ import {
   type PanelToolsItem,
   type PanelToolsToolId,
 } from './panel-tools-types';
-import { parsePanelToolsItems } from './panel-tools-utils';
+import { parsePanelToolsItems, panelToolsDrawerResting } from './panel-tools-utils';
 
 @Component({
   tag: 'ds-panel-tools',
@@ -160,6 +160,7 @@ export class PanelTools {
     const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
     const bodyItems = railItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
     const showDrawerChrome = this.isDrawerPresent();
+    const drawerResting = panelToolsDrawerResting(this.open, this.motion);
 
     return (
       <Host
@@ -169,6 +170,7 @@ export class PanelTools {
           'panel-tools--ready': this.readyForMotion,
           'panel-tools--motion-opening': this.motion === 'opening',
           'panel-tools--motion-closing': this.motion === 'closing',
+          'panel-tools--drawer-resting': drawerResting,
         }}
         role="complementary"
         aria-label="Tools"
