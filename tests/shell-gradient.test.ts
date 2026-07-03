@@ -6,6 +6,7 @@ import {
   shellGradientPositionBar,
   shellChromeSurfacePosition,
   shellGradientSize,
+  readShellViewportDimensions,
   SHELL_GRADIENT_OPACITY,
 } from '../src/wc/nav/shell-gradient';
 
@@ -32,8 +33,24 @@ describe('SHELL_GRADIENT_OPACITY', () => {
 });
 
 describe('shellGradientSize', () => {
-  it('formats pixel size for L bounds', () => {
-    assert.equal(shellGradientSize({ width: 1200.4, height: 800.6, panelWidth: 200 }), '1200px 801px');
+  it('formats pixel size for viewport bounds', () => {
+    assert.equal(shellGradientSize({ width: 1200.4, height: 800.6 }), '1200px 801px');
+  });
+});
+
+describe('readShellViewportDimensions', () => {
+  it('prefers visualViewport when present', () => {
+    const win = {
+      innerWidth: 1400,
+      innerHeight: 900,
+      visualViewport: { width: 390.4, height: 844.6 },
+    } as Window;
+    assert.deepEqual(readShellViewportDimensions(win), { width: 390, height: 845 });
+  });
+
+  it('falls back to innerWidth/innerHeight', () => {
+    const win = { innerWidth: 1280.2, innerHeight: 720.8, visualViewport: null } as Window;
+    assert.deepEqual(readShellViewportDimensions(win), { width: 1280, height: 721 });
   });
 });
 

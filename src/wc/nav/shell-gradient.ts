@@ -30,13 +30,35 @@ export function shellGradientImage(): string {
   return buildShellRadialGradient();
 }
 
+export interface ShellViewportDimensions {
+  width: number;
+  height: number;
+}
+
+/**
+ * Viewport size for shell chrome with `background-attachment: fixed`.
+ * Must not use the `ds-app-shell` element box — the shell can be shorter or
+ * taller than the viewport when host height chains break or content overflows.
+ */
+export function readShellViewportDimensions(win?: Window): ShellViewportDimensions {
+  const w = win ?? (typeof globalThis.window !== 'undefined' ? globalThis.window : undefined);
+  if (!w) return { width: 0, height: 0 };
+
+  const visual = w.visualViewport;
+  return {
+    width: Math.round(visual?.width ?? w.innerWidth),
+    height: Math.round(visual?.height ?? w.innerHeight),
+  };
+}
+
 export interface ShellGradientLayout {
   width: number;
   height: number;
   panelWidth: number;
 }
 
-export function shellGradientSize(layout: ShellGradientLayout): string {
+/** Pixel `background-size` for the fixed-attachment radial wash. */
+export function shellGradientSize(layout: Pick<ShellGradientLayout, 'width' | 'height'>): string {
   return `${Math.round(layout.width)}px ${Math.round(layout.height)}px`;
 }
 

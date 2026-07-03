@@ -37,7 +37,8 @@
 /*
  * One chrome layer behind the shell row. Wash + grid use background-attachment: fixed
  * so the pattern is locked to the viewport — panel/tools collapse only changes the
- * transparent window, not the pattern phase.
+ * transparent window, not the pattern phase. JS sets wash background-size from
+ * readShellViewportDimensions(), not the shell element box.
  */
 .app-shell__chrome {
   position: absolute;
