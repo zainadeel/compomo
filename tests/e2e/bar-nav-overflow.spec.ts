@@ -120,7 +120,7 @@ test.describe('BarNav responsive overflow', () => {
       },
     );
 
-    await page.evaluate(() => window.__setShellWidth(240));
+    await page.evaluate(() => window.__setShellWidth(180));
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
 
     const fade = await page.evaluate(() => {
@@ -144,7 +144,8 @@ test.describe('BarNav responsive overflow', () => {
   });
 
   test('collapsed trigger does not fade short label while it fully fits', async ({ page }) => {
-    await page.evaluate(() => window.__setShellWidth(480));
+    // Tabs-only header is wider than with action icons — collapse at 320px, not 480px.
+    await page.evaluate(() => window.__setShellWidth(320));
     await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
 
     const layout = await page.evaluate(() => {
