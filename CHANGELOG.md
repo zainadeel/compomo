@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.1.0](https://github.com/zainadeel/compomo/compare/v2.0.0...v2.1.0) (2026-07-03)
+
+
+### Added
+
+* **docs:** add package favicon with system dark mode ([783632a](https://github.com/zainadeel/compomo/commit/783632a98f66aff9330c0c391d9c40de6304be65))
+* **docs:** add package favicon with system dark mode ([543a8b8](https://github.com/zainadeel/compomo/commit/543a8b8f93a78023543bb7d389b7a7fc240e0fc7))
+
+
+### Fixed
+
+* **storybook:** replace pixel-traced favicon with vector U lettermark ([1965bbf](https://github.com/zainadeel/compomo/commit/1965bbff7419e780dfa75ddf99b9c61927e824a1))
+* **storybook:** use source SVG favicon with system dark mode ([97f1a87](https://github.com/zainadeel/compomo/commit/97f1a870b3a90d6069e7c92e22f08b7bcf764765))
+
 ## [2.0.0](https://github.com/zainadeel/compomo/compare/v1.11.5...v2.0.0) (2026-07-03)
 
 
