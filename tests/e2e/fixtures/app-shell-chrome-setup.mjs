@@ -1,0 +1,38 @@
+import '/dist/components/ds-app-shell.js';
+import '/dist/components/ds-panel-nav.js';
+import '/dist/components/ds-panel-tools.js';
+import '/dist/components/ds-text.js';
+
+const groups = [
+  {
+    label: 'Fleet',
+    items: [
+      { id: 'fleet-view', label: 'Fleet View', icon: 'Map', href: '/fleet' },
+      { id: 'safety', label: 'Safety', icon: 'ShieldCircle', href: '/safety' },
+    ],
+  },
+];
+
+const toolsItems = [
+  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
+  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
+  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
+  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
+];
+
+await Promise.all([
+  customElements.whenDefined('ds-app-shell'),
+  customElements.whenDefined('ds-panel-nav'),
+  customElements.whenDefined('ds-panel-tools'),
+]);
+
+const panel = document.getElementById('panel');
+panel.groups = groups;
+panel.currentUrl = '/fleet';
+panel.breakpoint = 0;
+
+const tools = document.getElementById('tools');
+tools.items = toolsItems;
+
+await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
