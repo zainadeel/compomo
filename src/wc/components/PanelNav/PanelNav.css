@@ -36,8 +36,9 @@
 
 /* ── Default chrome overrides ────────────────────────────────────────────── */
 
-/* Shell-owned chrome (bg + wash + grid) — panel is a transparent frame. */
-:host-context(ds-app-shell[gradient]) .panel-nav {
+/* Shell-owned chrome (bg + wash +/or grid) — panel is a transparent frame. */
+:host-context(ds-app-shell[gradient]) .panel-nav,
+:host-context(ds-app-shell[grid]) .panel-nav {
   background-color: transparent;
 }
 

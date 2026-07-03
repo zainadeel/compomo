@@ -10,6 +10,11 @@ export const SHELL_CHROME_SURFACE_POSITION_VAR = '--ds-shell-chrome-surface-posi
 /** Layer opacity for the nav gradient wash. */
 export const SHELL_GRADIENT_OPACITY = '0.1';
 
+/** Whether the shared chrome layer (bg + optional wash/grid) should mount. */
+export function shellChromeLayerActive(gradient: boolean, grid: boolean): boolean {
+  return gradient || grid;
+}
+
 const GRADIENT_GEOMETRY = '100% 100% at 0% 0%';
 
 /**

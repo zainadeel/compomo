@@ -14,8 +14,12 @@
   font-family: var(--typography-font-family, system-ui);
 }
 
-:host(.app-shell--gradient) {
+:host(.app-shell--gradient),
+:host(.app-shell--grid) {
   --_shell-chrome-bg: var(--color-background-secondary);
+}
+
+:host(.app-shell--grid) {
   --_shell-chrome-grid-cell: var(--dimension-size-050);
   --_shell-chrome-grid-stroke: var(--dimension-stroke-width-012);
   --_shell-chrome-grid-line: var(--color-foreground-quaternary);
@@ -42,13 +46,14 @@
   z-index: 0;
 }
 
-:host(.app-shell--gradient) .app-shell__chrome {
+:host(.app-shell--gradient) .app-shell__chrome,
+:host(.app-shell--grid) .app-shell__chrome {
   background-color: var(--_shell-chrome-bg);
 }
 
 /* Layer stack (bottom → top): bg → wash (::before) → grid (::after) */
 :host(.app-shell--gradient) .app-shell__chrome::before,
-:host(.app-shell--gradient) .app-shell__chrome::after {
+:host(.app-shell--grid) .app-shell__chrome::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -65,7 +70,7 @@
   background-repeat: no-repeat;
 }
 
-:host(.app-shell--gradient) .app-shell__chrome::after {
+:host(.app-shell--grid) .app-shell__chrome::after {
   z-index: 2;
   opacity: var(--_shell-chrome-grid-opacity);
   background-image: repeating-linear-gradient(
@@ -130,7 +135,8 @@
 }
 
 /* Opaque page surface — masks the fixed chrome layer in the content column. */
-:host(.app-shell--gradient) .app-shell__content {
+:host(.app-shell--gradient) .app-shell__content,
+:host(.app-shell--grid) .app-shell__content {
   position: relative;
   z-index: 1;
   background-color: var(--color-background-primary);

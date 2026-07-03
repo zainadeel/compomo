@@ -63,7 +63,8 @@
 }
 
 /* Shell-owned chrome (bg + wash + grid) — drawer is a transparent frame. */
-:host-context(ds-app-shell[gradient]) .panel-tools__drawer-surface {
+:host-context(ds-app-shell[gradient]) .panel-tools__drawer-surface,
+:host-context(ds-app-shell[grid]) .panel-tools__drawer-surface {
   background-color: transparent;
 }
 
