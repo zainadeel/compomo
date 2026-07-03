@@ -5,6 +5,9 @@ test.describe('BarNav responsive overflow', () => {
     await page.goto('/');
     await page.waitForFunction(() => typeof window.__setShellWidth === 'function');
     await expect(page.locator('ds-bar-nav .bar-nav__tabs-probe')).toHaveCount(1);
+    await expect(
+      page.locator('.bar-nav__tabs-visible, .bar-nav__tab-trigger').first(),
+    ).toBeVisible({ timeout: 5000 });
   });
 
   test('narrow shell width on first paint keeps tabs collapsed (no stuck expanded row)', async ({
