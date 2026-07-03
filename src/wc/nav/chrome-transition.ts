@@ -7,6 +7,8 @@ export type ChromeTransitionSource = 'panel-nav' | 'panel-tools';
 
 export interface ChromeTransitionDetail {
   source: ChromeTransitionSource;
+  /** Panel-tools drawer motion direction; omitted for panel-nav. */
+  phase?: 'opening' | 'closing';
 }
 
 /** Reference-counted gate — used while panel-nav width is transitioning. */
@@ -53,4 +55,8 @@ export function createRafCoalescer(onFrame: () => void): RafCoalescer {
 
 export function readChromeTransitionSource(event: Event): ChromeTransitionSource | undefined {
   return (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+}
+
+export function readChromeTransitionPhase(event: Event): ChromeTransitionDetail['phase'] {
+  return (event as CustomEvent<ChromeTransitionDetail>).detail?.phase;
 }

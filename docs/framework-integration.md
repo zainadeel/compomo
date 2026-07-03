@@ -50,6 +50,8 @@ Built-in radial wash: `100% 100% at 0% 0%` — transparent → `--color-color-in
 
 Nav chrome is not a single static bitmap behind the app. Transparent components (`ds-panel-nav`, `ds-bar-nav`, tools drawer under shell chrome) each composite the **same** `background-image` with per-surface `background-position` / `background-size` so scroll fades, badge rings, and bar offsets align during panel resize. `ds-app-shell` coalesces layout reads to one pass per frame and pauses `ResizeObserver`-driven sync during **panel-nav** width transitions.
 
+`ds-panel-tools` emits `dsChromeTransitionStart` with `phase: 'opening' | 'closing'`. `ds-bar-nav` collapses tabs synchronously only on **opening**; on **closing** it pauses overflow measurement until the drawer `max-width` transition ends so tabs do not flicker.
+
 ---
 
 ## Host integration contract (SPA)

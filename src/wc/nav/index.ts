@@ -43,6 +43,7 @@ export {
   ChromeTransitionDepth,
   createRafCoalescer,
   readChromeTransitionSource,
+  readChromeTransitionPhase,
 } from './chrome-transition';
 export {
   barGradientPositionFromPanelWidth,

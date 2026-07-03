@@ -34,6 +34,7 @@ import {
   ChromeTransitionDepth,
   createRafCoalescer,
   readChromeTransitionSource,
+  readChromeTransitionPhase,
 } from '../../nav/chrome-transition';
 import { readCssVarWidthPx } from '../../nav/shell-chrome-metrics';
 
@@ -111,6 +112,7 @@ export class BarNav {
   private resizeObserver: ResizeObserver | null = null;
   private intrinsicWidthRetryCount = 0;
   private readonly panelNavTransition = new ChromeTransitionDepth();
+  private readonly panelToolsTransition = new ChromeTransitionDepth();
   private readonly overflowCoalescer = createRafCoalescer(() => {
     this.updateTabsCollapsed();
     this.updateTriggerLabelTruncation();
@@ -194,7 +196,7 @@ export class BarNav {
   }
 
   componentDidRender() {
-    if (this.panelNavTransition.isActive) {
+    if (this.chromeOverflowPaused()) {
       this.syncMenuAnchor();
       return;
     }
@@ -241,6 +243,12 @@ export class BarNav {
       return;
     }
     if (source === 'panel-tools') {
+      const phase = readChromeTransitionPhase(event) ?? 'opening';
+      if (phase === 'closing') {
+        this.panelToolsTransition.enter();
+        return;
+      }
+
       this.toolsDrawerOpening = true;
       this.el.classList.add('bar-nav--tools-drawer-opening');
       if (this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute) {
@@ -250,6 +258,14 @@ export class BarNav {
       this.scheduleOverflowCheck();
     }
   };
+
+  private chromeOverflowPaused(): boolean {
+    return (
+      this.panelNavTransition.isActive ||
+      this.panelToolsTransition.isActive ||
+      this.toolsDrawerOpening
+    );
+  }
 
   private onChromeTransitionEnd = (event: Event) => {
     const source = readChromeTransitionSource(event);
@@ -263,6 +279,7 @@ export class BarNav {
     if (source === 'panel-tools') {
       this.toolsDrawerOpening = false;
       this.el.classList.remove('bar-nav--tools-drawer-opening');
+      this.panelToolsTransition.exit();
       this.scheduleOverflowCheck();
     }
   };
@@ -301,14 +318,14 @@ export class BarNav {
     if (typeof ResizeObserver === 'undefined' || !this.headerEl) return;
     this.resizeObserver?.disconnect();
     this.resizeObserver = new ResizeObserver(() => {
-      if (this.panelNavTransition.isActive) return;
+      if (this.chromeOverflowPaused()) return;
       this.scheduleOverflowCheck();
     });
     this.resizeObserver.observe(this.headerEl);
   }
 
   private scheduleOverflowCheck() {
-    if (this.panelNavTransition.isActive) return;
+    if (this.chromeOverflowPaused()) return;
     this.overflowCoalescer.schedule();
   }
 

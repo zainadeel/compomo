@@ -4,6 +4,7 @@ import {
   ChromeTransitionDepth,
   createRafCoalescer,
   readChromeTransitionSource,
+  readChromeTransitionPhase,
 } from '../src/wc/nav/chrome-transition';
 
 describe('ChromeTransitionDepth', () => {
@@ -28,6 +29,15 @@ describe('readChromeTransitionSource', () => {
       detail: { source: 'panel-tools' },
     });
     assert.equal(readChromeTransitionSource(event), 'panel-tools');
+  });
+});
+
+describe('readChromeTransitionPhase', () => {
+  it('reads panel-tools motion phase when present', () => {
+    const event = new CustomEvent('dsChromeTransitionStart', {
+      detail: { source: 'panel-tools', phase: 'closing' },
+    });
+    assert.equal(readChromeTransitionPhase(event), 'closing');
   });
 });
 
