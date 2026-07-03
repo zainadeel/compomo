@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/zainadeel/compomo/compare/v1.11.5...v2.0.0) (2026-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **nav:** remove bar-nav actions and use panel-tools default slot
+
+### Fixed
+
+* **panel-tools:** restore named slot per tool for composed feature UIs ([c5bebce](https://github.com/zainadeel/compomo/commit/c5bebce5f352812aa166ef363949befab314ce6f))
+
+
+### Changed
+
+* **nav:** remove bar-nav actions and use panel-tools default slot ([c7438e4](https://github.com/zainadeel/compomo/commit/c7438e4002618c09ee66ba7798a044e2081dc1ee))
+
 ## [1.11.5](https://github.com/zainadeel/compomo/compare/v1.11.4...v1.11.5) (2026-07-03)
 
 
