@@ -11,17 +11,25 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsPanelToolsCustomEvent, type PanelToolsToolId } from "@ds-mo/ui";
+import { type ChromeTransitionDetail, type DsPanelToolsCustomEvent, type PanelToolsToolId } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsPanelTools as DsPanelToolsElement, defineCustomElement as defineDsPanelTools } from "@ds-mo/ui/dist/components/ds-panel-tools.js";
 
-export type DsPanelToolsEvents = { onDsToolChange: EventName<DsPanelToolsCustomEvent<{ id: PanelToolsToolId; selected: boolean; }>> };
+export type DsPanelToolsEvents = {
+    onDsToolChange: EventName<DsPanelToolsCustomEvent<{ id: PanelToolsToolId; selected: boolean; }>>,
+    onDsChromeTransitionStart: EventName<DsPanelToolsCustomEvent<ChromeTransitionDetail>>,
+    onDsChromeTransitionEnd: EventName<DsPanelToolsCustomEvent<ChromeTransitionDetail>>
+};
 
 export const DsPanelTools: StencilReactComponent<DsPanelToolsElement, DsPanelToolsEvents, Components.DsPanelTools> = /*@__PURE__*/ createComponent<DsPanelToolsElement, DsPanelToolsEvents, Components.DsPanelTools>({
     tagName: 'ds-panel-tools',
     elementClass: DsPanelToolsElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsToolChange: 'dsToolChange' } as DsPanelToolsEvents,
+    events: {
+        onDsToolChange: 'dsToolChange',
+        onDsChromeTransitionStart: 'dsChromeTransitionStart',
+        onDsChromeTransitionEnd: 'dsChromeTransitionEnd'
+    } as DsPanelToolsEvents,
     defineCustomElement: defineDsPanelTools
 });

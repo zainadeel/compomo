@@ -28,6 +28,12 @@ import {
   tabsOverflowContainer,
   tabsToMenuSections,
 } from './bar-nav-tabs-menu-utils';
+import {
+  CHROME_TRANSITION_END,
+  CHROME_TRANSITION_START,
+  type ChromeTransitionDetail,
+} from '../../nav/chrome-transition';
+import { readCssVarWidthPx } from '../../nav/shell-chrome-metrics';
 
 @Component({
   tag: 'ds-bar-nav',
@@ -91,6 +97,7 @@ export class BarNav {
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
   private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
+  private static readonly OVERFLOW_HYSTERESIS_PX = 8;
 
   private headerEl: HTMLElement | null = null;
   private triggerEl: HTMLButtonElement | null = null;
@@ -102,6 +109,9 @@ export class BarNav {
   private resizeObserver: ResizeObserver | null = null;
   private overflowCheckScheduled = false;
   private intrinsicWidthRetryCount = 0;
+  private chromeTransitionDepth = 0;
+  private chromeTransitionShell: HTMLElement | null = null;
+  private toolsDrawerOpening = false;
   /** Matches `basePath` once tabs + URL are reconciled for the active section. */
   @State() private committedSection = '';
   /** Section waiting for URL + tabs to catch up after a cross-area navigation. */
@@ -174,10 +184,15 @@ export class BarNav {
     this.syncHostPropsIfNeeded();
     this.scheduleDeferredHostPropSync();
     this.setupOverflowObserver();
+    this.bindChromeTransitionListeners();
     this.scheduleOverflowCheck();
   }
 
   componentDidRender() {
+    if (this.chromeTransitionDepth > 0) {
+      this.syncMenuAnchor();
+      return;
+    }
     this.scheduleOverflowCheck();
     this.syncMenuAnchor();
     if (this.tabsCollapsed) {
@@ -189,7 +204,62 @@ export class BarNav {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.syncTriggerLabelObserver(true);
+    this.unbindChromeTransitionListeners();
   }
+
+  private bindChromeTransitionListeners() {
+    const shell = this.el.closest('ds-app-shell');
+    if (!shell) return;
+    this.chromeTransitionShell = shell;
+    shell.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
+    shell.addEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
+  }
+
+  private unbindChromeTransitionListeners() {
+    if (!this.chromeTransitionShell) return;
+    this.chromeTransitionShell.removeEventListener(
+      CHROME_TRANSITION_START,
+      this.onChromeTransitionStart,
+    );
+    this.chromeTransitionShell.removeEventListener(
+      CHROME_TRANSITION_END,
+      this.onChromeTransitionEnd,
+    );
+    this.chromeTransitionShell = null;
+  }
+
+  private onChromeTransitionStart = (event: Event) => {
+    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+    if (source === 'panel-nav') {
+      this.chromeTransitionDepth += 1;
+      return;
+    }
+    if (source === 'panel-tools') {
+      this.toolsDrawerOpening = true;
+      this.el.classList.add('bar-nav--tools-drawer-opening');
+      if (this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute) {
+        this.tabsCollapsed = true;
+        this.menuOpen = false;
+      }
+      this.scheduleOverflowCheck();
+    }
+  };
+
+  private onChromeTransitionEnd = (event: Event) => {
+    const source = (event as CustomEvent<ChromeTransitionDetail>).detail?.source;
+    if (source === 'panel-nav') {
+      this.chromeTransitionDepth = Math.max(0, this.chromeTransitionDepth - 1);
+      if (this.chromeTransitionDepth === 0) {
+        this.scheduleOverflowCheck();
+      }
+      return;
+    }
+    if (source === 'panel-tools') {
+      this.toolsDrawerOpening = false;
+      this.el.classList.remove('bar-nav--tools-drawer-opening');
+      this.scheduleOverflowCheck();
+    }
+  };
 
   /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
   private syncHostPropsIfNeeded() {
@@ -224,15 +294,20 @@ export class BarNav {
   private setupOverflowObserver() {
     if (typeof ResizeObserver === 'undefined' || !this.headerEl) return;
     this.resizeObserver?.disconnect();
-    this.resizeObserver = new ResizeObserver(() => this.scheduleOverflowCheck());
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chromeTransitionDepth > 0) return;
+      this.scheduleOverflowCheck();
+    });
     this.resizeObserver.observe(this.headerEl);
   }
 
   private scheduleOverflowCheck() {
+    if (this.chromeTransitionDepth > 0) return;
     if (this.overflowCheckScheduled) return;
     this.overflowCheckScheduled = true;
     requestAnimationFrame(() => {
       this.overflowCheckScheduled = false;
+      if (this.chromeTransitionDepth > 0) return;
       this.updateTabsCollapsed();
       this.updateTriggerLabelTruncation();
     });
@@ -292,7 +367,20 @@ export class BarNav {
     const available =
       this.headerEl.clientWidth - horizontalPadding - actionsWidth - spacing;
 
-    return Math.max(0, available);
+    return Math.max(0, available - this.toolsDrawerOpeningReservePx());
+  }
+
+  /** While the tools drawer is opening, reserve width not yet claimed by flex shrink. */
+  private toolsDrawerOpeningReservePx(): number {
+    if (!this.toolsDrawerOpening) return 0;
+
+    const tools = this.el.closest('ds-app-shell')?.querySelector('ds-panel-tools') as HTMLElement | null;
+    if (!tools) return 0;
+
+    const drawerTarget = readCssVarWidthPx(tools, '--_panel-tools-drawer-width');
+    const drawerNow =
+      tools.querySelector('.panel-tools__drawer')?.getBoundingClientRect().width ?? 0;
+    return Math.max(0, drawerTarget - drawerNow);
   }
 
   private getTabsIntrinsicWidth(): number {
@@ -327,6 +415,7 @@ export class BarNav {
       intrinsicWidth,
       this.getLeftZoneAvailableWidth(),
       this.tabsCollapsed,
+      BarNav.OVERFLOW_HYSTERESIS_PX,
     );
 
     if (shouldCollapse !== this.tabsCollapsed) {

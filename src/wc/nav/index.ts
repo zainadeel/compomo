@@ -35,6 +35,19 @@ export {
   shellChromeSurfacePosition,
 } from './shell-gradient';
 export type { ShellGradientLayout } from './shell-gradient';
+export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-transition';
+export {
+  CHROME_TRANSITION_END,
+  CHROME_TRANSITION_START,
+} from './chrome-transition';
+export {
+  barGradientPositionFromPanelWidth,
+  isPanelNavCollapsed,
+  panelWidthPxFromTokens,
+  readCssVarWidthPx,
+  readPanelNavWidthTokens,
+} from './shell-chrome-metrics';
+export type { PanelNavWidthTokens } from './shell-chrome-metrics';
 export {
   BADGE_GRADIENT_POSITION_VAR,
   badgeGradientPosition,

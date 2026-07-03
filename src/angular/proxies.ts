@@ -650,13 +650,15 @@ export declare interface DsPagination extends Components.DsPagination {
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'navStyle', 'routerMode', 'storageKey', 'userInitial', 'userName'],
-  outputs: ['dsNavSelect', 'dsNavToggle', 'dsNavFooterAction', 'dsNavUserAction'],
+  outputs: ['dsNavSelect', 'dsNavToggle', 'dsChromeTransitionStart', 'dsChromeTransitionEnd', 'dsNavFooterAction', 'dsNavUserAction'],
   standalone: false
 })
 export class DsPanelNav {
   protected el: HTMLDsPanelNavElement;
   @Output() dsNavSelect = new EventEmitter<CustomEvent<string>>();
   @Output() dsNavToggle = new EventEmitter<CustomEvent<boolean>>();
+  @Output() dsChromeTransitionStart = new EventEmitter<CustomEvent<IDsPanelNavChromeTransitionDetail>>();
+  @Output() dsChromeTransitionEnd = new EventEmitter<CustomEvent<IDsPanelNavChromeTransitionDetail>>();
   @Output() dsNavFooterAction = new EventEmitter<CustomEvent<void>>();
   @Output() dsNavUserAction = new EventEmitter<CustomEvent<IDsPanelNavPanelNavUserActionDetail>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
@@ -666,6 +668,7 @@ export class DsPanelNav {
 }
 
 
+import type { ChromeTransitionDetail as IDsPanelNavChromeTransitionDetail } from '@ds-mo/ui';
 import type { PanelNavUserActionDetail as IDsPanelNavPanelNavUserActionDetail } from '@ds-mo/ui';
 
 export declare interface DsPanelNav extends Components.DsPanelNav {
@@ -677,6 +680,12 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
    * Emitted when the collapse toggle is clicked. Detail = new collapsed state.
    */
   dsNavToggle: EventEmitter<CustomEvent<boolean>>;
+  /**
+   * Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion.
+   */
+  dsChromeTransitionStart: EventEmitter<CustomEvent<IDsPanelNavChromeTransitionDetail>>;
+
+  dsChromeTransitionEnd: EventEmitter<CustomEvent<IDsPanelNavChromeTransitionDetail>>;
   /**
    * Emitted when the footer left button (gear / dashboard) is clicked.
    */
@@ -697,12 +706,14 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['activeTool', 'items', 'itemsJson', 'open'],
-  outputs: ['dsToolChange'],
+  outputs: ['dsToolChange', 'dsChromeTransitionStart', 'dsChromeTransitionEnd'],
   standalone: false
 })
 export class DsPanelTools {
   protected el: HTMLDsPanelToolsElement;
   @Output() dsToolChange = new EventEmitter<CustomEvent<{ id: IDsPanelToolsPanelToolsToolId; selected: boolean; }>>();
+  @Output() dsChromeTransitionStart = new EventEmitter<CustomEvent<IDsPanelToolsChromeTransitionDetail>>();
+  @Output() dsChromeTransitionEnd = new EventEmitter<CustomEvent<IDsPanelToolsChromeTransitionDetail>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -711,12 +722,19 @@ export class DsPanelTools {
 
 
 import type { PanelToolsToolId as IDsPanelToolsPanelToolsToolId } from '@ds-mo/ui';
+import type { ChromeTransitionDetail as IDsPanelToolsChromeTransitionDetail } from '@ds-mo/ui';
 
 export declare interface DsPanelTools extends Components.DsPanelTools {
   /**
    * Emitted when a rail button is toggled. Detail = { id, selected }.
    */
   dsToolChange: EventEmitter<CustomEvent<{ id: IDsPanelToolsPanelToolsToolId; selected: boolean; }>>;
+  /**
+   * Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion.
+   */
+  dsChromeTransitionStart: EventEmitter<CustomEvent<IDsPanelToolsChromeTransitionDetail>>;
+
+  dsChromeTransitionEnd: EventEmitter<CustomEvent<IDsPanelToolsChromeTransitionDetail>>;
 }
 
 

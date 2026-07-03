@@ -26,6 +26,7 @@ import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+import { ChromeTransitionDetail } from "./nav/chrome-transition";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
@@ -63,6 +64,7 @@ export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+export { ChromeTransitionDetail } from "./nav/chrome-transition";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
@@ -1476,6 +1478,8 @@ declare global {
     interface HTMLDsPanelNavElementEventMap {
         "dsNavSelect": string;
         "dsNavToggle": boolean;
+        "dsChromeTransitionStart": ChromeTransitionDetail;
+        "dsChromeTransitionEnd": ChromeTransitionDetail;
         "dsNavFooterAction": void;
         "dsNavUserAction": PanelNavUserActionDetail;
     }
@@ -1498,6 +1502,8 @@ declare global {
     id: PanelToolsToolId;
     selected: boolean;
   };
+        "dsChromeTransitionStart": ChromeTransitionDetail;
+        "dsChromeTransitionEnd": ChromeTransitionDetail;
     }
     interface HTMLDsPanelToolsElement extends Components.DsPanelTools, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelToolsElementEventMap>(type: K, listener: (this: HTMLDsPanelToolsElement, ev: DsPanelToolsCustomEvent<HTMLDsPanelToolsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2378,6 +2384,11 @@ declare namespace LocalJSX {
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
+        "onDsChromeTransitionEnd"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
+        /**
+          * Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion.
+         */
+        "onDsChromeTransitionStart"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
         /**
           * Emitted when the footer left button (gear / dashboard) is clicked.
          */
@@ -2431,6 +2442,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "itemsJson"?: string;
+        "onDsChromeTransitionEnd"?: (event: DsPanelToolsCustomEvent<ChromeTransitionDetail>) => void;
+        /**
+          * Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion.
+         */
+        "onDsChromeTransitionStart"?: (event: DsPanelToolsCustomEvent<ChromeTransitionDetail>) => void;
         /**
           * Emitted when a rail button is toggled. Detail = { id, selected }.
          */

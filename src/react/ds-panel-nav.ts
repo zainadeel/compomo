@@ -11,13 +11,15 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsPanelNavCustomEvent, type PanelNavUserActionDetail } from "@ds-mo/ui";
+import { type ChromeTransitionDetail, type DsPanelNavCustomEvent, type PanelNavUserActionDetail } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsPanelNav as DsPanelNavElement, defineCustomElement as defineDsPanelNav } from "@ds-mo/ui/dist/components/ds-panel-nav.js";
 
 export type DsPanelNavEvents = {
     onDsNavSelect: EventName<DsPanelNavCustomEvent<string>>,
     onDsNavToggle: EventName<DsPanelNavCustomEvent<boolean>>,
+    onDsChromeTransitionStart: EventName<DsPanelNavCustomEvent<ChromeTransitionDetail>>,
+    onDsChromeTransitionEnd: EventName<DsPanelNavCustomEvent<ChromeTransitionDetail>>,
     onDsNavFooterAction: EventName<DsPanelNavCustomEvent<void>>,
     onDsNavUserAction: EventName<DsPanelNavCustomEvent<PanelNavUserActionDetail>>
 };
@@ -30,6 +32,8 @@ export const DsPanelNav: StencilReactComponent<DsPanelNavElement, DsPanelNavEven
     events: {
         onDsNavSelect: 'dsNavSelect',
         onDsNavToggle: 'dsNavToggle',
+        onDsChromeTransitionStart: 'dsChromeTransitionStart',
+        onDsChromeTransitionEnd: 'dsChromeTransitionEnd',
         onDsNavFooterAction: 'dsNavFooterAction',
         onDsNavUserAction: 'dsNavUserAction'
     } as DsPanelNavEvents,

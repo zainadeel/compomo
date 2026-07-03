@@ -1,4 +1,5 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
+import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import {
   deriveActiveIdFromUrl,
@@ -68,6 +69,13 @@ export class PanelNav {
 
   /** Emitted when the collapse toggle is clicked. Detail = new collapsed state. */
   @Event() dsNavToggle!: EventEmitter<boolean>;
+
+  /** Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion. */
+  @Event({ bubbles: true, composed: true })
+  dsChromeTransitionStart!: EventEmitter<ChromeTransitionDetail>;
+
+  @Event({ bubbles: true, composed: true })
+  dsChromeTransitionEnd!: EventEmitter<ChromeTransitionDetail>;
 
   /** Emitted when the footer left button (gear / dashboard) is clicked. */
   @Event() dsNavFooterAction!: EventEmitter<void>;
@@ -181,6 +189,7 @@ export class PanelNav {
 
   private startCollapseAnimation() {
     this.isAnimating = true;
+    this.dsChromeTransitionStart.emit({ source: 'panel-nav' });
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
     if (this.transitionEndHandler) {
       panel?.removeEventListener('transitionend', this.transitionEndHandler);
@@ -188,6 +197,7 @@ export class PanelNav {
     this.transitionEndHandler = (e: TransitionEvent) => {
       if (e.propertyName === 'width') {
         this.isAnimating = false;
+        this.dsChromeTransitionEnd.emit({ source: 'panel-nav' });
         panel?.removeEventListener('transitionend', this.transitionEndHandler!);
       }
     };

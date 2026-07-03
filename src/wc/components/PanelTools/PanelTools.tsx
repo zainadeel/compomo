@@ -1,4 +1,5 @@
 import { Component, Prop, Event, EventEmitter, Element, State, Watch, h, Host } from '@stencil/core';
+import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
 import {
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_PRIMARY_TOOL_ID,
@@ -37,6 +38,13 @@ export class PanelTools {
     selected: boolean;
   }>;
 
+  /** Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion. */
+  @Event({ bubbles: true, composed: true })
+  dsChromeTransitionStart!: EventEmitter<ChromeTransitionDetail>;
+
+  @Event({ bubbles: true, composed: true })
+  dsChromeTransitionEnd!: EventEmitter<ChromeTransitionDetail>;
+
   /** Arms open vs close easing for the in-flight width transition. */
   @State() private motion: 'opening' | 'closing' | 'idle' = 'idle';
 
@@ -74,6 +82,7 @@ export class PanelTools {
   openChanged(isOpen: boolean, wasOpen?: boolean) {
     if (this.readyForMotion && wasOpen !== undefined && wasOpen !== isOpen) {
       this.motion = isOpen ? 'opening' : 'closing';
+      this.dsChromeTransitionStart.emit({ source: 'panel-tools' });
     }
     this.deferMotionEnable();
   }
@@ -97,6 +106,7 @@ export class PanelTools {
     if (event.target !== this.el.querySelector('.panel-tools__drawer')) return;
     if (event.propertyName !== 'max-width') return;
     this.motion = 'idle';
+    this.dsChromeTransitionEnd.emit({ source: 'panel-tools' });
   };
 
   /** Rail selection follows `open` immediately — independent of the slide animation. */

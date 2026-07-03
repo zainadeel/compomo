@@ -15,6 +15,7 @@
   color: var(--_bar-nav-fg-primary);
   -webkit-user-select: none;
   user-select: none;
+  overflow: hidden;
   transition:
     background-color var(--effect-motion-short-3),
     border-color var(--effect-motion-short-3),
@@ -125,6 +126,11 @@
 .bar-nav__tabs-visible {
   width: 100%;
   min-width: 0;
+}
+
+/* Synchronous hide while tools drawer opens — Stencil collapse state paints a frame later. */
+:host(.bar-nav--tools-drawer-opening) .bar-nav__left {
+  display: none;
 }
 
 /* In-flow placeholder while measuring overflow — avoids layout jump; hidden from view/accessibility. */

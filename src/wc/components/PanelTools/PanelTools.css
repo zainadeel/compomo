@@ -4,6 +4,7 @@
   box-sizing: border-box;
   height: 100%;
   min-height: 0;
+  overflow: hidden;
   --_panel-tools-rail-width: var(--dimension-size-600);
   --_panel-tools-drawer-width: var(--dimension-panel-width-sm);
   --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
