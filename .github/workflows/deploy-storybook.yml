@@ -55,8 +55,6 @@ jobs:
           # GitHub Pages project sites live at /RepoName/ — Storybook
           # needs this so all asset paths resolve correctly.
           STORYBOOK_BASE_URL: /compomo/
-          # Stamped into the Storybook chrome so designers know which build they are viewing.
-          STORYBOOK_BUILT_AT: ${{ github.run_started_at }}
 
       - name: Build component registry
         run: npm run registry:build
