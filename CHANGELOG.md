@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.4](https://github.com/zainadeel/compomo/compare/v1.11.3...v1.11.4) (2026-07-03)
+
+
+### Fixed
+
+* **bar-nav:** commit initial tab layout when probe measure stalls ([634d032](https://github.com/zainadeel/compomo/commit/634d03286896ee4bed179b5a1e689bbaeb18dfb9))
+* **bar-nav:** commit initial tab layout when probe measure stalls ([49128ab](https://github.com/zainadeel/compomo/commit/49128ab656833ba80f3187fe47a7670f0898f99c))
+
 ## [1.11.3](https://github.com/zainadeel/compomo/compare/v1.11.2...v1.11.3) (2026-07-03)
 
 
