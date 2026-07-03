@@ -127,20 +127,24 @@ test.describe('BarNav responsive overflow', () => {
       const labelWrap = document.querySelector('.bar-nav__tab-trigger-label') as HTMLElement;
       const label = document.querySelector('.bar-nav__tab-trigger-label-text') as HTMLElement;
       const overlay = getComputedStyle(labelWrap, '::after');
+      const cs = getComputedStyle(label);
+      const maskImage = cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
       return {
         isOverflowing: label.scrollWidth > label.clientWidth + 1,
-        overlayContent: overlay.content,
-        overlayWidth: parseFloat(overlay.width),
-        overlayBackground: overlay.backgroundImage,
+        hasTruncatedWrapClass: labelWrap.classList.contains(
+          'bar-nav__tab-trigger-label--truncated',
+        ),
         hasTruncatedClass: label.classList.contains('bar-nav__tab-trigger-label-text--truncated'),
+        maskImage,
+        overlayBackground: overlay.backgroundImage,
       };
     });
 
     expect(fade.isOverflowing).toBe(true);
-    expect(['""', 'none']).toContain(fade.overlayContent);
-    expect(fade.overlayWidth).toBeGreaterThan(0);
-    expect(fade.overlayBackground).toContain('linear-gradient');
+    expect(fade.hasTruncatedWrapClass).toBe(true);
     expect(fade.hasTruncatedClass).toBe(true);
+    expect(fade.maskImage).toContain('linear-gradient');
+    expect(fade.overlayBackground).toContain('linear-gradient');
   });
 
   test('collapsed trigger does not fade short label while it fully fits', async ({ page }) => {
