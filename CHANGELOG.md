@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.11.3](https://github.com/zainadeel/compomo/compare/v1.11.2...v1.11.3) (2026-07-03)
+
+
+### Fixed
+
+* **bar-nav:** defer tab row paint until overflow is measured on section change ([fd7527a](https://github.com/zainadeel/compomo/commit/fd7527a243bea0544c04768ca6e5af0e7842b184))
+* **bar-nav:** pause overflow remeasure during tools drawer close ([115bdc2](https://github.com/zainadeel/compomo/commit/115bdc27c8c5a7af7c81e75a93c1345881052e73))
+* **bar-nav:** restore progressive tab collapse during tools drawer open ([9c1ff3b](https://github.com/zainadeel/compomo/commit/9c1ff3b485b48fa8299533f339cc5707a10b0ccf))
+* **shell:** size gradient wash from viewport for fixed attachment ([6e086fe](https://github.com/zainadeel/compomo/commit/6e086feff3f1d8e8a4130af9131d8244fdd82471))
+* **shell:** viewport gradient wash and tools drawer tab UX ([e917d57](https://github.com/zainadeel/compomo/commit/e917d57b83abbcb9cd84794f0426f7a6000dc480))
+
 ## [1.11.2](https://github.com/zainadeel/compomo/compare/v1.11.1...v1.11.2) (2026-07-03)
 
 
