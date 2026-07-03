@@ -10,6 +10,7 @@ addons.setConfig({
     base: 'light',
     brandTitle,
     brandUrl: 'https://github.com/zainadeel/compomo',
+    brandImage: './favicon.svg',
     brandTarget: '_self',
   }),
   // Storybook 10 ships Controls in core; keep the panel visible for

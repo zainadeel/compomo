@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-path { fill: #000000; }
+    @media (prefers-color-scheme: dark) {
+      .logo-path { fill: #ffffff; }
+    }
+  </style>
+  <path class="logo-path" d="M5 11H6V1H10V15H1V1H5V11Z" />
+  <path class="logo-path" d="M15 15H11V1H15V15Z" />
+</svg>
