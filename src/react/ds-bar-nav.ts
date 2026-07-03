@@ -15,19 +15,13 @@ import { type DsBarNavCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsBarNav as DsBarNavElement, defineCustomElement as defineDsBarNav } from "@ds-mo/ui/dist/components/ds-bar-nav.js";
 
-export type DsBarNavEvents = {
-    onDsTabChange: EventName<DsBarNavCustomEvent<string>>,
-    onDsActionChange: EventName<DsBarNavCustomEvent<{ id: string; selected: boolean }>>
-};
+export type DsBarNavEvents = { onDsTabChange: EventName<DsBarNavCustomEvent<string>> };
 
 export const DsBarNav: StencilReactComponent<DsBarNavElement, DsBarNavEvents, Components.DsBarNav> = /*@__PURE__*/ createComponent<DsBarNavElement, DsBarNavEvents, Components.DsBarNav>({
     tagName: 'ds-bar-nav',
     elementClass: DsBarNavElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {
-        onDsTabChange: 'dsTabChange',
-        onDsActionChange: 'dsActionChange'
-    } as DsBarNavEvents,
+    events: { onDsTabChange: 'dsTabChange' } as DsBarNavEvents,
     defineCustomElement: defineDsBarNav
 });

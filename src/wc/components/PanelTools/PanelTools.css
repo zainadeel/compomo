@@ -108,8 +108,7 @@
   contain-intrinsic-size: auto 200px;
 }
 
-.panel-tools__view {
-  display: none;
+.panel-tools__content {
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
@@ -122,7 +121,7 @@
   letter-spacing: var(--typography-letterspacing-negative-half);
 }
 
-.panel-tools__view ::slotted(*) {
+.panel-tools__content ::slotted(*) {
   margin: 0;
   color: var(--color-foreground-secondary);
   font-family: var(--typography-font-family);
@@ -130,10 +129,6 @@
   line-height: var(--typography-lineheight-md);
   font-weight: var(--typography-weight-regular);
   letter-spacing: var(--typography-letterspacing-negative-half);
-}
-
-.panel-tools__view--active {
-  display: block;
 }
 
 /* Rail — mirrors collapsed panel-nav width, padding, and item rhythm. */

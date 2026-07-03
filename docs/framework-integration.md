@@ -35,6 +35,23 @@ Primary navigation (`ds-panel-nav`) and secondary navigation (`ds-bar-nav`) shar
 
 Bind the **same** `navStyle` on shell, panel, and bar so they stay in sync.
 
+### `ds-bar-nav` — tabs only
+
+Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). Tool shortcuts (search, messages, agents, …) live on **`ds-panel-tools`**, not inline on the bar.
+
+### `ds-panel-tools` — composable drawer body
+
+The sliding drawer exposes a **default slot** for host-composed content. The rail still uses `items` + `active-tool`; swap drawer markup in the host when `dsToolChange` fires (or bind `activeTool` in your framework).
+
+```html
+<ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>
+  <!-- Host composes one body; switch on active-tool -->
+  <section>Agents panel content</section>
+</ds-panel-tools>
+```
+
+The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]` until a future `drawer-title` prop is added.
+
 ## `ds-app-shell` (optional workspace layout)
 
 ```html

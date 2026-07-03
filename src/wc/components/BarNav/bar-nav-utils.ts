@@ -1,5 +1,5 @@
 import { getSelectableTabs } from '../TabGroup/tab-item-utils';
-import type { BarNavActionItem, BarNavTab } from './bar-nav-types';
+import type { BarNavTab } from './bar-nav-types';
 
 export interface BarNavUrlState {
   /** Tab id derived from the URL, or empty when none applies. */
@@ -44,24 +44,15 @@ export function shouldResyncBarNavProps(
   resolvedTabs: BarNavTab[],
   tabs: BarNavTab[],
   tabsJson: string,
-  resolvedActions: BarNavActionItem[],
-  actions: BarNavActionItem[],
-  actionsJson: string,
 ): boolean {
   const tabsIncoming = tabsJson
     ? parseJsonArrayProp(tabsJson, [])
     : (tabs ?? []);
-  const actionsIncoming = actionsJson
-    ? parseJsonArrayProp(actionsJson, [])
-    : (actions ?? []);
 
-  return (
-    (resolvedTabs.length === 0 && tabsIncoming.length > 0) ||
-    (resolvedActions.length === 0 && actionsIncoming.length > 0)
-  );
+  return resolvedTabs.length === 0 && tabsIncoming.length > 0;
 }
 
-/** Parse tabs/actions from either a JSON attribute string or a JS property array. */
+/** Parse tabs from either a JSON attribute string or a JS property array. */
 export function parseJsonArrayProp<T>(value: string | T[] | undefined, fallback: T[]): T[] {
   if (Array.isArray(value)) return value;
   if (typeof value === 'string' && value !== '') {

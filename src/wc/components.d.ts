@@ -9,7 +9,7 @@ import { AccordionItemData } from "./components/Accordion/Accordion";
 import { NavChromeStyle } from "./nav/nav-chrome";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
-import { BarNavActionItem, BarNavTab } from "./components/BarNav/bar-nav-types";
+import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -47,7 +47,7 @@ export { AccordionItemData } from "./components/Accordion/Accordion";
 export { NavChromeStyle } from "./nav/nav-chrome";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
-export { BarNavActionItem, BarNavTab } from "./components/BarNav/bar-nav-types";
+export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
@@ -192,16 +192,6 @@ export namespace Components {
         "showDismiss": boolean;
     }
     interface DsBarNav {
-        /**
-          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`. Replace the array reference to update.
-          * @default []
-         */
-        "actions": BarNavActionItem[];
-        /**
-          * JSON fallback for `actions` — useful when framework bindings don't propagate arrays.
-          * @default ''
-         */
-        "actionsJson": string;
         /**
           * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
           * @default ''
@@ -1240,7 +1230,6 @@ declare global {
     };
     interface HTMLDsBarNavElementEventMap {
         "dsTabChange": string;
-        "dsActionChange": { id: string; selected: boolean };
     }
     interface HTMLDsBarNavElement extends Components.DsBarNav, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsBarNavElementEventMap>(type: K, listener: (this: HTMLDsBarNavElement, ev: DsBarNavCustomEvent<HTMLDsBarNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1881,16 +1870,6 @@ declare namespace LocalJSX {
     }
     interface DsBarNav {
         /**
-          * Action items rendered in the right section. Set via JS property: `el.actions = [...]`. Replace the array reference to update.
-          * @default []
-         */
-        "actions"?: BarNavActionItem[];
-        /**
-          * JSON fallback for `actions` — useful when framework bindings don't propagate arrays.
-          * @default ''
-         */
-        "actionsJson"?: string;
-        /**
           * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
           * @default ''
          */
@@ -1909,10 +1888,6 @@ declare namespace LocalJSX {
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
-        /**
-          * Emitted when an action button is toggled. Detail = { id, selected }.
-         */
-        "onDsActionChange"?: (event: DsBarNavCustomEvent<{ id: string; selected: boolean }>) => void;
         /**
           * Emitted when the active tab changes. Detail = tab id.
          */
@@ -2907,7 +2882,6 @@ declare namespace LocalJSX {
         "navStyle": NavChromeStyle;
         "tabsJson": string;
         "value": string;
-        "actionsJson": string;
         "heading": string | undefined;
         "basePath": string;
         "currentUrl": string;
