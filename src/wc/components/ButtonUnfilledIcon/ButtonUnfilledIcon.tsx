@@ -46,6 +46,12 @@ export class ButtonUnfilledIcon {
   @Prop() haspopup: string | undefined;
   @Prop() pressed: boolean | undefined;
 
+  /**
+   * Native `tabindex` for roving keyboard groups in shell chrome.
+   * Omit for the default button tab stop (`0`).
+   */
+  @Prop({ attribute: 'tab-index' }) focusTabIndex?: number;
+
   @Event() dsClick!: EventEmitter<MouseEvent>;
   @Event() dsChange!: EventEmitter<boolean>;
 
@@ -88,6 +94,7 @@ export class ButtonUnfilledIcon {
           type={this.type}
           class={cls}
           disabled={this.inactive}
+          tabIndex={this.focusTabIndex ?? 0}
           aria-label={this.ariaLabel}
           aria-controls={this.controls}
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}

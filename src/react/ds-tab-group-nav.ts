@@ -15,13 +15,19 @@ import { type DsTabGroupNavCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsTabGroupNav as DsTabGroupNavElement, defineCustomElement as defineDsTabGroupNav } from "@ds-mo/ui/dist/components/ds-tab-group-nav.js";
 
-export type DsTabGroupNavEvents = { onDsChange: EventName<DsTabGroupNavCustomEvent<string>> };
+export type DsTabGroupNavEvents = {
+    onDsChange: EventName<DsTabGroupNavCustomEvent<string>>,
+    onDsRovingExit: EventName<DsTabGroupNavCustomEvent<'start' | 'end'>>
+};
 
 export const DsTabGroupNav: StencilReactComponent<DsTabGroupNavElement, DsTabGroupNavEvents, Components.DsTabGroupNav> = /*@__PURE__*/ createComponent<DsTabGroupNavElement, DsTabGroupNavEvents, Components.DsTabGroupNav>({
     tagName: 'ds-tab-group-nav',
     elementClass: DsTabGroupNavElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsChange: 'dsChange' } as DsTabGroupNavEvents,
+    events: {
+        onDsChange: 'dsChange',
+        onDsRovingExit: 'dsRovingExit'
+    } as DsTabGroupNavEvents,
     defineCustomElement: defineDsTabGroupNav
 });

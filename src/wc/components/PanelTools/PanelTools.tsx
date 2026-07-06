@@ -51,10 +51,19 @@ export class PanelTools {
   /** Suppresses width transition until the host has painted its initial open state. */
   @State() private readyForMotion = false;
 
+  @State() private rovingIndex = 0;
+
   private motionEnableGeneration = 0;
 
   private get railItems(): PanelToolsItem[] {
     return parsePanelToolsItems(this.items, this.itemsJson);
+  }
+
+  private get orderedRailItems(): PanelToolsItem[] {
+    const railItems = this.railItems;
+    const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
+    const bodyItems = railItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
+    return headerItem ? [headerItem, ...bodyItems] : bodyItems;
   }
 
   disconnectedCallback() {
@@ -102,6 +111,7 @@ export class PanelTools {
   @Watch('items')
   @Watch('itemsJson')
   itemsChanged() {
+    this.rovingIndex = 0;
     this.deferMotionEnable();
   }
 
@@ -142,7 +152,40 @@ export class PanelTools {
     this.dsToolChange.emit({ id, selected });
   };
 
-  private renderRailAction(item: PanelToolsItem) {
+  private focusRailAt(index: number) {
+    const items = this.orderedRailItems;
+    if (!items.length) return;
+    const bounded = ((index % items.length) + items.length) % items.length;
+    this.rovingIndex = bounded;
+    const actions = Array.from(
+      this.el.querySelectorAll<HTMLElement>('.panel-tools__rail-action .button-icon'),
+    );
+    actions[bounded]?.focus({ preventScroll: true });
+  }
+
+  private handleRailKeyDown = (e: KeyboardEvent, index: number) => {
+    const items = this.orderedRailItems;
+    if (!items.length) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.handleToolChange(items[index].id);
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this.focusRailAt(index + 1);
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.focusRailAt(index - 1);
+    }
+  };
+
+  private renderRailAction(item: PanelToolsItem, index: number) {
     return (
       <ds-button-unfilled-icon
         key={item.id}
@@ -152,18 +195,21 @@ export class PanelTools {
         activeFill={false}
         dot={item.dot ?? false}
         inactive={item.inactive}
+        focusTabIndex={index === this.rovingIndex ? 0 : -1}
         aria-label={item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id]}
         pressed={this.isRailSelected(item.id)}
-        onDsChange={() => this.handleToolChange(item.id)}
+        onFocusin={() => { this.rovingIndex = index; }}
+        onKeyDown={(e: KeyboardEvent) => this.handleRailKeyDown(e, index)}
+        onDsClick={() => this.handleToolChange(item.id)}
       />
     );
   }
 
   render() {
     const headerLabel = this.headerLabel();
-    const railItems = this.railItems;
-    const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
-    const bodyItems = railItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
+    const orderedRailItems = this.orderedRailItems;
+    const headerItem = orderedRailItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
+    const bodyItems = orderedRailItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
     const showDrawerChrome = this.isDrawerPresent();
     const drawerResting = panelToolsDrawerResting(this.open, this.motion);
 
@@ -181,6 +227,19 @@ export class PanelTools {
         aria-label="Tools"
       >
         <div class="panel-tools__layout">
+          <nav class="panel-tools__rail" aria-label="Tool shortcuts">
+            {headerItem ? (
+              <div class="panel-tools__rail-header">
+                {this.renderRailAction(headerItem, 0)}
+              </div>
+            ) : null}
+            <div class="panel-tools__rail-body">
+              {bodyItems.map((item, bodyIdx) =>
+                this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx),
+              )}
+            </div>
+          </nav>
+
           <div
             class={{
               'panel-tools__drawer': true,
@@ -247,15 +306,6 @@ export class PanelTools {
               </div>
             </div>
           </div>
-
-          <nav class="panel-tools__rail" aria-label="Tool shortcuts">
-            {headerItem ? (
-              <div class="panel-tools__rail-header">{this.renderRailAction(headerItem)}</div>
-            ) : null}
-            <div class="panel-tools__rail-body">
-              {bodyItems.map(item => this.renderRailAction(item))}
-            </div>
-          </nav>
         </div>
       </Host>
     );

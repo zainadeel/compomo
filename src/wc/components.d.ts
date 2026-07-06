@@ -333,6 +333,10 @@ export namespace Components {
         "dot": boolean;
         "expanded": boolean | undefined;
         /**
+          * Native `tabindex` for roving keyboard groups in shell chrome. Omit for the default button tab stop (`0`).
+         */
+        "focusTabIndex"?: number;
+        /**
           * Show a 1px tertiary border without changing the interaction model.
           * @default false
          */
@@ -890,10 +894,23 @@ export namespace Components {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
         "background": TabGroupNavBackground | undefined;
+        "focusFirstTab": () => Promise<void>;
+        "focusLastTab": () => Promise<void>;
+        "focusTab": (id: string) => Promise<void>;
         /**
           * @default 'horizontal'
          */
         "orientation": 'horizontal' | 'vertical';
+        /**
+          * When `false`, every tab uses `tabindex="-1"` (another chrome control owns the tab stop).
+          * @default true
+         */
+        "rovingEnabled": boolean;
+        /**
+          * When `false`, arrow keys move focus only — Space/Enter (or click) commits selection. Used by bar nav where each tab is a full page transition.
+          * @default true
+         */
+        "selectionFollowsFocus": boolean;
         /**
           * @default []
          */
@@ -1627,6 +1644,7 @@ declare global {
     };
     interface HTMLDsTabGroupNavElementEventMap {
         "dsChange": string;
+        "dsRovingExit": 'start' | 'end';
     }
     interface HTMLDsTabGroupNavElement extends Components.DsTabGroupNav, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsTabGroupNavElementEventMap>(type: K, listener: (this: HTMLDsTabGroupNavElement, ev: DsTabGroupNavCustomEvent<HTMLDsTabGroupNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2047,6 +2065,10 @@ declare namespace LocalJSX {
          */
         "dot"?: boolean;
         "expanded"?: boolean | undefined;
+        /**
+          * Native `tabindex` for roving keyboard groups in shell chrome. Omit for the default button tab stop (`0`).
+         */
+        "focusTabIndex"?: number;
         /**
           * Show a 1px tertiary border without changing the interaction model.
           * @default false
@@ -2666,9 +2688,23 @@ declare namespace LocalJSX {
         "background"?: TabGroupNavBackground | undefined;
         "onDsChange"?: (event: DsTabGroupNavCustomEvent<string>) => void;
         /**
+          * Fired when arrow navigation reaches the first/last tab in manual selection mode.
+         */
+        "onDsRovingExit"?: (event: DsTabGroupNavCustomEvent<'start' | 'end'>) => void;
+        /**
           * @default 'horizontal'
          */
         "orientation"?: 'horizontal' | 'vertical';
+        /**
+          * When `false`, every tab uses `tabindex="-1"` (another chrome control owns the tab stop).
+          * @default true
+         */
+        "rovingEnabled"?: boolean;
+        /**
+          * When `false`, arrow keys move focus only — Space/Enter (or click) commits selection. Used by bar nav where each tab is a full page transition.
+          * @default true
+         */
+        "selectionFollowsFocus"?: boolean;
         /**
           * @default []
          */
@@ -2977,6 +3013,7 @@ declare namespace LocalJSX {
         "expanded": boolean | undefined;
         "haspopup": string | undefined;
         "pressed": boolean | undefined;
+        "focusTabIndex": number;
     }
     interface DsCardAttributes {
         "elevation": CardElevation;
@@ -3153,6 +3190,8 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
         "orientation": 'horizontal' | 'vertical';
+        "selectionFollowsFocus": boolean;
+        "rovingEnabled": boolean;
     }
     interface DsTableAttributes {
         "loading": boolean;
