@@ -322,16 +322,14 @@ export class AppShell {
             <slot name="panel" />
           </div>
           <div class="app-shell__main">
-            <div class="app-shell__stack">
-              <div class="app-shell__bar">
-                <slot name="bar" />
-              </div>
-              <div class="app-shell__content">
-                <slot />
-              </div>
+            <div class="app-shell__bar">
+              <slot name="bar" />
             </div>
             <div class="app-shell__tools">
               <slot name="tools" />
+            </div>
+            <div class="app-shell__content">
+              <slot />
             </div>
           </div>
         </div>

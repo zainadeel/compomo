@@ -143,14 +143,14 @@ export class PanelNav {
   @Watch('groups')
   onGroupsChange(val: string | PanelNavGroup[]) {
     this.parsedGroups = parsePanelNavGroups(val);
-    this.syncRovingIndex();
+    this.rovingIndex = 0;
     this.syncActiveFromUrl();
   }
 
   @Watch('activeId')
   @Watch('urlDerivedActiveId')
   onActiveIdChange() {
-    this.syncRovingIndex();
+    /* Active route updates aria-current only — roving tab stop stays user-controlled. */
   }
 
   @Watch('currentUrl')
@@ -288,26 +288,112 @@ export class PanelNav {
     return this.parsedGroups.flatMap(g => g.items);
   }
 
-  private syncRovingIndex() {
-    const idx = this.getAllItems().findIndex(i => i.id === this.effectiveActiveId);
-    this.rovingIndex = idx >= 0 ? idx : 0;
+  private getRovingTotal(): number {
+    return 1 + this.getAllItems().length + 2;
   }
 
-  private handleItemKeyDown(e: KeyboardEvent, index: number) {
-    const total = this.getAllItems().length;
-    let next: number;
-    switch (e.key) {
-      case 'ArrowDown': e.preventDefault(); next = (index + 1) % total; break;
-      case 'ArrowUp':   e.preventDefault(); next = (index - 1 + total) % total; break;
-      case 'Home':      e.preventDefault(); next = 0; break;
-      case 'End':       e.preventDefault(); next = total - 1; break;
-      default: return;
+  private getFooterRovingIndex(): number {
+    return 1 + this.getAllItems().length;
+  }
+
+  private getUserRovingIndex(): number {
+    return this.getFooterRovingIndex() + 1;
+  }
+
+  private getRovingElement(index: number): HTMLElement | null {
+    const itemCount = this.getAllItems().length;
+    if (index === 0) {
+      return this.el.querySelector('.panel-nav__header-btn');
     }
-    this.rovingIndex = next;
-    const items = Array.from(
-      this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item')
-    );
-    items[next]?.focus();
+    if (index >= 1 && index <= itemCount) {
+      const items = this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item');
+      return items[index - 1] ?? null;
+    }
+    if (index === this.getFooterRovingIndex()) {
+      return this.el.querySelector('.panel-nav__footer-btn .button-icon');
+    }
+    if (index === this.getUserRovingIndex()) {
+      return this.el.querySelector('.panel-nav__footer-user');
+    }
+    return null;
+  }
+
+  private focusRovingAt(index: number) {
+    this.rovingIndex = index;
+    this.getRovingElement(index)?.focus({ preventScroll: true });
+  }
+
+  private activateRovingIndex(index: number) {
+    const itemCount = this.getAllItems().length;
+    const items = this.getAllItems();
+    if (index === 0) {
+      this.handleToggle();
+      return;
+    }
+    if (index >= 1 && index <= itemCount) {
+      this.handleItemClick(items[index - 1].id);
+      return;
+    }
+    if (index === this.getFooterRovingIndex()) {
+      this.handleFooterAction();
+      return;
+    }
+    if (index === this.getUserRovingIndex()) {
+      const anchor = this.el.querySelector(`#${PANEL_NAV_USER_MENU_ANCHOR_ID}`) as HTMLElement | null;
+      if (anchor) this.dsNavUserAction.emit({ anchor });
+    }
+  }
+
+  private handleRovingKeyDown(e: KeyboardEvent, index: number) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.activateRovingIndex(index);
+      return;
+    }
+
+    const total = this.getRovingTotal();
+    const footerIdx = this.getFooterRovingIndex();
+    const userIdx = this.getUserRovingIndex();
+    let next: number;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        if (index === footerIdx) next = userIdx;
+        else if (index === userIdx) next = 0;
+        else next = (index + 1) % total;
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (index === 0) next = userIdx;
+        else if (index === userIdx) next = footerIdx;
+        else next = (index - 1 + total) % total;
+        break;
+      case 'ArrowRight':
+        if (index === footerIdx) {
+          e.preventDefault();
+          next = userIdx;
+        } else return;
+        break;
+      case 'ArrowLeft':
+        if (index === userIdx) {
+          e.preventDefault();
+          next = footerIdx;
+        } else return;
+        break;
+      case 'Home':
+        e.preventDefault();
+        next = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        next = userIdx;
+        break;
+      default:
+        return;
+    }
+
+    this.focusRovingAt(next);
   }
 
   private checkScroll() {
@@ -411,6 +497,7 @@ export class PanelNav {
 
   private renderNavItem(item: PanelNavItem, idx: number, collapsed: boolean) {
     const isActive = item.id === this.effectiveActiveId;
+    const rovingPosition = idx + 1;
 
     const itemContent = [
       <span class="panel-nav__item-icon">
@@ -446,10 +533,10 @@ export class PanelNav {
       },
       'aria-current': isActive ? ('page' as const) : undefined,
       title: collapsed ? item.label : undefined,
-      tabIndex: idx === this.rovingIndex ? 0 : -1,
+      tabIndex: rovingPosition === this.rovingIndex ? 0 : -1,
       onClick: () => this.handleItemClick(item.id),
-      onKeyDown: (e: KeyboardEvent) => this.handleItemKeyDown(e, idx),
-      onFocus: () => { this.rovingIndex = idx; },
+      onKeyDown: (e: KeyboardEvent) => this.handleRovingKeyDown(e, rovingPosition),
+      onFocus: () => { this.rovingIndex = rovingPosition; },
     };
 
     const useAnchor = this.routerMode === 'anchor' && item.href;
@@ -487,7 +574,10 @@ export class PanelNav {
             <button
               type="button"
               class="panel-nav__header-btn ds-focus-ring-inset"
+              tabIndex={this.rovingIndex === 0 ? 0 : -1}
               onClick={() => this.handleToggle()}
+              onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, 0)}
+              onFocus={() => { this.rovingIndex = 0; }}
               aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
               aria-expanded={collapsed ? 'false' : 'true'}
             >
@@ -543,9 +633,12 @@ export class PanelNav {
               class="panel-nav__footer-btn"
               icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
               activeFill={false}
+              focusTabIndex={this.rovingIndex === this.getFooterRovingIndex() ? 0 : -1}
               title={isDashboardChrome ? 'Settings' : 'Dashboard'}
               aria-label={isDashboardChrome ? 'Open settings' : 'Go to dashboard'}
               onDsClick={() => this.handleFooterAction()}
+              onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getFooterRovingIndex())}
+              onFocusin={() => { this.rovingIndex = this.getFooterRovingIndex(); }}
             />
 
             {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}
@@ -553,8 +646,11 @@ export class PanelNav {
               type="button"
               id={PANEL_NAV_USER_MENU_ANCHOR_ID}
               class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset"
+              tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
               aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
               onClick={(e) => this.handleUserAction(e)}
+              onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
+              onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
             >
               <span class="panel-nav__item-label panel-nav__footer-user-label">
                 <span class="panel-nav__item-label-text">

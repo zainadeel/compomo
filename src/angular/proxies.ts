@@ -234,7 +234,7 @@ export declare interface DsButtonGroup extends Components.DsButtonGroup {
 
 
 @ProxyCmp({
-  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
   methods: ['setFocus']
 })
 @Component({
@@ -242,7 +242,7 @@ export declare interface DsButtonGroup extends Components.DsButtonGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
   outputs: ['dsClick', 'dsChange'],
   standalone: false
 })
@@ -919,20 +919,22 @@ export declare interface DsTabGroup extends Components.DsTabGroup {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'tabs', 'value']
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'rovingEnabled', 'selectionFollowsFocus', 'tabs', 'value'],
+  methods: ['focusTab', 'focusLastTab', 'focusFirstTab']
 })
 @Component({
   selector: 'ds-tab-group-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'tabs', 'value'],
-  outputs: ['dsChange'],
+  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'orientation', 'rovingEnabled', 'selectionFollowsFocus', 'tabs', 'value'],
+  outputs: ['dsChange', 'dsRovingExit'],
   standalone: false
 })
 export class DsTabGroupNav {
   protected el: HTMLDsTabGroupNavElement;
   @Output() dsChange = new EventEmitter<CustomEvent<string>>();
+  @Output() dsRovingExit = new EventEmitter<CustomEvent<'start' | 'end'>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -943,6 +945,10 @@ export class DsTabGroupNav {
 export declare interface DsTabGroupNav extends Components.DsTabGroupNav {
 
   dsChange: EventEmitter<CustomEvent<string>>;
+  /**
+   * Fired when arrow navigation reaches the first/last tab in manual selection mode.
+   */
+  dsRovingExit: EventEmitter<CustomEvent<'start' | 'end'>>;
 }
 
 

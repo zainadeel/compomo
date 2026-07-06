@@ -89,16 +89,23 @@ test.describe('BarNav responsive overflow', () => {
     await page.evaluate(() => window.__setShellWidth(320));
     await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
 
-    let triggerFocused = false;
-    for (let i = 0; i < 30; i++) {
-      triggerFocused = await page.evaluate(() => {
+    // Bar nav uses roving focus: Tab enters the tab row; ArrowRight reaches overflow.
+    await page.keyboard.press('Tab');
+    for (let i = 0; i < 20; i++) {
+      const triggerFocused = await page.evaluate(() => {
         const host = document.querySelector('.bar-nav__overflow-trigger');
         const button = host?.querySelector('.button-icon');
         return !!button && document.activeElement === button;
       });
       if (triggerFocused) break;
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
     }
+
+    const triggerFocused = await page.evaluate(() => {
+      const host = document.querySelector('.bar-nav__overflow-trigger');
+      const button = host?.querySelector('.button-icon');
+      return !!button && document.activeElement === button;
+    });
     expect(triggerFocused).toBe(true);
 
     const focusRing = await page.evaluate(() => {

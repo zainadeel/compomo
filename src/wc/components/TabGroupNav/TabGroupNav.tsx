@@ -1,4 +1,4 @@
-import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, Method, State, h, Host } from '@stencil/core';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -23,28 +23,39 @@ export class TabGroupNav {
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
   @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';
 
+  /**
+   * When `false`, arrow keys move focus only — Space/Enter (or click) commits selection.
+   * Used by bar nav where each tab is a full page transition.
+   */
+  @Prop() selectionFollowsFocus: boolean = true;
+
+  /** When `false`, every tab uses `tabindex="-1"` (another chrome control owns the tab stop). */
+  @Prop() rovingEnabled: boolean = true;
+
   @Event() dsChange!: EventEmitter<string>;
+
+  /** Fired when arrow navigation reaches the first/last tab in manual selection mode. */
+  @Event() dsRovingExit!: EventEmitter<'start' | 'end'>;
+
+  @State() private focusedTabId: string = '';
 
   private get selectableTabs(): TabItemTab[] {
     return getSelectableTabs(this.tabs);
   }
 
-  private selectTab(id: string, options?: { focus?: boolean }) {
-    this.value = id;
-    this.dsChange.emit(id);
-    if (options?.focus !== false) {
-      this.focusTab(id);
-    }
+  componentWillLoad() {
+    this.syncFocusedTabId(this.value);
   }
 
-  private focusTab(id: string) {
-    const btn = this.el.querySelector(`[data-tab-id="${id}"]`) as HTMLElement | null;
-    btn?.focus({ preventScroll: true });
-  }
-
-  /** Keep focus on the selected tab when value changes externally (e.g. BarNav menu). */
   @Watch('value')
   onValueChange(next: string, prev: string | undefined) {
+    if (!this.selectionFollowsFocus) {
+      if (prev === undefined || next !== this.focusedTabId) {
+        this.syncFocusedTabId(next);
+      }
+      return;
+    }
+
     if (prev === undefined || next === prev) return;
 
     requestAnimationFrame(() => {
@@ -63,6 +74,64 @@ export class TabGroupNav {
     });
   }
 
+  @Watch('tabs')
+  onTabsChange() {
+    if (!this.selectableTabs.some(tab => tab.id === this.focusedTabId)) {
+      this.syncFocusedTabId(this.value);
+    }
+  }
+
+  @Method()
+  async focusTab(id: string) {
+    this.focusedTabId = id;
+    const btn = this.el.querySelector(`[data-tab-id="${id}"]`) as HTMLElement | null;
+    btn?.focus({ preventScroll: true });
+  }
+
+  @Method()
+  async focusLastTab() {
+    const tabs = this.selectableTabs;
+    const last = [...tabs].reverse().find(tab => !tab.disabled);
+    if (last) await this.focusTab(last.id);
+  }
+
+  @Method()
+  async focusFirstTab() {
+    const first = this.selectableTabs.find(tab => !tab.disabled);
+    if (first) await this.focusTab(first.id);
+  }
+
+  private syncFocusedTabId(preferred: string) {
+    const tabs = this.selectableTabs;
+    if (tabs.some(tab => tab.id === preferred && !tab.disabled)) {
+      this.focusedTabId = preferred;
+      return;
+    }
+    const first = tabs.find(tab => !tab.disabled);
+    this.focusedTabId = first?.id ?? '';
+  }
+
+  private selectTab(id: string, options?: { focus?: boolean }) {
+    this.value = id;
+    this.focusedTabId = id;
+    this.dsChange.emit(id);
+    if (options?.focus !== false) {
+      void this.focusTab(id);
+    }
+  }
+
+  private getFocusedIndex(): number {
+    return this.selectableTabs.findIndex(tab => tab.id === this.focusedTabId);
+  }
+
+  private findEnabledLinear(from: number, step: 1 | -1): number | null {
+    const tabs = this.selectableTabs;
+    for (let i = from + step; i >= 0 && i < tabs.length; i += step) {
+      if (!tabs[i]?.disabled) return i;
+    }
+    return null;
+  }
+
   /**
    * Find the next non-disabled tab index relative to `from`, stepping by `step`.
    * Returns `from` unchanged if no other enabled tab exists.
@@ -77,27 +146,77 @@ export class TabGroupNav {
     return from;
   }
 
+  private moveFocusToIndex(nextIdx: number) {
+    const next = this.selectableTabs[nextIdx];
+    if (!next) return;
+    this.focusedTabId = next.id;
+    void this.focusTab(next.id);
+  }
+
+  private activateFocusedTab(e: KeyboardEvent) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const tab = this.selectableTabs.find(item => item.id === this.focusedTabId);
+    if (!tab || tab.disabled) return;
+    e.preventDefault();
+    this.selectTab(tab.id, { focus: true });
+  }
+
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
     const tabs = this.selectableTabs;
     if (!tabs.length) return;
 
-    const currentIdx = tabs.findIndex(t => t.id === this.value);
-    const isVertical = this.orientation === 'vertical';
+    if (!this.selectionFollowsFocus) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        this.activateFocusedTab(e);
+        return;
+      }
+    }
 
+    const currentIdx = this.selectionFollowsFocus
+      ? tabs.findIndex(t => t.id === this.value)
+      : this.getFocusedIndex();
+    if (currentIdx < 0) return;
+
+    const isVertical = this.orientation === 'vertical';
     let nextIdx: number | null = null;
+    let exit: 'start' | 'end' | null = null;
 
     if (!isVertical) {
       if (e.key === 'ArrowRight') {
-        nextIdx = this.findEnabled(currentIdx, 1);
+        if (this.selectionFollowsFocus) {
+          nextIdx = this.findEnabled(currentIdx, 1);
+        } else {
+          const candidate = this.findEnabledLinear(currentIdx, 1);
+          if (candidate === null) exit = 'end';
+          else nextIdx = candidate;
+        }
       } else if (e.key === 'ArrowLeft') {
-        nextIdx = this.findEnabled(currentIdx, -1);
+        if (this.selectionFollowsFocus) {
+          nextIdx = this.findEnabled(currentIdx, -1);
+        } else {
+          const candidate = this.findEnabledLinear(currentIdx, -1);
+          if (candidate === null) exit = 'start';
+          else nextIdx = candidate;
+        }
       }
     } else {
       if (e.key === 'ArrowDown') {
-        nextIdx = this.findEnabled(currentIdx, 1);
+        if (this.selectionFollowsFocus) {
+          nextIdx = this.findEnabled(currentIdx, 1);
+        } else {
+          const candidate = this.findEnabledLinear(currentIdx, 1);
+          if (candidate === null) exit = 'end';
+          else nextIdx = candidate;
+        }
       } else if (e.key === 'ArrowUp') {
-        nextIdx = this.findEnabled(currentIdx, -1);
+        if (this.selectionFollowsFocus) {
+          nextIdx = this.findEnabled(currentIdx, -1);
+        } else {
+          const candidate = this.findEnabledLinear(currentIdx, -1);
+          if (candidate === null) exit = 'start';
+          else nextIdx = candidate;
+        }
       }
     }
 
@@ -109,10 +228,20 @@ export class TabGroupNav {
       nextIdx = lastEnabled === -1 ? null : tabs.length - 1 - lastEnabled;
     }
 
-    if (nextIdx !== null) {
+    if (exit) {
+      e.preventDefault();
+      this.dsRovingExit.emit(exit);
+      return;
+    }
+
+    if (nextIdx !== null && nextIdx !== currentIdx) {
       e.preventDefault();
       const next = tabs[nextIdx];
-      this.selectTab(next.id);
+      if (this.selectionFollowsFocus) {
+        this.selectTab(next.id);
+      } else {
+        this.moveFocusToIndex(nextIdx);
+      }
     }
   }
 
@@ -121,6 +250,14 @@ export class TabGroupNav {
     if (this.background === 'always-dark') return 'on-always-dark';
     if (this.background === 'navigation') return 'on-navigation';
     return `on-${this.background}`;
+  }
+
+  private tabIndexForTab(tab: TabItemTab): number {
+    if (!this.rovingEnabled) return -1;
+    if (this.selectionFollowsFocus) {
+      return tab.id === this.value ? 0 : -1;
+    }
+    return tab.id === this.focusedTabId ? 0 : -1;
   }
 
   render() {
@@ -174,8 +311,13 @@ export class TabGroupNav {
                 aria-disabled={tab.disabled || undefined}
                 aria-controls={tab.panelId ?? undefined}
                 disabled={tab.disabled}
-                tabIndex={isSelected ? 0 : -1}
+                tabIndex={this.tabIndexForTab(tab)}
                 onClick={() => !tab.disabled && this.selectTab(tab.id)}
+                onFocus={() => {
+                  if (!this.selectionFollowsFocus) {
+                    this.focusedTabId = tab.id;
+                  }
+                }}
               >
                 <span class={{
                   tab__label: true,

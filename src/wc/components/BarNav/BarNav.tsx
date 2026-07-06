@@ -86,6 +86,7 @@ export class BarNav {
   @State() private visibleTabs: BarNavTab[] = [];
   @State() private overflowTabs: BarNavTab[] = [];
   @State() private menuInitialFocusVisible = false;
+  @State() private overflowRovingFocused = false;
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
   private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
@@ -95,7 +96,7 @@ export class BarNav {
   private headerEl: HTMLElement | null = null;
   private triggerEl: (HTMLElement & { setFocus?: () => Promise<void> }) | null = null;
   private menuEl: HTMLDsMenuElement | null = null;
-  private visibleTabGroupEl: QueryableHost | null = null;
+  private visibleTabGroupEl: HTMLDsTabGroupNavElement | null = null;
   private probeTabGroupEl: QueryableHost | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private intrinsicWidthRetryCount = 0;
@@ -571,11 +572,32 @@ export class BarNav {
     this.menuOpen = true;
   }
 
+  private handleTabRovingExit(e: CustomEvent<'start' | 'end'>) {
+    if (e.detail !== 'end' || !this.hasOverflowTabs) return;
+    this.overflowRovingFocused = true;
+    void this.triggerEl?.setFocus?.();
+  }
+
+  private handleOverflowFocus = () => {
+    this.overflowRovingFocused = true;
+  };
+
+  private handleOverflowBlur = () => {
+    this.overflowRovingFocused = false;
+  };
+
   private handleTriggerKeyDown(e: KeyboardEvent) {
     if (!this.hasOverflowTabs) return;
 
     if (!this.menuOpen) {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.overflowRovingFocused = false;
+        void this.visibleTabGroupEl?.focusLastTab();
+        return;
+      }
+
+      if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         this.toggleTabMenu({ focusVisible: true });
       }
@@ -645,7 +667,13 @@ export class BarNav {
                   }}
                   tabs={renderedTabs}
                   value={this.effectiveValue}
+                  selectionFollowsFocus={false}
+                  rovingEnabled={!this.overflowRovingFocused}
                   onDsChange={(e: Event) => this.handleTabChange(e)}
+                  onDsRovingExit={(e: CustomEvent<'start' | 'end'>) => this.handleTabRovingExit(e)}
+                  onFocusin={() => {
+                    this.overflowRovingFocused = false;
+                  }}
                 />
               </div>
             )}
@@ -666,6 +694,7 @@ export class BarNav {
                 icon="Ellipses"
                 isActive={this.menuOpen}
                 activeFill={false}
+                focusTabIndex={this.overflowRovingFocused ? 0 : -1}
                 ref={(el?: HTMLDsButtonUnfilledIconElement) => {
                   this.triggerEl = (el as (HTMLElement & { setFocus?: () => Promise<void> })) ?? null;
                 }}
@@ -673,6 +702,8 @@ export class BarNav {
                 expanded={this.menuOpen}
                 aria-label="More tabs"
                 onDsClick={() => this.toggleTabMenu({ focusVisible: false })}
+                onFocusin={this.handleOverflowFocus}
+                onFocusout={this.handleOverflowBlur}
                 onKeyDown={(e: KeyboardEvent) => this.handleTriggerKeyDown(e)}
               />
             )}
