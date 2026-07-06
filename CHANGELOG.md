@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/zainadeel/compomo/compare/v2.2.0...v2.2.1) (2026-07-06)
+
+
+### Fixed
+
+* **ButtonUnfilledIcon:** wire inset focus ring and restore Storybook sidebar version ([#231](https://github.com/zainadeel/compomo/issues/231)) ([0bc8b2d](https://github.com/zainadeel/compomo/commit/0bc8b2de5c938a6b4f2c525f9df24f81e03de1bd))
+
 ## [2.2.0](https://github.com/zainadeel/compomo/compare/v2.1.1...v2.2.0) (2026-07-06)
 
 
