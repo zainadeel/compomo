@@ -112,13 +112,13 @@ const manyTabs = [
 ];
 
 export const ResponsiveTabCollapse: Story = {
-  name: 'Responsive tab collapse',
+  name: 'Responsive tab overflow',
   parameters: {
     docs: {
       description: {
         story:
-          'When tabs overflow the header width, all tabs collapse ' +
-          'into a single tab-styled trigger with the active label and ChevronDown. Opens `ds-menu` for selection.',
+          'When tabs overflow the header width, tabs that still fit remain visible. ' +
+          'The remaining tabs move into a right-pinned Ellipses menu trigger.',
       },
     },
     layout: 'padded',
@@ -141,7 +141,7 @@ export const ResponsiveTabCollapse: Story = {
       })}
     >
       <p style="font-size:12px; color:var(--color-foreground-secondary); margin:0 0 12px;">
-        Drag the container edge to resize — narrow widths collapse tabs into a menu trigger.
+        Drag the container edge to resize — tabs that no longer fit move into the overflow menu.
         Events is selected by default to show its notification dot.
       </p>
       <ds-bar-nav></ds-bar-nav>
@@ -156,13 +156,13 @@ const truncationTabs = [
 ];
 
 export const CollapsedLabelTruncation: Story = {
-  name: 'Collapsed tab label truncation',
+  name: 'Overflow at narrow width',
   parameters: {
     docs: {
       description: {
         story:
-          'Fixed 300px width — tabs collapse and the active label truncates with a right-edge fade ' +
-          'before the chevron. Use this story to review truncation without resizing.',
+          'Fixed 300px width — fitting tabs stay visible and the rest move into the Ellipses menu. ' +
+          'Use this story to review overflow without resizing.',
       },
     },
     layout: 'padded',

@@ -1,3 +1,5 @@
+@import '../../utils/focus-ring.css';
+
 :host {
   display: block;
 }
@@ -55,17 +57,7 @@
 .tab:hover::after  { background: var(--_hover-bg);   transition: none; }
 .tab:active::after { background: var(--_pressed-bg);  transition: none; }
 
-/* Focus ring only — no persistent hover fill from keyboard focus */
-.tab:focus-visible:not(:hover):not(:active)::after {
-  background: transparent;
-}
-
 .tab--selected { color: var(--color-foreground-primary); }
-
-.tab:focus-visible {
-  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
-  outline-offset: var(--dimension-space-025);
-}
 
 .tab:disabled,
 .tab[aria-disabled="true"] {
@@ -104,12 +96,14 @@
   --_hover-bg: var(--color-interaction-on-medium-background-hover);
   --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
   --_dot-ring: var(--color-background-medium-neutral);
+  --ds-focus-ring-color: var(--color-interaction-on-medium-background-focus);
 }
 
 .on-bold {
   --_hover-bg: var(--color-interaction-on-bold-background-hover);
   --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
   --_dot-ring: var(--color-background-bold-neutral);
+  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -119,6 +113,7 @@
   --_hover-bg: var(--color-interaction-on-strong-background-hover);
   --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
   --_dot-ring: var(--color-background-strong-neutral);
+  --ds-focus-ring-color: var(--color-interaction-on-strong-background-focus);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -128,6 +123,7 @@
   --_hover-bg: var(--color-always-dark-interaction-hover);
   --_pressed-bg: var(--color-always-dark-interaction-pressed);
   --_dot-ring: var(--color-always-dark-background);
+  --ds-focus-ring-color: var(--color-always-dark-interaction-focus);
   color: var(--color-always-dark-foreground-secondary);
 }
 
@@ -139,13 +135,10 @@
   --_pressed-bg: var(--color-navigation-interaction-pressed);
   --_dot: var(--color-navigation-foreground-brand);
   --_dot-ring: var(--color-navigation-background);
+  --ds-focus-ring-color: var(--color-navigation-interaction-focus);
 }
 
 .on-navigation.tab--selected { color: var(--color-navigation-foreground-primary); }
-
-.on-navigation:focus-visible {
-  outline-color: var(--color-navigation-interaction-focus);
-}
 
 .tab-list--on-navigation .tab-divider__line {
   background-color: var(--color-navigation-border-tertiary);

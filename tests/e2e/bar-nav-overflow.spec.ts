@@ -6,19 +6,18 @@ test.describe('BarNav responsive overflow', () => {
     await page.waitForFunction(() => typeof window.__setShellWidth === 'function');
     await expect(page.locator('ds-bar-nav .bar-nav__tabs-probe')).toHaveCount(1);
     await expect(
-      page.locator('.bar-nav__tabs-visible, .bar-nav__tab-trigger').first(),
+      page.locator('.bar-nav__tabs-visible, .bar-nav__overflow-trigger').first(),
     ).toBeVisible({ timeout: 5000 });
   });
 
-  test('narrow shell width on first paint keeps tabs collapsed (no stuck expanded row)', async ({
+  test('narrow shell width on first paint commits overflow (no stuck expanded row)', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 480, height: 720 });
     await page.goto('/?shell=320');
     await page.waitForFunction(() => typeof window.__setShellWidth === 'function');
     await expect(page.locator('ds-bar-nav .bar-nav__tabs-probe')).toHaveCount(1);
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('.bar-nav__tabs-pending')).toHaveCount(0);
   });
 
@@ -70,135 +69,148 @@ test.describe('BarNav responsive overflow', () => {
       { manyTabs, basePath: '/e2e/fleet-view' },
     );
 
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
   });
 
-  test('wide viewport shows tab row; narrow collapses; widen restores', async ({ page }) => {
+  test('wide viewport shows full tab row; narrow shows overflow; widen restores', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(900));
     await expect(page.locator('.bar-nav__tabs-visible')).toBeVisible();
-    await expect(page.locator('.bar-nav__tab-trigger')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__overflow-trigger')).toHaveCount(0);
 
     await page.evaluate(() => window.__setShellWidth(320));
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.bar-nav__tabs-visible')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
 
     await page.evaluate(() => window.__setShellWidth(900));
     await expect(page.locator('.bar-nav__tabs-visible')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.bar-nav__tab-trigger')).toHaveCount(0);
+    await expect(page.locator('.bar-nav__overflow-trigger')).toHaveCount(0);
   });
 
-  test('collapsed menu splits dividers into multiple sections', async ({ page }) => {
+  test('overflow menu opens from the ellipses trigger', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(320));
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
 
-    await page.locator('.bar-nav__tab-trigger').click();
+    await page.locator('.bar-nav__overflow-trigger').focus();
+    await page.keyboard.press('Enter');
     await expect(page.locator('.menu-popup')).toBeVisible();
-    await expect(page.locator('.menu-section')).toHaveCount(2);
 
-    const selected = page.locator('.menu-item[aria-current="true"]');
-    await expect(selected).toHaveCount(1);
-    await expect(selected).toContainText('Events');
+    const iconName = await page.evaluate(() => {
+      const icon = document.querySelector('.bar-nav__overflow-trigger ds-icon') as
+        | (HTMLElement & { name?: string })
+        | null;
+      return icon?.name ?? null;
+    });
+    expect(iconName).toBe('Ellipses');
   });
 
-  test('collapsed tab label truncates with fade at narrow width', async ({ page }) => {
-    await page.evaluate(
-      ({ tabs }) => {
-        const nav = document.getElementById('nav') as HTMLElement & {
-          tabs: typeof tabs;
-          value: string;
-        };
-        nav.tabs = tabs;
-        nav.value = 'events';
-      },
-      {
-        tabs: [
-          { id: 'overview', label: 'Overview' },
-          { id: 'events', label: 'Events and notifications', dot: true },
-          { id: 'requests', label: 'Requests' },
-        ],
-      },
-    );
-
-    await page.evaluate(() => window.__setShellWidth(180));
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
-    // ResizeObserver applies truncation classes one frame after layout.
-    await expect(page.locator('.bar-nav__tab-trigger-label--truncated')).toHaveCount(1, {
-      timeout: 5000,
-    });
-    await expect(page.locator('.bar-nav__tab-trigger-label-text--truncated')).toHaveCount(1);
-
-    const fade = await page.evaluate(() => {
-      const labelWrap = document.querySelector('.bar-nav__tab-trigger-label') as HTMLElement;
-      const label = document.querySelector('.bar-nav__tab-trigger-label-text') as HTMLElement;
-      const overlay = getComputedStyle(labelWrap, '::after');
-      const cs = getComputedStyle(label);
-      const maskImage = cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
-      return {
-        isOverflowing: label.scrollWidth > label.clientWidth + 1,
-        maskImage,
-        overlayBackground: overlay.backgroundImage,
+  test('pointer-opened overflow menu does not show focus ring or hover paint', async ({
+    page,
+  }) => {
+    await page.evaluate(() => {
+      const nav = document.getElementById('nav') as HTMLElement & {
+        currentUrl: string;
+        value: string;
       };
+      nav.currentUrl = '/e2e/safety/live-map';
+      nav.value = 'live-map';
     });
-
-    expect(fade.isOverflowing).toBe(true);
-    expect(fade.maskImage).toContain('linear-gradient');
-    expect(fade.overlayBackground).toContain('linear-gradient');
-  });
-
-  test('collapsed trigger does not fade short label while it fully fits', async ({ page }) => {
-    // Tabs-only header is wider than with action icons — collapse at 320px, not 480px.
     await page.evaluate(() => window.__setShellWidth(320));
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
+
+    await page.locator('.bar-nav__overflow-trigger').click();
+    await expect(page.locator('.menu-popup')).toBeVisible();
 
     const layout = await page.evaluate(() => {
-      const labelWrap = document.querySelector('.bar-nav__tab-trigger-label') as HTMLElement;
-      const label = document.querySelector('.bar-nav__tab-trigger-label-text') as HTMLElement;
-      const cs = getComputedStyle(label);
-      const overlay = getComputedStyle(labelWrap, '::after');
+      const header = document.querySelector('.bar-nav') as HTMLElement;
+      const trigger = document.querySelector('.bar-nav__overflow-trigger') as HTMLElement;
+      const popup = document.querySelector('.menu-popup') as HTMLElement;
+      const focused = document.querySelector('.menu-item--focused') as HTMLElement;
+      const headerRect = header.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+      const popupRect = popup.getBoundingClientRect();
+      const focusedAfter = getComputedStyle(focused, '::after');
+      const focusedStyle = getComputedStyle(focused);
 
       return {
-        labelOverflowing: label.scrollWidth > label.clientWidth + 1,
-        maskImage: cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage,
-        overlayContent: overlay.content,
-        hasTruncatedClass: label.classList.contains('bar-nav__tab-trigger-label-text--truncated'),
+        popupGapFromBar: Math.round(popupRect.top - headerRect.bottom),
+        popupRightOffset: Math.round(popupRect.right - triggerRect.right),
+        focusedFill: focusedAfter.backgroundColor,
+        focusedOutlineStyle: focusedStyle.outlineStyle,
+        focusedAfterOutlineStyle: focusedAfter.outlineStyle,
       };
     });
 
-    expect(layout.labelOverflowing).toBe(false);
-    expect(layout.maskImage).toBe('none');
-    expect(layout.overlayContent).toBe('none');
-    expect(layout.hasTruncatedClass).toBe(false);
+    expect(layout.popupGapFromBar).toBe(4);
+    expect(layout.popupRightOffset).toBe(4);
+    expect(layout.focusedFill).toBe('rgba(0, 0, 0, 0)');
+    expect(layout.focusedOutlineStyle).toBe('none');
+    expect(layout.focusedAfterOutlineStyle).toBe('none');
   });
 
-  test('collapsed trigger interaction layer sits above tab dot', async ({ page }) => {
+  test('keyboard-opened overflow menu shows focus ring without hover paint', async ({
+    page,
+  }) => {
+    await page.evaluate(() => {
+      const nav = document.getElementById('nav') as HTMLElement & {
+        currentUrl: string;
+        value: string;
+      };
+      nav.currentUrl = '/e2e/safety/live-map';
+      nav.value = 'live-map';
+    });
     await page.evaluate(() => window.__setShellWidth(320));
-    await expect(page.locator('.bar-nav__tab-trigger-dot')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
 
-    const layers = await page.evaluate(() => {
-      const trigger = document.querySelector('.bar-nav__tab-trigger') as HTMLElement;
-      const label = document.querySelector('.bar-nav__tab-trigger-label') as HTMLElement;
-      const dot = document.querySelector('.bar-nav__tab-trigger-dot') as HTMLElement;
-      const chevron = document.querySelector('.bar-nav__tab-trigger-chevron') as HTMLElement;
+    await page.locator('.bar-nav__overflow-trigger').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.menu-popup')).toBeVisible();
+
+    const layout = await page.evaluate(() => {
+      const focused = document.querySelector('.menu-item--focused') as HTMLElement;
+      const focusedAfter = getComputedStyle(focused, '::after');
+      const focusedStyle = getComputedStyle(focused);
 
       return {
-        interactionLayer: Number(getComputedStyle(trigger, '::after').zIndex),
-        labelLayer: Number(getComputedStyle(label).zIndex),
-        dotLayer: Number(getComputedStyle(dot).zIndex),
-        chevronLayer: Number(getComputedStyle(chevron).zIndex),
+        focusedFill: focusedAfter.backgroundColor,
+        focusedOutlineStyle: focusedStyle.outlineStyle,
+        focusedAfterOutlineStyle: focusedAfter.outlineStyle,
+        focusedAfterOutlineWidth: focusedAfter.outlineWidth,
+        focusedAfterOutlineOffset: focusedAfter.outlineOffset,
       };
     });
 
-    expect(layers.interactionLayer).toBeGreaterThan(layers.dotLayer);
-    expect(layers.interactionLayer).toBeGreaterThan(layers.labelLayer);
-    expect(layers.interactionLayer).toBeGreaterThan(layers.chevronLayer);
+    expect(layout.focusedFill).toBe('rgba(0, 0, 0, 0)');
+    expect(layout.focusedOutlineStyle).toBe('none');
+    expect(layout.focusedAfterOutlineStyle).toBe('solid');
+    expect(layout.focusedAfterOutlineWidth).toBe('2px');
+    expect(layout.focusedAfterOutlineOffset).toBe('-2px');
+  });
+
+  test('overflow trigger is compact and pinned to the right edge', async ({ page }) => {
+    await page.evaluate(() => window.__setShellWidth(320));
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
+
+    const layout = await page.evaluate(() => {
+      const header = document.querySelector('.bar-nav') as HTMLElement;
+      const trigger = document.querySelector('.bar-nav__overflow-trigger') as HTMLElement;
+      const headerRect = header.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+      const paddingRight = parseFloat(getComputedStyle(header).paddingRight) || 0;
+
+      return {
+        triggerWidth: triggerRect.width,
+        rightGap: Math.round(headerRect.right - triggerRect.right - paddingRight),
+      };
+    });
+
+    expect(layout.triggerWidth).toBeLessThanOrEqual(40);
+    expect(Math.abs(layout.rightGap)).toBeLessThanOrEqual(1);
   });
 
   test('escape closes menu and returns focus to trigger', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(320));
-    await expect(page.locator('.bar-nav__tab-trigger')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
 
-    const trigger = page.locator('.bar-nav__tab-trigger');
+    const trigger = page.locator('.bar-nav__overflow-trigger');
     await trigger.click();
     await expect(page.locator('.menu-popup')).toBeVisible();
 

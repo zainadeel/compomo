@@ -266,6 +266,63 @@
       ]
     },
     {
+      "name": "button-unfilled-icon",
+      "title": "ButtonUnfilledIcon",
+      "description": "Square unfilled icon button for chrome actions, overflow triggers, and tool rail actions. Supports active, active-without-fill, bordered, dot, inactive, and surface-aware interaction states.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled-icon",
+        "exports": [
+          "ButtonUnfilledIcon"
+        ],
+        "props": {
+          "icon": {
+            "type": "string",
+            "required": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "required": false
+          },
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "dot": {
+            "type": "boolean",
+            "required": false
+          },
+          "inactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "background": {
+            "type": "'faint' | 'medium' | 'bold' | 'strong' | 'always-dark' | 'navigation'",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string",
+            "required": false
+          }
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "badge"
+      ]
+    },
+    {
       "name": "toggle-button",
       "title": "ToggleButton",
       "description": "Controlled toggle button with pressed state, icon and label support.",

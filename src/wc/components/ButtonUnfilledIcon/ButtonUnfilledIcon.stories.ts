@@ -1,0 +1,142 @@
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../../../dist/components/ds-button-unfilled-icon.js';
+
+const meta: Meta = {
+  title: 'Actions/ButtonUnfilledIcon',
+  tags: ['autodocs'],
+  argTypes: {
+    icon: { control: 'text' },
+    isActive: { control: 'boolean' },
+    activeFill: { control: 'boolean' },
+    hasBorder: { control: 'boolean' },
+    dot: { control: 'boolean' },
+    inactive: { control: 'boolean' },
+    ariaLabel: { control: 'text' },
+    background: {
+      control: 'select',
+      options: ['', 'medium', 'bold', 'strong', 'always-dark', 'navigation'],
+    },
+  },
+  args: {
+    icon: 'Bell',
+    ariaLabel: 'Notifications',
+    isActive: false,
+    activeFill: true,
+    hasBorder: false,
+    dot: false,
+    inactive: false,
+    background: '',
+  },
+};
+
+export default meta;
+type Story = StoryObj;
+
+const ROW = 'display:flex;gap:var(--dimension-space-100);align-items:center;flex-wrap:wrap;';
+const COL = 'display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;';
+const LABEL =
+  'min-width:128px;color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);';
+const SURFACE =
+  'display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);';
+
+export const Playground: Story = {
+  render: args => html`
+    <ds-button-unfilled-icon
+      icon=${args['icon']}
+      ?is-active=${args['isActive']}
+      ?active-fill=${args['activeFill']}
+      ?has-border=${args['hasBorder']}
+      ?dot=${args['dot']}
+      ?inactive=${args['inactive']}
+      aria-label=${args['ariaLabel']}
+      background=${args['background'] || ''}
+    ></ds-button-unfilled-icon>
+  `,
+};
+
+export const States: Story = {
+  render: () => html`
+    <div style="${COL}">
+      <div style="${ROW}">
+        <span style="${LABEL}">idle</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Inbox" aria-label="Inbox" dot></ds-button-unfilled-icon>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">active with fill</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications active" is-active></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Inbox" aria-label="Inbox active" is-active dot></ds-button-unfilled-icon>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">active no fill</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications active" is-active .activeFill=${false}></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Inbox" aria-label="Inbox active" is-active .activeFill=${false} dot></ds-button-unfilled-icon>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">bordered</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications bordered" has-border></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications bordered active" has-border is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">inactive</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications inactive" inactive></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Inbox" aria-label="Inbox inactive" inactive dot></ds-button-unfilled-icon>
+      </div>
+    </div>
+  `,
+};
+
+export const ActiveFillLayering: Story = {
+  render: () => html`
+    <div style="${COL}">
+      <div style="${ROW}">
+        <span style="${LABEL}">active base fill</span>
+        <ds-button-unfilled-icon icon="Search" aria-label="Search" is-active></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Ellipses" aria-label="More" is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">shell style</span>
+        <ds-button-unfilled-icon icon="Search" aria-label="Search" is-active .activeFill=${false}></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Ellipses" aria-label="More" is-active .activeFill=${false}></ds-button-unfilled-icon>
+      </div>
+    </div>
+  `,
+};
+
+export const Backgrounds: Story = {
+  render: () => html`
+    <div style="${COL}">
+      <div style="${SURFACE}background:var(--color-background-primary);">
+        <span style="${LABEL}">default</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${SURFACE}background:var(--color-background-medium-neutral);">
+        <span style="${LABEL}">medium</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="medium"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="medium" is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${SURFACE}background:var(--color-background-bold-neutral);">
+        <span style="${LABEL}">bold</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="bold"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="bold" is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${SURFACE}background:var(--color-background-strong-neutral);">
+        <span style="${LABEL}">strong</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="strong"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="strong" is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${SURFACE}background:var(--color-navigation-background);">
+        <span style="${LABEL}">navigation</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="navigation"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="navigation" is-active></ds-button-unfilled-icon>
+      </div>
+      <div style="${SURFACE}background:var(--color-always-dark-background);">
+        <span style="${LABEL}">always dark</span>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="always-dark"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="always-dark" is-active></ds-button-unfilled-icon>
+      </div>
+    </div>
+  `,
+};

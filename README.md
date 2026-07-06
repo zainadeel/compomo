@@ -69,7 +69,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 
 ### Navigation
 - **TabGroup** (pill), **TabGroupNav** (underline), **Breadcrumb**
-- **AppShell**, **PanelNav**, **BarNav**, **BarNavAction**, **PanelTools**
+- **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout
 - **EmptyState**, **Loader**, **Skeleton**, **Header**, **Fade**, **Scrollbar**

@@ -1,3 +1,5 @@
+@import '../../utils/focus-ring.css';
+
 /* ── Theme variables ──────────────────────────────────────────────────────── */
 
 .panel-nav {
@@ -32,6 +34,7 @@
   --_nav-pressed:      var(--color-interaction-pressed);
   --_nav-focus:        var(--color-interaction-focus);
   --_nav-dot:          var(--color-foreground-bold-brand);
+  --ds-focus-ring-color: var(--_nav-focus);
 }
 
 /* ── Default chrome overrides ────────────────────────────────────────────── */
@@ -132,11 +135,6 @@
 
 .panel-nav__header-btn:hover::after  { background: var(--_nav-hover);   transition: none; }
 .panel-nav__header-btn:active::after { background: var(--_nav-pressed); transition: none; }
-.panel-nav__header-btn:focus-visible { outline: none; }
-.panel-nav__header-btn:focus-visible::after {
-  outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
-  outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
-}
 
 /* Logo — visible by default; instant swap to toggle on hover (no crossfade overlap) */
 .panel-nav__header-logo {
@@ -246,11 +244,6 @@
 
 .panel-nav__item:hover::after  { background: var(--_nav-hover);   transition: none; }
 .panel-nav__item:active::after { background: var(--_nav-pressed); transition: none; }
-.panel-nav__item:focus-visible { outline: none; }
-.panel-nav__item:focus-visible::after {
-  outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
-  outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
-}
 
 /* ── Active item ─────────────────────────────────────────────────────────── */
 
@@ -303,8 +296,8 @@
 
 .panel-nav__item-dot {
   position: absolute;
-  right: 13px;
-  top: 13px;
+  right: calc(var(--dimension-space-100, 8px) + var(--dimension-space-050, 4px) + var(--dimension-stroke-width-012, 1px));
+  top: calc(var(--dimension-space-100, 8px) + var(--dimension-space-050, 4px) + var(--dimension-stroke-width-012, 1px));
   pointer-events: none;
   transition:
     right var(--_nav-expand-motion),
@@ -362,43 +355,14 @@
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */
 
 .panel-nav__footer-btn {
-  all: unset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: absolute;
   left: var(--_nav-padding-x);
   top: var(--_nav-padding-y);
-  padding: var(--dimension-space-075, 6px);
-  border-radius: var(--dimension-radius-025, 2px);
-  cursor: pointer;
-  color: var(--_nav-fg-secondary);
-  box-sizing: border-box;
-  background: transparent;
-  transition: color var(--effect-motion-short-3, 200ms ease);
-}
-
-.panel-nav__footer-btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--dimension-radius-025, 2px);
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.panel-nav__footer-btn:hover::after  { background: var(--_nav-hover);   transition: none; }
-.panel-nav__footer-btn:active::after { background: var(--_nav-pressed); transition: none; }
-.panel-nav__footer-btn:focus-visible { outline: none; }
-.panel-nav__footer-btn:focus-visible::after {
-  outline: var(--dimension-stroke-width-025, 2px) solid var(--_nav-focus);
-  outline-offset: calc(-1 * var(--dimension-stroke-width-025, 2px));
-}
-
-.panel-nav__footer-btn ds-icon {
-  position: relative;
-  z-index: 1;
+  --ds-button-unfilled-icon-fg: var(--_nav-fg-secondary);
+  --ds-button-unfilled-icon-fg-active: var(--_nav-fg-primary);
+  --ds-button-unfilled-icon-hover-bg: var(--_nav-hover);
+  --ds-button-unfilled-icon-pressed-bg: var(--_nav-pressed);
+  --ds-focus-ring-color: var(--_nav-focus);
 }
 
 /* ── Footer user — absolutely positioned, slides from row to below gear ───── */
@@ -407,7 +371,7 @@
   position: absolute;
   /* row position: right of gear button */
   left: calc(var(--_nav-padding-x) + var(--_nav-footer-btn-w) + var(--dimension-space-050, 4px));
-  right: var(--_nav-padding-x);
+  right: calc(var(--_nav-padding-x) - var(--dimension-stroke-width-012, 1px));
   top: var(--_nav-padding-y);
   width: auto;
   min-width: 0;
@@ -421,7 +385,6 @@
 .panel-nav--collapsed .panel-nav__footer-user {
   /* column position: full-width row below gear */
   left: var(--_nav-padding-x);
-  right: var(--_nav-padding-x);
   top: calc(var(--_nav-padding-y) + var(--_nav-item-height) + var(--dimension-space-050, 4px));
 }
 

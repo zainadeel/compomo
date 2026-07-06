@@ -1,0 +1,33 @@
+:host {
+  --ds-focus-ring-width: var(--dimension-stroke-width-025, 2px);
+  --ds-focus-ring-offset: var(--dimension-space-025, 2px);
+  --ds-focus-ring-color: var(--color-interaction-focus);
+}
+
+.ds-focus-ring:focus-visible {
+  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
+  outline-offset: var(--ds-focus-ring-offset);
+}
+
+.ds-focus-ring.ds-focus-ring--visible {
+  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
+  outline-offset: var(--ds-focus-ring-offset);
+}
+
+.ds-focus-ring-inset:focus-visible {
+  outline: none;
+}
+
+.ds-focus-ring-inset:focus-visible::after {
+  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
+  outline-offset: calc(-1 * var(--ds-focus-ring-width));
+}
+
+.ds-focus-ring-inset.ds-focus-ring--visible {
+  outline: none;
+}
+
+.ds-focus-ring-inset.ds-focus-ring--visible::after {
+  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
+  outline-offset: calc(-1 * var(--ds-focus-ring-width));
+}

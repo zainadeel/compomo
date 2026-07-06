@@ -10,10 +10,10 @@ import { NavChromeStyle } from "./nav/nav-chrome";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
+import { ButtonUnfilledIconBackground } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
 import { CardElevation, CardRadius } from "./components/Card/Card";
 import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
@@ -48,10 +48,10 @@ export { NavChromeStyle } from "./nav/nav-chrome";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { BarNavActionBackground } from "./components/BarNavAction/BarNavAction";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
 export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
+export { ButtonUnfilledIconBackground } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
 export { CardElevation, CardRadius } from "./components/Card/Card";
 export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
@@ -227,36 +227,6 @@ export namespace Components {
          */
         "value": string;
     }
-    interface DsBarNavAction {
-        /**
-          * @default 'action'
-         */
-        "ariaLabel": string;
-        /**
-          * Parent surface context — adjusts hover/press colours for coloured backgrounds.
-         */
-        "background": BarNavActionBackground | undefined;
-        /**
-          * Show a notification dot (brand colour) at the top-right of the icon.
-          * @default false
-         */
-        "dot": boolean;
-        /**
-          * Icon name passed to <ds-icon>.
-          * @default ''
-         */
-        "icon": string;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive": boolean;
-        /**
-          * Controlled toggle/selected state.
-          * @default false
-         */
-        "selected": boolean;
-    }
     interface DsBreadcrumb {
         /**
           * @default []
@@ -340,6 +310,56 @@ export namespace Components {
           * @default 'md'
          */
         "size": ButtonGroupSize;
+    }
+    interface DsButtonUnfilledIcon {
+        /**
+          * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
+          * @default true
+         */
+        "activeFill": boolean;
+        /**
+          * @default 'action'
+         */
+        "ariaLabel": string;
+        /**
+          * Parent surface context — adjusts hover/press/focus colours for coloured backgrounds.
+         */
+        "background": ButtonUnfilledIconBackground | undefined;
+        "controls": string | undefined;
+        /**
+          * Show a notification dot at the top-right of the icon zone.
+          * @default false
+         */
+        "dot": boolean;
+        "expanded": boolean | undefined;
+        /**
+          * Show a 1px tertiary border without changing the interaction model.
+          * @default false
+         */
+        "hasBorder": boolean;
+        "haspopup": string | undefined;
+        /**
+          * Icon name passed to <ds-icon>.
+          * @default ''
+         */
+        "icon": string;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Active/selected visual state.
+          * @default false
+         */
+        "isActive": boolean;
+        "pressed": boolean | undefined;
+        "setFocus": () => Promise<void>;
+        /**
+          * Native button type.
+          * @default 'button'
+         */
+        "type": 'button' | 'submit' | 'reset';
     }
     interface DsCard {
         /**
@@ -568,6 +588,11 @@ export namespace Components {
           * ID of the external trigger element for positioning
          */
         "anchorId": string | undefined;
+        /**
+          * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
+          * @default false
+         */
+        "initialFocusVisible": boolean;
         /**
           * @default []
          */
@@ -1097,10 +1122,6 @@ export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarNavElement;
 }
-export interface DsBarNavActionCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsBarNavActionElement;
-}
 export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBreadcrumbElement;
@@ -1112,6 +1133,10 @@ export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
 export interface DsButtonGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonGroupElement;
+}
+export interface DsButtonUnfilledIconCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtonUnfilledIconElement;
 }
 export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1245,23 +1270,6 @@ declare global {
         prototype: HTMLDsBarNavElement;
         new (): HTMLDsBarNavElement;
     };
-    interface HTMLDsBarNavActionElementEventMap {
-        "dsChange": boolean;
-    }
-    interface HTMLDsBarNavActionElement extends Components.DsBarNavAction, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsBarNavActionElementEventMap>(type: K, listener: (this: HTMLDsBarNavActionElement, ev: DsBarNavActionCustomEvent<HTMLDsBarNavActionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsBarNavActionElementEventMap>(type: K, listener: (this: HTMLDsBarNavActionElement, ev: DsBarNavActionCustomEvent<HTMLDsBarNavActionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsBarNavActionElement: {
-        prototype: HTMLDsBarNavActionElement;
-        new (): HTMLDsBarNavActionElement;
-    };
     interface HTMLDsBreadcrumbElementEventMap {
         "dsNavigate": { item: BreadcrumbItem; index: number };
     }
@@ -1314,6 +1322,24 @@ declare global {
     var HTMLDsButtonGroupElement: {
         prototype: HTMLDsButtonGroupElement;
         new (): HTMLDsButtonGroupElement;
+    };
+    interface HTMLDsButtonUnfilledIconElementEventMap {
+        "dsClick": MouseEvent;
+        "dsChange": boolean;
+    }
+    interface HTMLDsButtonUnfilledIconElement extends Components.DsButtonUnfilledIcon, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonUnfilledIconElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledIconElement, ev: DsButtonUnfilledIconCustomEvent<HTMLDsButtonUnfilledIconElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonUnfilledIconElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledIconElement, ev: DsButtonUnfilledIconCustomEvent<HTMLDsButtonUnfilledIconElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsButtonUnfilledIconElement: {
+        prototype: HTMLDsButtonUnfilledIconElement;
+        new (): HTMLDsButtonUnfilledIconElement;
     };
     interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
     }
@@ -1716,10 +1742,10 @@ declare global {
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
-        "ds-bar-nav-action": HTMLDsBarNavActionElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button": HTMLDsButtonElement;
         "ds-button-group": HTMLDsButtonGroupElement;
+        "ds-button-unfilled-icon": HTMLDsButtonUnfilledIconElement;
         "ds-card": HTMLDsCardElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-chip": HTMLDsChipElement;
@@ -1908,40 +1934,6 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    interface DsBarNavAction {
-        /**
-          * @default 'action'
-         */
-        "ariaLabel"?: string;
-        /**
-          * Parent surface context — adjusts hover/press colours for coloured backgrounds.
-         */
-        "background"?: BarNavActionBackground | undefined;
-        /**
-          * Show a notification dot (brand colour) at the top-right of the icon.
-          * @default false
-         */
-        "dot"?: boolean;
-        /**
-          * Icon name passed to <ds-icon>.
-          * @default ''
-         */
-        "icon"?: string;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive"?: boolean;
-        /**
-          * Emits the new selected value (!selected) on click.
-         */
-        "onDsChange"?: (event: DsBarNavActionCustomEvent<boolean>) => void;
-        /**
-          * Controlled toggle/selected state.
-          * @default false
-         */
-        "selected"?: boolean;
-    }
     interface DsBreadcrumb {
         /**
           * @default []
@@ -2033,6 +2025,57 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: ButtonGroupSize;
+    }
+    interface DsButtonUnfilledIcon {
+        /**
+          * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
+          * @default true
+         */
+        "activeFill"?: boolean;
+        /**
+          * @default 'action'
+         */
+        "ariaLabel"?: string;
+        /**
+          * Parent surface context — adjusts hover/press/focus colours for coloured backgrounds.
+         */
+        "background"?: ButtonUnfilledIconBackground | undefined;
+        "controls"?: string | undefined;
+        /**
+          * Show a notification dot at the top-right of the icon zone.
+          * @default false
+         */
+        "dot"?: boolean;
+        "expanded"?: boolean | undefined;
+        /**
+          * Show a 1px tertiary border without changing the interaction model.
+          * @default false
+         */
+        "hasBorder"?: boolean;
+        "haspopup"?: string | undefined;
+        /**
+          * Icon name passed to <ds-icon>.
+          * @default ''
+         */
+        "icon"?: string;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "inactive"?: boolean;
+        /**
+          * Active/selected visual state.
+          * @default false
+         */
+        "isActive"?: boolean;
+        "onDsChange"?: (event: DsButtonUnfilledIconCustomEvent<boolean>) => void;
+        "onDsClick"?: (event: DsButtonUnfilledIconCustomEvent<MouseEvent>) => void;
+        "pressed"?: boolean | undefined;
+        /**
+          * Native button type.
+          * @default 'button'
+         */
+        "type"?: 'button' | 'submit' | 'reset';
     }
     interface DsCard {
         /**
@@ -2275,6 +2318,11 @@ declare namespace LocalJSX {
           * ID of the external trigger element for positioning
          */
         "anchorId"?: string | undefined;
+        /**
+          * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
+          * @default false
+         */
+        "initialFocusVisible"?: boolean;
         /**
           * @default []
          */
@@ -2886,14 +2934,6 @@ declare namespace LocalJSX {
         "basePath": string;
         "currentUrl": string;
     }
-    interface DsBarNavActionAttributes {
-        "icon": string;
-        "selected": boolean;
-        "dot": boolean;
-        "inactive": boolean;
-        "ariaLabel": string;
-        "background": BarNavActionBackground | undefined;
-    }
     interface DsBreadcrumbAttributes {
         "separator": string;
     }
@@ -2922,6 +2962,21 @@ declare namespace LocalJSX {
         "elevation": ButtonGroupElevation;
         "size": ButtonGroupSize;
         "rounded": boolean;
+    }
+    interface DsButtonUnfilledIconAttributes {
+        "icon": string;
+        "isActive": boolean;
+        "activeFill": boolean;
+        "hasBorder": boolean;
+        "dot": boolean;
+        "inactive": boolean;
+        "type": 'button' | 'submit' | 'reset';
+        "background": ButtonUnfilledIconBackground | undefined;
+        "ariaLabel": string;
+        "controls": string | undefined;
+        "expanded": boolean | undefined;
+        "haspopup": string | undefined;
+        "pressed": boolean | undefined;
     }
     interface DsCardAttributes {
         "elevation": CardElevation;
@@ -3006,6 +3061,7 @@ declare namespace LocalJSX {
         "menuWidth": string | undefined;
         "minWidth": string | undefined;
         "anchorId": string | undefined;
+        "initialFocusVisible": boolean;
     }
     interface DsModalAttributes {
         "open": boolean;
@@ -3168,10 +3224,10 @@ declare namespace LocalJSX {
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
-        "ds-bar-nav-action": Omit<DsBarNavAction, keyof DsBarNavActionAttributes> & { [K in keyof DsBarNavAction & keyof DsBarNavActionAttributes]?: DsBarNavAction[K] } & { [K in keyof DsBarNavAction & keyof DsBarNavActionAttributes as `attr:${K}`]?: DsBarNavActionAttributes[K] } & { [K in keyof DsBarNavAction & keyof DsBarNavActionAttributes as `prop:${K}`]?: DsBarNavAction[K] };
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
         "ds-button-group": Omit<DsButtonGroup, keyof DsButtonGroupAttributes> & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes]?: DsButtonGroup[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `attr:${K}`]?: DsButtonGroupAttributes[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `prop:${K}`]?: DsButtonGroup[K] };
+        "ds-button-unfilled-icon": Omit<DsButtonUnfilledIcon, keyof DsButtonUnfilledIconAttributes> & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes]?: DsButtonUnfilledIcon[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `attr:${K}`]?: DsButtonUnfilledIconAttributes[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `prop:${K}`]?: DsButtonUnfilledIcon[K] };
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
@@ -3215,10 +3271,10 @@ declare module "@stencil/core" {
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
-            "ds-bar-nav-action": LocalJSX.IntrinsicElements["ds-bar-nav-action"] & JSXBase.HTMLAttributes<HTMLDsBarNavActionElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             "ds-button-group": LocalJSX.IntrinsicElements["ds-button-group"] & JSXBase.HTMLAttributes<HTMLDsButtonGroupElement>;
+            "ds-button-unfilled-icon": LocalJSX.IntrinsicElements["ds-button-unfilled-icon"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledIconElement>;
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
