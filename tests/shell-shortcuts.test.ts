@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  isBareShellShortcutKey,
   isEditableShortcutTarget,
-  isShellShortcutModifier,
   resolveShellShortcut,
 } from '../src/wc/nav/shell-shortcuts';
 
@@ -19,39 +19,33 @@ function keyEvent(
   };
 }
 
-describe('isShellShortcutModifier', () => {
-  it('accepts meta or ctrl without alt/shift', () => {
-    assert.equal(isShellShortcutModifier(keyEvent({ key: 'k', metaKey: true })), true);
-    assert.equal(isShellShortcutModifier(keyEvent({ key: 'k', ctrlKey: true })), true);
-    assert.equal(isShellShortcutModifier(keyEvent({ key: 'k', metaKey: true, shiftKey: true })), false);
-    assert.equal(isShellShortcutModifier(keyEvent({ key: 'k', metaKey: true, altKey: true })), false);
-    assert.equal(isShellShortcutModifier(keyEvent({ key: 'k' })), false);
+describe('isBareShellShortcutKey', () => {
+  it('accepts unmodified keys only', () => {
+    assert.equal(isBareShellShortcutKey(keyEvent({ key: 'k' })), true);
+    assert.equal(isBareShellShortcutKey(keyEvent({ key: 'k', metaKey: true })), false);
+    assert.equal(isBareShellShortcutKey(keyEvent({ key: 'k', ctrlKey: true })), false);
+    assert.equal(isBareShellShortcutKey(keyEvent({ key: 'k', shiftKey: true })), false);
+    assert.equal(isBareShellShortcutKey(keyEvent({ key: 'k', altKey: true })), false);
   });
 });
 
 describe('resolveShellShortcut', () => {
-  it('maps panel and tool chords', () => {
+  it('maps panel and tool keys without modifiers', () => {
+    assert.equal(resolveShellShortcut(keyEvent({ key: '[' })), 'toggle-panel-nav');
     assert.equal(
-      resolveShellShortcut(keyEvent({ key: '[', metaKey: true })),
+      resolveShellShortcut(keyEvent({ key: '[', code: 'BracketLeft' })),
       'toggle-panel-nav',
     );
+    assert.equal(resolveShellShortcut(keyEvent({ key: ']' })), 'close-panel-tools');
     assert.equal(
-      resolveShellShortcut(keyEvent({ key: '[', code: 'BracketLeft', metaKey: true })),
-      'toggle-panel-nav',
-    );
-    assert.equal(
-      resolveShellShortcut(keyEvent({ key: ']', metaKey: true })),
+      resolveShellShortcut(keyEvent({ key: ']', code: 'BracketRight' })),
       'close-panel-tools',
     );
-    assert.equal(
-      resolveShellShortcut(keyEvent({ key: ']', code: 'BracketRight', metaKey: true })),
-      'close-panel-tools',
-    );
-    assert.equal(resolveShellShortcut(keyEvent({ key: 'k', metaKey: true })), 'open-tool:search');
-    assert.equal(resolveShellShortcut(keyEvent({ key: 'a', metaKey: true })), 'open-tool:agents');
-    assert.equal(resolveShellShortcut(keyEvent({ key: 's', metaKey: true })), 'open-tool:stacks');
-    assert.equal(resolveShellShortcut(keyEvent({ key: 'm', metaKey: true })), 'open-tool:messages');
-    assert.equal(resolveShellShortcut(keyEvent({ key: 'n', metaKey: true })), 'open-tool:activity');
+    assert.equal(resolveShellShortcut(keyEvent({ key: 'k' })), 'open-tool:search');
+    assert.equal(resolveShellShortcut(keyEvent({ key: 'a' })), 'open-tool:agents');
+    assert.equal(resolveShellShortcut(keyEvent({ key: 's' })), 'open-tool:stacks');
+    assert.equal(resolveShellShortcut(keyEvent({ key: 'm' })), 'open-tool:messages');
+    assert.equal(resolveShellShortcut(keyEvent({ key: 'n' })), 'open-tool:activity');
   });
 
   it('maps every tool shortcut key', () => {
@@ -63,13 +57,14 @@ describe('resolveShellShortcut', () => {
       ['n', 'activity'],
     ];
     for (const [key, tool] of keys) {
-      assert.equal(resolveShellShortcut(keyEvent({ key, metaKey: true })), `open-tool:${tool}`);
+      assert.equal(resolveShellShortcut(keyEvent({ key })), `open-tool:${tool}`);
     }
   });
 
-  it('ignores unmodified keys', () => {
-    assert.equal(resolveShellShortcut(keyEvent({ key: 'k' })), null);
-    assert.equal(resolveShellShortcut(keyEvent({ key: 'Enter' })), null);
+  it('ignores modified keys to avoid browser chords', () => {
+    assert.equal(resolveShellShortcut(keyEvent({ key: 'k', metaKey: true })), null);
+    assert.equal(resolveShellShortcut(keyEvent({ key: 'n', metaKey: true })), null);
+    assert.equal(resolveShellShortcut(keyEvent({ key: '[', ctrlKey: true })), null);
   });
 });
 

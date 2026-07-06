@@ -148,7 +148,7 @@ export class PanelTools {
     this.dsToolChange.emit({ id, selected: next.selected });
   };
 
-  /** Toggle any rail tool open/closed — shell shortcuts ⌘/Ctrl+K/A/S/M/N call this. */
+  /** Toggle any rail tool open/closed — shell shortcuts K/A/S/M/N call this. */
   @Method()
   async activateTool(id: PanelToolsToolId) {
     const item = this.railItems.find(entry => entry.id === id);

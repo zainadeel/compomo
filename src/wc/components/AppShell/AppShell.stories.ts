@@ -136,7 +136,7 @@ function shellLayout(
             <code>ds-app-shell</code> syncs <code>navStyle</code> and optional L-gradient.
           </p>
           <p style="margin: 0 0 8px; color: var(--color-foreground-secondary);">
-            Shell shortcuts: ⌘[ panel · ⌘] close tools · ⌘K/A/S/M/N toggle search/agents/stacks/messages/activity.
+            Shell shortcuts: `[` panel · `]` close tools · K/A/S/M/N toggle search/agents/stacks/messages/activity.
           </p>
           <p style="margin: 0; color: var(--color-foreground-secondary);">
             Footer gear toggles <code>dashboard</code> ↔ <code>settings</code> style slots.

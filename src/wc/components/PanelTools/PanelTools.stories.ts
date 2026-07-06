@@ -212,7 +212,7 @@ export const InGradientShell: Story = {
     >
       <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
         <div style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
-          Page content beside the tools rail. Shell shortcuts: ⌘K search, ⌘A agents, ⌘S stacks, ⌘M messages, ⌘N activity — repeat toggles closed.
+          Page content beside the tools rail. Shell shortcuts: K search, A agents, S stacks, M messages, N activity — repeat toggles closed.
         </div>
         <ds-panel-tools slot="tools">
           <p slot="search">Search drawer over shell chrome</p>
