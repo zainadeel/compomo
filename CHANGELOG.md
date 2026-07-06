@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.4.0](https://github.com/zainadeel/compomo/compare/v2.3.0...v2.4.0) (2026-07-06)
+
+
+### Added
+
+* **shell:** add keyboard shortcuts and linear panel roving ([4a5e8be](https://github.com/zainadeel/compomo/commit/4a5e8becffa81fab5e254444b1e39ddee94f8fcd))
+* **shell:** add keyboard shortcuts and linear panel roving ([4a2b635](https://github.com/zainadeel/compomo/commit/4a2b63500c947e3d71aa56750b0f2d1f2bcbba2e))
+* **shell:** close tools drawer on cmd+] ([53ae45c](https://github.com/zainadeel/compomo/commit/53ae45cfa96ec38cd4f1610029dec4afe5ce91c6))
+
+
+### Fixed
+
+* **PanelTools:** ensure tool shortcuts toggle closed on repeat ([eb29d29](https://github.com/zainadeel/compomo/commit/eb29d293a0297c4cfeaced29f0797c6e4e679e06))
+* **shell:** apply tool shortcut toggle to all rail tools ([371451f](https://github.com/zainadeel/compomo/commit/371451ffdaad8c86bce9ef6a1a3b259042688ccc))
+
 ## [2.3.0](https://github.com/zainadeel/compomo/compare/v2.2.1...v2.3.0) (2026-07-06)
 
 
