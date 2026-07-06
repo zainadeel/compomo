@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { PANEL_TOOLS_LABELS, PANEL_TOOLS_PRIMARY_TOOL_ID, PANEL_TOOLS_TOOL_IDS } from '../src/wc/components/PanelTools/panel-tools-types';
-import { panelToolsDrawerResting } from '../src/wc/components/PanelTools/panel-tools-utils';
+import { panelToolsDrawerResting, resolvePanelToolActivation } from '../src/wc/components/PanelTools/panel-tools-utils';
 
 describe('PANEL_TOOLS_TOOL_IDS', () => {
   it('lists search, agents, messages, stacks, and activity', () => {
@@ -38,5 +38,28 @@ describe('panelToolsDrawerResting', () => {
     assert.equal(panelToolsDrawerResting(false, 'opening'), false);
     assert.equal(panelToolsDrawerResting(false, 'closing'), false);
     assert.equal(panelToolsDrawerResting(true, 'opening'), false);
+  });
+});
+
+describe('resolvePanelToolActivation', () => {
+  it('opens a tool when closed or switching from another tool', () => {
+    assert.deepEqual(resolvePanelToolActivation(false, '', 'agents'), {
+      open: true,
+      activeTool: 'agents',
+      selected: true,
+    });
+    assert.deepEqual(resolvePanelToolActivation(true, 'search', 'agents'), {
+      open: true,
+      activeTool: 'agents',
+      selected: true,
+    });
+  });
+
+  it('closes the tool when the same tool is activated again', () => {
+    assert.deepEqual(resolvePanelToolActivation(true, 'agents', 'agents'), {
+      open: false,
+      activeTool: 'agents',
+      selected: false,
+    });
   });
 });

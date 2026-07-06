@@ -34,11 +34,13 @@ const SAFETY_TABS = [
 
 const PANEL_TOOLS_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', selected: true },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
 ];
+
+const wiredPanelTools = new WeakSet<Element>();
 
 function wireBarNav(el: Element | null) {
   if (!el) return;
@@ -53,15 +55,23 @@ function wireBarNav(el: Element | null) {
 }
 
 function wirePanelTools(el: Element | null) {
-  if (!el) return;
+  if (!el || wiredPanelTools.has(el)) return;
+  wiredPanelTools.add(el);
+
   const tools = el as HTMLElement & {
     open: boolean;
     activeTool: string;
     items: PanelToolsItem[];
   };
-  tools.open = true;
-  tools.activeTool = 'agents';
   tools.items = PANEL_TOOLS_ITEMS;
+  tools.open = false;
+  tools.activeTool = '';
+
+  tools.addEventListener('dsToolChange', (e: Event) => {
+    const { id, selected } = (e as CustomEvent<{ id: string; selected: boolean }>).detail;
+    tools.open = selected;
+    if (selected) tools.activeTool = id;
+  });
 }
 
 function applySection(shellId: string, next: NavChromeStyle) {

@@ -6,7 +6,7 @@ import {
   type PanelToolsItem,
   type PanelToolsToolId,
 } from './panel-tools-types';
-import { parsePanelToolsItems, panelToolsDrawerResting } from './panel-tools-utils';
+import { parsePanelToolsItems, panelToolsDrawerResting, resolvePanelToolActivation } from './panel-tools-utils';
 
 @Component({
   tag: 'ds-panel-tools',
@@ -142,17 +142,13 @@ export class PanelTools {
   }
 
   private handleToolChange = (id: PanelToolsToolId) => {
-    const selected = !this.isRailSelected(id);
-    if (selected) {
-      this.open = true;
-      this.activeTool = id;
-    } else {
-      this.open = false;
-    }
-    this.dsToolChange.emit({ id, selected });
+    const next = resolvePanelToolActivation(this.open, this.activeTool, id);
+    this.open = next.open;
+    this.activeTool = next.activeTool;
+    this.dsToolChange.emit({ id, selected: next.selected });
   };
 
-  /** Toggle a rail tool open/closed — used by shell keyboard shortcuts. */
+  /** Toggle a rail tool open/closed — repeat shortcut closes the active tool. */
   @Method()
   async activateTool(id: PanelToolsToolId) {
     const item = this.railItems.find(entry => entry.id === id);
