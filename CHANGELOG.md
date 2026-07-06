@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.1](https://github.com/zainadeel/compomo/compare/v2.4.0...v2.4.1) (2026-07-06)
+
+
+### Fixed
+
+* **shell:** use bare single-key shortcuts without modifiers ([f92fb8a](https://github.com/zainadeel/compomo/commit/f92fb8a314e1c8f58e3508c6652af2822446b3bb))
+* **shell:** use bare single-key shortcuts without modifiers ([997943e](https://github.com/zainadeel/compomo/commit/997943ea184af0f6c2114094f0aed6dc63047cfb))
+
 ## [2.4.0](https://github.com/zainadeel/compomo/compare/v2.3.0...v2.4.0) (2026-07-06)
 
 
