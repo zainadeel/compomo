@@ -11,12 +11,17 @@ import {
 } from '../src/wc/nav/shell-gradient';
 
 describe('buildShellRadialGradient', () => {
-  it('uses unified three-stop radial at top-left', () => {
+  it('uses unified three-stop radial at top-left for neutral by default', () => {
     const g = buildShellRadialGradient();
     assert.match(g, /100% 100% at 0% 0%/);
     assert.match(g, /var\(--color-background-transparent\) 0%/);
-    assert.match(g, /var\(--color-color-intent-blue-strong-background\) 100%/);
+    assert.match(g, /var\(--color-color-intent-grey-strong-background\) 100%/);
     assert.doesNotMatch(g, /50%/);
+  });
+
+  it('accepts explicit presets', () => {
+    assert.match(buildShellRadialGradient('neutral'), /intent-grey-strong-background/);
+    assert.match(buildShellRadialGradient('warm'), /intent-yellow-strong-background/);
   });
 });
 

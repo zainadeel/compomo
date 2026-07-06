@@ -11,13 +11,14 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsMenuCustomEvent, type MenuItemData } from "@ds-mo/ui";
+import { type DsMenuCustomEvent, type MenuItemData, type ShellGradientPreset } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsMenu as DsMenuElement, defineCustomElement as defineDsMenu } from "@ds-mo/ui/dist/components/ds-menu.js";
 
 export type DsMenuEvents = {
     onDsClose: EventName<DsMenuCustomEvent<void>>,
-    onDsSelect: EventName<DsMenuCustomEvent<MenuItemData>>
+    onDsSelect: EventName<DsMenuCustomEvent<MenuItemData>>,
+    onDsGradientSelect: EventName<DsMenuCustomEvent<ShellGradientPreset>>
 };
 
 export const DsMenu: StencilReactComponent<DsMenuElement, DsMenuEvents, Components.DsMenu> = /*@__PURE__*/ createComponent<DsMenuElement, DsMenuEvents, Components.DsMenu>({
@@ -27,7 +28,8 @@ export const DsMenu: StencilReactComponent<DsMenuElement, DsMenuEvents, Componen
     react: React,
     events: {
         onDsClose: 'dsClose',
-        onDsSelect: 'dsSelect'
+        onDsSelect: 'dsSelect',
+        onDsGradientSelect: 'dsGradientSelect'
     } as DsMenuEvents,
     defineCustomElement: defineDsMenu
 });

@@ -1,4 +1,20 @@
 /** CSS var names consumed by `ds-panel-nav` / `ds-bar-nav` inside `ds-app-shell`. */
+import type { ShellGradientPreset } from './shell-gradient-presets';
+import {
+  DEFAULT_SHELL_GRADIENT_PRESET,
+  buildShellRadialGradientForPreset,
+} from './shell-gradient-presets';
+
+export type { ShellGradientPreset } from './shell-gradient-presets';
+export {
+  DEFAULT_SHELL_GRADIENT_PRESET,
+  SHELL_GRADIENT_PRESETS,
+  SHELL_GRADIENT_PRESET_LABELS,
+  buildShellRadialGradientForPreset,
+  isShellGradientPreset,
+  shellGradientPresetStopToken,
+} from './shell-gradient-presets';
+
 export const SHELL_GRADIENT_IMAGE_VAR = '--ds-shell-gradient-image';
 export const SHELL_GRADIENT_SIZE_VAR = '--ds-shell-gradient-size';
 export const SHELL_GRADIENT_POSITION_PANEL_VAR = '--ds-shell-gradient-position-panel';
@@ -15,19 +31,21 @@ export function shellChromeLayerActive(gradient: boolean, grid: boolean): boolea
   return gradient || grid;
 }
 
-const GRADIENT_GEOMETRY = '100% 100% at 0% 0%';
-
 /**
  * Shell radial wash — same for panel and bar nav.
- * Tokens follow `data-theme` (light/dark blue intent).
+ * Tokens follow `data-theme` (light/dark intent stops).
  */
-export function buildShellRadialGradient(): string {
-  return `radial-gradient(${GRADIENT_GEOMETRY}, var(--color-background-transparent) 0%, var(--color-color-intent-blue-strong-background) 100%)`;
+export function buildShellRadialGradient(
+  preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET,
+): string {
+  return buildShellRadialGradientForPreset(preset);
 }
 
-/** Built-in radial image (optional `gradientSrc` on shell overrides). */
-export function shellGradientImage(): string {
-  return buildShellRadialGradient();
+/** Built-in radial image (`gradientSrc` on shell overrides). */
+export function shellGradientImage(
+  preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET,
+): string {
+  return buildShellRadialGradient(preset);
 }
 
 export interface ShellViewportDimensions {

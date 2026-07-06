@@ -1,4 +1,4 @@
-import type { MenuSection } from '../Menu/menu-types';
+import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -9,7 +9,7 @@ import {
 /** Map BarNav tabs to menu sections, preserving `{ type: 'divider' }` as section breaks. */
 export function tabsToMenuSections(tabs: TabItem[], selectedId: string): MenuSection[] {
   const sections: MenuSection[] = [];
-  let batch: MenuSection['items'] = [];
+  let batch: MenuItemData[] = [];
 
   for (const item of tabs) {
     if (isTabDivider(item)) {

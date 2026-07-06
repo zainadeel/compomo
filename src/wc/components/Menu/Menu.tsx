@@ -2,6 +2,8 @@ import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h,
 import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
+import { isMenuGradientPickerSection } from './menu-types';
+import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
 
 /** rAF retries while the popup mounts or the anchor resolves. */
 const POSITION_RETRY_BUDGET = 8;
@@ -41,6 +43,8 @@ export class Menu {
 
   @Event() dsClose!: EventEmitter<void>;
   @Event() dsSelect!: EventEmitter<MenuItemData>;
+  /** Emitted when a `gradient-picker` section swatch is chosen. */
+  @Event() dsGradientSelect!: EventEmitter<ShellGradientPreset>;
 
   private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
   private scrollResizeHandler: (() => void) | null = null;
@@ -136,7 +140,9 @@ export class Menu {
   }
 
   private get flatItems(): MenuItemData[] {
-    return this.activeSections.flatMap(s => s.items);
+    return this.activeSections.flatMap(section =>
+      isMenuGradientPickerSection(section) ? [] : section.items,
+    );
   }
 
   private cancelPositionRetry() {
@@ -309,6 +315,10 @@ export class Menu {
     this.close();
   }
 
+  private handleGradientSelect(preset: ShellGradientPreset) {
+    this.dsGradientSelect.emit(preset);
+  }
+
   render() {
     if (!this.shouldRender) return <Host style={{ display: 'contents' }} />;
 
@@ -339,7 +349,11 @@ export class Menu {
           {sections.map((section, si) => (
             <div
               key={si}
-              class={{ 'menu-section': true, 'menu-section--divided': si < sections.length - 1 }}
+              class={{
+                'menu-section': true,
+                'menu-section--divided': si < sections.length - 1,
+                'menu-section--gradient-picker': isMenuGradientPickerSection(section),
+              }}
               role={section.header ? 'group' : undefined}
               aria-label={section.header}
             >
@@ -348,7 +362,16 @@ export class Menu {
                   <span class="text-body-small-emphasis section-label">{section.header}</span>
                 </div>
               )}
-              {section.items.map(item => {
+              {isMenuGradientPickerSection(section) ? (
+                <ds-shell-gradient-picker
+                  value={section.value}
+                  onDsChange={(e: CustomEvent<ShellGradientPreset>) => {
+                    e.stopPropagation();
+                    this.handleGradientSelect(e.detail);
+                  }}
+                />
+              ) : (
+                section.items.map(item => {
                 const idx = flatIdx++;
                 const isFocused = this.focusedIndex === idx;
                 return (
@@ -387,7 +410,7 @@ export class Menu {
                     )}
                   </button>
                 );
-              })}
+              }))}
             </div>
           ))}
         </div>

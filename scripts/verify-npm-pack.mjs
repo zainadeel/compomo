@@ -14,6 +14,7 @@ const REQUIRED_PATHS = [
   'src/wc/nav/shell-view-transition.ts',
   'src/wc/nav/nav-chrome.ts',
   'src/wc/nav/shell-gradient.ts',
+  'src/wc/nav/shell-gradient-presets.ts',
 ];
 
 const output = execSync('npm pack --dry-run 2>&1', { encoding: 'utf8' });

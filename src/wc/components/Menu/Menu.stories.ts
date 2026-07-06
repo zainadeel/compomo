@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
+import '../../../../dist/components/ds-shell-gradient-picker.js';
 import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
 
 const items = [
@@ -123,6 +124,37 @@ export const TokenSideOffsetRight: Story = {
           { label: 'Light', value: 'light', isSelected: true },
           { label: 'Dark', value: 'dark' },
           { label: 'System', value: 'system' },
+        ]}
+      ></ds-menu>
+    </div>
+  `,
+};
+
+/** User menu pattern: appearance rows + gradient theme orbs. */
+export const AppearanceAndTheme: Story = {
+  name: 'Appearance and theme',
+  render: () => html`
+    <div style="padding: 16px; height: 360px">
+      <span id="menu-anchor-user" style="display: inline-block; width: 1px; height: 1px"></span>
+      <ds-menu
+        ?open=${true}
+        side="right"
+        align="start"
+        anchor-id="menu-anchor-user"
+        .sections=${[
+          {
+            header: 'Appearance',
+            items: [
+              { label: 'System', value: 'system' },
+              { label: 'Dark', value: 'dark', isSelected: true },
+              { label: 'Light', value: 'light' },
+            ],
+          },
+          {
+            header: 'Theme',
+            variant: 'gradient-picker',
+            value: 'neutral',
+          },
         ]}
       ></ds-menu>
     </div>
