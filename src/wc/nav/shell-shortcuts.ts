@@ -13,6 +13,8 @@ const TOOL_SHORTCUT_KEYS: Record<string, PanelToolsToolId> = {
   n: 'activity',
 };
 
+/** Tool shortcut chords (⌘/Ctrl+K/A/S/M/N) toggle open/closed via `ds-panel-tools.activateTool`. */
+
 /** True when Cmd (macOS) or Ctrl (Windows/Linux) is held without Alt/Shift. */
 export function isShellShortcutModifier(
   e: Pick<KeyboardEvent, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>,

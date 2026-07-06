@@ -54,6 +54,19 @@ describe('resolveShellShortcut', () => {
     assert.equal(resolveShellShortcut(keyEvent({ key: 'n', metaKey: true })), 'open-tool:activity');
   });
 
+  it('maps every tool shortcut key', () => {
+    const keys: Array<[string, string]> = [
+      ['k', 'search'],
+      ['a', 'agents'],
+      ['s', 'stacks'],
+      ['m', 'messages'],
+      ['n', 'activity'],
+    ];
+    for (const [key, tool] of keys) {
+      assert.equal(resolveShellShortcut(keyEvent({ key, metaKey: true })), `open-tool:${tool}`);
+    }
+  });
+
   it('ignores unmodified keys', () => {
     assert.equal(resolveShellShortcut(keyEvent({ key: 'k' })), null);
     assert.equal(resolveShellShortcut(keyEvent({ key: 'Enter' })), null);

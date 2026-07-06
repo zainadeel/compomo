@@ -7,7 +7,7 @@ import type { PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
 
 const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', selected: true },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
@@ -29,6 +29,8 @@ const meta: Meta = {
 
 export default meta;
 type Story = StoryObj;
+
+const wiredGradientTools = new WeakSet<Element>();
 
 function toolsShell(open: boolean, activeTool: PanelToolsToolId) {
   const items = RAIL_ITEMS.map(item => ({
@@ -140,21 +142,17 @@ export const Interactive: Story = {
         const status = root.querySelector('#panel-tools-status');
         if (!tools || !status) return;
 
-        tools.items = RAIL_ITEMS.map(item => ({ ...item, selected: false }));
+        tools.items = RAIL_ITEMS;
         tools.open = false;
         tools.activeTool = '';
 
         tools.addEventListener('dsToolChange', (e: Event) => {
           const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>).detail;
           tools.open = selected;
-          tools.activeTool = selected ? id : '';
-          tools.items = RAIL_ITEMS.map(item => ({
-            ...item,
-            selected: selected && item.id === id,
-          }));
+          if (selected) tools.activeTool = id;
           status.textContent = selected
             ? `open · activeTool="${id}"`
-            : 'closed';
+            : `closed · lastTool="${tools.activeTool}"`;
         });
       })}
     >
@@ -191,21 +189,37 @@ export const InGradientShell: Story = {
         background: var(--color-background-primary);
         font-family: var(--typography-font-family, system-ui);
       "
+      ${ref(root => {
+        if (!root || wiredGradientTools.has(root)) return;
+        wiredGradientTools.add(root);
+        const shell = root.querySelector('ds-app-shell');
+        const tools = root.querySelector('ds-panel-tools') as HTMLElement & {
+          open: boolean;
+          activeTool: PanelToolsToolId | '';
+          items: PanelToolsItem[];
+        } | null;
+        if (!tools) return;
+        tools.items = RAIL_ITEMS;
+        tools.open = false;
+        tools.activeTool = '';
+        tools.addEventListener('dsToolChange', (e: Event) => {
+          const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>).detail;
+          tools.open = selected;
+          if (selected) tools.activeTool = id;
+        });
+        void shell;
+      })}
     >
       <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
         <div style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
-          Page content beside the tools rail.
+          Page content beside the tools rail. Shell shortcuts: ⌘K search, ⌘A agents, ⌘S stacks, ⌘M messages, ⌘N activity — repeat toggles closed.
         </div>
-        <ds-panel-tools
-          slot="tools"
-          open
-          active-tool="agents"
-          .items=${RAIL_ITEMS.map(item => ({
-            ...item,
-            selected: item.id === 'agents',
-          }))}
-        >
+        <ds-panel-tools slot="tools">
+          <p slot="search">Search drawer over shell chrome</p>
           <p slot="agents">Agents drawer over shell chrome</p>
+          <p slot="messages">Messages drawer over shell chrome</p>
+          <p slot="stacks">Stacks drawer over shell chrome</p>
+          <p slot="activity">Activity drawer over shell chrome</p>
         </ds-panel-tools>
       </ds-app-shell>
     </div>

@@ -62,4 +62,19 @@ describe('resolvePanelToolActivation', () => {
       selected: false,
     });
   });
+
+  it('toggles closed on repeat activation for every rail tool', () => {
+    for (const id of PANEL_TOOLS_TOOL_IDS) {
+      assert.deepEqual(resolvePanelToolActivation(true, id, id), {
+        open: false,
+        activeTool: id,
+        selected: false,
+      });
+      assert.deepEqual(resolvePanelToolActivation(false, id, id), {
+        open: true,
+        activeTool: id,
+        selected: true,
+      });
+    }
+  });
 });

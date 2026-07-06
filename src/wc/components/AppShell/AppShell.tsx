@@ -53,7 +53,7 @@ export class AppShell {
    */
   @Prop() gradientSrc: string = '';
 
-  /** When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+] close tools, ⌘/Ctrl+K search, …). */
+  /** When `true` (default), registers global shell keyboard shortcuts. Tool chords (⌘/Ctrl+K/A/S/M/N) toggle their drawer open and closed; ⌘/Ctrl+[ toggles panel nav; ⌘/Ctrl+] closes any open tool drawer. */
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
   @Element() el!: HTMLElement;
