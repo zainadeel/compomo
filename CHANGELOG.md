@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.0](https://github.com/zainadeel/compomo/compare/v2.1.1...v2.2.0) (2026-07-06)
+
+
+### Added
+
+* **nav:** add bar nav overflow menu ([c63072b](https://github.com/zainadeel/compomo/commit/c63072be0d81dc6631c79dbce77b87d0337b9c6c))
+* **nav:** add bar nav overflow menu ([e23b207](https://github.com/zainadeel/compomo/commit/e23b207fa40505604662354baf569556348bfbec))
+
 ## [2.1.1](https://github.com/zainadeel/compomo/compare/v2.1.0...v2.1.1) (2026-07-03)
 
 
