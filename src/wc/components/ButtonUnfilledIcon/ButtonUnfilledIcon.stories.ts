@@ -104,6 +104,22 @@ export const ActiveFillLayering: Story = {
   `,
 };
 
+export const FocusVisible: Story = {
+  render: () => html`
+    <p style="color:var(--color-foreground-secondary);font:var(--typography-text-caption-font);max-width:36rem;">
+      Tab to each button — focus ring should use TokoMo interaction tokens, not the browser default blue outline.
+    </p>
+    <div style="${COL} margin-top:var(--dimension-space-150);">
+      <div style="${ROW}">
+        <span style="${LABEL}">default</span>
+        <ds-button-unfilled-icon icon="Search" aria-label="Search"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Ellipses" aria-label="More" background="navigation"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Gear" aria-label="Settings" has-border></ds-button-unfilled-icon>
+      </div>
+    </div>
+  `,
+};
+
 export const Backgrounds: Story = {
   render: () => html`
     <div style="${COL}">

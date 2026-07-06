@@ -85,6 +85,45 @@ test.describe('BarNav responsive overflow', () => {
     await expect(page.locator('.bar-nav__overflow-trigger')).toHaveCount(0);
   });
 
+  test('overflow trigger shows inset focus ring on keyboard focus', async ({ page }) => {
+    await page.evaluate(() => window.__setShellWidth(320));
+    await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
+
+    let triggerFocused = false;
+    for (let i = 0; i < 30; i++) {
+      triggerFocused = await page.evaluate(() => {
+        const host = document.querySelector('.bar-nav__overflow-trigger');
+        const button = host?.querySelector('.button-icon');
+        return !!button && document.activeElement === button;
+      });
+      if (triggerFocused) break;
+      await page.keyboard.press('Tab');
+    }
+    expect(triggerFocused).toBe(true);
+
+    const focusRing = await page.evaluate(() => {
+      const host = document.querySelector('.bar-nav__overflow-trigger') as HTMLElement | null;
+      const button = host?.querySelector('.button-icon') as HTMLElement | null;
+      if (!button) return null;
+
+      const buttonStyle = getComputedStyle(button);
+      const afterStyle = getComputedStyle(button, '::after');
+
+      return {
+        buttonOutlineStyle: buttonStyle.outlineStyle,
+        afterOutlineStyle: afterStyle.outlineStyle,
+        afterOutlineWidth: afterStyle.outlineWidth,
+        afterOutlineOffset: afterStyle.outlineOffset,
+      };
+    });
+
+    expect(focusRing).not.toBeNull();
+    expect(focusRing!.buttonOutlineStyle).toBe('none');
+    expect(focusRing!.afterOutlineStyle).toBe('solid');
+    expect(focusRing!.afterOutlineWidth).toBe('2px');
+    expect(focusRing!.afterOutlineOffset).toBe('-2px');
+  });
+
   test('overflow menu opens from the ellipses trigger', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(320));
     await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });

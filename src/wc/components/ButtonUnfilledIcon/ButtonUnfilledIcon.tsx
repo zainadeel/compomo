@@ -67,6 +67,7 @@ export class ButtonUnfilledIcon {
 
     const cls: Record<string, boolean> = {
       'button-icon': true,
+      'ds-focus-ring-inset': true,
       'button-icon--active': this.isActive,
       'button-icon--active-fill': this.isActive && this.activeFill,
       'button-icon--bordered': this.hasBorder,
