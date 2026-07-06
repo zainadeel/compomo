@@ -1,4 +1,4 @@
-import { Component, Prop, Event, EventEmitter, Watch, State, Element, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Watch, State, Element, Method, h, Host } from '@stencil/core';
 import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import {
@@ -288,10 +288,6 @@ export class PanelNav {
     return this.parsedGroups.flatMap(g => g.items);
   }
 
-  private getRovingTotal(): number {
-    return 1 + this.getAllItems().length + 2;
-  }
-
   private getFooterRovingIndex(): number {
     return 1 + this.getAllItems().length;
   }
@@ -351,35 +347,29 @@ export class PanelNav {
       return;
     }
 
-    const total = this.getRovingTotal();
     const footerIdx = this.getFooterRovingIndex();
     const userIdx = this.getUserRovingIndex();
-    let next: number;
+    let next: number | undefined;
 
     switch (e.key) {
       case 'ArrowDown':
-        e.preventDefault();
+        if (index === userIdx) return;
         if (index === footerIdx) next = userIdx;
-        else if (index === userIdx) next = 0;
-        else next = (index + 1) % total;
+        else next = index + 1;
         break;
       case 'ArrowUp':
-        e.preventDefault();
-        if (index === 0) next = userIdx;
-        else if (index === userIdx) next = footerIdx;
-        else next = (index - 1 + total) % total;
+        if (index === 0) return;
+        if (index === userIdx) next = footerIdx;
+        else if (index === footerIdx) next = footerIdx - 1;
+        else next = index - 1;
         break;
       case 'ArrowRight':
-        if (index === footerIdx) {
-          e.preventDefault();
-          next = userIdx;
-        } else return;
+        if (index === footerIdx) next = userIdx;
+        else return;
         break;
       case 'ArrowLeft':
-        if (index === userIdx) {
-          e.preventDefault();
-          next = footerIdx;
-        } else return;
+        if (index === userIdx) next = footerIdx;
+        else return;
         break;
       case 'Home':
         e.preventDefault();
@@ -393,6 +383,8 @@ export class PanelNav {
         return;
     }
 
+    if (next === undefined || next === index) return;
+    e.preventDefault();
     this.focusRovingAt(next);
   }
 
@@ -415,6 +407,12 @@ export class PanelNav {
 
   private handleToggle() {
     this.applyToggle(!this.collapsed);
+  }
+
+  /** Toggle expanded/collapsed panel nav — used by shell keyboard shortcuts. */
+  @Method()
+  async toggleCollapsed() {
+    this.handleToggle();
   }
 
   private handleFooterAction() {

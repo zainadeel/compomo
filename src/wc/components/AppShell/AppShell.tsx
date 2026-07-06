@@ -1,5 +1,10 @@
-import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Element, Watch, Listen, h, Host } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
+import {
+  isEditableShortcutTarget,
+  resolveShellShortcut,
+} from '../../nav/shell-shortcuts';
+import type { PanelToolsToolId } from '../PanelTools/panel-tools-types';
 import {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
@@ -47,6 +52,9 @@ export class AppShell {
    * When set, overrides the built-in radial wash.
    */
   @Prop() gradientSrc: string = '';
+
+  /** When `true` (default), registers global shell keyboard shortcuts. Tool chords (⌘/Ctrl+K/A/S/M/N) toggle their drawer open and closed; ⌘/Ctrl+[ toggles panel nav; ⌘/Ctrl+] closes any open tool drawer. */
+  @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
   @Element() el!: HTMLElement;
 
@@ -240,6 +248,35 @@ export class AppShell {
 
   private chromeLayerActive(): boolean {
     return this.gradient || this.grid;
+  }
+
+  @Listen('keydown', { target: 'window', capture: true })
+  handleWindowKeyDown(e: KeyboardEvent) {
+    if (!this.shortcutsEnabled) return;
+    if (isEditableShortcutTarget(e.target)) return;
+
+    const action = resolveShellShortcut(e);
+    if (!action) return;
+
+    e.preventDefault();
+
+    const panel = this.el.querySelector('ds-panel-nav') as HTMLDsPanelNavElement | null;
+    const tools = this.el.querySelector('ds-panel-tools') as HTMLDsPanelToolsElement | null;
+
+    if (action === 'toggle-panel-nav') {
+      void panel?.toggleCollapsed();
+      return;
+    }
+
+    if (action === 'close-panel-tools') {
+      void tools?.closeDrawer();
+      return;
+    }
+
+    if (action.startsWith('open-tool:') && tools) {
+      const toolId = action.slice('open-tool:'.length) as PanelToolsToolId;
+      void tools.activateTool(toolId);
+    }
   }
 
   private syncChrome() {

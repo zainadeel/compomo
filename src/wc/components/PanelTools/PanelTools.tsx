@@ -1,4 +1,4 @@
-import { Component, Prop, Event, EventEmitter, Element, State, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Event, EventEmitter, Element, State, Watch, Method, h, Host } from '@stencil/core';
 import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
 import {
   PANEL_TOOLS_LABELS,
@@ -6,7 +6,7 @@ import {
   type PanelToolsItem,
   type PanelToolsToolId,
 } from './panel-tools-types';
-import { parsePanelToolsItems, panelToolsDrawerResting } from './panel-tools-utils';
+import { parsePanelToolsItems, panelToolsDrawerResting, resolvePanelToolActivation } from './panel-tools-utils';
 
 @Component({
   tag: 'ds-panel-tools',
@@ -142,20 +142,36 @@ export class PanelTools {
   }
 
   private handleToolChange = (id: PanelToolsToolId) => {
-    const selected = !this.isRailSelected(id);
-    if (selected) {
-      this.open = true;
-      this.activeTool = id;
-    } else {
-      this.open = false;
-    }
-    this.dsToolChange.emit({ id, selected });
+    const next = resolvePanelToolActivation(this.open, this.activeTool, id);
+    this.open = next.open;
+    this.activeTool = next.activeTool;
+    this.dsToolChange.emit({ id, selected: next.selected });
   };
+
+  /** Toggle any rail tool open/closed — shell shortcuts ⌘/Ctrl+K/A/S/M/N call this. */
+  @Method()
+  async activateTool(id: PanelToolsToolId) {
+    const item = this.railItems.find(entry => entry.id === id);
+    if (!item || item.inactive) return;
+    this.handleToolChange(id);
+  }
+
+  /** Close the tools drawer when open — used by shell keyboard shortcuts. */
+  @Method()
+  async closeDrawer() {
+    if (!this.open) return;
+    const id = this.activeTool;
+    this.open = false;
+    if (id) {
+      this.dsToolChange.emit({ id, selected: false });
+    }
+  }
 
   private focusRailAt(index: number) {
     const items = this.orderedRailItems;
     if (!items.length) return;
-    const bounded = ((index % items.length) + items.length) % items.length;
+    const bounded = Math.max(0, Math.min(index, items.length - 1));
+    if (bounded === this.rovingIndex) return;
     this.rovingIndex = bounded;
     const actions = Array.from(
       this.el.querySelectorAll<HTMLElement>('.panel-tools__rail-action .button-icon'),
@@ -174,12 +190,14 @@ export class PanelTools {
     }
 
     if (e.key === 'ArrowDown') {
+      if (index >= items.length - 1) return;
       e.preventDefault();
       this.focusRailAt(index + 1);
       return;
     }
 
     if (e.key === 'ArrowUp') {
+      if (index <= 0) return;
       e.preventDefault();
       this.focusRailAt(index - 1);
     }

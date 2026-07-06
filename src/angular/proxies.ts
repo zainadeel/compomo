@@ -36,14 +36,14 @@ export declare interface DsAccordion extends Components.DsAccordion {
 
 
 @ProxyCmp({
-  inputs: ['gradient', 'gradientSrc', 'grid', 'navStyle']
+  inputs: ['gradient', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
   selector: 'ds-app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['gradient', 'gradientSrc', 'grid', 'navStyle'],
+  inputs: ['gradient', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled'],
   standalone: false
 })
 export class DsAppShell {
@@ -639,7 +639,8 @@ export declare interface DsPagination extends Components.DsPagination {
 
 
 @ProxyCmp({
-  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'navStyle', 'routerMode', 'storageKey', 'userInitial', 'userName']
+  inputs: ['activeId', 'breakpoint', 'collapsed', 'currentUrl', 'disableViewTransition', 'groups', 'navStyle', 'routerMode', 'storageKey', 'userInitial', 'userName'],
+  methods: ['toggleCollapsed']
 })
 @Component({
   selector: 'ds-panel-nav',
@@ -695,7 +696,8 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
 
 
 @ProxyCmp({
-  inputs: ['activeTool', 'items', 'itemsJson', 'open']
+  inputs: ['activeTool', 'items', 'itemsJson', 'open'],
+  methods: ['activateTool', 'closeDrawer']
 })
 @Component({
   selector: 'ds-panel-tools',

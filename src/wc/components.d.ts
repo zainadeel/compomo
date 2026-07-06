@@ -118,6 +118,11 @@ export namespace Components {
           * @default 'dashboard'
          */
         "navStyle": NavChromeStyle;
+        /**
+          * When `true` (default), registers global shell keyboard shortcuts. Tool chords (⌘/Ctrl+K/A/S/M/N) toggle their drawer open and closed; ⌘/Ctrl+[ toggles panel nav; ⌘/Ctrl+] closes any open tool drawer.
+          * @default true
+         */
+        "shortcutsEnabled": boolean;
     }
     interface DsBadge {
         /**
@@ -698,6 +703,10 @@ export namespace Components {
          */
         "storageKey": string;
         /**
+          * Toggle expanded/collapsed panel nav — used by shell keyboard shortcuts.
+         */
+        "toggleCollapsed": () => Promise<void>;
+        /**
           * Single character shown in the collapsed avatar
           * @default ''
          */
@@ -710,10 +719,18 @@ export namespace Components {
     }
     interface DsPanelTools {
         /**
+          * Toggle any rail tool open/closed — shell shortcuts ⌘/Ctrl+K/A/S/M/N call this.
+         */
+        "activateTool": (id: PanelToolsToolId) => Promise<void>;
+        /**
           * Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`.
           * @default ''
          */
         "activeTool": PanelToolsToolId | '';
+        /**
+          * Close the tools drawer when open — used by shell keyboard shortcuts.
+         */
+        "closeDrawer": () => Promise<void>;
         /**
           * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
           * @default []
@@ -1838,6 +1855,11 @@ declare namespace LocalJSX {
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
+        /**
+          * When `true` (default), registers global shell keyboard shortcuts. Tool chords (⌘/Ctrl+K/A/S/M/N) toggle their drawer open and closed; ⌘/Ctrl+[ toggles panel nav; ⌘/Ctrl+] closes any open tool drawer.
+          * @default true
+         */
+        "shortcutsEnabled"?: boolean;
     }
     interface DsBadge {
         /**
@@ -2942,6 +2964,7 @@ declare namespace LocalJSX {
         "gradient": boolean;
         "grid": boolean;
         "gradientSrc": string;
+        "shortcutsEnabled": boolean;
     }
     interface DsBadgeAttributes {
         "variant": BadgeVariant;
