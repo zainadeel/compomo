@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0](https://github.com/zainadeel/compomo/compare/v2.2.1...v2.3.0) (2026-07-06)
+
+
+### Added
+
+* **shell:** implement roving keyboard navigation for app shell chrome ([adf2f57](https://github.com/zainadeel/compomo/commit/adf2f57138357cd6be1f8e3f13bab0adb9b162b8))
+* **shell:** implement roving keyboard navigation for app shell chrome ([4812ab2](https://github.com/zainadeel/compomo/commit/4812ab2ef320cbbd70c6f383f269991050815d6e))
+
 ## [2.2.1](https://github.com/zainadeel/compomo/compare/v2.2.0...v2.2.1) (2026-07-06)
 
 
