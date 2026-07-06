@@ -118,6 +118,11 @@ export namespace Components {
           * @default 'dashboard'
          */
         "navStyle": NavChromeStyle;
+        /**
+          * When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+K search, …).
+          * @default true
+         */
+        "shortcutsEnabled": boolean;
     }
     interface DsBadge {
         /**
@@ -698,6 +703,10 @@ export namespace Components {
          */
         "storageKey": string;
         /**
+          * Toggle expanded/collapsed panel nav — used by shell keyboard shortcuts.
+         */
+        "toggleCollapsed": () => Promise<void>;
+        /**
           * Single character shown in the collapsed avatar
           * @default ''
          */
@@ -709,6 +718,10 @@ export namespace Components {
         "userName": string;
     }
     interface DsPanelTools {
+        /**
+          * Toggle a rail tool open/closed — used by shell keyboard shortcuts.
+         */
+        "activateTool": (id: PanelToolsToolId) => Promise<void>;
         /**
           * Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`.
           * @default ''
@@ -1838,6 +1851,11 @@ declare namespace LocalJSX {
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
+        /**
+          * When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+K search, …).
+          * @default true
+         */
+        "shortcutsEnabled"?: boolean;
     }
     interface DsBadge {
         /**
@@ -2942,6 +2960,7 @@ declare namespace LocalJSX {
         "gradient": boolean;
         "grid": boolean;
         "gradientSrc": string;
+        "shortcutsEnabled": boolean;
     }
     interface DsBadgeAttributes {
         "variant": BadgeVariant;
