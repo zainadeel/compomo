@@ -1,2 +1,16 @@
 <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
 <meta name="color-scheme" content="light dark" />
+<style>
+  /* Brand link only — skip the "Skip to content" control in the same header. */
+  .sidebar-header a:has(.brand-favicon) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sidebar-header .brand-favicon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+</style>
