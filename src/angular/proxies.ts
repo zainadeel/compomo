@@ -140,36 +140,6 @@ export declare interface DsBarNav extends Components.DsBarNav {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'background', 'dot', 'icon', 'inactive', 'selected']
-})
-@Component({
-  selector: 'ds-bar-nav-action',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'background', 'dot', 'icon', 'inactive', 'selected'],
-  outputs: ['dsChange'],
-  standalone: false
-})
-export class DsBarNavAction {
-  protected el: HTMLDsBarNavActionElement;
-  @Output() dsChange = new EventEmitter<CustomEvent<boolean>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsBarNavAction extends Components.DsBarNavAction {
-  /**
-   * Emits the new selected value (!selected) on click.
-   */
-  dsChange: EventEmitter<CustomEvent<boolean>>;
-}
-
-
-@ProxyCmp({
   inputs: ['items', 'separator']
 })
 @Component({
@@ -260,6 +230,38 @@ export declare interface DsButtonGroup extends Components.DsButtonGroup {
    * Emits the index of the clicked item.
    */
   dsClick: EventEmitter<CustomEvent<number>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  methods: ['setFocus']
+})
+@Component({
+  selector: 'ds-button-unfilled-icon',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  outputs: ['dsClick', 'dsChange'],
+  standalone: false
+})
+export class DsButtonUnfilledIcon {
+  protected el: HTMLDsButtonUnfilledIconElement;
+  @Output() dsClick = new EventEmitter<CustomEvent<MouseEvent>>();
+  @Output() dsChange = new EventEmitter<CustomEvent<boolean>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsButtonUnfilledIcon extends Components.DsButtonUnfilledIcon {
+
+  dsClick: EventEmitter<CustomEvent<MouseEvent>>;
+
+  dsChange: EventEmitter<CustomEvent<boolean>>;
 }
 
 
@@ -548,14 +550,14 @@ export declare interface DsLoader extends Components.DsLoader {}
 
 
 @ProxyCmp({
-  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset']
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'initialFocusVisible', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset']
 })
 @Component({
   selector: 'ds-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'initialFocusVisible', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
   outputs: ['dsClose', 'dsSelect'],
   standalone: false
 })

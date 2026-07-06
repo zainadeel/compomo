@@ -439,7 +439,11 @@ export class PanelNav {
     ];
 
     const sharedProps = {
-      class: { 'panel-nav__item': true, 'panel-nav__item--active': isActive },
+      class: {
+        'panel-nav__item': true,
+        'panel-nav__item--active': isActive,
+        'ds-focus-ring-inset': true,
+      },
       'aria-current': isActive ? ('page' as const) : undefined,
       title: collapsed ? item.label : undefined,
       tabIndex: idx === this.rovingIndex ? 0 : -1,
@@ -482,7 +486,7 @@ export class PanelNav {
           <div class="panel-nav__header">
             <button
               type="button"
-              class="panel-nav__header-btn"
+              class="panel-nav__header-btn ds-focus-ring-inset"
               onClick={() => this.handleToggle()}
               aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
               aria-expanded={collapsed ? 'false' : 'true'}
@@ -535,21 +539,20 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
-            <button
-              type="button"
+            <ds-button-unfilled-icon
               class="panel-nav__footer-btn"
+              icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
+              activeFill={false}
               title={isDashboardChrome ? 'Settings' : 'Dashboard'}
               aria-label={isDashboardChrome ? 'Open settings' : 'Go to dashboard'}
-              onClick={() => this.handleFooterAction()}
-            >
-              <ds-icon name={isDashboardChrome ? 'Gear' : 'Dashboard'} size="md" color="inherit" />
-            </button>
+              onDsClick={() => this.handleFooterAction()}
+            />
 
             {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}
             <button
               type="button"
               id={PANEL_NAV_USER_MENU_ANCHOR_ID}
-              class="panel-nav__item panel-nav__footer-user"
+              class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset"
               aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
               onClick={(e) => this.handleUserAction(e)}
             >

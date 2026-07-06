@@ -203,6 +203,23 @@ export class MyComponent {
 - Use `:host` for component-level styles; use class selectors for internal elements.
 - Theming is driven by the `data-theme` attribute on a parent element (`@ds-mo/tokens` provides light/dark).
 
+**Icon-only unfilled buttons**
+
+- Use `ds-button-unfilled-icon` for unfilled square icon buttons, including nav chrome actions, overflow triggers, and tool rail actions.
+- Use `isActive` for the active/selected visual state. Active state changes icon color to primary and uses the active interaction fill by default; set `activeFill={false}` only for shell chrome cases that need primary icon color without a filled active background.
+- Use `hasBorder` only when the button needs the optional 1px `--color-border-tertiary` stroke.
+- Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
+
+**Focus states**
+
+- New interactive components must use the shared focus utility in `src/wc/utils/focus-ring.css`; do not hand-roll `:focus-visible` outlines in component CSS.
+- Import it from component CSS with `@import '../../utils/focus-ring.css';`.
+- Prefer `ds-focus-ring-inset` for borderless controls, controls without their own stable background, chrome-aligned controls, menu items, nav items, tool rail actions, and tab-like controls. This keeps the ring tight to the visual hit target and avoids awkward outside outlines on grouped/pill surfaces.
+- Use `ds-focus-ring` only when an outside ring is intentional and visually fits the component shape.
+- Use `ds-focus-ring--visible` only when component-managed roving focus has confirmed keyboard modality, such as a menu opened with Enter/Space/Arrow keys or navigated with arrow keys. Do not apply it after pointer/mouse opens.
+- Focus is a ring state, not hover. Keyboard/programmatic focus must not use hover or pressed fills unless the item is actually hovered or pressed.
+- Set `--ds-focus-ring-color` from the surface context instead of hardcoding colors: default app surfaces use `--color-interaction-focus`, navigation chrome uses `--color-navigation-interaction-focus`, and medium/bold/strong/always-dark surfaces use their matching `*-interaction-*-focus` token.
+
 **TypeScript**
 
 - `strict` mode. No `any`. Export every public prop interface.

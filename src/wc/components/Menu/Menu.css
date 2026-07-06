@@ -1,3 +1,5 @@
+@import '../../utils/focus-ring.css';
+
 /* ── Popup shell ─────────────────────────────────────────────────────────── */
 
 .menu-popup {
@@ -109,8 +111,7 @@
   transition: none;
 }
 
-.menu-item:hover:not(:disabled):not(.menu-item--selected)::after,
-.menu-item--focused:not(:disabled):not(.menu-item--selected)::after {
+.menu-item:hover:not(:disabled):not(.menu-item--selected)::after {
   background: var(--_hover-bg);
   transition: none;
 }
@@ -118,11 +119,6 @@
 .menu-item:active:not(:disabled)::after {
   background: var(--_pressed-bg);
   transition: none;
-}
-
-.menu-item:focus-visible {
-  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
-  outline-offset: var(--dimension-space-025);
 }
 
 .menu-item--inactive {

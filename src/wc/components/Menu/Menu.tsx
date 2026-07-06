@@ -29,12 +29,15 @@ export class Menu {
   @Prop() anchor: HTMLElement | undefined;
   /** ID of the external trigger element for positioning */
   @Prop() anchorId: string | undefined;
+  /** Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven. */
+  @Prop() initialFocusVisible: boolean = false;
 
   @State() private shouldRender: boolean = false;
   @State() private closing: boolean = false;
   @State() private pos: { x: number; y: number } = { x: 0, y: 0 };
   @State() private focusedIndex: number = 0;
   @State() private positionReady: boolean = false;
+  @State() private focusRingVisible: boolean = false;
 
   @Event() dsClose!: EventEmitter<void>;
   @Event() dsSelect!: EventEmitter<MenuItemData>;
@@ -58,16 +61,16 @@ export class Menu {
   @Watch('open')
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
+      this.teardownListeners();
       this.shouldRender = true;
       this.closing = false;
       this.positionReady = false;
       this.listenersReady = false;
+      this.focusRingVisible = this.initialFocusVisible;
+      this.listenersReady = true;
+      this.setupListeners();
       this.schedulePositionUpdate(() => {
-        if (!this.listenersReady) {
-          this.listenersReady = true;
-          this.focusInitialItem();
-          this.setupListeners();
-        }
+        this.focusInitialItem();
       });
     } else if (this.shouldRender) {
       this.cancelPositionRetry();
@@ -218,7 +221,7 @@ export class Menu {
     };
 
     this.scrollResizeHandler = () => {
-      if (this.open) this.calculatePosition();
+      if (this.shouldRender && !this.closing) this.calculatePosition();
     };
 
     document.addEventListener('mousedown', this.clickOutsideHandler, true);
@@ -246,11 +249,12 @@ export class Menu {
     this.resolvedAnchor?.focus();
     this.dsClose.emit();
     this.open = false;
+    this.onOpenChange(false);
   }
 
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
-    if (!this.open) return;
+    if (!this.shouldRender || this.closing) return;
     const flat = this.flatItems;
     const enabled = flat.map((it, i) => ({ it, i })).filter(({ it }) => !it.isInactive).map(({ i }) => i);
     if (!enabled.length) return;
@@ -261,21 +265,25 @@ export class Menu {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault(); e.stopPropagation();
+        this.focusRingVisible = true;
         this.focusedIndex = enabled[(safe + 1) % enabled.length];
         this.focusItem(this.focusedIndex);
         break;
       case 'ArrowUp':
         e.preventDefault(); e.stopPropagation();
+        this.focusRingVisible = true;
         this.focusedIndex = enabled[(safe - 1 + enabled.length) % enabled.length];
         this.focusItem(this.focusedIndex);
         break;
       case 'Home':
         e.preventDefault(); e.stopPropagation();
+        this.focusRingVisible = true;
         this.focusedIndex = enabled[0];
         this.focusItem(this.focusedIndex);
         break;
       case 'End':
         e.preventDefault(); e.stopPropagation();
+        this.focusRingVisible = true;
         this.focusedIndex = enabled[enabled.length - 1];
         this.focusItem(this.focusedIndex);
         break;
@@ -349,6 +357,8 @@ export class Menu {
                     type="button"
                     class={{
                       'menu-item': true,
+                      'ds-focus-ring-inset': true,
+                      'ds-focus-ring--visible': isFocused && this.focusRingVisible,
                       'menu-item--selected': !!item.isSelected,
                       'menu-item--inactive': !!item.isInactive,
                       'menu-item--destructive': !!item.isDestructive,
@@ -358,6 +368,7 @@ export class Menu {
                     aria-current={item.isSelected ? 'true' : undefined}
                     disabled={item.isInactive}
                     tabIndex={isFocused ? 0 : -1}
+                    onMouseDown={() => { this.focusRingVisible = false; }}
                     onClick={() => this.handleItemClick(item)}
                     onFocus={() => { this.focusedIndex = idx; }}
                   >

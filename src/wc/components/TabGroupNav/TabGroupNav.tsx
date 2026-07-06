@@ -167,6 +167,7 @@ export class TabGroupNav {
                 class={{
                   tab: true,
                   'tab--selected': isSelected,
+                  'ds-focus-ring-inset': true,
                   [bgClass]: !!bgClass,
                 }}
                 aria-selected={isSelected}

@@ -1,3 +1,5 @@
+@import '../../utils/focus-ring.css';
+
 :host {
   display: block;
 }
@@ -63,20 +65,10 @@
 .tab:hover::after  { background: var(--_hover-bg);   transition: none; }
 .tab:active::after { background: var(--_pressed-bg);  transition: none; }
 
-/* Focus ring only — no persistent hover fill from keyboard focus */
-.tab:focus-visible:not(:hover):not(:active)::after {
-  background: transparent;
-}
-
 .tab--selected {
   color: var(--color-foreground-primary);
   background-color: var(--color-background-primary);
   border-color: var(--color-border-tertiary);
-}
-
-.tab:focus-visible {
-  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
-  outline-offset: var(--dimension-space-025);
 }
 
 .tab:disabled,
@@ -116,12 +108,14 @@
   --_hover-bg: var(--color-interaction-on-medium-background-hover);
   --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
   --_dot-ring: var(--color-background-medium-neutral);
+  --ds-focus-ring-color: var(--color-interaction-on-medium-background-focus);
 }
 
 .on-bold {
   --_hover-bg: var(--color-interaction-on-bold-background-hover);
   --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
   --_dot-ring: var(--color-background-bold-neutral);
+  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -131,6 +125,7 @@
   --_hover-bg: var(--color-interaction-on-strong-background-hover);
   --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
   --_dot-ring: var(--color-background-strong-neutral);
+  --ds-focus-ring-color: var(--color-interaction-on-strong-background-focus);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
@@ -140,6 +135,7 @@
   --_hover-bg: var(--color-always-dark-interaction-hover);
   --_pressed-bg: var(--color-always-dark-interaction-pressed);
   --_dot-ring: var(--color-always-dark-background);
+  --ds-focus-ring-color: var(--color-always-dark-interaction-focus);
   color: var(--color-always-dark-foreground-secondary);
 }
 

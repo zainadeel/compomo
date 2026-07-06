@@ -144,14 +144,16 @@ export class PanelTools {
 
   private renderRailAction(item: PanelToolsItem) {
     return (
-      <ds-bar-nav-action
+      <ds-button-unfilled-icon
         key={item.id}
         class="panel-tools__rail-action"
         icon={item.icon}
-        selected={this.isRailSelected(item.id)}
+        isActive={this.isRailSelected(item.id)}
+        activeFill={false}
         dot={item.dot ?? false}
         inactive={item.inactive}
         aria-label={item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id]}
+        pressed={this.isRailSelected(item.id)}
         onDsChange={() => this.handleToolChange(item.id)}
       />
     );
