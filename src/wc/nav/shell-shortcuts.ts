@@ -13,13 +13,13 @@ const TOOL_SHORTCUT_KEYS: Record<string, PanelToolsToolId> = {
   n: 'activity',
 };
 
-/** Tool shortcut chords (⌘/Ctrl+K/A/S/M/N) toggle open/closed via `ds-panel-tools.activateTool`. */
+/** Tool shortcut keys (K/A/S/M/N) toggle open/closed via `ds-panel-tools.activateTool`. */
 
-/** True when Cmd (macOS) or Ctrl (Windows/Linux) is held without Alt/Shift. */
-export function isShellShortcutModifier(
+/** True when no modifier keys are held — avoids browser/app chords like ⌘N. */
+export function isBareShellShortcutKey(
   e: Pick<KeyboardEvent, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>,
 ): boolean {
-  return (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey;
+  return !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey;
 }
 
 /** Skip shell shortcuts while typing in an editable control. */
@@ -46,11 +46,11 @@ function normalizedShortcutKey(e: Pick<KeyboardEvent, 'key' | 'code'>): string {
   return e.key.length === 1 ? e.key.toLowerCase() : e.key.toLowerCase();
 }
 
-/** Resolve a shell chrome shortcut, or `null` when the chord is not handled. */
+/** Resolve a shell chrome shortcut, or `null` when the key is not handled. */
 export function resolveShellShortcut(
   e: Pick<KeyboardEvent, 'key' | 'code' | 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>,
 ): ShellShortcutAction | null {
-  if (!isShellShortcutModifier(e)) return null;
+  if (!isBareShellShortcutKey(e)) return null;
 
   const key = normalizedShortcutKey(e);
   if (key === '[') return 'toggle-panel-nav';

@@ -119,7 +119,7 @@ export namespace Components {
          */
         "navStyle": NavChromeStyle;
         /**
-          * When `true` (default), registers global shell keyboard shortcuts. Tool chords (⌘/Ctrl+K/A/S/M/N) toggle their drawer open and closed; ⌘/Ctrl+[ toggles panel nav; ⌘/Ctrl+] closes any open tool drawer.
+          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
         "shortcutsEnabled": boolean;
@@ -719,7 +719,7 @@ export namespace Components {
     }
     interface DsPanelTools {
         /**
-          * Toggle any rail tool open/closed — shell shortcuts ⌘/Ctrl+K/A/S/M/N call this.
+          * Toggle any rail tool open/closed — shell shortcuts K/A/S/M/N call this.
          */
         "activateTool": (id: PanelToolsToolId) => Promise<void>;
         /**
@@ -1856,7 +1856,7 @@ declare namespace LocalJSX {
          */
         "navStyle"?: NavChromeStyle;
         /**
-          * When `true` (default), registers global shell keyboard shortcuts. Tool chords (⌘/Ctrl+K/A/S/M/N) toggle their drawer open and closed; ⌘/Ctrl+[ toggles panel nav; ⌘/Ctrl+] closes any open tool drawer.
+          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
         "shortcutsEnabled"?: boolean;
