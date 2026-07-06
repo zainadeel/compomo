@@ -2,6 +2,7 @@ import type { PanelToolsToolId } from '../components/PanelTools/panel-tools-type
 
 export type ShellShortcutAction =
   | 'toggle-panel-nav'
+  | 'close-panel-tools'
   | `open-tool:${PanelToolsToolId}`;
 
 const TOOL_SHORTCUT_KEYS: Record<string, PanelToolsToolId> = {
@@ -39,6 +40,7 @@ export function isEditableShortcutTarget(target: EventTarget | null): boolean {
 
 function normalizedShortcutKey(e: Pick<KeyboardEvent, 'key' | 'code'>): string {
   if (e.key === '[' || e.code === 'BracketLeft') return '[';
+  if (e.key === ']' || e.code === 'BracketRight') return ']';
   return e.key.length === 1 ? e.key.toLowerCase() : e.key.toLowerCase();
 }
 
@@ -50,6 +52,7 @@ export function resolveShellShortcut(
 
   const key = normalizedShortcutKey(e);
   if (key === '[') return 'toggle-panel-nav';
+  if (key === ']') return 'close-panel-tools';
 
   const toolId = TOOL_SHORTCUT_KEYS[key];
   if (toolId) return `open-tool:${toolId}`;

@@ -697,7 +697,7 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
 
 @ProxyCmp({
   inputs: ['activeTool', 'items', 'itemsJson', 'open'],
-  methods: ['activateTool']
+  methods: ['activateTool', 'closeDrawer']
 })
 @Component({
   selector: 'ds-panel-tools',

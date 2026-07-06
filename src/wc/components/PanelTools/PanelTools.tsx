@@ -160,6 +160,17 @@ export class PanelTools {
     this.handleToolChange(id);
   }
 
+  /** Close the tools drawer when open — used by shell keyboard shortcuts. */
+  @Method()
+  async closeDrawer() {
+    if (!this.open) return;
+    const id = this.activeTool;
+    this.open = false;
+    if (id) {
+      this.dsToolChange.emit({ id, selected: false });
+    }
+  }
+
   private focusRailAt(index: number) {
     const items = this.orderedRailItems;
     if (!items.length) return;

@@ -39,6 +39,14 @@ describe('resolveShellShortcut', () => {
       resolveShellShortcut(keyEvent({ key: '[', code: 'BracketLeft', metaKey: true })),
       'toggle-panel-nav',
     );
+    assert.equal(
+      resolveShellShortcut(keyEvent({ key: ']', metaKey: true })),
+      'close-panel-tools',
+    );
+    assert.equal(
+      resolveShellShortcut(keyEvent({ key: ']', code: 'BracketRight', metaKey: true })),
+      'close-panel-tools',
+    );
     assert.equal(resolveShellShortcut(keyEvent({ key: 'k', metaKey: true })), 'open-tool:search');
     assert.equal(resolveShellShortcut(keyEvent({ key: 'a', metaKey: true })), 'open-tool:agents');
     assert.equal(resolveShellShortcut(keyEvent({ key: 's', metaKey: true })), 'open-tool:stacks');

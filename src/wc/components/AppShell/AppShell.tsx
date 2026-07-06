@@ -53,7 +53,7 @@ export class AppShell {
    */
   @Prop() gradientSrc: string = '';
 
-  /** When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+K search, …). */
+  /** When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+] close tools, ⌘/Ctrl+K search, …). */
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
   @Element() el!: HTMLElement;
@@ -265,6 +265,11 @@ export class AppShell {
 
     if (action === 'toggle-panel-nav') {
       void panel?.toggleCollapsed();
+      return;
+    }
+
+    if (action === 'close-panel-tools') {
+      void tools?.closeDrawer();
       return;
     }
 

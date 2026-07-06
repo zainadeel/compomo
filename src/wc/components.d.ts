@@ -119,7 +119,7 @@ export namespace Components {
          */
         "navStyle": NavChromeStyle;
         /**
-          * When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+K search, …).
+          * When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+] close tools, ⌘/Ctrl+K search, …).
           * @default true
          */
         "shortcutsEnabled": boolean;
@@ -727,6 +727,10 @@ export namespace Components {
           * @default ''
          */
         "activeTool": PanelToolsToolId | '';
+        /**
+          * Close the tools drawer when open — used by shell keyboard shortcuts.
+         */
+        "closeDrawer": () => Promise<void>;
         /**
           * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
           * @default []
@@ -1852,7 +1856,7 @@ declare namespace LocalJSX {
          */
         "navStyle"?: NavChromeStyle;
         /**
-          * When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+K search, …).
+          * When `true` (default), registers global shell keyboard shortcuts (⌘/Ctrl+[ panel, ⌘/Ctrl+] close tools, ⌘/Ctrl+K search, …).
           * @default true
          */
         "shortcutsEnabled"?: boolean;
