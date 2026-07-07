@@ -27,10 +27,10 @@ It's the **top layer** of the ds-mo design-system trilogy: `@ds-mo/tokens` → `
 src/
   wc/                   # Stencil source root (srcDir in stencil.config.ts)
     components/         # One directory per web component (PascalCase)
-      Button/
-        Button.tsx        # Stencil component class (@Component, @Prop, @Event, …)
-        Button.css        # Scoped styles — token custom properties only (no CSS Modules)
-        Button.stories.ts # Storybook stories using lit-html html`` tags
+      ButtonFilled/
+        ButtonFilled.tsx
+        ButtonFilled.css
+        ButtonFilled.stories.ts
       ...               # All ported components (Accordion, Badge, Banner, …)
     components.d.ts     # Auto-generated Stencil type declarations — do not edit
   angular/              # Auto-generated Angular proxies (proxies.ts, index.ts) — do not edit
@@ -121,14 +121,15 @@ npm install @ds-mo/tokens @ds-mo/icons @ds-mo/ui
 
 ```ts
 // Custom elements — import each tag you use (auto-defines)
-import '@ds-mo/ui/dist/components/ds-button.js';
+import '@ds-mo/ui/dist/components/ds-button-filled.js';
+import '@ds-mo/ui/dist/components/ds-button-unfilled-icon.js';
 import '@ds-mo/tokens';
 
 // Angular — Stencil-generated proxy directives
-import { DsButton } from '@ds-mo/ui/angular';
+import { DsButtonFilled } from '@ds-mo/ui/angular';
 
 // React — Stencil-generated wrappers
-import { DsButton, DsBarNav } from '@ds-mo/ui/react';
+import { DsButtonFilled, DsBarNav } from '@ds-mo/ui/react';
 ```
 
 **Peer dependency model:** `@ds-mo/tokens` and `@ds-mo/icons` are **required** runtime peers — same as tokens, icons are **not** inlined into `dist/`. Stencil externalizes `@ds-mo/icons`; the consumer's bundler resolves SVG exports when bundling `ds-icon`.

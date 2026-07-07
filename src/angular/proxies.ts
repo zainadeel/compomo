@@ -170,54 +170,21 @@ export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'badgeCount', 'contrast', 'dropdown', 'elevation', 'fullWidth', 'href', 'inactive', 'intent', 'label', 'loading', 'rounded', 'size', 'target', 'type', 'variant', 'width']
+  inputs: ['ariaLabel', 'contrast', 'icon', 'inactive', 'intent', 'type'],
+  methods: ['setFocus']
 })
 @Component({
-  selector: 'ds-button',
+  selector: 'ds-button-filled',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'background', 'badgeCount', 'contrast', 'dropdown', 'elevation', 'fullWidth', 'href', 'inactive', 'intent', 'label', 'loading', 'rounded', 'size', 'target', 'type', 'variant', 'width'],
-  outputs: ['dsClick', 'dsMouseEnter', 'dsMouseLeave'],
-  standalone: false
-})
-export class DsButton {
-  protected el: HTMLDsButtonElement;
-  @Output() dsClick = new EventEmitter<CustomEvent<MouseEvent>>();
-  @Output() dsMouseEnter = new EventEmitter<CustomEvent<MouseEvent>>();
-  @Output() dsMouseLeave = new EventEmitter<CustomEvent<MouseEvent>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsButton extends Components.DsButton {
-
-  dsClick: EventEmitter<CustomEvent<MouseEvent>>;
-
-  dsMouseEnter: EventEmitter<CustomEvent<MouseEvent>>;
-
-  dsMouseLeave: EventEmitter<CustomEvent<MouseEvent>>;
-}
-
-
-@ProxyCmp({
-  inputs: ['elevation', 'items', 'rounded', 'size']
-})
-@Component({
-  selector: 'ds-button-group',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['elevation', 'items', 'rounded', 'size'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'inactive', 'intent', 'type'],
   outputs: ['dsClick'],
   standalone: false
 })
-export class DsButtonGroup {
-  protected el: HTMLDsButtonGroupElement;
-  @Output() dsClick = new EventEmitter<CustomEvent<number>>();
+export class DsButtonFilled {
+  protected el: HTMLDsButtonFilledElement;
+  @Output() dsClick = new EventEmitter<CustomEvent<MouseEvent>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -225,16 +192,14 @@ export class DsButtonGroup {
 }
 
 
-export declare interface DsButtonGroup extends Components.DsButtonGroup {
-  /**
-   * Emits the index of the clicked item.
-   */
-  dsClick: EventEmitter<CustomEvent<number>>;
+export declare interface DsButtonFilled extends Components.DsButtonFilled {
+
+  dsClick: EventEmitter<CustomEvent<MouseEvent>>;
 }
 
 
 @ProxyCmp({
-  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
   methods: ['setFocus']
 })
 @Component({
@@ -242,7 +207,7 @@ export declare interface DsButtonGroup extends Components.DsButtonGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
   outputs: ['dsClick', 'dsChange'],
   standalone: false
 })
@@ -286,6 +251,36 @@ export class DsCard {
 
 
 export declare interface DsCard extends Components.DsCard {}
+
+
+@ProxyCmp({
+  inputs: ['cardWidth', 'editing', 'heading']
+})
+@Component({
+  selector: 'ds-card-setting',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['cardWidth', 'editing', { name: 'heading', required: true }],
+  outputs: ['dsEditingChange'],
+  standalone: false
+})
+export class DsCardSetting {
+  protected el: HTMLDsCardSettingElement;
+  @Output() dsEditingChange = new EventEmitter<CustomEvent<boolean>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsCardSetting extends Components.DsCardSetting {
+  /**
+   * Emits when the user enters or exits edit mode.
+   */
+  dsEditingChange: EventEmitter<CustomEvent<boolean>>;
+}
 
 
 @ProxyCmp({
@@ -1148,66 +1143,6 @@ export class DsToggle {
 export declare interface DsToggle extends Components.DsToggle {
 
   dsChange: EventEmitter<CustomEvent<boolean>>;
-}
-
-
-@ProxyCmp({
-  inputs: ['ariaLabel', 'background', 'elevation', 'icon', 'inactive', 'label', 'pressed', 'rounded', 'size']
-})
-@Component({
-  selector: 'ds-toggle-button',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'background', 'elevation', 'icon', 'inactive', 'label', 'pressed', 'rounded', 'size'],
-  outputs: ['dsChange'],
-  standalone: false
-})
-export class DsToggleButton {
-  protected el: HTMLDsToggleButtonElement;
-  @Output() dsChange = new EventEmitter<CustomEvent<boolean>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsToggleButton extends Components.DsToggleButton {
-  /**
-   * Emits the new pressed value (!pressed) on click.
-   */
-  dsChange: EventEmitter<CustomEvent<boolean>>;
-}
-
-
-@ProxyCmp({
-  inputs: ['background', 'elevation', 'items', 'rounded', 'size', 'value']
-})
-@Component({
-  selector: 'ds-toggle-button-group',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'elevation', 'items', 'rounded', 'size', 'value'],
-  outputs: ['dsChange'],
-  standalone: false
-})
-export class DsToggleButtonGroup {
-  protected el: HTMLDsToggleButtonGroupElement;
-  @Output() dsChange = new EventEmitter<CustomEvent<string>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsToggleButtonGroup extends Components.DsToggleButtonGroup {
-  /**
-   * Emits the id of the newly selected item.
-   */
-  dsChange: EventEmitter<CustomEvent<string>>;
 }
 
 

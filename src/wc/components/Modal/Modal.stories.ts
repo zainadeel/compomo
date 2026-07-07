@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-modal.js';
-import '../../../../dist/components/ds-button.js';
+import '../../../../dist/components/ds-button-filled.js';
+import '../../../../dist/components/ds-button-unfilled-icon.js';
 
 const meta: Meta = {
   title: 'Overlay/Modal',
@@ -27,8 +28,8 @@ export const Playground: Story = {
     >
       <p>Modal body content goes here. You can place any content inside the default slot.</p>
       <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button label="Cancel" variant="secondary"></ds-button>
-        <ds-button label="Confirm" intent="brand"></ds-button>
+        <ds-button-unfilled-icon icon="Cross" aria-label="Cancel"></ds-button-unfilled-icon>
+        <ds-button-filled icon="Check" intent="brand" aria-label="Confirm"></ds-button-filled>
       </div>
     </ds-modal>
   `,
@@ -42,8 +43,8 @@ export const WithSubtitle: Story = {
       subtitle="This action cannot be undone. All associated data will be permanently removed."
     >
       <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button label="Cancel" variant="secondary"></ds-button>
-        <ds-button label="Delete" intent="negative"></ds-button>
+        <ds-button-unfilled-icon icon="Cross" aria-label="Cancel"></ds-button-unfilled-icon>
+        <ds-button-filled icon="Trash" intent="negative" aria-label="Delete"></ds-button-filled>
       </div>
     </ds-modal>
   `,
@@ -54,8 +55,8 @@ export const SmallWidth: Story = {
     <ds-modal ?open=${true} heading="Are you sure?" modal-width="sm">
       <p>This will apply to all selected items.</p>
       <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button label="Cancel" variant="secondary" size="sm"></ds-button>
-        <ds-button label="OK" intent="brand" size="sm"></ds-button>
+        <ds-button-unfilled-icon icon="Cross" aria-label="Cancel"></ds-button-unfilled-icon>
+        <ds-button-filled icon="Check" intent="brand" aria-label="OK"></ds-button-filled>
       </div>
     </ds-modal>
   `,
@@ -71,8 +72,8 @@ export const LargeWidth: Story = {
         <div><label style="font-size: 12px; color: var(--color-foreground-secondary)">Status</label><p style="margin: 4px 0">Active</p></div>
       </div>
       <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button label="Close" variant="secondary"></ds-button>
-        <ds-button label="Edit" intent="brand"></ds-button>
+        <ds-button-unfilled-icon icon="Cross" aria-label="Close"></ds-button-unfilled-icon>
+        <ds-button-filled icon="Pencil" intent="brand" aria-label="Edit"></ds-button-filled>
       </div>
     </ds-modal>
   `,

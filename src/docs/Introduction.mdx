@@ -30,13 +30,14 @@ import '@ds-mo/tokens/globals';
 Register the custom elements you use (each module auto-defines its tag):
 
 ```ts
-import '@ds-mo/ui/dist/components/ds-button.js';
+import '@ds-mo/ui/dist/components/ds-button-filled.js';
+import '@ds-mo/ui/dist/components/ds-button-unfilled-icon.js';
 import '@ds-mo/ui/dist/components/ds-text.js';
 ```
 
-**Angular:** `import { DsButton } from '@ds-mo/ui/angular'` (or module that re-exports proxies).
+**Angular:** `import { DsButtonFilled } from '@ds-mo/ui/angular'` (or module that re-exports proxies).
 
-**React:** `import { DsButton, DsText } from '@ds-mo/ui/react'`.
+**React:** `import { DsButtonFilled, DsText } from '@ds-mo/ui/react'`.
 
 See [framework integration](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md) for shell/nav first-paint rules.
 

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-filled",
+  "title": "ButtonFilled",
+  "description": "Square filled primary icon button. Intent-based colours with contrast fill pairing (bold→faint fg, strong→medium, medium→strong, faint→bold).",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-filled",
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
+      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-button-filled.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
+      "usage": {
+        "html": "<ds-button-filled></ds-button-filled>",
+        "react": "<ds-button-filled></ds-button-filled>",
+        "angular": "<ds-button-filled></ds-button-filled>"
+      },
+      "events": [
+        {
+          "name": "dsClick",
+          "listen": "element.addEventListener('dsClick', handler)",
+          "reactProp": "onDsClick={handler}",
+          "angularBinding": "(dsClick)=\"handler($event)\""
+        }
+      ],
+      "internalDependencies": [
+        {
+          "component": "Icon",
+          "note": "Used internally by ButtonFilled. Bundled in @ds-mo/ui."
+        }
+      ],
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens >=2.9.0",
+          "@ds-mo/icons ^5.0.1"
+        ],
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+      }
+    },
+    "props": {
+      "icon": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical IcoMo icon export name."
+      },
+      "intent": {
+        "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'",
+        "default": "'brand'"
+      },
+      "contrast": {
+        "type": "'bold' | 'strong' | 'medium' | 'faint'",
+        "default": "'bold'"
+      },
+      "inactive": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Disables interaction."
+      },
+      "ariaLabel": {
+        "type": "string",
+        "default": "'action'",
+        "description": "Accessible name."
+      }
+    },
+    "exports": [
+      "ButtonFilled"
+    ],
+    "types": [
+      "ButtonFilledIntent",
+      "ButtonFilledContrast"
+    ]
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ButtonFilled/ButtonFilled.css",
+      "content": "@import '../../utils/focus-ring.css';\n\n:host {\n  display: inline-flex;\n  flex: 0 0 auto;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-400);\n  min-width: var(--dimension-size-400);\n  min-height: var(--dimension-size-400);\n  outline: none;\n  --ds-button-filled-bg: var(--color-background-bold-brand);\n  --ds-button-filled-fg: var(--color-foreground-faint-brand);\n}\n\n.button-filled {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  padding: var(--dimension-space-075);\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  background-color: var(--ds-button-filled-bg);\n  color: var(--ds-button-filled-fg);\n  cursor: pointer;\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n  position: relative;\n  overflow: hidden;\n  transition:\n    background-color var(--effect-motion-short-2),\n    color var(--effect-motion-short-2),\n    transform var(--effect-motion-short-2);\n}\n\n.button-filled::before,\n.button-filled::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  background: transparent;\n  pointer-events: none;\n  transition: none;\n}\n\n.button-filled::before {\n  z-index: 1;\n}\n\n.button-filled::after {\n  z-index: 2;\n}\n\n.button-filled:hover:not(.button-filled--inactive)::before {\n  background: color-mix(in oklch, var(--ds-button-filled-bg) 85%, var(--ds-button-filled-fg));\n}\n\n.button-filled:active:not(.button-filled--inactive) {\n  transform: scale(var(--dimension-scale-subtle));\n}\n\n.button-filled:active:not(.button-filled--inactive)::before {\n  background: color-mix(in oklch, var(--ds-button-filled-bg) 80%, var(--ds-button-filled-fg));\n}\n\n.button-filled--inactive {\n  opacity: 0.5;\n  cursor: not-allowed;\n  pointer-events: none;\n}\n\n.button-filled__icon-wrap {\n  position: relative;\n  width: var(--dimension-iconography-md);\n  height: var(--dimension-iconography-md);\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  z-index: 2;\n}\n\n/* ── Intent + contrast (bold default) ─────────────────────────────────────── */\n\n.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-bold-neutral);\n  --ds-button-filled-fg: var(--color-foreground-faint-neutral);\n}\n\n.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-bold-brand);\n  --ds-button-filled-fg: var(--color-foreground-faint-brand);\n}\n\n.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-bold-ai);\n  --ds-button-filled-fg: var(--color-foreground-faint-ai);\n}\n\n.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-bold-negative);\n  --ds-button-filled-fg: var(--color-foreground-faint-negative);\n}\n\n.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-bold-warning);\n  --ds-button-filled-fg: var(--color-foreground-faint-warning);\n}\n\n.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-bold-caution);\n  --ds-button-filled-fg: var(--color-foreground-faint-caution);\n}\n\n.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-bold-positive);\n  --ds-button-filled-fg: var(--color-foreground-faint-positive);\n}\n\n.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-bold-guide);\n  --ds-button-filled-fg: var(--color-foreground-faint-guide);\n}\n\n.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-bold-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-faint-walkthrough);\n}\n\n/* strong → medium fg */\n.button-filled--contrast-strong.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-strong-neutral);\n  --ds-button-filled-fg: var(--color-foreground-medium-neutral);\n}\n\n.button-filled--contrast-strong.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-strong-brand);\n  --ds-button-filled-fg: var(--color-foreground-medium-brand);\n}\n\n.button-filled--contrast-strong.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-strong-ai);\n  --ds-button-filled-fg: var(--color-foreground-medium-ai);\n}\n\n.button-filled--contrast-strong.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-strong-negative);\n  --ds-button-filled-fg: var(--color-foreground-medium-negative);\n}\n\n.button-filled--contrast-strong.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-strong-warning);\n  --ds-button-filled-fg: var(--color-foreground-medium-warning);\n}\n\n.button-filled--contrast-strong.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-strong-caution);\n  --ds-button-filled-fg: var(--color-foreground-medium-caution);\n}\n\n.button-filled--contrast-strong.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-strong-positive);\n  --ds-button-filled-fg: var(--color-foreground-medium-positive);\n}\n\n.button-filled--contrast-strong.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-strong-guide);\n  --ds-button-filled-fg: var(--color-foreground-medium-guide);\n}\n\n.button-filled--contrast-strong.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-strong-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-medium-walkthrough);\n}\n\n/* medium → strong fg */\n.button-filled--contrast-medium.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-medium-neutral);\n  --ds-button-filled-fg: var(--color-foreground-strong-neutral);\n}\n\n.button-filled--contrast-medium.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-medium-brand);\n  --ds-button-filled-fg: var(--color-foreground-strong-brand);\n}\n\n.button-filled--contrast-medium.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-medium-ai);\n  --ds-button-filled-fg: var(--color-foreground-strong-ai);\n}\n\n.button-filled--contrast-medium.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-medium-negative);\n  --ds-button-filled-fg: var(--color-foreground-strong-negative);\n}\n\n.button-filled--contrast-medium.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-medium-warning);\n  --ds-button-filled-fg: var(--color-foreground-strong-warning);\n}\n\n.button-filled--contrast-medium.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-medium-caution);\n  --ds-button-filled-fg: var(--color-foreground-strong-caution);\n}\n\n.button-filled--contrast-medium.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-medium-positive);\n  --ds-button-filled-fg: var(--color-foreground-strong-positive);\n}\n\n.button-filled--contrast-medium.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-medium-guide);\n  --ds-button-filled-fg: var(--color-foreground-strong-guide);\n}\n\n.button-filled--contrast-medium.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-medium-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-strong-walkthrough);\n}\n\n/* faint → bold fg */\n.button-filled--contrast-faint.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-faint-neutral);\n  --ds-button-filled-fg: var(--color-foreground-bold-neutral);\n}\n\n.button-filled--contrast-faint.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-faint-brand);\n  --ds-button-filled-fg: var(--color-foreground-bold-brand);\n}\n\n.button-filled--contrast-faint.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-faint-ai);\n  --ds-button-filled-fg: var(--color-foreground-bold-ai);\n}\n\n.button-filled--contrast-faint.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-faint-negative);\n  --ds-button-filled-fg: var(--color-foreground-bold-negative);\n}\n\n.button-filled--contrast-faint.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-faint-warning);\n  --ds-button-filled-fg: var(--color-foreground-bold-warning);\n}\n\n.button-filled--contrast-faint.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-faint-caution);\n  --ds-button-filled-fg: var(--color-foreground-bold-caution);\n}\n\n.button-filled--contrast-faint.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-faint-positive);\n  --ds-button-filled-fg: var(--color-foreground-bold-positive);\n}\n\n.button-filled--contrast-faint.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-faint-guide);\n  --ds-button-filled-fg: var(--color-foreground-bold-guide);\n}\n\n.button-filled--contrast-faint.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-faint-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-bold-walkthrough);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ButtonFilled/ButtonFilled.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\n\nexport type ButtonFilledIntent =\n  | 'neutral'\n  | 'brand'\n  | 'ai'\n  | 'negative'\n  | 'warning'\n  | 'caution'\n  | 'positive'\n  | 'guide'\n  | 'walkthrough';\n\nexport type ButtonFilledContrast = 'bold' | 'strong' | 'medium' | 'faint';\n\n@Component({\n  tag: 'ds-button-filled',\n  styleUrl: 'ButtonFilled.css',\n  scoped: true,\n})\nexport class ButtonFilled {\n  @Element() el!: HTMLElement;\n\n  /** Icon name passed to <ds-icon>. */\n  @Prop() icon: string = '';\n\n  /** Semantic colour intent. */\n  @Prop() intent: ButtonFilledIntent = 'brand';\n\n  /**\n   * Background fill weight. Foreground uses the paired contrast token:\n   * bold → faint, strong → medium, medium → strong, faint → bold.\n   */\n  @Prop() contrast: ButtonFilledContrast = 'bold';\n\n  /** Disables interaction. */\n  @Prop() inactive: boolean = false;\n\n  /** Native button type. */\n  @Prop() type: 'button' | 'submit' | 'reset' = 'button';\n\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string = 'action';\n\n  @Event() dsClick!: EventEmitter<MouseEvent>;\n\n  private buttonEl: HTMLButtonElement | null = null;\n\n  @Method()\n  async setFocus() {\n    this.buttonEl?.focus();\n  }\n\n  private handleClick = (event: MouseEvent) => {\n    if (this.inactive) return;\n    this.dsClick.emit(event);\n  };\n\n  render() {\n    const cls: Record<string, boolean> = {\n      'button-filled': true,\n      'ds-focus-ring-inset': true,\n      'button-filled--inactive': this.inactive,\n      [`button-filled--intent-${this.intent}`]: true,\n      [`button-filled--contrast-${this.contrast}`]: this.contrast !== 'bold',\n    };\n\n    return (\n      <Host tabIndex={-1}>\n        <button\n          ref={el => {\n            this.buttonEl = el ?? null;\n          }}\n          type={this.type}\n          class={cls}\n          disabled={this.inactive}\n          aria-label={this.ariaLabel}\n          onClick={this.handleClick}\n        >\n          <span class=\"button-filled__icon-wrap\">\n            <ds-icon name={this.icon} size=\"md\" color=\"inherit\" />\n          </span>\n        </button>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

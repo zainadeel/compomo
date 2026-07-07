@@ -28,7 +28,8 @@ import '@ds-mo/tokens/globals';
 Register the custom elements you render (each import auto-defines its tag):
 
 ```ts
-import '@ds-mo/ui/dist/components/ds-button.js';
+import '@ds-mo/ui/dist/components/ds-button-filled.js';
+import '@ds-mo/ui/dist/components/ds-button-unfilled-icon.js';
 import '@ds-mo/ui/dist/components/ds-bar-nav.js';
 // …import only the <ds-*> tags your app uses
 ```
@@ -40,7 +41,7 @@ Your app bundler must resolve `@ds-mo/icons` when it bundles `ds-icon` — insta
 | Host | Import | Usage |
 | --- | --- | --- |
 | **Angular** | `@ds-mo/ui/angular` | Stencil proxy directives — property/event bindings in templates |
-| **React** | `@ds-mo/ui/react` | `DsButton`, `DsBarNav`, … — thin wrappers around the same custom elements |
+| **React** | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … — thin wrappers around the same custom elements |
 | **Any** | `@ds-mo/ui/dist/components/ds-*.js` | Use `<ds-*>` directly (motive-webapp-lab pattern) |
 
 There is **no** published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` bundle — styles ship scoped inside each custom-element module.
@@ -55,8 +56,8 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Text**, **Surface**, **Card**, **Input**, **Slider**, **Field**, **Divider**, **Icon**
 
 ### Actions
-- **Button** — `primary` / `secondary` variants, intents, sizes, icon slot
-- **ButtonGroup**, **ToggleButton**, **ToggleButtonGroup**
+- **ButtonFilled** — square filled primary icon button; intent + contrast fill
+- **ButtonUnfilledIcon** — square unfilled icon button; `on-background-contrast` for parent surfaces
 
 ### Controls
 - **Toggle**, **Checkbox**, **RadioGroup**
@@ -83,13 +84,11 @@ All styling uses TokoMo CSS custom properties. No hardcoded colors, sizes, or sh
 Components that accept icons use a named `icon` slot:
 
 ```html
-<ds-button>
-  <ds-icon name="ArrowRight" slot="icon"></ds-icon>
-  Save
-</ds-button>
+<ds-button-filled icon="Check" intent="brand" aria-label="Save"></ds-button-filled>
+<ds-button-unfilled-icon icon="Pencil" aria-label="Edit"></ds-button-unfilled-icon>
 ```
 
-`name` must be a canonical IcoMo export key (`ArrowRight`, `Bell`, …). You can also slot any custom SVG element.
+`icon` / `name` must be a canonical IcoMo export key (`ArrowRight`, `Bell`, …).
 
 ## Figma Code Connect
 

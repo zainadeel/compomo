@@ -171,7 +171,7 @@ function MyPage() {
 **Custom elements** (any framework):
 
 \`\`\`html
-<ds-button>Continue</ds-button>
+<ds-button-filled icon="Check" intent="brand" aria-label="Continue"></ds-button-filled>
 \`\`\`
 
 ## 6. Peer dependencies

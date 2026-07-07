@@ -8,10 +8,10 @@ export const DIRECTIVES = [
   d.DsBanner,
   d.DsBarNav,
   d.DsBreadcrumb,
-  d.DsButton,
-  d.DsButtonGroup,
+  d.DsButtonFilled,
   d.DsButtonUnfilledIcon,
   d.DsCard,
+  d.DsCardSetting,
   d.DsCheckbox,
   d.DsChip,
   d.DsDivider,
@@ -42,7 +42,5 @@ export const DIRECTIVES = [
   d.DsText,
   d.DsToastProvider,
   d.DsToggle,
-  d.DsToggleButton,
-  d.DsToggleButtonGroup,
   d.DsTooltip
 ];

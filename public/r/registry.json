@@ -6,7 +6,7 @@
   "meta": {
     "distribution": "npm",
     "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-    "register": "import '@ds-mo/ui/dist/components/ds-button.js'; // import each <ds-*> tag you use",
+    "register": "import '@ds-mo/ui/dist/components/ds-button-filled.js'; // import each <ds-*> tag you use",
     "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
@@ -181,76 +181,28 @@
       ]
     },
     {
-      "name": "button",
-      "title": "Button",
-      "description": "Primary action component with variants (primary/secondary), 8 semantic intents, 4 sizes, icon support, loading state, dropdown indicator, badge count, and elevation levels.",
+      "name": "card-setting",
+      "title": "CardSetting",
+      "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
         "exports": [
-          "Button"
+          "CardSetting"
         ],
         "props": {
-          "label": {
+          "heading": {
             "type": "string",
-            "required": false
+            "required": true
           },
-          "icon": {
-            "type": "IconComponent",
-            "required": false
-          },
-          "variant": {
-            "type": "'primary' | 'secondary'",
-            "required": false
-          },
-          "intent": {
-            "type": "'none' | 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive'",
-            "required": false
-          },
-          "size": {
+          "cardWidth": {
             "type": "'xs' | 'sm' | 'md' | 'lg'",
             "required": false
           },
-          "contrast": {
-            "type": "'strong' | 'bold' | 'medium' | 'faint'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'flat' | 'elevated' | 'floating'",
-            "required": false
-          },
-          "loading": {
+          "editing": {
             "type": "boolean",
-            "required": false
-          },
-          "dropdown": {
-            "type": "boolean",
-            "required": false
-          },
-          "badgeCount": {
-            "type": "number",
-            "required": false
-          },
-          "rounded": {
-            "type": "boolean",
-            "required": false
-          },
-          "fullWidth": {
-            "type": "boolean",
-            "required": false
-          },
-          "inactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "as": {
-            "type": "React.ElementType",
-            "required": false
-          },
-          "onClick": {
-            "type": "(e: React.MouseEvent<HTMLElement>) => void",
             "required": false
           }
         }
@@ -262,7 +214,52 @@
       ],
       "registryDependencies": [
         "text",
-        "loader"
+        "button-unfilled-icon",
+        "button-filled"
+      ]
+    },
+    {
+      "name": "button-filled",
+      "title": "ButtonFilled",
+      "description": "Square filled primary icon button. Intent-based colours with contrast fill pairing (bold→faint fg, strong→medium, medium→strong, faint→bold).",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-filled",
+        "exports": [
+          "ButtonFilled"
+        ],
+        "props": {
+          "icon": {
+            "type": "string",
+            "required": true
+          },
+          "intent": {
+            "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'",
+            "required": false
+          },
+          "contrast": {
+            "type": "'bold' | 'strong' | 'medium' | 'faint'",
+            "required": false
+          },
+          "inactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string",
+            "required": false
+          }
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon"
       ]
     },
     {
@@ -302,8 +299,12 @@
             "type": "boolean",
             "required": false
           },
+          "backgroundContrast": {
+            "type": "'default' | 'medium' | 'bold' | 'strong'",
+            "required": false
+          },
           "background": {
-            "type": "'faint' | 'medium' | 'bold' | 'strong' | 'always-dark' | 'navigation'",
+            "type": "'always-dark' | 'navigation'",
             "required": false
           },
           "ariaLabel": {
@@ -320,116 +321,6 @@
       "registryDependencies": [
         "icon",
         "badge"
-      ]
-    },
-    {
-      "name": "toggle-button",
-      "title": "ToggleButton",
-      "description": "Controlled toggle button with pressed state, icon and label support.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle-button",
-        "exports": [
-          "ToggleButton"
-        ],
-        "props": {
-          "pressed": {
-            "type": "boolean",
-            "required": true
-          },
-          "onPressedChange": {
-            "type": "(pressed: boolean) => void",
-            "required": true
-          },
-          "label": {
-            "type": "string",
-            "required": false
-          },
-          "icon": {
-            "type": "IconComponent",
-            "required": false
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'flat' | 'elevated' | 'floating'",
-            "required": false
-          },
-          "rounded": {
-            "type": "boolean",
-            "required": false
-          },
-          "inactive": {
-            "type": "boolean",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "button-group",
-      "title": "ButtonGroup",
-      "description": "Groups Button children with automatic dividers and shared elevation/rounding. Reads props from first child to drive group styling.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-group",
-        "exports": [
-          "ButtonGroup"
-        ],
-        "props": {
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "button"
-      ]
-    },
-    {
-      "name": "toggle-button-group",
-      "title": "ToggleButtonGroup",
-      "description": "Groups ToggleButton children with dividers and shared chrome.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle-button-group",
-        "exports": [
-          "ToggleButtonGroup"
-        ],
-        "props": {
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "toggle-button"
       ]
     },
     {
