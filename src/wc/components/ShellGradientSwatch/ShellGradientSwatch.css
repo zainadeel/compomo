@@ -2,6 +2,7 @@
 
 :host {
   display: inline-flex;
+  --_swatch-ring-bg: var(--color-background-primary);
 }
 
 .shell-gradient-swatch {
@@ -13,11 +14,23 @@
   border: none;
   border-radius: var(--dimension-radius-half);
   background-color: var(--color-background-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  isolation: isolate;
+}
+
+/* Wash layer — matches shell chrome at 10% opacity over secondary surface. */
+.shell-gradient-swatch::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--_swatch-gradient-image);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
-  cursor: pointer;
-  flex-shrink: 0;
+  opacity: var(--ds-shell-gradient-opacity, 0.1);
+  pointer-events: none;
 }
 
 .shell-gradient-swatch:disabled {
@@ -25,13 +38,12 @@
   cursor: not-allowed;
 }
 
-.shell-gradient-swatch--selected::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
-  pointer-events: none;
+/* Selected — 2px brand ring + 4px surface ring underneath (dot ring pattern). */
+.shell-gradient-swatch--selected {
+  box-shadow:
+    0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand),
+    0 0 0 calc(var(--dimension-stroke-width-025) + var(--dimension-stroke-width-050))
+      var(--_swatch-ring-bg);
 }
 
 .shell-gradient-swatch:not(.shell-gradient-swatch--selected):hover:not(:disabled)::after {
