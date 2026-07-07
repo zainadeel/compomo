@@ -14,16 +14,8 @@
   font-family: var(--typography-font-family, system-ui);
 }
 
-:host(.app-shell--gradient),
-:host(.app-shell--grid) {
+:host(.app-shell--gradient) {
   --_shell-chrome-bg: var(--color-background-secondary);
-}
-
-:host(.app-shell--grid) {
-  --_shell-chrome-grid-cell: var(--dimension-size-050);
-  --_shell-chrome-grid-stroke: var(--dimension-stroke-width-012);
-  --_shell-chrome-grid-line: var(--color-foreground-quaternary);
-  --_shell-chrome-grid-opacity: 0.1;
 }
 
 .app-shell__row {
@@ -35,7 +27,7 @@
 }
 
 /*
- * One chrome layer behind the shell row. Wash + grid use background-attachment: fixed
+ * One chrome layer behind the shell row. Wash uses background-attachment: fixed
  * so the pattern is locked to the viewport — panel/tools collapse only changes the
  * transparent window, not the pattern phase. JS sets wash background-size from
  * readShellViewportDimensions(), not the shell element box.
@@ -47,40 +39,22 @@
   z-index: 0;
 }
 
-:host(.app-shell--gradient) .app-shell__chrome,
-:host(.app-shell--grid) .app-shell__chrome {
+:host(.app-shell--gradient) .app-shell__chrome {
   background-color: var(--_shell-chrome-bg);
 }
 
-/* Layer stack (bottom → top): bg → wash (::before) → grid (::after) */
-:host(.app-shell--gradient) .app-shell__chrome::before,
-:host(.app-shell--grid) .app-shell__chrome::after {
+:host(.app-shell--gradient) .app-shell__chrome::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background-position: 0 0;
   background-attachment: fixed;
-}
-
-:host(.app-shell--gradient) .app-shell__chrome::before {
   z-index: 1;
   opacity: var(--ds-shell-gradient-opacity, 1);
   background-image: var(--ds-shell-gradient-image, none);
   background-size: var(--ds-shell-gradient-size, auto);
   background-repeat: no-repeat;
-}
-
-:host(.app-shell--grid) .app-shell__chrome::after {
-  z-index: 2;
-  opacity: var(--_shell-chrome-grid-opacity);
-  background-image: repeating-linear-gradient(
-    120deg,
-    var(--_shell-chrome-grid-line) 0,
-    var(--_shell-chrome-grid-line) var(--_shell-chrome-grid-stroke),
-    transparent var(--_shell-chrome-grid-stroke),
-    transparent var(--_shell-chrome-grid-cell)
-  );
 }
 
 .app-shell__panel {
@@ -132,8 +106,7 @@
 }
 
 /* Opaque page surface — masks the fixed chrome layer in the content column. */
-:host(.app-shell--gradient) .app-shell__content,
-:host(.app-shell--grid) .app-shell__content {
+:host(.app-shell--gradient) .app-shell__content {
   position: relative;
   z-index: 1;
   background-color: var(--color-background-primary);

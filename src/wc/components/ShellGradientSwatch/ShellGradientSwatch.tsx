@@ -41,11 +41,16 @@ export class ShellGradientSwatch {
             'shell-gradient-swatch': true,
             'ds-focus-ring-inset': true,
             'shell-gradient-swatch--selected': this.selected,
+            'shell-gradient-swatch--none': this.preset === 'none',
           }}
-          style={{
-            '--_swatch-gradient-image': buildShellRadialGradientForPreset(this.preset),
-            '--ds-shell-gradient-opacity': SHELL_GRADIENT_OPACITY,
-          }}
+          style={
+            this.preset === 'none'
+              ? undefined
+              : {
+                  '--_swatch-gradient-image': buildShellRadialGradientForPreset(this.preset),
+                  '--ds-shell-gradient-opacity': SHELL_GRADIENT_OPACITY,
+                }
+          }
           aria-label={label}
           aria-pressed={this.selected ? 'true' : 'false'}
           disabled={this.inactive}

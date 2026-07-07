@@ -1,0 +1,33 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import * as AppShellStories from './AppShell.stories';
+
+<Meta of={AppShellStories} />
+
+# App Shell
+
+`ds-app-shell` is the workspace layout primitive for Motive dashboard shells. It slots **panel nav**, **bar nav**, **panel tools**, and page content, and optionally paints a shared chrome layer behind the nav surfaces.
+
+## Slots
+
+| Slot | Element | Purpose |
+| --- | --- | --- |
+| `panel` | `ds-panel-nav` | Left navigation rail |
+| `bar` | `ds-bar-nav` | Top tab bar / heading row |
+| `tools` | `ds-panel-tools` | Right tool rail + drawer |
+| *(default)* | — | Scrollable page content (opaque primary surface when gradient is on) |
+
+## Props
+
+| Prop | Default | Behavior |
+| --- | --- | --- |
+| `navStyle` | `dashboard` | Propagated to slotted `ds-panel-nav` and `ds-bar-nav` |
+| `gradient` | `false` | When `true`, mounts the shared chrome layer and syncs `--ds-shell-gradient-*` vars to shell, panel, and bar |
+| `gradientPreset` | `neutral` | Built-in wash: `none` (solid secondary), `cool`, `neutral`, or `warm`. `gradientSrc` overrides when set |
+| `gradientSrc` | `''` | Optional `url(...)` image override for the wash |
+| `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers) |
+
+## Gradient presets
+
+Use `ds-shell-gradient-picker` (or menu gradient-picker sections) to let users pick a wash. **`none`** matches `--color-background-secondary` with no intent wash — useful when you want chrome framing without color tint.
+
+See [framework integration](/?path=/docs/docs-introduction--docs) for host-app wiring, viewport sizing, and Angular timing notes.

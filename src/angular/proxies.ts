@@ -36,14 +36,14 @@ export declare interface DsAccordion extends Components.DsAccordion {
 
 
 @ProxyCmp({
-  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled']
+  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
   selector: 'ds-app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled'],
+  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'navStyle', 'shortcutsEnabled'],
   standalone: false
 })
 export class DsAppShell {

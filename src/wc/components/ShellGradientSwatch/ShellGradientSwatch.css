@@ -11,7 +11,7 @@
   width: var(--dimension-size-400);
   height: var(--dimension-size-400);
   padding: 0;
-  border: none;
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   border-radius: var(--dimension-radius-half);
   background-color: var(--color-background-secondary);
   cursor: pointer;
@@ -57,6 +57,11 @@
 .shell-gradient-swatch:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* None — secondary surface only, no wash preview. */
+.shell-gradient-swatch--none::before {
+  display: none;
 }
 
 /* Selected — inset 2px brand ring + inset 2px surface halo behind it. */
