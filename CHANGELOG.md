@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.6.3](https://github.com/zainadeel/compomo/compare/v2.6.2...v2.6.3) (2026-07-07)
+
+
+### Fixed
+
+* **Menu:** use valid CSS var() for panel-nav user menu sideOffset ([abf0177](https://github.com/zainadeel/compomo/commit/abf01772754378177a2a067a453393a086c01983))
+* **Menu:** use valid CSS var() for panel-nav user menu sideOffset ([3eb9f75](https://github.com/zainadeel/compomo/commit/3eb9f75f323e8fe1b418209886de4343f3b7d549))
+* **Menu:** valid CSS sideOffset for host-bound placement ([abf0177](https://github.com/zainadeel/compomo/commit/abf01772754378177a2a067a453393a086c01983))
+* **Menu:** valid CSS sideOffset for host-bound placement ([4188a1b](https://github.com/zainadeel/compomo/commit/4188a1bc9f93ebb5628080e7d7fdfb6188e403b2))
+
 ## [2.6.2](https://github.com/zainadeel/compomo/compare/v2.6.1...v2.6.2) (2026-07-07)
 
 
