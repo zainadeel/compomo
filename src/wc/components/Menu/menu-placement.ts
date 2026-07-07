@@ -1,4 +1,3 @@
-import { TOKEN_DEFAULTS } from '../../utils';
 import type { MenuAlign, MenuSide } from './menu-position';
 
 /** Placement props bindable on `ds-menu` (side, align, offsets). */
@@ -19,6 +18,6 @@ export interface MenuPlacement {
 export const PANEL_NAV_USER_MENU_PLACEMENT = {
   side: 'right',
   align: 'end',
-  sideOffset: TOKEN_DEFAULTS.space050,
+  sideOffset: 'var(--dimension-space-050)',
   alignOffset: 0,
 } as const satisfies MenuPlacement;

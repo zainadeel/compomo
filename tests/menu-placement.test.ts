@@ -9,7 +9,7 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
   it('uses right/end with default menu side gap token', () => {
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.side, 'right');
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.align, 'end');
-    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.sideOffset, TOKEN_DEFAULTS.space050);
+    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.sideOffset, 'var(--dimension-space-050)');
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.alignOffset, 0);
   });
 
