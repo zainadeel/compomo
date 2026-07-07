@@ -21,16 +21,11 @@ Intended as a reference when building new components so these patterns stay cons
 edge padding = (height - iconSize) / 2
 ```
 
-**Button / ToggleButton (iconAndLabel layout — icon on left):**
+**Icon buttons (`ds-button-unfilled-icon`, `ds-button-filled`):**
 
-| Size | Height | Icon | Optical gap | Left padding (icon side) | Right padding (label side) |
-|------|--------|------|-------------|--------------------------|----------------------------|
-| XS | 16px | 12px | 2px | <code>space-025</code> = 2px | <code>space-025</code> = 2px |
-| SM | 24px | 16px | 4px | <code>space-050</code> = 4px | <code>space-075</code> = 6px |
-| MD | 32px | 20px | 6px | <code>space-075</code> = 6px | <code>space-100</code> = 8px |
-| LG | 40px | 24px | 8px | <code>space-100</code> = 8px | <code>space-150</code> = 12px |
-
-Note the asymmetry: the label side keeps its normal token value; only the icon side is corrected. XS happens to already be correct since the base token matches the gap.
+| Size | Host | Icon | Padding |
+|------|------|------|---------|
+| MD | 32px (`size-400`) | 20px (`iconography-md`) | `space-075` (6px) |
 
 **Tag (iconLeft / iconRight — leading icon or remove button):**
 
@@ -49,16 +44,6 @@ For Tag, both the leading icon side (left) and the remove-button side (right) ar
 **The rule:** pill-shaped components add <code>space-050</code> (4px) extra padding on any side that has no content anchor (bare label text at the edge, no icon).
 
 **Why:** a pill's large corner radius curves far into the edge, eating into the visual breathing room around the text. The extra <code>space-050</code> compensates so the text doesn't feel cramped against the rounded edge. Sides that already have an icon do not get the correction — the icon acts as a visual anchor and the tighter icon-edge padding (rule 1) already applies.
-
-**Button / ToggleButton (rounded):**
-
-Added to *both* sides for labelOnly. Added only to the *label/right side* for iconAndLabel (the icon side keeps the corrected icon-edge padding from rule 1):
-
-```
-labelOnly:    padding = base + space-050 (both sides)
-iconAndLabel: left  = icon-edge padding + space-050
-              right = base + space-050
-```
 
 **Tag (rounded — pill padding correction classes):**
 
@@ -98,9 +83,9 @@ When both an icon and a remove button are present, neither correction applies. W
 
 ---
 
-## 4. Alpha dividers in component groups
+## 4. Alpha dividers in adjacent chrome
 
-**The rule:** dividers between grouped components (ButtonGroup, ToggleButtonGroup) must use an alpha color token and must be physically positioned to overlap adjacent button fills — not sit in the gap between them.
+**The rule:** dividers between adjacent chrome controls must use an alpha color token and must be physically positioned to overlap adjacent fills — not sit in the gap between them.
 
 **Why the token alone isn't enough:** <code>color-border-tertiary</code> = rgb(0 0 0 / 0.1) (10% black in light mode, 10% white in dark mode). This is the right token — it's designed to blend over any surface. But a 1px flex child sitting *between* two buttons composites against the group/page background, not against the button fills. When buttons have a colored pressed state (e.g. bg-faint-brand, blue) the divider still shows as 10% black over white — a gray line that breaks the blue.
 
