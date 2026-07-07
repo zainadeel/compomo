@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/zainadeel/compomo/compare/v2.6.3...v2.7.0) (2026-07-07)
+
+
+### Added
+
+* **AppShell:** remove grid, add none preset, simplify stories ([#250](https://github.com/zainadeel/compomo/issues/250)) ([f9f939d](https://github.com/zainadeel/compomo/commit/f9f939db796de63e601291fd6d662c7056c1e7ad))
+
 ## [2.6.3](https://github.com/zainadeel/compomo/compare/v2.6.2...v2.6.3) (2026-07-07)
 
 
