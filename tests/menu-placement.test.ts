@@ -6,9 +6,9 @@ import { resolveCssLengthPx } from '../src/wc/utils/resolve-css-length-px';
 import { TOKEN_DEFAULTS } from '../src/wc/utils/token-defaults';
 
 describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
-  it('uses right/start with default menu side gap token', () => {
+  it('uses right/end with default menu side gap token', () => {
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.side, 'right');
-    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.align, 'start');
+    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.align, 'end');
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.sideOffset, TOKEN_DEFAULTS.space050);
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.alignOffset, 0);
   });
@@ -40,7 +40,7 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
       });
 
       assert.equal(pos.x, 204);
-      assert.equal(pos.y, 48);
+      assert.equal(pos.y, -160);
     } finally {
       style.remove();
     }
