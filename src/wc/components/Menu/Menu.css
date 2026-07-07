@@ -28,7 +28,7 @@
 }
 
 .menu-popup--closing {
-  animation: menuFadeOut var(--effect-motion-short-3) forwards;
+  animation: menuFadeOut var(--effect-motion-short-2) forwards;
 }
 
 @keyframes menuFadeIn {
@@ -64,11 +64,10 @@
 }
 
 .section-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--dimension-space-025);
   color: var(--color-foreground-secondary);
-}
-
-.menu-section--gradient-picker {
-  padding-bottom: var(--dimension-space-050);
 }
 
 /* ── Items ───────────────────────────────────────────────────────────────── */
@@ -146,6 +145,7 @@
 }
 
 .menu-item__label {
+  padding: 0 var(--dimension-space-025);
   color: var(--color-foreground-secondary);
 }
 
@@ -155,6 +155,7 @@
 }
 
 .menu-item__subtext {
+  padding: 0 var(--dimension-space-025);
   color: var(--color-foreground-secondary);
   line-height: 1.4;
 }

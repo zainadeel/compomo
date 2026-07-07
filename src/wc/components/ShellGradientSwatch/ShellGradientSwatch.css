@@ -1,57 +1,145 @@
 @import '../../utils/focus-ring.css';
 
+/**
+ * Swatch — 24×24 orb (size-300). Spacing lives on the picker row.
+ *
+ * Layer stack (bottom → top):
+ *   Default:    fill → border → interaction (hover/press)
+ *   Selected:   fill → border → interaction → halo → stroke (brand)
+ */
+
 :host {
+  box-sizing: border-box;
   display: inline-flex;
+  flex: 0 0 auto;
+  width: var(--dimension-size-300);
+  height: var(--dimension-size-300);
+  --_swatch-inner-inset: calc(
+    var(--dimension-stroke-width-025) + var(--dimension-space-025)
+  );
   --_swatch-ring-bg: var(--color-background-primary);
+  --_swatch-select-motion: var(--effect-motion-short-3);
 }
 
 .shell-gradient-swatch {
   position: relative;
   box-sizing: border-box;
-  width: var(--dimension-size-400);
-  height: var(--dimension-size-400);
+  width: var(--dimension-size-300);
+  height: var(--dimension-size-300);
   padding: 0;
-  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  border: none;
   border-radius: var(--dimension-radius-half);
-  background-color: var(--color-background-secondary);
+  background: transparent;
   cursor: pointer;
   flex-shrink: 0;
   isolation: isolate;
 }
 
-/* Wash layer — matches shell chrome at 10% opacity over secondary surface. */
-.shell-gradient-swatch::before {
-  content: '';
+.shell-gradient-swatch__fill,
+.shell-gradient-swatch__border,
+.shell-gradient-swatch__interaction,
+.shell-gradient-swatch__halo,
+.shell-gradient-swatch__stroke {
   position: absolute;
-  inset: 0;
-  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   border-radius: inherit;
+  pointer-events: none;
+}
+
+/* 1 — fill */
+.shell-gradient-swatch__fill {
+  z-index: 1;
+  background-color: var(--color-background-secondary);
   background-image: var(--_swatch-gradient-image);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
+  transition:
+    top var(--_swatch-select-motion),
+    right var(--_swatch-select-motion),
+    bottom var(--_swatch-select-motion),
+    left var(--_swatch-select-motion);
+}
+
+.shell-gradient-swatch--none .shell-gradient-swatch__fill {
+  background-image: none;
+}
+
+.shell-gradient-swatch:not(.shell-gradient-swatch--none) .shell-gradient-swatch__fill {
   opacity: var(--ds-shell-gradient-opacity, 0.1);
-  pointer-events: none;
 }
 
-/* Interaction layer — above wash, below focus ring. */
-.shell-gradient-swatch::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
+/* 2 — tertiary border */
+.shell-gradient-swatch__border {
+  z-index: 2;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
+  transition:
+    top var(--_swatch-select-motion),
+    right var(--_swatch-select-motion),
+    bottom var(--_swatch-select-motion),
+    left var(--_swatch-select-motion);
+}
+
+/* 3 — hover / press (over border, under selected chrome) */
+.shell-gradient-swatch__interaction {
+  z-index: 3;
   background: transparent;
-  pointer-events: none;
-  transition: none;
+  transition:
+    top var(--_swatch-select-motion),
+    right var(--_swatch-select-motion),
+    bottom var(--_swatch-select-motion),
+    left var(--_swatch-select-motion),
+    background-color 0s;
 }
 
-.shell-gradient-swatch:hover:not(:disabled)::after {
+.shell-gradient-swatch:hover:not(:disabled) .shell-gradient-swatch__interaction {
   background: var(--color-interaction-hover);
 }
 
-.shell-gradient-swatch:active:not(:disabled)::after {
+.shell-gradient-swatch:active:not(:disabled) .shell-gradient-swatch__interaction {
   background: var(--color-interaction-pressed);
+}
+
+/* 4 — halo gap (selected only) */
+.shell-gradient-swatch__halo {
+  z-index: 4;
+  opacity: 0;
+  transform: scale(1.2);
+  transform-origin: center;
+  box-shadow: inset 0 0 0 var(--_swatch-inner-inset) var(--_swatch-ring-bg);
+  transition:
+    opacity var(--_swatch-select-motion),
+    transform var(--_swatch-select-motion);
+}
+
+/* 5 — brand stroke (selected only) */
+.shell-gradient-swatch__stroke {
+  z-index: 5;
+  opacity: 0;
+  transform: scale(1.2);
+  transform-origin: center;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
+  transition:
+    opacity var(--_swatch-select-motion),
+    transform var(--_swatch-select-motion);
+}
+
+.shell-gradient-swatch--selected .shell-gradient-swatch__fill,
+.shell-gradient-swatch--selected .shell-gradient-swatch__border,
+.shell-gradient-swatch--selected .shell-gradient-swatch__interaction {
+  top: var(--_swatch-inner-inset);
+  right: var(--_swatch-inner-inset);
+  bottom: var(--_swatch-inner-inset);
+  left: var(--_swatch-inner-inset);
+}
+
+.shell-gradient-swatch--selected .shell-gradient-swatch__halo,
+.shell-gradient-swatch--selected .shell-gradient-swatch__stroke {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .shell-gradient-swatch:disabled {
@@ -59,14 +147,12 @@
   cursor: not-allowed;
 }
 
-/* None — secondary surface only, no wash preview. */
-.shell-gradient-swatch--none::before {
-  display: none;
-}
-
-/* Selected — inset 2px brand ring + inset 2px surface halo behind it. */
-.shell-gradient-swatch--selected::after {
-  box-shadow:
-    inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand),
-    inset 0 0 0 calc(var(--dimension-stroke-width-025) * 2) var(--_swatch-ring-bg);
+@media (prefers-reduced-motion: reduce) {
+  .shell-gradient-swatch__fill,
+  .shell-gradient-swatch__border,
+  .shell-gradient-swatch__interaction,
+  .shell-gradient-swatch__halo,
+  .shell-gradient-swatch__stroke {
+    transition: none;
+  }
 }

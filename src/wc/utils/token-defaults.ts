@@ -16,6 +16,7 @@ import {
   effectAnimationDelayShort2,
   effectAnimationDurationMedium1,
   effectAnimationDurationShort3,
+  effectMotionShort2,
   effectMotionShort3,
 } from '@ds-mo/tokens/ts';
 
@@ -33,6 +34,7 @@ export const TOKEN_DEFAULTS = {
   panelWidthMd: dimensionPanelWidthMd,
   panelWidthLg: dimensionPanelWidthLg,
   menuWidthXs: dimensionMenuWidthXs,
+  motionShort2: effectMotionShort2,
   motionShort3: effectMotionShort3,
   animationDurationShort3: effectAnimationDurationShort3,
   animationDurationMedium1: effectAnimationDurationMedium1,

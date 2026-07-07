@@ -825,7 +825,7 @@ export namespace Components {
          */
         "preset": ShellGradientPreset1;
         /**
-          * Selected state — brand ring with background offset (notification-dot pattern).
+          * Selected — brand stroke + halo over inner fill/border/interaction stack.
           * @default false
          */
         "selected": boolean;
@@ -2695,7 +2695,7 @@ declare namespace LocalJSX {
          */
         "preset"?: ShellGradientPreset1;
         /**
-          * Selected state — brand ring with background offset (notification-dot pattern).
+          * Selected — brand stroke + halo over inner fill/border/interaction stack.
           * @default false
          */
         "selected"?: boolean;

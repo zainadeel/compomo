@@ -16,7 +16,7 @@ export class ShellGradientSwatch {
   /** Wash preset this orb previews. */
   @Prop({ reflect: true }) preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET;
 
-  /** Selected state — brand ring with background offset (notification-dot pattern). */
+  /** Selected — brand stroke + halo over inner fill/border/interaction stack. */
   @Prop({ reflect: true }) selected = false;
 
   @Prop() inactive = false;
@@ -55,7 +55,13 @@ export class ShellGradientSwatch {
           aria-pressed={this.selected ? 'true' : 'false'}
           disabled={this.inactive}
           onClick={this.handleClick}
-        />
+        >
+          <span class="shell-gradient-swatch__fill" aria-hidden="true" />
+          <span class="shell-gradient-swatch__border" aria-hidden="true" />
+          <span class="shell-gradient-swatch__interaction" aria-hidden="true" />
+          <span class="shell-gradient-swatch__halo" aria-hidden="true" />
+          <span class="shell-gradient-swatch__stroke" aria-hidden="true" />
+        </button>
       </Host>
     );
   }
