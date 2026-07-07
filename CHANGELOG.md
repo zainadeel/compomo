@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.8.0](https://github.com/zainadeel/compomo/compare/v2.7.0...v2.8.0) (2026-07-07)
+
+
+### Added
+
+* **menu:** panel-nav placement, gradient orbs, and menu polish ([39fa304](https://github.com/zainadeel/compomo/commit/39fa3049d468066e5591ecf5211fe13512ce61e8))
+* **menu:** panel-nav placement, gradient orbs, and menu polish ([236f7b8](https://github.com/zainadeel/compomo/commit/236f7b810c8e459015ab6c4a8322d3475e33cd4e))
+
+
+### Fixed
+
+* **build:** commit patched components.d.ts for CI src/ check ([40287a4](https://github.com/zainadeel/compomo/commit/40287a4a2e7b13f8b4f9fde8116384d4712eb88b))
+
 ## [2.7.0](https://github.com/zainadeel/compomo/compare/v2.6.3...v2.7.0) (2026-07-07)
 
 
