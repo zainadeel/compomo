@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/zainadeel/compomo/compare/v2.6.1...v2.6.2) (2026-07-07)
+
+
+### Fixed
+
+* **storybook:** sync sidebar version after package bumps ([33407b7](https://github.com/zainadeel/compomo/commit/33407b7b60a34698c751fe6f53ecb819f26fcf20))
+
 ## [2.6.1](https://github.com/zainadeel/compomo/compare/v2.6.0...v2.6.1) (2026-07-07)
 
 
