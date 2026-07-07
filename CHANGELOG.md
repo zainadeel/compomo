@@ -5,6 +5,26 @@
 
 ### Added
 
+* **buttons:** add filled button and settings section card ([05c748c](https://github.com/zainadeel/compomo/commit/05c748cee96e60bbd2189b864fe6b59dc07bd8a8))
+* **buttons:** add filled button and settings section card ([6054c51](https://github.com/zainadeel/compomo/commit/6054c51d9e21a0bd2dc3cb4c26d9f3ffffd87460))
+
+
+### Fixed
+
+* **build:** commit patched components.d.ts and remove stale react wrapper ([27aa8f1](https://github.com/zainadeel/compomo/commit/27aa8f142059cddf34bf338de4b1b2eb8199efb6))
+* **build:** sync components.d.ts with post-build patch output ([2a5cb67](https://github.com/zainadeel/compomo/commit/2a5cb67886da3605a09c0dbcb42b1168f7e52366))
+* **card-setting:** clip header corners and rename component ([dc79db8](https://github.com/zainadeel/compomo/commit/dc79db864fd137bb831020bcc2072156f1795b59))
+
+
+### Documentation
+
+* **optical-sizing:** drop removed button group references ([a1f473d](https://github.com/zainadeel/compomo/commit/a1f473d463ef073a92b16a8f8c107f3472eed261))
+
+## [2.9.0](https://github.com/zainadeel/compomo/compare/v2.8.0...v2.9.0) (2026-07-07)
+
+
+### Added
+
 * **button-filled:** square filled icon button with intent + contrast pairing
 * **card-setting:** settings section card with view/edit chrome and controlled `editing` state
 
