@@ -7,6 +7,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(__dirname, '..');
 const DIST_DIR = resolve(PROJECT_ROOT, 'dist/components');
 const DIST_STAMP = resolve(PROJECT_ROOT, 'dist/.build-stamp');
+const PACKAGE_JSON = resolve(PROJECT_ROOT, 'package.json');
+const PACKAGE_VERSION_JSON = resolve(PROJECT_ROOT, '.storybook/static/package-version.json');
 
 const RELOAD_DEBOUNCE_MS = 350;
 
@@ -53,13 +55,27 @@ function createDistReloadPlugin(): Plugin {
         scheduleFullReload(reason);
       };
 
+      const onPackageVersionEvent = (filePath: string) => {
+        const normalized = normalizePath(filePath);
+        if (
+          normalized !== normalizePath(PACKAGE_JSON) &&
+          normalized !== normalizePath(PACKAGE_VERSION_JSON)
+        ) {
+          return;
+        }
+        scheduleFullReload('package version');
+      };
+
       server.watcher.on('add', onDistFileEvent);
       server.watcher.on('change', onDistFileEvent);
       server.watcher.on('unlink', onDistFileEvent);
+      server.watcher.on('change', onPackageVersionEvent);
 
       // dist/ is gitignored — must opt in explicitly (watch.ignored below also allows it).
       server.watcher.add(DIST_DIR);
       server.watcher.add(DIST_STAMP);
+      server.watcher.add(PACKAGE_JSON);
+      server.watcher.add(PACKAGE_VERSION_JSON);
     },
   };
 }

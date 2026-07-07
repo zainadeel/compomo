@@ -75,6 +75,7 @@
     "build:docs": "stencil build --docs",
     "dev": "node scripts/generate-icon-catalog.mjs && stencil build --watch",
     "storybook:ui": "node scripts/storybook-ui.mjs",
+    "prestorybook:build": "node scripts/write-build-stamp.mjs",
     "storybook": "node scripts/storybook-dev.mjs",
     "storybook:build": "storybook build",
     "clean": "rm -rf dist",

@@ -1,5 +1,7 @@
 import { spawn } from 'node:child_process';
-import { writeBuildStamp } from './write-build-stamp.mjs';
+import { writeBuildStamp, writePackageVersion } from './write-build-stamp.mjs';
+
+writePackageVersion();
 
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
