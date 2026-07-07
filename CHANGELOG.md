@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.0](https://github.com/zainadeel/compomo/compare/v2.4.1...v2.5.0) (2026-07-07)
+
+
+### Added
+
+* **AppShell:** add shell gradient presets and menu picker ([05461e2](https://github.com/zainadeel/compomo/commit/05461e2bff7776101db7583b42a6a6a38cbb7dd9))
+* **AppShell:** add shell gradient presets and menu picker ([972f70f](https://github.com/zainadeel/compomo/commit/972f70f7f63960efd28c1654df79d7cde04df4c5))
+
 ## [2.4.1](https://github.com/zainadeel/compomo/compare/v2.4.0...v2.4.1) (2026-07-06)
 
 
