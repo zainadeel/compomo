@@ -4,6 +4,7 @@ import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-shell-gradient-picker.js';
 import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
+import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 
 const items = [
   { label: 'Edit', value: 'edit' },
@@ -138,8 +139,10 @@ export const AppearanceAndTheme: Story = {
       <span id="menu-anchor-user" style="display: inline-block; width: 1px; height: 1px"></span>
       <ds-menu
         ?open=${true}
-        side="right"
-        align="start"
+        side=${PANEL_NAV_USER_MENU_PLACEMENT.side}
+        align=${PANEL_NAV_USER_MENU_PLACEMENT.align}
+        sideOffset=${PANEL_NAV_USER_MENU_PLACEMENT.sideOffset}
+        alignOffset=${PANEL_NAV_USER_MENU_PLACEMENT.alignOffset}
         anchor-id="menu-anchor-user"
         .sections=${[
           {

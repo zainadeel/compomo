@@ -155,8 +155,56 @@ The drawer surface also sets `aria-hidden="true"` and the **`inert`** attribute 
 
 ## External `ds-menu`
 
-Bind `[open]`, `[sections]`, `[anchor]`, `side`, `align`, and offsets in the host template. Use `dsNavUserAction` detail `{ anchor }` — do not open without a resolved anchor. Theme menu example: **motive-webapp-lab** `shell.component.ts` (`userMenuVisible` getter).
+Host apps render **external** `ds-menu` instances (not bundled inside `ds-panel-nav`) for user settings, appearance, theme pickers, etc.
+
+### Panel-nav user menu (canonical)
+
+1. Listen for `dsNavUserAction` on `ds-panel-nav`. Detail includes:
+   - `anchor` — footer user button (`id="ds-panel-nav-user-menu-anchor"`)
+   - `menuPlacement` — recommended `ds-menu` props (same as `PANEL_NAV_USER_MENU_PLACEMENT`)
+2. Bind the external menu:
+
+```ts
+import {
+  PANEL_NAV_USER_MENU_PLACEMENT,
+  type MenuSection,
+  type ShellGradientPreset,
+} from '@ds-mo/ui';
+// or: import { PANEL_NAV_USER_MENU_PLACEMENT } from '@ds-mo/ui/nav';
+```
+
+```html
+<ds-menu
+  [open]="userMenuOpen"
+  [anchor]="userMenuAnchor"
+  [sections]="userMenuSections"
+  [side]="userMenuPlacement.side"
+  [align]="userMenuPlacement.align"
+  [sideOffset]="userMenuPlacement.sideOffset"
+  [alignOffset]="userMenuPlacement.alignOffset"
+  (dsClose)="onUserMenuClose()"
+  (dsSelect)="onUserMenuSelect($event)"
+  (dsGradientSelect)="onUserMenuGradientSelect($event)"
+></ds-menu>
+```
+
+On `dsNavUserAction`, set `userMenuAnchor = detail.anchor` and `userMenuPlacement = detail.menuPlacement` (or spread `PANEL_NAV_USER_MENU_PLACEMENT` directly).
+
+**Sections pattern** (see Storybook **Menu → Appearance and theme**):
+
+- `Appearance` — System / Dark / Light rows (`dsSelect` closes menu)
+- `Theme` — `{ header: 'Theme', variant: 'gradient-picker', value }` (`dsGradientSelect`; menu stays open)
+
+**Do not** pass `minWidth` unless a product needs a fixed width — `.menu-popup` uses `min-width: var(--dimension-menu-width-xs)` (200px). The gradient-picker row fits at that token width.
+
+**Do not** copy BarNav overflow menu offsets (`side="bottom"`, `align="end"`, `space100+space050`) for the panel-nav user menu — different anchor and axis.
+
+`ds-menu` still accepts `side`, `align`, `sideOffset`, `alignOffset`, `menuWidth`, and `minWidth` as escape hatches when a host needs custom placement.
+
+### Other external menus
+
+Bind `[open]`, `[sections]` or `[items]`, `[anchor]` / `anchor-id`, and placement props. Position math lives in `menu-position.ts` with viewport clamping.
 
 ## Reference consumer
 
-**motive-webapp-lab** — shell + `PanelNavHostDirective` + document hint + Phase 0 perf harness (`npm run perf:phase0`).
+**motive-webapp-lab** — shell + `PanelNavHostDirective` + document hint + Phase 0 perf harness (`npm run perf:phase0`). User menu: spread `PANEL_NAV_USER_MENU_PLACEMENT` from `@ds-mo/ui`.

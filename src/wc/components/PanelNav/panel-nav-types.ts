@@ -1,3 +1,5 @@
+import type { MenuPlacement } from '../Menu/menu-placement';
+import { PANEL_NAV_USER_MENU_PLACEMENT } from '../Menu/menu-placement';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 
 export type { NavChromeStyle };
@@ -27,4 +29,8 @@ export const PANEL_NAV_USER_MENU_ANCHOR_ID = 'ds-panel-nav-user-menu-anchor';
 /** Detail for `dsNavUserAction` — anchor element for an external `ds-menu`. */
 export interface PanelNavUserActionDetail {
   anchor: HTMLElement;
+  /** Recommended `ds-menu` placement — spread onto external user menu instance. */
+  menuPlacement: MenuPlacement;
 }
+
+export { PANEL_NAV_USER_MENU_PLACEMENT };

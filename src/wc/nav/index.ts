@@ -37,6 +37,10 @@ export {
   readShellViewportDimensions,
 } from './shell-gradient';
 export type { ShellGradientLayout, ShellViewportDimensions } from './shell-gradient';
+export type { MenuPlacement } from '../components/Menu/menu-placement';
+export {
+  PANEL_NAV_USER_MENU_PLACEMENT,
+} from '../components/Menu/menu-placement';
 export type { ShellGradientPreset } from './shell-gradient-presets';
 export {
   DEFAULT_SHELL_GRADIENT_PRESET,
