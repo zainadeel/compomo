@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.6.1](https://github.com/zainadeel/compomo/compare/v2.6.0...v2.6.1) (2026-07-07)
+
+
+### Fixed
+
+* **Menu:** bottom-align panel-nav user menu on footer anchor ([d30f10e](https://github.com/zainadeel/compomo/commit/d30f10eee58da88a0a491359ec68792f67c05577))
+* **Menu:** bottom-align panel-nav user menu on footer anchor ([d30f10e](https://github.com/zainadeel/compomo/commit/d30f10eee58da88a0a491359ec68792f67c05577))
+* **Menu:** bottom-align panel-nav user menu on footer anchor ([a51de71](https://github.com/zainadeel/compomo/commit/a51de716017703def0607f1633ad032cced4d52a))
+* **ShellGradientSwatch:** accurate wash preview and inset selection rings ([57e3d07](https://github.com/zainadeel/compomo/commit/57e3d070886171c982b8e941e409723a4f13d223))
+* **ShellGradientSwatch:** inset surface halo on selection ring ([2fbbe4a](https://github.com/zainadeel/compomo/commit/2fbbe4ade813fc36c1d61324dcb9cbdb1542a6c9))
+* **ShellGradientSwatch:** match 10% wash and dot-style selection ring ([67dcdb0](https://github.com/zainadeel/compomo/commit/67dcdb085f0fb64ba890d49ef176e54783c5e5a8))
+* **ShellGradientSwatch:** restore hover and pressed interaction layer ([7042a06](https://github.com/zainadeel/compomo/commit/7042a0668ab41cf2e602c47dd68d1d9eefa75f1a))
+* **ShellGradientSwatch:** use 2px inset surface halo ([6b5c035](https://github.com/zainadeel/compomo/commit/6b5c035c28d32ba2dbb9a05232dbe88a51230553))
+* **ShellGradientSwatch:** use inset brand selection ring ([6e9680b](https://github.com/zainadeel/compomo/commit/6e9680bf91f0b082c338247e03b1c98e0133d4f9))
+
 ## [2.6.0](https://github.com/zainadeel/compomo/compare/v2.5.0...v2.6.0) (2026-07-07)
 
 
