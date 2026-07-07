@@ -1,8 +1,8 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 
-export type SettingsSectionCardWidth = 'xs' | 'sm' | 'md' | 'lg';
+export type CardSettingWidth = 'xs' | 'sm' | 'md' | 'lg';
 
-const CARD_WIDTH_VARS: Record<SettingsSectionCardWidth, string> = {
+const CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {
   xs: 'var(--dimension-card-width-xs)',
   sm: 'var(--dimension-card-width-sm)',
   md: 'var(--dimension-card-width-md)',
@@ -12,16 +12,16 @@ const CARD_WIDTH_VARS: Record<SettingsSectionCardWidth, string> = {
 const FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';
 
 @Component({
-  tag: 'ds-settings-section-card',
-  styleUrl: 'SettingsSectionCard.css',
+  tag: 'ds-card-setting',
+  styleUrl: 'CardSetting.css',
   scoped: true,
 })
-export class SettingsSectionCard {
+export class CardSetting {
   /** Section heading shown in the card header. */
   @Prop() heading!: string;
 
   /** Card width token. */
-  @Prop() cardWidth: SettingsSectionCardWidth = 'md';
+  @Prop() cardWidth: CardSettingWidth = 'md';
 
   /** Controlled edit state — parent owns single-edit orchestration. */
   @Prop() editing = false;
@@ -43,15 +43,15 @@ export class SettingsSectionCard {
     return (
       <Host
         class={{
-          'settings-section-card': true,
-          'settings-section-card--editing': editing,
+          'card-setting': true,
+          'card-setting--editing': editing,
         }}
-        style={{ '--_settings-card-width': CARD_WIDTH_VARS[this.cardWidth] }}
+        style={{ '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth] }}
       >
-        <header class="settings-section-card__header">
-          <div class="settings-section-card__title-wrap">
+        <header class="card-setting__header">
+          <div class="card-setting__title-wrap">
             <ds-text
-              class="settings-section-card__title"
+              class="card-setting__title"
               variant="text-title-small"
               color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
               as="h2"
@@ -67,7 +67,7 @@ export class SettingsSectionCard {
               onDsClick={this.enterEdit}
             />
           ) : (
-            <div class="settings-section-card__actions">
+            <div class="card-setting__actions">
               <ds-button-unfilled-icon
                 type="button"
                 icon="Cross"
@@ -87,7 +87,7 @@ export class SettingsSectionCard {
             </div>
           )}
         </header>
-        <div class="settings-section-card__body">
+        <div class="card-setting__body">
           <slot />
         </div>
       </Host>

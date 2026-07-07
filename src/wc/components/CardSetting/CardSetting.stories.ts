@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../../../dist/components/ds-settings-section-card.js';
+import '../../../../dist/components/ds-card-setting.js';
 
 const meta: Meta = {
-  title: 'Layout/SettingsSectionCard',
+  title: 'Layout/CardSetting',
   tags: ['autodocs'],
   argTypes: {
     heading: { control: 'text' },
@@ -22,30 +22,30 @@ type Story = StoryObj;
 
 export const View: Story = {
   render: args => html`
-    <ds-settings-section-card
+    <ds-card-setting
       heading=${args['heading']}
       card-width=${args['cardWidth']}
       ?editing=${args['editing']}
-    ></ds-settings-section-card>
+    ></ds-card-setting>
   `,
 };
 
 export const Edit: Story = {
   args: { editing: true },
   render: args => html`
-    <ds-settings-section-card
+    <ds-card-setting
       heading=${args['heading']}
       card-width=${args['cardWidth']}
       ?editing=${true}
-    ></ds-settings-section-card>
+    ></ds-card-setting>
   `,
 };
 
 export const Interactive: Story = {
   render: () => html`
-    <div id="settings-card-demo" style="display:flex;flex-direction:column;gap:var(--dimension-space-400);"></div>
+    <div id="card-setting-demo" style="display:flex;flex-direction:column;gap:var(--dimension-space-400);"></div>
     <script type="module">
-      const root = document.getElementById('settings-card-demo');
+      const root = document.getElementById('card-setting-demo');
       if (!root) throw new Error('missing demo root');
 
       let editingId = null;
@@ -58,7 +58,7 @@ export const Interactive: Story = {
       const render = () => {
         root.replaceChildren();
         for (const card of cards) {
-          const el = document.createElement('ds-settings-section-card');
+          const el = document.createElement('ds-card-setting');
           el.heading = card.heading;
           el.editing = editingId === card.id;
           el.addEventListener('dsEditingChange', (event) => {

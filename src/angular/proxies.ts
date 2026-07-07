@@ -254,6 +254,36 @@ export declare interface DsCard extends Components.DsCard {}
 
 
 @ProxyCmp({
+  inputs: ['cardWidth', 'editing', 'heading']
+})
+@Component({
+  selector: 'ds-card-setting',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['cardWidth', 'editing', { name: 'heading', required: true }],
+  outputs: ['dsEditingChange'],
+  standalone: false
+})
+export class DsCardSetting {
+  protected el: HTMLDsCardSettingElement;
+  @Output() dsEditingChange = new EventEmitter<CustomEvent<boolean>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsCardSetting extends Components.DsCardSetting {
+  /**
+   * Emits when the user enters or exits edit mode.
+   */
+  dsEditingChange: EventEmitter<CustomEvent<boolean>>;
+}
+
+
+@ProxyCmp({
   inputs: ['checked', 'inactive', 'indeterminate', 'label']
 })
 @Component({
@@ -786,36 +816,6 @@ export declare interface DsSelect extends Components.DsSelect {
    * Emits the selected value string.
    */
   dsChange: EventEmitter<CustomEvent<string>>;
-}
-
-
-@ProxyCmp({
-  inputs: ['cardWidth', 'editing', 'heading']
-})
-@Component({
-  selector: 'ds-settings-section-card',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['cardWidth', 'editing', { name: 'heading', required: true }],
-  outputs: ['dsEditingChange'],
-  standalone: false
-})
-export class DsSettingsSectionCard {
-  protected el: HTMLDsSettingsSectionCardElement;
-  @Output() dsEditingChange = new EventEmitter<CustomEvent<boolean>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsSettingsSectionCard extends Components.DsSettingsSectionCard {
-  /**
-   * Emits when the user enters or exits edit mode.
-   */
-  dsEditingChange: EventEmitter<CustomEvent<boolean>>;
 }
 
 

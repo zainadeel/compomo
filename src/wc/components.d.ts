@@ -15,6 +15,7 @@ import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
 import { CardElevation, CardRadius } from "./components/Card/Card";
+import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -31,7 +32,6 @@ import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
-import { SettingsSectionCardWidth } from "./components/SettingsSectionCard/SettingsSectionCard";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
@@ -53,6 +53,7 @@ export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
 export { CardElevation, CardRadius } from "./components/Card/Card";
+export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -69,7 +70,6 @@ export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
-export { SettingsSectionCardWidth } from "./components/SettingsSectionCard/SettingsSectionCard";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
@@ -341,6 +341,22 @@ export namespace Components {
           * @default 'lg'
          */
         "radius": CardRadius;
+    }
+    interface DsCardSetting {
+        /**
+          * Card width token.
+          * @default 'md'
+         */
+        "cardWidth": CardSettingWidth;
+        /**
+          * Controlled edit state — parent owns single-edit orchestration.
+          * @default false
+         */
+        "editing": boolean;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
     }
     interface DsCheckbox {
         /**
@@ -764,22 +780,6 @@ export namespace Components {
          */
         "value": string;
     }
-    interface DsSettingsSectionCard {
-        /**
-          * Card width token.
-          * @default 'md'
-         */
-        "cardWidth": SettingsSectionCardWidth;
-        /**
-          * Controlled edit state — parent owns single-edit orchestration.
-          * @default false
-         */
-        "editing": boolean;
-        /**
-          * Section heading shown in the card header.
-         */
-        "heading": string;
-    }
     interface DsShellGradientPicker {
         /**
           * Active shell wash preset.
@@ -1097,6 +1097,10 @@ export interface DsButtonUnfilledIconCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledIconElement;
 }
+export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardSettingElement;
+}
 export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCheckboxElement;
@@ -1136,10 +1140,6 @@ export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
-}
-export interface DsSettingsSectionCardCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsSettingsSectionCardElement;
 }
 export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1290,6 +1290,23 @@ declare global {
     var HTMLDsCardElement: {
         prototype: HTMLDsCardElement;
         new (): HTMLDsCardElement;
+    };
+    interface HTMLDsCardSettingElementEventMap {
+        "dsEditingChange": boolean;
+    }
+    interface HTMLDsCardSettingElement extends Components.DsCardSetting, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardSettingElementEventMap>(type: K, listener: (this: HTMLDsCardSettingElement, ev: DsCardSettingCustomEvent<HTMLDsCardSettingElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardSettingElementEventMap>(type: K, listener: (this: HTMLDsCardSettingElement, ev: DsCardSettingCustomEvent<HTMLDsCardSettingElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardSettingElement: {
+        prototype: HTMLDsCardSettingElement;
+        new (): HTMLDsCardSettingElement;
     };
     interface HTMLDsCheckboxElementEventMap {
         "dsChange": boolean;
@@ -1524,23 +1541,6 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
-    interface HTMLDsSettingsSectionCardElementEventMap {
-        "dsEditingChange": boolean;
-    }
-    interface HTMLDsSettingsSectionCardElement extends Components.DsSettingsSectionCard, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSettingsSectionCardElementEventMap>(type: K, listener: (this: HTMLDsSettingsSectionCardElement, ev: DsSettingsSectionCardCustomEvent<HTMLDsSettingsSectionCardElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSettingsSectionCardElementEventMap>(type: K, listener: (this: HTMLDsSettingsSectionCardElement, ev: DsSettingsSectionCardCustomEvent<HTMLDsSettingsSectionCardElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsSettingsSectionCardElement: {
-        prototype: HTMLDsSettingsSectionCardElement;
-        new (): HTMLDsSettingsSectionCardElement;
-    };
     interface HTMLDsShellGradientPickerElementEventMap {
         "dsChange": ShellGradientPreset1;
     }
@@ -1709,6 +1709,7 @@ declare global {
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled-icon": HTMLDsButtonUnfilledIconElement;
         "ds-card": HTMLDsCardElement;
+        "ds-card-setting": HTMLDsCardSettingElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-chip": HTMLDsChipElement;
         "ds-divider": HTMLDsDividerElement;
@@ -1727,7 +1728,6 @@ declare global {
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
-        "ds-settings-section-card": HTMLDsSettingsSectionCardElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
@@ -2013,6 +2013,26 @@ declare namespace LocalJSX {
           * @default 'lg'
          */
         "radius"?: CardRadius;
+    }
+    interface DsCardSetting {
+        /**
+          * Card width token.
+          * @default 'md'
+         */
+        "cardWidth"?: CardSettingWidth;
+        /**
+          * Controlled edit state — parent owns single-edit orchestration.
+          * @default false
+         */
+        "editing"?: boolean;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+        /**
+          * Emits when the user enters or exits edit mode.
+         */
+        "onDsEditingChange"?: (event: DsCardSettingCustomEvent<boolean>) => void;
     }
     interface DsCheckbox {
         /**
@@ -2484,26 +2504,6 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    interface DsSettingsSectionCard {
-        /**
-          * Card width token.
-          * @default 'md'
-         */
-        "cardWidth"?: SettingsSectionCardWidth;
-        /**
-          * Controlled edit state — parent owns single-edit orchestration.
-          * @default false
-         */
-        "editing"?: boolean;
-        /**
-          * Section heading shown in the card header.
-         */
-        "heading": string;
-        /**
-          * Emits when the user enters or exits edit mode.
-         */
-        "onDsEditingChange"?: (event: DsSettingsSectionCardCustomEvent<boolean>) => void;
-    }
     interface DsShellGradientPicker {
         "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
         /**
@@ -2877,6 +2877,11 @@ declare namespace LocalJSX {
         "elevation": CardElevation;
         "radius": CardRadius;
     }
+    interface DsCardSettingAttributes {
+        "heading": string;
+        "cardWidth": CardSettingWidth;
+        "editing": boolean;
+    }
     interface DsCheckboxAttributes {
         "label": string;
         "checked": boolean;
@@ -3006,11 +3011,6 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
-    interface DsSettingsSectionCardAttributes {
-        "heading": string;
-        "cardWidth": SettingsSectionCardWidth;
-        "editing": boolean;
-    }
     interface DsShellGradientPickerAttributes {
         "value": ShellGradientPreset;
     }
@@ -3121,6 +3121,7 @@ declare namespace LocalJSX {
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled-icon": Omit<DsButtonUnfilledIcon, keyof DsButtonUnfilledIconAttributes> & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes]?: DsButtonUnfilledIcon[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `attr:${K}`]?: DsButtonUnfilledIconAttributes[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `prop:${K}`]?: DsButtonUnfilledIcon[K] };
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
+        "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
@@ -3139,7 +3140,6 @@ declare namespace LocalJSX {
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
-        "ds-settings-section-card": Omit<DsSettingsSectionCard, keyof DsSettingsSectionCardAttributes> & { [K in keyof DsSettingsSectionCard & keyof DsSettingsSectionCardAttributes]?: DsSettingsSectionCard[K] } & { [K in keyof DsSettingsSectionCard & keyof DsSettingsSectionCardAttributes as `attr:${K}`]?: DsSettingsSectionCardAttributes[K] } & { [K in keyof DsSettingsSectionCard & keyof DsSettingsSectionCardAttributes as `prop:${K}`]?: DsSettingsSectionCard[K] } & OneOf<"heading", DsSettingsSectionCard["heading"], DsSettingsSectionCardAttributes["heading"]>;
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
@@ -3168,6 +3168,7 @@ declare module "@stencil/core" {
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled-icon": LocalJSX.IntrinsicElements["ds-button-unfilled-icon"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledIconElement>;
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
+            "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
@@ -3186,7 +3187,6 @@ declare module "@stencil/core" {
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
-            "ds-settings-section-card": LocalJSX.IntrinsicElements["ds-settings-section-card"] & JSXBase.HTMLAttributes<HTMLDsSettingsSectionCardElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;

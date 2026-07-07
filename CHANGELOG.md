@@ -6,7 +6,7 @@
 ### Added
 
 * **button-filled:** square filled icon button with intent + contrast pairing
-* **settings-section-card:** settings section card with view/edit chrome and controlled `editing` state
+* **card-setting:** settings section card with view/edit chrome and controlled `editing` state
 
 ### Changed
 

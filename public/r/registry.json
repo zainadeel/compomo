@@ -181,16 +181,16 @@
       ]
     },
     {
-      "name": "settings-section-card",
-      "title": "SettingsSectionCard",
+      "name": "card-setting",
+      "title": "CardSetting",
       "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/settings-section-card",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
         "exports": [
-          "SettingsSectionCard"
+          "CardSetting"
         ],
         "props": {
           "heading": {

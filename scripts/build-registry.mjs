@@ -98,12 +98,12 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: ['Surface'],
   }],
-  ['SettingsSectionCard', {
-    title: 'SettingsSectionCard',
-    tag: 'ds-settings-section-card',
+  ['CardSetting', {
+    title: 'CardSetting',
+    tag: 'ds-card-setting',
     description: 'Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.',
-    exports: ['SettingsSectionCard'],
-    types: ['SettingsSectionCardWidth'],
+    exports: ['CardSetting'],
+    types: ['CardSettingWidth'],
     props: {
       heading: { type: 'string', required: true, description: 'Section title in the card header.' },
       cardWidth: { type: "'xs' | 'sm' | 'md' | 'lg'", default: "'md'" },
