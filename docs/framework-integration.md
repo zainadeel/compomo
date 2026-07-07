@@ -201,6 +201,8 @@ On `dsNavUserAction`, set `userMenuAnchor = detail.anchor` and `userMenuPlacemen
 
 `ds-menu` still accepts `side`, `align`, `sideOffset`, `alignOffset`, `menuWidth`, and `minWidth` as escape hatches when a host needs custom placement.
 
+**Offset strings must be valid CSS lengths** when binding from host apps — use `var(--dimension-space-050)` or `calc(...)`, not bare custom-property names like `--dimension-space-050`. `PANEL_NAV_USER_MENU_PLACEMENT` and `ds-menu` defaults use `TOKEN_CSS_LENGTHS` (`var(--dimension-*)`) for this reason. BarNav overflow menus follow the same pattern.
+
 ### Other external menus
 
 Bind `[open]`, `[sections]` or `[items]`, `[anchor]` / `anchor-id`, and placement props. Position math lives in `menu-position.ts` with viewport clamping.

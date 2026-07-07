@@ -1,5 +1,5 @@
 import { Component, Prop, State, Element, Watch, h, Host } from '@stencil/core';
-import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
 
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
 export type TooltipAlign = 'start' | 'center' | 'end';
@@ -19,7 +19,7 @@ export class Tooltip {
   @Prop() side: TooltipSide = 'top';
   @Prop() align: TooltipAlign = 'center';
   /** Gap between anchor and tooltip — number (px) or TokoMo length. */
-  @Prop() sideOffset: number | string = TOKEN_DEFAULTS.space050;
+  @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number (px) or TokoMo length. */
   @Prop() alignOffset: number | string = 0;
   /** Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`. */

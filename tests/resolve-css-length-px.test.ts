@@ -1,7 +1,7 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { clearCssLengthPxCache, resolveCssLengthPx } from '../src/wc/utils/resolve-css-length-px';
-import { TOKEN_DEFAULTS } from '../src/wc/utils/token-defaults';
+import { TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../src/wc/utils/token-defaults';
 
 describe('resolveCssLengthPx', () => {
   before(() => {
@@ -31,13 +31,29 @@ describe('resolveCssLengthPx', () => {
     if (typeof document === 'undefined') return;
 
     const style = document.createElement('style');
-    style.textContent = ':root { --dimension-space-200: 16px; }';
+    style.textContent = ':root { --dimension-space-200: 16px; --dimension-space-050: 4px; }';
     document.head.appendChild(style);
 
     try {
       clearCssLengthPxCache();
-      const px = resolveCssLengthPx(TOKEN_DEFAULTS.space200, TOKEN_DEFAULTS.space050);
+      const px = resolveCssLengthPx(TOKEN_DEFAULTS.space200, TOKEN_CSS_LENGTHS.space050);
       assert.equal(px, 16);
+    } finally {
+      style.remove();
+    }
+  });
+
+  it('wraps bare custom-property names in var() for probe resolution', () => {
+    if (typeof document === 'undefined') return;
+
+    const style = document.createElement('style');
+    style.textContent = ':root { --dimension-space-050: 4px; }';
+    document.head.appendChild(style);
+
+    try {
+      clearCssLengthPxCache();
+      assert.equal(resolveCssLengthPx(TOKEN_DEFAULTS.space050, 0), 4);
+      assert.equal(resolveCssLengthPx(TOKEN_CSS_LENGTHS.space050, 0), 4);
     } finally {
       style.remove();
     }

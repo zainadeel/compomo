@@ -46,3 +46,10 @@ export const TOKEN_DEFAULTS = {
 } as const;
 
 export type TokenDefaultKey = keyof typeof TOKEN_DEFAULTS;
+
+/** Valid CSS length strings for overlay offset props — bind on `sideOffset` / `alignOffset` in hosts. */
+export const TOKEN_CSS_LENGTHS = {
+  space050: `var(${dimensionSpace050})`,
+  space200: `var(${dimensionSpace200})`,
+  menuWidthXs: `var(${dimensionMenuWidthXs})`,
+} as const;

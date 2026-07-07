@@ -7,5 +7,5 @@ export {
   scrollEdgeFadeMaskStyle,
 } from './scroll-edge-fade';
 export type { ScrollEdgeFadeEdge } from './scroll-edge-fade';
-export { TOKEN_DEFAULTS } from './token-defaults';
+export { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from './token-defaults';
 export type { TokenDefaultKey } from './token-defaults';

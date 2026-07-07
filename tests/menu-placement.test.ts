@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import { computeMenuPosition } from '../src/wc/components/Menu/menu-position';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from '../src/wc/components/Menu/menu-placement';
 import { resolveCssLengthPx } from '../src/wc/utils/resolve-css-length-px';
-import { TOKEN_DEFAULTS } from '../src/wc/utils/token-defaults';
+import { TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../src/wc/utils/token-defaults';
 
 describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
   it('uses right/end with default menu side gap token', () => {
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.side, 'right');
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.align, 'end');
-    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.sideOffset, TOKEN_DEFAULTS.space050);
+    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.sideOffset, TOKEN_CSS_LENGTHS.space050);
+    assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.sideOffset, 'var(--dimension-space-050)');
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.alignOffset, 0);
   });
 
@@ -23,8 +24,9 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
     try {
       const sideOffsetPx = resolveCssLengthPx(
         PANEL_NAV_USER_MENU_PLACEMENT.sideOffset,
-        TOKEN_DEFAULTS.space050,
+        TOKEN_CSS_LENGTHS.space050,
       );
+      assert.equal(sideOffsetPx, 4);
       const anchor = { top: 48, left: 0, right: 200, bottom: 80, width: 200, height: 32 };
       const pos = computeMenuPosition({
         anchorRect: anchor,
@@ -39,7 +41,7 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
         viewportHeight: 800,
       });
 
-      assert.equal(pos.x, 204);
+      assert.equal(pos.x, 204); // anchor.right (200) + 4px sideOffset
       assert.equal(pos.y, -160);
     } finally {
       style.remove();
