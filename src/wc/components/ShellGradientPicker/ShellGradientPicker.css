@@ -8,3 +8,11 @@
   gap: var(--dimension-space-100);
   padding: var(--dimension-space-050) var(--dimension-space-075) var(--dimension-space-075);
 }
+
+.shell-gradient-picker__divider {
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: var(--dimension-stroke-width-012);
+  margin: 0 var(--dimension-space-025);
+  background-color: var(--color-border-tertiary);
+}

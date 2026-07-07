@@ -3,6 +3,13 @@ export type ShellGradientPreset = 'none' | 'cool' | 'neutral' | 'warm';
 
 export const SHELL_GRADIENT_PRESETS: ShellGradientPreset[] = ['none', 'cool', 'neutral', 'warm'];
 
+/** Wash presets shown after the `none` option in pickers. */
+export const SHELL_GRADIENT_WASH_PRESETS: Exclude<ShellGradientPreset, 'none'>[] = [
+  'cool',
+  'neutral',
+  'warm',
+];
+
 /** Default wash when `gradient-preset` is omitted. */
 export const DEFAULT_SHELL_GRADIENT_PRESET: ShellGradientPreset = 'neutral';
 

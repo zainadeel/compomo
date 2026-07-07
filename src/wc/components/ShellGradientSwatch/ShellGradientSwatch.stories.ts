@@ -28,9 +28,13 @@ export const AllPresets: Story = {
   name: 'All presets',
   render: () => html`
     <div
-      style="display: flex; gap: var(--dimension-space-200); padding: var(--dimension-space-200); background: var(--color-background-primary); border-radius: var(--dimension-radius-075);"
+      style="display: flex; align-items: center; gap: var(--dimension-space-100); padding: var(--dimension-space-200); background: var(--color-background-primary); border-radius: var(--dimension-radius-075);"
     >
       <ds-shell-gradient-swatch preset="none"></ds-shell-gradient-swatch>
+      <div
+        style="align-self: stretch; width: var(--dimension-stroke-width-012); margin: 0 var(--dimension-space-025); background: var(--color-border-tertiary);"
+        aria-hidden="true"
+      ></div>
       <ds-shell-gradient-swatch preset="cool" selected></ds-shell-gradient-swatch>
       <ds-shell-gradient-swatch preset="neutral"></ds-shell-gradient-swatch>
       <ds-shell-gradient-swatch preset="warm"></ds-shell-gradient-swatch>

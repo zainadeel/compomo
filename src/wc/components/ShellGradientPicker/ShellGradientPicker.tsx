@@ -1,6 +1,6 @@
 import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
 import {
-  SHELL_GRADIENT_PRESETS,
+  SHELL_GRADIENT_WASH_PRESETS,
   DEFAULT_SHELL_GRADIENT_PRESET,
   type ShellGradientPreset,
 } from '../ShellGradientSwatch/shell-gradient-swatch-types';
@@ -23,6 +23,20 @@ export class ShellGradientPicker {
     this.dsChange.emit(preset);
   };
 
+  private renderSwatch(preset: ShellGradientPreset) {
+    return (
+      <ds-shell-gradient-swatch
+        key={preset}
+        preset={preset}
+        selected={this.value === preset}
+        onDsSelect={(e: CustomEvent<ShellGradientPreset>) => {
+          e.stopPropagation();
+          this.handleSwatchSelect(e.detail);
+        }}
+      />
+    );
+  }
+
   render() {
     return (
       <Host>
@@ -31,17 +45,9 @@ export class ShellGradientPicker {
           role="radiogroup"
           aria-label="Shell gradient theme"
         >
-          {SHELL_GRADIENT_PRESETS.map(preset => (
-            <ds-shell-gradient-swatch
-              key={preset}
-              preset={preset}
-              selected={this.value === preset}
-              onDsSelect={(e: CustomEvent<ShellGradientPreset>) => {
-                e.stopPropagation();
-                this.handleSwatchSelect(e.detail);
-              }}
-            />
-          ))}
+          {this.renderSwatch('none')}
+          <div class="shell-gradient-picker__divider" aria-hidden="true" />
+          {SHELL_GRADIENT_WASH_PRESETS.map(preset => this.renderSwatch(preset))}
         </div>
       </Host>
     );
