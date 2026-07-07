@@ -1,6 +1,10 @@
 import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
 
 export type { MenuAlign, MenuSide } from './menu-position';
+export {
+  PANEL_NAV_USER_MENU_PLACEMENT,
+  type MenuPlacement,
+} from './menu-placement';
 
 export interface MenuItemData {
   label: string;

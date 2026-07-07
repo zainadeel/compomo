@@ -11,6 +11,7 @@ import {
 } from './panel-nav-utils';
 import {
   PANEL_NAV_USER_MENU_ANCHOR_ID,
+  PANEL_NAV_USER_MENU_PLACEMENT,
   type PanelNavGroup,
   type PanelNavItem,
   type PanelNavRouterMode,
@@ -336,7 +337,7 @@ export class PanelNav {
     }
     if (index === this.getUserRovingIndex()) {
       const anchor = this.el.querySelector(`#${PANEL_NAV_USER_MENU_ANCHOR_ID}`) as HTMLElement | null;
-      if (anchor) this.dsNavUserAction.emit({ anchor });
+      if (anchor) this.dsNavUserAction.emit({ anchor, menuPlacement: PANEL_NAV_USER_MENU_PLACEMENT });
     }
   }
 
@@ -421,7 +422,7 @@ export class PanelNav {
 
   private handleUserAction(e: MouseEvent) {
     const anchor = e.currentTarget as HTMLElement;
-    this.dsNavUserAction.emit({ anchor });
+    this.dsNavUserAction.emit({ anchor, menuPlacement: PANEL_NAV_USER_MENU_PLACEMENT });
   }
 
   private clearEdgeOverlayTimer() {
