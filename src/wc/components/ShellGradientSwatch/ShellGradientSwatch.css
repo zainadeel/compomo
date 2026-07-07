@@ -24,6 +24,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 0;
   border-radius: inherit;
   background-image: var(--_swatch-gradient-image);
   background-repeat: no-repeat;
@@ -31,6 +32,26 @@
   background-position: 0 0;
   opacity: var(--ds-shell-gradient-opacity, 0.1);
   pointer-events: none;
+}
+
+/* Interaction layer — above wash, below focus ring. */
+.shell-gradient-swatch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  transition: none;
+}
+
+.shell-gradient-swatch:hover:not(:disabled)::after {
+  background: var(--color-interaction-hover);
+}
+
+.shell-gradient-swatch:active:not(:disabled)::after {
+  background: var(--color-interaction-pressed);
 }
 
 .shell-gradient-swatch:disabled {
@@ -44,13 +65,4 @@
     0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand),
     0 0 0 calc(var(--dimension-stroke-width-025) + var(--dimension-stroke-width-050))
       var(--_swatch-ring-bg);
-}
-
-.shell-gradient-swatch:not(.shell-gradient-swatch--selected):hover:not(:disabled)::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--color-interaction-hover);
-  pointer-events: none;
 }
