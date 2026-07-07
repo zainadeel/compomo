@@ -59,10 +59,9 @@
   cursor: not-allowed;
 }
 
-/* Selected — inset 2px brand ring + inset 4px surface halo (dot ring pattern). */
+/* Selected — inset 2px brand ring + inset 2px surface halo behind it. */
 .shell-gradient-swatch--selected::after {
   box-shadow:
     inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand),
-    inset 0 0 0 calc(var(--dimension-stroke-width-025) + var(--dimension-stroke-width-050))
-      var(--_swatch-ring-bg);
+    inset 0 0 0 calc(var(--dimension-stroke-width-025) * 2) var(--_swatch-ring-bg);
 }
