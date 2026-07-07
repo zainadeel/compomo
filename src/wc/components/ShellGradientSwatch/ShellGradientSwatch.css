@@ -1,0 +1,44 @@
+@import '../../utils/focus-ring.css';
+
+:host {
+  display: inline-flex;
+}
+
+.shell-gradient-swatch {
+  position: relative;
+  box-sizing: border-box;
+  width: var(--dimension-size-400);
+  height: var(--dimension-size-400);
+  padding: 0;
+  border: none;
+  border-radius: var(--dimension-radius-half);
+  background-color: var(--color-background-secondary);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.shell-gradient-swatch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shell-gradient-swatch--selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
+  pointer-events: none;
+}
+
+.shell-gradient-swatch:not(.shell-gradient-swatch--selected):hover:not(:disabled)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-interaction-hover);
+  pointer-events: none;
+}

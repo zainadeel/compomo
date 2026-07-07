@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+.shell-gradient-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  padding: var(--dimension-space-050) var(--dimension-space-075) var(--dimension-space-075);
+}

@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AccordionItemData } from "./components/Accordion/Accordion";
 import { NavChromeStyle } from "./nav/nav-chrome";
+import { ShellGradientPreset } from "./nav/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
@@ -31,6 +32,7 @@ import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
+import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -45,6 +47,7 @@ import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGro
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
 export { NavChromeStyle } from "./nav/nav-chrome";
+export { ShellGradientPreset } from "./nav/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
@@ -69,6 +72,7 @@ export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
+export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -103,6 +107,11 @@ export namespace Components {
           * @default false
          */
         "gradient": boolean;
+        /**
+          * Built-in shell wash preset when `gradient` is true. `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+          * @default DEFAULT_SHELL_GRADIENT_PRESET
+         */
+        "gradientPreset": ShellGradientPreset;
         /**
           * Optional custom gradient for `background-image` (e.g. SVG URL). When set, overrides the built-in radial wash.
           * @default ''
@@ -802,6 +811,30 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsShellGradientPicker {
+        /**
+          * Active shell wash preset.
+          * @default DEFAULT_SHELL_GRADIENT_PRESET
+         */
+        "value": ShellGradientPreset1;
+    }
+    interface DsShellGradientSwatch {
+        "ariaLabel": string | undefined;
+        /**
+          * @default false
+         */
+        "inactive": boolean;
+        /**
+          * Wash preset this orb previews.
+          * @default DEFAULT_SHELL_GRADIENT_PRESET
+         */
+        "preset": ShellGradientPreset1;
+        /**
+          * Selected state — shows an inset brand ring.
+          * @default false
+         */
+        "selected": boolean;
+    }
     interface DsSkeleton {
         /**
           * Height as a CSS value string or number (px).
@@ -1212,6 +1245,14 @@ export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
 }
+export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellGradientPickerElement;
+}
+export interface DsShellGradientSwatchCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellGradientSwatchElement;
+}
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
@@ -1480,6 +1521,7 @@ declare global {
     interface HTMLDsMenuElementEventMap {
         "dsClose": void;
         "dsSelect": MenuItemData;
+        "dsGradientSelect": ShellGradientPreset;
     }
     interface HTMLDsMenuElement extends Components.DsMenu, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsMenuElementEventMap>(type: K, listener: (this: HTMLDsMenuElement, ev: DsMenuCustomEvent<HTMLDsMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1612,6 +1654,40 @@ declare global {
     var HTMLDsSelectElement: {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
+    };
+    interface HTMLDsShellGradientPickerElementEventMap {
+        "dsChange": ShellGradientPreset1;
+    }
+    interface HTMLDsShellGradientPickerElement extends Components.DsShellGradientPicker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellGradientPickerElementEventMap>(type: K, listener: (this: HTMLDsShellGradientPickerElement, ev: DsShellGradientPickerCustomEvent<HTMLDsShellGradientPickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellGradientPickerElementEventMap>(type: K, listener: (this: HTMLDsShellGradientPickerElement, ev: DsShellGradientPickerCustomEvent<HTMLDsShellGradientPickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsShellGradientPickerElement: {
+        prototype: HTMLDsShellGradientPickerElement;
+        new (): HTMLDsShellGradientPickerElement;
+    };
+    interface HTMLDsShellGradientSwatchElementEventMap {
+        "dsSelect": ShellGradientPreset1;
+    }
+    interface HTMLDsShellGradientSwatchElement extends Components.DsShellGradientSwatch, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellGradientSwatchElementEventMap>(type: K, listener: (this: HTMLDsShellGradientSwatchElement, ev: DsShellGradientSwatchCustomEvent<HTMLDsShellGradientSwatchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellGradientSwatchElementEventMap>(type: K, listener: (this: HTMLDsShellGradientSwatchElement, ev: DsShellGradientSwatchCustomEvent<HTMLDsShellGradientSwatchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsShellGradientSwatchElement: {
+        prototype: HTMLDsShellGradientSwatchElement;
+        new (): HTMLDsShellGradientSwatchElement;
     };
     interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
     }
@@ -1800,6 +1876,8 @@ declare global {
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
+        "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
+        "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-surface": HTMLDsSurfaceElement;
@@ -1840,6 +1918,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "gradient"?: boolean;
+        /**
+          * Built-in shell wash preset when `gradient` is true. `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+          * @default DEFAULT_SHELL_GRADIENT_PRESET
+         */
+        "gradientPreset"?: ShellGradientPreset;
         /**
           * Optional custom gradient for `background-image` (e.g. SVG URL). When set, overrides the built-in radial wash.
           * @default ''
@@ -2374,6 +2457,10 @@ declare namespace LocalJSX {
         "menuWidth"?: string | undefined;
         "minWidth"?: string | undefined;
         "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
+        /**
+          * Emitted when a `gradient-picker` section swatch is chosen.
+         */
+        "onDsGradientSelect"?: (event: DsMenuCustomEvent<ShellGradientPreset>) => void;
         "onDsSelect"?: (event: DsMenuCustomEvent<MenuItemData>) => void;
         /**
           * @default false
@@ -2596,6 +2683,32 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    interface DsShellGradientPicker {
+        "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
+        /**
+          * Active shell wash preset.
+          * @default DEFAULT_SHELL_GRADIENT_PRESET
+         */
+        "value"?: ShellGradientPreset1;
+    }
+    interface DsShellGradientSwatch {
+        "ariaLabel"?: string | undefined;
+        /**
+          * @default false
+         */
+        "inactive"?: boolean;
+        "onDsSelect"?: (event: DsShellGradientSwatchCustomEvent<ShellGradientPreset1>) => void;
+        /**
+          * Wash preset this orb previews.
+          * @default DEFAULT_SHELL_GRADIENT_PRESET
+         */
+        "preset"?: ShellGradientPreset1;
+        /**
+          * Selected state — shows an inset brand ring.
+          * @default false
+         */
+        "selected"?: boolean;
     }
     interface DsSkeleton {
         /**
@@ -2964,6 +3077,7 @@ declare namespace LocalJSX {
         "gradient": boolean;
         "grid": boolean;
         "gradientSrc": string;
+        "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
     }
     interface DsBadgeAttributes {
@@ -3171,6 +3285,15 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
+    interface DsShellGradientPickerAttributes {
+        "value": ShellGradientPreset;
+    }
+    interface DsShellGradientSwatchAttributes {
+        "preset": ShellGradientPreset;
+        "selected": boolean;
+        "inactive": boolean;
+        "ariaLabel": string | undefined;
+    }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
         "width": string;
@@ -3309,6 +3432,8 @@ declare namespace LocalJSX {
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
+        "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
         "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
@@ -3356,6 +3481,8 @@ declare module "@stencil/core" {
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
+            "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;

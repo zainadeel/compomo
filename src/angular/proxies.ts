@@ -36,14 +36,14 @@ export declare interface DsAccordion extends Components.DsAccordion {
 
 
 @ProxyCmp({
-  inputs: ['gradient', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled']
+  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
   selector: 'ds-app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['gradient', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled'],
+  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'grid', 'navStyle', 'shortcutsEnabled'],
   standalone: false
 })
 export class DsAppShell {
@@ -558,13 +558,14 @@ export declare interface DsLoader extends Components.DsLoader {}
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'initialFocusVisible', 'items', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
-  outputs: ['dsClose', 'dsSelect'],
+  outputs: ['dsClose', 'dsSelect', 'dsGradientSelect'],
   standalone: false
 })
 export class DsMenu {
   protected el: HTMLDsMenuElement;
   @Output() dsClose = new EventEmitter<CustomEvent<void>>();
   @Output() dsSelect = new EventEmitter<CustomEvent<IDsMenuMenuItemData>>();
+  @Output() dsGradientSelect = new EventEmitter<CustomEvent<IDsMenuShellGradientPreset>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -573,12 +574,17 @@ export class DsMenu {
 
 
 import type { MenuItemData as IDsMenuMenuItemData } from '@ds-mo/ui';
+import type { ShellGradientPreset as IDsMenuShellGradientPreset } from '@ds-mo/ui';
 
 export declare interface DsMenu extends Components.DsMenu {
 
   dsClose: EventEmitter<CustomEvent<void>>;
 
   dsSelect: EventEmitter<CustomEvent<IDsMenuMenuItemData>>;
+  /**
+   * Emitted when a `gradient-picker` section swatch is chosen.
+   */
+  dsGradientSelect: EventEmitter<CustomEvent<IDsMenuShellGradientPreset>>;
 }
 
 
@@ -815,6 +821,66 @@ export declare interface DsSelect extends Components.DsSelect {
    * Emits the selected value string.
    */
   dsChange: EventEmitter<CustomEvent<string>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['value']
+})
+@Component({
+  selector: 'ds-shell-gradient-picker',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['value'],
+  outputs: ['dsChange'],
+  standalone: false
+})
+export class DsShellGradientPicker {
+  protected el: HTMLDsShellGradientPickerElement;
+  @Output() dsChange = new EventEmitter<CustomEvent<IDsShellGradientPickerShellGradientPreset>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { ShellGradientPreset as IDsShellGradientPickerShellGradientPreset } from '@ds-mo/ui';
+
+export declare interface DsShellGradientPicker extends Components.DsShellGradientPicker {
+
+  dsChange: EventEmitter<CustomEvent<IDsShellGradientPickerShellGradientPreset>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['ariaLabel', 'inactive', 'preset', 'selected']
+})
+@Component({
+  selector: 'ds-shell-gradient-swatch',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['ariaLabel', 'inactive', 'preset', 'selected'],
+  outputs: ['dsSelect'],
+  standalone: false
+})
+export class DsShellGradientSwatch {
+  protected el: HTMLDsShellGradientSwatchElement;
+  @Output() dsSelect = new EventEmitter<CustomEvent<IDsShellGradientSwatchShellGradientPreset>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { ShellGradientPreset as IDsShellGradientSwatchShellGradientPreset } from '@ds-mo/ui';
+
+export declare interface DsShellGradientSwatch extends Components.DsShellGradientSwatch {
+
+  dsSelect: EventEmitter<CustomEvent<IDsShellGradientSwatchShellGradientPreset>>;
 }
 
 

@@ -6,6 +6,10 @@ import {
 } from '../../nav/shell-shortcuts';
 import type { PanelToolsToolId } from '../PanelTools/panel-tools-types';
 import {
+  DEFAULT_SHELL_GRADIENT_PRESET,
+  type ShellGradientPreset,
+} from '../../nav/shell-gradient-presets';
+import {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
   ChromeTransitionDepth,
@@ -53,6 +57,13 @@ export class AppShell {
    */
   @Prop() gradientSrc: string = '';
 
+  /**
+   * Built-in shell wash preset when `gradient` is true.
+   * `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+   */
+  @Prop({ attribute: 'gradient-preset', reflect: true }) gradientPreset: ShellGradientPreset =
+    DEFAULT_SHELL_GRADIENT_PRESET;
+
   /** When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native. */
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
@@ -98,6 +109,7 @@ export class AppShell {
   @Watch('gradient')
   @Watch('grid')
   @Watch('gradientSrc')
+  @Watch('gradientPreset')
   onShellPropsChange() {
     this.syncSlottedNavStyle();
     this.scheduleChromeSync();
@@ -311,7 +323,7 @@ export class AppShell {
 
     const image = this.gradientSrc.trim()
       ? `url(${this.gradientSrc.trim()})`
-      : buildShellRadialGradient();
+      : buildShellRadialGradient(this.gradientPreset);
 
     const size = shellGradientSize({
       width: viewport.width,

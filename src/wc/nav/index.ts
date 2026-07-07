@@ -37,6 +37,15 @@ export {
   readShellViewportDimensions,
 } from './shell-gradient';
 export type { ShellGradientLayout, ShellViewportDimensions } from './shell-gradient';
+export type { ShellGradientPreset } from './shell-gradient-presets';
+export {
+  DEFAULT_SHELL_GRADIENT_PRESET,
+  SHELL_GRADIENT_PRESETS,
+  SHELL_GRADIENT_PRESET_LABELS,
+  buildShellRadialGradientForPreset,
+  isShellGradientPreset,
+  shellGradientPresetStopToken,
+} from './shell-gradient-presets';
 export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-transition';
 export {
   CHROME_TRANSITION_END,

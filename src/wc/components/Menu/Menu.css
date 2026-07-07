@@ -67,6 +67,10 @@
   color: var(--color-foreground-secondary);
 }
 
+.menu-section--gradient-picker {
+  padding-bottom: var(--dimension-space-050);
+}
+
 /* ── Items ───────────────────────────────────────────────────────────────── */
 
 .menu-item {
