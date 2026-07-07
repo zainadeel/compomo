@@ -124,7 +124,7 @@ export class Menu {
   }
 
   private get closeAnimationMs(): number {
-    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort2, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private get resolvedAnchor(): HTMLElement | null {
@@ -312,7 +312,6 @@ export class Menu {
   private handleItemClick(item: MenuItemData) {
     if (item.isInactive) return;
     this.dsSelect.emit(item);
-    this.close();
   }
 
   private handleGradientSelect(preset: ShellGradientPreset) {

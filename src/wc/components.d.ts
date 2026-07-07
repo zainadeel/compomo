@@ -825,7 +825,7 @@ export namespace Components {
          */
         "preset": ShellGradientPreset1;
         /**
-          * Selected state — brand ring with background offset (notification-dot pattern).
+          * Selected — brand stroke + halo over inner fill/border/interaction stack.
           * @default false
          */
         "selected": boolean;
@@ -2695,7 +2695,7 @@ declare namespace LocalJSX {
          */
         "preset"?: ShellGradientPreset1;
         /**
-          * Selected state — brand ring with background offset (notification-dot pattern).
+          * Selected — brand stroke + halo over inner fill/border/interaction stack.
           * @default false
          */
         "selected"?: boolean;
@@ -3488,6 +3488,3 @@ declare module "@stencil/core" {
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-
