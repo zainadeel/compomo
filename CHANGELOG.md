@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.0](https://github.com/zainadeel/compomo/compare/v2.5.0...v2.6.0) (2026-07-07)
+
+
+### Added
+
+* **Menu:** publish panel-nav user menu placement constant ([c6408d3](https://github.com/zainadeel/compomo/commit/c6408d367dbd1694ed3f6dab3f965ccfcb57e74d))
+* **Menu:** publish panel-nav user menu placement constant ([b63712a](https://github.com/zainadeel/compomo/commit/b63712a887b06941cbc03a40334ac9541770ced4))
+
 ## [2.5.0](https://github.com/zainadeel/compomo/compare/v2.4.1...v2.5.0) (2026-07-07)
 
 
