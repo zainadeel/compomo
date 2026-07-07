@@ -7,7 +7,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   args: { preset: 'cool', selected: false },
   argTypes: {
-    preset: { control: 'select', options: ['cool', 'neutral', 'warm'] },
+    preset: { control: 'select', options: ['none', 'cool', 'neutral', 'warm'] },
     selected: { control: 'boolean' },
   },
 };
@@ -30,6 +30,7 @@ export const AllPresets: Story = {
     <div
       style="display: flex; gap: var(--dimension-space-200); padding: var(--dimension-space-200); background: var(--color-background-primary); border-radius: var(--dimension-radius-075);"
     >
+      <ds-shell-gradient-swatch preset="none"></ds-shell-gradient-swatch>
       <ds-shell-gradient-swatch preset="cool" selected></ds-shell-gradient-swatch>
       <ds-shell-gradient-swatch preset="neutral"></ds-shell-gradient-swatch>
       <ds-shell-gradient-swatch preset="warm"></ds-shell-gradient-swatch>

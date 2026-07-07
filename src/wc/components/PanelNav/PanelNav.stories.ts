@@ -12,32 +12,34 @@ import type { PanelNavGroup } from './panel-nav-types';
 const DASHBOARD_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'fleet-view',        icon: 'MapPage',            label: 'Fleet View'          },
-      { id: 'safety',            icon: 'ShieldCircle',       label: 'Safety'              },
-      { id: 'compliance',        icon: 'Chart',              label: 'Compliance'          },
-      { id: 'fuel',              icon: 'FuelPump',           label: 'Fuel'                },
-      { id: 'cards',             icon: 'Card',               label: 'Cards'               },
-      { id: 'maintenance',       icon: 'Wrench',             label: 'Maintenance'         },
-      { id: 'workforce',         icon: 'Person',             label: 'Workforce'           },
+      { id: 'area-a',            icon: 'MapPage',            label: 'Area A'              },
+      { id: 'area-b',            icon: 'ShieldCircle',       label: 'Area B'              },
+      { id: 'area-c',            icon: 'Chart',              label: 'Area C'              },
+      { id: 'area-d',            icon: 'FuelPump',           label: 'Area D'              },
+      { id: 'area-e',            icon: 'Card',               label: 'Area E'              },
+      { id: 'area-f',            icon: 'Wrench',             label: 'Area F'              },
+      { id: 'area-g',            icon: 'Person',             label: 'Area G'              },
     ],
   },
   {
+    label: 'Section 1',
     items: [
-      { id: 'performance',       icon: 'Whistle',            label: 'Performance'         },
-      { id: 'security',          icon: 'ShieldLock',         label: 'Security'            },
-      { id: 'service-ops',       icon: 'WorkflowA',          label: 'Service Operations'  },
-      { id: 'dispatch',          icon: 'LocationPinArrows',  label: 'Dispatch'            },
-      { id: 'devices',           icon: 'Devices',            label: 'Devices'             },
+      { id: 'area-h',            icon: 'Whistle',            label: 'Area H'              },
+      { id: 'area-i',            icon: 'ShieldLock',         label: 'Area I'              },
+      { id: 'area-j',            icon: 'WorkflowA',          label: 'Area J'              },
+      { id: 'area-k',            icon: 'LocationPinArrows',  label: 'Area K'              },
+      { id: 'area-l',            icon: 'Devices',            label: 'Area L'              },
     ],
   },
   {
+    label: 'Section 2',
     items: [
-      { id: 'atlas',             icon: 'AI',                 label: 'Atlas'               },
-      { id: 'messages',          icon: 'MessageBubbleStack', label: 'Messages',   dot: true },
-      { id: 'documents',         icon: 'Document',           label: 'Documents'           },
-      { id: 'analytics',         icon: 'GraphArrow',         label: 'Analytics'           },
-      { id: 'marketplace',       icon: 'ShoppingBag',        label: 'Marketplace'         },
-      { id: 'labs',              icon: 'Beaker',             label: 'Labs'                },
+      { id: 'area-m',            icon: 'AI',                 label: 'Area M'              },
+      { id: 'area-n',            icon: 'MessageBubbleStack', label: 'Area N',     dot: true },
+      { id: 'area-o',            icon: 'Document',           label: 'Area O'              },
+      { id: 'area-p',            icon: 'GraphArrow',         label: 'Area P'              },
+      { id: 'area-q',            icon: 'ShoppingBag',        label: 'Area Q'              },
+      { id: 'area-r',            icon: 'Beaker',             label: 'Area R'              },
     ],
   },
 ];
@@ -45,33 +47,33 @@ const DASHBOARD_GROUPS: PanelNavGroup[] = [
 const SETTINGS_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'user-settings',     icon: 'Avatar',             label: 'User Settings'       },
+      { id: 'item-1',            icon: 'Avatar',             label: 'Item 1'              },
     ],
   },
   {
-    label: 'Organization',
+    label: 'Section 3',
     items: [
-      { id: 'company',           icon: 'BuildingOffice',     label: 'Company'             },
-      { id: 'fleet-users',       icon: 'PersonManager',      label: 'Fleet Users'         },
-      { id: 'groups',            icon: 'PersonGroup',        label: 'Groups'              },
+      { id: 'item-2',            icon: 'BuildingOffice',     label: 'Item 2'              },
+      { id: 'item-3',            icon: 'PersonManager',      label: 'Item 3'              },
+      { id: 'item-4',            icon: 'PersonGroup',        label: 'Item 4'              },
     ],
   },
   {
-    label: 'Configuration',
+    label: 'Section 4',
     items: [
-      { id: 'settings-profiles', icon: 'DocumentGear',       label: 'Settings Profiles'   },
-      { id: 'product-settings',  icon: 'Preferences',        label: 'Product Settings'    },
-      { id: 'automations',       icon: 'Bolt',               label: 'Automations'         },
-      { id: 'alerts',            icon: 'Notification',       label: 'Alerts',     dot: true },
+      { id: 'item-5',            icon: 'DocumentGear',       label: 'Item 5'              },
+      { id: 'item-6',            icon: 'Preferences',        label: 'Item 6'              },
+      { id: 'item-7',            icon: 'Bolt',               label: 'Item 7'              },
+      { id: 'item-8',            icon: 'Notification',       label: 'Item 8',     dot: true },
     ],
   },
   {
-    label: 'Developer',
+    label: 'Section 5',
     items: [
-      { id: 'driver-app',        icon: 'Mobile',             label: 'Driver & Fleet App'  },
-      { id: 'security-data',     icon: 'LockClosed',         label: 'Security & Data'     },
-      { id: 'developers',        icon: 'BackslashBrackets',  label: 'Developers'          },
-      { id: 'audit-log',         icon: 'DocumentPencil',     label: 'Audit Log'           },
+      { id: 'item-9',            icon: 'Mobile',             label: 'Item 9'              },
+      { id: 'item-10',           icon: 'LockClosed',         label: 'Item 10'             },
+      { id: 'item-11',           icon: 'BackslashBrackets',  label: 'Item 11'             },
+      { id: 'item-12',           icon: 'DocumentPencil',     label: 'Item 12'             },
     ],
   },
 ];
@@ -84,8 +86,8 @@ const STYLE_GROUPS: Record<NavChromeStyle, PanelNavGroup[]> = {
 };
 
 const STYLE_ACTIVE: Record<NavChromeStyle, string> = {
-  dashboard: 'fleet-view',
-  settings: 'user-settings',
+  dashboard: 'area-a',
+  settings: 'item-1',
 };
 
 function switchFooterStyle(id: string) {
@@ -102,7 +104,7 @@ function switchFooterStyle(id: string) {
   el.activeId = STYLE_ACTIVE[next];
 }
 
-function interactiveDashboard(activeId = 'fleet-view', collapsed = false): TemplateResult {
+function interactiveDashboard(activeId = 'area-a', collapsed = false): TemplateResult {
   return html`
     <div id="dash-nav-wrap" style="
       display: flex;
@@ -115,8 +117,8 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
         nav-style="dashboard"
         groups=${JSON.stringify(DASHBOARD_GROUPS)}
         active-id=${activeId}
-        user-name="Zain Adeel"
-        user-initial="Z"
+        user-name="User Name"
+        user-initial="U"
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('dash-nav') as any;
@@ -136,7 +138,7 @@ function interactiveDashboard(activeId = 'fleet-view', collapsed = false): Templ
   `;
 }
 
-function interactiveSettings(activeId = 'user-settings', collapsed = false): TemplateResult {
+function interactiveSettings(activeId = 'item-1', collapsed = false): TemplateResult {
   return html`
     <div id="settings-nav-wrap" style="
       display: flex;
@@ -149,8 +151,8 @@ function interactiveSettings(activeId = 'user-settings', collapsed = false): Tem
         nav-style="settings"
         groups=${JSON.stringify(SETTINGS_GROUPS)}
         active-id=${activeId}
-        user-name="Zain Adeel"
-        user-initial="Z"
+        user-name="User Name"
+        user-initial="U"
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('settings-nav') as any;
@@ -193,9 +195,9 @@ function sideBySide(): TemplateResult {
             id="sb-dash-exp"
             nav-style="dashboard"
             groups=${dashGroups}
-            active-id="fleet-view"
-            user-name="Zain Adeel"
-            user-initial="Z"
+            active-id="area-a"
+            user-name="User Name"
+            user-initial="U"
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('sb-dash-exp') as any;
               if (el) el.activeId = e.detail;
@@ -216,9 +218,9 @@ function sideBySide(): TemplateResult {
             id="sb-dash-col"
             nav-style="dashboard"
             groups=${dashGroups}
-            active-id="fleet-view"
-            user-name="Zain Adeel"
-            user-initial="Z"
+            active-id="area-a"
+            user-name="User Name"
+            user-initial="U"
             collapsed
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('sb-dash-col') as any;
@@ -240,9 +242,9 @@ function sideBySide(): TemplateResult {
             id="sb-settings-exp"
             nav-style="settings"
             groups=${settingsGroups}
-            active-id="user-settings"
-            user-name="Zain Adeel"
-            user-initial="Z"
+            active-id="item-1"
+            user-name="User Name"
+            user-initial="U"
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('sb-settings-exp') as any;
               if (el) el.activeId = e.detail;
@@ -263,9 +265,9 @@ function sideBySide(): TemplateResult {
             id="sb-settings-col"
             nav-style="settings"
             groups=${settingsGroups}
-            active-id="user-settings"
-            user-name="Zain Adeel"
-            user-initial="Z"
+            active-id="item-1"
+            user-name="User Name"
+            user-initial="U"
             collapsed
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('sb-settings-col') as any;
@@ -356,7 +358,7 @@ export const AngularHostTiming: Story = {
     assignPanelNavAfterUpgrade('angular-timing-nav', 'angular-timing-status', el => {
       el.groups = ROUTER_GROUPS;
       el.routerMode = 'event';
-      el.currentUrl = '/dashboard/fleet-view/live-map';
+      el.currentUrl = '/dashboard/area-a/tab-1';
     });
 
     return html`
@@ -370,8 +372,8 @@ export const AngularHostTiming: Story = {
           id="angular-timing-nav"
           nav-style="dashboard"
           router-mode="event"
-          user-name="Zain Adeel"
-          user-initial="Z"
+          user-name="User Name"
+          user-initial="U"
         ></ds-panel-nav>
         <div style="flex:1; padding:24px; color:rgba(255,255,255,0.55); font-size:13px;">
           <p style="margin:0 0 8px;">
@@ -387,7 +389,7 @@ export const AngularHostTiming: Story = {
 export const RouterModeEvent: Story = {
   name: 'Router mode — event (SPA)',
   render: () => {
-    let currentUrl = '/dashboard/fleet-view/live-map';
+    let currentUrl = '/dashboard/area-a/tab-1';
 
     const navigate = (path: string) => {
       currentUrl = path;
@@ -412,8 +414,8 @@ export const RouterModeEvent: Story = {
           router-mode="event"
           .groups=${ROUTER_GROUPS}
           current-url=${currentUrl}
-          user-name="Zain Adeel"
-          user-initial="Z"
+          user-name="User Name"
+          user-initial="U"
           @dsNavSelect=${(e: CustomEvent<string>) => {
             const item = ROUTER_GROUPS.flatMap(g => g.items).find(i => i.id === e.detail);
             if (item?.href) navigate(item.href);
@@ -465,9 +467,9 @@ export const LiveSwitch: Story = {
             id="live-nav"
             nav-style="dashboard"
             groups=${JSON.stringify(DASHBOARD_GROUPS)}
-            active-id="fleet-view"
-            user-name="Zain Adeel"
-            user-initial="Z"
+            active-id="area-a"
+            user-name="User Name"
+            user-initial="U"
             @dsNavSelect=${(e: CustomEvent<string>) => {
               const el = document.getElementById('live-nav') as any;
               if (el) el.activeId = e.detail;

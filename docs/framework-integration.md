@@ -58,7 +58,7 @@ The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing th
 ## `ds-app-shell` (optional workspace layout)
 
 ```html
-<ds-app-shell nav-style="dashboard" gradient grid="false">
+<ds-app-shell nav-style="dashboard" gradient>
   <ds-panel-nav slot="panel" …></ds-panel-nav>
   <ds-bar-nav slot="bar" …></ds-bar-nav>
   <ds-panel-tools slot="tools" …></ds-panel-tools>
@@ -70,12 +70,12 @@ The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing th
 | --- | --- | --- |
 | `navStyle` | `dashboard` | Shell propagates to slotted `ds-panel-nav` and `ds-bar-nav` |
 | `gradient` | `false` | Radial wash on the shared chrome layer + JS sync of `--ds-shell-gradient-*` vars to shell, panel, and bar |
-| `grid` | `false` | Diagonal grid overlay on the chrome layer (CSS only; independent of `gradient`) |
+| `gradientPreset` | `neutral` | Built-in wash when `gradient` is true: `none` (solid secondary), `cool`, `neutral`, or `warm` |
 | `gradientSrc` | `''` | Optional `url(...)` image override for the wash |
 
-The chrome layer mounts when **`gradient` or `grid`** is true. Panel, bar, and tools drawer surfaces are **transparent** under either prop so the chrome shows through. Page content (`default` slot) stays on an opaque `--color-background-primary` surface.
+The chrome layer mounts when **`gradient`** is true. Panel, bar, and tools drawer surfaces are **transparent** under gradient so the chrome shows through. Page content (`default` slot) stays on an opaque `--color-background-primary` surface.
 
-Built-in radial wash: `100% 100% at 0% 0%` — transparent → `--color-color-intent-blue-strong-background`, layer opacity **10%**. Bar wash position is offset by panel width so the L-shape stays continuous when the panel collapses.
+Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`cool` / `neutral` / `warm`), layer opacity **10%**. Preset **`none`** skips the wash and leaves the secondary chrome surface only. Bar wash position is offset by panel width so the L-shape stays continuous when the panel collapses.
 
 ### Why the wash is synced in JavaScript
 

@@ -48,9 +48,6 @@ export class AppShell {
   /** When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout). */
   @Prop({ reflect: true }) gradient: boolean = false;
 
-  /** When `true`, paints the diagonal grid overlay on the shared chrome layer. Independent of `gradient`. */
-  @Prop({ reflect: true }) grid: boolean = false;
-
   /**
    * Optional custom gradient for `background-image` (e.g. SVG URL).
    * When set, overrides the built-in radial wash.
@@ -59,7 +56,7 @@ export class AppShell {
 
   /**
    * Built-in shell wash preset when `gradient` is true.
-   * `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+   * `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
    */
   @Prop({ attribute: 'gradient-preset', reflect: true }) gradientPreset: ShellGradientPreset =
     DEFAULT_SHELL_GRADIENT_PRESET;
@@ -107,7 +104,6 @@ export class AppShell {
 
   @Watch('navStyle')
   @Watch('gradient')
-  @Watch('grid')
   @Watch('gradientSrc')
   @Watch('gradientPreset')
   onShellPropsChange() {
@@ -259,7 +255,7 @@ export class AppShell {
   }
 
   private chromeLayerActive(): boolean {
-    return this.gradient || this.grid;
+    return this.gradient;
   }
 
   @Listen('keydown', { target: 'window', capture: true })
@@ -300,12 +296,6 @@ export class AppShell {
       if (panelNav) panelNav.style.removeProperty(SHELL_GRADIENT_POSITION_PANEL_VAR);
       if (bar) bar.style.removeProperty(SHELL_GRADIENT_POSITION_BAR_VAR);
     };
-
-    if (!this.chromeLayerActive()) {
-      this.clearGradientPaintVars(targets);
-      clearLayoutVars();
-      return;
-    }
 
     if (!this.gradient) {
       this.clearGradientPaintVars(targets);
@@ -359,7 +349,6 @@ export class AppShell {
     const shellCls: Record<string, boolean> = {
       'app-shell': true,
       'app-shell--gradient': this.gradient,
-      'app-shell--grid': this.grid,
       [`app-shell--${this.navStyle}`]: true,
     };
 

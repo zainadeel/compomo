@@ -6,38 +6,34 @@ import '../../../../dist/components/ds-app-shell.js';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
-import type { NavChromeStyle } from '../../nav/nav-chrome';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
 import type { PanelToolsItem } from '../PanelTools/panel-tools-types';
 
-const DASHBOARD_GROUPS: PanelNavGroup[] = [
+const PANEL_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'fleet-view', icon: 'MapPage', label: 'Fleet View', href: '/dashboard/fleet-view' },
-      { id: 'safety', icon: 'ShieldCircle', label: 'Safety', href: '/dashboard/safety' },
+      { id: 'area-a', icon: 'MapPage', label: 'Area A' },
+      { id: 'area-b', icon: 'ShieldCircle', label: 'Area B' },
+    ],
+  },
+  {
+    label: 'Section 1',
+    items: [
+      { id: 'area-c', icon: 'Chart', label: 'Area C' },
+      { id: 'area-d', icon: 'FuelPump', label: 'Area D' },
     ],
   },
 ];
 
-const SETTINGS_GROUPS: PanelNavGroup[] = [
-  {
-    items: [
-      { id: 'user-settings', icon: 'Avatar', label: 'User Settings', href: '/settings/user-settings' },
-    ],
-  },
-];
-
-const SAFETY_TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'events', label: 'Events', dot: true },
+const BAR_TABS = [
+  { id: 'tab-1', label: 'Tab 1' },
+  { id: 'tab-2', label: 'Tab 2', dot: true },
 ];
 
 const PANEL_TOOLS_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
   { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
-  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
 ];
 
 const wiredPanelTools = new WeakSet<Element>();
@@ -45,13 +41,11 @@ const wiredPanelTools = new WeakSet<Element>();
 function wireBarNav(el: Element | null) {
   if (!el) return;
   const nav = el as HTMLElement & {
-    tabs: typeof SAFETY_TABS;
-    basePath: string;
-    currentUrl: string;
+    tabs: typeof BAR_TABS;
+    value: string;
   };
-  nav.tabs = SAFETY_TABS;
-  nav.basePath = '/dashboard/safety';
-  nav.currentUrl = '/dashboard/safety/events';
+  nav.tabs = BAR_TABS;
+  nav.value = 'tab-2';
 }
 
 function wirePanelTools(el: Element | null) {
@@ -74,35 +68,7 @@ function wirePanelTools(el: Element | null) {
   });
 }
 
-function applySection(shellId: string, next: NavChromeStyle) {
-  const shell = document.getElementById(shellId) as HTMLElement & { navStyle: NavChromeStyle } | null;
-  const panel = shell?.querySelector('ds-panel-nav') as HTMLElement & {
-    navStyle: NavChromeStyle;
-    groups: string | PanelNavGroup[];
-    activeId: string;
-  } | null;
-  const bar = shell?.querySelector('ds-bar-nav') as HTMLElement & { navStyle: NavChromeStyle } | null;
-  if (!shell || !panel) return;
-
-  shell.navStyle = next;
-  panel.navStyle = next;
-  if (bar) bar.navStyle = next;
-  panel.groups = JSON.stringify(next === 'dashboard' ? DASHBOARD_GROUPS : SETTINGS_GROUPS);
-  panel.activeId = next === 'dashboard' ? 'safety' : 'user-settings';
-}
-
-function toggleSection(shellId: string) {
-  const shell = document.getElementById(shellId) as HTMLElement & { navStyle: NavChromeStyle } | null;
-  if (!shell) return;
-  const next: NavChromeStyle = shell.navStyle === 'dashboard' ? 'settings' : 'dashboard';
-  applySection(shellId, next);
-}
-
-function shellLayout(
-  shellId: string,
-  options: { gradient?: boolean; grid?: boolean },
-): TemplateResult {
-  const { gradient = false, grid = false } = options;
+function shellLayout(gradient: boolean): TemplateResult {
   return html`
     <div
       style="
@@ -111,37 +77,17 @@ function shellLayout(
         font-family: var(--typography-font-family, system-ui);
       "
     >
-      <ds-app-shell
-        id=${shellId}
-        nav-style="dashboard"
-        ?gradient=${gradient}
-        ?grid=${grid}
-        style="height: 100%;"
-      >
+      <ds-app-shell nav-style="dashboard" ?gradient=${gradient} style="height: 100%;">
         <ds-panel-nav
           slot="panel"
           nav-style="dashboard"
-          groups=${JSON.stringify(DASHBOARD_GROUPS)}
-          active-id="safety"
-          user-name="Zain Adeel"
-          user-initial="Z"
-          @dsNavFooterAction=${() => toggleSection(shellId)}
+          .groups=${PANEL_GROUPS}
+          active-id="area-b"
+          user-name="User Name"
+          user-initial="U"
         ></ds-panel-nav>
         <ds-bar-nav slot="bar" nav-style="dashboard" ${ref(wireBarNav)}></ds-bar-nav>
-        <ds-panel-tools slot="tools" ${ref(wirePanelTools)}>
-          <p slot="agents">Agents tool content</p>
-        </ds-panel-tools>
-        <div style="padding: var(--dimension-space-400); color: var(--color-foreground-primary);">
-          <p style="margin: 0 0 8px;">
-            <code>ds-app-shell</code> syncs <code>navStyle</code> and optional L-gradient.
-          </p>
-          <p style="margin: 0 0 8px; color: var(--color-foreground-secondary);">
-            Shell shortcuts: `[` panel · `]` close tools · K/A/S/M/N toggle search/agents/stacks/messages/activity.
-          </p>
-          <p style="margin: 0; color: var(--color-foreground-secondary);">
-            Footer gear toggles <code>dashboard</code> ↔ <code>settings</code> style slots.
-          </p>
-        </div>
+        <ds-panel-tools slot="tools" ${ref(wirePanelTools)}></ds-panel-tools>
       </ds-app-shell>
     </div>
   `;
@@ -149,7 +95,6 @@ function shellLayout(
 
 const meta: Meta = {
   title: 'Navigation/AppShell',
-  tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },
 };
 
@@ -157,21 +102,11 @@ export default meta;
 type Story = StoryObj;
 
 export const WithGradient: Story = {
-  name: 'Gradient wash only',
-  render: () => shellLayout('shell-gradient', { gradient: true, grid: false }),
+  name: 'With gradient',
+  render: () => shellLayout(true),
 };
 
-export const WithGradientAndGrid: Story = {
-  name: 'Gradient wash + grid',
-  render: () => shellLayout('shell-gradient-grid', { gradient: true, grid: true }),
-};
-
-export const WithGridOnly: Story = {
-  name: 'Grid only',
-  render: () => shellLayout('shell-grid', { gradient: false, grid: true }),
-};
-
-export const NoGradient: Story = {
-  name: 'No chrome',
-  render: () => shellLayout('shell-plain', { gradient: false, grid: false }),
+export const WithoutGradient: Story = {
+  name: 'Without gradient',
+  render: () => shellLayout(false),
 };

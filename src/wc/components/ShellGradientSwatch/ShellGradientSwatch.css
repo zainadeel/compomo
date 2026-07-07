@@ -59,6 +59,11 @@
   cursor: not-allowed;
 }
 
+/* None — secondary surface only, no wash preview. */
+.shell-gradient-swatch--none::before {
+  display: none;
+}
+
 /* Selected — inset 2px brand ring + inset 2px surface halo behind it. */
 .shell-gradient-swatch--selected::after {
   box-shadow:

@@ -108,7 +108,7 @@ export namespace Components {
          */
         "gradient": boolean;
         /**
-          * Built-in shell wash preset when `gradient` is true. `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+          * Built-in shell wash preset when `gradient` is true. `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
           * @default DEFAULT_SHELL_GRADIENT_PRESET
          */
         "gradientPreset": ShellGradientPreset;
@@ -117,11 +117,6 @@ export namespace Components {
           * @default ''
          */
         "gradientSrc": string;
-        /**
-          * When `true`, paints the diagonal grid overlay on the shared chrome layer. Independent of `gradient`.
-          * @default false
-         */
-        "grid": boolean;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
@@ -1919,7 +1914,7 @@ declare namespace LocalJSX {
          */
         "gradient"?: boolean;
         /**
-          * Built-in shell wash preset when `gradient` is true. `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+          * Built-in shell wash preset when `gradient` is true. `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
           * @default DEFAULT_SHELL_GRADIENT_PRESET
          */
         "gradientPreset"?: ShellGradientPreset;
@@ -1928,11 +1923,6 @@ declare namespace LocalJSX {
           * @default ''
          */
         "gradientSrc"?: string;
-        /**
-          * When `true`, paints the diagonal grid overlay on the shared chrome layer. Independent of `gradient`.
-          * @default false
-         */
-        "grid"?: boolean;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
@@ -3075,7 +3065,6 @@ declare namespace LocalJSX {
     interface DsAppShellAttributes {
         "navStyle": NavChromeStyle;
         "gradient": boolean;
-        "grid": boolean;
         "gradientSrc": string;
         "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
@@ -3499,6 +3488,3 @@ declare module "@stencil/core" {
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-
