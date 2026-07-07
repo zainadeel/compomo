@@ -59,10 +59,11 @@
   cursor: not-allowed;
 }
 
-/* Selected — 2px brand ring + 4px surface ring underneath (dot ring pattern). */
+/* Selected — inset 2px brand ring + outset 4px surface halo (dot ring pattern). */
 .shell-gradient-swatch--selected {
-  box-shadow:
-    0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand),
-    0 0 0 calc(var(--dimension-stroke-width-025) + var(--dimension-stroke-width-050))
-      var(--_swatch-ring-bg);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-050) var(--_swatch-ring-bg);
+}
+
+.shell-gradient-swatch--selected::after {
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
 }
