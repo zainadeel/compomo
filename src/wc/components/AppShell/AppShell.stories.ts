@@ -38,14 +38,10 @@ const PANEL_TOOLS_ITEMS: PanelToolsItem[] = [
 
 const wiredPanelTools = new WeakSet<Element>();
 
-function wireBarNav(el: Element | null) {
-  if (!el) return;
-  const nav = el as HTMLElement & {
-    tabs: typeof BAR_TABS;
-    value: string;
-  };
-  nav.tabs = BAR_TABS;
-  nav.value = 'tab-2';
+function bindTabChange(nav: HTMLElement & { value: string }) {
+  nav.addEventListener('dsTabChange', (e: Event) => {
+    nav.value = (e as CustomEvent<string>).detail;
+  });
 }
 
 function wirePanelTools(el: Element | null) {
@@ -86,7 +82,17 @@ function shellLayout(gradient: boolean): TemplateResult {
           user-name="User Name"
           user-initial="U"
         ></ds-panel-nav>
-        <ds-bar-nav slot="bar" nav-style="dashboard" ${ref(wireBarNav)}></ds-bar-nav>
+        <ds-bar-nav
+          slot="bar"
+          nav-style="dashboard"
+          base-path="/example"
+          .tabs=${BAR_TABS}
+          value="tab-2"
+          ${ref(el => {
+            if (!el) return;
+            bindTabChange(el as HTMLElement & { value: string });
+          })}
+        ></ds-bar-nav>
         <ds-panel-tools slot="tools" ${ref(wirePanelTools)}></ds-panel-tools>
       </ds-app-shell>
     </div>

@@ -16,23 +16,11 @@ const overflowTabs = [
   { id: 'tab-2', label: 'Tab 2' },
   { id: 'tab-3', label: 'Tab 3' },
   { id: 'tab-4', label: 'Tab 4' },
-  { id: 'tab-5', label: 'Tab 5', dot: true },
+  { id: 'tab-5', label: 'Tab 5 with dot', dot: true },
   { id: 'tab-6', label: 'Tab 6' },
 ];
 
-function wireTabs(
-  el: Element | null,
-  tabs: typeof multiTabs | typeof overflowTabs,
-  value: string,
-) {
-  if (!el) return;
-  const nav = el.querySelector('ds-bar-nav') as HTMLElement & {
-    tabs: typeof multiTabs | typeof overflowTabs;
-    value: string;
-  } | null;
-  if (!nav) return;
-  nav.tabs = tabs;
-  nav.value = value;
+function bindTabChange(nav: HTMLElement & { value: string }) {
   nav.addEventListener('dsTabChange', (e: Event) => {
     nav.value = (e as CustomEvent<string>).detail;
   });
@@ -59,11 +47,16 @@ export const SingleTab: Story = {
 export const MultipleTabs: Story = {
   name: 'Multiple tabs',
   render: () => html`
-    <div
-      style="width: min(100%, 720px);"
-      ${ref(el => wireTabs(el, multiTabs, 'tab-3'))}
-    >
-      <ds-bar-nav></ds-bar-nav>
+    <div style="width: min(100%, 720px);">
+      <ds-bar-nav
+        base-path="/example"
+        .tabs=${multiTabs}
+        value="tab-3"
+        ${ref(el => {
+          if (!el) return;
+          bindTabChange(el as HTMLElement & { value: string });
+        })}
+      ></ds-bar-nav>
     </div>
   `,
 };
@@ -82,15 +75,22 @@ export const TabOverflow: Story = {
   render: () => html`
     <div
       style="
-        width: min(100%, 420px);
+        width: min(100%, 300px);
         resize: horizontal;
         overflow: auto;
         padding-bottom: var(--dimension-space-200);
         border: 1px dashed var(--color-border-tertiary);
       "
-      ${ref(el => wireTabs(el, overflowTabs, 'tab-5'))}
     >
-      <ds-bar-nav></ds-bar-nav>
+      <ds-bar-nav
+        base-path="/example"
+        .tabs=${overflowTabs}
+        value="tab-5"
+        ${ref(el => {
+          if (!el) return;
+          bindTabChange(el as HTMLElement & { value: string });
+        })}
+      ></ds-bar-nav>
     </div>
   `,
 };
