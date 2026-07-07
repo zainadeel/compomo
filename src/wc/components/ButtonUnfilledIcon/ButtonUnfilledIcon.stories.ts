@@ -13,9 +13,14 @@ const meta: Meta = {
     dot: { control: 'boolean' },
     inactive: { control: 'boolean' },
     ariaLabel: { control: 'text' },
+    backgroundContrast: {
+      name: 'on-background-contrast',
+      control: 'select',
+      options: ['default', 'medium', 'bold', 'strong'],
+    },
     background: {
       control: 'select',
-      options: ['', 'medium', 'bold', 'strong', 'always-dark', 'navigation'],
+      options: ['', 'always-dark', 'navigation'],
     },
   },
   args: {
@@ -26,6 +31,7 @@ const meta: Meta = {
     hasBorder: false,
     dot: false,
     inactive: false,
+    backgroundContrast: 'default',
     background: '',
   },
 };
@@ -50,6 +56,7 @@ export const Playground: Story = {
       ?dot=${args['dot']}
       ?inactive=${args['inactive']}
       aria-label=${args['ariaLabel']}
+      on-background-contrast=${args['backgroundContrast']}
       background=${args['background'] || ''}
     ></ds-button-unfilled-icon>
   `,
@@ -130,18 +137,18 @@ export const Backgrounds: Story = {
       </div>
       <div style="${SURFACE}background:var(--color-background-medium-neutral);">
         <span style="${LABEL}">medium</span>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="medium"></ds-button-unfilled-icon>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="medium" is-active></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" on-background-contrast="medium"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" on-background-contrast="medium" is-active></ds-button-unfilled-icon>
       </div>
       <div style="${SURFACE}background:var(--color-background-bold-neutral);">
         <span style="${LABEL}">bold</span>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="bold"></ds-button-unfilled-icon>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="bold" is-active></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" on-background-contrast="bold"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" on-background-contrast="bold" is-active></ds-button-unfilled-icon>
       </div>
       <div style="${SURFACE}background:var(--color-background-strong-neutral);">
         <span style="${LABEL}">strong</span>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" background="strong"></ds-button-unfilled-icon>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" background="strong" is-active></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell" on-background-contrast="strong"></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Bell active" on-background-contrast="strong" is-active></ds-button-unfilled-icon>
       </div>
       <div style="${SURFACE}background:var(--color-navigation-background);">
         <span style="${LABEL}">navigation</span>

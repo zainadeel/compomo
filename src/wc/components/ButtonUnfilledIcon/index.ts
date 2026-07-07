@@ -1,1 +1,1 @@
-export type { ButtonUnfilledIconBackground } from './ButtonUnfilledIcon';
+export type { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from './ButtonUnfilledIcon';

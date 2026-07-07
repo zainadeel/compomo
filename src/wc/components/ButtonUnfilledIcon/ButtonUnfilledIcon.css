@@ -5,6 +5,8 @@
   flex: 0 0 auto;
   width: var(--dimension-size-400);
   height: var(--dimension-size-400);
+  min-width: var(--dimension-size-400);
+  min-height: var(--dimension-size-400);
   outline: none;
   --ds-button-unfilled-icon-fg: var(--color-foreground-secondary);
   --ds-button-unfilled-icon-fg-active: var(--color-foreground-primary);
@@ -19,11 +21,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--dimension-size-400);
-  height: var(--dimension-size-400);
+  width: 100%;
+  height: 100%;
   padding: var(--dimension-space-075);
   background: transparent;
-  border: var(--dimension-stroke-width-012, 1px) solid transparent;
+  border: none;
   border-radius: var(--dimension-radius-025);
   color: var(--ds-button-unfilled-icon-fg);
   cursor: pointer;
@@ -44,11 +46,15 @@
   background: transparent;
   pointer-events: none;
   transition: none;
+}
+
+/* Layer stack (bottom → top): active fill → hover/press (over border). */
+.button-icon::before {
   z-index: 1;
 }
 
-.button-icon::before {
-  z-index: 0;
+.button-icon::after {
+  z-index: 2;
 }
 
 .button-icon--active-fill::before {
@@ -70,15 +76,7 @@
 }
 
 .button-icon--bordered {
-  border-color: var(--ds-button-unfilled-icon-border);
-}
-
-.button-icon--bordered::after {
-  inset: var(--dimension-stroke-width-012, 1px);
-}
-
-.button-icon--bordered::before {
-  inset: var(--dimension-stroke-width-012, 1px);
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--ds-button-unfilled-icon-border);
 }
 
 .button-icon--inactive {
@@ -87,31 +85,36 @@
   pointer-events: none;
 }
 
-.button-icon--on-medium {
+.button-icon--contrast-medium {
+  --ds-button-unfilled-icon-fg: var(--color-foreground-on-medium-background-secondary);
+  --ds-button-unfilled-icon-fg-active: var(--color-foreground-on-medium-background-primary);
   --ds-button-unfilled-icon-active-bg: var(--color-interaction-on-medium-background-active);
   --ds-button-unfilled-icon-hover-bg: var(--color-interaction-on-medium-background-hover);
   --ds-button-unfilled-icon-pressed-bg: var(--color-interaction-on-medium-background-pressed);
   --ds-button-unfilled-icon-dot-ring: var(--color-background-medium-neutral);
+  --ds-button-unfilled-icon-border: var(--color-border-on-medium-background-tertiary);
   --ds-focus-ring-color: var(--color-interaction-on-medium-background-focus);
 }
 
-.button-icon--on-bold {
+.button-icon--contrast-bold {
   --ds-button-unfilled-icon-fg: var(--color-foreground-on-bold-background-secondary);
   --ds-button-unfilled-icon-fg-active: var(--color-foreground-on-bold-background-primary);
   --ds-button-unfilled-icon-active-bg: var(--color-interaction-on-bold-background-active);
   --ds-button-unfilled-icon-hover-bg: var(--color-interaction-on-bold-background-hover);
   --ds-button-unfilled-icon-pressed-bg: var(--color-interaction-on-bold-background-pressed);
   --ds-button-unfilled-icon-dot-ring: var(--color-background-bold-neutral);
+  --ds-button-unfilled-icon-border: var(--color-border-on-bold-background-tertiary);
   --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
 }
 
-.button-icon--on-strong {
-  --ds-button-unfilled-icon-fg: var(--color-foreground-on-bold-background-secondary);
-  --ds-button-unfilled-icon-fg-active: var(--color-foreground-on-bold-background-primary);
+.button-icon--contrast-strong {
+  --ds-button-unfilled-icon-fg: var(--color-foreground-on-strong-background-secondary);
+  --ds-button-unfilled-icon-fg-active: var(--color-foreground-on-strong-background-primary);
   --ds-button-unfilled-icon-active-bg: var(--color-interaction-on-strong-background-active);
   --ds-button-unfilled-icon-hover-bg: var(--color-interaction-on-strong-background-hover);
   --ds-button-unfilled-icon-pressed-bg: var(--color-interaction-on-strong-background-pressed);
   --ds-button-unfilled-icon-dot-ring: var(--color-background-strong-neutral);
+  --ds-button-unfilled-icon-border: var(--color-border-on-strong-background-tertiary);
   --ds-focus-ring-color: var(--color-interaction-on-strong-background-focus);
 }
 

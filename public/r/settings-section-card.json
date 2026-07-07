@@ -1,0 +1,96 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-section-card",
+  "title": "SettingsSectionCard",
+  "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/settings-section-card",
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
+      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-settings-section-card.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
+      "usage": {
+        "html": "<ds-settings-section-card></ds-settings-section-card>",
+        "react": "<ds-settings-section-card></ds-settings-section-card>",
+        "angular": "<ds-settings-section-card></ds-settings-section-card>"
+      },
+      "events": [
+        {
+          "name": "dsEditingChange",
+          "listen": "element.addEventListener('dsEditingChange', handler)",
+          "reactProp": "onDsEditingChange={handler}",
+          "angularBinding": "(dsEditingChange)=\"handler($event)\""
+        }
+      ],
+      "internalDependencies": [
+        {
+          "component": "Text",
+          "note": "Used internally by SettingsSectionCard. Bundled in @ds-mo/ui."
+        },
+        {
+          "component": "ButtonUnfilledIcon",
+          "note": "Used internally by SettingsSectionCard. Bundled in @ds-mo/ui."
+        },
+        {
+          "component": "ButtonFilled",
+          "note": "Used internally by SettingsSectionCard. Bundled in @ds-mo/ui."
+        }
+      ],
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens >=2.9.0",
+          "@ds-mo/icons ^5.0.1"
+        ],
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+      }
+    },
+    "props": {
+      "heading": {
+        "type": "string",
+        "required": true,
+        "description": "Section title in the card header."
+      },
+      "cardWidth": {
+        "type": "'xs' | 'sm' | 'md' | 'lg'",
+        "default": "'md'"
+      },
+      "editing": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Controlled edit state."
+      }
+    },
+    "exports": [
+      "SettingsSectionCard"
+    ],
+    "types": [
+      "SettingsSectionCardWidth"
+    ]
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "text",
+    "button-unfilled-icon",
+    "button-filled"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/SettingsSectionCard/SettingsSectionCard.css",
+      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n  width: var(--_settings-card-width);\n  max-width: 100%;\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.settings-section-card--editing) {\n  background-color: var(--color-background-bold-brand);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);\n}\n\n.settings-section-card__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  height: var(--dimension-size-600);\n  padding: var(--dimension-space-100);\n  background-color: var(--color-background-secondary);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  box-sizing: border-box;\n}\n\n:host(.settings-section-card--editing) .settings-section-card__header {\n  background-color: transparent;\n  border-bottom-color: transparent;\n}\n\n.settings-section-card__title-wrap {\n  flex: 1 1 auto;\n  min-width: 0;\n  display: flex;\n  align-items: center;\n  padding: var(--dimension-space-075);\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.settings-section-card__title {\n  display: inline-flex;\n  align-items: center;\n  min-width: 0;\n  padding: var(--dimension-space-025);\n}\n\n.settings-section-card__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n\n.settings-section-card__body {\n  min-height: var(--dimension-card-width-sm);\n  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n}\n\n:host(.settings-section-card--editing) .settings-section-card__body {\n  border-radius: var(--dimension-radius-025);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SettingsSectionCard/SettingsSectionCard.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\nexport type SettingsSectionCardWidth = 'xs' | 'sm' | 'md' | 'lg';\n\nconst CARD_WIDTH_VARS: Record<SettingsSectionCardWidth, string> = {\n  xs: 'var(--dimension-card-width-xs)',\n  sm: 'var(--dimension-card-width-sm)',\n  md: 'var(--dimension-card-width-md)',\n  lg: 'var(--dimension-card-width-lg)',\n};\n\nconst FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';\n\n@Component({\n  tag: 'ds-settings-section-card',\n  styleUrl: 'SettingsSectionCard.css',\n  scoped: true,\n})\nexport class SettingsSectionCard {\n  /** Section heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Card width token. */\n  @Prop() cardWidth: SettingsSectionCardWidth = 'md';\n\n  /** Controlled edit state — parent owns single-edit orchestration. */\n  @Prop() editing = false;\n\n  /** Emits when the user enters or exits edit mode. */\n  @Event() dsEditingChange!: EventEmitter<boolean>;\n\n  private enterEdit = () => {\n    this.dsEditingChange.emit(true);\n  };\n\n  private exitEdit = () => {\n    this.dsEditingChange.emit(false);\n  };\n\n  render() {\n    const editing = this.editing;\n\n    return (\n      <Host\n        class={{\n          'settings-section-card': true,\n          'settings-section-card--editing': editing,\n        }}\n        style={{ '--_settings-card-width': CARD_WIDTH_VARS[this.cardWidth] }}\n      >\n        <header class=\"settings-section-card__header\">\n          <div class=\"settings-section-card__title-wrap\">\n            <ds-text\n              class=\"settings-section-card__title\"\n              variant=\"text-title-small\"\n              color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}\n              as=\"h2\"\n            >\n              {this.heading}\n            </ds-text>\n          </div>\n          {!editing ? (\n            <ds-button-unfilled-icon\n              type=\"button\"\n              icon=\"Pencil\"\n              aria-label=\"Edit\"\n              onDsClick={this.enterEdit}\n            />\n          ) : (\n            <div class=\"settings-section-card__actions\">\n              <ds-button-unfilled-icon\n                type=\"button\"\n                icon=\"Cross\"\n                backgroundContrast=\"bold\"\n                has-border\n                aria-label=\"Cancel\"\n                onDsClick={this.exitEdit}\n              />\n              <ds-button-filled\n                type=\"button\"\n                icon=\"Check\"\n                intent=\"brand\"\n                contrast=\"faint\"\n                aria-label=\"Save\"\n                onDsClick={this.exitEdit}\n              />\n            </div>\n          )}\n        </header>\n        <div class=\"settings-section-card__body\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

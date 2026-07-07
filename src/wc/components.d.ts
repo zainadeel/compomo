@@ -12,9 +12,8 @@ import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
-import { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
-import { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
-import { ButtonUnfilledIconBackground } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
+import { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
 import { CardElevation, CardRadius } from "./components/Card/Card";
 import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
@@ -32,6 +31,7 @@ import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
+import { SettingsSectionCardWidth } from "./components/SettingsSectionCard/SettingsSectionCard";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
@@ -42,8 +42,6 @@ import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
 import { ToastPosition } from "./components/Toast/Toast";
-import { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
-import { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
 import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export { AccordionItemData } from "./components/Accordion/Accordion";
 export { NavChromeStyle } from "./nav/nav-chrome";
@@ -52,9 +50,8 @@ export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
-export { ButtonBackground, ButtonContrast, ButtonElevation, ButtonIntent, ButtonSize, ButtonVariant } from "./components/Button/Button";
-export { ButtonGroupElevation, ButtonGroupItem, ButtonGroupSize } from "./components/ButtonGroup/ButtonGroup";
-export { ButtonUnfilledIconBackground } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
+export { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
 export { CardElevation, CardRadius } from "./components/Card/Card";
 export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
@@ -72,6 +69,7 @@ export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
+export { SettingsSectionCardWidth } from "./components/SettingsSectionCard/SettingsSectionCard";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
@@ -82,8 +80,6 @@ export { SortState, TableColumn } from "./components/Table/Table";
 export { TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
 export { ToastPosition } from "./components/Toast/Toast";
-export { ToggleButtonBackground, ToggleButtonElevation, ToggleButtonSize } from "./components/ToggleButton/ToggleButton";
-export { ToggleGroupBackground, ToggleGroupElevation, ToggleGroupItem, ToggleGroupSize } from "./components/ToggleButtonGroup/ToggleButtonGroup";
 export { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAccordion {
@@ -246,79 +242,37 @@ export namespace Components {
          */
         "separator": string;
     }
-    interface DsButton {
-        "ariaLabel": string | undefined;
-        "ariaLabelledby": string | undefined;
-        "background": ButtonBackground | undefined;
-        "badgeCount": number | undefined;
+    interface DsButtonFilled {
         /**
+          * @default 'action'
+         */
+        "ariaLabel": string;
+        /**
+          * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
-        "contrast": ButtonContrast;
+        "contrast": ButtonFilledContrast;
         /**
-          * @default false
+          * Icon name passed to <ds-icon>.
+          * @default ''
          */
-        "dropdown": boolean;
-        "elevation": ButtonElevation | undefined;
+        "icon": string;
         /**
-          * @default false
-         */
-        "fullWidth": boolean;
-        "href": string | undefined;
-        /**
+          * Disables interaction.
           * @default false
          */
         "inactive": boolean;
         /**
+          * Semantic colour intent.
           * @default 'brand'
          */
-        "intent": ButtonIntent;
-        "label": string | undefined;
+        "intent": ButtonFilledIntent;
+        "setFocus": () => Promise<void>;
         /**
-          * @default false
-         */
-        "loading": boolean;
-        /**
-          * @default false
-         */
-        "rounded": boolean;
-        /**
-          * @default 'md'
-         */
-        "size": ButtonSize;
-        "target": string | undefined;
-        /**
+          * Native button type.
           * @default 'button'
          */
         "type": 'button' | 'submit' | 'reset';
-        /**
-          * @default 'primary'
-         */
-        "variant": ButtonVariant;
-        "width": string | undefined;
-    }
-    interface DsButtonGroup {
-        /**
-          * Chrome level for the group container.
-          * @default 'flat'
-         */
-        "elevation": ButtonGroupElevation;
-        /**
-          * Array of button descriptors. Set via JS property.
-          * @example el.items = [{ label: 'Filter', icon: 'Filter' }, { label: 'Sort' }];
-          * @default []
-         */
-        "items": ButtonGroupItem[];
-        /**
-          * Pill shape for group + buttons.
-          * @default false
-         */
-        "rounded": boolean;
-        /**
-          * Size passed to each ds-button.
-          * @default 'md'
-         */
-        "size": ButtonGroupSize;
     }
     interface DsButtonUnfilledIcon {
         /**
@@ -331,9 +285,13 @@ export namespace Components {
          */
         "ariaLabel": string;
         /**
-          * Parent surface context — adjusts hover/press/focus colours for coloured backgrounds.
+          * Parent surface context for navigation and always-dark chrome.
          */
         "background": ButtonUnfilledIconBackground | undefined;
+        /**
+          * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
+         */
+        "backgroundContrast"?: ButtonUnfilledIconOnBackgroundContrast;
         "controls": string | undefined;
         /**
           * Show a notification dot at the top-right of the icon zone.
@@ -806,6 +764,22 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsSettingsSectionCard {
+        /**
+          * Card width token.
+          * @default 'md'
+         */
+        "cardWidth": SettingsSectionCardWidth;
+        /**
+          * Controlled edit state — parent owns single-edit orchestration.
+          * @default false
+         */
+        "editing": boolean;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+    }
     interface DsShellGradientPicker {
         /**
           * Active shell wash preset.
@@ -1067,79 +1041,6 @@ export namespace Components {
          */
         "inactive": boolean;
     }
-    interface DsToggleButton {
-        "ariaLabel": string | undefined;
-        /**
-          * Parent surface context — adjusts hover tokens for colored backgrounds.
-         */
-        "background": ToggleButtonBackground | undefined;
-        /**
-          * Chrome level.   none     — ghost (transparent, no border, no shadow)   flat     — border only, transparent bg   elevated — bg-primary + shadow  [default]   floating — bg-primary + FAB-strength shadow
-          * @default 'elevated'
-         */
-        "elevation": ToggleButtonElevation;
-        /**
-          * Icon name for <ds-icon>. Set via JS property.
-          * @example el.icon = 'GridView';
-         */
-        "icon": string | undefined;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive": boolean;
-        /**
-          * Label text.
-         */
-        "label": string | undefined;
-        /**
-          * Controlled pressed state.
-          * @default false
-         */
-        "pressed": boolean;
-        /**
-          * Pill shape.
-          * @default false
-         */
-        "rounded": boolean;
-        /**
-          * Size: md (32px), sm (24px), xs (16px).
-          * @default 'md'
-         */
-        "size": ToggleButtonSize;
-    }
-    interface DsToggleButtonGroup {
-        /**
-          * Parent surface context.
-         */
-        "background": ToggleGroupBackground | undefined;
-        /**
-          * Chrome level for the group container.
-          * @default 'elevated'
-         */
-        "elevation": ToggleGroupElevation;
-        /**
-          * Array of item descriptors. Set via JS property.
-          * @example el.items = [{ id: 'list', label: 'List' }, { id: 'grid', icon: 'GridView' }];
-          * @default []
-         */
-        "items": ToggleGroupItem[];
-        /**
-          * Pill shape for group + buttons.
-          * @default false
-         */
-        "rounded": boolean;
-        /**
-          * Size passed to each ds-toggle-button.
-          * @default 'md'
-         */
-        "size": ToggleGroupSize;
-        /**
-          * ID of the currently selected / pressed item.
-          * @default ''
-         */
-        "value": string;
-    }
     interface DsTooltip {
         /**
           * @default 'center'
@@ -1188,13 +1089,9 @@ export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBreadcrumbElement;
 }
-export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
+export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsButtonElement;
-}
-export interface DsButtonGroupCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsButtonGroupElement;
+    target: HTMLDsButtonFilledElement;
 }
 export interface DsButtonUnfilledIconCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1240,6 +1137,10 @@ export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
 }
+export interface DsSettingsSectionCardCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSettingsSectionCardElement;
+}
 export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsShellGradientPickerElement;
@@ -1267,14 +1168,6 @@ export interface DsTableCustomEvent<T> extends CustomEvent<T> {
 export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToggleElement;
-}
-export interface DsToggleButtonCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsToggleButtonElement;
-}
-export interface DsToggleButtonGroupCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsToggleButtonGroupElement;
 }
 declare global {
     interface HTMLDsAccordionElementEventMap {
@@ -1357,41 +1250,22 @@ declare global {
         prototype: HTMLDsBreadcrumbElement;
         new (): HTMLDsBreadcrumbElement;
     };
-    interface HTMLDsButtonElementEventMap {
+    interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
-        "dsMouseEnter": MouseEvent;
-        "dsMouseLeave": MouseEvent;
     }
-    interface HTMLDsButtonElement extends Components.DsButton, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsButtonElementEventMap>(type: K, listener: (this: HTMLDsButtonElement, ev: DsButtonCustomEvent<HTMLDsButtonElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsButtonFilledElement extends Components.DsButtonFilled, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonFilledElementEventMap>(type: K, listener: (this: HTMLDsButtonFilledElement, ev: DsButtonFilledCustomEvent<HTMLDsButtonFilledElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsButtonElementEventMap>(type: K, listener: (this: HTMLDsButtonElement, ev: DsButtonCustomEvent<HTMLDsButtonElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonFilledElementEventMap>(type: K, listener: (this: HTMLDsButtonFilledElement, ev: DsButtonFilledCustomEvent<HTMLDsButtonFilledElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsButtonElement: {
-        prototype: HTMLDsButtonElement;
-        new (): HTMLDsButtonElement;
-    };
-    interface HTMLDsButtonGroupElementEventMap {
-        "dsClick": number;
-    }
-    interface HTMLDsButtonGroupElement extends Components.DsButtonGroup, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsButtonGroupElement, ev: DsButtonGroupCustomEvent<HTMLDsButtonGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsButtonGroupElement, ev: DsButtonGroupCustomEvent<HTMLDsButtonGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsButtonGroupElement: {
-        prototype: HTMLDsButtonGroupElement;
-        new (): HTMLDsButtonGroupElement;
+    var HTMLDsButtonFilledElement: {
+        prototype: HTMLDsButtonFilledElement;
+        new (): HTMLDsButtonFilledElement;
     };
     interface HTMLDsButtonUnfilledIconElementEventMap {
         "dsClick": MouseEvent;
@@ -1650,6 +1524,23 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
+    interface HTMLDsSettingsSectionCardElementEventMap {
+        "dsEditingChange": boolean;
+    }
+    interface HTMLDsSettingsSectionCardElement extends Components.DsSettingsSectionCard, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSettingsSectionCardElementEventMap>(type: K, listener: (this: HTMLDsSettingsSectionCardElement, ev: DsSettingsSectionCardCustomEvent<HTMLDsSettingsSectionCardElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSettingsSectionCardElementEventMap>(type: K, listener: (this: HTMLDsSettingsSectionCardElement, ev: DsSettingsSectionCardCustomEvent<HTMLDsSettingsSectionCardElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSettingsSectionCardElement: {
+        prototype: HTMLDsSettingsSectionCardElement;
+        new (): HTMLDsSettingsSectionCardElement;
+    };
     interface HTMLDsShellGradientPickerElementEventMap {
         "dsChange": ShellGradientPreset1;
     }
@@ -1802,40 +1693,6 @@ declare global {
         prototype: HTMLDsToggleElement;
         new (): HTMLDsToggleElement;
     };
-    interface HTMLDsToggleButtonElementEventMap {
-        "dsChange": boolean;
-    }
-    interface HTMLDsToggleButtonElement extends Components.DsToggleButton, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsToggleButtonElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonElement, ev: DsToggleButtonCustomEvent<HTMLDsToggleButtonElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsToggleButtonElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonElement, ev: DsToggleButtonCustomEvent<HTMLDsToggleButtonElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsToggleButtonElement: {
-        prototype: HTMLDsToggleButtonElement;
-        new (): HTMLDsToggleButtonElement;
-    };
-    interface HTMLDsToggleButtonGroupElementEventMap {
-        "dsChange": string;
-    }
-    interface HTMLDsToggleButtonGroupElement extends Components.DsToggleButtonGroup, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsToggleButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonGroupElement, ev: DsToggleButtonGroupCustomEvent<HTMLDsToggleButtonGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsToggleButtonGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleButtonGroupElement, ev: DsToggleButtonGroupCustomEvent<HTMLDsToggleButtonGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsToggleButtonGroupElement: {
-        prototype: HTMLDsToggleButtonGroupElement;
-        new (): HTMLDsToggleButtonGroupElement;
-    };
     interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
     }
     var HTMLDsTooltipElement: {
@@ -1849,8 +1706,7 @@ declare global {
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
-        "ds-button": HTMLDsButtonElement;
-        "ds-button-group": HTMLDsButtonGroupElement;
+        "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled-icon": HTMLDsButtonUnfilledIconElement;
         "ds-card": HTMLDsCardElement;
         "ds-checkbox": HTMLDsCheckboxElement;
@@ -1871,6 +1727,7 @@ declare global {
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
+        "ds-settings-section-card": HTMLDsSettingsSectionCardElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
@@ -1883,8 +1740,6 @@ declare global {
         "ds-text": HTMLDsTextElement;
         "ds-toast-provider": HTMLDsToastProviderElement;
         "ds-toggle": HTMLDsToggleElement;
-        "ds-toggle-button": HTMLDsToggleButtonElement;
-        "ds-toggle-button-group": HTMLDsToggleButtonGroupElement;
         "ds-tooltip": HTMLDsTooltipElement;
     }
 }
@@ -2058,86 +1913,37 @@ declare namespace LocalJSX {
          */
         "separator"?: string;
     }
-    interface DsButton {
-        "ariaLabel"?: string | undefined;
-        "ariaLabelledby"?: string | undefined;
-        "background"?: ButtonBackground | undefined;
-        "badgeCount"?: number | undefined;
+    interface DsButtonFilled {
         /**
+          * @default 'action'
+         */
+        "ariaLabel"?: string;
+        /**
+          * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
-        "contrast"?: ButtonContrast;
+        "contrast"?: ButtonFilledContrast;
         /**
-          * @default false
+          * Icon name passed to <ds-icon>.
+          * @default ''
          */
-        "dropdown"?: boolean;
-        "elevation"?: ButtonElevation | undefined;
+        "icon"?: string;
         /**
-          * @default false
-         */
-        "fullWidth"?: boolean;
-        "href"?: string | undefined;
-        /**
+          * Disables interaction.
           * @default false
          */
         "inactive"?: boolean;
         /**
+          * Semantic colour intent.
           * @default 'brand'
          */
-        "intent"?: ButtonIntent;
-        "label"?: string | undefined;
+        "intent"?: ButtonFilledIntent;
+        "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
         /**
-          * @default false
-         */
-        "loading"?: boolean;
-        "onDsClick"?: (event: DsButtonCustomEvent<MouseEvent>) => void;
-        "onDsMouseEnter"?: (event: DsButtonCustomEvent<MouseEvent>) => void;
-        "onDsMouseLeave"?: (event: DsButtonCustomEvent<MouseEvent>) => void;
-        /**
-          * @default false
-         */
-        "rounded"?: boolean;
-        /**
-          * @default 'md'
-         */
-        "size"?: ButtonSize;
-        "target"?: string | undefined;
-        /**
+          * Native button type.
           * @default 'button'
          */
         "type"?: 'button' | 'submit' | 'reset';
-        /**
-          * @default 'primary'
-         */
-        "variant"?: ButtonVariant;
-        "width"?: string | undefined;
-    }
-    interface DsButtonGroup {
-        /**
-          * Chrome level for the group container.
-          * @default 'flat'
-         */
-        "elevation"?: ButtonGroupElevation;
-        /**
-          * Array of button descriptors. Set via JS property.
-          * @example el.items = [{ label: 'Filter', icon: 'Filter' }, { label: 'Sort' }];
-          * @default []
-         */
-        "items"?: ButtonGroupItem[];
-        /**
-          * Emits the index of the clicked item.
-         */
-        "onDsClick"?: (event: DsButtonGroupCustomEvent<number>) => void;
-        /**
-          * Pill shape for group + buttons.
-          * @default false
-         */
-        "rounded"?: boolean;
-        /**
-          * Size passed to each ds-button.
-          * @default 'md'
-         */
-        "size"?: ButtonGroupSize;
     }
     interface DsButtonUnfilledIcon {
         /**
@@ -2150,9 +1956,13 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string;
         /**
-          * Parent surface context — adjusts hover/press/focus colours for coloured backgrounds.
+          * Parent surface context for navigation and always-dark chrome.
          */
         "background"?: ButtonUnfilledIconBackground | undefined;
+        /**
+          * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
+         */
+        "backgroundContrast"?: ButtonUnfilledIconOnBackgroundContrast;
         "controls"?: string | undefined;
         /**
           * Show a notification dot at the top-right of the icon zone.
@@ -2674,6 +2484,26 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsSettingsSectionCard {
+        /**
+          * Card width token.
+          * @default 'md'
+         */
+        "cardWidth"?: SettingsSectionCardWidth;
+        /**
+          * Controlled edit state — parent owns single-edit orchestration.
+          * @default false
+         */
+        "editing"?: boolean;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+        /**
+          * Emits when the user enters or exits edit mode.
+         */
+        "onDsEditingChange"?: (event: DsSettingsSectionCardCustomEvent<boolean>) => void;
+    }
     interface DsShellGradientPicker {
         "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
         /**
@@ -2945,87 +2775,6 @@ declare namespace LocalJSX {
         "inactive"?: boolean;
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
     }
-    interface DsToggleButton {
-        "ariaLabel"?: string | undefined;
-        /**
-          * Parent surface context — adjusts hover tokens for colored backgrounds.
-         */
-        "background"?: ToggleButtonBackground | undefined;
-        /**
-          * Chrome level.   none     — ghost (transparent, no border, no shadow)   flat     — border only, transparent bg   elevated — bg-primary + shadow  [default]   floating — bg-primary + FAB-strength shadow
-          * @default 'elevated'
-         */
-        "elevation"?: ToggleButtonElevation;
-        /**
-          * Icon name for <ds-icon>. Set via JS property.
-          * @example el.icon = 'GridView';
-         */
-        "icon"?: string | undefined;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive"?: boolean;
-        /**
-          * Label text.
-         */
-        "label"?: string | undefined;
-        /**
-          * Emits the new pressed value (!pressed) on click.
-         */
-        "onDsChange"?: (event: DsToggleButtonCustomEvent<boolean>) => void;
-        /**
-          * Controlled pressed state.
-          * @default false
-         */
-        "pressed"?: boolean;
-        /**
-          * Pill shape.
-          * @default false
-         */
-        "rounded"?: boolean;
-        /**
-          * Size: md (32px), sm (24px), xs (16px).
-          * @default 'md'
-         */
-        "size"?: ToggleButtonSize;
-    }
-    interface DsToggleButtonGroup {
-        /**
-          * Parent surface context.
-         */
-        "background"?: ToggleGroupBackground | undefined;
-        /**
-          * Chrome level for the group container.
-          * @default 'elevated'
-         */
-        "elevation"?: ToggleGroupElevation;
-        /**
-          * Array of item descriptors. Set via JS property.
-          * @example el.items = [{ id: 'list', label: 'List' }, { id: 'grid', icon: 'GridView' }];
-          * @default []
-         */
-        "items"?: ToggleGroupItem[];
-        /**
-          * Emits the id of the newly selected item.
-         */
-        "onDsChange"?: (event: DsToggleButtonGroupCustomEvent<string>) => void;
-        /**
-          * Pill shape for group + buttons.
-          * @default false
-         */
-        "rounded"?: boolean;
-        /**
-          * Size passed to each ds-toggle-button.
-          * @default 'md'
-         */
-        "size"?: ToggleGroupSize;
-        /**
-          * ID of the currently selected / pressed item.
-          * @default ''
-         */
-        "value"?: string;
-    }
     interface DsTooltip {
         /**
           * @default 'center'
@@ -3099,31 +2848,13 @@ declare namespace LocalJSX {
     interface DsBreadcrumbAttributes {
         "separator": string;
     }
-    interface DsButtonAttributes {
-        "variant": ButtonVariant;
-        "intent": ButtonIntent;
-        "size": ButtonSize;
-        "label": string | undefined;
-        "rounded": boolean;
-        "fullWidth": boolean;
-        "width": string | undefined;
-        "contrast": ButtonContrast;
-        "background": ButtonBackground | undefined;
-        "dropdown": boolean;
-        "badgeCount": number | undefined;
-        "elevation": ButtonElevation | undefined;
-        "loading": boolean;
+    interface DsButtonFilledAttributes {
+        "icon": string;
+        "intent": ButtonFilledIntent;
+        "contrast": ButtonFilledContrast;
         "inactive": boolean;
-        "href": string | undefined;
-        "target": string | undefined;
         "type": 'button' | 'submit' | 'reset';
-        "ariaLabel": string | undefined;
-        "ariaLabelledby": string | undefined;
-    }
-    interface DsButtonGroupAttributes {
-        "elevation": ButtonGroupElevation;
-        "size": ButtonGroupSize;
-        "rounded": boolean;
+        "ariaLabel": string;
     }
     interface DsButtonUnfilledIconAttributes {
         "icon": string;
@@ -3133,6 +2864,7 @@ declare namespace LocalJSX {
         "dot": boolean;
         "inactive": boolean;
         "type": 'button' | 'submit' | 'reset';
+        "backgroundContrast": ButtonUnfilledIconOnBackgroundContrast;
         "background": ButtonUnfilledIconBackground | undefined;
         "ariaLabel": string;
         "controls": string | undefined;
@@ -3274,6 +3006,11 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
+    interface DsSettingsSectionCardAttributes {
+        "heading": string;
+        "cardWidth": SettingsSectionCardWidth;
+        "editing": boolean;
+    }
     interface DsShellGradientPickerAttributes {
         "value": ShellGradientPreset;
     }
@@ -3363,24 +3100,6 @@ declare namespace LocalJSX {
         "checked": boolean;
         "inactive": boolean;
     }
-    interface DsToggleButtonAttributes {
-        "elevation": ToggleButtonElevation;
-        "label": string | undefined;
-        "icon": string | undefined;
-        "size": ToggleButtonSize;
-        "rounded": boolean;
-        "background": ToggleButtonBackground | undefined;
-        "pressed": boolean;
-        "inactive": boolean;
-        "ariaLabel": string | undefined;
-    }
-    interface DsToggleButtonGroupAttributes {
-        "value": string;
-        "elevation": ToggleGroupElevation;
-        "size": ToggleGroupSize;
-        "rounded": boolean;
-        "background": ToggleGroupBackground | undefined;
-    }
     interface DsTooltipAttributes {
         "label": string;
         "side": TooltipSide;
@@ -3399,8 +3118,7 @@ declare namespace LocalJSX {
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
-        "ds-button": Omit<DsButton, keyof DsButtonAttributes> & { [K in keyof DsButton & keyof DsButtonAttributes]?: DsButton[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `attr:${K}`]?: DsButtonAttributes[K] } & { [K in keyof DsButton & keyof DsButtonAttributes as `prop:${K}`]?: DsButton[K] };
-        "ds-button-group": Omit<DsButtonGroup, keyof DsButtonGroupAttributes> & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes]?: DsButtonGroup[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `attr:${K}`]?: DsButtonGroupAttributes[K] } & { [K in keyof DsButtonGroup & keyof DsButtonGroupAttributes as `prop:${K}`]?: DsButtonGroup[K] };
+        "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled-icon": Omit<DsButtonUnfilledIcon, keyof DsButtonUnfilledIconAttributes> & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes]?: DsButtonUnfilledIcon[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `attr:${K}`]?: DsButtonUnfilledIconAttributes[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `prop:${K}`]?: DsButtonUnfilledIcon[K] };
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
@@ -3421,6 +3139,7 @@ declare namespace LocalJSX {
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-settings-section-card": Omit<DsSettingsSectionCard, keyof DsSettingsSectionCardAttributes> & { [K in keyof DsSettingsSectionCard & keyof DsSettingsSectionCardAttributes]?: DsSettingsSectionCard[K] } & { [K in keyof DsSettingsSectionCard & keyof DsSettingsSectionCardAttributes as `attr:${K}`]?: DsSettingsSectionCardAttributes[K] } & { [K in keyof DsSettingsSectionCard & keyof DsSettingsSectionCardAttributes as `prop:${K}`]?: DsSettingsSectionCard[K] } & OneOf<"heading", DsSettingsSectionCard["heading"], DsSettingsSectionCardAttributes["heading"]>;
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
@@ -3433,8 +3152,6 @@ declare namespace LocalJSX {
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
-        "ds-toggle-button": Omit<DsToggleButton, keyof DsToggleButtonAttributes> & { [K in keyof DsToggleButton & keyof DsToggleButtonAttributes]?: DsToggleButton[K] } & { [K in keyof DsToggleButton & keyof DsToggleButtonAttributes as `attr:${K}`]?: DsToggleButtonAttributes[K] } & { [K in keyof DsToggleButton & keyof DsToggleButtonAttributes as `prop:${K}`]?: DsToggleButton[K] };
-        "ds-toggle-button-group": Omit<DsToggleButtonGroup, keyof DsToggleButtonGroupAttributes> & { [K in keyof DsToggleButtonGroup & keyof DsToggleButtonGroupAttributes]?: DsToggleButtonGroup[K] } & { [K in keyof DsToggleButtonGroup & keyof DsToggleButtonGroupAttributes as `attr:${K}`]?: DsToggleButtonGroupAttributes[K] } & { [K in keyof DsToggleButtonGroup & keyof DsToggleButtonGroupAttributes as `prop:${K}`]?: DsToggleButtonGroup[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
     }
 }
@@ -3448,8 +3165,7 @@ declare module "@stencil/core" {
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
-            "ds-button": LocalJSX.IntrinsicElements["ds-button"] & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
-            "ds-button-group": LocalJSX.IntrinsicElements["ds-button-group"] & JSXBase.HTMLAttributes<HTMLDsButtonGroupElement>;
+            "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled-icon": LocalJSX.IntrinsicElements["ds-button-unfilled-icon"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledIconElement>;
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
@@ -3470,6 +3186,7 @@ declare module "@stencil/core" {
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            "ds-settings-section-card": LocalJSX.IntrinsicElements["ds-settings-section-card"] & JSXBase.HTMLAttributes<HTMLDsSettingsSectionCardElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
@@ -3482,12 +3199,7 @@ declare module "@stencil/core" {
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
-            "ds-toggle-button": LocalJSX.IntrinsicElements["ds-toggle-button"] & JSXBase.HTMLAttributes<HTMLDsToggleButtonElement>;
-            "ds-toggle-button-group": LocalJSX.IntrinsicElements["ds-toggle-button-group"] & JSXBase.HTMLAttributes<HTMLDsToggleButtonGroupElement>;
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-

@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.9.0](https://github.com/zainadeel/compomo/compare/v2.8.0...v2.9.0) (2026-07-07)
+
+
+### Added
+
+* **button-filled:** square filled icon button with intent + contrast pairing
+* **settings-section-card:** settings section card with view/edit chrome and controlled `editing` state
+
+### Changed
+
+* **button-unfilled-icon:** add `backgroundContrast` for on-bold/strong surfaces; align host sizing with filled button
+* **breaking:** remove legacy `ds-button`, `ds-button-group`, `ds-toggle-button`, and `ds-toggle-button-group`
+
 ## [2.8.0](https://github.com/zainadeel/compomo/compare/v2.7.0...v2.8.0) (2026-07-07)
 
 

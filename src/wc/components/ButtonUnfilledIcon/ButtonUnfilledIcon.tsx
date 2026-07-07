@@ -1,12 +1,8 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 
-export type ButtonUnfilledIconBackground =
-  | 'faint'
-  | 'medium'
-  | 'bold'
-  | 'strong'
-  | 'always-dark'
-  | 'navigation';
+export type ButtonUnfilledIconOnBackgroundContrast = 'default' | 'medium' | 'bold' | 'strong';
+
+export type ButtonUnfilledIconBackground = 'always-dark' | 'navigation';
 
 @Component({
   tag: 'ds-button-unfilled-icon',
@@ -37,7 +33,14 @@ export class ButtonUnfilledIcon {
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
-  /** Parent surface context — adjusts hover/press/focus colours for coloured backgrounds. */
+  /**
+   * Foreground and interaction tokens when the button sits on a contrasting parent
+   * background (default, medium, bold, or strong).
+   */
+  @Prop({ attribute: 'on-background-contrast' })
+  backgroundContrast?: ButtonUnfilledIconOnBackgroundContrast;
+
+  /** Parent surface context for navigation and always-dark chrome. */
   @Prop() background: ButtonUnfilledIconBackground | undefined;
 
   @Prop({ attribute: 'aria-label' }) ariaLabel: string = 'action';
@@ -68,8 +71,13 @@ export class ButtonUnfilledIcon {
     this.dsChange.emit(!this.isActive);
   };
 
+  private effectiveContrast(): ButtonUnfilledIconOnBackgroundContrast {
+    return this.backgroundContrast ?? 'default';
+  }
+
   render() {
     const bg = this.background;
+    const contrast = this.effectiveContrast();
 
     const cls: Record<string, boolean> = {
       'button-icon': true,
@@ -78,9 +86,9 @@ export class ButtonUnfilledIcon {
       'button-icon--active-fill': this.isActive && this.activeFill,
       'button-icon--bordered': this.hasBorder,
       'button-icon--inactive': this.inactive,
-      'button-icon--on-medium': bg === 'medium',
-      'button-icon--on-bold': bg === 'bold',
-      'button-icon--on-strong': bg === 'strong',
+      'button-icon--contrast-medium': contrast === 'medium',
+      'button-icon--contrast-bold': contrast === 'bold',
+      'button-icon--contrast-strong': contrast === 'strong',
       'button-icon--on-always-dark': bg === 'always-dark',
       'button-icon--on-navigation': bg === 'navigation',
     };

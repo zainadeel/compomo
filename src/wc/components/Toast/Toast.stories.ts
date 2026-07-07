@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-toast-provider.js';
-import '../../../../dist/components/ds-button.js';
+import '../../../../dist/components/ds-button-filled.js';
 
 const meta: Meta = {
   title: 'Overlay/Toast',
@@ -19,10 +19,10 @@ export const Playground: Story = {
   render: args => html`
     <ds-toast-provider id="toast-provider" position=${args['position'] ?? 'top-center'}></ds-toast-provider>
     <div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 16px">
-      <ds-button id="toast-neutral" label="Show neutral" variant="secondary"></ds-button>
-      <ds-button id="toast-success" label="Show success" intent="positive" variant="secondary"></ds-button>
-      <ds-button id="toast-error"   label="Show error"   intent="negative" variant="secondary"></ds-button>
-      <ds-button id="toast-warning" label="Show warning" intent="warning"  variant="secondary"></ds-button>
+      <ds-button-filled id="toast-neutral" icon="Bell" intent="neutral" aria-label="Show neutral"></ds-button-filled>
+      <ds-button-filled id="toast-success" icon="Check" intent="positive" aria-label="Show success"></ds-button-filled>
+      <ds-button-filled id="toast-error" icon="Cross" intent="negative" aria-label="Show error"></ds-button-filled>
+      <ds-button-filled id="toast-warning" icon="Warning" intent="warning" aria-label="Show warning"></ds-button-filled>
     </div>
     <script type="module">
       import { toast } from '/src/wc/components/Toast/toast-service.ts';
@@ -38,12 +38,12 @@ export const AllIntents: Story = {
   render: () => html`
     <ds-toast-provider id="intents-provider" position="top-center"></ds-toast-provider>
     <div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 16px">
-      <ds-button id="t-neutral"  label="Neutral"  variant="secondary"></ds-button>
-      <ds-button id="t-brand"    label="Brand"    intent="brand"    variant="secondary"></ds-button>
-      <ds-button id="t-positive" label="Positive" intent="positive" variant="secondary"></ds-button>
-      <ds-button id="t-negative" label="Negative" intent="negative" variant="secondary"></ds-button>
-      <ds-button id="t-warning"  label="Warning"  intent="warning"  variant="secondary"></ds-button>
-      <ds-button id="t-caution"  label="Caution"  intent="caution"  variant="secondary"></ds-button>
+      <ds-button-filled id="t-neutral" icon="Bell" intent="neutral" aria-label="Neutral"></ds-button-filled>
+      <ds-button-filled id="t-brand" icon="Bell" intent="brand" aria-label="Brand"></ds-button-filled>
+      <ds-button-filled id="t-positive" icon="Check" intent="positive" aria-label="Positive"></ds-button-filled>
+      <ds-button-filled id="t-negative" icon="Cross" intent="negative" aria-label="Negative"></ds-button-filled>
+      <ds-button-filled id="t-warning" icon="Warning" intent="warning" aria-label="Warning"></ds-button-filled>
+      <ds-button-filled id="t-caution" icon="Warning" intent="caution" aria-label="Caution"></ds-button-filled>
     </div>
     <script type="module">
       import { toast } from '/src/wc/components/Toast/toast-service.ts';

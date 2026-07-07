@@ -1,0 +1,269 @@
+@import '../../utils/focus-ring.css';
+
+:host {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: var(--dimension-size-400);
+  height: var(--dimension-size-400);
+  min-width: var(--dimension-size-400);
+  min-height: var(--dimension-size-400);
+  outline: none;
+  --ds-button-filled-bg: var(--color-background-bold-brand);
+  --ds-button-filled-fg: var(--color-foreground-faint-brand);
+}
+
+.button-filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--dimension-space-075);
+  border: none;
+  border-radius: var(--dimension-radius-025);
+  background-color: var(--ds-button-filled-bg);
+  color: var(--ds-button-filled-fg);
+  cursor: pointer;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color var(--effect-motion-short-2),
+    color var(--effect-motion-short-2),
+    transform var(--effect-motion-short-2);
+}
+
+.button-filled::before,
+.button-filled::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  transition: none;
+}
+
+.button-filled::before {
+  z-index: 1;
+}
+
+.button-filled::after {
+  z-index: 2;
+}
+
+.button-filled:hover:not(.button-filled--inactive)::before {
+  background: color-mix(in oklch, var(--ds-button-filled-bg) 85%, var(--ds-button-filled-fg));
+}
+
+.button-filled:active:not(.button-filled--inactive) {
+  transform: scale(var(--dimension-scale-subtle));
+}
+
+.button-filled:active:not(.button-filled--inactive)::before {
+  background: color-mix(in oklch, var(--ds-button-filled-bg) 80%, var(--ds-button-filled-fg));
+}
+
+.button-filled--inactive {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.button-filled__icon-wrap {
+  position: relative;
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+/* ── Intent + contrast (bold default) ─────────────────────────────────────── */
+
+.button-filled--intent-neutral {
+  --ds-button-filled-bg: var(--color-background-bold-neutral);
+  --ds-button-filled-fg: var(--color-foreground-faint-neutral);
+}
+
+.button-filled--intent-brand {
+  --ds-button-filled-bg: var(--color-background-bold-brand);
+  --ds-button-filled-fg: var(--color-foreground-faint-brand);
+}
+
+.button-filled--intent-ai {
+  --ds-button-filled-bg: var(--color-background-bold-ai);
+  --ds-button-filled-fg: var(--color-foreground-faint-ai);
+}
+
+.button-filled--intent-negative {
+  --ds-button-filled-bg: var(--color-background-bold-negative);
+  --ds-button-filled-fg: var(--color-foreground-faint-negative);
+}
+
+.button-filled--intent-warning {
+  --ds-button-filled-bg: var(--color-background-bold-warning);
+  --ds-button-filled-fg: var(--color-foreground-faint-warning);
+}
+
+.button-filled--intent-caution {
+  --ds-button-filled-bg: var(--color-background-bold-caution);
+  --ds-button-filled-fg: var(--color-foreground-faint-caution);
+}
+
+.button-filled--intent-positive {
+  --ds-button-filled-bg: var(--color-background-bold-positive);
+  --ds-button-filled-fg: var(--color-foreground-faint-positive);
+}
+
+.button-filled--intent-guide {
+  --ds-button-filled-bg: var(--color-background-bold-guide);
+  --ds-button-filled-fg: var(--color-foreground-faint-guide);
+}
+
+.button-filled--intent-walkthrough {
+  --ds-button-filled-bg: var(--color-background-bold-walkthrough);
+  --ds-button-filled-fg: var(--color-foreground-faint-walkthrough);
+}
+
+/* strong → medium fg */
+.button-filled--contrast-strong.button-filled--intent-neutral {
+  --ds-button-filled-bg: var(--color-background-strong-neutral);
+  --ds-button-filled-fg: var(--color-foreground-medium-neutral);
+}
+
+.button-filled--contrast-strong.button-filled--intent-brand {
+  --ds-button-filled-bg: var(--color-background-strong-brand);
+  --ds-button-filled-fg: var(--color-foreground-medium-brand);
+}
+
+.button-filled--contrast-strong.button-filled--intent-ai {
+  --ds-button-filled-bg: var(--color-background-strong-ai);
+  --ds-button-filled-fg: var(--color-foreground-medium-ai);
+}
+
+.button-filled--contrast-strong.button-filled--intent-negative {
+  --ds-button-filled-bg: var(--color-background-strong-negative);
+  --ds-button-filled-fg: var(--color-foreground-medium-negative);
+}
+
+.button-filled--contrast-strong.button-filled--intent-warning {
+  --ds-button-filled-bg: var(--color-background-strong-warning);
+  --ds-button-filled-fg: var(--color-foreground-medium-warning);
+}
+
+.button-filled--contrast-strong.button-filled--intent-caution {
+  --ds-button-filled-bg: var(--color-background-strong-caution);
+  --ds-button-filled-fg: var(--color-foreground-medium-caution);
+}
+
+.button-filled--contrast-strong.button-filled--intent-positive {
+  --ds-button-filled-bg: var(--color-background-strong-positive);
+  --ds-button-filled-fg: var(--color-foreground-medium-positive);
+}
+
+.button-filled--contrast-strong.button-filled--intent-guide {
+  --ds-button-filled-bg: var(--color-background-strong-guide);
+  --ds-button-filled-fg: var(--color-foreground-medium-guide);
+}
+
+.button-filled--contrast-strong.button-filled--intent-walkthrough {
+  --ds-button-filled-bg: var(--color-background-strong-walkthrough);
+  --ds-button-filled-fg: var(--color-foreground-medium-walkthrough);
+}
+
+/* medium → strong fg */
+.button-filled--contrast-medium.button-filled--intent-neutral {
+  --ds-button-filled-bg: var(--color-background-medium-neutral);
+  --ds-button-filled-fg: var(--color-foreground-strong-neutral);
+}
+
+.button-filled--contrast-medium.button-filled--intent-brand {
+  --ds-button-filled-bg: var(--color-background-medium-brand);
+  --ds-button-filled-fg: var(--color-foreground-strong-brand);
+}
+
+.button-filled--contrast-medium.button-filled--intent-ai {
+  --ds-button-filled-bg: var(--color-background-medium-ai);
+  --ds-button-filled-fg: var(--color-foreground-strong-ai);
+}
+
+.button-filled--contrast-medium.button-filled--intent-negative {
+  --ds-button-filled-bg: var(--color-background-medium-negative);
+  --ds-button-filled-fg: var(--color-foreground-strong-negative);
+}
+
+.button-filled--contrast-medium.button-filled--intent-warning {
+  --ds-button-filled-bg: var(--color-background-medium-warning);
+  --ds-button-filled-fg: var(--color-foreground-strong-warning);
+}
+
+.button-filled--contrast-medium.button-filled--intent-caution {
+  --ds-button-filled-bg: var(--color-background-medium-caution);
+  --ds-button-filled-fg: var(--color-foreground-strong-caution);
+}
+
+.button-filled--contrast-medium.button-filled--intent-positive {
+  --ds-button-filled-bg: var(--color-background-medium-positive);
+  --ds-button-filled-fg: var(--color-foreground-strong-positive);
+}
+
+.button-filled--contrast-medium.button-filled--intent-guide {
+  --ds-button-filled-bg: var(--color-background-medium-guide);
+  --ds-button-filled-fg: var(--color-foreground-strong-guide);
+}
+
+.button-filled--contrast-medium.button-filled--intent-walkthrough {
+  --ds-button-filled-bg: var(--color-background-medium-walkthrough);
+  --ds-button-filled-fg: var(--color-foreground-strong-walkthrough);
+}
+
+/* faint → bold fg */
+.button-filled--contrast-faint.button-filled--intent-neutral {
+  --ds-button-filled-bg: var(--color-background-faint-neutral);
+  --ds-button-filled-fg: var(--color-foreground-bold-neutral);
+}
+
+.button-filled--contrast-faint.button-filled--intent-brand {
+  --ds-button-filled-bg: var(--color-background-faint-brand);
+  --ds-button-filled-fg: var(--color-foreground-bold-brand);
+}
+
+.button-filled--contrast-faint.button-filled--intent-ai {
+  --ds-button-filled-bg: var(--color-background-faint-ai);
+  --ds-button-filled-fg: var(--color-foreground-bold-ai);
+}
+
+.button-filled--contrast-faint.button-filled--intent-negative {
+  --ds-button-filled-bg: var(--color-background-faint-negative);
+  --ds-button-filled-fg: var(--color-foreground-bold-negative);
+}
+
+.button-filled--contrast-faint.button-filled--intent-warning {
+  --ds-button-filled-bg: var(--color-background-faint-warning);
+  --ds-button-filled-fg: var(--color-foreground-bold-warning);
+}
+
+.button-filled--contrast-faint.button-filled--intent-caution {
+  --ds-button-filled-bg: var(--color-background-faint-caution);
+  --ds-button-filled-fg: var(--color-foreground-bold-caution);
+}
+
+.button-filled--contrast-faint.button-filled--intent-positive {
+  --ds-button-filled-bg: var(--color-background-faint-positive);
+  --ds-button-filled-fg: var(--color-foreground-bold-positive);
+}
+
+.button-filled--contrast-faint.button-filled--intent-guide {
+  --ds-button-filled-bg: var(--color-background-faint-guide);
+  --ds-button-filled-fg: var(--color-foreground-bold-guide);
+}
+
+.button-filled--contrast-faint.button-filled--intent-walkthrough {
+  --ds-button-filled-bg: var(--color-background-faint-walkthrough);
+  --ds-button-filled-fg: var(--color-foreground-bold-walkthrough);
+}

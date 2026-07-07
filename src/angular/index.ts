@@ -8,8 +8,7 @@ export const DIRECTIVES = [
   d.DsBanner,
   d.DsBarNav,
   d.DsBreadcrumb,
-  d.DsButton,
-  d.DsButtonGroup,
+  d.DsButtonFilled,
   d.DsButtonUnfilledIcon,
   d.DsCard,
   d.DsCheckbox,
@@ -30,6 +29,7 @@ export const DIRECTIVES = [
   d.DsRadioGroup,
   d.DsScrollbar,
   d.DsSelect,
+  d.DsSettingsSectionCard,
   d.DsShellGradientPicker,
   d.DsShellGradientSwatch,
   d.DsSkeleton,
@@ -42,7 +42,5 @@ export const DIRECTIVES = [
   d.DsText,
   d.DsToastProvider,
   d.DsToggle,
-  d.DsToggleButton,
-  d.DsToggleButtonGroup,
   d.DsTooltip
 ];
