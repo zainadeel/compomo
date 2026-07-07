@@ -830,7 +830,7 @@ export namespace Components {
          */
         "preset": ShellGradientPreset1;
         /**
-          * Selected state — shows an inset brand ring.
+          * Selected state — brand ring with background offset (notification-dot pattern).
           * @default false
          */
         "selected": boolean;
@@ -2705,7 +2705,7 @@ declare namespace LocalJSX {
          */
         "preset"?: ShellGradientPreset1;
         /**
-          * Selected state — shows an inset brand ring.
+          * Selected state — brand ring with background offset (notification-dot pattern).
           * @default false
          */
         "selected"?: boolean;
