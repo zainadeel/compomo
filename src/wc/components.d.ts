@@ -631,7 +631,7 @@ export namespace Components {
         "side": MenuSide;
         /**
           * Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.).
-          * @default TOKEN_DEFAULTS.space050
+          * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset": number | string;
     }
@@ -1172,7 +1172,7 @@ export namespace Components {
         "side": TooltipSide;
         /**
           * Gap between anchor and tooltip — number (px) or TokoMo length.
-          * @default TOKEN_DEFAULTS.space050
+          * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset": number | string;
     }
@@ -2476,7 +2476,7 @@ declare namespace LocalJSX {
         "side"?: MenuSide;
         /**
           * Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.).
-          * @default TOKEN_DEFAULTS.space050
+          * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset"?: number | string;
     }
@@ -3063,7 +3063,7 @@ declare namespace LocalJSX {
         "side"?: TooltipSide;
         /**
           * Gap between anchor and tooltip — number (px) or TokoMo length.
-          * @default TOKEN_DEFAULTS.space050
+          * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset"?: number | string;
     }
@@ -3499,6 +3499,3 @@ declare module "@stencil/core" {
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-

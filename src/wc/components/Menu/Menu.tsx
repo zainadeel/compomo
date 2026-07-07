@@ -1,5 +1,5 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
-import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
 import { isMenuGradientPickerSection } from './menu-types';
@@ -22,7 +22,7 @@ export class Menu {
   @Prop() side: MenuSide = 'bottom';
   @Prop() align: MenuAlign = 'start';
   /** Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.). */
-  @Prop() sideOffset: number | string = TOKEN_DEFAULTS.space050;
+  @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number (px) or TokoMo length. */
   @Prop() alignOffset: number | string = 0;
   @Prop() menuWidth: string | undefined;

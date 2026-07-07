@@ -3,7 +3,7 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-shell-gradient-picker.js';
-import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
+import { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 
 const items = [
@@ -21,7 +21,7 @@ const meta: Meta = {
     align: { control: 'select', options: ['start', 'center', 'end'] },
     sideOffset: { control: 'text', description: 'px number or TokoMo length (e.g. var(--dimension-space-200))' },
   },
-  args: { side: 'bottom', align: 'start', sideOffset: TOKEN_DEFAULTS.space050 },
+  args: { side: 'bottom', align: 'start', sideOffset: TOKEN_CSS_LENGTHS.space050 },
 };
 
 export default meta;
@@ -40,7 +40,7 @@ export const Playground: Story = {
         ${ref(el => {
           if (!el) return;
           const menu = el as HTMLElement & { sideOffset: number | string };
-          const raw = args['sideOffset'] ?? TOKEN_DEFAULTS.space050;
+          const raw = args['sideOffset'] ?? TOKEN_CSS_LENGTHS.space050;
           menu.sideOffset = typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : raw;
         })}
       ></ds-menu>
@@ -119,7 +119,7 @@ export const TokenSideOffsetRight: Story = {
         anchor-id="menu-anchor-token"
         ${ref(el => {
           if (!el) return;
-          (el as HTMLElement & { sideOffset: string }).sideOffset = TOKEN_DEFAULTS.space200;
+          (el as HTMLElement & { sideOffset: string }).sideOffset = TOKEN_CSS_LENGTHS.space200;
         })}
         .items=${[
           { label: 'Light', value: 'light', isSelected: true },

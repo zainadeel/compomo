@@ -51,12 +51,14 @@ export function resolveCssLengthPx(
     return px;
   }
 
+  const cssLength = /^--[\w-]+$/.test(trimmed) ? `var(${trimmed})` : trimmed;
+
   const probe = getProbeElement();
   if (!probe) {
     return typeof fallback === 'number' ? fallback : 0;
   }
 
-  probe.style.width = trimmed;
+  probe.style.width = cssLength;
   const px = probe.getBoundingClientRect().width;
   probe.style.width = '';
   lengthPxCache.set(trimmed, px);
