@@ -22,6 +22,7 @@ src/wc/components/Icon/flag-icon-catalog.ts
 
 # Storybook
 storybook-static
+.storybook/static/package-version.json
 
 # Playwright
 test-results/
