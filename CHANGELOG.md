@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.10.2](https://github.com/zainadeel/compomo/compare/v2.10.1...v2.10.2) (2026-07-08)
+
+
+### Fixed
+
+* **build:** include patched menu placement exports in components.d.ts ([29132ef](https://github.com/zainadeel/compomo/commit/29132efc71617e6ef85f8bf957c2a1db1d6f2b85))
+
+
+### Changed
+
+* **Fade:** unify scroll-edge-fade as the singular fade utility ([92ecd1f](https://github.com/zainadeel/compomo/commit/92ecd1fb6d1c4ee582dc295b8982e3e7c1ba049c))
+* **Fade:** unify scroll-edge-fade as the singular fade utility ([8ddd87c](https://github.com/zainadeel/compomo/commit/8ddd87ccf4b62fd439beea4f123cb2b30b63b42b))
+
 ## [2.10.1](https://github.com/zainadeel/compomo/compare/v2.10.0...v2.10.1) (2026-07-08)
 
 
