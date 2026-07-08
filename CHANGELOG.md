@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.3](https://github.com/zainadeel/compomo/compare/v2.10.2...v2.10.3) (2026-07-08)
+
+
+### Fixed
+
+* **Fade:** apply scroll-edge mask on inner scroll container and fix stories ([#263](https://github.com/zainadeel/compomo/issues/263)) ([ddb8421](https://github.com/zainadeel/compomo/commit/ddb84219ba5caf3f1763ab5b098aa671fbb0fd31))
+
 ## [2.10.2](https://github.com/zainadeel/compomo/compare/v2.10.1...v2.10.2) (2026-07-08)
 
 
