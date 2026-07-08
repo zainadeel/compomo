@@ -2,6 +2,7 @@ import { Component, Prop, Element, State, Watch, h, Host } from '@stencil/core';
 import { flagIconLoaders } from './flag-icon-catalog';
 import { systemIconLoaders } from './system-icon-catalog';
 import { iconCache, iconCacheKey } from './icon-cache';
+import { parseIconSvg } from './icon-svg';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
@@ -71,7 +72,13 @@ export class Icon {
       return;
     }
 
-    const loader = (flag ? flagIconLoaders : systemIconLoaders)[this.name];
+    // Own-key lookup only: names resolve by exact canonical IcoMo export key —
+    // never meta.json aliases (not in the maps) and never inherited prototype
+    // keys ('constructor', 'toString', …) that a bare index access would hit.
+    const loaders = flag ? flagIconLoaders : systemIconLoaders;
+    const loader = Object.prototype.hasOwnProperty.call(loaders, this.name)
+      ? loaders[this.name]
+      : undefined;
     if (!loader) {
       this.svg = '';
       return;
@@ -93,25 +100,37 @@ export class Icon {
     this.resolveSvg();
   }
 
+  /** Last markup injected into the DOM — skips redundant re-parse on unrelated re-renders. */
+  private renderedSvg: string | null = null;
+
   private updateSvg() {
     const container = this.el.querySelector<HTMLElement>('.icon__svg');
     if (!container) return;
-    container.innerHTML = this.svg;
-    // Stencil's scoped CSS cannot reach innerHTML-injected elements (no sc-* class).
-    // Apply width/height as inline styles so sizing works regardless of scope class.
-    const svg = container.querySelector<SVGElement>('svg');
-    if (svg) {
-      svg.removeAttribute('width');
-      svg.removeAttribute('height');
-      // Prevent SVG from being natively focusable (Firefox/IE default) while
-      // sitting inside an aria-hidden parent — fixes aria-hidden-focus violation.
-      svg.setAttribute('focusable', 'false');
-      svg.setAttribute('aria-hidden', 'true');
-      svg.style.display = 'block';
-      svg.style.flexShrink = '0';
-      svg.style.width = '100%';
-      svg.style.height = '100%';
+    if (this.svg === this.renderedSvg) return;
+    this.renderedSvg = this.svg;
+
+    // Validate + inject as parsed DOM nodes — never innerHTML. Keeps ds-icon
+    // Trusted-Types compatible and rejects executable/foreign content in
+    // glyph strings (registerIcons accepts app-provided markup).
+    const svg = this.svg ? parseIconSvg(this.svg) : null;
+    if (!svg) {
+      container.replaceChildren();
+      return;
     }
+
+    // Stencil's scoped CSS cannot reach injected elements (no sc-* class).
+    // Apply width/height as inline styles so sizing works regardless of scope class.
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    // Prevent SVG from being natively focusable (Firefox/IE default) while
+    // sitting inside an aria-hidden parent — fixes aria-hidden-focus violation.
+    svg.setAttribute('focusable', 'false');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.display = 'block';
+    svg.style.flexShrink = '0';
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    container.replaceChildren(svg);
   }
 
   @Watch('name')

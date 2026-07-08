@@ -32,6 +32,39 @@ describe('icon loader catalogs', () => {
     }
   });
 
+  it('resolves canonical names only — meta.json aliases are never loader keys', async () => {
+    const { systemIconLoaders } = await import('../src/wc/components/Icon/system-icon-catalog.ts');
+    const { flagIconLoaders } = await import('../src/wc/components/Icon/flag-icon-catalog.ts');
+    const canonical = new Set(meta.icons.map((i: { name: string }) => i.name));
+
+    for (const icon of meta.icons) {
+      for (const alias of icon.aliases ?? []) {
+        if (canonical.has(alias)) continue; // an alias colliding with a canonical name keys that icon, not this one
+        assert.equal(
+          Object.prototype.hasOwnProperty.call(systemIconLoaders, alias),
+          false,
+          `alias "${alias}" (${icon.name}) must not resolve`,
+        );
+        assert.equal(
+          Object.prototype.hasOwnProperty.call(flagIconLoaders, alias),
+          false,
+          `alias "${alias}" (${icon.name}) must not resolve`,
+        );
+      }
+    }
+  });
+
+  it('inherited object-prototype keys are not own loader entries', async () => {
+    const { systemIconLoaders } = await import('../src/wc/components/Icon/system-icon-catalog.ts');
+    for (const key of ['constructor', 'toString', 'hasOwnProperty', '__proto__']) {
+      assert.equal(
+        Object.prototype.hasOwnProperty.call(systemIconLoaders, key),
+        false,
+        `"${key}" must not be an own loader key`,
+      );
+    }
+  });
+
   it('every loader resolves to SVG markup from the @ds-mo/icons peer', async () => {
     const { systemIconLoaders } = await import('../src/wc/components/Icon/system-icon-catalog.ts');
     const { flagIconLoaders } = await import('../src/wc/components/Icon/flag-icon-catalog.ts');

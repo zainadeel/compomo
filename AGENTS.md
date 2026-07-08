@@ -138,6 +138,8 @@ import { DsButtonFilled, DsBarNav } from '@ds-mo/ui/react';
 
 **Icon preloading (`registerIcons`):** icons render async on first use (glyph pops into a fixed-size box — no layout shift). Apps can pre-register critical icons (nav chrome) for synchronous first paint: statically import the SVG strings from `@ds-mo/icons` and call `registerIcons` from `@ds-mo/ui/utils` before rendering. See the JSDoc in `src/wc/components/Icon/icon-cache.ts`.
 
+**Icon resolution + injection hardening:** `ds-icon` resolves names by **exact own-key match** against canonical IcoMo export names — meta.json aliases and inherited prototype keys never resolve. Every glyph is validated at the render boundary (`icon-svg.ts`: `<svg>` root, no executable/foreign-content elements, no `on*` attributes, fragment-only `href`s) and injected as parsed DOM nodes — never `innerHTML` — so ds-icon works under a strict CSP with `require-trusted-types-for`. Invalid markup renders an empty fixed-size box.
+
 **Framework wrappers:** Stencil emits **Angular proxy directives** (`angularOutputTarget` in `stencil.config.ts`) and **React wrappers** (`reactOutputTarget` in `stencil.config.ts`). Do not hand-maintain a parallel React component tree; generated wrappers live in `src/react/` and are recreated by `npm run build`.
 
 ---
