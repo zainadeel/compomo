@@ -17,7 +17,12 @@ if (!fs.existsSync(DIST)) {
 const jsFiles = fs.readdirSync(DIST).filter(name => name.endsWith('.js'));
 const hasExternalImport = jsFiles.some(name => {
   const content = fs.readFileSync(path.join(DIST, name), 'utf8');
-  return /from\s*['"]@ds-mo\/icons/.test(content) || /import\s*['"]@ds-mo\/icons/.test(content);
+  return (
+    /from\s*['"]@ds-mo\/icons/.test(content) ||
+    /import\s*['"]@ds-mo\/icons/.test(content) ||
+    // Lazy loader catalogs: import("@ds-mo/icons/svg/<Name>")
+    /import\s*\(\s*['"]@ds-mo\/icons/.test(content)
+  );
 });
 
 if (!hasExternalImport) {

@@ -14,7 +14,10 @@ export interface GradientSurface {
 
 /** Whether the badge sits under `ds-app-shell[gradient]`. */
 export function isShellGradientActive(from: HTMLElement): boolean {
-  const shell = from.closest('ds-app-shell');
+  // Explicit <HTMLElement>: the inferred HTMLDsAppShellElement type only
+  // resolves where @stencil/core types are installed — consumers importing
+  // `@ds-mo/ui/nav` (raw TS) compile this without them.
+  const shell = from.closest<HTMLElement>('ds-app-shell');
   return shell?.hasAttribute('gradient') === true;
 }
 

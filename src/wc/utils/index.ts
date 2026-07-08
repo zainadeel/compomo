@@ -1,3 +1,4 @@
+export { registerIcons } from '../components/Icon/icon-cache';
 export { clearCssLengthPxCache, resolveCssLengthPx } from './resolve-css-length-px';
 export { parseCssTimeMs, resolveCssTimeMs } from './resolve-css-time-ms';
 export {

@@ -52,9 +52,13 @@ export class Badge {
   /**
    * Ring samples the shell gradient stack (base fill + wash) instead of a flat
    * `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`;
-   * set `on-gradient-background` to opt in/out explicitly.
+   * set `gradient-background` to opt in/out explicitly.
+   *
+   * The attribute must NOT start with `on` — Stencil's setAccessor routes any
+   * unknown `on*` member down the event-listener path during attribute
+   * reflection, calling addEventListener with a non-listener and throwing.
    */
-  @Prop({ attribute: 'on-gradient-background', reflect: true }) gradientBackground: boolean = false;
+  @Prop({ attribute: 'gradient-background', reflect: true }) gradientBackground: boolean = false;
 
   /** Deprecated alias for selected counter styling. Prefer context-specific color in the parent. */
   @Prop() isSelected: boolean = false;

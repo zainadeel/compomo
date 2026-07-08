@@ -1,6 +1,8 @@
-import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
-import { flagIconCatalog } from './flag-icon-catalog';
-import { systemIconCatalog } from './system-icon-catalog';
+import { Component, Prop, Element, State, Watch, h, Host } from '@stencil/core';
+import { flagIconLoaders } from './flag-icon-catalog';
+import { systemIconLoaders } from './system-icon-catalog';
+import { iconCache, iconCacheKey } from './icon-cache';
+import { parseIconSvg } from './icon-svg';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
@@ -47,36 +49,94 @@ export class Icon {
   /** Set `true` to look up from the flag icon set instead of the system icon set. */
   @Prop() flag: boolean = false;
 
-  private get svgString(): string {
-    const source = this.flag ? flagIconCatalog : systemIconCatalog;
-    return source[this.name] ?? '';
+  /** Resolved SVG markup — set synchronously on cache hit, async after a lazy load. */
+  @State() private svg: string = '';
+
+  /** Guards against out-of-order async resolutions when `name`/`flag` change quickly. */
+  private loadToken = 0;
+
+  /**
+   * Cache hit → render synchronously (pre-registered via `registerIcons` or
+   * previously loaded). Miss → fire the per-icon lazy loader; the glyph pops in
+   * when the (tiny, per-icon) chunk resolves and stays cached for every other
+   * ds-icon instance.
+   */
+  private resolveSvg() {
+    const flag = this.flag;
+    const key = iconCacheKey(this.name, flag);
+    const token = ++this.loadToken;
+
+    const cached = iconCache().get(key);
+    if (cached !== undefined) {
+      this.svg = cached;
+      return;
+    }
+
+    // Own-key lookup only: names resolve by exact canonical IcoMo export key —
+    // never meta.json aliases (not in the maps) and never inherited prototype
+    // keys ('constructor', 'toString', …) that a bare index access would hit.
+    const loaders = flag ? flagIconLoaders : systemIconLoaders;
+    const loader = Object.prototype.hasOwnProperty.call(loaders, this.name)
+      ? loaders[this.name]
+      : undefined;
+    if (!loader) {
+      this.svg = '';
+      return;
+    }
+
+    loader()
+      .then(svg => {
+        iconCache().set(key, svg);
+        if (token === this.loadToken) this.svg = svg;
+      })
+      .catch(() => {
+        if (token === this.loadToken) this.svg = '';
+      });
   }
+
+  componentWillLoad() {
+    // Fire-and-forget: do not return the promise — a cache miss must not block
+    // the parent render tree on a network fetch.
+    this.resolveSvg();
+  }
+
+  /** Last markup injected into the DOM — skips redundant re-parse on unrelated re-renders. */
+  private renderedSvg: string | null = null;
 
   private updateSvg() {
     const container = this.el.querySelector<HTMLElement>('.icon__svg');
     if (!container) return;
-    container.innerHTML = this.svgString;
-    // Stencil's scoped CSS cannot reach innerHTML-injected elements (no sc-* class).
-    // Apply width/height as inline styles so sizing works regardless of scope class.
-    const svg = container.querySelector<SVGElement>('svg');
-    if (svg) {
-      svg.removeAttribute('width');
-      svg.removeAttribute('height');
-      // Prevent SVG from being natively focusable (Firefox/IE default) while
-      // sitting inside an aria-hidden parent — fixes aria-hidden-focus violation.
-      svg.setAttribute('focusable', 'false');
-      svg.setAttribute('aria-hidden', 'true');
-      svg.style.display = 'block';
-      svg.style.flexShrink = '0';
-      svg.style.width = '100%';
-      svg.style.height = '100%';
+    if (this.svg === this.renderedSvg) return;
+    this.renderedSvg = this.svg;
+
+    // Validate + inject as parsed DOM nodes — never innerHTML. Keeps ds-icon
+    // Trusted-Types compatible and rejects executable/foreign content in
+    // glyph strings (registerIcons accepts app-provided markup).
+    const svg = this.svg ? parseIconSvg(this.svg) : null;
+    if (!svg) {
+      container.replaceChildren();
+      return;
     }
+
+    // Stencil's scoped CSS cannot reach injected elements (no sc-* class).
+    // Apply width/height as inline styles so sizing works regardless of scope class.
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    // Prevent SVG from being natively focusable (Firefox/IE default) while
+    // sitting inside an aria-hidden parent — fixes aria-hidden-focus violation.
+    svg.setAttribute('focusable', 'false');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.display = 'block';
+    svg.style.flexShrink = '0';
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    container.replaceChildren(svg);
   }
 
   @Watch('name')
   @Watch('flag')
   onIconChange() {
-    this.updateSvg();
+    this.resolveSvg();
   }
 
   componentDidRender() {
