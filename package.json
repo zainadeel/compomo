@@ -104,7 +104,7 @@
     }
   },
   "devDependencies": {
-    "@ds-mo/icons": "^6.1.1",
+    "@ds-mo/icons": "^6.1.2",
     "@ds-mo/tokens": "^2.12.1",
     "@eslint/js": "^10.0.1",
     "@figma/code-connect": "^1.4.8",
