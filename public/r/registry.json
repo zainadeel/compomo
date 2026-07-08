@@ -1103,7 +1103,7 @@
     {
       "name": "fade",
       "title": "Fade",
-      "description": "Decorative edge-fade utility for scrollable content and overflow boundaries.",
+      "description": "Scroll-edge fade wrapper — masks overflow content so gradients and textured surfaces show through.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1119,14 +1119,6 @@
           },
           "size": {
             "type": "'size-000' | 'size-050' | 'size-075' | 'size-100' | 'size-150' | 'size-200' | 'size-250' | 'size-300' | 'size-400' | 'size-500' | 'size-600' | 'size-800' | string",
-            "required": false
-          },
-          "surface": {
-            "type": "'default' | 'primary' | 'secondary' | 'navigation' | 'media' | 'always-dark' | 'inverted'",
-            "required": false
-          },
-          "background": {
-            "type": "string",
             "required": false
           },
           "visible": {

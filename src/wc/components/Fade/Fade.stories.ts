@@ -18,23 +18,18 @@ const SIZES = [
   'size-600',
   'size-800',
 ] as const;
-const SURFACES = ['default', 'primary', 'secondary', 'navigation', 'media', 'always-dark', 'inverted'] as const;
 
 const meta: Meta = {
   title: 'Utility/Fade',
   tags: ['autodocs'],
   argTypes: {
-    side:       { control: 'select', options: SIDES },
-    size:       { control: 'select', options: SIZES },
-    surface:    { control: 'select', options: SURFACES },
-    background: { control: 'text', description: 'Optional direct background override, e.g. var(--_nav-bg).' },
-    visible:    { control: 'boolean' },
+    side: { control: 'select', options: SIDES },
+    size: { control: 'select', options: SIZES },
+    visible: { control: 'boolean' },
   },
   args: {
     side: 'bottom',
     size: 'size-600',
-    surface: 'secondary',
-    background: '',
     visible: true,
   },
 };
@@ -42,70 +37,55 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const CARD = 'position: relative; width: 220px; height: 128px; overflow: hidden; border-radius: var(--dimension-radius-100); padding: var(--dimension-space-150); box-sizing: border-box;';
-const COPY = 'margin: 0; line-height: var(--typography-lineheight-md); color: inherit;';
+const FRAME =
+  'width: 220px; height: 128px; border-radius: var(--dimension-radius-100); background: var(--color-background-secondary); color: var(--color-foreground-primary);';
+const COPY = 'margin: 0; line-height: var(--typography-lineheight-md);';
 
-function surfaceBackground(surface: string): string {
-  return surface === 'primary' ? 'var(--color-background-primary)' :
-    surface === 'navigation' ? 'var(--color-navigation-background)' :
-    surface === 'media' ? 'var(--color-media-background)' :
-    surface === 'always-dark' ? 'var(--color-always-dark-background)' :
-    surface === 'inverted' ? 'var(--color-inverted-background)' :
-    'var(--color-background-secondary)';
-}
-
-function surfaceColor(surface: string): string {
-  return surface === 'navigation' ? 'var(--color-navigation-foreground-primary)' :
-    surface === 'media' ? 'var(--color-media-foreground-primary)' :
-    surface === 'always-dark' ? 'var(--color-always-dark-foreground-primary)' :
-    surface === 'inverted' ? 'var(--color-inverted-foreground-primary)' :
-    'var(--color-foreground-primary)';
-}
+const scrollItems = (count: number) =>
+  Array.from(
+    { length: count },
+    (_, i) => html`
+      <p style="${COPY}">
+        Scroll item ${i + 1} — lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </p>
+    `,
+  );
 
 export const Playground: Story = {
   render: args => html`
-    <div style="${CARD} background: ${args['background'] || surfaceBackground(args['surface'])}; color: ${surfaceColor(args['surface'])};">
-      <p style="${COPY}">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco.
-      </p>
-      <ds-fade
-        side=${args['side']}
-        size=${args['size']}
-        surface=${args['surface']}
-        background=${args['background'] || undefined}
-        .visible=${args['visible']}
-      ></ds-fade>
-    </div>
+    <ds-fade
+      side=${args['side']}
+      size=${args['size']}
+      .visible=${args['visible']}
+      style="${FRAME} padding: var(--dimension-space-150);"
+    >
+      ${scrollItems(8)}
+    </ds-fade>
   `,
 };
 
 export const AllSides: Story = {
   render: () => html`
     <div style="display: flex; gap: var(--dimension-space-200); flex-wrap: wrap">
-      ${SIDES.map(side => html`
-        <div>
-          <div style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-075);">${side}</div>
-          <div style="${CARD} width: 180px; height: 104px; background: var(--color-background-secondary);">
-            <p style="${COPY}">Scrollable content edge affordance.</p>
-            <ds-fade side=${side} size="size-500" surface="secondary"></ds-fade>
+      ${SIDES.map(side => {
+        const isVertical = side === 'top' || side === 'bottom';
+        return html`
+          <div>
+            <div
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-075);"
+            >
+              ${side}
+            </div>
+            <ds-fade
+              side=${side}
+              size="size-500"
+              style="${isVertical ? 'width: 180px; height: 104px;' : 'width: 200px; height: 88px;'} ${FRAME}"
+            >
+              ${scrollItems(isVertical ? 6 : 4)}
+            </ds-fade>
           </div>
-        </div>
-      `)}
-    </div>
-  `,
-};
-
-export const Surfaces: Story = {
-  render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--dimension-space-200);">
-      ${SURFACES.map(surface => html`
-        <div style="${CARD} background: ${surfaceBackground(surface)}; color: ${surfaceColor(surface)};">
-          <p style="${COPY}">${surface}</p>
-          <ds-fade side="bottom" size="size-600" surface=${surface}></ds-fade>
-        </div>
-      `)}
+        `;
+      })}
     </div>
   `,
 };
@@ -113,14 +93,17 @@ export const Surfaces: Story = {
 export const Visibility: Story = {
   render: () => html`
     <div style="display: flex; gap: var(--dimension-space-200); flex-wrap: wrap;">
-      <div style="${CARD} background: var(--color-background-secondary);">
-        <p style="${COPY}">Visible while content continues beneath the footer.</p>
-        <ds-fade side="bottom" size="size-600" surface="secondary"></ds-fade>
-      </div>
-      <div style="${CARD} background: var(--color-background-secondary);">
-        <p style="${COPY}">Hidden when scrolled to the edge.</p>
-        <ds-fade side="bottom" size="size-600" surface="secondary" .visible=${false}></ds-fade>
-      </div>
+      <ds-fade side="bottom" size="size-600" style="${FRAME} padding: var(--dimension-space-150);">
+        ${scrollItems(8)}
+      </ds-fade>
+      <ds-fade
+        side="bottom"
+        size="size-600"
+        .visible=${false}
+        style="${FRAME} padding: var(--dimension-space-150);"
+      >
+        ${scrollItems(8)}
+      </ds-fade>
     </div>
   `,
 };
@@ -132,8 +115,8 @@ export const ShellGradientChrome: Story = {
     docs: {
       description: {
         story:
-          'Inside `ds-app-shell[gradient]`, fades on panel-nav scroll regions inherit the fixed shell wash ' +
-          'via `fade--shell-gradient` modifiers — edges stay aligned with the viewport-locked chrome layer.',
+          'Inside `ds-app-shell[gradient]`, scroll-edge masks let the fixed shell wash show through — ' +
+          'no painted overlay or surface prop needed. Panel nav uses the same utility.',
       },
     },
   },
@@ -146,34 +129,22 @@ export const ShellGradientChrome: Story = {
       "
     >
       <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
-        <div
+        <ds-fade
           slot="panel"
+          side="bottom"
+          size="size-600"
           style="
-            position: relative;
             width: var(--dimension-size-2400);
             height: 100%;
-            overflow: hidden;
+            padding: var(--dimension-space-200);
+            box-sizing: border-box;
             background: transparent;
           "
         >
-          <div
-            style="
-              height: 100%;
-              overflow-y: auto;
-              padding: var(--dimension-space-200);
-              box-sizing: border-box;
-            "
-          >
-            ${Array.from({ length: 18 }, (_, i) => html`
-              <p style="margin: 0 0 var(--dimension-space-150); color: var(--color-foreground-secondary); font-size: 13px;">
-                Scroll item ${i + 1}
-              </p>
-            `)}
-          </div>
-          <ds-fade side="bottom" size="size-600" surface="secondary"></ds-fade>
-        </div>
+          ${scrollItems(18)}
+        </ds-fade>
         <div style="padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
-          Scroll the panel column — bottom fade samples shell gradient chrome.
+          Scroll the panel column — bottom fade reveals shell gradient chrome through the mask.
         </div>
       </ds-app-shell>
     </div>

@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "fade",
   "title": "Fade",
-  "description": "Decorative edge-fade utility for scrollable content and overflow boundaries.",
+  "description": "Scroll-edge fade wrapper — masks overflow content so gradients and textured surfaces show through.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -29,27 +29,18 @@
     "props": {
       "side": {
         "type": "'top' | 'bottom' | 'left' | 'right'",
-        "default": "'bottom'"
+        "default": "'bottom'",
+        "description": "Edge where content fades as it approaches the scroll boundary."
       },
       "size": {
         "type": "'size-000' | 'size-050' | 'size-075' | 'size-100' | 'size-150' | 'size-200' | 'size-250' | 'size-300' | 'size-400' | 'size-500' | 'size-600' | 'size-800' | string",
         "default": "'size-600'",
         "description": "Fade depth along the fade axis. Use dimension size token names or a CSS length."
       },
-      "surface": {
-        "type": "'default' | 'primary' | 'secondary' | 'navigation' | 'media' | 'always-dark' | 'inverted'",
-        "default": "'default'",
-        "description": "Surface context used to choose the fade target background token."
-      },
-      "background": {
-        "type": "string",
-        "default": "'var(--color-background-secondary)'",
-        "description": "Direct background override, useful for component-local surface variables."
-      },
       "visible": {
         "type": "boolean",
         "default": "true",
-        "description": "Controls opacity without removing the fade from its edge position."
+        "description": "Controls the mask without removing the scroll container from layout."
       },
       "height": {
         "type": "string",
@@ -62,7 +53,6 @@
     "types": [
       "FadeProps",
       "FadeSide",
-      "FadeSurface",
       "FadeSize",
       "FadeSizeToken"
     ]
@@ -75,12 +65,12 @@
   "files": [
     {
       "path": "src/wc/components/Fade/Fade.css",
-      "content": ":host {\n  --ds-fade-size: var(--dimension-size-600);\n  --ds-fade-bg: var(--color-background-secondary);\n  --ds-fade-offset: 0;\n\n  position: absolute;\n  pointer-events: none;\n  z-index: 10;\n  opacity: 1;\n  transform: translateZ(0);\n  backface-visibility: hidden;\n  transition: opacity var(--effect-motion-short-3);\n}\n\n:host(.fade--hidden) {\n  opacity: 0;\n}\n\n:host(.fade--vertical-edge) {\n  height: var(--ds-fade-size);\n}\n\n:host(.fade--horizontal-edge) {\n  width: var(--ds-fade-size);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  :host { transition: none; }\n}\n\n:host(.fade--top) {\n  top: var(--ds-fade-offset); left: 0; right: 0;\n  background: linear-gradient(to bottom, var(--ds-fade-bg) 0%, var(--ds-fade-bg) 50%, transparent 100%);\n}\n\n:host(.fade--bottom) {\n  bottom: var(--ds-fade-offset); left: 0; right: 0;\n  background: linear-gradient(to top, var(--ds-fade-bg) 0%, transparent 100%);\n}\n\n:host(.fade--left) {\n  top: 0; bottom: 0; left: var(--ds-fade-offset);\n  background: linear-gradient(to right, var(--ds-fade-bg) 0%, transparent 100%);\n}\n\n:host(.fade--right) {\n  top: 0; bottom: 0; right: var(--ds-fade-offset);\n  background: linear-gradient(to left, var(--ds-fade-bg) 0%, transparent 100%);\n}\n\n/* Shell gradient — base fill + wash (matches panel-nav / bar-nav ::before stacks). */\n:host(.fade--shell-gradient) {\n  background: transparent;\n}\n\n:host(.fade--shell-gradient)::before,\n:host(.fade--shell-gradient)::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  pointer-events: none;\n}\n\n:host(.fade--shell-gradient.fade--top)::before {\n  background: linear-gradient(to bottom, var(--ds-fade-bg) 0%, var(--ds-fade-bg) 50%, transparent 100%);\n}\n\n:host(.fade--shell-gradient.fade--bottom)::before {\n  background: linear-gradient(to top, var(--ds-fade-bg) 0%, transparent 100%);\n}\n\n:host(.fade--shell-gradient.fade--left)::before {\n  background: linear-gradient(to right, var(--ds-fade-bg) 0%, transparent 100%);\n}\n\n:host(.fade--shell-gradient.fade--right)::before {\n  background: linear-gradient(to left, var(--ds-fade-bg) 0%, transparent 100%);\n}\n\n:host(.fade--shell-gradient)::after {\n  opacity: var(--ds-shell-gradient-opacity, 1);\n  background-image: var(--ds-shell-gradient-image, none);\n  background-size: var(--ds-shell-gradient-size, auto);\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-attachment: fixed;\n}\n\n:host(.fade--shell-gradient.fade--top)::after {\n  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%);\n  mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%);\n}\n\n:host(.fade--shell-gradient.fade--bottom)::after {\n  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 100%);\n  mask-image: linear-gradient(to top, #000 0%, transparent 100%);\n}\n\n:host(.fade--shell-gradient.fade--left)::after {\n  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 100%);\n  mask-image: linear-gradient(to right, #000 0%, transparent 100%);\n}\n\n:host(.fade--shell-gradient.fade--right)::after {\n  -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 100%);\n  mask-image: linear-gradient(to left, #000 0%, transparent 100%);\n}\n",
+      "content": "@import '../../utils/scroll-edge-fade.css';\n\n:host {\n  display: block;\n  overflow: auto;\n  box-sizing: border-box;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Fade/Fade.tsx",
-      "content": "import { Component, Prop, Element, State, h, Host } from '@stencil/core';\nimport { isShellGradientActive } from '../../nav/badge-gradient-ring';\n\nexport type FadeSide = 'top' | 'bottom' | 'left' | 'right';\nexport type FadeSurface =\n  | 'default'\n  | 'primary'\n  | 'secondary'\n  | 'navigation'\n  | 'media'\n  | 'always-dark'\n  | 'inverted';\nexport type FadeSizeToken =\n  | 'size-000'\n  | 'size-050'\n  | 'size-075'\n  | 'size-100'\n  | 'size-150'\n  | 'size-200'\n  | 'size-250'\n  | 'size-300'\n  | 'size-400'\n  | 'size-500'\n  | 'size-600'\n  | 'size-800';\nexport type FadeSize = FadeSizeToken | (string & {});\n\nconst SIZE_VALUE: Record<FadeSizeToken, string> = {\n  'size-000': 'var(--dimension-size-000)',\n  'size-050': 'var(--dimension-size-050)',\n  'size-075': 'var(--dimension-size-075)',\n  'size-100': 'var(--dimension-size-100)',\n  'size-150': 'var(--dimension-size-150)',\n  'size-200': 'var(--dimension-size-200)',\n  'size-250': 'var(--dimension-size-250)',\n  'size-300': 'var(--dimension-size-300)',\n  'size-400': 'var(--dimension-size-400)',\n  'size-500': 'var(--dimension-size-500)',\n  'size-600': 'var(--dimension-size-600)',\n  'size-800': 'var(--dimension-size-800)',\n};\n\nconst SURFACE_BACKGROUND: Record<FadeSurface, string> = {\n  default: 'var(--color-background-secondary)',\n  primary: 'var(--color-background-primary)',\n  secondary: 'var(--color-background-secondary)',\n  navigation: 'var(--color-navigation-background)',\n  media: 'var(--color-media-background)',\n  'always-dark': 'var(--color-always-dark-background)',\n  inverted: 'var(--color-inverted-background)',\n};\n\n@Component({\n  tag: 'ds-fade',\n  styleUrl: 'Fade.css',\n  scoped: true,\n})\nexport class Fade {\n  @Element() el!: HTMLElement;\n\n  /** When under `ds-app-shell[gradient]`, composites the shell wash over the base fade. */\n  @State() private shellGradientChrome: 'panel' | 'bar' | null = null;\n\n  /** Edge where the fade is anchored. */\n  @Prop() side: FadeSide = 'bottom';\n\n  /** Fade depth along the fade axis. Accepts dimension size token names or any CSS length. */\n  @Prop() size: FadeSize = 'size-600';\n\n  /**\n   * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length.\n   * Prefer `size`.\n   */\n  @Prop() height: string | undefined;\n\n  /** Surface context used to choose the fade target background token. */\n  @Prop() surface: FadeSurface = 'default';\n\n  /** Direct background override for contexts that already expose a resolved surface var. */\n  @Prop() background: string = 'var(--color-background-secondary)';\n\n  /** Controls visibility without removing the element from layout/positioning. */\n  @Prop() visible: boolean = true;\n\n  componentDidLoad() {\n    this.syncShellGradient();\n  }\n\n  private syncShellGradient() {\n    if (!isShellGradientActive(this.el)) {\n      this.shellGradientChrome = null;\n      return;\n    }\n    this.shellGradientChrome = this.el.closest('ds-bar-nav') ? 'bar' : 'panel';\n  }\n\n  private resolveSize(): string {\n    if (this.height) return this.height;\n\n    return Object.prototype.hasOwnProperty.call(SIZE_VALUE, this.size)\n      ? SIZE_VALUE[this.size as FadeSizeToken]\n      : this.size;\n  }\n\n  private resolveBackground(): string {\n    if (this.background !== 'var(--color-background-secondary)') return this.background;\n    return SURFACE_BACKGROUND[this.surface];\n  }\n\n  render() {\n    const isVerticalEdge = this.side === 'top' || this.side === 'bottom';\n\n    return (\n      <Host\n        aria-hidden=\"true\"\n        class={{\n          fade: true,\n          'fade--hidden': !this.visible,\n          'fade--vertical-edge': isVerticalEdge,\n          'fade--horizontal-edge': !isVerticalEdge,\n          'fade--shell-gradient': this.shellGradientChrome !== null,\n          'fade--shell-gradient-panel': this.shellGradientChrome === 'panel',\n          'fade--shell-gradient-bar': this.shellGradientChrome === 'bar',\n          [`fade--${this.side}`]: true,\n        }}\n        style={{\n          '--ds-fade-size': this.resolveSize(),\n          '--ds-fade-bg': this.resolveBackground(),\n        } as Record<string, string>}\n      />\n    );\n  }\n}\n",
+      "content": "import { Component, Element, Prop, State, Watch, h, Host } from '@stencil/core';\nimport {\n  isScrollAtEdge,\n  scrollEdgeFadeClassMap,\n  scrollEdgeFadeSizeStyle,\n  type ScrollEdgeFadeEdge,\n  type ScrollEdgeFadeSize,\n  type ScrollEdgeFadeSizeToken,\n} from '../../utils/scroll-edge-fade';\n\n/** @deprecated Use `ScrollEdgeFadeEdge` from `@ds-mo/ui/utils`. */\nexport type FadeSide = ScrollEdgeFadeEdge;\n\n/** @deprecated Use `ScrollEdgeFadeSizeToken` from `@ds-mo/ui/utils`. */\nexport type FadeSizeToken = ScrollEdgeFadeSizeToken;\n\n/** @deprecated Use `ScrollEdgeFadeSize` from `@ds-mo/ui/utils`. */\nexport type FadeSize = ScrollEdgeFadeSize;\n\n@Component({\n  tag: 'ds-fade',\n  styleUrl: 'Fade.css',\n  scoped: true,\n})\nexport class Fade {\n  @Element() el!: HTMLElement;\n\n  /** Edge where content fades as it approaches the scroll boundary. */\n  @Prop() side: FadeSide = 'bottom';\n\n  /** Fade depth along the fade axis. Accepts dimension size token names or any CSS length. */\n  @Prop() size: FadeSize = 'size-600';\n\n  /**\n   * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length.\n   * Prefer `size`.\n   */\n  @Prop() height: string | undefined;\n\n  /** Controls the mask without removing the scroll container from layout. */\n  @Prop() visible: boolean = true;\n\n  @State() private atEnd = false;\n\n  @Watch('side')\n  @Watch('visible')\n  protected onFadeConfigChange() {\n    this.syncAtEnd();\n  }\n\n  componentDidLoad() {\n    this.syncAtEnd();\n  }\n\n  private syncAtEnd() {\n    this.atEnd = isScrollAtEdge(this.el, this.side);\n  }\n\n  private handleScroll(e: Event) {\n    const target = e.currentTarget as HTMLElement;\n    this.atEnd = isScrollAtEdge(target, this.side);\n  }\n\n  render() {\n    return (\n      <Host\n        class={scrollEdgeFadeClassMap({\n          edges: this.side,\n          atEnd: { [this.side]: this.atEnd },\n          hidden: !this.visible,\n        })}\n        style={scrollEdgeFadeSizeStyle(this.size, this.height) as Record<string, string>}\n        onScroll={(e: Event) => this.handleScroll(e)}\n      >\n        <slot />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

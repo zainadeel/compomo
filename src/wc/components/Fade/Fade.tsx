@@ -1,54 +1,21 @@
-import { Component, Prop, Element, State, h, Host } from '@stencil/core';
-import { isShellGradientActive } from '../../nav/badge-gradient-ring';
+import { Component, Element, Prop, State, Watch, h, Host } from '@stencil/core';
+import {
+  isScrollAtEdge,
+  scrollEdgeFadeClassMap,
+  scrollEdgeFadeSizeStyle,
+  type ScrollEdgeFadeEdge,
+  type ScrollEdgeFadeSize,
+  type ScrollEdgeFadeSizeToken,
+} from '../../utils/scroll-edge-fade';
 
-export type FadeSide = 'top' | 'bottom' | 'left' | 'right';
-export type FadeSurface =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'navigation'
-  | 'media'
-  | 'always-dark'
-  | 'inverted';
-export type FadeSizeToken =
-  | 'size-000'
-  | 'size-050'
-  | 'size-075'
-  | 'size-100'
-  | 'size-150'
-  | 'size-200'
-  | 'size-250'
-  | 'size-300'
-  | 'size-400'
-  | 'size-500'
-  | 'size-600'
-  | 'size-800';
-export type FadeSize = FadeSizeToken | (string & {});
+/** @deprecated Use `ScrollEdgeFadeEdge` from `@ds-mo/ui/utils`. */
+export type FadeSide = ScrollEdgeFadeEdge;
 
-const SIZE_VALUE: Record<FadeSizeToken, string> = {
-  'size-000': 'var(--dimension-size-000)',
-  'size-050': 'var(--dimension-size-050)',
-  'size-075': 'var(--dimension-size-075)',
-  'size-100': 'var(--dimension-size-100)',
-  'size-150': 'var(--dimension-size-150)',
-  'size-200': 'var(--dimension-size-200)',
-  'size-250': 'var(--dimension-size-250)',
-  'size-300': 'var(--dimension-size-300)',
-  'size-400': 'var(--dimension-size-400)',
-  'size-500': 'var(--dimension-size-500)',
-  'size-600': 'var(--dimension-size-600)',
-  'size-800': 'var(--dimension-size-800)',
-};
+/** @deprecated Use `ScrollEdgeFadeSizeToken` from `@ds-mo/ui/utils`. */
+export type FadeSizeToken = ScrollEdgeFadeSizeToken;
 
-const SURFACE_BACKGROUND: Record<FadeSurface, string> = {
-  default: 'var(--color-background-secondary)',
-  primary: 'var(--color-background-primary)',
-  secondary: 'var(--color-background-secondary)',
-  navigation: 'var(--color-navigation-background)',
-  media: 'var(--color-media-background)',
-  'always-dark': 'var(--color-always-dark-background)',
-  inverted: 'var(--color-inverted-background)',
-};
+/** @deprecated Use `ScrollEdgeFadeSize` from `@ds-mo/ui/utils`. */
+export type FadeSize = ScrollEdgeFadeSize;
 
 @Component({
   tag: 'ds-fade',
@@ -58,10 +25,7 @@ const SURFACE_BACKGROUND: Record<FadeSurface, string> = {
 export class Fade {
   @Element() el!: HTMLElement;
 
-  /** When under `ds-app-shell[gradient]`, composites the shell wash over the base fade. */
-  @State() private shellGradientChrome: 'panel' | 'bar' | null = null;
-
-  /** Edge where the fade is anchored. */
+  /** Edge where content fades as it approaches the scroll boundary. */
   @Prop() side: FadeSide = 'bottom';
 
   /** Fade depth along the fade axis. Accepts dimension size token names or any CSS length. */
@@ -73,61 +37,43 @@ export class Fade {
    */
   @Prop() height: string | undefined;
 
-  /** Surface context used to choose the fade target background token. */
-  @Prop() surface: FadeSurface = 'default';
-
-  /** Direct background override for contexts that already expose a resolved surface var. */
-  @Prop() background: string = 'var(--color-background-secondary)';
-
-  /** Controls visibility without removing the element from layout/positioning. */
+  /** Controls the mask without removing the scroll container from layout. */
   @Prop() visible: boolean = true;
 
+  @State() private atEnd = false;
+
+  @Watch('side')
+  @Watch('visible')
+  protected onFadeConfigChange() {
+    this.syncAtEnd();
+  }
+
   componentDidLoad() {
-    this.syncShellGradient();
+    this.syncAtEnd();
   }
 
-  private syncShellGradient() {
-    if (!isShellGradientActive(this.el)) {
-      this.shellGradientChrome = null;
-      return;
-    }
-    this.shellGradientChrome = this.el.closest('ds-bar-nav') ? 'bar' : 'panel';
+  private syncAtEnd() {
+    this.atEnd = isScrollAtEdge(this.el, this.side);
   }
 
-  private resolveSize(): string {
-    if (this.height) return this.height;
-
-    return Object.prototype.hasOwnProperty.call(SIZE_VALUE, this.size)
-      ? SIZE_VALUE[this.size as FadeSizeToken]
-      : this.size;
-  }
-
-  private resolveBackground(): string {
-    if (this.background !== 'var(--color-background-secondary)') return this.background;
-    return SURFACE_BACKGROUND[this.surface];
+  private handleScroll(e: Event) {
+    const target = e.currentTarget as HTMLElement;
+    this.atEnd = isScrollAtEdge(target, this.side);
   }
 
   render() {
-    const isVerticalEdge = this.side === 'top' || this.side === 'bottom';
-
     return (
       <Host
-        aria-hidden="true"
-        class={{
-          fade: true,
-          'fade--hidden': !this.visible,
-          'fade--vertical-edge': isVerticalEdge,
-          'fade--horizontal-edge': !isVerticalEdge,
-          'fade--shell-gradient': this.shellGradientChrome !== null,
-          'fade--shell-gradient-panel': this.shellGradientChrome === 'panel',
-          'fade--shell-gradient-bar': this.shellGradientChrome === 'bar',
-          [`fade--${this.side}`]: true,
-        }}
-        style={{
-          '--ds-fade-size': this.resolveSize(),
-          '--ds-fade-bg': this.resolveBackground(),
-        } as Record<string, string>}
-      />
+        class={scrollEdgeFadeClassMap({
+          edges: this.side,
+          atEnd: { [this.side]: this.atEnd },
+          hidden: !this.visible,
+        })}
+        style={scrollEdgeFadeSizeStyle(this.size, this.height) as Record<string, string>}
+        onScroll={(e: Event) => this.handleScroll(e)}
+      >
+        <slot />
+      </Host>
     );
   }
 }

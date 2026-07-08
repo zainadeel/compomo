@@ -1,1 +1,1 @@
-export type { FadeSide, FadeSize, FadeSizeToken, FadeSurface } from './Fade';
+export type { FadeSide, FadeSize, FadeSizeToken } from './Fade';
