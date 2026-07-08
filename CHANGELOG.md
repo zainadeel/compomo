@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.10.4](https://github.com/zainadeel/compomo/compare/v2.10.3...v2.10.4) (2026-07-08)
+
+
+### Fixed
+
+* **Icon:** bump @ds-mo/icons to 6.1.2 for WiFi icon casing fix ([216f364](https://github.com/zainadeel/compomo/commit/216f3648fd192b2a32cce976ee4a26257618796a))
+* **Icon:** bump @ds-mo/icons to 6.1.2 for WiFi icon casing fix ([b2622bf](https://github.com/zainadeel/compomo/commit/b2622bfb177a52efed9c532bae2ad3113870c775))
+
 ## [2.10.3](https://github.com/zainadeel/compomo/compare/v2.10.2...v2.10.3) (2026-07-08)
 
 
