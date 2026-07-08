@@ -38,9 +38,6 @@ try {
         dependencies: {
           '@ds-mo/ui': `file:${tarballPath}`,
         },
-        devDependencies: {
-          tsx: '^4.20.3',
-        },
       },
       null,
       2,
@@ -50,31 +47,44 @@ try {
   execSync('npm install --no-audit --no-fund', { cwd: smokeDir, stdio: 'inherit' });
   const listing = execSync(`tar -tzf "${tarballPath}"`, { encoding: 'utf8' });
   for (const suffix of [
-    'package/src/wc/utils/resolve-css-length-px.ts',
-    'package/src/wc/nav/shell-view-transition.ts',
+    'package/dist/lib/nav/index.js',
+    'package/dist/lib/nav/index.d.ts',
+    'package/dist/lib/utils/index.js',
+    'package/dist/lib/utils/index.d.ts',
   ]) {
     if (!listing.includes(suffix)) {
       throw new Error(`packed tarball missing ${suffix}`);
     }
   }
 
+  // Plain node — no TS loader. Proves the subpaths ship runnable compiled JS
+  // (consumer toolchains no longer need to transpile our source or carry
+  // @stencil/core types). See compomo#257.
   execSync(
-    `node --import tsx/esm --input-type=module -e "
+    `node --input-type=module -e "
       const nav = await import('@ds-mo/ui/nav');
-      if (typeof nav.runShellNavStyleRevealOnReady !== 'function') {
-        console.error('missing runShellNavStyleRevealOnReady');
+      for (const name of ['runShellNavStyleRevealOnReady', 'normalizeShellGradientPreset']) {
+        if (typeof nav[name] !== 'function') {
+          console.error('missing ' + name);
+          process.exit(1);
+        }
+      }
+      if (nav.DEFAULT_SHELL_GRADIENT_PRESET !== 'neutral') {
+        console.error('unexpected DEFAULT_SHELL_GRADIENT_PRESET');
         process.exit(1);
       }
       const utils = await import('@ds-mo/ui/utils');
-      if (typeof utils.resolveCssLengthPx !== 'function') {
-        console.error('missing resolveCssLengthPx');
-        process.exit(1);
+      for (const name of ['resolveCssLengthPx', 'registerIcons']) {
+        if (typeof utils[name] !== 'function') {
+          console.error('missing ' + name);
+          process.exit(1);
+        }
       }
     "`,
     { cwd: smokeDir, stdio: 'inherit' },
   );
 
-  console.log('✅ @ds-mo/ui/nav and @ds-mo/ui/utils import from packed tarball.');
+  console.log('✅ @ds-mo/ui/nav and @ds-mo/ui/utils import from packed tarball with plain node.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

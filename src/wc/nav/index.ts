@@ -48,6 +48,7 @@ export {
   SHELL_GRADIENT_PRESET_LABELS,
   buildShellRadialGradientForPreset,
   isShellGradientPreset,
+  normalizeShellGradientPreset,
   shellGradientPresetStopToken,
 } from './shell-gradient-presets';
 export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-transition';

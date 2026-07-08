@@ -37,10 +37,24 @@ export function isShellGradientPreset(value: string): value is ShellGradientPres
   return (SHELL_GRADIENT_PRESETS as string[]).includes(value);
 }
 
+/**
+ * Coerce unknown/absent presets to the default. Runtime values escape the
+ * type: removing the reflected `gradient-preset` attribute (e.g. an Angular
+ * `[attr.gradient-preset]="null"` binding) drives the prop to null past its
+ * field default — without normalization the stop lookup interpolates the
+ * literal string "undefined" into CSS and the wash silently disappears.
+ */
+export function normalizeShellGradientPreset(
+  value: string | null | undefined,
+): ShellGradientPreset {
+  return value != null && isShellGradientPreset(value) ? value : DEFAULT_SHELL_GRADIENT_PRESET;
+}
+
 /** Radial wash for a preset — transparent at top-left into the intent stop. `none` returns no image. */
 export function buildShellRadialGradientForPreset(preset: ShellGradientPreset): string {
-  if (preset === 'none') return 'none';
+  const normalized = normalizeShellGradientPreset(preset);
+  if (normalized === 'none') return 'none';
 
-  const stop = shellGradientPresetStopToken(preset);
+  const stop = shellGradientPresetStopToken(normalized);
   return `radial-gradient(${GRADIENT_GEOMETRY}, var(--color-background-transparent) 0%, ${stop} 100%)`;
 }
