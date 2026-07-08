@@ -6,8 +6,31 @@ import {
   buildShellRadialGradientForPreset,
   DEFAULT_SHELL_GRADIENT_PRESET,
   isShellGradientPreset,
+  normalizeShellGradientPreset,
   shellGradientPresetStopToken,
 } from '../src/wc/nav/shell-gradient-presets';
+
+describe('normalizeShellGradientPreset', () => {
+  it('passes valid presets through', () => {
+    for (const preset of SHELL_GRADIENT_PRESETS) {
+      assert.equal(normalizeShellGradientPreset(preset), preset);
+    }
+  });
+
+  it('coerces null, undefined, and unknown values to the default', () => {
+    assert.equal(normalizeShellGradientPreset(null), DEFAULT_SHELL_GRADIENT_PRESET);
+    assert.equal(normalizeShellGradientPreset(undefined), DEFAULT_SHELL_GRADIENT_PRESET);
+    assert.equal(normalizeShellGradientPreset('sunset'), DEFAULT_SHELL_GRADIENT_PRESET);
+  });
+
+  it('never lets a bad preset interpolate "undefined" into the gradient image', () => {
+    // Removing the reflected gradient-preset attribute drives the prop to null
+    // past its field default (e.g. Angular [attr.gradient-preset]="null").
+    const image = buildShellRadialGradientForPreset(null as never);
+    assert.ok(!image.includes('undefined'), image);
+    assert.equal(image, buildShellRadialGradientForPreset(DEFAULT_SHELL_GRADIENT_PRESET));
+  });
+});
 
 describe('SHELL_GRADIENT_PRESETS', () => {
   it('lists none, cool, neutral, and warm', () => {
