@@ -4,9 +4,18 @@ export { parseCssTimeMs, resolveCssTimeMs } from './resolve-css-time-ms';
 export {
   SCROLL_EDGE_FADE_DEFAULT_SIZE,
   SCROLL_EDGE_FADE_SIZE_VAR,
+  isScrollAtEdge,
+  resolveScrollEdgeFadeSize,
+  scrollEdgeFadeClassMap,
   scrollEdgeFadeMaskImage,
   scrollEdgeFadeMaskStyle,
+  scrollEdgeFadeSizeStyle,
 } from './scroll-edge-fade';
-export type { ScrollEdgeFadeEdge } from './scroll-edge-fade';
+export type {
+  ScrollEdgeFadeEdge,
+  ScrollEdgeFadeOptions,
+  ScrollEdgeFadeSize,
+  ScrollEdgeFadeSizeToken,
+} from './scroll-edge-fade';
 export { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from './token-defaults';
 export type { TokenDefaultKey } from './token-defaults';

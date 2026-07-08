@@ -19,7 +19,7 @@ import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
+import { FadeSide, FadeSize } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
@@ -57,7 +57,7 @@ export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { FadeSide, FadeSize, FadeSurface } from "./components/Fade/Fade";
+export { FadeSide, FadeSize } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
@@ -446,16 +446,11 @@ export namespace Components {
     }
     interface DsFade {
         /**
-          * Direct background override for contexts that already expose a resolved surface var.
-          * @default 'var(--color-background-secondary)'
-         */
-        "background": string;
-        /**
           * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
          */
         "height": string | undefined;
         /**
-          * Edge where the fade is anchored.
+          * Edge where content fades as it approaches the scroll boundary.
           * @default 'bottom'
          */
         "side": FadeSide;
@@ -465,12 +460,7 @@ export namespace Components {
          */
         "size": FadeSize;
         /**
-          * Surface context used to choose the fade target background token.
-          * @default 'default'
-         */
-        "surface": FadeSurface;
-        /**
-          * Controls visibility without removing the element from layout/positioning.
+          * Controls the mask without removing the scroll container from layout.
           * @default true
          */
         "visible": boolean;
@@ -2135,16 +2125,11 @@ declare namespace LocalJSX {
     }
     interface DsFade {
         /**
-          * Direct background override for contexts that already expose a resolved surface var.
-          * @default 'var(--color-background-secondary)'
-         */
-        "background"?: string;
-        /**
           * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
          */
         "height"?: string | undefined;
         /**
-          * Edge where the fade is anchored.
+          * Edge where content fades as it approaches the scroll boundary.
           * @default 'bottom'
          */
         "side"?: FadeSide;
@@ -2154,12 +2139,7 @@ declare namespace LocalJSX {
          */
         "size"?: FadeSize;
         /**
-          * Surface context used to choose the fade target background token.
-          * @default 'default'
-         */
-        "surface"?: FadeSurface;
-        /**
-          * Controls visibility without removing the element from layout/positioning.
+          * Controls the mask without removing the scroll container from layout.
           * @default true
          */
         "visible"?: boolean;
@@ -2916,8 +2896,6 @@ declare namespace LocalJSX {
         "side": FadeSide;
         "size": FadeSize;
         "height": string | undefined;
-        "surface": FadeSurface;
-        "background": string;
         "visible": boolean;
     }
     interface DsFieldAttributes {

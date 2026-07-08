@@ -17,6 +17,7 @@ import {
   type PanelNavRouterMode,
   type PanelNavUserActionDetail,
 } from './panel-nav-types';
+import { scrollEdgeFadeClassMap } from '../../utils/scroll-edge-fade';
 
 @Component({
   tag: 'ds-panel-nav',
@@ -88,7 +89,6 @@ export class PanelNav {
 
   @State() private renderedStyle: NavChromeStyle = 'dashboard';
   @State() private parsedGroups: PanelNavGroup[] = [];
-  @State() private atBottom = false;
   @State() private isAnimating = false;
   @State() private rovingIndex: number = 0;
   @State() private viewportNarrow: boolean = false;
@@ -179,7 +179,6 @@ export class PanelNav {
   componentDidLoad() {
     this.syncHostPropsIfNeeded();
     this.scheduleDeferredHostPropSync();
-    this.checkScroll();
     if (this.breakpoint > 0) this.connectResizeObserver();
   }
 
@@ -389,19 +388,6 @@ export class PanelNav {
     this.focusRovingAt(next);
   }
 
-  private checkScroll() {
-    const body = this.el.querySelector('.panel-nav__body') as HTMLElement | null;
-    if (!body) return;
-    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
-    this.atBottom = remaining < 2;
-  }
-
-  private handleBodyScroll(e: Event) {
-    const body = e.target as HTMLElement;
-    const remaining = body.scrollHeight - body.scrollTop - body.clientHeight;
-    this.atBottom = remaining < 2;
-  }
-
   private handleItemClick(id: string) {
     this.dsNavSelect.emit(id);
   }
@@ -558,7 +544,6 @@ export class PanelNav {
       'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,
       'panel-nav--animating': this.isAnimating,
-      'panel-nav--at-bottom': this.atBottom,
     };
 
     return (
@@ -601,11 +586,8 @@ export class PanelNav {
           <div
             class={{
               'panel-nav__body': true,
-              'scroll-edge-fade': true,
-              'scroll-edge-fade--bottom': true,
-              'scroll-edge-fade--at-end': this.atBottom,
+              ...scrollEdgeFadeClassMap({ edges: 'bottom' }),
             }}
-            onScroll={e => this.handleBodyScroll(e)}
           >
             {(() => {
               let flatIdx = 0;

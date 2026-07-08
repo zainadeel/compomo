@@ -1,8 +1,9 @@
 /**
- * Scroll-edge alpha fade — apply to overflow scroll containers.
- * Pair with `.scroll-edge-fade--at-end` when the relevant edge is flush (no fade).
+ * Scroll-edge alpha fade — the single edge-fade utility for overflow containers.
+ * Masks scrolling content to transparent so flat surfaces, shell gradients, and
+ * images show through. Pair with `.scroll-edge-fade--at-end` when flush.
  *
- * @see scroll-edge-fade.ts for programmatic mask helpers.
+ * @see scroll-edge-fade.ts — `scrollEdgeFadeClassMap`, `isScrollAtEdge`, size helpers.
  */
 
 .scroll-edge-fade {
@@ -67,7 +68,8 @@
   mask-size: 100% 100%;
 }
 
-.scroll-edge-fade--at-end {
+.scroll-edge-fade--at-end,
+.scroll-edge-fade--hidden {
   -webkit-mask-image: none;
   mask-image: none;
 }
