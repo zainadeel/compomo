@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.10.1](https://github.com/zainadeel/compomo/compare/v2.10.0...v2.10.1) (2026-07-08)
+
+
+### Fixed
+
+* **nav:** normalize invalid shell gradient presets to the default ([03d46f2](https://github.com/zainadeel/compomo/commit/03d46f2ac8e7b124981c75c4b8eb43a1fa62a99a))
+* **nav:** normalize invalid shell gradient presets to the default ([dad4da6](https://github.com/zainadeel/compomo/commit/dad4da6ad0cc2c0df3d7eab84226f562ed65af47))
+
 ## [2.10.0](https://github.com/zainadeel/compomo/compare/v2.9.0...v2.10.0) (2026-07-08)
 
 
