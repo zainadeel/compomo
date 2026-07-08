@@ -1,6 +1,5 @@
-import { Component, Element, Prop, State, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, h, Host } from '@stencil/core';
 import {
-  isScrollAtEdge,
   scrollEdgeFadeClassMap,
   scrollEdgeFadeSizeStyle,
   type ScrollEdgeFadeEdge,
@@ -23,8 +22,6 @@ export type FadeSize = ScrollEdgeFadeSize;
   scoped: true,
 })
 export class Fade {
-  @Element() el!: HTMLElement;
-
   /** Edge where content fades as it approaches the scroll boundary. */
   @Prop() side: FadeSide = 'bottom';
 
@@ -40,39 +37,21 @@ export class Fade {
   /** Controls the mask without removing the scroll container from layout. */
   @Prop() visible: boolean = true;
 
-  @State() private atEnd = false;
-
-  @Watch('side')
-  @Watch('visible')
-  protected onFadeConfigChange() {
-    this.syncAtEnd();
-  }
-
-  componentDidLoad() {
-    this.syncAtEnd();
-  }
-
-  private syncAtEnd() {
-    this.atEnd = isScrollAtEdge(this.el, this.side);
-  }
-
-  private handleScroll(e: Event) {
-    const target = e.currentTarget as HTMLElement;
-    this.atEnd = isScrollAtEdge(target, this.side);
-  }
-
   render() {
     return (
-      <Host
-        class={scrollEdgeFadeClassMap({
-          edges: this.side,
-          atEnd: { [this.side]: this.atEnd },
-          hidden: !this.visible,
-        })}
-        style={scrollEdgeFadeSizeStyle(this.size, this.height) as Record<string, string>}
-        onScroll={(e: Event) => this.handleScroll(e)}
-      >
-        <slot />
+      <Host>
+        <div
+          class={{
+            'fade__scroll': true,
+            ...scrollEdgeFadeClassMap({
+              edges: this.side,
+              hidden: !this.visible,
+            }),
+          }}
+          style={scrollEdgeFadeSizeStyle(this.size, this.height) as Record<string, string>}
+        >
+          <slot />
+        </div>
       </Host>
     );
   }
