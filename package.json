@@ -42,12 +42,12 @@
       "import": "./dist/components/index.js"
     },
     "./nav": {
-      "types": "./src/wc/nav/index.ts",
-      "import": "./src/wc/nav/index.ts"
+      "types": "./dist/lib/nav/index.d.ts",
+      "import": "./dist/lib/nav/index.js"
     },
     "./utils": {
-      "types": "./src/wc/utils/index.ts",
-      "import": "./src/wc/utils/index.ts"
+      "types": "./dist/lib/utils/index.d.ts",
+      "import": "./dist/lib/utils/index.js"
     },
     "./dist/components/*": "./dist/components/*"
   },
@@ -67,7 +67,7 @@
     "prebuild": "node scripts/generate-icon-catalog.mjs",
     "pretypecheck": "node scripts/generate-icon-catalog.mjs",
     "pretest": "node scripts/generate-icon-catalog.mjs",
-    "build": "stencil build && node scripts/patch-index-types.mjs && node scripts/patch-components-d-exports.mjs && node scripts/verify-icons-externalized.mjs && node scripts/write-build-stamp.mjs",
+    "build": "stencil build && node scripts/patch-index-types.mjs && node scripts/patch-components-d-exports.mjs && node scripts/verify-icons-externalized.mjs && node scripts/write-build-stamp.mjs && node scripts/build-lib-exports.mjs",
     "verify:pack": "node scripts/verify-npm-pack.mjs && node scripts/verify-nav-import.mjs",
     "test": "node --import tsx/esm --test tests/panel-nav-utils.test.ts tests/panel-tools.test.ts tests/shell-shortcuts.test.ts tests/shell-gradient-presets.test.ts tests/shell-view-transition.test.ts tests/shell-gradient.test.ts tests/shell-chrome-metrics.test.ts tests/shell-chrome-layer.test.ts tests/chrome-transition.test.ts tests/bar-nav-overflow-hysteresis.test.ts tests/badge-gradient-ring.test.ts tests/scroll-edge-fade.test.ts tests/resolve-css-length-px.test.ts tests/resolve-css-time-ms.test.ts tests/overlay-positioning.test.ts tests/menu-position.test.ts tests/menu-placement.test.ts tests/bar-nav-utils.test.ts tests/bar-nav-tabs-menu-utils.test.ts tests/bar-nav-dom-utils.test.ts tests/icon-catalog.test.ts tests/icon-cache.test.ts tests/icon-svg.test.ts",
     "test:e2e": "npm run build && playwright test",
@@ -130,7 +130,8 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.1",
     "vite": "^8.0.16",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "esbuild": "^0.28.0"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

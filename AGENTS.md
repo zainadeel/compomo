@@ -107,11 +107,13 @@ Package `exports`:
   "./angular":       { "import": "./src/angular/index.ts", "types": "./src/angular/index.ts" },
   "./react":         { "import": "./src/react/components.ts", "types": "./src/react/components.ts" },
   "./dist/components": { "import": "./dist/components/index.js", "types": "./src/wc/components.d.ts" },
-  "./nav":           { "import": "./src/wc/nav/index.ts", "types": "./src/wc/nav/index.ts" },
-  "./utils":         { "import": "./src/wc/utils/index.ts", "types": "./src/wc/utils/index.ts" },
+  "./nav":           { "import": "./dist/lib/nav/index.js", "types": "./dist/lib/nav/index.d.ts" },
+  "./utils":         { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
 }
 ```
+
+**`/nav` and `/utils` ship compiled JS + d.ts** (`scripts/build-lib-exports.mjs`: esbuild bundle per entry + `tsc -p tsconfig.lib.json` declarations → `dist/lib/`). They previously shipped raw TS source, which made consumer type-checking depend on our devDependencies (`@stencil/core` types) and broke toolchains that don't transpile node_modules TS. `/angular` and `/react` still ship source — the Stencil output-target convention — revisit in [#257](https://github.com/zainadeel/compomo/issues/257) if it bites a consumer.
 
 Consumers install the **ds-mo trilogy** and import the tags they render:
 
