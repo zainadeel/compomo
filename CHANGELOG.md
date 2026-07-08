@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.10.0](https://github.com/zainadeel/compomo/compare/v2.9.0...v2.10.0) (2026-07-08)
+
+
+### Added
+
+* **icon:** lazy per-icon glyph loaders with shared cache and registerIcons ([d297503](https://github.com/zainadeel/compomo/commit/d29750335c0697eb134a8cf1ef54bc5370d0ff95))
+* **icon:** lazy per-icon glyph loaders with shared cache and registerIcons ([cbbc308](https://github.com/zainadeel/compomo/commit/cbbc3089e80950f61c0bef7603769eb45160af71))
+* **icon:** validate glyph markup and inject via dom nodes ([3c9c5db](https://github.com/zainadeel/compomo/commit/3c9c5db4318fd5b1ed4f2389d0bc1f06ca07732e))
+
+
+### Fixed
+
+* **badge:** rename on-gradient-background attribute to gradient-background ([80fa9e0](https://github.com/zainadeel/compomo/commit/80fa9e0a4c15976b185c3896323e90e36e9c7648))
+* **nav:** type closest() explicitly for consumers without stencil types ([626aa60](https://github.com/zainadeel/compomo/commit/626aa60dd1553d938a041427913205a646e5cebe))
+
 ## [2.9.0](https://github.com/zainadeel/compomo/compare/v2.8.0...v2.9.0) (2026-07-07)
 
 
