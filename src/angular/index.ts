@@ -10,8 +10,12 @@ export const DIRECTIVES = [
   d.DsBreadcrumb,
   d.DsButtonFilled,
   d.DsButtonUnfilledIcon,
-  d.DsCard,
+  d.DsCardDataViz,
   d.DsCardSetting,
+  d.DsChartBar,
+  d.DsChartDonut,
+  d.DsChartLegend,
+  d.DsChartLine,
   d.DsCheckbox,
   d.DsChip,
   d.DsDivider,
@@ -42,5 +46,6 @@ export const DIRECTIVES = [
   d.DsText,
   d.DsToastProvider,
   d.DsToggle,
-  d.DsTooltip
+  d.DsTooltip,
+  d.DsTooltipDataViz
 ];

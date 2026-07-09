@@ -1,0 +1,38 @@
+:host {
+  display: inline-block;
+  font-family: inherit;
+  user-select: none;
+}
+
+.chart-donut__wrapper {
+  position: relative;
+}
+
+.chart-donut__svg path {
+  cursor: pointer;
+  transition: opacity var(--effect-motion-short-2);
+}
+
+.chart-donut__svg path:focus-visible {
+  outline: none;
+  stroke: var(--color-interaction-focus);
+  stroke-width: 2;
+}
+
+/* Matches ds-text's text-title-large variant. */
+.chart-donut__center-value {
+  fill: var(--color-foreground-primary);
+  font-size: var(--typography-fontsize-xl);
+  font-weight: var(--typography-weight-semibold);
+  letter-spacing: var(--typography-letterspacing-negative-double);
+  cursor: default;
+}
+
+/* Matches ds-text's text-body-medium variant. */
+.chart-donut__center-caption {
+  fill: var(--color-foreground-secondary);
+  font-size: var(--typography-fontsize-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+  cursor: default;
+}

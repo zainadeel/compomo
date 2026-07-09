@@ -1,0 +1,24 @@
+:host {
+  display: inline-block;
+  font-family: inherit;
+}
+
+.chart-line__gridline {
+  stroke: var(--color-border-tertiary);
+  stroke-width: 1;
+}
+
+.chart-line__axis-label {
+  fill: var(--color-foreground-tertiary);
+  font-size: var(--typography-fontsize-xs);
+}
+
+.chart-line__path {
+  fill: none;
+  stroke-width: 2;
+}
+
+.chart-line__point {
+  stroke: var(--color-background-primary);
+  stroke-width: 1.5;
+}

@@ -82,22 +82,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
-  ['Card', {
-    title: 'Card',
-    description: 'Content container with header, body, and footer sections. Supports elevation and radius presets.',
-    exports: ['Card'],
-    types: ['CardProps', 'CardElevation', 'CardRadius'],
-    props: {
-      children: { type: 'React.ReactNode', required: true },
-      header: { type: 'React.ReactNode', description: 'Rendered with a bottom divider.' },
-      footer: { type: 'React.ReactNode', description: 'Rendered with a top divider.' },
-      elevation: { type: "'flat' | 'elevated' | 'floating'", default: "'elevated'" },
-      radius: { type: "'sm' | 'md' | 'lg' | 'xl'", default: "'lg'" },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Surface'],
-  }],
   ['CardSetting', {
     title: 'CardSetting',
     tag: 'ds-card-setting',

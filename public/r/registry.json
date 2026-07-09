@@ -138,49 +138,6 @@
       "registryDependencies": []
     },
     {
-      "name": "card",
-      "title": "Card",
-      "description": "Content container with header, body, and footer sections. Supports elevation and radius presets.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
-        "exports": [
-          "Card"
-        ],
-        "props": {
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          },
-          "header": {
-            "type": "React.ReactNode",
-            "required": false
-          },
-          "footer": {
-            "type": "React.ReactNode",
-            "required": false
-          },
-          "elevation": {
-            "type": "'flat' | 'elevated' | 'floating'",
-            "required": false
-          },
-          "radius": {
-            "type": "'sm' | 'md' | 'lg' | 'xl'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "surface"
-      ]
-    },
-    {
       "name": "card-setting",
       "title": "CardSetting",
       "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",

@@ -1,0 +1,18 @@
+:host {
+  display: inline-flex;
+  font-family: inherit;
+}
+
+.chart-bar__gridline {
+  stroke: var(--color-border-tertiary);
+  stroke-width: 1;
+}
+
+.chart-bar__axis-label {
+  fill: var(--color-foreground-tertiary);
+  font-size: var(--typography-fontsize-xs);
+}
+
+.chart-bar__bar {
+  rx: var(--dimension-radius-050);
+}
