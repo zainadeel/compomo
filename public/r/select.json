@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "select",
   "title": "Select",
-  "description": "Dropdown select using `ds-menu` internally. Supports placeholder, isInactive state, and custom chevron icon.",
+  "description": "Dropdown select with unfilled-button chrome (label + trailing ChevronDown) in control-density sizes and width hug/fill. Uses ds-menu for the option list.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -17,13 +17,21 @@
         "react": "<ds-select></ds-select>",
         "angular": "<ds-select></ds-select>"
       },
+      "events": [
+        {
+          "name": "dsChange",
+          "listen": "element.addEventListener('dsChange', handler)",
+          "reactProp": "onDsChange={handler}",
+          "angularBinding": "(dsChange)=\"handler($event)\""
+        }
+      ],
       "internalDependencies": [
         {
           "component": "Menu",
           "note": "Used internally by Select. Bundled in @ds-mo/ui."
         },
         {
-          "component": "Text",
+          "component": "Icon",
           "note": "Used internally by Select. Bundled in @ds-mo/ui."
         }
       ],
@@ -37,56 +45,73 @@
       }
     },
     "props": {
-      "value": {
-        "type": "string | number",
-        "required": true
-      },
-      "onChange": {
-        "type": "(value: string | number) => void",
-        "required": true
-      },
       "options": {
         "type": "SelectOption[]",
-        "required": true
+        "required": true,
+        "description": "Options list. Set as a JS property (not an HTML attribute)."
+      },
+      "value": {
+        "type": "string",
+        "default": "''",
+        "description": "Currently selected value."
       },
       "placeholder": {
         "type": "string",
-        "default": "'Select option'"
+        "default": "'Select'"
+      },
+      "size": {
+        "type": "'md' | 'sm' | 'xs'",
+        "default": "'md'",
+        "description": "Control-density height/padding/icon/type."
+      },
+      "width": {
+        "type": "'hug' | 'fill'",
+        "default": "'fill'",
+        "description": "Width fit — fill the parent (default) or hug content."
       },
       "isInactive": {
         "type": "boolean",
         "default": "false",
         "description": "Disables interaction (25% opacity via ds-control-inactive)."
       },
-      "chevronIcon": {
-        "type": "IconComponent"
+      "activeFill": {
+        "type": "boolean",
+        "default": "true",
+        "description": "When a value is selected, render the selected interaction fill (same as unfilled-button activeFill). Selected/open promotes the label to primary; chevron stays secondary. Set false for primary label without fill."
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "default": "true",
+        "description": "Secondary 1px inset border. Default on."
       }
     },
     "exports": [
       "Select"
     ],
     "types": [
-      "SelectProps",
-      "SelectOption"
+      "SelectOption",
+      "SelectSize",
+      "SelectWidth"
     ]
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens"
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
   ],
   "registryDependencies": [
     "menu",
-    "text"
+    "icon"
   ],
   "files": [
     {
       "path": "src/wc/components/Select/Select.css",
-      "content": "/* ==========================================================================\n   Select — combobox-pattern select using ds-menu for the dropdown.\n   ========================================================================== */\n\n@import '../../utils/control-inactive.css';\n\n:host(.select-host) {\n  display: inline-block;\n  width: 100%;\n  position: relative;\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n/* ── Trigger button ──────────────────────────────────────────────────────── */\n\n.trigger {\n  display: inline-flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0 var(--dimension-space-075) 0 var(--dimension-space-100);\n  border: none;\n  border-radius: var(--dimension-radius-050);\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-elevation-elevated-sm);\n  cursor: pointer;\n  box-sizing: border-box;\n  gap: var(--dimension-space-050);\n  font-family: inherit;\n  outline: none;\n\n  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));\n  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));\n}\n\n.trigger:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-space-025);\n}\n\n.trigger:hover:not(:disabled) {\n  background-color: var(--_hover-bg);\n}\n\n.trigger:active:not(:disabled) {\n  background-color: var(--_pressed-bg);\n}\n\n.trigger--open {\n  background-color: var(--_pressed-bg);\n}\n\n/* ── Trigger label ───────────────────────────────────────────────────────── */\n\n.trigger__label {\n  flex: 1;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  color: var(--color-foreground-primary);\n}\n\n.trigger__label--placeholder {\n  color: var(--color-foreground-secondary);\n}\n\n/* ── Chevron icon ────────────────────────────────────────────────────────── */\n\n.trigger__chevron {\n  flex-shrink: 0;\n  color: var(--color-foreground-secondary);\n  transition: transform var(--effect-motion-short-2);\n}\n\n.trigger--open .trigger__chevron {\n  transform: rotate(180deg);\n}\n",
+      "content": "/* ==========================================================================\n   Select — unfilled-button chrome trigger + ds-menu dropdown.\n   Density via `.ds-control--md|sm|xs` (control-density.css).\n   ========================================================================== */\n\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-width.css';\n\n:host(.select-host) {\n  display: inline-flex;\n  position: relative;\n  /* Idle = secondary. Selected/open: label → primary; chevron stays secondary. */\n  --ds-select-fg: var(--color-foreground-secondary);\n  --ds-select-fg-active: var(--color-foreground-primary);\n  --ds-select-border: var(--color-border-secondary);\n}\n\n:host(.ds-control-width--fill) .trigger {\n  width: 100%;\n}\n\n:host(.ds-control-width--hug) .trigger__label {\n  flex: 0 1 auto;\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n.trigger {\n  display: inline-flex;\n  align-items: center;\n  justify-content: space-between;\n  box-sizing: border-box;\n  height: var(--ds-control-height, var(--dimension-size-400));\n  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));\n  gap: var(--ds-control-gap, var(--dimension-space-050));\n  background: transparent;\n  border: none;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  color: var(--ds-select-fg);\n  cursor: pointer;\n  font-family: inherit;\n  -webkit-user-select: none;\n  user-select: none;\n  overflow: hidden;\n  transition: color var(--effect-motion-short-2);\n  /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected`).\n     Selected/open: label → primary; chevron stays secondary. */\n}\n\n/* Inset stroke via interaction-fill ::after (same recipe as ButtonUnfilled). */\n.trigger--bordered {\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--ds-select-border);\n}\n\n.trigger--bordered:not(.ds-interaction-fill) {\n  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);\n}\n\n.trigger__label {\n  position: relative;\n  z-index: 2;\n  flex: 1 1 auto;\n  min-width: 0;\n  /* Don't use line-height: 0 here — overflow:hidden would clip the glyphs. */\n  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n  color: inherit;\n  transition: color var(--effect-motion-short-2);\n}\n\n.trigger--has-value .trigger__label,\n.trigger--open .trigger__label {\n  color: var(--ds-select-fg-active);\n}\n\n.trigger__chevron {\n  position: relative;\n  z-index: 2;\n  flex-shrink: 0;\n  width: var(--ds-control-icon, var(--dimension-iconography-md));\n  height: var(--ds-control-icon, var(--dimension-iconography-md));\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  /* Always secondary — only the label promotes on selected/open. */\n  color: var(--ds-select-fg);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Select/Select.tsx",
-      "content": "import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';\nimport type { MenuItemData } from '../Menu/menu-types';\n\nexport interface SelectOption {\n  label: string;\n  value: string;\n}\n\n@Component({\n  tag: 'ds-select',\n  styleUrl: 'Select.css',\n  scoped: true,\n})\nexport class Select {\n  @Element() el!: HTMLElement;\n\n  /**\n   * Array of options. Set via JS property.\n   * @example el.options = [{ label: 'Apple', value: 'apple' }];\n   */\n  @Prop() options: SelectOption[] = [];\n\n  /** Currently selected value. */\n  @Prop({ mutable: true }) value: string = '';\n\n  /** Placeholder shown when no value is selected. */\n  @Prop() placeholder: string = 'Select option';\n\n  /** Disables interaction (25% opacity via ds-control-inactive). */\n  @Prop() isInactive: boolean = false;\n\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n\n  /** Emits the selected value string. */\n  @Event() dsChange!: EventEmitter<string>;\n\n  @State() private isOpen: boolean = false;\n\n  private triggerEl: HTMLButtonElement | null = null;\n  private menuEl: HTMLDsMenuElement | null = null;\n\n  componentDidLoad() {\n    // Wire up the menu anchor to the trigger button\n    if (this.menuEl && this.triggerEl) {\n      this.menuEl.anchor = this.triggerEl;\n    }\n    // Listen for menu selection events\n    this.menuEl?.addEventListener('dsSelect', (e: Event) => {\n      const detail = (e as CustomEvent<MenuItemData>).detail;\n      if (detail?.value !== undefined) {\n        this.value = String(detail.value);\n        this.dsChange.emit(this.value);\n      }\n      this.isOpen = false;\n    });\n    // Listen for menu close event\n    this.menuEl?.addEventListener('dsClose', () => {\n      this.isOpen = false;\n    });\n  }\n\n  @Watch('isOpen')\n  onIsOpenChange(open: boolean) {\n    if (this.menuEl) {\n      this.menuEl.open = open;\n    }\n  }\n\n  @Watch('options')\n  onOptionsChange() {\n    this.syncMenuItems();\n  }\n\n  @Watch('value')\n  onValueChange() {\n    this.syncMenuItems();\n  }\n\n  private syncMenuItems() {\n    if (!this.menuEl) return;\n    this.menuEl.items = this.options.map(opt => ({\n      label: opt.label,\n      value: opt.value,\n      isSelected: opt.value === this.value,\n    }));\n  }\n\n  private open() {\n    if (this.isInactive || !this.options.length) return;\n    // Sync menu width to trigger width\n    if (this.menuEl && this.triggerEl) {\n      this.menuEl.menuWidth = `${this.triggerEl.offsetWidth}px`;\n      this.menuEl.anchor = this.triggerEl;\n    }\n    this.syncMenuItems();\n    this.isOpen = true;\n  }\n\n  private close() {\n    this.isOpen = false;\n  }\n\n  private toggle() {\n    if (this.isOpen) {\n      this.close();\n    } else {\n      this.open();\n    }\n  }\n\n  @Listen('keydown')\n  handleKeyDown(e: KeyboardEvent) {\n    // Only handle keydown on the trigger button\n    if (document.activeElement !== this.triggerEl) return;\n\n    if (!this.isOpen) {\n      switch (e.key) {\n        case 'ArrowDown':\n        case 'ArrowUp':\n        case 'Enter':\n        case ' ':\n          e.preventDefault();\n          this.open();\n          break;\n      }\n    } else {\n      if (e.key === 'Escape') {\n        e.preventDefault();\n        this.close();\n        this.triggerEl?.focus();\n      }\n    }\n  }\n\n  private get selectedLabel(): string {\n    const found = this.options.find(o => o.value === this.value);\n    return found?.label ?? '';\n  }\n\n  private get hasSelection(): boolean {\n    return !!this.options.find(o => o.value === this.value);\n  }\n\n  render() {\n    const label = this.hasSelection ? this.selectedLabel : this.placeholder;\n    const showPlaceholder = !this.hasSelection;\n\n    return (\n      <Host class={{ 'select-host': true, 'ds-control-inactive': this.isInactive }}>\n        <button\n          ref={el => {\n            this.triggerEl = (el as HTMLButtonElement) ?? null;\n          }}\n          type=\"button\"\n          class={{ trigger: true, 'trigger--open': this.isOpen }}\n          disabled={this.isInactive}\n          role=\"combobox\"\n          aria-haspopup=\"listbox\"\n          aria-expanded={this.isOpen}\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n          onClick={() => this.toggle()}\n        >\n          <span class={{ 'trigger__label': true, 'trigger__label--placeholder': showPlaceholder }}>\n            {label}\n          </span>\n          <svg\n            class=\"trigger__chevron\"\n            width=\"16\"\n            height=\"16\"\n            viewBox=\"0 0 16 16\"\n            fill=\"none\"\n            aria-hidden=\"true\"\n          >\n            <path\n              d=\"M4 6L8 10L12 6\"\n              stroke=\"currentColor\"\n              stroke-width=\"1.25\"\n              stroke-linecap=\"round\"\n              stroke-linejoin=\"round\"\n            />\n          </svg>\n        </button>\n        <ds-menu\n          ref={el => {\n            this.menuEl = (el as HTMLDsMenuElement) ?? null;\n          }}\n          side=\"bottom\"\n          align=\"start\"\n        />\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';\nimport { controlWidthClass, type ControlWidth } from '../../utils/control-width';\nimport type { MenuItemData } from '../Menu/menu-types';\n\nexport interface SelectOption {\n  label: string;\n  value: string;\n}\n\nexport type SelectSize = 'md' | 'sm' | 'xs';\n\nexport type SelectWidth = ControlWidth;\n\n/** Regular (non-emphasis) type per density — selects stay visually lighter than buttons. */\nconst TEXT_VARIANT: Record<SelectSize, string> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\n/** `ds-icon` size matching control-density icon metrics. */\nconst ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n/**\n * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in\n * control-density sizes, with `ds-menu` for the option list.\n */\n@Component({\n  tag: 'ds-select',\n  styleUrl: 'Select.css',\n  scoped: true,\n})\nexport class Select {\n  @Element() el!: HTMLElement;\n\n  /**\n   * Array of options. Set via JS property.\n   * @example el.options = [{ label: 'Apple', value: 'apple' }];\n   */\n  @Prop() options: SelectOption[] = [];\n\n  /** Currently selected value. */\n  @Prop({ mutable: true }) value: string = '';\n\n  /** Placeholder shown when no value is selected. */\n  @Prop() placeholder: string = 'Select';\n\n  /** Control density (height, padding, icon, type). */\n  @Prop() size: SelectSize = 'md';\n\n  /** Width fit — fill the parent (default) or hug content. */\n  @Prop() width: SelectWidth = 'fill';\n\n  /** Disables interaction (25% opacity via ds-control-inactive). */\n  @Prop() isInactive: boolean = false;\n\n  /**\n   * When a value is selected, render the selected interaction fill (same recipe\n   * as unfilled-button `activeFill`). Default `true`. Pass `false` for\n   * foreground-only selection (primary label, no fill).\n   * Selected/open promotes the label to primary; chevron stays secondary.\n   */\n  @Prop() activeFill: boolean = true;\n\n  /** Show a 1px secondary inset border. Default on (matches unfilled button). */\n  @Prop() hasBorder: boolean = true;\n\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n\n  /** Emits the selected value string. */\n  @Event() dsChange!: EventEmitter<string>;\n\n  @State() private isOpen: boolean = false;\n\n  private triggerEl: HTMLButtonElement | null = null;\n  private menuEl: HTMLDsMenuElement | null = null;\n  /** True when the open was keyboard-driven — menu shows initial focus ring. */\n  private openWithFocusVisible = false;\n\n  componentDidLoad() {\n    if (this.menuEl && this.triggerEl) {\n      this.menuEl.anchor = this.triggerEl;\n    }\n    this.menuEl?.addEventListener('dsSelect', this.handleMenuSelect);\n    this.menuEl?.addEventListener('dsClose', this.handleMenuClose);\n    this.syncMenuItems();\n  }\n\n  disconnectedCallback() {\n    this.menuEl?.removeEventListener('dsSelect', this.handleMenuSelect);\n    this.menuEl?.removeEventListener('dsClose', this.handleMenuClose);\n  }\n\n  @Watch('isOpen')\n  onIsOpenChange(open: boolean) {\n    if (!this.menuEl) return;\n    this.menuEl.initialFocusVisible = open && this.openWithFocusVisible;\n    this.menuEl.open = open;\n  }\n\n  @Watch('options')\n  onOptionsChange() {\n    this.syncMenuItems();\n  }\n\n  @Watch('value')\n  onValueChange() {\n    this.syncMenuItems();\n  }\n\n  private handleMenuSelect = (e: Event) => {\n    const detail = (e as CustomEvent<MenuItemData>).detail;\n    if (detail?.value !== undefined) {\n      this.value = String(detail.value);\n      this.dsChange.emit(this.value);\n    }\n    this.close();\n  };\n\n  private handleMenuClose = () => {\n    this.close();\n  };\n\n  private syncMenuItems() {\n    if (!this.menuEl) return;\n    this.menuEl.items = this.options.map(opt => ({\n      label: opt.label,\n      value: opt.value,\n      isSelected: opt.value === this.value,\n    }));\n  }\n\n  private open(opts: { focusVisible: boolean } = { focusVisible: false }) {\n    if (this.isInactive || !this.options.length) return;\n    this.openWithFocusVisible = opts.focusVisible;\n    if (this.menuEl && this.triggerEl) {\n      this.menuEl.menuWidth = `${this.triggerEl.offsetWidth}px`;\n      this.menuEl.anchor = this.triggerEl;\n    }\n    this.syncMenuItems();\n    this.isOpen = true;\n  }\n\n  private close() {\n    this.isOpen = false;\n    this.openWithFocusVisible = false;\n  }\n\n  private toggle(opts: { focusVisible: boolean }) {\n    if (this.isOpen) {\n      this.close();\n    } else {\n      this.open(opts);\n    }\n  }\n\n  @Listen('keydown')\n  handleKeyDown(e: KeyboardEvent) {\n    if (document.activeElement !== this.triggerEl) return;\n\n    if (!this.isOpen) {\n      switch (e.key) {\n        case 'ArrowDown':\n        case 'ArrowUp':\n        case 'Enter':\n        case ' ':\n          e.preventDefault();\n          this.open({ focusVisible: true });\n          break;\n      }\n    } else if (e.key === 'Escape') {\n      e.preventDefault();\n      this.close();\n      this.triggerEl?.focus();\n    }\n  }\n\n  private get selectedLabel(): string {\n    return this.options.find(o => o.value === this.value)?.label ?? '';\n  }\n\n  private get hasSelection(): boolean {\n    return this.options.some(o => o.value === this.value);\n  }\n\n  render() {\n    const showPlaceholder = !this.hasSelection;\n    const hasValue = !showPlaceholder;\n    const label = showPlaceholder ? this.placeholder : this.selectedLabel;\n    const textVariant = TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n    const density = `ds-control--${this.size}`;\n    // Selected fill when a value is set (or while open), gated by `activeFill`.\n    const showSelectedFill =\n      !this.isInactive && this.activeFill && (hasValue || this.isOpen);\n\n    return (\n      <Host\n        class={{\n          'select-host': true,\n          'ds-control-inactive': this.isInactive,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          ...controlWidthClass(this.width),\n        }}\n      >\n        <button\n          ref={el => {\n            this.triggerEl = (el as HTMLButtonElement) ?? null;\n          }}\n          type=\"button\"\n          class={{\n            trigger: true,\n            'ds-focus-ring-inset': true,\n            'ds-interaction-fill': true,\n            'ds-interaction-fill--selected': showSelectedFill,\n            'trigger--open': this.isOpen,\n            'trigger--bordered': this.hasBorder,\n            'trigger--placeholder': showPlaceholder,\n            'trigger--has-value': hasValue,\n            [density]: true,\n          }}\n          disabled={this.isInactive}\n          role=\"combobox\"\n          aria-haspopup=\"menu\"\n          aria-expanded={String(this.isOpen)}\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n          onClick={() => this.toggle({ focusVisible: false })}\n        >\n          <span\n            class={{\n              'trigger__label': true,\n              [textVariant]: true,\n              'ds-interaction-fill__content': true,\n            }}\n          >\n            {label}\n          </span>\n          <span class=\"trigger__chevron ds-interaction-fill__content\" aria-hidden=\"true\">\n            <ds-icon name=\"ChevronDown\" size={iconSize} color=\"inherit\" />\n          </span>\n        </button>\n        <ds-menu\n          ref={el => {\n            this.menuEl = (el as HTMLDsMenuElement) ?? null;\n          }}\n          side=\"bottom\"\n          align=\"start\"\n        />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

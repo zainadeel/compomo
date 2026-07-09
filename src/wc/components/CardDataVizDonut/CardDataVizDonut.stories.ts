@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
-import '../../../../dist/components/ds-card-data-viz.js';
+import '../../../../dist/components/ds-card-data-viz-donut.js';
 import '../../../../dist/components/ds-chart-donut.js';
 import '../../../../dist/components/ds-chart-legend.js';
 import type { ChartDatum } from '../../utils/chart-types';
@@ -15,7 +15,7 @@ const MOCK_DATA: ChartDatum[] = [
 const WIDTHS = ['sm', 'md', 'lg'] as const;
 
 const meta: Meta = {
-  title: 'Layout/CardDataViz',
+  title: 'Data Viz/CardDataVizDonut',
   tags: ['autodocs'],
   argTypes: {
     heading: { control: 'text' },
@@ -31,7 +31,7 @@ export default meta;
 type Story = StoryObj;
 
 const renderCard = (heading: string, cardWidth: string) => html`
-  <ds-card-data-viz heading=${heading} card-width=${cardWidth}>
+  <ds-card-data-viz-donut heading=${heading} card-width=${cardWidth}>
     <ds-chart-donut
       slot="chart"
       ${ref(el => {
@@ -47,14 +47,14 @@ const renderCard = (heading: string, cardWidth: string) => html`
         (el as any).items = MOCK_DATA;
       })}
     ></ds-chart-legend>
-  </ds-card-data-viz>
+  </ds-card-data-viz-donut>
 `;
 
 export const View: Story = {
   render: args => renderCard(args['heading'], args['cardWidth']),
 };
 
-/** Side-by-side sm / md / lg — check header, chart, and legend hold at each width. */
+/** Side-by-side sm / md / lg — check header, fill chart, and content legend at each width. */
 export const Widths: Story = {
   parameters: { controls: { exclude: ['cardWidth'] } },
   render: args => html`

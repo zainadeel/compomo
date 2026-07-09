@@ -4,6 +4,7 @@ import '../../../../dist/components/ds-button-unfilled.js';
 
 const VARIANTS = ['label', 'icon', 'icon-label'] as const;
 const SIZES = ['md', 'sm', 'xs'] as const;
+const WIDTHS = ['hug', 'fill'] as const;
 
 const meta: Meta = {
   title: 'Primitives/ButtonUnfilled',
@@ -11,6 +12,7 @@ const meta: Meta = {
   argTypes: {
     variant: { control: 'select', options: [...VARIANTS] },
     size: { control: 'select', options: [...SIZES] },
+    width: { control: 'select', options: [...WIDTHS] },
     label: { control: 'text' },
     icon: { control: 'text' },
     isActive: { control: 'boolean' },
@@ -32,6 +34,7 @@ const meta: Meta = {
   args: {
     variant: 'label',
     size: 'md',
+    width: 'hug',
     label: 'Action',
     icon: 'Bell',
     ariaLabel: '',
@@ -60,6 +63,7 @@ export const Playground: Story = {
     <ds-button-unfilled
       variant=${args['variant']}
       size=${args['size']}
+      width=${args['width']}
       label=${args['label']}
       icon=${args['icon']}
       ?is-active=${args['isActive']}
@@ -99,8 +103,38 @@ export const VariantsAndSizes: Story = {
   `,
 };
 
+/** Hug vs fill in a fixed parent — fill stretches; hug sizes to the label. */
+export const Widths: Story = {
+  parameters: { controls: { exclude: ['width'] } },
+  render: args => html`
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-200);width:280px;"
+    >
+      ${WIDTHS.map(
+        width => html`
+          <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:100%;">
+            <span style="${LABEL}">width=${width}</span>
+            <ds-button-unfilled
+              variant=${args['variant'] === 'icon' ? 'label' : args['variant']}
+              size=${args['size']}
+              width=${width}
+              label=${args['label']}
+              icon=${args['icon']}
+              ?is-active=${args['isActive']}
+              ?active-fill=${args['activeFill']}
+              ?has-border=${args['hasBorder']}
+              on-background-contrast=${args['backgroundContrast']}
+              background=${args['background'] || ''}
+            ></ds-button-unfilled>
+          </div>
+        `,
+      )}
+    </div>
+  `,
+};
+
 /**
- * Selected looks:
+ * Selected looks (primary foreground always; fill optional):
  * - `is-active` (default `activeFill`) — general UI / toolbars
  * - `is-active` + `activeFill={false}` — shell chrome (nav, tool rails)
  */
@@ -109,7 +143,7 @@ export const States: Story = {
     docs: {
       description: {
         story:
-          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` so selection is foreground-only.',
+          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` so selection is primary foreground only (no fill).',
       },
     },
   },

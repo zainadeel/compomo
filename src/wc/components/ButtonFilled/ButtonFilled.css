@@ -2,21 +2,30 @@
 @import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-width.css';
 
 :host {
   display: inline-flex;
-  flex: 0 0 auto;
   outline: none;
   --ds-button-filled-bg: var(--color-background-bold-brand);
   --ds-button-filled-fg: var(--color-foreground-faint-brand);
 }
 
-/* Icon-only: fixed square from density height. */
-:host(.button-filled-host--icon) {
+/* Icon-only: fixed square from density height (hug). Fill stretches the hit target. */
+:host(.button-filled-host--icon.ds-control-width--hug) {
   width: var(--ds-control-height, var(--dimension-size-400));
   height: var(--ds-control-height, var(--dimension-size-400));
   min-width: var(--ds-control-height, var(--dimension-size-400));
   min-height: var(--ds-control-height, var(--dimension-size-400));
+}
+
+:host(.button-filled-host--icon.ds-control-width--fill) {
+  height: var(--ds-control-height, var(--dimension-size-400));
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+}
+
+:host(.ds-control-width--fill) .button-filled {
+  width: 100%;
 }
 
 .button-filled {

@@ -112,7 +112,7 @@ export declare interface DsBarNav extends Components.DsBarNav {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -120,7 +120,7 @@ export declare interface DsBarNav extends Components.DsBarNav {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant', 'width'],
   outputs: ['dsClick'],
   standalone: false
 })
@@ -141,7 +141,7 @@ export declare interface DsButtonFilled extends Components.DsButtonFilled {
 
 
 @ProxyCmp({
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -149,7 +149,7 @@ export declare interface DsButtonFilled extends Components.DsButtonFilled {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
   outputs: ['dsClick', 'dsChange'],
   standalone: false
 })
@@ -173,18 +173,18 @@ export declare interface DsButtonUnfilled extends Components.DsButtonUnfilled {
 
 
 @ProxyCmp({
-  inputs: ['cardWidth', 'heading']
+  inputs: ['appearance', 'cardWidth', 'heading']
 })
 @Component({
-  selector: 'ds-card-data-viz',
+  selector: 'ds-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['cardWidth', { name: 'heading', required: true }],
+  inputs: ['appearance', 'cardWidth', { name: 'heading', required: true }],
   standalone: false
 })
-export class DsCardDataViz {
-  protected el: HTMLDsCardDataVizElement;
+export class DsCard {
+  protected el: HTMLDsCardElement;
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -192,7 +192,37 @@ export class DsCardDataViz {
 }
 
 
-export declare interface DsCardDataViz extends Components.DsCardDataViz {}
+export declare interface DsCard extends Components.DsCard {}
+
+
+@ProxyCmp({
+  inputs: ['cardWidth', 'heading']
+})
+@Component({
+  selector: 'ds-card-data-viz-donut',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['cardWidth', { name: 'heading', required: true }],
+  outputs: ['dsFilterClick'],
+  standalone: false
+})
+export class DsCardDataVizDonut {
+  protected el: HTMLDsCardDataVizDonutElement;
+  @Output() dsFilterClick = new EventEmitter<CustomEvent<void>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsCardDataVizDonut extends Components.DsCardDataVizDonut {
+  /**
+   * Emits when the header filter control is activated.
+   */
+  dsFilterClick: EventEmitter<CustomEvent<void>>;
+}
 
 
 @ProxyCmp({
@@ -465,29 +495,6 @@ export class DsField {
 
 
 export declare interface DsField extends Components.DsField {}
-
-
-@ProxyCmp({
-  inputs: ['background', 'heading']
-})
-@Component({
-  selector: 'ds-header',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'heading'],
-  standalone: false
-})
-export class DsHeader {
-  protected el: HTMLDsHeaderElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsHeader extends Components.DsHeader {}
 
 
 @ProxyCmp({
@@ -791,37 +798,14 @@ export declare interface DsRadioGroup extends Components.DsRadioGroup {
 
 
 @ProxyCmp({
-  inputs: ['showTrackOnHover', 'variant']
-})
-@Component({
-  selector: 'ds-scrollbar',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['showTrackOnHover', 'variant'],
-  standalone: false
-})
-export class DsScrollbar {
-  protected el: HTMLDsScrollbarElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsScrollbar extends Components.DsScrollbar {}
-
-
-@ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'isInactive', 'options', 'placeholder', 'value']
+  inputs: ['activeFill', 'ariaLabel', 'ariaLabelledby', 'hasBorder', 'isInactive', 'options', 'placeholder', 'size', 'value', 'width']
 })
 @Component({
   selector: 'ds-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'isInactive', 'options', 'placeholder', 'value'],
+  inputs: ['activeFill', 'ariaLabel', 'ariaLabelledby', 'hasBorder', 'isInactive', 'options', 'placeholder', 'size', 'value', 'width'],
   outputs: ['dsChange'],
   standalone: false
 })

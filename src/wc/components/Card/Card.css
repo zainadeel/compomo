@@ -1,7 +1,9 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
-  width: var(--_card-data-viz-width);
+  width: var(--_card-width);
+  min-height: var(--_card-min-height);
   max-width: 100%;
   border: none;
   border-radius: var(--dimension-radius-025);
@@ -10,19 +12,30 @@
   overflow: hidden;
 }
 
-.card-data-viz__header {
+:host(.card--editing) {
+  background-color: var(--color-background-bold-brand);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
+}
+
+.card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--dimension-space-100);
   height: var(--dimension-size-600);
+  flex-shrink: 0;
   padding: var(--dimension-space-100);
   background-color: var(--color-background-secondary);
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   box-sizing: border-box;
 }
 
-.card-data-viz__title-wrap {
+:host(.card--editing) .card__header {
+  background-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.card__title-wrap {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
@@ -33,36 +46,34 @@
   user-select: none;
 }
 
-.card-data-viz__title {
+.card__title {
   display: inline-flex;
   align-items: center;
   min-width: 0;
   padding: var(--dimension-space-025);
 }
 
-.card-data-viz__body {
+.card__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--dimension-space-100);
+}
+
+.card__actions:empty {
+  display: none;
+}
+
+.card__body {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--dimension-space-200);
   border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);
   background-color: var(--color-background-primary);
   box-sizing: border-box;
 }
 
-/*
- * Chart and legend regions carry their own padding (instead of one flat body padding) so the
- * 16px gap between them comes from the body's own `gap`, not doubled-up padding at their
- * shared edge — each region's padding is 0 on the side that touches the other region.
- */
-.card-data-viz__chart-region {
-  display: flex;
-  justify-content: center;
-  padding: var(--dimension-space-400) var(--dimension-space-400) 0 var(--dimension-space-400);
-  /* Cursor-following tooltip may extend past the chart; don't clip it here. */
-  overflow: visible;
-}
-
-/* 8px here + the legend item's own 6px padding + the legend text's own 2px padding = 16px total. */
-.card-data-viz__legend-region {
-  padding: 0 var(--dimension-space-100) var(--dimension-space-100) var(--dimension-space-100);
+:host(.card--editing) .card__body {
+  border-radius: var(--dimension-radius-025);
 }

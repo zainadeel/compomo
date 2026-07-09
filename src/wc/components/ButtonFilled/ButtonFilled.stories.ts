@@ -17,6 +17,7 @@ const INTENTS = [
 const CONTRASTS = ['bold', 'strong', 'medium', 'faint'] as const;
 const VARIANTS = ['label', 'icon', 'icon-label'] as const;
 const SIZES = ['md', 'sm', 'xs'] as const;
+const WIDTHS = ['hug', 'fill'] as const;
 
 const meta: Meta = {
   title: 'Primitives/ButtonFilled',
@@ -24,6 +25,7 @@ const meta: Meta = {
   argTypes: {
     variant: { control: 'select', options: [...VARIANTS] },
     size: { control: 'select', options: [...SIZES] },
+    width: { control: 'select', options: [...WIDTHS] },
     label: { control: 'text' },
     icon: { control: 'text' },
     intent: { control: 'select', options: [...INTENTS] },
@@ -34,6 +36,7 @@ const meta: Meta = {
   args: {
     variant: 'label',
     size: 'md',
+    width: 'hug',
     label: 'Confirm',
     icon: 'Check',
     intent: 'brand',
@@ -56,6 +59,7 @@ export const Playground: Story = {
     <ds-button-filled
       variant=${args['variant']}
       size=${args['size']}
+      width=${args['width']}
       label=${args['label']}
       icon=${args['icon']}
       intent=${args['intent']}
@@ -85,6 +89,33 @@ export const VariantsAndSizes: Story = {
                 ></ds-button-filled>
               `,
             )}
+          </div>
+        `,
+      )}
+    </div>
+  `,
+};
+
+/** Hug vs fill in a fixed parent — fill stretches; hug sizes to the label. */
+export const Widths: Story = {
+  parameters: { controls: { exclude: ['width'] } },
+  render: args => html`
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-200);width:280px;"
+    >
+      ${WIDTHS.map(
+        width => html`
+          <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:100%;">
+            <span style="${LABEL}">width=${width}</span>
+            <ds-button-filled
+              variant=${args['variant'] === 'icon' ? 'label' : args['variant']}
+              size=${args['size']}
+              width=${width}
+              label=${args['label']}
+              icon=${args['icon']}
+              intent=${args['intent']}
+              contrast=${args['contrast']}
+            ></ds-button-filled>
           </div>
         `,
       )}

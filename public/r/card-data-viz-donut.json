@@ -1,0 +1,97 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-data-viz-donut",
+  "title": "CardDataVizDonut",
+  "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
+      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-card-data-viz-donut.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
+      "usage": {
+        "html": "<ds-card-data-viz-donut></ds-card-data-viz-donut>",
+        "react": "<ds-card-data-viz-donut></ds-card-data-viz-donut>",
+        "angular": "<ds-card-data-viz-donut></ds-card-data-viz-donut>"
+      },
+      "events": [
+        {
+          "name": "dsFilterClick",
+          "listen": "element.addEventListener('dsFilterClick', handler)",
+          "reactProp": "onDsFilterClick={handler}",
+          "angularBinding": "(dsFilterClick)=\"handler($event)\""
+        }
+      ],
+      "internalDependencies": [
+        {
+          "component": "Card",
+          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
+        },
+        {
+          "component": "ButtonUnfilled",
+          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
+        },
+        {
+          "component": "ChartDonut",
+          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
+        },
+        {
+          "component": "ChartLegend",
+          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
+        }
+      ],
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens >=2.9.0",
+          "@ds-mo/icons ^5.0.1"
+        ],
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+      }
+    },
+    "props": {
+      "heading": {
+        "type": "string",
+        "required": true,
+        "description": "Widget title in the card header."
+      },
+      "cardWidth": {
+        "type": "'sm' | 'md' | 'lg'",
+        "default": "'md'",
+        "description": "Width token; also sets matching min-height."
+      }
+    },
+    "exports": [
+      "CardDataVizDonut"
+    ],
+    "types": [
+      "CardDataVizDonutWidth"
+    ]
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "card",
+    "button-unfilled",
+    "chart-donut",
+    "chart-legend"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.css",
+      "content": ":host {\n  display: contents;\n}\n\n.card-data-viz-donut__layout {\n  display: flex;\n  flex-direction: column;\n  flex: 1 1 auto;\n  min-height: 0;\n  height: 100%;\n  gap: var(--dimension-space-200);\n  box-sizing: border-box;\n}\n\n/*\n * Chart region fills leftover space; legend stays content-sized.\n * Padding is per-region so the body gap isn't doubled at the shared edge.\n */\n.card-data-viz-donut__chart-region {\n  flex: 1 1 auto;\n  min-height: 0;\n  /* Stretch the slotted donut to the full region; the donut centers its own SVG. */\n  display: grid;\n  padding: var(--dimension-space-400) var(--dimension-space-400) 0 var(--dimension-space-400);\n  /* Cursor-following tooltip may extend past the chart; don't clip it here. */\n  overflow: visible;\n  box-sizing: border-box;\n}\n\n/* Make the slotted donut stretch to the region so ResizeObserver can measure fill size. */\n.card-data-viz-donut__chart-region > * {\n  width: 100%;\n  height: 100%;\n  min-width: 0;\n  min-height: 0;\n  max-width: 100%;\n  max-height: 100%;\n}\n\n.card-data-viz-donut__legend-region {\n  flex: 0 0 auto;\n  padding: 0 var(--dimension-space-100) var(--dimension-space-100) var(--dimension-space-100);\n  box-sizing: border-box;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, State, h, Host, Prop } from '@stencil/core';\nimport type { CardWidth } from '../Card/Card';\n\nexport type CardDataVizDonutWidth = CardWidth;\n\n/** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */\ntype HoveredDatum = { label: string } | null;\n\n/** A slotted chart/legend that opts into hover sync by exposing an `activeLabel` prop. */\ntype SyncableSlot = HTMLElement & { activeLabel?: string | null };\n\n/**\n * Donut data-viz card — shared `ds-card` chrome with a fill chart region and\n * content-sized legend. Hover sync between chart and legend stays here.\n */\n@Component({\n  tag: 'ds-card-data-viz-donut',\n  styleUrl: 'CardDataVizDonut.css',\n  scoped: true,\n})\nexport class CardDataVizDonut {\n  @Element() el!: HTMLElement;\n\n  /** Widget heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Card width token — also sets matching min-height. */\n  @Prop() cardWidth: CardDataVizDonutWidth = 'md';\n\n  /** Emits when the header filter control is activated. */\n  @Event() dsFilterClick!: EventEmitter<void>;\n\n  // Scoped (light-DOM) components have no native slot projection to detect emptiness from CSS —\n  // check the actual children so an unused region (e.g. no legend) doesn't render a dangling\n  // padded box plus a body gap next to nothing.\n  @State() private hasChartSlot = false;\n  @State() private hasLegendSlot = false;\n\n  componentWillRender() {\n    // Not `:scope >` — Stencil's scoped slot polyfill relocates slotted children into\n    // region wrappers (and here into nested `ds-card`), so they may not stay direct\n    // host children across renders.\n    this.hasChartSlot = !!this.el.querySelector('[slot=\"chart\"]');\n    this.hasLegendSlot = !!this.el.querySelector('[slot=\"legend\"]');\n  }\n\n  componentDidLoad() {\n    // Sync the chart's and legend's `activeLabel` from each other's hover events, so any\n    // ds-chart-donut + ds-chart-legend pair cross-highlights without every consumer having to\n    // wire it up by hand. Delegated on the host (rather than bound to the specific slotted\n    // elements) since Stencil events bubble and the slot content can be swapped at runtime.\n    this.el.addEventListener('dsSliceHover', this.handleChartHover);\n    this.el.addEventListener('dsItemHover', this.handleLegendHover);\n  }\n\n  disconnectedCallback() {\n    this.el.removeEventListener('dsSliceHover', this.handleChartHover);\n    this.el.removeEventListener('dsItemHover', this.handleLegendHover);\n  }\n\n  private handleChartHover = (e: Event) => {\n    // Not `:scope >` — Stencil's slot polyfill for scoped (non-shadow) components relocates\n    // slotted children into an inner region wrapper on render, so they're no longer direct\n    // children of the host by the time this fires.\n    const legend = this.el.querySelector('[slot=\"legend\"]') as SyncableSlot | null;\n    if (!legend || !('activeLabel' in legend)) return;\n    legend.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;\n  };\n\n  private handleLegendHover = (e: Event) => {\n    const chart = this.el.querySelector('[slot=\"chart\"]') as SyncableSlot | null;\n    if (!chart || !('activeLabel' in chart)) return;\n    chart.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;\n  };\n\n  private handleFilterClick = () => {\n    this.dsFilterClick.emit();\n  };\n\n  render() {\n    return (\n      <Host class=\"card-data-viz-donut\">\n        <ds-card heading={this.heading} cardWidth={this.cardWidth}>\n          <ds-button-unfilled\n            slot=\"actions\"\n            variant=\"icon\"\n            type=\"button\"\n            icon=\"Filters\"\n            aria-label=\"Filter\"\n            onDsClick={this.handleFilterClick}\n          />\n          <div class=\"card-data-viz-donut__layout\">\n            {this.hasChartSlot && (\n              <div class=\"card-data-viz-donut__chart-region\">\n                <slot name=\"chart\" />\n              </div>\n            )}\n            {this.hasLegendSlot && (\n              <div class=\"card-data-viz-donut__legend-region\">\n                <slot name=\"legend\" />\n              </div>\n            )}\n          </div>\n        </ds-card>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

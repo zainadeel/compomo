@@ -10,16 +10,16 @@ import { ShellGradientPreset } from "./nav/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
-import { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
+import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { CardAppearance, CardWidth } from "./components/Card/Card";
+import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 import { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
@@ -29,8 +29,7 @@ import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./c
 import { ChromeTransitionDetail } from "./nav/chrome-transition";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
-import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
-import { SelectOption } from "./components/Select/Select";
+import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -45,16 +44,16 @@ export { ShellGradientPreset } from "./nav/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
-export { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
+export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { CardAppearance, CardWidth } from "./components/Card/Card";
+export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 export { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
@@ -64,8 +63,7 @@ export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./c
 export { ChromeTransitionDetail } from "./nav/chrome-transition";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
-export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
-export { SelectOption } from "./components/Select/Select";
+export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -254,10 +252,15 @@ export namespace Components {
           * @default 'label'
          */
         "variant": ButtonFilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width": ButtonFilledWidth;
     }
     interface DsButtonUnfilled {
         /**
-          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only (primary color, no fill).
           * @default true
          */
         "activeFill": boolean;
@@ -282,7 +285,7 @@ export namespace Components {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * Show a 1px secondary inset border. Default on; shell chrome can pass `false`.
           * @default true
          */
         "hasBorder": boolean;
@@ -293,7 +296,7 @@ export namespace Components {
          */
         "icon": string;
         /**
-          * Active/selected visual state.
+          * Active/selected visual state. Always promotes foreground to primary.
           * @default false
          */
         "isActive": boolean;
@@ -324,18 +327,42 @@ export namespace Components {
           * @default 'label'
          */
         "variant": ButtonUnfilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width": ButtonUnfilledWidth;
     }
     /**
-     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     * Shared card chrome — width + matching min-height tokens, header (title + actions),
+     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
      */
-    interface DsCardDataViz {
+    interface DsCard {
         /**
-          * Card width token.
+          * Chrome recipe — `editing` applies the settings edit wash.
+          * @default 'default'
+         */
+        "appearance": CardAppearance;
+        /**
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so empty bodies still fill the card.
           * @default 'md'
          */
-        "cardWidth": CardDataVizWidth;
+        "cardWidth": CardWidth;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+    }
+    /**
+     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * content-sized legend. Hover sync between chart and legend stays here.
+     */
+    interface DsCardDataVizDonut {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth": CardDataVizDonutWidth;
         /**
           * Widget heading shown in the card header.
          */
@@ -343,7 +370,7 @@ export namespace Components {
     }
     interface DsCardSetting {
         /**
-          * Card width token.
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
           * @default 'md'
          */
         "cardWidth": CardSettingWidth;
@@ -402,9 +429,9 @@ export namespace Components {
          */
         "gap": number;
         /**
-          * @default 175
+          * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
-        "size": number;
+        "size": number | undefined;
         /**
           * Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px).
           * @default TOKEN_DEFAULTS.size200
@@ -553,13 +580,6 @@ export namespace Components {
          */
         "fieldId": string | undefined;
         "label": string;
-    }
-    interface DsHeader {
-        /**
-          * @default 'secondary'
-         */
-        "background": HeaderBackground;
-        "heading": string | undefined;
     }
     interface DsIcon {
         /**
@@ -817,19 +837,23 @@ export namespace Components {
          */
         "value": string;
     }
-    interface DsScrollbar {
+    /**
+     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+     * control-density sizes, with `ds-menu` for the option list.
+     */
+    interface DsSelect {
         /**
+          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). Selected/open promotes the label to primary; chevron stays secondary.
           * @default true
          */
-        "showTrackOnHover": boolean;
-        /**
-          * @default 'default'
-         */
-        "variant": ScrollbarVariant;
-    }
-    interface DsSelect {
+        "activeFill": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
+        /**
+          * Show a 1px secondary inset border. Default on (matches unfilled button).
+          * @default true
+         */
+        "hasBorder": boolean;
         /**
           * Disables interaction (25% opacity via ds-control-inactive).
           * @default false
@@ -843,14 +867,24 @@ export namespace Components {
         "options": SelectOption[];
         /**
           * Placeholder shown when no value is selected.
-          * @default 'Select option'
+          * @default 'Select'
          */
         "placeholder": string;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": SelectSize;
         /**
           * Currently selected value.
           * @default ''
          */
         "value": string;
+        /**
+          * Width fit — fill the parent (default) or hug content.
+          * @default 'fill'
+         */
+        "width": SelectWidth;
     }
     interface DsShellGradientPicker {
         /**
@@ -1162,6 +1196,10 @@ export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
 }
+export interface DsCardDataVizDonutCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardDataVizDonutElement;
+}
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardSettingElement;
@@ -1325,15 +1363,35 @@ declare global {
         new (): HTMLDsButtonUnfilledElement;
     };
     /**
-     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     * Shared card chrome — width + matching min-height tokens, header (title + actions),
+     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
      */
-    interface HTMLDsCardDataVizElement extends Components.DsCardDataViz, HTMLStencilElement {
+    interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
     }
-    var HTMLDsCardDataVizElement: {
-        prototype: HTMLDsCardDataVizElement;
-        new (): HTMLDsCardDataVizElement;
+    var HTMLDsCardElement: {
+        prototype: HTMLDsCardElement;
+        new (): HTMLDsCardElement;
+    };
+    interface HTMLDsCardDataVizDonutElementEventMap {
+        "dsFilterClick": void;
+    }
+    /**
+     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * content-sized legend. Hover sync between chart and legend stays here.
+     */
+    interface HTMLDsCardDataVizDonutElement extends Components.DsCardDataVizDonut, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardDataVizDonutElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizDonutElement, ev: DsCardDataVizDonutCustomEvent<HTMLDsCardDataVizDonutElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardDataVizDonutElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizDonutElement, ev: DsCardDataVizDonutCustomEvent<HTMLDsCardDataVizDonutElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardDataVizDonutElement: {
+        prototype: HTMLDsCardDataVizDonutElement;
+        new (): HTMLDsCardDataVizDonutElement;
     };
     interface HTMLDsCardSettingElementEventMap {
         "dsEditingChange": boolean;
@@ -1462,12 +1520,6 @@ declare global {
     var HTMLDsFieldElement: {
         prototype: HTMLDsFieldElement;
         new (): HTMLDsFieldElement;
-    };
-    interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
-    }
-    var HTMLDsHeaderElement: {
-        prototype: HTMLDsHeaderElement;
-        new (): HTMLDsHeaderElement;
     };
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
@@ -1613,15 +1665,13 @@ declare global {
         prototype: HTMLDsRadioGroupElement;
         new (): HTMLDsRadioGroupElement;
     };
-    interface HTMLDsScrollbarElement extends Components.DsScrollbar, HTMLStencilElement {
-    }
-    var HTMLDsScrollbarElement: {
-        prototype: HTMLDsScrollbarElement;
-        new (): HTMLDsScrollbarElement;
-    };
     interface HTMLDsSelectElementEventMap {
         "dsChange": string;
     }
+    /**
+     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+     * control-density sizes, with `ds-menu` for the option list.
+     */
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1813,7 +1863,8 @@ declare global {
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
-        "ds-card-data-viz": HTMLDsCardDataVizElement;
+        "ds-card": HTMLDsCardElement;
+        "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-chart-bar": HTMLDsChartBarElement;
         "ds-chart-donut": HTMLDsChartDonutElement;
@@ -1824,7 +1875,6 @@ declare global {
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-field": HTMLDsFieldElement;
-        "ds-header": HTMLDsHeaderElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
@@ -1834,7 +1884,6 @@ declare global {
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
-        "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
@@ -2036,10 +2085,15 @@ declare namespace LocalJSX {
           * @default 'label'
          */
         "variant"?: ButtonFilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ButtonFilledWidth;
     }
     interface DsButtonUnfilled {
         /**
-          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only (primary color, no fill).
           * @default true
          */
         "activeFill"?: boolean;
@@ -2064,7 +2118,7 @@ declare namespace LocalJSX {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * Show a 1px secondary inset border. Default on; shell chrome can pass `false`.
           * @default true
          */
         "hasBorder"?: boolean;
@@ -2075,7 +2129,7 @@ declare namespace LocalJSX {
          */
         "icon"?: string;
         /**
-          * Active/selected visual state.
+          * Active/selected visual state. Always promotes foreground to primary.
           * @default false
          */
         "isActive"?: boolean;
@@ -2107,26 +2161,54 @@ declare namespace LocalJSX {
           * @default 'label'
          */
         "variant"?: ButtonUnfilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ButtonUnfilledWidth;
     }
     /**
-     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     * Shared card chrome — width + matching min-height tokens, header (title + actions),
+     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
      */
-    interface DsCardDataViz {
+    interface DsCard {
         /**
-          * Card width token.
+          * Chrome recipe — `editing` applies the settings edit wash.
+          * @default 'default'
+         */
+        "appearance"?: CardAppearance;
+        /**
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so empty bodies still fill the card.
           * @default 'md'
          */
-        "cardWidth"?: CardDataVizWidth;
+        "cardWidth"?: CardWidth;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+    }
+    /**
+     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * content-sized legend. Hover sync between chart and legend stays here.
+     */
+    interface DsCardDataVizDonut {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth"?: CardDataVizDonutWidth;
         /**
           * Widget heading shown in the card header.
          */
         "heading": string;
+        /**
+          * Emits when the header filter control is activated.
+         */
+        "onDsFilterClick"?: (event: DsCardDataVizDonutCustomEvent<void>) => void;
     }
     interface DsCardSetting {
         /**
-          * Card width token.
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
           * @default 'md'
          */
         "cardWidth"?: CardSettingWidth;
@@ -2193,9 +2275,9 @@ declare namespace LocalJSX {
          */
         "onDsSliceHover"?: (event: DsChartDonutCustomEvent<ChartDatum | null>) => void;
         /**
-          * @default 175
+          * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
-        "size"?: number;
+        "size"?: number | undefined;
         /**
           * Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px).
           * @default TOKEN_DEFAULTS.size200
@@ -2357,13 +2439,6 @@ declare namespace LocalJSX {
          */
         "fieldId"?: string | undefined;
         "label": string;
-    }
-    interface DsHeader {
-        /**
-          * @default 'secondary'
-         */
-        "background"?: HeaderBackground;
-        "heading"?: string | undefined;
     }
     interface DsIcon {
         /**
@@ -2652,19 +2727,23 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    interface DsScrollbar {
+    /**
+     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+     * control-density sizes, with `ds-menu` for the option list.
+     */
+    interface DsSelect {
         /**
+          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). Selected/open promotes the label to primary; chevron stays secondary.
           * @default true
          */
-        "showTrackOnHover"?: boolean;
-        /**
-          * @default 'default'
-         */
-        "variant"?: ScrollbarVariant;
-    }
-    interface DsSelect {
+        "activeFill"?: boolean;
         "ariaLabel"?: string | undefined;
         "ariaLabelledby"?: string | undefined;
+        /**
+          * Show a 1px secondary inset border. Default on (matches unfilled button).
+          * @default true
+         */
+        "hasBorder"?: boolean;
         /**
           * Disables interaction (25% opacity via ds-control-inactive).
           * @default false
@@ -2682,14 +2761,24 @@ declare namespace LocalJSX {
         "options"?: SelectOption[];
         /**
           * Placeholder shown when no value is selected.
-          * @default 'Select option'
+          * @default 'Select'
          */
         "placeholder"?: string;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: SelectSize;
         /**
           * Currently selected value.
           * @default ''
          */
         "value"?: string;
+        /**
+          * Width fit — fill the parent (default) or hug content.
+          * @default 'fill'
+         */
+        "width"?: SelectWidth;
     }
     interface DsShellGradientPicker {
         "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
@@ -3032,6 +3121,7 @@ declare namespace LocalJSX {
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
         "size": ButtonFilledSize;
+        "width": ButtonFilledWidth;
         "label": string;
         "icon": string;
         "intent": ButtonFilledIntent;
@@ -3043,6 +3133,7 @@ declare namespace LocalJSX {
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
         "size": ButtonUnfilledSize;
+        "width": ButtonUnfilledWidth;
         "label": string;
         "icon": string;
         "isActive": boolean;
@@ -3060,9 +3151,14 @@ declare namespace LocalJSX {
         "pressed": boolean | undefined;
         "focusTabIndex": number;
     }
-    interface DsCardDataVizAttributes {
+    interface DsCardAttributes {
         "heading": string;
-        "cardWidth": CardDataVizWidth;
+        "cardWidth": CardWidth;
+        "appearance": CardAppearance;
+    }
+    interface DsCardDataVizDonutAttributes {
+        "heading": string;
+        "cardWidth": CardDataVizDonutWidth;
     }
     interface DsCardSettingAttributes {
         "heading": string;
@@ -3074,7 +3170,7 @@ declare namespace LocalJSX {
         "height": number;
     }
     interface DsChartDonutAttributes {
-        "size": number;
+        "size": number | undefined;
         "thickness": string;
         "cornerRadius": string;
         "gap": number;
@@ -3122,10 +3218,6 @@ declare namespace LocalJSX {
     interface DsFieldAttributes {
         "label": string;
         "fieldId": string | undefined;
-    }
-    interface DsHeaderAttributes {
-        "heading": string | undefined;
-        "background": HeaderBackground;
     }
     interface DsIconAttributes {
         "name": string;
@@ -3199,14 +3291,14 @@ declare namespace LocalJSX {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
-    interface DsScrollbarAttributes {
-        "variant": ScrollbarVariant;
-        "showTrackOnHover": boolean;
-    }
     interface DsSelectAttributes {
         "value": string;
         "placeholder": string;
+        "size": SelectSize;
+        "width": SelectWidth;
         "isInactive": boolean;
+        "activeFill": boolean;
+        "hasBorder": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
@@ -3309,7 +3401,8 @@ declare namespace LocalJSX {
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
-        "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
+        "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] } & OneOf<"heading", DsCard["heading"], DsCardAttributes["heading"]>;
+        "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
         "ds-chart-donut": Omit<DsChartDonut, keyof DsChartDonutAttributes> & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes]?: DsChartDonut[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `attr:${K}`]?: DsChartDonutAttributes[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `prop:${K}`]?: DsChartDonut[K] };
@@ -3320,7 +3413,6 @@ declare namespace LocalJSX {
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
-        "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
@@ -3330,7 +3422,6 @@ declare namespace LocalJSX {
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
-        "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
@@ -3357,11 +3448,15 @@ declare module "@stencil/core" {
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
-             * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-             * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-             * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+             * Shared card chrome — width + matching min-height tokens, header (title + actions),
+             * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
              */
-            "ds-card-data-viz": LocalJSX.IntrinsicElements["ds-card-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizElement>;
+            "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
+            /**
+             * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+             * content-sized legend. Hover sync between chart and legend stays here.
+             */
+            "ds-card-data-viz-donut": LocalJSX.IntrinsicElements["ds-card-data-viz-donut"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizDonutElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
             "ds-chart-bar": LocalJSX.IntrinsicElements["ds-chart-bar"] & JSXBase.HTMLAttributes<HTMLDsChartBarElement>;
             "ds-chart-donut": LocalJSX.IntrinsicElements["ds-chart-donut"] & JSXBase.HTMLAttributes<HTMLDsChartDonutElement>;
@@ -3384,7 +3479,6 @@ declare module "@stencil/core" {
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
-            "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
@@ -3394,7 +3488,10 @@ declare module "@stencil/core" {
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
-            "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
+            /**
+             * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+             * control-density sizes, with `ds-menu` for the option list.
+             */
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
@@ -3429,6 +3526,3 @@ declare module "@stencil/core" {
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-

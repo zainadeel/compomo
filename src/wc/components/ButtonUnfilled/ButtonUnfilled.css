@@ -2,23 +2,32 @@
 @import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-width.css';
 
 :host {
   display: inline-flex;
-  flex: 0 0 auto;
   outline: none;
   --ds-button-unfilled-fg: var(--color-foreground-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-secondary);
-  --ds-button-unfilled-border: var(--color-border-tertiary);
+  --ds-button-unfilled-border: var(--color-border-secondary);
 }
 
-/* Icon-only: fixed square from density height. */
-:host(.button-unfilled-host--icon) {
+/* Icon-only: fixed square from density height (hug). Fill stretches the hit target. */
+:host(.button-unfilled-host--icon.ds-control-width--hug) {
   width: var(--ds-control-height, var(--dimension-size-400));
   height: var(--ds-control-height, var(--dimension-size-400));
   min-width: var(--ds-control-height, var(--dimension-size-400));
   min-height: var(--ds-control-height, var(--dimension-size-400));
+}
+
+:host(.button-unfilled-host--icon.ds-control-width--fill) {
+  height: var(--ds-control-height, var(--dimension-size-400));
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+}
+
+:host(.ds-control-width--fill) .button-unfilled {
+  width: 100%;
 }
 
 .button-unfilled {
@@ -38,7 +47,8 @@
   user-select: none;
   overflow: hidden;
   transition: color var(--effect-motion-short-2);
-  /* Hover/press/selected: `.ds-interaction-fill` (+ `--selected` / `--on-*`). */
+  /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected` / `--on-*`).
+     Active always promotes foreground to primary (toggle mode). */
 }
 
 .button-unfilled--icon {
@@ -69,33 +79,35 @@
   --ds-button-unfilled-fg: var(--color-foreground-on-medium-background-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-on-medium-background-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-medium-neutral);
-  --ds-button-unfilled-border: var(--color-border-on-medium-background-tertiary);
+  --ds-button-unfilled-border: var(--color-border-on-medium-background-secondary);
 }
 
 .button-unfilled--contrast-bold {
   --ds-button-unfilled-fg: var(--color-foreground-on-bold-background-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-on-bold-background-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-bold-neutral);
-  --ds-button-unfilled-border: var(--color-border-on-bold-background-tertiary);
+  --ds-button-unfilled-border: var(--color-border-on-bold-background-secondary);
 }
 
 .button-unfilled--contrast-strong {
   --ds-button-unfilled-fg: var(--color-foreground-on-strong-background-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-on-strong-background-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-strong-neutral);
-  --ds-button-unfilled-border: var(--color-border-on-strong-background-tertiary);
+  --ds-button-unfilled-border: var(--color-border-on-strong-background-secondary);
 }
 
 .button-unfilled--on-always-dark {
   --ds-button-unfilled-fg: var(--color-always-dark-foreground-secondary);
   --ds-button-unfilled-fg-active: var(--color-always-dark-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-always-dark-background);
+  --ds-button-unfilled-border: var(--color-always-dark-border-secondary);
 }
 
 .button-unfilled--on-navigation {
   --ds-button-unfilled-fg: var(--color-navigation-foreground-secondary);
   --ds-button-unfilled-fg-active: var(--color-navigation-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-navigation-background);
+  --ds-button-unfilled-border: var(--color-navigation-border-secondary);
 }
 
 /*

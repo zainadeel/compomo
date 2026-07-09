@@ -1,4 +1,6 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
+import { controlWidthClass, type ControlWidth } from '../../utils/control-width';
+import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
 import type { MenuItemData } from '../Menu/menu-types';
 
 export interface SelectOption {
@@ -6,6 +8,28 @@ export interface SelectOption {
   value: string;
 }
 
+export type SelectSize = 'md' | 'sm' | 'xs';
+
+export type SelectWidth = ControlWidth;
+
+/** Regular (non-emphasis) type per density — selects stay visually lighter than buttons. */
+const TEXT_VARIANT: Record<SelectSize, string> = {
+  md: 'text-body-medium',
+  sm: 'text-body-small',
+  xs: 'text-caption',
+};
+
+/** `ds-icon` size matching control-density icon metrics. */
+const ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
+  md: 'md',
+  sm: 'sm',
+  xs: 'xs',
+};
+
+/**
+ * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+ * control-density sizes, with `ds-menu` for the option list.
+ */
 @Component({
   tag: 'ds-select',
   styleUrl: 'Select.css',
@@ -24,10 +48,27 @@ export class Select {
   @Prop({ mutable: true }) value: string = '';
 
   /** Placeholder shown when no value is selected. */
-  @Prop() placeholder: string = 'Select option';
+  @Prop() placeholder: string = 'Select';
+
+  /** Control density (height, padding, icon, type). */
+  @Prop() size: SelectSize = 'md';
+
+  /** Width fit — fill the parent (default) or hug content. */
+  @Prop() width: SelectWidth = 'fill';
 
   /** Disables interaction (25% opacity via ds-control-inactive). */
   @Prop() isInactive: boolean = false;
+
+  /**
+   * When a value is selected, render the selected interaction fill (same recipe
+   * as unfilled-button `activeFill`). Default `true`. Pass `false` for
+   * foreground-only selection (primary label, no fill).
+   * Selected/open promotes the label to primary; chevron stays secondary.
+   */
+  @Prop() activeFill: boolean = true;
+
+  /** Show a 1px secondary inset border. Default on (matches unfilled button). */
+  @Prop() hasBorder: boolean = true;
 
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
@@ -39,32 +80,28 @@ export class Select {
 
   private triggerEl: HTMLButtonElement | null = null;
   private menuEl: HTMLDsMenuElement | null = null;
+  /** True when the open was keyboard-driven — menu shows initial focus ring. */
+  private openWithFocusVisible = false;
 
   componentDidLoad() {
-    // Wire up the menu anchor to the trigger button
     if (this.menuEl && this.triggerEl) {
       this.menuEl.anchor = this.triggerEl;
     }
-    // Listen for menu selection events
-    this.menuEl?.addEventListener('dsSelect', (e: Event) => {
-      const detail = (e as CustomEvent<MenuItemData>).detail;
-      if (detail?.value !== undefined) {
-        this.value = String(detail.value);
-        this.dsChange.emit(this.value);
-      }
-      this.isOpen = false;
-    });
-    // Listen for menu close event
-    this.menuEl?.addEventListener('dsClose', () => {
-      this.isOpen = false;
-    });
+    this.menuEl?.addEventListener('dsSelect', this.handleMenuSelect);
+    this.menuEl?.addEventListener('dsClose', this.handleMenuClose);
+    this.syncMenuItems();
+  }
+
+  disconnectedCallback() {
+    this.menuEl?.removeEventListener('dsSelect', this.handleMenuSelect);
+    this.menuEl?.removeEventListener('dsClose', this.handleMenuClose);
   }
 
   @Watch('isOpen')
   onIsOpenChange(open: boolean) {
-    if (this.menuEl) {
-      this.menuEl.open = open;
-    }
+    if (!this.menuEl) return;
+    this.menuEl.initialFocusVisible = open && this.openWithFocusVisible;
+    this.menuEl.open = open;
   }
 
   @Watch('options')
@@ -77,6 +114,19 @@ export class Select {
     this.syncMenuItems();
   }
 
+  private handleMenuSelect = (e: Event) => {
+    const detail = (e as CustomEvent<MenuItemData>).detail;
+    if (detail?.value !== undefined) {
+      this.value = String(detail.value);
+      this.dsChange.emit(this.value);
+    }
+    this.close();
+  };
+
+  private handleMenuClose = () => {
+    this.close();
+  };
+
   private syncMenuItems() {
     if (!this.menuEl) return;
     this.menuEl.items = this.options.map(opt => ({
@@ -86,32 +136,46 @@ export class Select {
     }));
   }
 
-  private open() {
+  /**
+   * Size/place the menu so option labels line up with the select label.
+   * Menu section padding insets items; we expand min-width by that chrome and
+   * shift left by the same amount (`alignOffset`). Menu can grow wider than
+   * the field (left-bottom / `align="start"`) when labels need more room.
+   */
+  private syncMenuLayout() {
+    if (!this.menuEl || !this.triggerEl) return;
+    const sectionPadPx = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+    const triggerW = this.triggerEl.offsetWidth;
+    // Prefer min-width over fixed width so long options can grow the menu.
+    this.menuEl.menuWidth = '';
+    this.menuEl.minWidth = `${triggerW + sectionPadPx * 2}px`;
+    this.menuEl.alignOffset = -sectionPadPx;
+    this.menuEl.anchor = this.triggerEl;
+  }
+
+  private open(opts: { focusVisible: boolean } = { focusVisible: false }) {
     if (this.isInactive || !this.options.length) return;
-    // Sync menu width to trigger width
-    if (this.menuEl && this.triggerEl) {
-      this.menuEl.menuWidth = `${this.triggerEl.offsetWidth}px`;
-      this.menuEl.anchor = this.triggerEl;
-    }
+    this.openWithFocusVisible = opts.focusVisible;
+    this.syncMenuLayout();
     this.syncMenuItems();
     this.isOpen = true;
   }
 
   private close() {
     this.isOpen = false;
+    this.openWithFocusVisible = false;
   }
 
-  private toggle() {
+  private toggle(opts: { focusVisible: boolean }) {
     if (this.isOpen) {
       this.close();
     } else {
-      this.open();
+      this.open(opts);
     }
   }
 
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
-    // Only handle keydown on the trigger button
     if (document.activeElement !== this.triggerEl) return;
 
     if (!this.isOpen) {
@@ -121,67 +185,84 @@ export class Select {
         case 'Enter':
         case ' ':
           e.preventDefault();
-          this.open();
+          this.open({ focusVisible: true });
           break;
       }
-    } else {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        this.close();
-        this.triggerEl?.focus();
-      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      this.close();
+      this.triggerEl?.focus();
     }
   }
 
   private get selectedLabel(): string {
-    const found = this.options.find(o => o.value === this.value);
-    return found?.label ?? '';
+    return this.options.find(o => o.value === this.value)?.label ?? '';
   }
 
   private get hasSelection(): boolean {
-    return !!this.options.find(o => o.value === this.value);
+    return this.options.some(o => o.value === this.value);
   }
 
   render() {
-    const label = this.hasSelection ? this.selectedLabel : this.placeholder;
     const showPlaceholder = !this.hasSelection;
+    const hasValue = !showPlaceholder;
+    const label = showPlaceholder ? this.placeholder : this.selectedLabel;
+    const textVariant = TEXT_VARIANT[this.size];
+    const iconSize = ICON_SIZE[this.size];
+    const density = `ds-control--${this.size}`;
+    // Selected fill when a value is set (or while open), gated by `activeFill`.
+    const showSelectedFill =
+      !this.isInactive && this.activeFill && (hasValue || this.isOpen);
 
     return (
-      <Host class={{ 'select-host': true, 'ds-control-inactive': this.isInactive }}>
+      <Host
+        class={{
+          'select-host': true,
+          'ds-control-inactive': this.isInactive,
+          'ds-control--md': this.size === 'md',
+          'ds-control--sm': this.size === 'sm',
+          'ds-control--xs': this.size === 'xs',
+          ...controlWidthClass(this.width),
+        }}
+      >
         <button
           ref={el => {
             this.triggerEl = (el as HTMLButtonElement) ?? null;
           }}
           type="button"
-          class={{ trigger: true, 'trigger--open': this.isOpen }}
+          class={{
+            trigger: true,
+            'ds-focus-ring-inset': true,
+            'ds-interaction-fill': true,
+            'ds-interaction-fill--selected': showSelectedFill,
+            'trigger--open': this.isOpen,
+            'trigger--bordered': this.hasBorder,
+            'trigger--placeholder': showPlaceholder,
+            'trigger--has-value': hasValue,
+            [density]: true,
+          }}
           disabled={this.isInactive}
           role="combobox"
-          aria-haspopup="listbox"
-          aria-expanded={this.isOpen}
+          aria-haspopup="menu"
+          aria-expanded={String(this.isOpen)}
           aria-label={this.ariaLabel}
           aria-labelledby={this.ariaLabelledby}
-          onClick={() => this.toggle()}
+          onClick={() => this.toggle({ focusVisible: false })}
         >
-          <span class={{ 'trigger__label': true, 'trigger__label--placeholder': showPlaceholder }}>
+          <span
+            class={{
+              'trigger__label': true,
+              [textVariant]: true,
+              'ds-interaction-fill__content': true,
+            }}
+          >
             {label}
           </span>
-          <svg
-            class="trigger__chevron"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M4 6L8 10L12 6"
-              stroke="currentColor"
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <span class="trigger__chevron ds-interaction-fill__content" aria-hidden="true">
+            <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
+          </span>
         </button>
+        {/* bottom + start: left-aligned under the field; wider menus grow right. */}
         <ds-menu
           ref={el => {
             this.menuEl = (el as HTMLDsMenuElement) ?? null;

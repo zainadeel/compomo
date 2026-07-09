@@ -12,15 +12,15 @@ import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
 import type { Components } from "@ds-mo/ui/dist/components";
-import { DsScrollbar as DsScrollbarElement, defineCustomElement as defineDsScrollbar } from "@ds-mo/ui/dist/components/ds-scrollbar.js";
+import { DsCard as DsCardElement, defineCustomElement as defineDsCard } from "@ds-mo/ui/dist/components/ds-card.js";
 
-export type DsScrollbarEvents = NonNullable<unknown>;
+export type DsCardEvents = NonNullable<unknown>;
 
-export const DsScrollbar: StencilReactComponent<DsScrollbarElement, DsScrollbarEvents, Components.DsScrollbar> = /*@__PURE__*/ createComponent<DsScrollbarElement, DsScrollbarEvents, Components.DsScrollbar>({
-    tagName: 'ds-scrollbar',
-    elementClass: DsScrollbarElement,
+export const DsCard: StencilReactComponent<DsCardElement, DsCardEvents, Components.DsCard> = /*@__PURE__*/ createComponent<DsCardElement, DsCardEvents, Components.DsCard>({
+    tagName: 'ds-card',
+    elementClass: DsCardElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsScrollbarEvents,
-    defineCustomElement: defineDsScrollbar
+    events: {} as DsCardEvents,
+    defineCustomElement: defineDsCard
 });

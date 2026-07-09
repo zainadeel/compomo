@@ -52,6 +52,7 @@ export const Playground: Story = {
         if (!el) return;
         (el as any).data = MOCK_DATA;
       })}
+      size=${175}
       thickness=${args['thickness']}
       corner-radius=${args['cornerRadius']}
       gap=${args['gap']}
@@ -68,6 +69,7 @@ export const WithLegend: Story = {
           if (!el) return;
           (el as any).data = MOCK_DATA;
         })}
+        size=${175}
         center-caption="Total reviewed"
       ></ds-chart-donut>
       <ds-chart-legend
@@ -89,6 +91,7 @@ export const AvailabilityStatusPattern: Story = {
           if (!el) return;
           (el as any).data = AVAILABILITY_STATUS;
         })}
+        size=${175}
         center-caption="Total vehicles"
       ></ds-chart-donut>
       <ds-chart-legend
@@ -111,6 +114,7 @@ export const Empty: Story = {
           if (!el) return;
           (el as any).data = NO_DATA;
         })}
+        size=${175}
         center-caption="Total vehicles"
       ></ds-chart-donut>
       <ds-chart-legend
@@ -185,6 +189,7 @@ export const SyncedWithLegend: Story = {
               if (legendEl) legendEl.activeLabel = e.detail?.label ?? null;
             }) as EventListener);
           })}
+          size=${175}
           center-caption="Total vehicles"
         ></ds-chart-donut>
         <ds-chart-legend

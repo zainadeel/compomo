@@ -72,7 +72,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout
-- **EmptyState**, **Loader**, **Skeleton**, **Header**, **Scrollbar**
+- **EmptyState**, **Loader**, **Skeleton**, **Card** (shared chrome), **CardSetting**, **CardDataVizDonut**
 
 ## Token dependency
 

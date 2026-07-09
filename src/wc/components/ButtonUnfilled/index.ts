@@ -3,4 +3,5 @@ export type {
   ButtonUnfilledOnBackgroundContrast,
   ButtonUnfilledSize,
   ButtonUnfilledVariant,
+  ButtonUnfilledWidth,
 } from './ButtonUnfilled';

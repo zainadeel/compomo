@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "card-setting",
   "title": "CardSetting",
-  "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
+  "description": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -26,6 +26,10 @@
         }
       ],
       "internalDependencies": [
+        {
+          "component": "Card",
+          "note": "Used internally by CardSetting. Bundled in @ds-mo/ui."
+        },
         {
           "component": "Text",
           "note": "Used internally by CardSetting. Bundled in @ds-mo/ui."
@@ -56,7 +60,8 @@
       },
       "cardWidth": {
         "type": "'sm' | 'md' | 'lg'",
-        "default": "'md'"
+        "default": "'md'",
+        "description": "Width token; also sets host min-height to the matching --dimension-card-height-* so empty bodies still fill the card."
       },
       "editing": {
         "type": "boolean",
@@ -77,6 +82,7 @@
     "@ds-mo/icons"
   ],
   "registryDependencies": [
+    "card",
     "text",
     "button-unfilled",
     "button-filled"
@@ -84,12 +90,12 @@
   "files": [
     {
       "path": "src/wc/components/CardSetting/CardSetting.css",
-      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n  width: var(--_card-setting-width);\n  max-width: 100%;\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n  overflow: hidden;\n}\n\n:host(.card-setting--editing) {\n  background-color: var(--color-background-bold-brand);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);\n}\n\n.card-setting__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  height: var(--dimension-size-600);\n  padding: var(--dimension-space-100);\n  background-color: var(--color-background-secondary);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  box-sizing: border-box;\n}\n\n:host(.card-setting--editing) .card-setting__header {\n  background-color: transparent;\n  border-bottom-color: transparent;\n}\n\n.card-setting__title-wrap {\n  flex: 1 1 auto;\n  min-width: 0;\n  display: flex;\n  align-items: center;\n  padding: var(--dimension-space-075);\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.card-setting__title {\n  display: inline-flex;\n  align-items: center;\n  min-width: 0;\n  padding: var(--dimension-space-025);\n}\n\n.card-setting__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n\n.card-setting__body {\n  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n}\n\n:host(.card-setting--editing) .card-setting__body {\n  border-radius: var(--dimension-radius-025);\n}\n",
+      "content": ":host {\n  display: contents;\n}\n\n.card-setting__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/CardSetting/CardSetting.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\nexport type CardSettingWidth = 'sm' | 'md' | 'lg';\n\nconst CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {\n  sm: 'var(--dimension-card-width-sm)',\n  md: 'var(--dimension-card-width-md)',\n  lg: 'var(--dimension-card-width-lg)',\n};\n\nconst FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';\n\n@Component({\n  tag: 'ds-card-setting',\n  styleUrl: 'CardSetting.css',\n  scoped: true,\n})\nexport class CardSetting {\n  /** Section heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Card width token. */\n  @Prop() cardWidth: CardSettingWidth = 'md';\n\n  /** Controlled edit state — parent owns single-edit orchestration. */\n  @Prop() editing = false;\n\n  /** Emits when the user enters or exits edit mode. */\n  @Event() dsEditingChange!: EventEmitter<boolean>;\n\n  private enterEdit = () => {\n    this.dsEditingChange.emit(true);\n  };\n\n  private exitEdit = () => {\n    this.dsEditingChange.emit(false);\n  };\n\n  render() {\n    const editing = this.editing;\n\n    return (\n      <Host\n        class={{\n          'card-setting': true,\n          'card-setting--editing': editing,\n        }}\n        style={{ '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth] }}\n      >\n        <header class=\"card-setting__header\">\n          <div class=\"card-setting__title-wrap\">\n            <ds-text\n              class=\"card-setting__title\"\n              variant=\"text-title-small\"\n              color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}\n              as=\"h2\"\n            >\n              {this.heading}\n            </ds-text>\n          </div>\n          {!editing ? (\n            <ds-button-unfilled variant=\"icon\"\n              type=\"button\"\n              icon=\"Pencil\"\n              aria-label=\"Edit\"\n              onDsClick={this.enterEdit}\n            />\n          ) : (\n            <div class=\"card-setting__actions\">\n              <ds-button-unfilled variant=\"icon\"\n                type=\"button\"\n                icon=\"Cross\"\n                backgroundContrast=\"bold\"\n                aria-label=\"Cancel\"\n                onDsClick={this.exitEdit}\n              />\n              <ds-button-filled variant=\"icon\"\n                type=\"button\"\n                icon=\"Check\"\n                intent=\"brand\"\n                contrast=\"faint\"\n                aria-label=\"Save\"\n                onDsClick={this.exitEdit}\n              />\n            </div>\n          )}\n        </header>\n        <div class=\"card-setting__body\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type { CardWidth } from '../Card/Card';\n\nexport type CardSettingWidth = CardWidth;\n\n@Component({\n  tag: 'ds-card-setting',\n  styleUrl: 'CardSetting.css',\n  scoped: true,\n})\nexport class CardSetting {\n  /** Section heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /**\n   * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\n   * matching `--dimension-card-height-*` so the body fills available space\n   * even when the slot is empty.\n   */\n  @Prop() cardWidth: CardSettingWidth = 'md';\n\n  /** Controlled edit state — parent owns single-edit orchestration. */\n  @Prop() editing = false;\n\n  /** Emits when the user enters or exits edit mode. */\n  @Event() dsEditingChange!: EventEmitter<boolean>;\n\n  private enterEdit = () => {\n    this.dsEditingChange.emit(true);\n  };\n\n  private exitEdit = () => {\n    this.dsEditingChange.emit(false);\n  };\n\n  render() {\n    const editing = this.editing;\n\n    return (\n      <Host class=\"card-setting\">\n        <ds-card\n          heading={this.heading}\n          cardWidth={this.cardWidth}\n          appearance={editing ? 'editing' : 'default'}\n        >\n          {!editing ? (\n            <ds-button-unfilled\n              slot=\"actions\"\n              variant=\"icon\"\n              type=\"button\"\n              icon=\"Pencil\"\n              aria-label=\"Edit\"\n              onDsClick={this.enterEdit}\n            />\n          ) : (\n            <div slot=\"actions\" class=\"card-setting__actions\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Cross\"\n                backgroundContrast=\"bold\"\n                aria-label=\"Cancel\"\n                onDsClick={this.exitEdit}\n              />\n              <ds-button-filled\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Check\"\n                intent=\"brand\"\n                contrast=\"faint\"\n                aria-label=\"Save\"\n                onDsClick={this.exitEdit}\n              />\n            </div>\n          )}\n          <slot />\n        </ds-card>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

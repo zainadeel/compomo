@@ -65,6 +65,10 @@ export const TOKEN_DEFAULTS = {
   menuFallbackHeight: 'calc(var(--dimension-size-base) * 20)',
   /** Unmeasured tooltip width fallback: size-800 + size-200 (80px). */
   tooltipFallbackWidth: 'calc(var(--dimension-size-800) + var(--dimension-size-200))',
+  /** Fill-mode donut diameter floor: 16× size-base (128px). */
+  donutFillMin: 'calc(var(--dimension-size-base) * 16)',
+  /** Fill-mode donut diameter ceiling: 24× size-base (192px). */
+  donutFillMax: 'calc(var(--dimension-size-base) * 24)',
 } as const;
 
 export type TokenDefaultKey = keyof typeof TOKEN_DEFAULTS;
