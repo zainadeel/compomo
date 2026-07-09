@@ -61,27 +61,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
-  ['Surface', {
-    title: 'Surface',
-    description: 'Foundational container with intent-based or background-based coloring, elevation, edges, radius, and interactive states.',
-    exports: ['Surface'],
-    types: ['SurfaceProps', 'SurfaceIntent', 'SurfaceBackground', 'SurfaceContrast', 'SurfaceElevation', 'SurfaceEdge', 'SurfaceRadius', 'SurfaceRadiusPreset', 'SurfaceElement'],
-    props: {
-      intent: { type: "'brand' | 'positive' | 'negative' | 'warning' | 'caution' | 'ai' | 'neutral' | 'walkthrough' | 'guide'", description: 'Semantic intent coloring (mutually exclusive with background).' },
-      contrast: { type: "'faint' | 'medium' | 'bold' | 'strong'", default: "'faint'" },
-      background: { type: "'primary' | 'secondary' | 'transparent' | 'translucent'", description: 'Background mode (mutually exclusive with intent).' },
-      elevation: { type: "'none' | 'depressed' | 'depressed-md' | 'flat' | 'elevated' | 'floating' | 'overlayTop' | 'overlayRight' | 'overlayBottom' | 'overlayLeft'", default: "'none'" },
-      edge: { type: "SurfaceEdge | SurfaceEdge[]", description: 'Border edges. Only applies when elevation is none.' },
-      radius: { type: "'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | string" },
-      interactive: { type: 'boolean', description: 'Enables hover/press overlay.' },
-      selected: { type: 'boolean' },
-      isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
-      as: { type: "'div' | 'section' | 'aside' | 'article' | 'header' | 'footer' | 'main' | 'nav' | 'span' | 'button' | 'td' | 'th'", default: "'div'" },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: [],
-  }],
   ['CardSetting', {
     title: 'CardSetting',
     tag: 'ds-card-setting',
@@ -306,7 +285,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Menu', 'Surface', 'Text'],
+    internalDeps: ['Menu', 'Text'],
   }],
 
   // Floating / Portal
@@ -326,7 +305,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Surface', 'Text'],
+    internalDeps: ['Text'],
   }],
   ['Menu', {
     title: 'Menu',
@@ -381,7 +360,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Surface', 'Text'],
+    internalDeps: ['Text'],
   }],
 
   // Complex & Utility
@@ -404,7 +383,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Text', 'Surface', 'Skeleton'],
+    internalDeps: ['Text', 'Skeleton'],
   }],
   ['EmptyState', {
     title: 'EmptyState',
@@ -460,7 +439,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Surface'],
+    internalDeps: [],
   }],
 
   // Classic
@@ -578,7 +557,7 @@ const COMPONENTS = [
     },
     usesTokens: true,
     usesIcons: false,
-    internalDeps: ['Surface', 'Text'],
+    internalDeps: ['Text'],
     usageNotes: 'Place <ToastContainer /> once at app root. Then call toast.success("Done!") anywhere.',
   }],
 ];

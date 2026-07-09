@@ -23,10 +23,6 @@
           "note": "Used internally by Select. Bundled in @ds-mo/ui."
         },
         {
-          "component": "Surface",
-          "note": "Used internally by Select. Bundled in @ds-mo/ui."
-        },
-        {
           "component": "Text",
           "note": "Used internally by Select. Bundled in @ds-mo/ui."
         }
@@ -80,7 +76,6 @@
   ],
   "registryDependencies": [
     "menu",
-    "surface",
     "text"
   ],
   "files": [

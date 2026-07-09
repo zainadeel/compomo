@@ -35,7 +35,6 @@ import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
-import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
@@ -74,7 +73,6 @@ export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
-export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
@@ -943,42 +941,6 @@ export namespace Components {
         "value": number;
         "valueText": string | undefined;
     }
-    interface DsSurface {
-        /**
-          * @default 'div'
-         */
-        "as": SurfaceElement;
-        /**
-          * @default 'transparent'
-         */
-        "background": SurfaceBackground;
-        /**
-          * @default 'faint'
-         */
-        "contrast": SurfaceContrast;
-        /**
-          * Space-separated list of edges: "top bottom" etc. Only applies when elevation='none'.
-         */
-        "edge": string | undefined;
-        /**
-          * @default 'none'
-         */
-        "elevation": SurfaceElevation;
-        "intent": SurfaceIntent | undefined;
-        /**
-          * @default false
-         */
-        "interactive": boolean;
-        /**
-          * @default false
-         */
-        "isInactive": boolean;
-        "radius": SurfaceRadius | undefined;
-        /**
-          * @default false
-         */
-        "selected": boolean;
-    }
     interface DsTabGroup {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
@@ -1759,12 +1721,6 @@ declare global {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
     };
-    interface HTMLDsSurfaceElement extends Components.DsSurface, HTMLStencilElement {
-    }
-    var HTMLDsSurfaceElement: {
-        prototype: HTMLDsSurfaceElement;
-        new (): HTMLDsSurfaceElement;
-    };
     interface HTMLDsTabGroupElementEventMap {
         "dsChange": string;
     }
@@ -1912,7 +1868,6 @@ declare global {
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
-        "ds-surface": HTMLDsSurfaceElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tab-group-nav": HTMLDsTabGroupNavElement;
         "ds-table": HTMLDsTableElement;
@@ -2852,42 +2807,6 @@ declare namespace LocalJSX {
         "value"?: number;
         "valueText"?: string | undefined;
     }
-    interface DsSurface {
-        /**
-          * @default 'div'
-         */
-        "as"?: SurfaceElement;
-        /**
-          * @default 'transparent'
-         */
-        "background"?: SurfaceBackground;
-        /**
-          * @default 'faint'
-         */
-        "contrast"?: SurfaceContrast;
-        /**
-          * Space-separated list of edges: "top bottom" etc. Only applies when elevation='none'.
-         */
-        "edge"?: string | undefined;
-        /**
-          * @default 'none'
-         */
-        "elevation"?: SurfaceElevation;
-        "intent"?: SurfaceIntent | undefined;
-        /**
-          * @default false
-         */
-        "interactive"?: boolean;
-        /**
-          * @default false
-         */
-        "isInactive"?: boolean;
-        "radius"?: SurfaceRadius | undefined;
-        /**
-          * @default false
-         */
-        "selected"?: boolean;
-    }
     interface DsTabGroup {
         "ariaLabel"?: string | undefined;
         "ariaLabelledby"?: string | undefined;
@@ -3345,18 +3264,6 @@ declare namespace LocalJSX {
         "valueText": string | undefined;
         "inputId": string | undefined;
     }
-    interface DsSurfaceAttributes {
-        "background": SurfaceBackground;
-        "intent": SurfaceIntent | undefined;
-        "contrast": SurfaceContrast;
-        "elevation": SurfaceElevation;
-        "edge": string | undefined;
-        "radius": SurfaceRadius | undefined;
-        "interactive": boolean;
-        "selected": boolean;
-        "isInactive": boolean;
-        "as": SurfaceElement;
-    }
     interface DsTabGroupAttributes {
         "value": string;
         "background": TabBackground | undefined;
@@ -3460,7 +3367,6 @@ declare namespace LocalJSX {
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
-        "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tab-group-nav": Omit<DsTabGroupNav, keyof DsTabGroupNavAttributes> & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes]?: DsTabGroupNav[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `attr:${K}`]?: DsTabGroupNavAttributes[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `prop:${K}`]?: DsTabGroupNav[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
@@ -3528,7 +3434,6 @@ declare module "@stencil/core" {
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
-            "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tab-group-nav": LocalJSX.IntrinsicElements["ds-tab-group-nav"] & JSXBase.HTMLAttributes<HTMLDsTabGroupNavElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;

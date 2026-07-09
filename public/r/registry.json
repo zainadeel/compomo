@@ -77,67 +77,6 @@
       "registryDependencies": []
     },
     {
-      "name": "surface",
-      "title": "Surface",
-      "description": "Foundational container with intent-based or background-based coloring, elevation, edges, radius, and interactive states.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/surface",
-        "exports": [
-          "Surface"
-        ],
-        "props": {
-          "intent": {
-            "type": "'brand' | 'positive' | 'negative' | 'warning' | 'caution' | 'ai' | 'neutral' | 'walkthrough' | 'guide'",
-            "required": false
-          },
-          "contrast": {
-            "type": "'faint' | 'medium' | 'bold' | 'strong'",
-            "required": false
-          },
-          "background": {
-            "type": "'primary' | 'secondary' | 'transparent' | 'translucent'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'depressed' | 'depressed-md' | 'flat' | 'elevated' | 'floating' | 'overlayTop' | 'overlayRight' | 'overlayBottom' | 'overlayLeft'",
-            "required": false
-          },
-          "edge": {
-            "type": "SurfaceEdge | SurfaceEdge[]",
-            "required": false
-          },
-          "radius": {
-            "type": "'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | string",
-            "required": false
-          },
-          "interactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "selected": {
-            "type": "boolean",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "as": {
-            "type": "'div' | 'section' | 'aside' | 'article' | 'header' | 'footer' | 'main' | 'nav' | 'span' | 'button' | 'td' | 'th'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
       "name": "card-setting",
       "title": "CardSetting",
       "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
@@ -738,7 +677,6 @@
       ],
       "registryDependencies": [
         "menu",
-        "surface",
         "text"
       ]
     },
@@ -790,7 +728,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "surface",
         "text"
       ]
     },
@@ -934,7 +871,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "surface",
         "text"
       ]
     },
@@ -999,7 +935,6 @@
       ],
       "registryDependencies": [
         "text",
-        "surface",
         "skeleton"
       ]
     },
@@ -1135,9 +1070,7 @@
         "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
-      "registryDependencies": [
-        "surface"
-      ]
+      "registryDependencies": []
     },
     {
       "name": "radio-group",
@@ -1426,7 +1359,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "surface",
         "text"
       ]
     }

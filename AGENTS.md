@@ -276,7 +276,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled-icon`, `ds-chip`, `ds-checkbox`, `ds-toggle`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-surface`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled-icon`, `ds-chip`, `ds-checkbox`, `ds-toggle`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 

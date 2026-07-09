@@ -23,10 +23,6 @@
           "note": "Used internally by Table. Bundled in @ds-mo/ui."
         },
         {
-          "component": "Surface",
-          "note": "Used internally by Table. Bundled in @ds-mo/ui."
-        },
-        {
           "component": "Skeleton",
           "note": "Used internally by Table. Bundled in @ds-mo/ui."
         }
@@ -95,7 +91,6 @@
   ],
   "registryDependencies": [
     "text",
-    "surface",
     "skeleton"
   ],
   "files": [

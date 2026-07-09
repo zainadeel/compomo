@@ -17,12 +17,6 @@
         "react": "<ds-header></ds-header>",
         "angular": "<ds-header></ds-header>"
       },
-      "internalDependencies": [
-        {
-          "component": "Surface",
-          "note": "Used internally by Header. Bundled in @ds-mo/ui."
-        }
-      ],
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens >=2.9.0",
@@ -52,9 +46,7 @@
     "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
-  "registryDependencies": [
-    "surface"
-  ],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/wc/components/Header/Header.css",
