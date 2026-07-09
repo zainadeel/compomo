@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.11.0](https://github.com/zainadeel/compomo/compare/v2.10.4...v2.11.0) (2026-07-09)
+
+
+### Added
+
+* add data-viz chart components ([b4a7662](https://github.com/zainadeel/compomo/commit/b4a7662b4b7d7f7ecf123a09eebe9ddcb60ae00e))
+* add data-viz chart components ([696e47b](https://github.com/zainadeel/compomo/commit/696e47b4dcb35ed4b8d1ba98bb58f7f18277819f))
+
+
+### Fixed
+
+* restore menu-placement re-export in components.d.ts ([e4b57bf](https://github.com/zainadeel/compomo/commit/e4b57bf9b4ffcae4727dff9cc200831fc7b51260))
+
+
+### Documentation
+
+* capture data-viz session learnings in AGENTS.md ([6525bb5](https://github.com/zainadeel/compomo/commit/6525bb5746007896a407423c2320b6792e4aea6b))
+
 ## [2.10.4](https://github.com/zainadeel/compomo/compare/v2.10.3...v2.10.4) (2026-07-08)
 
 
