@@ -19,7 +19,7 @@ const VARIANTS = ['label', 'icon', 'icon-label'] as const;
 const SIZES = ['md', 'sm', 'xs'] as const;
 
 const meta: Meta = {
-  title: 'Actions/ButtonFilled',
+  title: 'Primitives/ButtonFilled',
   tags: ['autodocs'],
   argTypes: {
     variant: { control: 'select', options: [...VARIANTS] },

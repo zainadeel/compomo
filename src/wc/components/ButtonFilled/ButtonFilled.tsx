@@ -17,11 +17,11 @@ export type ButtonFilledVariant = 'icon' | 'label' | 'icon-label';
 
 export type ButtonFilledSize = 'md' | 'sm' | 'xs';
 
-/** Text variant per control-density recipe (md / sm / xs). */
+/** Emphasis text per control-density size (buttons use emphasis, unlike Tag). */
 const TEXT_VARIANT: Record<ButtonFilledSize, string> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
+  md: 'text-body-medium-emphasis',
+  sm: 'text-body-small-emphasis',
+  xs: 'text-caption-emphasis',
 };
 
 /**

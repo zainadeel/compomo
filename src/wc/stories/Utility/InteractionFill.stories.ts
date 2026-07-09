@@ -42,7 +42,11 @@ export const Overview: Story = {
         <div class="util-demo-row">
           ${control('Idle', 'ds-interaction-fill')}
           ${control('Selected', 'ds-interaction-fill ds-interaction-fill--selected')}
-          ${control('Bordered', 'ds-interaction-fill util-demo-control--bordered')}
+          ${control('Bordered', 'ds-interaction-fill ds-interaction-fill--bordered')}
+          ${control(
+            'Selected + border',
+            'ds-interaction-fill ds-interaction-fill--selected ds-interaction-fill--bordered',
+          )}
         </div>
       </div>
 

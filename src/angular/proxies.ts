@@ -112,36 +112,6 @@ export declare interface DsBarNav extends Components.DsBarNav {
 
 
 @ProxyCmp({
-  inputs: ['items', 'separator']
-})
-@Component({
-  selector: 'ds-breadcrumb',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['items', 'separator'],
-  outputs: ['dsNavigate'],
-  standalone: false
-})
-export class DsBreadcrumb {
-  protected el: HTMLDsBreadcrumbElement;
-  @Output() dsNavigate = new EventEmitter<CustomEvent<{ item: IDsBreadcrumbBreadcrumbItem; index: number }>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-import type { BreadcrumbItem as IDsBreadcrumbBreadcrumbItem } from '@ds-mo/ui';
-
-export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
-
-  dsNavigate: EventEmitter<CustomEvent<{ item: IDsBreadcrumbBreadcrumbItem; index: number }>>;
-}
-
-
-@ProxyCmp({
   inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
   methods: ['setFocus']
 })
@@ -1127,29 +1097,6 @@ export declare interface DsText extends Components.DsText {}
 
 
 @ProxyCmp({
-  inputs: ['position']
-})
-@Component({
-  selector: 'ds-toast-provider',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['position'],
-  standalone: false
-})
-export class DsToastProvider {
-  protected el: HTMLDsToastProviderElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsToastProvider extends Components.DsToastProvider {}
-
-
-@ProxyCmp({
   inputs: ['checked', 'isInactive']
 })
 @Component({
@@ -1178,14 +1125,14 @@ export declare interface DsToggle extends Components.DsToggle {
 
 
 @ProxyCmp({
-  inputs: ['align', 'alignOffset', 'delay', 'label', 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset']
+  inputs: ['align', 'alignOffset', 'delay', 'label', 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset', 'size']
 })
 @Component({
   selector: 'ds-tooltip',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'alignOffset', 'delay', { name: 'label', required: true }, 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset'],
+  inputs: ['align', 'alignOffset', 'delay', { name: 'label', required: true }, 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset', 'size'],
   standalone: false
 })
 export class DsTooltip {
@@ -1201,14 +1148,14 @@ export declare interface DsTooltip extends Components.DsTooltip {}
 
 
 @ProxyCmp({
-  inputs: ['label', 'value', 'x', 'y']
+  inputs: ['delay', 'label', 'value', 'x', 'y']
 })
 @Component({
   selector: 'ds-tooltip-data-viz',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['label', 'value', 'x', 'y'],
+  inputs: ['delay', 'label', 'value', 'x', 'y'],
   standalone: false
 })
 export class DsTooltipDataViz {

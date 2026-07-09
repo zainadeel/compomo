@@ -10,7 +10,6 @@ import { ShellGradientPreset } from "./nav/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
@@ -40,14 +39,12 @@ import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
-import { ToastPosition } from "./components/Toast/Toast";
-import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
+import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { NavChromeStyle } from "./nav/nav-chrome";
 export { ShellGradientPreset } from "./nav/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
@@ -77,8 +74,7 @@ export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
-export { ToastPosition } from "./components/Toast/Toast";
-export { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
+export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAppShell {
         /**
@@ -215,16 +211,6 @@ export namespace Components {
          */
         "value": string;
     }
-    interface DsBreadcrumb {
-        /**
-          * @default []
-         */
-        "items": BreadcrumbItem[];
-        /**
-          * @default '/'
-         */
-        "separator": string;
-    }
     interface DsButtonFilled {
         "ariaLabel": string | undefined;
         /**
@@ -271,7 +257,7 @@ export namespace Components {
     }
     interface DsButtonUnfilled {
         /**
-          * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
           * @default true
          */
         "activeFill": boolean;
@@ -296,8 +282,8 @@ export namespace Components {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary border without changing the interaction model.
-          * @default false
+          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * @default true
          */
         "hasBorder": boolean;
         "haspopup": string | undefined;
@@ -388,7 +374,7 @@ export namespace Components {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. External sync dims slices only — the data-viz tooltip is reserved for this component's own pointer/keyboard interaction.
           * @default null
          */
         "activeLabel": string | null;
@@ -1071,12 +1057,6 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
-    interface DsToastProvider {
-        /**
-          * @default 'top-center'
-         */
-        "position": ToastPosition;
-    }
     interface DsToggle {
         /**
           * @default false
@@ -1087,6 +1067,12 @@ export namespace Components {
          */
         "isInactive": boolean;
     }
+    /**
+     * Imperative body portal for the popup.
+     * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+     * causes recreate → re-portal →
+     * @State loops that freeze the page.
+     */
     interface DsTooltip {
         /**
           * @default 'center'
@@ -1098,8 +1084,8 @@ export namespace Components {
          */
         "alignOffset": number | string;
         /**
-          * Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`.
-          * @default TOKEN_DEFAULTS.animationDelayMedium1
+          * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
+          * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
         "delay": number | string;
         "label": string;
@@ -1117,6 +1103,11 @@ export namespace Components {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset": number | string;
+        /**
+          * Control density (height, padding, type).
+          * @default 'md'
+         */
+        "size": TooltipSize;
     }
     /**
      * Positioned value/label callout for chart hover interactions (donut slice, bar,
@@ -1127,8 +1118,15 @@ export namespace Components {
      * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
      * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
      * keeps it on-screen.
+     * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+     * keep the instance mounted while the cursor moves so tracking stays instant.
      */
     interface DsTooltipDataViz {
+        /**
+          * Show delay after mount before the callout appears. Default: `--effect-animation-delay-instant` (0ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Charts need immediate feedback while scrubbing; prefer the default. Mount once per hover session so any non-zero delay runs once, then track `x`/`y` instantly.
+          * @default TOKEN_DEFAULTS.animationDelayInstant
+         */
+        "delay": number | string;
         /**
           * @default ''
          */
@@ -1155,10 +1153,6 @@ export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
 export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarNavElement;
-}
-export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsBreadcrumbElement;
 }
 export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1294,23 +1288,6 @@ declare global {
     var HTMLDsBarNavElement: {
         prototype: HTMLDsBarNavElement;
         new (): HTMLDsBarNavElement;
-    };
-    interface HTMLDsBreadcrumbElementEventMap {
-        "dsNavigate": { item: BreadcrumbItem; index: number };
-    }
-    interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsBreadcrumbElement: {
-        prototype: HTMLDsBreadcrumbElement;
-        new (): HTMLDsBreadcrumbElement;
     };
     interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
@@ -1782,12 +1759,6 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
-    interface HTMLDsToastProviderElement extends Components.DsToastProvider, HTMLStencilElement {
-    }
-    var HTMLDsToastProviderElement: {
-        prototype: HTMLDsToastProviderElement;
-        new (): HTMLDsToastProviderElement;
-    };
     interface HTMLDsToggleElementEventMap {
         "dsChange": boolean;
     }
@@ -1805,6 +1776,12 @@ declare global {
         prototype: HTMLDsToggleElement;
         new (): HTMLDsToggleElement;
     };
+    /**
+     * Imperative body portal for the popup.
+     * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+     * causes recreate → re-portal →
+     * @State loops that freeze the page.
+     */
     interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
     }
     var HTMLDsTooltipElement: {
@@ -1820,6 +1797,8 @@ declare global {
      * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
      * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
      * keeps it on-screen.
+     * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+     * keep the instance mounted while the cursor moves so tracking stays instant.
      */
     interface HTMLDsTooltipDataVizElement extends Components.DsTooltipDataViz, HTMLStencilElement {
     }
@@ -1832,7 +1811,6 @@ declare global {
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
-        "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-card-data-viz": HTMLDsCardDataVizElement;
@@ -1867,7 +1845,6 @@ declare global {
         "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
-        "ds-toast-provider": HTMLDsToastProviderElement;
         "ds-toggle": HTMLDsToggleElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-data-viz": HTMLDsTooltipDataVizElement;
@@ -2016,17 +1993,6 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    interface DsBreadcrumb {
-        /**
-          * @default []
-         */
-        "items"?: BreadcrumbItem[];
-        "onDsNavigate"?: (event: DsBreadcrumbCustomEvent<{ item: BreadcrumbItem; index: number }>) => void;
-        /**
-          * @default '/'
-         */
-        "separator"?: string;
-    }
     interface DsButtonFilled {
         "ariaLabel"?: string | undefined;
         /**
@@ -2073,7 +2039,7 @@ declare namespace LocalJSX {
     }
     interface DsButtonUnfilled {
         /**
-          * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
           * @default true
          */
         "activeFill"?: boolean;
@@ -2098,8 +2064,8 @@ declare namespace LocalJSX {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary border without changing the interaction model.
-          * @default false
+          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * @default true
          */
         "hasBorder"?: boolean;
         "haspopup"?: string | undefined;
@@ -2195,7 +2161,7 @@ declare namespace LocalJSX {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. External sync dims slices only — the data-viz tooltip is reserved for this component's own pointer/keyboard interaction.
           * @default null
          */
         "activeLabel"?: string | null;
@@ -2939,12 +2905,6 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
-    interface DsToastProvider {
-        /**
-          * @default 'top-center'
-         */
-        "position"?: ToastPosition;
-    }
     interface DsToggle {
         /**
           * @default false
@@ -2956,6 +2916,12 @@ declare namespace LocalJSX {
         "isInactive"?: boolean;
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
     }
+    /**
+     * Imperative body portal for the popup.
+     * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+     * causes recreate → re-portal →
+     * @State loops that freeze the page.
+     */
     interface DsTooltip {
         /**
           * @default 'center'
@@ -2967,8 +2933,8 @@ declare namespace LocalJSX {
          */
         "alignOffset"?: number | string;
         /**
-          * Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`.
-          * @default TOKEN_DEFAULTS.animationDelayMedium1
+          * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
+          * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
         "delay"?: number | string;
         "label": string;
@@ -2986,6 +2952,11 @@ declare namespace LocalJSX {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset"?: number | string;
+        /**
+          * Control density (height, padding, type).
+          * @default 'md'
+         */
+        "size"?: TooltipSize;
     }
     /**
      * Positioned value/label callout for chart hover interactions (donut slice, bar,
@@ -2996,8 +2967,15 @@ declare namespace LocalJSX {
      * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
      * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
      * keeps it on-screen.
+     * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+     * keep the instance mounted while the cursor moves so tracking stays instant.
      */
     interface DsTooltipDataViz {
+        /**
+          * Show delay after mount before the callout appears. Default: `--effect-animation-delay-instant` (0ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Charts need immediate feedback while scrubbing; prefer the default. Mount once per hover session so any non-zero delay runs once, then track `x`/`y` instantly.
+          * @default TOKEN_DEFAULTS.animationDelayInstant
+         */
+        "delay"?: number | string;
         /**
           * @default ''
          */
@@ -3050,9 +3028,6 @@ declare namespace LocalJSX {
         "heading": string | undefined;
         "basePath": string;
         "currentUrl": string;
-    }
-    interface DsBreadcrumbAttributes {
-        "separator": string;
     }
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
@@ -3304,15 +3279,13 @@ declare namespace LocalJSX {
         "as": TextElement;
         "for": string | undefined;
     }
-    interface DsToastProviderAttributes {
-        "position": ToastPosition;
-    }
     interface DsToggleAttributes {
         "checked": boolean;
         "isInactive": boolean;
     }
     interface DsTooltipAttributes {
         "label": string;
+        "size": TooltipSize;
         "side": TooltipSide;
         "align": TooltipAlign;
         "sideOffset": string;
@@ -3326,6 +3299,7 @@ declare namespace LocalJSX {
         "label": string;
         "x": number;
         "y": number;
+        "delay": string;
     }
 
     interface IntrinsicElements {
@@ -3333,7 +3307,6 @@ declare namespace LocalJSX {
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
-        "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
@@ -3368,7 +3341,6 @@ declare namespace LocalJSX {
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
-        "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-data-viz": Omit<DsTooltipDataViz, keyof DsTooltipDataVizAttributes> & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes]?: DsTooltipDataViz[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `attr:${K}`]?: DsTooltipDataVizAttributes[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `prop:${K}`]?: DsTooltipDataViz[K] };
@@ -3382,7 +3354,6 @@ declare module "@stencil/core" {
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
-            "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
@@ -3434,8 +3405,13 @@ declare module "@stencil/core" {
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
-            "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            /**
+             * Imperative body portal for the popup.
+             * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+             * causes recreate → re-portal →
+             * @State loops that freeze the page.
+             */
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             /**
              * Positioned value/label callout for chart hover interactions (donut slice, bar,
@@ -3446,6 +3422,8 @@ declare module "@stencil/core" {
              * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
              * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
              * keeps it on-screen.
+             * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+             * keep the instance mounted while the cursor moves so tracking stays instant.
              */
             "ds-tooltip-data-viz": LocalJSX.IntrinsicElements["ds-tooltip-data-viz"] & JSXBase.HTMLAttributes<HTMLDsTooltipDataVizElement>;
         }

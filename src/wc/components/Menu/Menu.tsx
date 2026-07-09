@@ -357,7 +357,7 @@ export class Menu {
               aria-label={section.header}
             >
               {section.header && (
-                <div class="section-header" aria-hidden="true">
+                <div class="section-header ds-control--md" aria-hidden="true">
                   <span class="text-body-small-emphasis section-label">{section.header}</span>
                 </div>
               )}
@@ -379,6 +379,7 @@ export class Menu {
                     type="button"
                     class={{
                       'menu-item': true,
+                      'ds-control--md': true,
                       'ds-focus-ring-inset': true,
                       'ds-focus-ring--visible': isFocused && this.focusRingVisible,
                       'ds-interaction-fill': !item.isInactive,
@@ -396,7 +397,7 @@ export class Menu {
                     onClick={() => this.handleItemClick(item)}
                     onFocus={() => { this.focusedIndex = idx; }}
                   >
-                    <div class="menu-item__content">
+                    <div class="menu-item__content ds-interaction-fill__content">
                       <span class={item.isSelected ? 'text-body-medium-emphasis menu-item__label' : 'text-body-medium menu-item__label'}>
                         {item.label}
                       </span>
@@ -405,7 +406,7 @@ export class Menu {
                       )}
                     </div>
                     {item.showToggle && (
-                      <div class={{ 'menu-item__toggle': true, 'menu-item__toggle--on': !!item.toggleValue }} aria-hidden="true">
+                      <div class={{ 'menu-item__toggle': true, 'menu-item__toggle--on': !!item.toggleValue, 'ds-interaction-fill__content': true }} aria-hidden="true">
                         <div class="menu-item__toggle-thumb" />
                       </div>
                     )}

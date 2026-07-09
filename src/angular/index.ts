@@ -6,7 +6,6 @@ export const DIRECTIVES = [
   d.DsBadge,
   d.DsBanner,
   d.DsBarNav,
-  d.DsBreadcrumb,
   d.DsButtonFilled,
   d.DsButtonUnfilled,
   d.DsCardDataViz,
@@ -41,7 +40,6 @@ export const DIRECTIVES = [
   d.DsTable,
   d.DsTag,
   d.DsText,
-  d.DsToastProvider,
   d.DsToggle,
   d.DsTooltip,
   d.DsTooltipDataViz

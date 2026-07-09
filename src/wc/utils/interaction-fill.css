@@ -9,7 +9,7 @@
  *   1. Element background (intent / surface)
  *   2. `::before` — selected / active (opt-in via `.ds-interaction-fill--selected`)
  *   3. Label / icon / badge content (`.ds-interaction-fill__content` or z-index: 2)
- *   4. `::after` — hover / press (+ inset focus ring) — topmost wash over content + dots
+ *   4. `::after` — hover / press wash + optional inset border + inset focus ring
  *
  * Apply `.ds-interaction-fill` on the interactive element (host or inner row).
  * Omit `.ds-interaction-fill--selected` when chrome wants icon-color-only
@@ -20,6 +20,11 @@
  * covered; raise label/icon with `.ds-interaction-fill__content` (z-index: 2)
  * — never above `::after` (z-index: 3).
  *
+ * Inset borders must paint on `::after` (not the element’s own `box-shadow`)
+ * so the stroke stays visible above selected / hover washes. Set
+ * `--ds-interaction-border-*` or use `.ds-interaction-fill--bordered`.
+ * Do not use a layout `border` on interaction targets.
+ *
  * If the control uses `all: unset`, re-assert `position: relative; z-index: 0`
  * after the unset so this util’s stacking context still applies.
  *
@@ -27,11 +32,8 @@
  *   `.ds-interaction-fill--on-medium|bold|strong|always-dark|navigation`
  *
  * Override hooks: `--ds-interaction-hover`, `--ds-interaction-pressed`,
- * `--ds-interaction-active`.
- *
- * Borders on interaction targets must be inset (inside the fixed height) so
- * fills cover the stroke edge — use inset box-shadow, not layout `border`.
- * See AGENTS.md "Interaction fill" / ButtonUnfilled--bordered.
+ * `--ds-interaction-active`, `--ds-interaction-border-color`,
+ * `--ds-interaction-border-width`.
  *
  * @see AGENTS.md — "Interaction fill"
  */
@@ -43,6 +45,9 @@
   --ds-interaction-hover: var(--color-interaction-hover);
   --ds-interaction-pressed: var(--color-interaction-pressed);
   --ds-interaction-active: var(--color-interaction-active);
+  /* Inset stroke on ::after — default off (transparent / zero width). */
+  --ds-interaction-border-width: 0px;
+  --ds-interaction-border-color: transparent;
 }
 
 :host(.ds-interaction-fill)::before,
@@ -58,7 +63,7 @@
   transition: none;
 }
 
-/* Layer stack (bottom → top): selected → content → hover/press (topmost). */
+/* Layer stack (bottom → top): selected → content → hover/press + border (topmost). */
 :host(.ds-interaction-fill)::before,
 .ds-interaction-fill::before {
   z-index: 1;
@@ -67,11 +72,33 @@
 :host(.ds-interaction-fill)::after,
 .ds-interaction-fill::after {
   z-index: 3;
+  /* Border above selected (::before) and this pseudo’s own hover wash. */
+  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
+}
+
+/* Opt-in tertiary inset border (override color via `--ds-interaction-border-color`). */
+:host(.ds-interaction-fill--bordered),
+.ds-interaction-fill--bordered {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--color-border-tertiary);
 }
 
 :host(.ds-interaction-fill--selected)::before,
 .ds-interaction-fill--selected::before {
   background: var(--ds-interaction-active);
+}
+
+/*
+ * Notification-dot halo: when selected fill is on, set `--ds-interaction-dot-ring`
+ * to the active wash so rings can match. Prefer also remapping the consumer’s
+ * surface ring token (e.g. `--ds-button-unfilled-dot-ring`) or passing
+ * `background="var(--ds-interaction-active)"` from the parent when selected —
+ * custom-property fallbacks through nested scoped hosts are easy to miss.
+ * Omit `--selected` (chrome `activeFill={false}`) to keep the surface ring.
+ */
+:host(.ds-interaction-fill--selected),
+.ds-interaction-fill--selected {
+  --ds-interaction-dot-ring: var(--ds-interaction-active);
 }
 
 :host(.ds-interaction-fill:hover:not(:disabled))::after,

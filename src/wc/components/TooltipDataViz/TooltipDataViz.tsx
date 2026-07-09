@@ -1,4 +1,5 @@
 import { Component, Prop, State, Element, Watch, h, Host } from '@stencil/core';
+import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 const CURSOR_OFFSET_PX = 12;
 const VIEWPORT_PAD_PX = 8;
@@ -16,6 +17,9 @@ export type TooltipDataVizAlign = 'top' | 'bottom';
  * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
  * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
  * keeps it on-screen.
+ *
+ * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+ * keep the instance mounted while the cursor moves so tracking stays instant.
  */
 @Component({
   tag: 'ds-tooltip-data-viz',
@@ -31,17 +35,65 @@ export class TooltipDataViz {
   @Prop() x: number = 0;
   @Prop() y: number = 0;
 
+  /**
+   * Show delay after mount before the callout appears.
+   * Default: `--effect-animation-delay-instant` (0ms). Accepts a number (ms)
+   * or a TokoMo time token / `var(--effect-animation-delay-*)`. Charts need
+   * immediate feedback while scrubbing; prefer the default. Mount once per
+   * hover session so any non-zero delay runs once, then track `x`/`y` instantly.
+   */
+  @Prop() delay: number | string = TOKEN_DEFAULTS.animationDelayInstant;
+
   @State() private side: TooltipDataVizSide = 'right';
   @State() private align: TooltipDataVizAlign = 'bottom';
+  @State() private visible: boolean = false;
+
+  private delayTimer: ReturnType<typeof setTimeout> | null = null;
 
   componentDidLoad() {
+    this.scheduleShow();
     this.calculatePlacement();
+  }
+
+  disconnectedCallback() {
+    this.clearDelayTimer();
   }
 
   @Watch('x')
   @Watch('y')
   onAnchorChange() {
     requestAnimationFrame(() => this.calculatePlacement());
+  }
+
+  @Watch('delay')
+  onDelayChange() {
+    if (!this.visible) this.scheduleShow();
+  }
+
+  private get showDelayMs(): number {
+    return resolveCssTimeMs(this.delay, TOKEN_DEFAULTS.animationDelayInstant);
+  }
+
+  private clearDelayTimer() {
+    if (this.delayTimer) {
+      clearTimeout(this.delayTimer);
+      this.delayTimer = null;
+    }
+  }
+
+  private scheduleShow() {
+    this.clearDelayTimer();
+    this.visible = false;
+    const ms = this.showDelayMs;
+    if (ms <= 0) {
+      this.visible = true;
+      return;
+    }
+    this.delayTimer = setTimeout(() => {
+      this.delayTimer = null;
+      this.visible = true;
+      requestAnimationFrame(() => this.calculatePlacement());
+    }, ms);
   }
 
   private calculatePlacement() {
@@ -61,7 +113,10 @@ export class TooltipDataViz {
 
     return (
       <Host
-        class="tooltip-data-viz"
+        class={{
+          'tooltip-data-viz': true,
+          'tooltip-data-viz--visible': this.visible,
+        }}
         style={{ left: `${this.x}px`, top: `${this.y}px`, transform: `translate(${translateX}, ${translateY})` }}
       >
         <div class="tooltip-data-viz__item ds-control--md">

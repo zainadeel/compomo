@@ -8,11 +8,11 @@ export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
 
 export type ButtonUnfilledSize = 'md' | 'sm' | 'xs';
 
-/** Text variant per control-density recipe (md / sm / xs). */
+/** Emphasis text per control-density size (buttons use emphasis, unlike Tag). */
 const TEXT_VARIANT: Record<ButtonUnfilledSize, string> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
+  md: 'text-body-medium-emphasis',
+  sm: 'text-body-small-emphasis',
+  xs: 'text-caption-emphasis',
 };
 
 /**
@@ -51,11 +51,15 @@ export class ButtonUnfilled {
   /** Active/selected visual state. */
   @Prop() isActive: boolean = false;
 
-  /** When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour. */
+  /**
+   * When active, render the selected interaction fill.
+   * Default `true` for general UI. Shell chrome (nav / tool rails) should pass
+   * `false` so selection is foreground-only.
+   */
   @Prop() activeFill: boolean = true;
 
-  /** Show a 1px tertiary border without changing the interaction model. */
-  @Prop() hasBorder: boolean = false;
+  /** Show a 1px tertiary inset border. Default on; shell chrome can pass `false`. */
+  @Prop() hasBorder: boolean = true;
 
   /** Show a notification dot at the top-right of the icon zone (icon variant only). */
   @Prop() dot: boolean = false;
@@ -120,6 +124,14 @@ export class ButtonUnfilled {
     return this.variant === 'icon' && this.dot;
   }
 
+  /** Knock-out ring: selected fill → active wash; otherwise surface token. */
+  private get dotRing(): string {
+    if (this.isActive && this.activeFill) {
+      return 'var(--ds-interaction-active)';
+    }
+    return 'var(--ds-button-unfilled-dot-ring)';
+  }
+
   private get accessibleName(): string | undefined {
     if (this.ariaLabel) return this.ariaLabel;
     if (this.showLabel && this.label) return undefined;
@@ -136,7 +148,7 @@ export class ButtonUnfilled {
     const cls: Record<string, boolean> = {
       'button-unfilled': true,
       'ds-focus-ring-inset': true,
-      'ds-interaction-fill': !this.isInactive,
+      'ds-interaction-fill': true,
       'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
       'ds-interaction-fill--on-medium': contrast === 'medium',
       'ds-interaction-fill--on-bold': contrast === 'bold',
@@ -192,7 +204,7 @@ export class ButtonUnfilled {
                 <ds-badge
                   class="button-unfilled__dot"
                   variant="dot"
-                  background="var(--ds-button-unfilled-dot-ring)"
+                  background={this.dotRing}
                   label=""
                   aria-hidden="true"
                 />

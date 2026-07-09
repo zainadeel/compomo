@@ -58,6 +58,8 @@
   display: flex;
   justify-content: center;
   padding: var(--dimension-space-400) var(--dimension-space-400) 0 var(--dimension-space-400);
+  /* Cursor-following tooltip may extend past the chart; don't clip it here. */
+  overflow: visible;
 }
 
 /* 8px here + the legend item's own 6px padding + the legend text's own 2px padding = 16px total. */

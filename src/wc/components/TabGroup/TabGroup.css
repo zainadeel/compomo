@@ -52,8 +52,13 @@
 .tab--selected {
   color: var(--color-foreground-primary);
   background-color: var(--color-background-primary);
-  /* Inset stroke so hover/press overlay covers the border edge (not a 1px halo outside). */
-  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
+  /* Inset stroke on interaction-fill ::after — stays above hover wash. */
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--color-border-tertiary);
+}
+
+.tab--selected:not(.ds-interaction-fill) {
+  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
 /* Inactive: `.ds-control-inactive` (25% opacity) — applied via class in TSX. */

@@ -70,6 +70,18 @@ const preview: Preview = {
           'Foundation',
           ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
           'Primitives',
+          [
+            'Text',
+            'Icon',
+            'ButtonFilled',
+            'ButtonUnfilled',
+            'Tag',
+            'Chip',
+            'Badge',
+            'Divider',
+            'Loader',
+            'Skeleton',
+          ],
           'Utility',
           [
             'InteractionFill',

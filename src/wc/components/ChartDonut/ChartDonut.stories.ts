@@ -157,7 +157,9 @@ export const CenterTextTruncation: Story = {
  * by `label`) plus a deep-linkable legend row (`item.href`) — "Out of Service" navigates via a
  * real `<a>`; click is intercepted here only so the demo doesn't leave Storybook.
  *
- * Both directions only dim opacity — neither shows a tooltip or a hover-fill on the other side.
+ * Both directions only dim opacity — neither shows a hover-fill on the other side.
+ * The donut's data-viz tooltip only appears for real pointer/keyboard interaction on
+ * a slice (not when the legend syncs `activeLabel`).
  * Legend rows keep their own hover-fill (`:hover`/`:focus-visible` in CSS) for real pointer/
  * keyboard interaction, since that's a "you can click here" affordance that shouldn't appear just
  * because the donut was hovered.

@@ -113,7 +113,7 @@ const COMPONENTS = [
       icon: { type: 'string', description: 'Canonical IcoMo icon export name for icon / icon-label variants.' },
       isActive: { type: 'boolean', default: 'false', description: 'Active/selected state. Active always promotes icon/label color.' },
       activeFill: { type: 'boolean', default: 'true', description: 'Set false for shell chrome that needs active color without active fill.' },
-      hasBorder: { type: 'boolean', default: 'false', description: 'Adds a tertiary 1px inset border.' },
+      hasBorder: { type: 'boolean', default: 'true', description: 'Tertiary 1px inset border. Default on; shell chrome should pass false.' },
       dot: { type: 'boolean', default: 'false', description: 'Notification dot (icon variant only).' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
       backgroundContrast: { type: "'default' | 'medium' | 'bold' | 'strong'", description: 'Parent surface contrast for interaction and focus tokens.' },
@@ -336,15 +336,21 @@ const COMPONENTS = [
   }],
   ['Tooltip', {
     title: 'Tooltip',
-    description: 'Positioned tooltip with portal rendering, delay, keyboard shortcut display, and viewport clamping.',
+    description: 'Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping.',
     exports: ['Tooltip'],
-    types: ['TooltipProps', 'TooltipSide', 'TooltipAlign'],
+    types: ['TooltipProps', 'TooltipSide', 'TooltipAlign', 'TooltipSize'],
     props: {
       label: { type: 'string', required: true },
+      size: { type: "'md' | 'sm' | 'xs'", default: "'md'", description: 'Control-density height/padding/type.' },
       children: { type: 'React.ReactElement', required: true },
       side: { type: "'top' | 'right' | 'bottom' | 'left'", default: "'top'" },
       align: { type: "'start' | 'center' | 'end'", default: "'center'" },
-      delay: { type: 'number', description: 'Hover delay in ms.' },
+      delay: {
+        type: 'number | string',
+        default: "'var(--effect-animation-delay-medium-3)' /* 1000ms */",
+        description:
+          'Hover/focus show delay. Default medium-3 (1000ms). Number (ms) or TokoMo time token. Instant reopen after a recent dismiss. Prefer default; override only for denser chrome or rare actions.',
+      },
       shortcutKey: { type: 'string', description: 'Displays keyboard shortcut hint.' },
     },
     usesTokens: true,
@@ -477,19 +483,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
-  ['Breadcrumb', {
-    title: 'Breadcrumb',
-    description: 'Hierarchical navigation with link or button items, custom separator, and aria-current on the last item.',
-    exports: ['Breadcrumb'],
-    types: ['BreadcrumbProps', 'BreadcrumbItem'],
-    props: {
-      items: { type: 'BreadcrumbItem[]', required: true, description: 'Last item is treated as current page.' },
-      separator: { type: 'React.ReactNode', default: "'/'" },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Text'],
-  }],
   ['Pagination', {
     title: 'Pagination',
     description: 'Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.',
@@ -537,19 +530,6 @@ const COMPONENTS = [
     usesTokens: true,
     usesIcons: false,
     internalDeps: [],
-  }],
-  ['Toast', {
-    title: 'Toast',
-    description: 'Imperative toast notification system. Use toast.success()/error()/warning()/info() to show toasts. Place <ToastContainer /> once at the app root.',
-    exports: ['ToastContainer', 'toast', 'useToasts'],
-    types: ['ToastContainerProps', 'ToastData', 'ToastOptions', 'ToastIntent', 'ToastPosition'],
-    props: {
-      position: { type: "'top-center' | 'top-right' | 'bottom-center' | 'bottom-right'", default: "'top-center'", description: 'ToastContainer position prop.' },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Text'],
-    usageNotes: 'Place <ToastContainer /> once at app root. Then call toast.success("Done!") anywhere.',
   }],
 ];
 

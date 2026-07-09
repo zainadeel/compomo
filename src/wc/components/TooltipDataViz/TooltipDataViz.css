@@ -14,6 +14,10 @@
   box-shadow: var(--effect-elevation-elevated-floating);
   white-space: nowrap;
   pointer-events: none;
+  opacity: 0;
+}
+
+:host(.tooltip-data-viz--visible) {
   animation: tooltip-data-viz-fade-in var(--effect-motion-short-2) forwards;
 }
 

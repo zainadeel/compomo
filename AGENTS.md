@@ -219,12 +219,13 @@ export class MyComponent {
 
 **Buttons (filled / unfilled)**
 
-- Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density.
+- Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
 - Use `ds-button-unfilled` (not a separate icon-only tag) for unfilled actions.
 - **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
-- Use `isActive` for the active/selected visual state on unfilled. Active promotes foreground color and uses the active interaction fill by default; set `activeFill={false}` only for shell chrome that needs active color without a filled active background.
-- Use `hasBorder` only when the button needs the optional 1px `--color-border-tertiary` inset stroke.
+- Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground color.
+- **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only and does not paint a filled selected background on nav surfaces.
+- Use `hasBorder` for the optional 1px `--color-border-tertiary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
 
 **Control density recipes**
@@ -248,26 +249,30 @@ CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, 
 
 Shared layer recipe for interactive controls (buttons, Chip, PanelNav items, Menu items, TabGroup tabs, ChartLegend rows, …). Import `src/wc/utils/interaction-fill.css` and apply `.ds-interaction-fill` on the interactive element.
 
-Paint order (bottom → top): element background → `::before` (selected/active, opt-in) → label/icon/badge content → `::after` (hover/press + inset focus, topmost).
+Paint order (bottom → top): element background → `::before` (selected/active, opt-in) → label/icon/badge content → `::after` (hover/press wash + optional inset border + inset focus).
 
 | Class / var | Role |
 |---|---|
 | `.ds-interaction-fill` | Stacking context + `::before`/`::after` shells |
 | `.ds-interaction-fill--selected` | Fills `::before` with `--ds-interaction-active` |
+| `.ds-interaction-fill--bordered` | Inset tertiary stroke on `::after` (above selected / hover) |
 | `.ds-interaction-fill--on-medium\|bold\|strong\|always-dark\|navigation` | Remap hover/pressed/active + `--ds-focus-ring-color` |
 | `--ds-interaction-hover\|pressed\|active` | Overridable token hooks |
+| `--ds-interaction-border-width\|color` | Inset stroke on `::after` (default off) |
+| `--ds-interaction-dot-ring` | Set under `--selected` to `--ds-interaction-active` — badge halo matches selected fill |
 
 Rules:
 
 - Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
 - Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
 - `::before` = selected/active only. Omit `--selected` when chrome wants icon-color-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav).
-- `::after` = hover + press (`transition: none`), **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
+- **Badge / notification-dot halo:** when the control is `--selected`, the util sets `--ds-interaction-dot-ring` to `--ds-interaction-active`. Prefer remapping the component’s surface ring token under `--selected`, or pass `background="var(--ds-interaction-active)"` from the parent when selected (ButtonUnfilled does both) — nested scoped hosts can miss custom-property fallbacks. Idle / chrome-without-fill keep the surface ring.
+- `::after` = hover + press (`transition: none`) + optional inset border + inset focus — **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
 - Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
 - If a control uses `all: unset`, re-assert `position: relative; z-index: 0` afterward so the util’s stacking context still applies (see PanelNav items).
 - Omit `.ds-interaction-fill` when `isInactive`, or rely on `:disabled` (util skips hover/press on `:disabled`).
 - Persistent selected *product* state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only — no select/toggle.
-- **Inset borders on interaction targets:** control chrome strokes sit *inside* the fixed height so hover/press/selected fills (`inset: 0`) cover the full edge, including the stroke. Prefer `box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) <token>` (see `ButtonUnfilled--bordered`, TabGroup selected tabs). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use inset strokes.
+- **Inset borders on interaction targets:** paint the stroke on `::after` via `--ds-interaction-border-*` or `.ds-interaction-fill--bordered` so it stays visible **above** selected and hover washes. Do **not** put an inset `box-shadow` on the element itself (that layer sits under `::before` and gets covered when selected). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use the util stroke.
 
 **Control inactive**
 

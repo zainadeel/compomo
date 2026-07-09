@@ -6,7 +6,7 @@ const VARIANTS = ['label', 'icon', 'icon-label'] as const;
 const SIZES = ['md', 'sm', 'xs'] as const;
 
 const meta: Meta = {
-  title: 'Actions/ButtonUnfilled',
+  title: 'Primitives/ButtonUnfilled',
   tags: ['autodocs'],
   argTypes: {
     variant: { control: 'select', options: [...VARIANTS] },
@@ -37,7 +37,7 @@ const meta: Meta = {
     ariaLabel: '',
     isActive: false,
     activeFill: true,
-    hasBorder: false,
+    hasBorder: true,
     dot: false,
     isInactive: false,
     backgroundContrast: 'default',
@@ -99,7 +99,20 @@ export const VariantsAndSizes: Story = {
   `,
 };
 
+/**
+ * Selected looks:
+ * - `is-active` (default `activeFill`) — general UI / toolbars
+ * - `is-active` + `activeFill={false}` — shell chrome (nav, tool rails)
+ */
 export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` so selection is foreground-only.',
+      },
+    },
+  },
   render: () => html`
     <div style="${COL}">
       <div style="${ROW}">
@@ -108,19 +121,24 @@ export const States: Story = {
         <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox" dot></ds-button-unfilled>
       </div>
       <div style="${ROW}">
-        <span style="${LABEL}">active with fill</span>
+        <span style="${LABEL}">active (general UI)</span>
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active></ds-button-unfilled>
         <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox active" is-active dot></ds-button-unfilled>
       </div>
       <div style="${ROW}">
-        <span style="${LABEL}">active no fill</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active .activeFill=${false}></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox active" is-active .activeFill=${false} dot></ds-button-unfilled>
+        <span style="${LABEL}">active (chrome)</span>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox active" is-active .activeFill=${false} .hasBorder=${false} dot></ds-button-unfilled>
       </div>
       <div style="${ROW}">
-        <span style="${LABEL}">bordered</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications bordered" has-border></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications bordered active" has-border is-active></ds-button-unfilled>
+        <span style="${LABEL}">no border</span>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications" .hasBorder=${false}></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active .hasBorder=${false}></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">bordered (default)</span>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications bordered"></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications bordered active" is-active></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">inactive</span>
@@ -156,13 +174,13 @@ export const Surfaces: Story = {
       </div>
       <div style="${SURFACE} background:var(--color-navigation-background-primary);">
         <span style="${LABEL};color:var(--color-navigation-foreground-secondary)">navigation</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="navigation"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="navigation" is-active></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="navigation" .hasBorder=${false}></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="navigation" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-always-dark-background-primary);">
         <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)">always-dark</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="always-dark"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="always-dark" is-active></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="always-dark" .hasBorder=${false}></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="always-dark" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
       </div>
     </div>
   `,

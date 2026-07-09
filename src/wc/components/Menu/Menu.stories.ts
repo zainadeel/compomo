@@ -131,7 +131,7 @@ export const TokenSideOffsetRight: Story = {
   `,
 };
 
-/** User menu pattern: appearance rows + gradient theme orbs. */
+/** User menu pattern: theme orbs first, then appearance rows (matches lab). */
 export const AppearanceAndTheme: Story = {
   name: 'Appearance and theme',
   render: () => html`
@@ -146,17 +146,17 @@ export const AppearanceAndTheme: Story = {
         anchor-id="menu-anchor-user"
         .sections=${[
           {
+            header: 'Theme',
+            variant: 'gradient-picker',
+            value: 'neutral',
+          },
+          {
             header: 'Appearance',
             items: [
               { label: 'System', value: 'system' },
               { label: 'Dark', value: 'dark', isSelected: true },
               { label: 'Light', value: 'light' },
             ],
-          },
-          {
-            header: 'Theme',
-            variant: 'gradient-picker',
-            value: 'neutral',
           },
         ]}
       ></ds-menu>

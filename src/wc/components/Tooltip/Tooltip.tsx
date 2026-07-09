@@ -1,12 +1,39 @@
-import { Component, Prop, State, Element, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
 import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
 
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
 export type TooltipAlign = 'start' | 'center' | 'end';
+export type TooltipSize = 'md' | 'sm' | 'xs';
+
+/** Body text per control-density size (regular weight — not emphasis). */
+const TEXT_VARIANT: Record<TooltipSize, string> = {
+  md: 'text-body-medium',
+  sm: 'text-body-small',
+  xs: 'text-caption',
+};
+
+const LINE_HEIGHT: Record<TooltipSize, string> = {
+  md: 'var(--typography-lineheight-md)',
+  sm: 'var(--typography-lineheight-sm)',
+  xs: 'var(--typography-lineheight-xs)',
+};
+
+const FALLBACK_HEIGHT: Record<TooltipSize, string> = {
+  md: TOKEN_DEFAULTS.size400,
+  sm: TOKEN_DEFAULTS.size300,
+  xs: TOKEN_DEFAULTS.size200,
+};
 
 let lastDismissedAt = 0;
 let tooltipIdCounter = 0;
+/** Currently open tooltip — force-cleared on warm handoff so tips don't cross-fade. */
+let activeTooltip: Tooltip | null = null;
 
+/**
+ * Imperative body portal for the popup.
+ * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+ * causes recreate → re-portal → @State loops that freeze the page.
+ */
 @Component({
   tag: 'ds-tooltip',
   styleUrl: 'Tooltip.css',
@@ -16,47 +43,67 @@ export class Tooltip {
   @Element() el!: HTMLElement;
 
   @Prop() label!: string;
+
+  /** Control density (height, padding, type). */
+  @Prop() size: TooltipSize = 'md';
+
   @Prop() side: TooltipSide = 'top';
   @Prop() align: TooltipAlign = 'center';
   /** Gap between anchor and tooltip — number (px) or TokoMo length. */
   @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number (px) or TokoMo length. */
   @Prop() alignOffset: number | string = 0;
-  /** Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`. */
-  @Prop() delay: number | string = TOKEN_DEFAULTS.animationDelayMedium1;
+  /**
+   * Hover show delay before the tooltip appears.
+   * Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms)
+   * or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the
+   * initial hover/focus show only — after a recent dismiss, reopen is instant.
+   * Prefer the default; override only for denser chrome or rare/destructive actions.
+   */
+  @Prop() delay: number | string = TOKEN_DEFAULTS.animationDelayMedium3;
   @Prop() shortcutKey: string | undefined;
   @Prop() shortcutKeyPosition: 'start' | 'end' = 'end';
-
-  @State() private visible: boolean = false;
-  @State() private closing: boolean = false;
-  @State() private pos: { x: number; y: number } = { x: 0, y: 0 };
 
   private tooltipId = `ds-tooltip-${++tooltipIdCounter}`;
   private delayTimer: ReturnType<typeof setTimeout> | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private anchor: HTMLElement | null = null;
-  private tooltipEl: HTMLElement | null = null;
+  private popupEl: HTMLElement | null = null;
+  private skipEnterAnimation = false;
+  private isOpen = false;
   private mouseEnterHandler: () => void = () => this.show();
   private mouseLeaveHandler: () => void = () => this.hide();
+  /** focusin/focusout so nested focus targets (e.g. ds-button-* inner button) still open the tip. */
   private focusHandler: () => void = () => this.show();
-  private blurHandler: () => void = () => this.hide();
+  private blurHandler: (e: FocusEvent) => void = (e) => {
+    const next = e.relatedTarget as Node | null;
+    if (next && this.anchor?.contains(next)) return;
+    this.hide();
+  };
 
   componentDidLoad() {
     this.bindAnchor();
   }
 
   disconnectedCallback() {
+    if (activeTooltip === this) activeTooltip = null;
     this.unbindAnchor();
     this.clearTimers();
+    this.destroyPopup();
   }
 
   @Watch('label')
+  @Watch('size')
   @Watch('side')
   @Watch('align')
   @Watch('sideOffset')
   @Watch('alignOffset')
-  onPositionPropsChange() {
-    if (this.visible) this.calculatePosition();
+  @Watch('shortcutKey')
+  @Watch('shortcutKeyPosition')
+  onContentOrPositionChange() {
+    if (!this.popupEl || !this.isOpen) return;
+    this.renderPopupContent();
+    this.calculatePosition();
   }
 
   private get viewportPadPx(): number {
@@ -72,7 +119,7 @@ export class Tooltip {
   }
 
   private get hoverDelayMs(): number {
-    return resolveCssTimeMs(this.delay, TOKEN_DEFAULTS.animationDelayMedium1);
+    return resolveCssTimeMs(this.delay, TOKEN_DEFAULTS.animationDelayMedium3);
   }
 
   private get instantReopenMs(): number {
@@ -91,7 +138,8 @@ export class Tooltip {
   }
 
   private get tooltipFallbackHeightPx(): number {
-    return resolveCssLengthPx(TOKEN_DEFAULTS.size300, TOKEN_DEFAULTS.size300);
+    const token = FALLBACK_HEIGHT[this.size];
+    return resolveCssLengthPx(token, token);
   }
 
   private bindAnchor() {
@@ -103,8 +151,8 @@ export class Tooltip {
     child.setAttribute('aria-describedby', this.tooltipId);
     child.addEventListener('mouseenter', this.mouseEnterHandler);
     child.addEventListener('mouseleave', this.mouseLeaveHandler);
-    child.addEventListener('focus', this.focusHandler);
-    child.addEventListener('blur', this.blurHandler);
+    child.addEventListener('focusin', this.focusHandler);
+    child.addEventListener('focusout', this.blurHandler);
   }
 
   private unbindAnchor() {
@@ -112,8 +160,8 @@ export class Tooltip {
     this.anchor.removeAttribute('aria-describedby');
     this.anchor.removeEventListener('mouseenter', this.mouseEnterHandler);
     this.anchor.removeEventListener('mouseleave', this.mouseLeaveHandler);
-    this.anchor.removeEventListener('focus', this.focusHandler);
-    this.anchor.removeEventListener('blur', this.blurHandler);
+    this.anchor.removeEventListener('focusin', this.focusHandler);
+    this.anchor.removeEventListener('focusout', this.blurHandler);
     this.anchor = null;
   }
 
@@ -122,39 +170,114 @@ export class Tooltip {
     if (this.closeTimer) { clearTimeout(this.closeTimer); this.closeTimer = null; }
   }
 
+  private destroyPopup() {
+    if (!this.popupEl) return;
+    this.popupEl.remove();
+    this.popupEl = null;
+  }
+
+  /** Drop the open tip immediately (warm handoff to another tooltip). */
+  private hideInstant() {
+    this.clearTimers();
+    lastDismissedAt = Date.now();
+    if (activeTooltip === this) activeTooltip = null;
+    this.destroyPopup();
+    this.isOpen = false;
+    this.skipEnterAnimation = false;
+  }
+
   private show() {
     this.clearTimers();
-    const instant = Date.now() - lastDismissedAt < this.instantReopenMs;
+    let instant = Date.now() - lastDismissedAt < this.instantReopenMs;
+    if (activeTooltip && activeTooltip !== this) {
+      activeTooltip.hideInstant();
+      instant = true;
+    }
+    activeTooltip = this;
+    this.skipEnterAnimation = instant;
     if (instant) {
-      this.closing = false;
-      this.visible = true;
-      requestAnimationFrame(() => this.calculatePosition());
+      this.mountPopup();
       return;
     }
     this.delayTimer = setTimeout(() => {
       this.delayTimer = null;
-      this.closing = false;
-      this.visible = true;
-      requestAnimationFrame(() => this.calculatePosition());
+      this.mountPopup();
     }, this.hoverDelayMs);
   }
 
   private hide() {
     this.clearTimers();
-    if (!this.visible) return;
+    if (!this.popupEl && !this.isOpen) return;
     lastDismissedAt = Date.now();
-    this.closing = true;
+    if (activeTooltip === this) activeTooltip = null;
+    if (!this.popupEl) {
+      this.isOpen = false;
+      return;
+    }
+    this.popupEl.classList.remove('tooltip-popup--instant');
+    this.popupEl.classList.add('tooltip-popup--closing');
     this.closeTimer = setTimeout(() => {
       this.closeTimer = null;
-      this.visible = false;
-      this.closing = false;
+      this.destroyPopup();
+      this.isOpen = false;
+      this.skipEnterAnimation = false;
     }, this.fadeOutMs);
   }
 
+  private mountPopup() {
+    if (!this.popupEl) {
+      const tip = document.createElement('div');
+      tip.id = this.tooltipId;
+      tip.setAttribute('role', 'tooltip');
+      // `sc-ds-tooltip` is required for Stencil scoped CSS to match outside the host.
+      tip.className = 'tooltip-popup sc-ds-tooltip';
+      Object.assign(tip.style, {
+        position: 'fixed',
+        left: '0',
+        top: '0',
+        zIndex: 'var(--dimension-z-index-tooltip)',
+        pointerEvents: 'none',
+      });
+      document.body.appendChild(tip);
+      this.popupEl = tip;
+    }
+
+    this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
+    this.popupEl.classList.remove('tooltip-popup--closing');
+    this.renderPopupContent();
+    this.calculatePosition();
+    this.isOpen = true;
+  }
+
+  private renderPopupContent() {
+    if (!this.popupEl) return;
+    const textVariant = TEXT_VARIANT[this.size];
+    const lineHeight = LINE_HEIGHT[this.size];
+    const density =
+      this.size === 'md' ? 'ds-control--md' : this.size === 'sm' ? 'ds-control--sm' : 'ds-control--xs';
+    // Every node needs `sc-ds-tooltip` so scoped selectors (`.foo.sc-ds-tooltip`) match.
+    const sc = 'sc-ds-tooltip';
+
+    const startKey =
+      this.shortcutKey && this.shortcutKeyPosition === 'start'
+        ? `<div class="key-hint ${sc}" aria-hidden="true"><span class="text-caption-emphasis ${sc}">${escapeHtml(this.shortcutKey)}</span></div>`
+        : '';
+    const endKey =
+      this.shortcutKey && this.shortcutKeyPosition === 'end'
+        ? `<div class="key-hint ${sc}" aria-hidden="true"><span class="text-caption-emphasis ${sc}">${escapeHtml(this.shortcutKey)}</span></div>`
+        : '';
+
+    this.popupEl.innerHTML =
+      `<div class="tooltip-inner ${density} ${sc}">` +
+      startKey +
+      `<span class="tooltip-label ${textVariant} ${sc}" style="line-height:${lineHeight}">${escapeHtml(this.label)}</span>` +
+      endKey +
+      `</div>`;
+  }
+
   private calculatePosition() {
-    if (!this.anchor) return;
-    const tip = this.el.querySelector('.tooltip-popup') as HTMLElement | null;
-    if (!tip) return;
+    if (!this.anchor || !this.popupEl) return;
+    const tip = this.popupEl;
     const a = this.anchor.getBoundingClientRect();
     const tw = tip.offsetWidth || this.tooltipFallbackWidthPx;
     const th = tip.offsetHeight || this.tooltipFallbackHeightPx;
@@ -190,46 +313,25 @@ export class Tooltip {
         break;
     }
 
-    this.pos = {
-      x: Math.min(Math.max(x, vpPad), window.innerWidth - tw - vpPad),
-      y: Math.min(Math.max(y, vpPad), window.innerHeight - th - vpPad),
-    };
+    const nextX = Math.min(Math.max(x, vpPad), window.innerWidth - tw - vpPad);
+    const nextY = Math.min(Math.max(y, vpPad), window.innerHeight - th - vpPad);
+    tip.style.transform = `translate(${Math.round(nextX)}px, ${Math.round(nextY)}px)`;
   }
 
   render() {
     return (
       <Host style={{ display: 'contents' }}>
         <slot />
-        {(this.visible || this.closing) && (
-          <div
-            id={this.tooltipId}
-            class={{ 'tooltip-popup': true, 'tooltip-popup--closing': this.closing }}
-            role="tooltip"
-            style={{
-              position: 'fixed',
-              left: '0',
-              top: '0',
-              transform: `translate(${Math.round(this.pos.x)}px, ${Math.round(this.pos.y)}px)`,
-              zIndex: '10000',
-              pointerEvents: 'none',
-            }}
-          >
-            <div class="tooltip-inner">
-              {this.shortcutKey && this.shortcutKeyPosition === 'start' && (
-                <div class="key-hint" aria-hidden="true">
-                  <span class="text-caption-emphasis">{this.shortcutKey}</span>
-                </div>
-              )}
-              <span class="text-body-small">{this.label}</span>
-              {this.shortcutKey && this.shortcutKeyPosition === 'end' && (
-                <div class="key-hint" aria-hidden="true">
-                  <span class="text-caption-emphasis">{this.shortcutKey}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </Host>
     );
   }
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

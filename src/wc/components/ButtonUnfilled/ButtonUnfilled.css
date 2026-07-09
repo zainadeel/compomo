@@ -51,8 +51,15 @@
   color: var(--ds-button-unfilled-fg-active);
 }
 
+/* Inset stroke via interaction-fill ::after (above selected / hover washes). */
 .button-unfilled--bordered {
-  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--ds-button-unfilled-border);
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--ds-button-unfilled-border);
+}
+
+/* Fallback if interaction-fill is omitted (should be rare — prefer keep the util class). */
+.button-unfilled--bordered:not(.ds-interaction-fill) {
+  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
 /* Inactive: `.ds-control-inactive` (25% opacity). */
@@ -89,6 +96,14 @@
   --ds-button-unfilled-fg: var(--color-navigation-foreground-secondary);
   --ds-button-unfilled-fg-active: var(--color-navigation-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-navigation-background);
+}
+
+/*
+ * After surface ring defaults: selected fill remaps the knock-out to the active
+ * wash so the badge halo matches the selected background.
+ */
+.button-unfilled.ds-interaction-fill--selected {
+  --ds-button-unfilled-dot-ring: var(--ds-interaction-active);
 }
 
 .button-unfilled__icon-wrap {

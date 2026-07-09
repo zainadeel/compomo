@@ -10,6 +10,12 @@ const CENTER_GAP_PX = 0;
 /** Fraction of the inner-circle diameter center text is allowed to use before truncating. */
 const CENTER_TEXT_SAFE_WIDTH_RATIO = 0.82;
 
+type DonutTooltipState = {
+  datum: ChartDatum;
+  x: number;
+  y: number;
+};
+
 @Component({
   tag: 'ds-chart-donut',
   styleUrl: 'ChartDonut.css',
@@ -33,10 +39,14 @@ export class ChartDonut {
    * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling
    * `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync.
    * Falls back to this component's own pointer/focus hover when unset.
+   * External sync dims slices only — the data-viz tooltip is reserved for this
+   * component's own pointer/keyboard interaction.
    */
   @Prop() activeLabel: string | null = null;
 
   @State() private hoveredLabel: string | null = null;
+  /** Own-hover tooltip (cursor-following). Cleared on leave; not driven by `activeLabel`. */
+  @State() private tooltip: DonutTooltipState | null = null;
   /** Center text, truncated with an ellipsis if it doesn't fit inside the inner circle. */
   @State() private displayedValueText: string = '';
   @State() private displayedCaptionText: string = '';
@@ -46,10 +56,30 @@ export class ChartDonut {
 
   private valueTextEl?: SVGTextElement;
   private captionTextEl?: SVGTextElement;
+  private wrapperEl?: HTMLDivElement;
 
-  private handleHover(datum: ChartDatum | null) {
+  private handleHover(datum: ChartDatum | null, event?: MouseEvent) {
     this.hoveredLabel = datum?.label ?? null;
     this.dsSliceHover.emit(datum);
+    if (!datum) {
+      this.tooltip = null;
+      return;
+    }
+    this.updateTooltip(datum, event);
+  }
+
+  private handleSliceMove(datum: ChartDatum, event: MouseEvent) {
+    if (this.hoveredLabel !== datum.label) return;
+    this.updateTooltip(datum, event);
+  }
+
+  private updateTooltip(datum: ChartDatum, event?: MouseEvent) {
+    const wrapper = this.wrapperEl;
+    if (!wrapper) return;
+    const rect = wrapper.getBoundingClientRect();
+    const x = event ? event.clientX - rect.left : this.size / 2;
+    const y = event ? event.clientY - rect.top : this.size / 2;
+    this.tooltip = { datum, x, y };
   }
 
   componentDidRender() {
@@ -115,10 +145,17 @@ export class ChartDonut {
     // Show the full text before the post-render truncation pass has measured it (avoids a blank first paint).
     const fullValueText = this.centerValue ?? formatCompactNumber(total);
     const fullCaptionText = this.centerCaption ?? '';
+    const tip = this.tooltip;
 
     return (
       <Host class="chart-donut">
-        <div class="chart-donut__wrapper" style={{ width: `${this.size}px`, height: `${this.size}px` }}>
+        <div
+          class="chart-donut__wrapper"
+          style={{ width: `${this.size}px`, height: `${this.size}px` }}
+          ref={el => {
+            this.wrapperEl = (el as HTMLDivElement) ?? undefined;
+          }}
+        >
           <svg
             class="chart-donut__svg"
             viewBox={`0 0 ${this.size} ${this.size}`}
@@ -141,7 +178,8 @@ export class ChartDonut {
                       tabindex={0}
                       role="img"
                       aria-label={`${datum.label}: ${datum.value}`}
-                      onMouseEnter={() => this.handleHover(datum)}
+                      onMouseEnter={(e: MouseEvent) => this.handleHover(datum, e)}
+                      onMouseMove={(e: MouseEvent) => this.handleSliceMove(datum, e)}
                       onMouseLeave={() => this.handleHover(null)}
                       onFocus={() => this.handleHover(datum)}
                       onBlur={() => this.handleHover(null)}
@@ -177,6 +215,15 @@ export class ChartDonut {
               </text>
             )}
           </svg>
+          {tip && (
+            <ds-tooltip-data-viz
+              key={tip.datum.label}
+              label={tip.datum.label}
+              value={formatCompactNumber(tip.datum.value)}
+              x={tip.x}
+              y={tip.y}
+            />
+          )}
         </div>
       </Host>
     );

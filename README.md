@@ -53,23 +53,22 @@ There is **no** published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` bundle �
 All tags are `ds-*` custom elements. Grouped by role (see Storybook for props and stories):
 
 ### Primitives
-- **Text**, **Card**, **Input**, **Slider**, **Field**, **Divider**, **Icon**
-
-### Actions
+- **Text**, **Icon**, **Divider**, **Loader**, **Skeleton**
 - **ButtonFilled** — filled button; `variant` (label / icon / icon-label) + `size` + intent×contrast
 - **ButtonUnfilled** — unfilled button; same variants/sizes; surface-aware chrome (`on-background-contrast`, `background`)
+- **Tag**, **Chip**, **Badge**
 
 ### Controls
-- **Toggle**, **Checkbox**, **RadioGroup**
+- **Toggle**, **Checkbox**, **RadioGroup**, **Input**, **Slider**, **Field**
 
 ### Data display
-- **Tag**, **Chip**, **Badge**, **Table**, **Pagination**
+- **Table**, **Pagination**
 
 ### Overlays
-- **Modal**, **Menu**, **Tooltip**, **Select**, **ToastProvider** (`ds-toast-provider`), **Banner**
+- **Modal**, **Menu**, **Tooltip**, **Select**, **Banner**
 
 ### Navigation
-- **TabGroup** (pill), **TabGroupNav** (underline), **Breadcrumb**
+- **TabGroup** (pill), **TabGroupNav** (underline)
 - **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout

@@ -807,7 +807,7 @@
     {
       "name": "tooltip",
       "title": "Tooltip",
-      "description": "Positioned tooltip with portal rendering, delay, keyboard shortcut display, and viewport clamping.",
+      "description": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -820,6 +820,10 @@
           "label": {
             "type": "string",
             "required": true
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
           },
           "children": {
             "type": "React.ReactElement",
@@ -834,7 +838,7 @@
             "required": false
           },
           "delay": {
-            "type": "number",
+            "type": "number | string",
             "required": false
           },
           "shortcutKey": {
@@ -1165,37 +1169,6 @@
       "registryDependencies": []
     },
     {
-      "name": "breadcrumb",
-      "title": "Breadcrumb",
-      "description": "Hierarchical navigation with link or button items, custom separator, and aria-current on the last item.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/breadcrumb",
-        "exports": [
-          "Breadcrumb"
-        ],
-        "props": {
-          "items": {
-            "type": "BreadcrumbItem[]",
-            "required": true
-          },
-          "separator": {
-            "type": "React.ReactNode",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "pagination",
       "title": "Pagination",
       "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
@@ -1319,35 +1292,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
-    },
-    {
-      "name": "toast",
-      "title": "Toast",
-      "description": "Imperative toast notification system. Use toast.success()/error()/warning()/info() to show toasts. Place <ToastContainer /> once at the app root.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toast",
-        "exports": [
-          "ToastContainer",
-          "toast",
-          "useToasts"
-        ],
-        "props": {
-          "position": {
-            "type": "'top-center' | 'top-right' | 'bottom-center' | 'bottom-right'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
     }
   ]
 }

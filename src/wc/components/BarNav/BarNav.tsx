@@ -694,6 +694,7 @@ export class BarNav {
                 icon="Ellipses"
                 isActive={this.menuOpen}
                 activeFill={false}
+                hasBorder={false}
                 focusTabIndex={this.overflowRovingFocused ? 0 : -1}
                 ref={(el?: HTMLDsButtonUnfilledElement) => {
                   this.triggerEl = (el as (HTMLElement & { setFocus?: () => Promise<void> })) ?? null;
