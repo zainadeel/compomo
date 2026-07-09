@@ -2,6 +2,12 @@ import { Component, Element, State, h, Host, Prop } from '@stencil/core';
 
 export type CardDataVizWidth = 'xs' | 'sm' | 'md' | 'lg';
 
+/** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */
+type HoveredDatum = { label: string } | null;
+
+/** A slotted chart/legend that opts into hover sync by exposing an `activeLabel` prop. */
+type SyncableSlot = HTMLElement & { activeLabel?: string | null };
+
 const CARD_WIDTH_VARS: Record<CardDataVizWidth, string> = {
   xs: 'var(--dimension-card-width-xs)',
   sm: 'var(--dimension-card-width-sm)',
@@ -38,6 +44,35 @@ export class CardDataViz {
     this.hasChartSlot = !!this.el.querySelector(':scope > [slot="chart"]');
     this.hasLegendSlot = !!this.el.querySelector(':scope > [slot="legend"]');
   }
+
+  componentDidLoad() {
+    // Sync the chart's and legend's `activeLabel` from each other's hover events, so any
+    // ds-chart-* + ds-chart-legend pair cross-highlights without every consumer having to
+    // wire it up by hand. Delegated on the host (rather than bound to the specific slotted
+    // elements) since Stencil events bubble and the slot content can be swapped at runtime.
+    this.el.addEventListener('dsSliceHover', this.handleChartHover);
+    this.el.addEventListener('dsItemHover', this.handleLegendHover);
+  }
+
+  disconnectedCallback() {
+    this.el.removeEventListener('dsSliceHover', this.handleChartHover);
+    this.el.removeEventListener('dsItemHover', this.handleLegendHover);
+  }
+
+  private handleChartHover = (e: Event) => {
+    // Not `:scope >` — Stencil's slot polyfill for scoped (non-shadow) components relocates
+    // slotted children into an inner `.chart-region`/`.legend-region` wrapper on render, so
+    // they're no longer direct children of the host by the time this fires.
+    const legend = this.el.querySelector('[slot="legend"]') as SyncableSlot | null;
+    if (!legend || !('activeLabel' in legend)) return;
+    legend.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;
+  };
+
+  private handleLegendHover = (e: Event) => {
+    const chart = this.el.querySelector('[slot="chart"]') as SyncableSlot | null;
+    if (!chart || !('activeLabel' in chart)) return;
+    chart.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;
+  };
 
   render() {
     return (

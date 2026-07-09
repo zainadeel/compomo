@@ -49,35 +49,21 @@ export const Review: Story = {
       style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:var(--dimension-space-300);padding:var(--dimension-space-400);background:var(--color-background-secondary);font-family:var(--typography-font-family, system-ui)"
     >
       <ds-card-data-viz heading="Availability status" card-width="lg">
-        ${(() => {
-          let donutEl: (HTMLElement & { activeLabel: string | null }) | null = null;
-          let legendEl: (HTMLElement & { activeLabel: string | null }) | null = null;
-          return html`
-            <ds-chart-donut
-              slot="chart"
-              ${ref(el => {
-                if (!el) return;
-                donutEl = el as any;
-                (el as any).data = AVAILABILITY_STATUS;
-                el.addEventListener('dsSliceHover', ((e: CustomEvent<ChartDatum | null>) => {
-                  if (legendEl) legendEl.activeLabel = e.detail?.label ?? null;
-                }) as EventListener);
-              })}
-              center-caption="Total vehicles"
-            ></ds-chart-donut>
-            <ds-chart-legend
-              slot="legend"
-              ${ref(el => {
-                if (!el) return;
-                legendEl = el as any;
-                (el as any).items = AVAILABILITY_STATUS;
-                el.addEventListener('dsItemHover', ((e: CustomEvent<ChartLegendItem | null>) => {
-                  if (donutEl) donutEl.activeLabel = e.detail?.label ?? null;
-                }) as EventListener);
-              })}
-            ></ds-chart-legend>
-          `;
-        })()}
+        <ds-chart-donut
+          slot="chart"
+          ${ref(el => {
+            if (!el) return;
+            (el as any).data = AVAILABILITY_STATUS;
+          })}
+          center-caption="Total vehicles"
+        ></ds-chart-donut>
+        <ds-chart-legend
+          slot="legend"
+          ${ref(el => {
+            if (!el) return;
+            (el as any).items = AVAILABILITY_STATUS;
+          })}
+        ></ds-chart-legend>
       </ds-card-data-viz>
 
       <ds-card-data-viz heading="Fuel trend" card-width="lg">
