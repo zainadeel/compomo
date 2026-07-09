@@ -207,3 +207,56 @@ export const StatusSelect: Story = {
     </div>
   `,
 };
+
+const LONG_OPTIONS = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+  { label: 'Cherry', value: 'cherry' },
+  { label: 'Date — very long option label that grows the menu', value: 'date' },
+  { label: 'Elderberry', value: 'elderberry' },
+];
+
+/** Open the select once mounted so the menu alignment is visible in Storybook. */
+const bindOpen = (options: typeof FRUIT_OPTIONS, value: string) =>
+  ref((el: Element | undefined) => {
+    if (!el) return;
+    const select = el as HTMLDsSelectElement;
+    select.options = options;
+    select.value = value;
+    // Defer until the trigger button exists in the light DOM.
+    requestAnimationFrame(() => {
+      select.querySelector('button')?.click();
+    });
+  });
+
+/**
+ * Menu min-width matches the select (plus section chrome) so option labels
+ * line up with the trigger label. Left-bottom placement (`side=bottom`,
+ * `align=start`); long labels can grow the menu to the right.
+ */
+export const MenuAlignment: Story = {
+  name: 'Menu Alignment',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Open menus are left-bottom aligned under the field. Option text lines up with the select label; long options may widen the menu to the right.',
+      },
+    },
+  },
+  render: () => html`
+    <div
+      style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--dimension-space-400);min-height:280px;"
+    >
+      <div style="${COL};width:200px;">
+        <span style="${LBL}">match width — labels line up</span>
+        <ds-select width="fill" ${bindOpen(FRUIT_OPTIONS, 'cherry')}></ds-select>
+      </div>
+      <div style="${COL};width:160px;">
+        <span style="${LBL}">narrow field — menu grows for long label</span>
+        <ds-select width="fill" ${bindOpen(LONG_OPTIONS, 'cherry')}></ds-select>
+      </div>
+    </div>
+  `,
+};

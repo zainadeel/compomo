@@ -1,5 +1,6 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
 import { controlWidthClass, type ControlWidth } from '../../utils/control-width';
+import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
 import type { MenuItemData } from '../Menu/menu-types';
 
 export interface SelectOption {
@@ -135,13 +136,27 @@ export class Select {
     }));
   }
 
+  /**
+   * Size/place the menu so option labels line up with the select label.
+   * Menu section padding insets items; we expand min-width by that chrome and
+   * shift left by the same amount (`alignOffset`). Menu can grow wider than
+   * the field (left-bottom / `align="start"`) when labels need more room.
+   */
+  private syncMenuLayout() {
+    if (!this.menuEl || !this.triggerEl) return;
+    const sectionPadPx = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+    const triggerW = this.triggerEl.offsetWidth;
+    // Prefer min-width over fixed width so long options can grow the menu.
+    this.menuEl.menuWidth = '';
+    this.menuEl.minWidth = `${triggerW + sectionPadPx * 2}px`;
+    this.menuEl.alignOffset = -sectionPadPx;
+    this.menuEl.anchor = this.triggerEl;
+  }
+
   private open(opts: { focusVisible: boolean } = { focusVisible: false }) {
     if (this.isInactive || !this.options.length) return;
     this.openWithFocusVisible = opts.focusVisible;
-    if (this.menuEl && this.triggerEl) {
-      this.menuEl.menuWidth = `${this.triggerEl.offsetWidth}px`;
-      this.menuEl.anchor = this.triggerEl;
-    }
+    this.syncMenuLayout();
     this.syncMenuItems();
     this.isOpen = true;
   }
@@ -247,6 +262,7 @@ export class Select {
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
           </span>
         </button>
+        {/* bottom + start: left-aligned under the field; wider menus grow right. */}
         <ds-menu
           ref={el => {
             this.menuEl = (el as HTMLDsMenuElement) ?? null;
