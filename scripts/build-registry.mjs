@@ -69,7 +69,12 @@ const COMPONENTS = [
     types: ['CardSettingWidth'],
     props: {
       heading: { type: 'string', required: true, description: 'Section title in the card header.' },
-      cardWidth: { type: "'sm' | 'md' | 'lg'", default: "'md'" },
+      cardWidth: {
+        type: "'sm' | 'md' | 'lg'",
+        default: "'md'",
+        description:
+          'Width token; also sets host min-height to the matching --dimension-card-height-* so empty bodies still fill the card.',
+      },
       editing: { type: 'boolean', default: 'false', description: 'Controlled edit state.' },
     },
     events: ['dsEditingChange'],

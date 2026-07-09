@@ -8,6 +8,13 @@ const CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {
   lg: 'var(--dimension-card-width-lg)',
 };
 
+/** Matching height tokens — host min-height so empty cards still reserve space. */
+const CARD_HEIGHT_VARS: Record<CardSettingWidth, string> = {
+  sm: 'var(--dimension-card-height-sm)',
+  md: 'var(--dimension-card-height-md)',
+  lg: 'var(--dimension-card-height-lg)',
+};
+
 const FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';
 
 @Component({
@@ -19,7 +26,11 @@ export class CardSetting {
   /** Section heading shown in the card header. */
   @Prop() heading!: string;
 
-  /** Card width token. */
+  /**
+   * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the
+   * matching `--dimension-card-height-*` so the body fills available space
+   * even when the slot is empty.
+   */
   @Prop() cardWidth: CardSettingWidth = 'md';
 
   /** Controlled edit state — parent owns single-edit orchestration. */
@@ -45,7 +56,10 @@ export class CardSetting {
           'card-setting': true,
           'card-setting--editing': editing,
         }}
-        style={{ '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth] }}
+        style={{
+          '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth],
+          '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],
+        }}
       >
         <header class="card-setting__header">
           <div class="card-setting__title-wrap">

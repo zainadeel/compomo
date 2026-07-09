@@ -343,7 +343,7 @@ export namespace Components {
     }
     interface DsCardSetting {
         /**
-          * Card width token.
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
           * @default 'md'
          */
         "cardWidth": CardSettingWidth;
@@ -2126,7 +2126,7 @@ declare namespace LocalJSX {
     }
     interface DsCardSetting {
         /**
-          * Card width token.
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
           * @default 'md'
          */
         "cardWidth"?: CardSettingWidth;

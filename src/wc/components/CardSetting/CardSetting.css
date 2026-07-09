@@ -1,7 +1,9 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   width: var(--_card-setting-width);
+  min-height: var(--_card-setting-min-height);
   max-width: 100%;
   border: none;
   border-radius: var(--dimension-radius-025);
@@ -21,6 +23,7 @@
   justify-content: space-between;
   gap: var(--dimension-space-100);
   height: var(--dimension-size-600);
+  flex-shrink: 0;
   padding: var(--dimension-space-100);
   background-color: var(--color-background-secondary);
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
@@ -58,6 +61,8 @@
 }
 
 .card-setting__body {
+  flex: 1 1 auto;
+  min-height: 0;
   border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);
   background-color: var(--color-background-primary);
 }
