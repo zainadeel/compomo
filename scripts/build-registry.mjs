@@ -61,10 +61,30 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: [],
   }],
+  ['Card', {
+    title: 'Card',
+    tag: 'ds-card',
+    description: 'Shared card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space. Compose from settings and data-viz cards.',
+    exports: ['Card'],
+    types: ['CardWidth', 'CardAppearance'],
+    props: {
+      heading: { type: 'string', required: true, description: 'Section title in the card header.' },
+      cardWidth: {
+        type: "'sm' | 'md' | 'lg'",
+        default: "'md'",
+        description:
+          'Width token; also sets host min-height to the matching --dimension-card-height-*.',
+      },
+      appearance: { type: "'default' | 'editing'", default: "'default'", description: 'Chrome recipe — editing applies the settings edit wash.' },
+    },
+    usesTokens: true,
+    usesIcons: false,
+    internalDeps: ['Text'],
+  }],
   ['CardSetting', {
     title: 'CardSetting',
     tag: 'ds-card-setting',
-    description: 'Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.',
+    description: 'Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.',
     exports: ['CardSetting'],
     types: ['CardSettingWidth'],
     props: {
@@ -80,7 +100,25 @@ const COMPONENTS = [
     events: ['dsEditingChange'],
     usesTokens: true,
     usesIcons: true,
-    internalDeps: ['Text', 'ButtonUnfilled', 'ButtonFilled'],
+    internalDeps: ['Card', 'Text', 'ButtonUnfilled', 'ButtonFilled'],
+  }],
+  ['CardDataVizDonut', {
+    title: 'CardDataVizDonut',
+    tag: 'ds-card-data-viz-donut',
+    description: 'Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, and chart↔legend hover sync.',
+    exports: ['CardDataVizDonut'],
+    types: ['CardDataVizDonutWidth'],
+    props: {
+      heading: { type: 'string', required: true, description: 'Widget title in the card header.' },
+      cardWidth: {
+        type: "'sm' | 'md' | 'lg'",
+        default: "'md'",
+        description: 'Width token; also sets matching min-height.',
+      },
+    },
+    usesTokens: true,
+    usesIcons: false,
+    internalDeps: ['Card', 'ChartDonut', 'ChartLegend'],
   }],
 
   // Core Interactive

@@ -173,18 +173,18 @@ export declare interface DsButtonUnfilled extends Components.DsButtonUnfilled {
 
 
 @ProxyCmp({
-  inputs: ['cardWidth', 'heading']
+  inputs: ['appearance', 'cardWidth', 'heading']
 })
 @Component({
-  selector: 'ds-card-data-viz',
+  selector: 'ds-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['cardWidth', { name: 'heading', required: true }],
+  inputs: ['appearance', 'cardWidth', { name: 'heading', required: true }],
   standalone: false
 })
-export class DsCardDataViz {
-  protected el: HTMLDsCardDataVizElement;
+export class DsCard {
+  protected el: HTMLDsCardElement;
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -192,7 +192,30 @@ export class DsCardDataViz {
 }
 
 
-export declare interface DsCardDataViz extends Components.DsCardDataViz {}
+export declare interface DsCard extends Components.DsCard {}
+
+
+@ProxyCmp({
+  inputs: ['cardWidth', 'heading']
+})
+@Component({
+  selector: 'ds-card-data-viz-donut',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['cardWidth', { name: 'heading', required: true }],
+  standalone: false
+})
+export class DsCardDataVizDonut {
+  protected el: HTMLDsCardDataVizDonutElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsCardDataVizDonut extends Components.DsCardDataVizDonut {}
 
 
 @ProxyCmp({

@@ -77,9 +77,44 @@
       "registryDependencies": []
     },
     {
+      "name": "card",
+      "title": "Card",
+      "description": "Shared card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space. Compose from settings and data-viz cards.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
+        "exports": [
+          "Card"
+        ],
+        "props": {
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "cardWidth": {
+            "type": "'sm' | 'md' | 'lg'",
+            "required": false
+          },
+          "appearance": {
+            "type": "'default' | 'editing'",
+            "required": false
+          }
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "card-setting",
       "title": "CardSetting",
-      "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
+      "description": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -109,9 +144,43 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "card",
         "text",
         "button-unfilled",
         "button-filled"
+      ]
+    },
+    {
+      "name": "card-data-viz-donut",
+      "title": "CardDataVizDonut",
+      "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, and chart↔legend hover sync.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
+        "exports": [
+          "CardDataVizDonut"
+        ],
+        "props": {
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "cardWidth": {
+            "type": "'sm' | 'md' | 'lg'",
+            "required": false
+          }
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "card",
+        "chart-donut",
+        "chart-legend"
       ]
     },
     {

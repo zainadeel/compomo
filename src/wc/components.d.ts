@@ -12,7 +12,8 @@ import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
-import { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
+import { CardAppearance, CardWidth } from "./components/Card/Card";
+import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
@@ -45,7 +46,8 @@ export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
-export { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
+export { CardAppearance, CardWidth } from "./components/Card/Card";
+export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
@@ -322,16 +324,35 @@ export namespace Components {
         "variant": ButtonUnfilledVariant;
     }
     /**
-     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     * Shared card chrome — width + matching min-height tokens, header (title + actions),
+     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
      */
-    interface DsCardDataViz {
+    interface DsCard {
         /**
-          * Card width token.
+          * Chrome recipe — `editing` applies the settings edit wash.
+          * @default 'default'
+         */
+        "appearance": CardAppearance;
+        /**
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so empty bodies still fill the card.
           * @default 'md'
          */
-        "cardWidth": CardDataVizWidth;
+        "cardWidth": CardWidth;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+    }
+    /**
+     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * content-sized legend. Hover sync between chart and legend stays here.
+     */
+    interface DsCardDataVizDonut {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth": CardDataVizDonutWidth;
         /**
           * Widget heading shown in the card header.
          */
@@ -398,9 +419,9 @@ export namespace Components {
          */
         "gap": number;
         /**
-          * @default 175
+          * Explicit diameter in px. When unset, the donut fills its container as the largest square that fits (ResizeObserver). Prefer unset inside card layouts.
          */
-        "size": number;
+        "size": number | undefined;
         /**
           * Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px).
           * @default TOKEN_DEFAULTS.size200
@@ -1304,15 +1325,24 @@ declare global {
         new (): HTMLDsButtonUnfilledElement;
     };
     /**
-     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     * Shared card chrome — width + matching min-height tokens, header (title + actions),
+     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
      */
-    interface HTMLDsCardDataVizElement extends Components.DsCardDataViz, HTMLStencilElement {
+    interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
     }
-    var HTMLDsCardDataVizElement: {
-        prototype: HTMLDsCardDataVizElement;
-        new (): HTMLDsCardDataVizElement;
+    var HTMLDsCardElement: {
+        prototype: HTMLDsCardElement;
+        new (): HTMLDsCardElement;
+    };
+    /**
+     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * content-sized legend. Hover sync between chart and legend stays here.
+     */
+    interface HTMLDsCardDataVizDonutElement extends Components.DsCardDataVizDonut, HTMLStencilElement {
+    }
+    var HTMLDsCardDataVizDonutElement: {
+        prototype: HTMLDsCardDataVizDonutElement;
+        new (): HTMLDsCardDataVizDonutElement;
     };
     interface HTMLDsCardSettingElementEventMap {
         "dsEditingChange": boolean;
@@ -1780,7 +1810,8 @@ declare global {
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
-        "ds-card-data-viz": HTMLDsCardDataVizElement;
+        "ds-card": HTMLDsCardElement;
+        "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-chart-bar": HTMLDsChartBarElement;
         "ds-chart-donut": HTMLDsChartDonutElement;
@@ -2074,16 +2105,35 @@ declare namespace LocalJSX {
         "variant"?: ButtonUnfilledVariant;
     }
     /**
-     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     * Shared card chrome — width + matching min-height tokens, header (title + actions),
+     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
      */
-    interface DsCardDataViz {
+    interface DsCard {
         /**
-          * Card width token.
+          * Chrome recipe — `editing` applies the settings edit wash.
+          * @default 'default'
+         */
+        "appearance"?: CardAppearance;
+        /**
+          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so empty bodies still fill the card.
           * @default 'md'
          */
-        "cardWidth"?: CardDataVizWidth;
+        "cardWidth"?: CardWidth;
+        /**
+          * Section heading shown in the card header.
+         */
+        "heading": string;
+    }
+    /**
+     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * content-sized legend. Hover sync between chart and legend stays here.
+     */
+    interface DsCardDataVizDonut {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth"?: CardDataVizDonutWidth;
         /**
           * Widget heading shown in the card header.
          */
@@ -2158,9 +2208,9 @@ declare namespace LocalJSX {
          */
         "onDsSliceHover"?: (event: DsChartDonutCustomEvent<ChartDatum | null>) => void;
         /**
-          * @default 175
+          * Explicit diameter in px. When unset, the donut fills its container as the largest square that fits (ResizeObserver). Prefer unset inside card layouts.
          */
-        "size"?: number;
+        "size"?: number | undefined;
         /**
           * Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px).
           * @default TOKEN_DEFAULTS.size200
@@ -3008,9 +3058,14 @@ declare namespace LocalJSX {
         "pressed": boolean | undefined;
         "focusTabIndex": number;
     }
-    interface DsCardDataVizAttributes {
+    interface DsCardAttributes {
         "heading": string;
-        "cardWidth": CardDataVizWidth;
+        "cardWidth": CardWidth;
+        "appearance": CardAppearance;
+    }
+    interface DsCardDataVizDonutAttributes {
+        "heading": string;
+        "cardWidth": CardDataVizDonutWidth;
     }
     interface DsCardSettingAttributes {
         "heading": string;
@@ -3022,7 +3077,7 @@ declare namespace LocalJSX {
         "height": number;
     }
     interface DsChartDonutAttributes {
-        "size": number;
+        "size": number | undefined;
         "thickness": string;
         "cornerRadius": string;
         "gap": number;
@@ -3249,7 +3304,8 @@ declare namespace LocalJSX {
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
-        "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
+        "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] } & OneOf<"heading", DsCard["heading"], DsCardAttributes["heading"]>;
+        "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
         "ds-chart-donut": Omit<DsChartDonut, keyof DsChartDonutAttributes> & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes]?: DsChartDonut[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `attr:${K}`]?: DsChartDonutAttributes[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `prop:${K}`]?: DsChartDonut[K] };
@@ -3295,11 +3351,15 @@ declare module "@stencil/core" {
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
-             * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
-             * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
-             * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+             * Shared card chrome — width + matching min-height tokens, header (title + actions),
+             * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
              */
-            "ds-card-data-viz": LocalJSX.IntrinsicElements["ds-card-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizElement>;
+            "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
+            /**
+             * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+             * content-sized legend. Hover sync between chart and legend stays here.
+             */
+            "ds-card-data-viz-donut": LocalJSX.IntrinsicElements["ds-card-data-viz-donut"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizDonutElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
             "ds-chart-bar": LocalJSX.IntrinsicElements["ds-chart-bar"] & JSXBase.HTMLAttributes<HTMLDsChartBarElement>;
             "ds-chart-donut": LocalJSX.IntrinsicElements["ds-chart-donut"] & JSXBase.HTMLAttributes<HTMLDsChartDonutElement>;
@@ -3365,6 +3425,3 @@ declare module "@stencil/core" {
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-

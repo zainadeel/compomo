@@ -12,15 +12,15 @@ import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
 import type { Components } from "@ds-mo/ui/dist/components";
-import { DsCardDataViz as DsCardDataVizElement, defineCustomElement as defineDsCardDataViz } from "@ds-mo/ui/dist/components/ds-card-data-viz.js";
+import { DsCard as DsCardElement, defineCustomElement as defineDsCard } from "@ds-mo/ui/dist/components/ds-card.js";
 
-export type DsCardDataVizEvents = NonNullable<unknown>;
+export type DsCardEvents = NonNullable<unknown>;
 
-export const DsCardDataViz: StencilReactComponent<DsCardDataVizElement, DsCardDataVizEvents, Components.DsCardDataViz> = /*@__PURE__*/ createComponent<DsCardDataVizElement, DsCardDataVizEvents, Components.DsCardDataViz>({
-    tagName: 'ds-card-data-viz',
-    elementClass: DsCardDataVizElement,
+export const DsCard: StencilReactComponent<DsCardElement, DsCardEvents, Components.DsCard> = /*@__PURE__*/ createComponent<DsCardElement, DsCardEvents, Components.DsCard>({
+    tagName: 'ds-card',
+    elementClass: DsCardElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsCardDataVizEvents,
-    defineCustomElement: defineDsCardDataViz
+    events: {} as DsCardEvents,
+    defineCustomElement: defineDsCard
 });

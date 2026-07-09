@@ -1,21 +1,7 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
+import type { CardWidth } from '../Card/Card';
 
-export type CardSettingWidth = 'sm' | 'md' | 'lg';
-
-const CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {
-  sm: 'var(--dimension-card-width-sm)',
-  md: 'var(--dimension-card-width-md)',
-  lg: 'var(--dimension-card-width-lg)',
-};
-
-/** Matching height tokens — host min-height so empty cards still reserve space. */
-const CARD_HEIGHT_VARS: Record<CardSettingWidth, string> = {
-  sm: 'var(--dimension-card-height-sm)',
-  md: 'var(--dimension-card-height-md)',
-  lg: 'var(--dimension-card-height-lg)',
-};
-
-const FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';
+export type CardSettingWidth = CardWidth;
 
 @Component({
   tag: 'ds-card-setting',
@@ -51,44 +37,33 @@ export class CardSetting {
     const editing = this.editing;
 
     return (
-      <Host
-        class={{
-          'card-setting': true,
-          'card-setting--editing': editing,
-        }}
-        style={{
-          '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth],
-          '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],
-        }}
-      >
-        <header class="card-setting__header">
-          <div class="card-setting__title-wrap">
-            <ds-text
-              class="card-setting__title"
-              variant="text-title-small"
-              color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
-              as="h2"
-            >
-              {this.heading}
-            </ds-text>
-          </div>
+      <Host class="card-setting">
+        <ds-card
+          heading={this.heading}
+          cardWidth={this.cardWidth}
+          appearance={editing ? 'editing' : 'default'}
+        >
           {!editing ? (
-            <ds-button-unfilled variant="icon"
+            <ds-button-unfilled
+              slot="actions"
+              variant="icon"
               type="button"
               icon="Pencil"
               aria-label="Edit"
               onDsClick={this.enterEdit}
             />
           ) : (
-            <div class="card-setting__actions">
-              <ds-button-unfilled variant="icon"
+            <div slot="actions" class="card-setting__actions">
+              <ds-button-unfilled
+                variant="icon"
                 type="button"
                 icon="Cross"
                 backgroundContrast="bold"
                 aria-label="Cancel"
                 onDsClick={this.exitEdit}
               />
-              <ds-button-filled variant="icon"
+              <ds-button-filled
+                variant="icon"
                 type="button"
                 icon="Check"
                 intent="brand"
@@ -98,10 +73,8 @@ export class CardSetting {
               />
             </div>
           )}
-        </header>
-        <div class="card-setting__body">
           <slot />
-        </div>
+        </ds-card>
       </Host>
     );
   }

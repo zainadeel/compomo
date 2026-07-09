@@ -1,4 +1,4 @@
-import { Component, Prop, State, Event, EventEmitter, h, Host } from '@stencil/core';
+import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';
 import { arc, pie } from 'd3-shape';
 import { categoryColor } from '../../utils/chart-colors';
 import { formatCompactNumber, resolveCssLengthPx, truncateSvgTextToWidth, TOKEN_DEFAULTS } from '../../utils';
@@ -9,6 +9,8 @@ const DIMMED_OPACITY = 0.25;
 const CENTER_GAP_PX = 0;
 /** Fraction of the inner-circle diameter center text is allowed to use before truncating. */
 const CENTER_TEXT_SAFE_WIDTH_RATIO = 0.82;
+/** Fallback when filling before the first ResizeObserver measurement. */
+const FILL_FALLBACK_PX = 175;
 
 type DonutTooltipState = {
   datum: ChartDatum;
@@ -22,9 +24,15 @@ type DonutTooltipState = {
   scoped: true,
 })
 export class ChartDonut {
+  @Element() el!: HTMLElement;
+
   /** Slices to render. Set as a JS property (not an HTML attribute). */
   @Prop() data: ChartDatum[] = [];
-  @Prop() size: number = 175;
+  /**
+   * Explicit diameter in px. When unset, the donut fills its container as the
+   * largest square that fits (ResizeObserver). Prefer unset inside card layouts.
+   */
+  @Prop() size: number | undefined;
   /** Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px). */
   @Prop() thickness: number | string = TOKEN_DEFAULTS.size200;
   /** Corner radius on each slice — number (px) or TokoMo length. Defaults to `--dimension-radius-025` (2px). */
@@ -50,6 +58,8 @@ export class ChartDonut {
   /** Center text, truncated with an ellipsis if it doesn't fit inside the inner circle. */
   @State() private displayedValueText: string = '';
   @State() private displayedCaptionText: string = '';
+  /** Measured fill diameter when `size` is unset. */
+  @State() private measuredSize: number = FILL_FALLBACK_PX;
 
   /** Fires with the hovered/focused slice's datum, or `null` on leave/blur. */
   @Event() dsSliceHover!: EventEmitter<ChartDatum | null>;
@@ -57,6 +67,56 @@ export class ChartDonut {
   private valueTextEl?: SVGTextElement;
   private captionTextEl?: SVGTextElement;
   private wrapperEl?: HTMLDivElement;
+  private resizeObserver: ResizeObserver | null = null;
+
+  private get isFillMode(): boolean {
+    return this.size == null || !Number.isFinite(this.size) || this.size <= 0;
+  }
+
+  private get resolvedSize(): number {
+    if (!this.isFillMode) return this.size as number;
+    return Math.max(1, Math.round(this.measuredSize));
+  }
+
+  componentDidLoad() {
+    this.syncResizeObserver();
+  }
+
+  @Watch('size')
+  onSizePropChange() {
+    this.syncResizeObserver();
+  }
+
+  disconnectedCallback() {
+    this.teardownResizeObserver();
+  }
+
+  private syncResizeObserver() {
+    this.teardownResizeObserver();
+    if (!this.isFillMode) return;
+    const target = this.wrapperEl ?? this.el;
+    if (!target || typeof ResizeObserver === 'undefined') return;
+
+    this.resizeObserver = new ResizeObserver(entries => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      const next = Math.floor(Math.min(width, height));
+      if (next > 0 && next !== this.measuredSize) {
+        this.measuredSize = next;
+      }
+    });
+    this.resizeObserver.observe(target);
+    // Seed from current box in case observer doesn't fire synchronously.
+    const rect = target.getBoundingClientRect();
+    const seed = Math.floor(Math.min(rect.width, rect.height));
+    if (seed > 0) this.measuredSize = seed;
+  }
+
+  private teardownResizeObserver() {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+  }
 
   private handleHover(datum: ChartDatum | null, event?: MouseEvent) {
     this.hoveredLabel = datum?.label ?? null;
@@ -76,14 +136,21 @@ export class ChartDonut {
   private updateTooltip(datum: ChartDatum, event?: MouseEvent) {
     const wrapper = this.wrapperEl;
     if (!wrapper) return;
+    const size = this.resolvedSize;
     const rect = wrapper.getBoundingClientRect();
-    const x = event ? event.clientX - rect.left : this.size / 2;
-    const y = event ? event.clientY - rect.top : this.size / 2;
+    const x = event ? event.clientX - rect.left : size / 2;
+    const y = event ? event.clientY - rect.top : size / 2;
     this.tooltip = { datum, x, y };
   }
 
   componentDidRender() {
-    const radius = this.size / 2;
+    // Re-bind observer if the wrapper ref just appeared.
+    if (this.isFillMode && this.wrapperEl && !this.resizeObserver) {
+      this.syncResizeObserver();
+    }
+
+    const size = this.resolvedSize;
+    const radius = size / 2;
     const thicknessPx = resolveCssLengthPx(this.thickness, TOKEN_DEFAULTS.size200);
     const innerRadius = radius - thicknessPx;
     const maxWidth = innerRadius * 2 * CENTER_TEXT_SAFE_WIDTH_RATIO;
@@ -105,7 +172,8 @@ export class ChartDonut {
   }
 
   render() {
-    const radius = this.size / 2;
+    const size = this.resolvedSize;
+    const radius = size / 2;
     const thicknessPx = resolveCssLengthPx(this.thickness, TOKEN_DEFAULTS.size200);
     const cornerRadiusPx = resolveCssLengthPx(this.cornerRadius, TOKEN_DEFAULTS.radius025);
     const innerRadius = radius - thicknessPx;
@@ -146,21 +214,29 @@ export class ChartDonut {
     const fullValueText = this.centerValue ?? formatCompactNumber(total);
     const fullCaptionText = this.centerCaption ?? '';
     const tip = this.tooltip;
+    const fill = this.isFillMode;
 
     return (
-      <Host class="chart-donut">
+      <Host
+        class={{
+          'chart-donut': true,
+          'chart-donut--fill': fill,
+          'chart-donut--fixed': !fill,
+        }}
+        style={!fill ? { width: `${size}px`, height: `${size}px` } : undefined}
+      >
         <div
           class="chart-donut__wrapper"
-          style={{ width: `${this.size}px`, height: `${this.size}px` }}
+          style={!fill ? { width: `${size}px`, height: `${size}px` } : undefined}
           ref={el => {
             this.wrapperEl = (el as HTMLDivElement) ?? undefined;
           }}
         >
           <svg
             class="chart-donut__svg"
-            viewBox={`0 0 ${this.size} ${this.size}`}
-            width={this.size}
-            height={this.size}
+            viewBox={`0 0 ${size} ${size}`}
+            width={size}
+            height={size}
           >
             <g transform={`translate(${radius}, ${radius})`}>
               {isEmpty ? (
