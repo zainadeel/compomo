@@ -165,12 +165,8 @@ Host apps render **external** `ds-menu` instances (not bundled inside `ds-panel-
 2. Bind the external menu:
 
 ```ts
-import {
-  PANEL_NAV_USER_MENU_PLACEMENT,
-  type MenuSection,
-  type ShellGradientPreset,
-} from '@ds-mo/ui';
-// or: import { PANEL_NAV_USER_MENU_PLACEMENT } from '@ds-mo/ui/nav';
+import { PANEL_NAV_USER_MENU_PLACEMENT } from '@ds-mo/ui/nav';
+import type { MenuSection, ShellGradientPreset } from '@ds-mo/ui';
 ```
 
 ```html
@@ -209,4 +205,4 @@ Bind `[open]`, `[sections]` or `[items]`, `[anchor]` / `anchor-id`, and placemen
 
 ## Reference consumer
 
-**motive-webapp-lab** — shell + `PanelNavHostDirective` + document hint + Phase 0 perf harness (`npm run perf:phase0`). User menu: spread `PANEL_NAV_USER_MENU_PLACEMENT` from `@ds-mo/ui`.
+**motive-webapp-lab** — shell + `PanelNavHostDirective` + document hint + Phase 0 perf harness (`npm run perf:phase0`). User menu: spread `PANEL_NAV_USER_MENU_PLACEMENT` from `@ds-mo/ui/nav`.

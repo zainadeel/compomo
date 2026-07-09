@@ -3526,6 +3526,3 @@ declare module "@stencil/core" {
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-

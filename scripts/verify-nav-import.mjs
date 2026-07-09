@@ -73,6 +73,10 @@ try {
         console.error('unexpected DEFAULT_SHELL_GRADIENT_PRESET');
         process.exit(1);
       }
+      if (!nav.PANEL_NAV_USER_MENU_PLACEMENT || nav.PANEL_NAV_USER_MENU_PLACEMENT.side !== 'right') {
+        console.error('missing or unexpected PANEL_NAV_USER_MENU_PLACEMENT');
+        process.exit(1);
+      }
       const utils = await import('@ds-mo/ui/utils');
       for (const name of ['resolveCssLengthPx', 'registerIcons']) {
         if (typeof utils[name] !== 'function') {
