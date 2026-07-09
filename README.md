@@ -73,7 +73,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout
-- **EmptyState**, **Loader**, **Skeleton**, **Header**, **Fade**, **Scrollbar**
+- **EmptyState**, **Loader**, **Skeleton**, **Header**, **Scrollbar**
 
 ## Token dependency
 

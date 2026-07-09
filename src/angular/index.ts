@@ -19,7 +19,6 @@ export const DIRECTIVES = [
   d.DsChip,
   d.DsDivider,
   d.DsEmptyState,
-  d.DsFade,
   d.DsField,
   d.DsHeader,
   d.DsIcon,

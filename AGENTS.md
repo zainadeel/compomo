@@ -503,6 +503,7 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | A component's behavior | `src/wc/components/<Name>/<Name>.tsx` |
 | A component's styling | `src/wc/components/<Name>/<Name>.css` (tokens only — no hardcoded values) |
 | A component's Storybook stories | `src/wc/components/<Name>/<Name>.stories.ts` |
+| Shared CSS util demos (Storybook) | `src/wc/stories/Utility/*.stories.ts` |
 | Angular proxy output | Auto-generated: `src/angular/proxies.ts`, `src/angular/index.ts` — do not hand-edit |
 | React wrapper output | Auto-generated: `src/react/` — do not hand-edit |
 | Token-showcase stories | `src/stories/*.stories.tsx` |

@@ -71,6 +71,13 @@ const preview: Preview = {
           ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
           'Primitives',
           'Utility',
+          [
+            'InteractionFill',
+            'ControlInactive',
+            'ControlDensity',
+            'FocusRing',
+            'ScrollEdgeFade',
+          ],
         ],
       },
     },

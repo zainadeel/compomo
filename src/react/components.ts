@@ -21,7 +21,6 @@ export { DsCheckbox } from "./ds-checkbox.js";
 export { DsChip } from "./ds-chip.js";
 export { DsDivider } from "./ds-divider.js";
 export { DsEmptyState } from "./ds-empty-state.js";
-export { DsFade } from "./ds-fade.js";
 export { DsField } from "./ds-field.js";
 export { DsHeader } from "./ds-header.js";
 export { DsIcon } from "./ds-icon.js";

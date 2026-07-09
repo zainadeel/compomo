@@ -475,29 +475,6 @@ export declare interface DsEmptyState extends Components.DsEmptyState {}
 
 
 @ProxyCmp({
-  inputs: ['height', 'side', 'size', 'visible']
-})
-@Component({
-  selector: 'ds-fade',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['height', 'side', 'size', 'visible'],
-  standalone: false
-})
-export class DsFade {
-  protected el: HTMLDsFadeElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsFade extends Components.DsFade {}
-
-
-@ProxyCmp({
   inputs: ['fieldId', 'label']
 })
 @Component({

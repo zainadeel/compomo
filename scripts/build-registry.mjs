@@ -398,21 +398,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: ['Text'],
   }],
-  ['Fade', {
-    title: 'Fade',
-    description: 'Scroll-edge fade wrapper — masks overflow content so gradients and textured surfaces show through.',
-    exports: ['Fade'],
-    types: ['FadeProps', 'FadeSide', 'FadeSize', 'FadeSizeToken'],
-    props: {
-      side: { type: "'top' | 'bottom' | 'left' | 'right'", default: "'bottom'", description: 'Edge where content fades as it approaches the scroll boundary.' },
-      size: { type: "'size-000' | 'size-050' | 'size-075' | 'size-100' | 'size-150' | 'size-200' | 'size-250' | 'size-300' | 'size-400' | 'size-500' | 'size-600' | 'size-800' | string", default: "'size-600'", description: 'Fade depth along the fade axis. Use dimension size token names or a CSS length.' },
-      visible: { type: 'boolean', default: 'true', description: 'Controls the mask without removing the scroll container from layout.' },
-      height: { type: 'string', description: 'Deprecated alias for size.' },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: [],
-  }],
   ['Scrollbar', {
     title: 'Scrollbar',
     description: 'Custom scrollbar with draggable thumb, proportional sizing, and hover reveal.',

@@ -20,7 +20,6 @@ import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 import { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { FadeSide, FadeSize } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
@@ -58,7 +57,6 @@ export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 export { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { FadeSide, FadeSize } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
@@ -538,27 +536,6 @@ export namespace Components {
           * @default 'no-content'
          */
         "type": EmptyStateType;
-    }
-    interface DsFade {
-        /**
-          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
-         */
-        "height": string | undefined;
-        /**
-          * Edge where content fades as it approaches the scroll boundary.
-          * @default 'bottom'
-         */
-        "side": FadeSide;
-        /**
-          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
-          * @default 'size-600'
-         */
-        "size": FadeSize;
-        /**
-          * Controls the mask without removing the scroll container from layout.
-          * @default true
-         */
-        "visible": boolean;
     }
     interface DsField {
         /**
@@ -1479,12 +1456,6 @@ declare global {
         prototype: HTMLDsEmptyStateElement;
         new (): HTMLDsEmptyStateElement;
     };
-    interface HTMLDsFadeElement extends Components.DsFade, HTMLStencilElement {
-    }
-    var HTMLDsFadeElement: {
-        prototype: HTMLDsFadeElement;
-        new (): HTMLDsFadeElement;
-    };
     interface HTMLDsFieldElement extends Components.DsField, HTMLStencilElement {
     }
     var HTMLDsFieldElement: {
@@ -1850,7 +1821,6 @@ declare global {
         "ds-chip": HTMLDsChipElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
-        "ds-fade": HTMLDsFadeElement;
         "ds-field": HTMLDsFieldElement;
         "ds-header": HTMLDsHeaderElement;
         "ds-icon": HTMLDsIconElement;
@@ -2366,27 +2336,6 @@ declare namespace LocalJSX {
           * @default 'no-content'
          */
         "type"?: EmptyStateType;
-    }
-    interface DsFade {
-        /**
-          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
-         */
-        "height"?: string | undefined;
-        /**
-          * Edge where content fades as it approaches the scroll boundary.
-          * @default 'bottom'
-         */
-        "side"?: FadeSide;
-        /**
-          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
-          * @default 'size-600'
-         */
-        "size"?: FadeSize;
-        /**
-          * Controls the mask without removing the scroll container from layout.
-          * @default true
-         */
-        "visible"?: boolean;
     }
     interface DsField {
         /**
@@ -3141,12 +3090,6 @@ declare namespace LocalJSX {
         "type": EmptyStateType;
         "message": string | undefined;
     }
-    interface DsFadeAttributes {
-        "side": FadeSide;
-        "size": FadeSize;
-        "height": string | undefined;
-        "visible": boolean;
-    }
     interface DsFieldAttributes {
         "label": string;
         "fieldId": string | undefined;
@@ -3349,7 +3292,6 @@ declare namespace LocalJSX {
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
-        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
@@ -3416,7 +3358,6 @@ declare module "@stencil/core" {
             "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
-            "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;

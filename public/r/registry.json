@@ -970,43 +970,6 @@
       ]
     },
     {
-      "name": "fade",
-      "title": "Fade",
-      "description": "Scroll-edge fade wrapper — masks overflow content so gradients and textured surfaces show through.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/fade",
-        "exports": [
-          "Fade"
-        ],
-        "props": {
-          "side": {
-            "type": "'top' | 'bottom' | 'left' | 'right'",
-            "required": false
-          },
-          "size": {
-            "type": "'size-000' | 'size-050' | 'size-075' | 'size-100' | 'size-150' | 'size-200' | 'size-250' | 'size-300' | 'size-400' | 'size-500' | 'size-600' | 'size-800' | string",
-            "required": false
-          },
-          "visible": {
-            "type": "boolean",
-            "required": false
-          },
-          "height": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
       "name": "scrollbar",
       "title": "Scrollbar",
       "description": "Custom scrollbar with draggable thumb, proportional sizing, and hover reveal.",
