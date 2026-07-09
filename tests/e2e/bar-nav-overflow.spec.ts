@@ -94,7 +94,7 @@ test.describe('BarNav responsive overflow', () => {
     for (let i = 0; i < 20; i++) {
       const triggerFocused = await page.evaluate(() => {
         const host = document.querySelector('.bar-nav__overflow-trigger');
-        const button = host?.querySelector('.button-icon');
+        const button = host?.querySelector('.button-unfilled');
         return !!button && document.activeElement === button;
       });
       if (triggerFocused) break;
@@ -103,14 +103,14 @@ test.describe('BarNav responsive overflow', () => {
 
     const triggerFocused = await page.evaluate(() => {
       const host = document.querySelector('.bar-nav__overflow-trigger');
-      const button = host?.querySelector('.button-icon');
+      const button = host?.querySelector('.button-unfilled');
       return !!button && document.activeElement === button;
     });
     expect(triggerFocused).toBe(true);
 
     const focusRing = await page.evaluate(() => {
       const host = document.querySelector('.bar-nav__overflow-trigger') as HTMLElement | null;
-      const button = host?.querySelector('.button-icon') as HTMLElement | null;
+      const button = host?.querySelector('.button-unfilled') as HTMLElement | null;
       if (!button) return null;
 
       const buttonStyle = getComputedStyle(button);
