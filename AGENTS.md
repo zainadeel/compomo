@@ -276,6 +276,19 @@ render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`
 
 ---
 
+## Common gotchas
+
+**Fixed-height rows/controls: use `height` + `align-items: center`, not padding + line-height math.**
+`PanelNav`'s and `BarNav`'s items both size to 32px (`--dimension-size-400`) via a *fixed* `height` on a flex/grid container with `align-items: center`, plus **horizontal-only** padding. Don't try to hit a target height by stacking `padding: Npx` + "the content's line-height should be Mpx" — that only works as long as every child's font metrics stay exactly as assumed. The moment a child's typography changes (e.g. moving text into a wrapped `<ds-text>`, see below), the row's height silently drifts because it was never actually fixed — it was derived. A hard `height` sidesteps this permanently: content is centered regardless of its own font metrics.
+
+**`<ds-text>`'s host is `display: contents` — box-model CSS on it silently no-ops.**
+`display: contents` removes the element's own box entirely; only its *children* generate boxes. So a `class` with `margin`/`padding`/`overflow`/`min-width`/`width` etc. placed directly on `<ds-text class="...">` does nothing — those properties have no box to apply to. If a text node needs layout responsibilities (grid/flex participation, truncation, spacing), wrap `<ds-text>` in a plain `<span>`/`<div>` that owns the layout, and let `<ds-text>` only carry `variant`/`color`. See `ChartLegend.tsx` for the pattern.
+
+**Corollary: a layout wrapper around `<ds-text>` needs its own `line-height` set explicitly.**
+A block box's rendered line height is the *taller* of its own inherited "strut" (based on whatever font-size/line-height it inherits) and its actual inline content. A plain wrapper `<span>` around `<ds-text>` doesn't inherit `text-body-medium`'s line-height from anywhere — only `<ds-text>`'s own inner tag has it. Left unset, the wrapper falls back to the browser default (`line-height: normal`, ~1.5×), which is usually *taller* than the intended type scale and silently inflates whatever contains it. Set the wrapper's `line-height` to match the same token used by the nested `<ds-text variant>` (e.g. `line-height: var(--typography-lineheight-md)` for `text-body-medium`) so the wrapper hugs its actual content.
+
+---
+
 ## Commit & PR conventions
 
 **Conventional Commits**, enforced by `.github/workflows/pr-title.yml`:

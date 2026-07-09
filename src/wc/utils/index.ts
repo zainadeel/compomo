@@ -1,5 +1,7 @@
 export { registerIcons } from '../components/Icon/icon-cache';
 export { clearCssLengthPxCache, resolveCssLengthPx } from './resolve-css-length-px';
+export { formatCompactNumber } from './format-compact-number';
+export { truncateSvgTextToWidth } from './truncate-svg-text';
 export { parseCssTimeMs, resolveCssTimeMs } from './resolve-css-time-ms';
 export {
   SCROLL_EDGE_FADE_DEFAULT_SIZE,

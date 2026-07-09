@@ -231,18 +231,18 @@ export declare interface DsButtonUnfilledIcon extends Components.DsButtonUnfille
 
 
 @ProxyCmp({
-  inputs: ['elevation', 'radius']
+  inputs: ['cardWidth', 'heading']
 })
 @Component({
-  selector: 'ds-card',
+  selector: 'ds-card-data-viz',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['elevation', 'radius'],
+  inputs: ['cardWidth', { name: 'heading', required: true }],
   standalone: false
 })
-export class DsCard {
-  protected el: HTMLDsCardElement;
+export class DsCardDataViz {
+  protected el: HTMLDsCardDataVizElement;
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -250,7 +250,7 @@ export class DsCard {
 }
 
 
-export declare interface DsCard extends Components.DsCard {}
+export declare interface DsCardDataViz extends Components.DsCardDataViz {}
 
 
 @ProxyCmp({
@@ -281,6 +281,121 @@ export declare interface DsCardSetting extends Components.DsCardSetting {
    */
   dsEditingChange: EventEmitter<CustomEvent<boolean>>;
 }
+
+
+@ProxyCmp({
+  inputs: ['data', 'height', 'width']
+})
+@Component({
+  selector: 'ds-chart-bar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['data', 'height', 'width'],
+  standalone: false
+})
+export class DsChartBar {
+  protected el: HTMLDsChartBarElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsChartBar extends Components.DsChartBar {}
+
+
+@ProxyCmp({
+  inputs: ['activeLabel', 'centerCaption', 'centerValue', 'cornerRadius', 'data', 'gap', 'size', 'thickness']
+})
+@Component({
+  selector: 'ds-chart-donut',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['activeLabel', 'centerCaption', 'centerValue', 'cornerRadius', 'data', 'gap', 'size', 'thickness'],
+  outputs: ['dsSliceHover'],
+  standalone: false
+})
+export class DsChartDonut {
+  protected el: HTMLDsChartDonutElement;
+  @Output() dsSliceHover = new EventEmitter<CustomEvent<IDsChartDonutChartDatum | null>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { ChartDatum as IDsChartDonutChartDatum } from '@ds-mo/ui';
+
+export declare interface DsChartDonut extends Components.DsChartDonut {
+  /**
+   * Fires with the hovered/focused slice's datum, or `null` on leave/blur.
+   */
+  dsSliceHover: EventEmitter<CustomEvent<IDsChartDonutChartDatum | null>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['activeLabel', 'direction', 'items', 'showPercentage']
+})
+@Component({
+  selector: 'ds-chart-legend',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['activeLabel', 'direction', 'items', 'showPercentage'],
+  outputs: ['dsItemHover', 'dsItemClick'],
+  standalone: false
+})
+export class DsChartLegend {
+  protected el: HTMLDsChartLegendElement;
+  @Output() dsItemHover = new EventEmitter<CustomEvent<IDsChartLegendChartLegendItem | null>>();
+  @Output() dsItemClick = new EventEmitter<CustomEvent<{ item: IDsChartLegendChartLegendItem; originalEvent: MouseEvent }>>();
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+import type { ChartLegendItem as IDsChartLegendChartLegendItem } from '@ds-mo/ui';
+
+export declare interface DsChartLegend extends Components.DsChartLegend {
+  /**
+   * Fires on row hover/focus with the item, or `null` on leave/blur.
+   */
+  dsItemHover: EventEmitter<CustomEvent<IDsChartLegendChartLegendItem | null>>;
+  /**
+   * Fires when a deep-linkable row (`item.href` set) is activated.
+   */
+  dsItemClick: EventEmitter<CustomEvent<{ item: IDsChartLegendChartLegendItem; originalEvent: MouseEvent }>>;
+}
+
+
+@ProxyCmp({
+  inputs: ['categories', 'height', 'series', 'showPoints', 'width']
+})
+@Component({
+  selector: 'ds-chart-line',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['categories', 'height', 'series', 'showPoints', 'width'],
+  standalone: false
+})
+export class DsChartLine {
+  protected el: HTMLDsChartLineElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsChartLine extends Components.DsChartLine {}
 
 
 @ProxyCmp({
@@ -1167,5 +1282,28 @@ export class DsTooltip {
 
 
 export declare interface DsTooltip extends Components.DsTooltip {}
+
+
+@ProxyCmp({
+  inputs: ['label', 'value', 'x', 'y']
+})
+@Component({
+  selector: 'ds-tooltip-data-viz',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['label', 'value', 'x', 'y'],
+  standalone: false
+})
+export class DsTooltipDataViz {
+  protected el: HTMLDsTooltipDataVizElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsTooltipDataViz extends Components.DsTooltipDataViz {}
 
 

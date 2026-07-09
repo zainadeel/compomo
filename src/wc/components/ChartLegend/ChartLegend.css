@@ -1,0 +1,163 @@
+:host {
+  display: block;
+  font-family: inherit;
+  user-select: none;
+}
+
+.chart-legend__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Non-visual wrapper — the real box is .chart-legend__item so it can be hovered/clicked
+   as a whole row while its children still align to the list's shared grid columns. */
+.chart-legend__list-item {
+  display: contents;
+}
+
+/*
+ * Vertical: list is the grid; each item spans it via subgrid so the data columns line up.
+ * Label always gets at least 50% of the row (minmax floor) and grows via 1fr if the other
+ * columns need less; value/percentage are `auto` — sized to their own content — so this holds
+ * up whether there are 1, 2, or more data columns, instead of hardcoding a fixed split.
+ */
+:host(.chart-legend--vertical) .chart-legend__list {
+  display: grid;
+  grid-template-columns: auto minmax(50%, 1fr) auto auto;
+  row-gap: var(--dimension-space-050);
+}
+
+:host(.chart-legend--vertical) .chart-legend__item {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+:host(.chart-legend--horizontal) .chart-legend__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dimension-space-200);
+}
+
+:host(.chart-legend--horizontal) .chart-legend__item {
+  display: flex;
+}
+
+/*
+ * 32px tall via a fixed `height` + `align-items: center` — same recipe as PanelNav's and BarNav's
+ * items — rather than deriving it from padding + line-height math. That math broke once text
+ * moved into a wrapped <ds-text>: the row's height ends up depending on whatever line-height a
+ * plain wrapper span happens to inherit, which is fragile. A fixed height sidesteps that
+ * entirely — content is centered regardless of its own font metrics. Padding is horizontal-only
+ * (matches PanelNav) since the fixed height already handles vertical spacing.
+ * Column spacing is per-pair via margins (not a uniform column-gap): the swatch-box+label read as
+ * one unit (8px between them), while label→percentage→value are separate data points (16px between each).
+ */
+.chart-legend__item {
+  /* z-index (any non-auto value) is required, not just position:relative, to make this row its
+     own stacking context — otherwise the ::after fill's z-index:-1 below escapes past this row
+     and can paint behind some ancestor's opaque background instead of just behind this row's text. */
+  position: relative;
+  z-index: 0;
+  box-sizing: border-box;
+  height: var(--dimension-size-400);
+  align-items: center;
+  padding: 0 var(--dimension-space-075);
+  border-radius: var(--dimension-radius-025);
+  text-decoration: none;
+  color: inherit;
+  transition: opacity var(--effect-motion-short-2);
+}
+
+.chart-legend__item--interactive {
+  cursor: pointer;
+}
+
+/* Same interaction-fill pattern as our buttons: an absolutely-positioned pseudo-layer using the
+   semantic --color-interaction-* tokens, painted behind the row's own content (negative z-index),
+   instead of setting background-color directly on the row. */
+.chart-legend__item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+}
+
+.chart-legend__item:hover::after {
+  background: var(--color-interaction-hover);
+}
+
+.chart-legend__item--interactive:active::after {
+  background: var(--color-interaction-pressed);
+}
+
+.chart-legend__item--interactive:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: -2px;
+}
+
+/* 20px box balances the 12px swatch against the row's 20px text line-height; also carries the
+   6px gap to the label, since box+swatch+label read as a single "series" unit. */
+.chart-legend__swatch-box {
+  width: var(--dimension-size-250);
+  height: var(--dimension-size-250);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: var(--dimension-space-075);
+}
+
+.chart-legend__swatch {
+  width: var(--dimension-space-150);
+  height: var(--dimension-space-150);
+  border-radius: var(--dimension-radius-025);
+  flex-shrink: 0;
+}
+
+/*
+ * Typography (color/size/weight/letter-spacing) now comes from the nested <ds-text
+ * variant="text-body-medium">; these classes only own layout — grid participation, spacing,
+ * and truncation. <ds-text>'s host is `display: contents` (no box of its own), so classes
+ * placed directly on <ds-text> would silently no-op for anything box-model related — that's
+ * why the layout class lives on this wrapping <span> instead of on <ds-text> itself.
+ *
+ * .chart-legend__item's fixed height (not this line-height) is what keeps the row itself at
+ * exactly 32px. line-height is still set here so this wrapper's own box tightly hugs its actual
+ * text — without it, the wrapper inherits the browser's default line-height (~24px, since
+ * nothing sets its own font-size), and `align-items: center` would then center an oversized
+ * wrapper whose text isn't necessarily centered within it, not the text itself.
+ */
+.chart-legend__label {
+  padding: 0 var(--dimension-space-025);
+  margin-right: var(--dimension-space-200);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: var(--typography-lineheight-md);
+}
+
+.chart-legend__percentage {
+  padding: 0 var(--dimension-space-025);
+  text-align: right;
+  line-height: var(--typography-lineheight-md);
+}
+
+/* Value and percentage read as equal-weight data (see the nested <ds-text>, same variant for
+   both) — percentage sits last since it's inherently bounded (never exceeds "100.0%"), so its
+   content-sized column never needs more room than that. */
+.chart-legend__value {
+  padding: 0 var(--dimension-space-025);
+  margin-right: var(--dimension-space-200);
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: var(--typography-lineheight-md);
+}

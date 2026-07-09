@@ -14,8 +14,10 @@ import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 import { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
-import { CardElevation, CardRadius } from "./components/Card/Card";
+import { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
+import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
+import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -52,8 +54,10 @@ export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
 export { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
-export { CardElevation, CardRadius } from "./components/Card/Card";
+export { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
+export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
+export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -332,15 +336,21 @@ export namespace Components {
          */
         "type": 'button' | 'submit' | 'reset';
     }
-    interface DsCard {
+    /**
+     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
+     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
+     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     */
+    interface DsCardDataViz {
         /**
-          * @default 'elevated'
+          * Card width token.
+          * @default 'md'
          */
-        "elevation": CardElevation;
+        "cardWidth": CardDataVizWidth;
         /**
-          * @default 'lg'
+          * Widget heading shown in the card header.
          */
-        "radius": CardRadius;
+        "heading": string;
     }
     interface DsCardSetting {
         /**
@@ -357,6 +367,112 @@ export namespace Components {
           * Section heading shown in the card header.
          */
         "heading": string;
+    }
+    interface DsChartBar {
+        /**
+          * Bars to render. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "data": ChartDatum[];
+        /**
+          * @default 240
+         */
+        "height": number;
+        /**
+          * @default 480
+         */
+        "width": number;
+    }
+    interface DsChartDonut {
+        /**
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset.
+          * @default null
+         */
+        "activeLabel": string | null;
+        /**
+          * Secondary caption below the center value (e.g. "Total", "Normal"). Rendered uppercase.
+         */
+        "centerCaption": string | undefined;
+        /**
+          * Primary center value; defaults to the sum of `data` values (e.g. "187", "40.9%").
+         */
+        "centerValue": string | undefined;
+        /**
+          * Corner radius on each slice — number (px) or TokoMo length. Defaults to `--dimension-radius-025` (2px).
+          * @default TOKEN_DEFAULTS.radius025
+         */
+        "cornerRadius": number | string;
+        /**
+          * Slices to render. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "data": ChartDatum[];
+        /**
+          * Gap between slices, in degrees.
+          * @default 1
+         */
+        "gap": number;
+        /**
+          * @default 175
+         */
+        "size": number;
+        /**
+          * Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px).
+          * @default TOKEN_DEFAULTS.size200
+         */
+        "thickness": number | string;
+    }
+    /**
+     * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style
+     * legends differently (list w/ values, compact chips, bare swatches, external
+     * stat callouts) — this covers the common "swatch + label + optional value" case.
+     * Consumers who need a different treatment skip this component entirely and
+     * render their own markup against the same `ChartDatum[]` data.
+     */
+    interface DsChartLegend {
+        /**
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other rows' opacity (like a chart dimming its other slices) — it never shows the hover-fill, since that's reserved for a real pointer/keyboard interaction on this row.
+          * @default null
+         */
+        "activeLabel": string | null;
+        /**
+          * @default 'vertical'
+         */
+        "direction": ChartLegendDirection;
+        /**
+          * Legend entries. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "items": ChartLegendItem[];
+        /**
+          * Show each item's share of the total (of items with a `value`) alongside its count.
+          * @default true
+         */
+        "showPercentage": boolean;
+    }
+    interface DsChartLine {
+        /**
+          * X-axis labels — must match each series' `data` length. Set as a JS property.
+          * @default []
+         */
+        "categories": string[];
+        /**
+          * @default 240
+         */
+        "height": number;
+        /**
+          * One or more series to plot. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "series": ChartSeries[];
+        /**
+          * @default true
+         */
+        "showPoints": boolean;
+        /**
+          * @default 480
+         */
+        "width": number;
     }
     interface DsCheckbox {
         /**
@@ -1062,6 +1178,35 @@ export namespace Components {
          */
         "sideOffset": number | string;
     }
+    /**
+     * Positioned value/label callout for chart hover interactions (donut slice, bar,
+     * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+     * charts hover-highlight data that lives inside an SVG, so the chart itself computes
+     * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
+     * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
+     * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
+     * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
+     * keeps it on-screen.
+     */
+    interface DsTooltipDataViz {
+        /**
+          * @default ''
+         */
+        "label": string;
+        /**
+          * @default ''
+         */
+        "value": string | number;
+        /**
+          * Anchor point in px, relative to the nearest `position: relative` ancestor — e.g. the cursor.
+          * @default 0
+         */
+        "x": number;
+        /**
+          * @default 0
+         */
+        "y": number;
+    }
 }
 export interface DsAccordionCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1090,6 +1235,14 @@ export interface DsButtonUnfilledIconCustomEvent<T> extends CustomEvent<T> {
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardSettingElement;
+}
+export interface DsChartDonutCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsChartDonutElement;
+}
+export interface DsChartLegendCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsChartLegendElement;
 }
 export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1275,11 +1428,16 @@ declare global {
         prototype: HTMLDsButtonUnfilledIconElement;
         new (): HTMLDsButtonUnfilledIconElement;
     };
-    interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
+    /**
+     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
+     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
+     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     */
+    interface HTMLDsCardDataVizElement extends Components.DsCardDataViz, HTMLStencilElement {
     }
-    var HTMLDsCardElement: {
-        prototype: HTMLDsCardElement;
-        new (): HTMLDsCardElement;
+    var HTMLDsCardDataVizElement: {
+        prototype: HTMLDsCardDataVizElement;
+        new (): HTMLDsCardDataVizElement;
     };
     interface HTMLDsCardSettingElementEventMap {
         "dsEditingChange": boolean;
@@ -1297,6 +1455,60 @@ declare global {
     var HTMLDsCardSettingElement: {
         prototype: HTMLDsCardSettingElement;
         new (): HTMLDsCardSettingElement;
+    };
+    interface HTMLDsChartBarElement extends Components.DsChartBar, HTMLStencilElement {
+    }
+    var HTMLDsChartBarElement: {
+        prototype: HTMLDsChartBarElement;
+        new (): HTMLDsChartBarElement;
+    };
+    interface HTMLDsChartDonutElementEventMap {
+        "dsSliceHover": ChartDatum | null;
+    }
+    interface HTMLDsChartDonutElement extends Components.DsChartDonut, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsChartDonutElementEventMap>(type: K, listener: (this: HTMLDsChartDonutElement, ev: DsChartDonutCustomEvent<HTMLDsChartDonutElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsChartDonutElementEventMap>(type: K, listener: (this: HTMLDsChartDonutElement, ev: DsChartDonutCustomEvent<HTMLDsChartDonutElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsChartDonutElement: {
+        prototype: HTMLDsChartDonutElement;
+        new (): HTMLDsChartDonutElement;
+    };
+    interface HTMLDsChartLegendElementEventMap {
+        "dsItemHover": ChartLegendItem | null;
+        "dsItemClick": { item: ChartLegendItem; originalEvent: MouseEvent };
+    }
+    /**
+     * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style
+     * legends differently (list w/ values, compact chips, bare swatches, external
+     * stat callouts) — this covers the common "swatch + label + optional value" case.
+     * Consumers who need a different treatment skip this component entirely and
+     * render their own markup against the same `ChartDatum[]` data.
+     */
+    interface HTMLDsChartLegendElement extends Components.DsChartLegend, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsChartLegendElementEventMap>(type: K, listener: (this: HTMLDsChartLegendElement, ev: DsChartLegendCustomEvent<HTMLDsChartLegendElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsChartLegendElementEventMap>(type: K, listener: (this: HTMLDsChartLegendElement, ev: DsChartLegendCustomEvent<HTMLDsChartLegendElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsChartLegendElement: {
+        prototype: HTMLDsChartLegendElement;
+        new (): HTMLDsChartLegendElement;
+    };
+    interface HTMLDsChartLineElement extends Components.DsChartLine, HTMLStencilElement {
+    }
+    var HTMLDsChartLineElement: {
+        prototype: HTMLDsChartLineElement;
+        new (): HTMLDsChartLineElement;
     };
     interface HTMLDsCheckboxElementEventMap {
         "dsChange": boolean;
@@ -1689,6 +1901,22 @@ declare global {
         prototype: HTMLDsTooltipElement;
         new (): HTMLDsTooltipElement;
     };
+    /**
+     * Positioned value/label callout for chart hover interactions (donut slice, bar,
+     * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+     * charts hover-highlight data that lives inside an SVG, so the chart itself computes
+     * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
+     * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
+     * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
+     * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
+     * keeps it on-screen.
+     */
+    interface HTMLDsTooltipDataVizElement extends Components.DsTooltipDataViz, HTMLStencilElement {
+    }
+    var HTMLDsTooltipDataVizElement: {
+        prototype: HTMLDsTooltipDataVizElement;
+        new (): HTMLDsTooltipDataVizElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-accordion": HTMLDsAccordionElement;
         "ds-app-shell": HTMLDsAppShellElement;
@@ -1698,8 +1926,12 @@ declare global {
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled-icon": HTMLDsButtonUnfilledIconElement;
-        "ds-card": HTMLDsCardElement;
+        "ds-card-data-viz": HTMLDsCardDataVizElement;
         "ds-card-setting": HTMLDsCardSettingElement;
+        "ds-chart-bar": HTMLDsChartBarElement;
+        "ds-chart-donut": HTMLDsChartDonutElement;
+        "ds-chart-legend": HTMLDsChartLegendElement;
+        "ds-chart-line": HTMLDsChartLineElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-chip": HTMLDsChipElement;
         "ds-divider": HTMLDsDividerElement;
@@ -1731,6 +1963,7 @@ declare global {
         "ds-toast-provider": HTMLDsToastProviderElement;
         "ds-toggle": HTMLDsToggleElement;
         "ds-tooltip": HTMLDsTooltipElement;
+        "ds-tooltip-data-viz": HTMLDsTooltipDataVizElement;
     }
 }
 declare namespace LocalJSX {
@@ -1994,15 +2227,21 @@ declare namespace LocalJSX {
          */
         "type"?: 'button' | 'submit' | 'reset';
     }
-    interface DsCard {
+    /**
+     * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
+     * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
+     * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+     */
+    interface DsCardDataViz {
         /**
-          * @default 'elevated'
+          * Card width token.
+          * @default 'md'
          */
-        "elevation"?: CardElevation;
+        "cardWidth"?: CardDataVizWidth;
         /**
-          * @default 'lg'
+          * Widget heading shown in the card header.
          */
-        "radius"?: CardRadius;
+        "heading": string;
     }
     interface DsCardSetting {
         /**
@@ -2023,6 +2262,124 @@ declare namespace LocalJSX {
           * Emits when the user enters or exits edit mode.
          */
         "onDsEditingChange"?: (event: DsCardSettingCustomEvent<boolean>) => void;
+    }
+    interface DsChartBar {
+        /**
+          * Bars to render. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "data"?: ChartDatum[];
+        /**
+          * @default 240
+         */
+        "height"?: number;
+        /**
+          * @default 480
+         */
+        "width"?: number;
+    }
+    interface DsChartDonut {
+        /**
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset.
+          * @default null
+         */
+        "activeLabel"?: string | null;
+        /**
+          * Secondary caption below the center value (e.g. "Total", "Normal"). Rendered uppercase.
+         */
+        "centerCaption"?: string | undefined;
+        /**
+          * Primary center value; defaults to the sum of `data` values (e.g. "187", "40.9%").
+         */
+        "centerValue"?: string | undefined;
+        /**
+          * Corner radius on each slice — number (px) or TokoMo length. Defaults to `--dimension-radius-025` (2px).
+          * @default TOKEN_DEFAULTS.radius025
+         */
+        "cornerRadius"?: number | string;
+        /**
+          * Slices to render. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "data"?: ChartDatum[];
+        /**
+          * Gap between slices, in degrees.
+          * @default 1
+         */
+        "gap"?: number;
+        /**
+          * Fires with the hovered/focused slice's datum, or `null` on leave/blur.
+         */
+        "onDsSliceHover"?: (event: DsChartDonutCustomEvent<ChartDatum | null>) => void;
+        /**
+          * @default 175
+         */
+        "size"?: number;
+        /**
+          * Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px).
+          * @default TOKEN_DEFAULTS.size200
+         */
+        "thickness"?: number | string;
+    }
+    /**
+     * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style
+     * legends differently (list w/ values, compact chips, bare swatches, external
+     * stat callouts) — this covers the common "swatch + label + optional value" case.
+     * Consumers who need a different treatment skip this component entirely and
+     * render their own markup against the same `ChartDatum[]` data.
+     */
+    interface DsChartLegend {
+        /**
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other rows' opacity (like a chart dimming its other slices) — it never shows the hover-fill, since that's reserved for a real pointer/keyboard interaction on this row.
+          * @default null
+         */
+        "activeLabel"?: string | null;
+        /**
+          * @default 'vertical'
+         */
+        "direction"?: ChartLegendDirection;
+        /**
+          * Legend entries. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "items"?: ChartLegendItem[];
+        /**
+          * Fires when a deep-linkable row (`item.href` set) is activated.
+         */
+        "onDsItemClick"?: (event: DsChartLegendCustomEvent<{ item: ChartLegendItem; originalEvent: MouseEvent }>) => void;
+        /**
+          * Fires on row hover/focus with the item, or `null` on leave/blur.
+         */
+        "onDsItemHover"?: (event: DsChartLegendCustomEvent<ChartLegendItem | null>) => void;
+        /**
+          * Show each item's share of the total (of items with a `value`) alongside its count.
+          * @default true
+         */
+        "showPercentage"?: boolean;
+    }
+    interface DsChartLine {
+        /**
+          * X-axis labels — must match each series' `data` length. Set as a JS property.
+          * @default []
+         */
+        "categories"?: string[];
+        /**
+          * @default 240
+         */
+        "height"?: number;
+        /**
+          * One or more series to plot. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "series"?: ChartSeries[];
+        /**
+          * @default true
+         */
+        "showPoints"?: boolean;
+        /**
+          * @default 480
+         */
+        "width"?: number;
     }
     interface DsCheckbox {
         /**
@@ -2786,6 +3143,35 @@ declare namespace LocalJSX {
          */
         "sideOffset"?: number | string;
     }
+    /**
+     * Positioned value/label callout for chart hover interactions (donut slice, bar,
+     * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+     * charts hover-highlight data that lives inside an SVG, so the chart itself computes
+     * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
+     * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
+     * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
+     * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
+     * keeps it on-screen.
+     */
+    interface DsTooltipDataViz {
+        /**
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * @default ''
+         */
+        "value"?: string | number;
+        /**
+          * Anchor point in px, relative to the nearest `position: relative` ancestor — e.g. the cursor.
+          * @default 0
+         */
+        "x"?: number;
+        /**
+          * @default 0
+         */
+        "y"?: number;
+    }
 
     interface DsAccordionAttributes {
         "multiple": boolean;
@@ -2853,14 +3239,37 @@ declare namespace LocalJSX {
         "pressed": boolean | undefined;
         "focusTabIndex": number;
     }
-    interface DsCardAttributes {
-        "elevation": CardElevation;
-        "radius": CardRadius;
+    interface DsCardDataVizAttributes {
+        "heading": string;
+        "cardWidth": CardDataVizWidth;
     }
     interface DsCardSettingAttributes {
         "heading": string;
         "cardWidth": CardSettingWidth;
         "editing": boolean;
+    }
+    interface DsChartBarAttributes {
+        "width": number;
+        "height": number;
+    }
+    interface DsChartDonutAttributes {
+        "size": number;
+        "thickness": string;
+        "cornerRadius": string;
+        "gap": number;
+        "centerValue": string | undefined;
+        "centerCaption": string | undefined;
+        "activeLabel": string | null;
+    }
+    interface DsChartLegendAttributes {
+        "direction": ChartLegendDirection;
+        "showPercentage": boolean;
+        "activeLabel": string | null;
+    }
+    interface DsChartLineAttributes {
+        "width": number;
+        "height": number;
+        "showPoints": boolean;
     }
     interface DsCheckboxAttributes {
         "label": string;
@@ -3088,6 +3497,12 @@ declare namespace LocalJSX {
         "shortcutKey": string | undefined;
         "shortcutKeyPosition": 'start' | 'end';
     }
+    interface DsTooltipDataVizAttributes {
+        "value": string;
+        "label": string;
+        "x": number;
+        "y": number;
+    }
 
     interface IntrinsicElements {
         "ds-accordion": Omit<DsAccordion, keyof DsAccordionAttributes> & { [K in keyof DsAccordion & keyof DsAccordionAttributes]?: DsAccordion[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `attr:${K}`]?: DsAccordionAttributes[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `prop:${K}`]?: DsAccordion[K] };
@@ -3098,8 +3513,12 @@ declare namespace LocalJSX {
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled-icon": Omit<DsButtonUnfilledIcon, keyof DsButtonUnfilledIconAttributes> & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes]?: DsButtonUnfilledIcon[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `attr:${K}`]?: DsButtonUnfilledIconAttributes[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `prop:${K}`]?: DsButtonUnfilledIcon[K] };
-        "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] };
+        "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
+        "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
+        "ds-chart-donut": Omit<DsChartDonut, keyof DsChartDonutAttributes> & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes]?: DsChartDonut[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `attr:${K}`]?: DsChartDonutAttributes[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `prop:${K}`]?: DsChartDonut[K] };
+        "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
+        "ds-chart-line": Omit<DsChartLine, keyof DsChartLineAttributes> & { [K in keyof DsChartLine & keyof DsChartLineAttributes]?: DsChartLine[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `attr:${K}`]?: DsChartLineAttributes[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `prop:${K}`]?: DsChartLine[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
@@ -3131,6 +3550,7 @@ declare namespace LocalJSX {
         "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
+        "ds-tooltip-data-viz": Omit<DsTooltipDataViz, keyof DsTooltipDataVizAttributes> & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes]?: DsTooltipDataViz[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `attr:${K}`]?: DsTooltipDataVizAttributes[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `prop:${K}`]?: DsTooltipDataViz[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -3145,8 +3565,24 @@ declare module "@stencil/core" {
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled-icon": LocalJSX.IntrinsicElements["ds-button-unfilled-icon"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledIconElement>;
-            "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
+            /**
+             * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
+             * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
+             * once the data-viz card's real header actions (menu, caption, footer stat) are designed.
+             */
+            "ds-card-data-viz": LocalJSX.IntrinsicElements["ds-card-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
+            "ds-chart-bar": LocalJSX.IntrinsicElements["ds-chart-bar"] & JSXBase.HTMLAttributes<HTMLDsChartBarElement>;
+            "ds-chart-donut": LocalJSX.IntrinsicElements["ds-chart-donut"] & JSXBase.HTMLAttributes<HTMLDsChartDonutElement>;
+            /**
+             * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style
+             * legends differently (list w/ values, compact chips, bare swatches, external
+             * stat callouts) — this covers the common "swatch + label + optional value" case.
+             * Consumers who need a different treatment skip this component entirely and
+             * render their own markup against the same `ChartDatum[]` data.
+             */
+            "ds-chart-legend": LocalJSX.IntrinsicElements["ds-chart-legend"] & JSXBase.HTMLAttributes<HTMLDsChartLegendElement>;
+            "ds-chart-line": LocalJSX.IntrinsicElements["ds-chart-line"] & JSXBase.HTMLAttributes<HTMLDsChartLineElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
@@ -3178,9 +3614,17 @@ declare module "@stencil/core" {
             "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
+            /**
+             * Positioned value/label callout for chart hover interactions (donut slice, bar,
+             * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+             * charts hover-highlight data that lives inside an SVG, so the chart itself computes
+             * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
+             * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
+             * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
+             * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
+             * keeps it on-screen.
+             */
+            "ds-tooltip-data-viz": LocalJSX.IntrinsicElements["ds-tooltip-data-viz"] & JSXBase.HTMLAttributes<HTMLDsTooltipDataVizElement>;
         }
     }
 }
-// --- menu placement re-exports (patch-components-d-exports.mjs) ---
-export { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement } from "./components/Menu/menu-types";
-
