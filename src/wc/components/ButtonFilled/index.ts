@@ -3,4 +3,5 @@ export type {
   ButtonFilledIntent,
   ButtonFilledSize,
   ButtonFilledVariant,
+  ButtonFilledWidth,
 } from './ButtonFilled';

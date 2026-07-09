@@ -10,8 +10,8 @@ import { ShellGradientPreset } from "./nav/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardAppearance, CardWidth } from "./components/Card/Card";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -29,7 +29,7 @@ import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./c
 import { ChromeTransitionDetail } from "./nav/chrome-transition";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
-import { SelectOption } from "./components/Select/Select";
+import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -44,8 +44,8 @@ export { ShellGradientPreset } from "./nav/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardAppearance, CardWidth } from "./components/Card/Card";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -63,7 +63,7 @@ export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./c
 export { ChromeTransitionDetail } from "./nav/chrome-transition";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
-export { SelectOption } from "./components/Select/Select";
+export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
@@ -252,10 +252,15 @@ export namespace Components {
           * @default 'label'
          */
         "variant": ButtonFilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width": ButtonFilledWidth;
     }
     interface DsButtonUnfilled {
         /**
-          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only (primary color, no fill).
           * @default true
          */
         "activeFill": boolean;
@@ -280,7 +285,7 @@ export namespace Components {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * Show a 1px secondary inset border. Default on; shell chrome can pass `false`.
           * @default true
          */
         "hasBorder": boolean;
@@ -291,7 +296,7 @@ export namespace Components {
          */
         "icon": string;
         /**
-          * Active/selected visual state.
+          * Active/selected visual state. Always promotes foreground to primary.
           * @default false
          */
         "isActive": boolean;
@@ -322,6 +327,11 @@ export namespace Components {
           * @default 'label'
          */
         "variant": ButtonUnfilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width": ButtonUnfilledWidth;
     }
     /**
      * Shared card chrome — width + matching min-height tokens, header (title + actions),
@@ -419,7 +429,7 @@ export namespace Components {
          */
         "gap": number;
         /**
-          * Explicit diameter in px. When unset, the donut fills its container as the largest square that fits (ResizeObserver). Prefer unset inside card layouts.
+          * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
         "size": number | undefined;
         /**
@@ -827,9 +837,23 @@ export namespace Components {
          */
         "value": string;
     }
+    /**
+     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+     * control-density sizes, with `ds-menu` for the option list.
+     */
     interface DsSelect {
+        /**
+          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). Selected/open promotes the label to primary; chevron stays secondary.
+          * @default true
+         */
+        "activeFill": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
+        /**
+          * Show a 1px secondary inset border. Default on (matches unfilled button).
+          * @default true
+         */
+        "hasBorder": boolean;
         /**
           * Disables interaction (25% opacity via ds-control-inactive).
           * @default false
@@ -843,14 +867,24 @@ export namespace Components {
         "options": SelectOption[];
         /**
           * Placeholder shown when no value is selected.
-          * @default 'Select option'
+          * @default 'Select'
          */
         "placeholder": string;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": SelectSize;
         /**
           * Currently selected value.
           * @default ''
          */
         "value": string;
+        /**
+          * Width fit — fill the parent (default) or hug content.
+          * @default 'fill'
+         */
+        "width": SelectWidth;
     }
     interface DsShellGradientPicker {
         /**
@@ -1162,6 +1196,10 @@ export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
 }
+export interface DsCardDataVizDonutCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardDataVizDonutElement;
+}
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardSettingElement;
@@ -1334,11 +1372,22 @@ declare global {
         prototype: HTMLDsCardElement;
         new (): HTMLDsCardElement;
     };
+    interface HTMLDsCardDataVizDonutElementEventMap {
+        "dsFilterClick": void;
+    }
     /**
      * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
     interface HTMLDsCardDataVizDonutElement extends Components.DsCardDataVizDonut, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardDataVizDonutElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizDonutElement, ev: DsCardDataVizDonutCustomEvent<HTMLDsCardDataVizDonutElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardDataVizDonutElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizDonutElement, ev: DsCardDataVizDonutCustomEvent<HTMLDsCardDataVizDonutElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsCardDataVizDonutElement: {
         prototype: HTMLDsCardDataVizDonutElement;
@@ -1619,6 +1668,10 @@ declare global {
     interface HTMLDsSelectElementEventMap {
         "dsChange": string;
     }
+    /**
+     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+     * control-density sizes, with `ds-menu` for the option list.
+     */
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2032,10 +2085,15 @@ declare namespace LocalJSX {
           * @default 'label'
          */
         "variant"?: ButtonFilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ButtonFilledWidth;
     }
     interface DsButtonUnfilled {
         /**
-          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only (primary color, no fill).
           * @default true
          */
         "activeFill"?: boolean;
@@ -2060,7 +2118,7 @@ declare namespace LocalJSX {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * Show a 1px secondary inset border. Default on; shell chrome can pass `false`.
           * @default true
          */
         "hasBorder"?: boolean;
@@ -2071,7 +2129,7 @@ declare namespace LocalJSX {
          */
         "icon"?: string;
         /**
-          * Active/selected visual state.
+          * Active/selected visual state. Always promotes foreground to primary.
           * @default false
          */
         "isActive"?: boolean;
@@ -2103,6 +2161,11 @@ declare namespace LocalJSX {
           * @default 'label'
          */
         "variant"?: ButtonUnfilledVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ButtonUnfilledWidth;
     }
     /**
      * Shared card chrome — width + matching min-height tokens, header (title + actions),
@@ -2138,6 +2201,10 @@ declare namespace LocalJSX {
           * Widget heading shown in the card header.
          */
         "heading": string;
+        /**
+          * Emits when the header filter control is activated.
+         */
+        "onDsFilterClick"?: (event: DsCardDataVizDonutCustomEvent<void>) => void;
     }
     interface DsCardSetting {
         /**
@@ -2208,7 +2275,7 @@ declare namespace LocalJSX {
          */
         "onDsSliceHover"?: (event: DsChartDonutCustomEvent<ChartDatum | null>) => void;
         /**
-          * Explicit diameter in px. When unset, the donut fills its container as the largest square that fits (ResizeObserver). Prefer unset inside card layouts.
+          * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
         "size"?: number | undefined;
         /**
@@ -2660,9 +2727,23 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    /**
+     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+     * control-density sizes, with `ds-menu` for the option list.
+     */
     interface DsSelect {
+        /**
+          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). Selected/open promotes the label to primary; chevron stays secondary.
+          * @default true
+         */
+        "activeFill"?: boolean;
         "ariaLabel"?: string | undefined;
         "ariaLabelledby"?: string | undefined;
+        /**
+          * Show a 1px secondary inset border. Default on (matches unfilled button).
+          * @default true
+         */
+        "hasBorder"?: boolean;
         /**
           * Disables interaction (25% opacity via ds-control-inactive).
           * @default false
@@ -2680,14 +2761,24 @@ declare namespace LocalJSX {
         "options"?: SelectOption[];
         /**
           * Placeholder shown when no value is selected.
-          * @default 'Select option'
+          * @default 'Select'
          */
         "placeholder"?: string;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: SelectSize;
         /**
           * Currently selected value.
           * @default ''
          */
         "value"?: string;
+        /**
+          * Width fit — fill the parent (default) or hug content.
+          * @default 'fill'
+         */
+        "width"?: SelectWidth;
     }
     interface DsShellGradientPicker {
         "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
@@ -3030,6 +3121,7 @@ declare namespace LocalJSX {
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
         "size": ButtonFilledSize;
+        "width": ButtonFilledWidth;
         "label": string;
         "icon": string;
         "intent": ButtonFilledIntent;
@@ -3041,6 +3133,7 @@ declare namespace LocalJSX {
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
         "size": ButtonUnfilledSize;
+        "width": ButtonUnfilledWidth;
         "label": string;
         "icon": string;
         "isActive": boolean;
@@ -3201,7 +3294,11 @@ declare namespace LocalJSX {
     interface DsSelectAttributes {
         "value": string;
         "placeholder": string;
+        "size": SelectSize;
+        "width": SelectWidth;
         "isInactive": boolean;
+        "activeFill": boolean;
+        "hasBorder": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
@@ -3391,6 +3488,10 @@ declare module "@stencil/core" {
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
+            /**
+             * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
+             * control-density sizes, with `ds-menu` for the option list.
+             */
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;

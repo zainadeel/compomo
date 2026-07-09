@@ -153,7 +153,7 @@
     {
       "name": "card-data-viz-donut",
       "title": "CardDataVizDonut",
-      "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, and chart↔legend hover sync.",
+      "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -175,10 +175,12 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
         "card",
+        "button-unfilled",
         "chart-donut",
         "chart-legend"
       ]
@@ -186,7 +188,7 @@
     {
       "name": "button-filled",
       "title": "ButtonFilled",
-      "description": "Filled button with variant (label / icon / icon-label), control-density sizes, and intent×contrast fills.",
+      "description": "Filled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, and intent×contrast fills.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -202,6 +204,10 @@
           },
           "size": {
             "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "width": {
+            "type": "'hug' | 'fill'",
             "required": false
           },
           "label": {
@@ -242,7 +248,7 @@
     {
       "name": "button-unfilled",
       "title": "ButtonUnfilled",
-      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, active/border/dot, and surface-aware interaction states.",
+      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, active/border/dot, and surface-aware interaction states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -258,6 +264,10 @@
           },
           "size": {
             "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "width": {
+            "type": "'hug' | 'fill'",
             "required": false
           },
           "label": {
@@ -728,7 +738,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Dropdown select using `ds-menu` internally. Supports placeholder, isInactive state, and custom chevron icon.",
+      "description": "Dropdown select with unfilled-button chrome (label + trailing ChevronDown) in control-density sizes and width hug/fill. Uses ds-menu for the option list.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -738,39 +748,48 @@
           "Select"
         ],
         "props": {
-          "value": {
-            "type": "string | number",
-            "required": true
-          },
-          "onChange": {
-            "type": "(value: string | number) => void",
-            "required": true
-          },
           "options": {
             "type": "SelectOption[]",
             "required": true
           },
+          "value": {
+            "type": "string",
+            "required": false
+          },
           "placeholder": {
             "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "width": {
+            "type": "'hug' | 'fill'",
             "required": false
           },
           "isInactive": {
             "type": "boolean",
             "required": false
           },
-          "chevronIcon": {
-            "type": "IconComponent",
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
             "required": false
           }
         }
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
         "menu",
-        "text"
+        "icon"
       ]
     },
     {

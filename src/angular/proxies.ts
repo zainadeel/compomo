@@ -112,7 +112,7 @@ export declare interface DsBarNav extends Components.DsBarNav {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -120,7 +120,7 @@ export declare interface DsBarNav extends Components.DsBarNav {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant', 'width'],
   outputs: ['dsClick'],
   standalone: false
 })
@@ -141,7 +141,7 @@ export declare interface DsButtonFilled extends Components.DsButtonFilled {
 
 
 @ProxyCmp({
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -149,7 +149,7 @@ export declare interface DsButtonFilled extends Components.DsButtonFilled {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
   outputs: ['dsClick', 'dsChange'],
   standalone: false
 })
@@ -204,10 +204,12 @@ export declare interface DsCard extends Components.DsCard {}
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['cardWidth', { name: 'heading', required: true }],
+  outputs: ['dsFilterClick'],
   standalone: false
 })
 export class DsCardDataVizDonut {
   protected el: HTMLDsCardDataVizDonutElement;
+  @Output() dsFilterClick = new EventEmitter<CustomEvent<void>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -215,7 +217,12 @@ export class DsCardDataVizDonut {
 }
 
 
-export declare interface DsCardDataVizDonut extends Components.DsCardDataVizDonut {}
+export declare interface DsCardDataVizDonut extends Components.DsCardDataVizDonut {
+  /**
+   * Emits when the header filter control is activated.
+   */
+  dsFilterClick: EventEmitter<CustomEvent<void>>;
+}
 
 
 @ProxyCmp({
@@ -791,14 +798,14 @@ export declare interface DsRadioGroup extends Components.DsRadioGroup {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'isInactive', 'options', 'placeholder', 'value']
+  inputs: ['activeFill', 'ariaLabel', 'ariaLabelledby', 'hasBorder', 'isInactive', 'options', 'placeholder', 'size', 'value', 'width']
 })
 @Component({
   selector: 'ds-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'isInactive', 'options', 'placeholder', 'value'],
+  inputs: ['activeFill', 'ariaLabel', 'ariaLabelledby', 'hasBorder', 'isInactive', 'options', 'placeholder', 'size', 'value', 'width'],
   outputs: ['dsChange'],
   standalone: false
 })

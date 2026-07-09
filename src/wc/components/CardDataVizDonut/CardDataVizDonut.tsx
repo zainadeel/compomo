@@ -1,4 +1,4 @@
-import { Component, Element, State, h, Host, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, State, h, Host, Prop } from '@stencil/core';
 import type { CardWidth } from '../Card/Card';
 
 export type CardDataVizDonutWidth = CardWidth;
@@ -26,6 +26,9 @@ export class CardDataVizDonut {
 
   /** Card width token — also sets matching min-height. */
   @Prop() cardWidth: CardDataVizDonutWidth = 'md';
+
+  /** Emits when the header filter control is activated. */
+  @Event() dsFilterClick!: EventEmitter<void>;
 
   // Scoped (light-DOM) components have no native slot projection to detect emptiness from CSS —
   // check the actual children so an unused region (e.g. no legend) doesn't render a dangling
@@ -70,10 +73,22 @@ export class CardDataVizDonut {
     chart.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;
   };
 
+  private handleFilterClick = () => {
+    this.dsFilterClick.emit();
+  };
+
   render() {
     return (
       <Host class="card-data-viz-donut">
         <ds-card heading={this.heading} cardWidth={this.cardWidth}>
+          <ds-button-unfilled
+            slot="actions"
+            variant="icon"
+            type="button"
+            icon="Filters"
+            aria-label="Filter"
+            onDsClick={this.handleFilterClick}
+          />
           <div class="card-data-viz-donut__layout">
             {this.hasChartSlot && (
               <div class="card-data-viz-donut__chart-region">

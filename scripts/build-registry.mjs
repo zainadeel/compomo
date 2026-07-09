@@ -105,7 +105,7 @@ const COMPONENTS = [
   ['CardDataVizDonut', {
     title: 'CardDataVizDonut',
     tag: 'ds-card-data-viz-donut',
-    description: 'Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, and chart↔legend hover sync.',
+    description: 'Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.',
     exports: ['CardDataVizDonut'],
     types: ['CardDataVizDonutWidth'],
     props: {
@@ -116,21 +116,23 @@ const COMPONENTS = [
         description: 'Width token; also sets matching min-height.',
       },
     },
+    events: ['dsFilterClick'],
     usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Card', 'ChartDonut', 'ChartLegend'],
+    usesIcons: true,
+    internalDeps: ['Card', 'ButtonUnfilled', 'ChartDonut', 'ChartLegend'],
   }],
 
   // Core Interactive
   ['ButtonFilled', {
     title: 'ButtonFilled',
     tag: 'ds-button-filled',
-    description: 'Filled button with variant (label / icon / icon-label), control-density sizes, and intent×contrast fills.',
+    description: 'Filled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, and intent×contrast fills.',
     exports: ['ButtonFilled'],
-    types: ['ButtonFilledIntent', 'ButtonFilledContrast', 'ButtonFilledVariant', 'ButtonFilledSize'],
+    types: ['ButtonFilledIntent', 'ButtonFilledContrast', 'ButtonFilledVariant', 'ButtonFilledSize', 'ButtonFilledWidth'],
     props: {
       variant: { type: "'icon' | 'label' | 'icon-label'", default: "'label'", description: 'Content layout. Icon-only chrome must pass variant="icon".' },
       size: { type: "'md' | 'sm' | 'xs'", default: "'md'", description: 'Control-density height/padding/icon/type.' },
+      width: { type: "'hug' | 'fill'", default: "'hug'", description: 'Width fit — hug content or fill the parent.' },
       label: { type: 'string', description: 'Visible text for label / icon-label variants.' },
       icon: { type: 'string', description: 'Canonical IcoMo icon export name for icon / icon-label variants.' },
       intent: { type: "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'", default: "'brand'" },
@@ -146,17 +148,18 @@ const COMPONENTS = [
   ['ButtonUnfilled', {
     title: 'ButtonUnfilled',
     tag: 'ds-button-unfilled',
-    description: 'Unfilled button with variant (label / icon / icon-label), control-density sizes, active/border/dot, and surface-aware interaction states.',
+    description: 'Unfilled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, active/border/dot, and surface-aware interaction states.',
     exports: ['ButtonUnfilled'],
-    types: ['ButtonUnfilledBackground', 'ButtonUnfilledOnBackgroundContrast', 'ButtonUnfilledVariant', 'ButtonUnfilledSize'],
+    types: ['ButtonUnfilledBackground', 'ButtonUnfilledOnBackgroundContrast', 'ButtonUnfilledVariant', 'ButtonUnfilledSize', 'ButtonUnfilledWidth'],
     props: {
       variant: { type: "'icon' | 'label' | 'icon-label'", default: "'label'", description: 'Content layout. Icon-only chrome must pass variant="icon".' },
       size: { type: "'md' | 'sm' | 'xs'", default: "'md'", description: 'Control-density height/padding/icon/type.' },
+      width: { type: "'hug' | 'fill'", default: "'hug'", description: 'Width fit — hug content or fill the parent.' },
       label: { type: 'string', description: 'Visible text for label / icon-label variants.' },
       icon: { type: 'string', description: 'Canonical IcoMo icon export name for icon / icon-label variants.' },
-      isActive: { type: 'boolean', default: 'false', description: 'Active/selected state. Active always promotes icon/label color.' },
-      activeFill: { type: 'boolean', default: 'true', description: 'Set false for shell chrome that needs active color without active fill.' },
-      hasBorder: { type: 'boolean', default: 'true', description: 'Tertiary 1px inset border. Default on; shell chrome should pass false.' },
+      isActive: { type: 'boolean', default: 'false', description: 'Active/selected state. Always promotes icon/label to primary foreground.' },
+      activeFill: { type: 'boolean', default: 'true', description: 'When active, render selected interaction fill. Set false for shell chrome (primary fg, no fill).' },
+      hasBorder: { type: 'boolean', default: 'true', description: 'Secondary 1px inset border. Default on; shell chrome should pass false.' },
       dot: { type: 'boolean', default: 'false', description: 'Notification dot (icon variant only).' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
       backgroundContrast: { type: "'default' | 'medium' | 'bold' | 'strong'", description: 'Parent surface contrast for interaction and focus tokens.' },
@@ -321,20 +324,33 @@ const COMPONENTS = [
   }],
   ['Select', {
     title: 'Select',
-    description: 'Dropdown select using `ds-menu` internally. Supports placeholder, isInactive state, and custom chevron icon.',
+    description:
+      'Dropdown select with unfilled-button chrome (label + trailing ChevronDown) in control-density sizes and width hug/fill. Uses ds-menu for the option list.',
     exports: ['Select'],
-    types: ['SelectProps', 'SelectOption'],
+    types: ['SelectOption', 'SelectSize', 'SelectWidth'],
     props: {
-      value: { type: 'string | number', required: true },
-      onChange: { type: '(value: string | number) => void', required: true },
-      options: { type: 'SelectOption[]', required: true },
-      placeholder: { type: 'string', default: "'Select option'" },
+      options: {
+        type: 'SelectOption[]',
+        required: true,
+        description: 'Options list. Set as a JS property (not an HTML attribute).',
+      },
+      value: { type: 'string', default: "''", description: 'Currently selected value.' },
+      placeholder: { type: 'string', default: "'Select'" },
+      size: { type: "'md' | 'sm' | 'xs'", default: "'md'", description: 'Control-density height/padding/icon/type.' },
+      width: { type: "'hug' | 'fill'", default: "'fill'", description: 'Width fit — fill the parent (default) or hug content.' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
-      chevronIcon: { type: 'IconComponent' },
+      activeFill: {
+        type: 'boolean',
+        default: 'true',
+        description:
+          'When a value is selected, render the selected interaction fill (same as unfilled-button activeFill). Selected/open promotes the label to primary; chevron stays secondary. Set false for primary label without fill.',
+      },
+      hasBorder: { type: 'boolean', default: 'true', description: 'Secondary 1px inset border. Default on.' },
     },
+    events: ['dsChange'],
     usesTokens: true,
-    usesIcons: false,
-    internalDeps: ['Menu', 'Text'],
+    usesIcons: true,
+    internalDeps: ['Menu', 'Icon'],
   }],
 
   // Floating / Portal

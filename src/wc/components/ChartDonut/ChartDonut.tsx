@@ -9,8 +9,8 @@ const DIMMED_OPACITY = 0.25;
 const CENTER_GAP_PX = 0;
 /** Fraction of the inner-circle diameter center text is allowed to use before truncating. */
 const CENTER_TEXT_SAFE_WIDTH_RATIO = 0.82;
-/** Fallback when filling before the first ResizeObserver measurement. */
-const FILL_FALLBACK_PX = 175;
+/** Fallback when filling before the first ResizeObserver measurement (matches fill min). */
+const FILL_FALLBACK_PX = 128;
 
 type DonutTooltipState = {
   datum: ChartDatum;
@@ -29,8 +29,10 @@ export class ChartDonut {
   /** Slices to render. Set as a JS property (not an HTML attribute). */
   @Prop() data: ChartDatum[] = [];
   /**
-   * Explicit diameter in px. When unset, the donut fills its container as the
-   * largest square that fits (ResizeObserver). Prefer unset inside card layouts.
+   * Explicit diameter in px. When unset, the donut sizes to its container
+   * (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and
+   * `* 24` (192px), and stays centered in the leftover space. Prefer unset
+   * inside card layouts.
    */
   @Prop() size: number | undefined;
   /** Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px). */
@@ -73,9 +75,25 @@ export class ChartDonut {
     return this.size == null || !Number.isFinite(this.size) || this.size <= 0;
   }
 
+  private get fillMinPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.donutFillMin, FILL_FALLBACK_PX);
+  }
+
+  private get fillMaxPx(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.donutFillMax, 192);
+  }
+
+  /** Clamp available square side into the fill min/max band. */
+  private clampFillSize(availablePx: number): number {
+    const minPx = this.fillMinPx;
+    const maxPx = this.fillMaxPx;
+    if (!(availablePx > 0)) return minPx;
+    return Math.round(Math.min(maxPx, Math.max(minPx, availablePx)));
+  }
+
   private get resolvedSize(): number {
     if (!this.isFillMode) return this.size as number;
-    return Math.max(1, Math.round(this.measuredSize));
+    return this.clampFillSize(this.measuredSize);
   }
 
   componentDidLoad() {
@@ -94,23 +112,30 @@ export class ChartDonut {
   private syncResizeObserver() {
     this.teardownResizeObserver();
     if (!this.isFillMode) return;
-    const target = this.wrapperEl ?? this.el;
+    // Observe the host (which fills its parent), not the wrapper — the wrapper
+    // only wraps the SVG and would collapse to the clamped size, locking fill at min.
+    const target = this.el;
     if (!target || typeof ResizeObserver === 'undefined') return;
 
     this.resizeObserver = new ResizeObserver(entries => {
       const entry = entries[0];
       if (!entry) return;
-      const { width, height } = entry.contentRect;
-      const next = Math.floor(Math.min(width, height));
-      if (next > 0 && next !== this.measuredSize) {
-        this.measuredSize = next;
-      }
+      this.applyAvailableSize(entry.contentRect.width, entry.contentRect.height);
     });
     this.resizeObserver.observe(target);
-    // Seed from current box in case observer doesn't fire synchronously.
-    const rect = target.getBoundingClientRect();
-    const seed = Math.floor(Math.min(rect.width, rect.height));
-    if (seed > 0) this.measuredSize = seed;
+    this.measureHost();
+  }
+
+  private measureHost() {
+    const rect = this.el.getBoundingClientRect();
+    this.applyAvailableSize(rect.width, rect.height);
+  }
+
+  private applyAvailableSize(width: number, height: number) {
+    const available = Math.floor(Math.min(width, height));
+    if (available > 0 && available !== this.measuredSize) {
+      this.measuredSize = available;
+    }
   }
 
   private teardownResizeObserver() {
@@ -144,8 +169,8 @@ export class ChartDonut {
   }
 
   componentDidRender() {
-    // Re-bind observer if the wrapper ref just appeared.
-    if (this.isFillMode && this.wrapperEl && !this.resizeObserver) {
+    // Re-bind after HMR when DidLoad's observer was dropped.
+    if (this.isFillMode && !this.resizeObserver) {
       this.syncResizeObserver();
     }
 

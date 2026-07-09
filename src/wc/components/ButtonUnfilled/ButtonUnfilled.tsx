@@ -1,4 +1,5 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
+import { controlWidthClass, type ControlWidth } from '../../utils/control-width';
 
 export type ButtonUnfilledOnBackgroundContrast = 'default' | 'medium' | 'bold' | 'strong';
 
@@ -7,6 +8,8 @@ export type ButtonUnfilledBackground = 'always-dark' | 'navigation';
 export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
 
 export type ButtonUnfilledSize = 'md' | 'sm' | 'xs';
+
+export type ButtonUnfilledWidth = ControlWidth;
 
 /** Emphasis text per control-density size (buttons use emphasis, unlike Tag). */
 const TEXT_VARIANT: Record<ButtonUnfilledSize, string> = {
@@ -42,23 +45,26 @@ export class ButtonUnfilled {
   /** Control density (height, padding, icon, type). */
   @Prop() size: ButtonUnfilledSize = 'md';
 
+  /** Width fit — hug content (default) or fill the parent. */
+  @Prop() width: ButtonUnfilledWidth = 'hug';
+
   /** Visible text for `label` / `icon-label` variants. */
   @Prop() label: string = '';
 
   /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */
   @Prop() icon: string = '';
 
-  /** Active/selected visual state. */
+  /** Active/selected visual state. Always promotes foreground to primary. */
   @Prop() isActive: boolean = false;
 
   /**
    * When active, render the selected interaction fill.
    * Default `true` for general UI. Shell chrome (nav / tool rails) should pass
-   * `false` so selection is foreground-only.
+   * `false` so selection is foreground-only (primary color, no fill).
    */
   @Prop() activeFill: boolean = true;
 
-  /** Show a 1px tertiary inset border. Default on; shell chrome can pass `false`. */
+  /** Show a 1px secondary inset border. Default on; shell chrome can pass `false`. */
   @Prop() hasBorder: boolean = true;
 
   /** Show a notification dot at the top-right of the icon zone (icon variant only). */
@@ -179,6 +185,7 @@ export class ButtonUnfilled {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
+          ...controlWidthClass(this.width),
         }}
         tabIndex={-1}
       >

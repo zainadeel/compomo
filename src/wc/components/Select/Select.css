@@ -1,84 +1,94 @@
 /* ==========================================================================
-   Select — combobox-pattern select using ds-menu for the dropdown.
+   Select — unfilled-button chrome trigger + ds-menu dropdown.
+   Density via `.ds-control--md|sm|xs` (control-density.css).
    ========================================================================== */
 
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
+@import '../../utils/control-density.css';
+@import '../../utils/control-width.css';
 
 :host(.select-host) {
-  display: inline-block;
-  width: 100%;
+  display: inline-flex;
   position: relative;
+  /* Idle = secondary. Selected/open: label → primary; chevron stays secondary. */
+  --ds-select-fg: var(--color-foreground-secondary);
+  --ds-select-fg-active: var(--color-foreground-primary);
+  --ds-select-border: var(--color-border-secondary);
+}
+
+:host(.ds-control-width--fill) .trigger {
+  width: 100%;
+}
+
+:host(.ds-control-width--hug) .trigger__label {
+  flex: 0 1 auto;
 }
 
 /* Inactive: `.ds-control-inactive` (25% opacity). */
-
-/* ── Trigger button ──────────────────────────────────────────────────────── */
 
 .trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  height: var(--dimension-size-400);
-  padding: 0 var(--dimension-space-075) 0 var(--dimension-space-100);
-  border: none;
-  border-radius: var(--dimension-radius-050);
-  background-color: var(--color-background-primary);
-  box-shadow: var(--effect-elevation-elevated-sm);
-  cursor: pointer;
   box-sizing: border-box;
-  gap: var(--dimension-space-050);
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+  gap: var(--ds-control-gap, var(--dimension-space-050));
+  background: transparent;
+  border: none;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  color: var(--ds-select-fg);
+  cursor: pointer;
   font-family: inherit;
-  outline: none;
-
-  --_hover-bg: color-mix(in oklch, var(--color-background-primary) 90%, var(--color-foreground-primary));
-  --_pressed-bg: color-mix(in oklch, var(--color-background-primary) 85%, var(--color-foreground-primary));
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+  transition: color var(--effect-motion-short-2);
+  /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected`).
+     Selected/open: label → primary; chevron stays secondary. */
 }
 
-.trigger:focus-visible {
-  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
-  outline-offset: var(--dimension-space-025);
+/* Inset stroke via interaction-fill ::after (same recipe as ButtonUnfilled). */
+.trigger--bordered {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--ds-select-border);
 }
 
-.trigger:hover:not(:disabled) {
-  background-color: var(--_hover-bg);
+.trigger--bordered:not(.ds-interaction-fill) {
+  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
-
-.trigger:active:not(:disabled) {
-  background-color: var(--_pressed-bg);
-}
-
-.trigger--open {
-  background-color: var(--_pressed-bg);
-}
-
-/* ── Trigger label ───────────────────────────────────────────────────────── */
 
 .trigger__label {
-  flex: 1;
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
   min-width: 0;
+  /* Don't use line-height: 0 here — overflow:hidden would clip the glyphs. */
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
-  font-size: var(--typography-fontsize-md);
-  line-height: var(--typography-lineheight-md);
-  font-weight: var(--typography-weight-regular);
-  color: var(--color-foreground-primary);
+  color: inherit;
+  transition: color var(--effect-motion-short-2);
 }
 
-.trigger__label--placeholder {
-  color: var(--color-foreground-secondary);
+.trigger--has-value .trigger__label,
+.trigger--open .trigger__label {
+  color: var(--ds-select-fg-active);
 }
-
-/* ── Chevron icon ────────────────────────────────────────────────────────── */
 
 .trigger__chevron {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
-  color: var(--color-foreground-secondary);
-  transition: transform var(--effect-motion-short-2);
-}
-
-.trigger--open .trigger__chevron {
-  transform: rotate(180deg);
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Always secondary — only the label promotes on selected/open. */
+  color: var(--ds-select-fg);
 }

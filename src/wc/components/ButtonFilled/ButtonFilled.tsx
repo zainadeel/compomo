@@ -1,4 +1,5 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
+import { controlWidthClass, type ControlWidth } from '../../utils/control-width';
 
 export type ButtonFilledIntent =
   | 'neutral'
@@ -16,6 +17,8 @@ export type ButtonFilledContrast = 'bold' | 'strong' | 'medium' | 'faint';
 export type ButtonFilledVariant = 'icon' | 'label' | 'icon-label';
 
 export type ButtonFilledSize = 'md' | 'sm' | 'xs';
+
+export type ButtonFilledWidth = ControlWidth;
 
 /** Emphasis text per control-density size (buttons use emphasis, unlike Tag). */
 const TEXT_VARIANT: Record<ButtonFilledSize, string> = {
@@ -50,6 +53,9 @@ export class ButtonFilled {
 
   /** Control density (height, padding, icon, type). */
   @Prop() size: ButtonFilledSize = 'md';
+
+  /** Width fit — hug content (default) or fill the parent. */
+  @Prop() width: ButtonFilledWidth = 'hug';
 
   /** Visible text for `label` / `icon-label` variants. */
   @Prop() label: string = '';
@@ -135,6 +141,7 @@ export class ButtonFilled {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
+          ...controlWidthClass(this.width),
         }}
         tabIndex={-1}
       >

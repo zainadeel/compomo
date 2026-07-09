@@ -7,20 +7,21 @@
 
 /* eslint-disable */
 
-import type { StencilReactComponent } from '@stencil/react-output-target/runtime';
+import type { EventName, StencilReactComponent } from '@stencil/react-output-target/runtime';
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
+import { type DsCardDataVizDonutCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsCardDataVizDonut as DsCardDataVizDonutElement, defineCustomElement as defineDsCardDataVizDonut } from "@ds-mo/ui/dist/components/ds-card-data-viz-donut.js";
 
-export type DsCardDataVizDonutEvents = NonNullable<unknown>;
+export type DsCardDataVizDonutEvents = { onDsFilterClick: EventName<DsCardDataVizDonutCustomEvent<void>> };
 
 export const DsCardDataVizDonut: StencilReactComponent<DsCardDataVizDonutElement, DsCardDataVizDonutEvents, Components.DsCardDataVizDonut> = /*@__PURE__*/ createComponent<DsCardDataVizDonutElement, DsCardDataVizDonutEvents, Components.DsCardDataVizDonut>({
     tagName: 'ds-card-data-viz-donut',
     elementClass: DsCardDataVizDonutElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsCardDataVizDonutEvents,
+    events: { onDsFilterClick: 'dsFilterClick' } as DsCardDataVizDonutEvents,
     defineCustomElement: defineDsCardDataVizDonut
 });

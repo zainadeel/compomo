@@ -223,9 +223,9 @@ export class MyComponent {
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
 - Use `ds-button-unfilled` (not a separate icon-only tag) for unfilled actions.
 - **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
-- Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground color.
-- **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only and does not paint a filled selected background on nav surfaces.
-- Use `hasBorder` for the optional 1px `--color-border-tertiary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
+- Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground to **primary** (toggle mode) — not brand tint.
+- **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
+- Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
 
 **Control density recipes**
@@ -265,7 +265,7 @@ Rules:
 
 - Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
 - Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
-- `::before` = selected/active only. Omit `--selected` when chrome wants icon-color-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav).
+- `::before` = selected/active only. Omit `--selected` when chrome wants foreground-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav) — primary fg still applies.
 - **Badge / notification-dot halo:** when the control is `--selected`, the util sets `--ds-interaction-dot-ring` to `--ds-interaction-active`. Prefer remapping the component’s surface ring token under `--selected`, or pass `background="var(--ds-interaction-active)"` from the parent when selected (ButtonUnfilled does both) — nested scoped hosts can miss custom-property fallbacks. Idle / chrome-without-fill keep the surface ring.
 - `::after` = hover + press (`transition: none`) + optional inset border + inset focus — **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
 - Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
