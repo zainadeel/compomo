@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.12.0](https://github.com/zainadeel/compomo/compare/v2.11.2...v2.12.0) (2026-07-09)
+
+
+### Added
+
+* **Button:** add variant/size and rename unfilled tag ([68bd219](https://github.com/zainadeel/compomo/commit/68bd2199265e95e16e228e338efce86eca5c1fee))
+* chrome tooltips, portal handoff, and control polish ([cef0401](https://github.com/zainadeel/compomo/commit/cef0401f70fae743d1992ea3c41de535f6d9fd87))
+* control polish, chrome tooltips, and overlay cleanup ([75c0163](https://github.com/zainadeel/compomo/commit/75c0163e1666a61cfd1ec321495294fc7f90c2c7))
+
+
+### Fixed
+
+* **ci:** restore menu placement types and BarNav e2e selector ([49ee3c9](https://github.com/zainadeel/compomo/commit/49ee3c9a3478333ddf43ecb61a407b97d428d682))
+
+
+### Changed
+
+* shared control utils, isInactive, chip state, drop accordion ([3230800](https://github.com/zainadeel/compomo/commit/32308007f6a4aaba9cf274d2a99a38705a12bafe))
+
 ## [2.11.2](https://github.com/zainadeel/compomo/compare/v2.11.1...v2.11.2) (2026-07-09)
 
 
