@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.11.2](https://github.com/zainadeel/compomo/compare/v2.11.1...v2.11.2) (2026-07-09)
+
+
+### Fixed
+
+* **CardDataViz:** auto-sync chart/legend hover highlighting ([1f44437](https://github.com/zainadeel/compomo/commit/1f44437fd575a1cd1e4d08789cbf327f3468d610))
+* **CardDataViz:** auto-sync chart/legend hover highlighting ([2119441](https://github.com/zainadeel/compomo/commit/21194418a6b1b558033eb9d2ee7e309f948ea867))
+* **ChartDonut:** keep default cursor on slice hover ([06f03ad](https://github.com/zainadeel/compomo/commit/06f03ade255f13018cdb0048642e35845d156e99))
+
 ## [2.11.1](https://github.com/zainadeel/compomo/compare/v2.11.0...v2.11.1) (2026-07-09)
 
 
