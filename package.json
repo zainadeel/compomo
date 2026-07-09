@@ -105,7 +105,7 @@
   },
   "devDependencies": {
     "@ds-mo/icons": "^6.1.2",
-    "@ds-mo/tokens": "^2.12.1",
+    "@ds-mo/tokens": "^2.13.1",
     "@eslint/js": "^10.0.1",
     "@figma/code-connect": "^1.4.8",
     "@modelcontextprotocol/sdk": "^1.29.0",

@@ -96,12 +96,54 @@ function WinLossColors(): TemplateResult {
 }
 
 function MiscColors(): TemplateResult {
+  const steps = ['strong', 'bold', 'medium', 'faint'] as const;
   return html`
     <div style="${PAGE}">
-      ${section('Misc', undefined, html`
+      ${section('Misc', 'Semantic intensity steps (strong → faint)', html`
         <div style="display: flex; gap: 8px; max-width: 400px;">
-          ${[1, 2, 3, 4].map(n => html`
-            <div style="flex: 1;">${swatch(`color-data-misc-${n}`, `${n}`)}</div>`)}
+          ${steps.map(step => html`
+            <div style="flex: 1;">${swatch(`color-data-misc-${step}`, step)}</div>`)}
+        </div>`)}
+    </div>`;
+}
+
+function IntentColors(): TemplateResult {
+  const intents = ['neutral', 'brand', 'negative', 'warning', 'caution', 'positive'] as const;
+  return html`
+    <div style="${PAGE}">
+      ${section('Intent', 'Semantic intent colors for data visualization', html`
+        <div style="${GRID}">
+          ${intents.map(intent => swatch(`color-data-intent-${intent}`, intent))}
+        </div>`)}
+    </div>`;
+}
+
+function StatusDeviceColors(): TemplateResult {
+  const statuses = [
+    'normal',
+    'powered-off',
+    'other-issue',
+    'install-issue',
+    'return-device',
+    'signal-issue',
+  ] as const;
+  return html`
+    <div style="${PAGE}">
+      ${section('Status Device', 'Device status colors for fleet / hardware charts', html`
+        <div style="${GRID}">
+          ${statuses.map(status => swatch(`color-data-status-device-${status}`, status))}
+        </div>`)}
+    </div>`;
+}
+
+function ScoreSafetyColors(): TemplateResult {
+  const scores = ['excellent', 'good', 'fair'] as const;
+  return html`
+    <div style="${PAGE}">
+      ${section('Score Safety', 'Safety score bands', html`
+        <div style="display: flex; gap: 8px; max-width: 400px;">
+          ${scores.map(score => html`
+            <div style="flex: 1;">${swatch(`color-data-score-safety-${score}`, score)}</div>`)}
         </div>`)}
     </div>`;
 }
@@ -111,3 +153,6 @@ export const Sequential: Story = { name: 'Sequential', render: () => SequentialC
 export const Diverging: Story = { name: 'Diverging', render: () => DivergingColors() };
 export const WinLoss: Story = { name: 'Win/Loss', render: () => WinLossColors() };
 export const Misc: Story = { name: 'Misc', render: () => MiscColors() };
+export const Intent: Story = { name: 'Intent', render: () => IntentColors() };
+export const StatusDevice: Story = { name: 'Status Device', render: () => StatusDeviceColors() };
+export const ScoreSafety: Story = { name: 'Score Safety', render: () => ScoreSafetyColors() };
