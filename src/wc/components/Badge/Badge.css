@@ -59,6 +59,7 @@
   box-sizing: border-box;
   padding: var(--_badge-ring-width);
   pointer-events: none;
+  /* stylelint-disable color-no-hex -- mask luminance stops for ring cutout, not theme colors */
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -66,6 +67,7 @@
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
+  /* stylelint-enable color-no-hex */
   mask-composite: exclude;
 }
 

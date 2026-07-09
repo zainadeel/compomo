@@ -15,23 +15,31 @@ const INTENTS = [
 ] as const;
 
 const CONTRASTS = ['bold', 'strong', 'medium', 'faint'] as const;
+const VARIANTS = ['label', 'icon', 'icon-label'] as const;
+const SIZES = ['md', 'sm', 'xs'] as const;
 
 const meta: Meta = {
-  title: 'Actions/ButtonFilled',
+  title: 'Primitives/ButtonFilled',
   tags: ['autodocs'],
   argTypes: {
+    variant: { control: 'select', options: [...VARIANTS] },
+    size: { control: 'select', options: [...SIZES] },
+    label: { control: 'text' },
     icon: { control: 'text' },
     intent: { control: 'select', options: [...INTENTS] },
     contrast: { control: 'select', options: [...CONTRASTS] },
-    inactive: { control: 'boolean' },
+    isInactive: { control: 'boolean' },
     ariaLabel: { control: 'text' },
   },
   args: {
+    variant: 'label',
+    size: 'md',
+    label: 'Confirm',
     icon: 'Check',
     intent: 'brand',
     contrast: 'bold',
-    inactive: false,
-    ariaLabel: 'Confirm',
+    isInactive: false,
+    ariaLabel: '',
   },
 };
 
@@ -46,12 +54,41 @@ const LABEL =
 export const Playground: Story = {
   render: args => html`
     <ds-button-filled
+      variant=${args['variant']}
+      size=${args['size']}
+      label=${args['label']}
       icon=${args['icon']}
       intent=${args['intent']}
       contrast=${args['contrast']}
-      ?inactive=${args['inactive']}
-      aria-label=${args['ariaLabel']}
+      ?is-inactive=${args['isInactive']}
+      aria-label=${args['ariaLabel'] || undefined}
     ></ds-button-filled>
+  `,
+};
+
+export const VariantsAndSizes: Story = {
+  render: () => html`
+    <div style="${COL}">
+      ${VARIANTS.map(
+        variant => html`
+          <div style="${ROW}">
+            <span style="${LABEL}">${variant}</span>
+            ${SIZES.map(
+              size => html`
+                <ds-button-filled
+                  variant=${variant}
+                  size=${size}
+                  label="Confirm"
+                  icon="Check"
+                  intent="brand"
+                  aria-label=${variant === 'icon' ? `Confirm ${size}` : undefined}
+                ></ds-button-filled>
+              `,
+            )}
+          </div>
+        `,
+      )}
+    </div>
   `,
 };
 
@@ -60,7 +97,12 @@ export const IntentsBold: Story = {
     <div style="${ROW}">
       ${INTENTS.map(
         intent => html`
-          <ds-button-filled icon="Check" intent=${intent} aria-label=${intent}></ds-button-filled>
+          <ds-button-filled
+            variant="icon"
+            icon="Check"
+            intent=${intent}
+            aria-label=${intent}
+          ></ds-button-filled>
         `,
       )}
     </div>
@@ -77,6 +119,7 @@ export const ContrastMatrix: Story = {
             ${INTENTS.map(
               intent => html`
                 <ds-button-filled
+                  variant="icon"
                   icon="Check"
                   intent=${intent}
                   contrast=${contrast}
@@ -96,8 +139,8 @@ export const OnBoldBrand: Story = {
     <div
       style="display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);background:var(--color-background-bold-brand);"
     >
-      <ds-button-filled icon="Check" intent="neutral" contrast="faint" aria-label="Save"></ds-button-filled>
-      <ds-button-filled icon="Check" intent="brand" contrast="faint" aria-label="Save brand"></ds-button-filled>
+      <ds-button-filled variant="icon" icon="Check" intent="neutral" contrast="faint" aria-label="Save"></ds-button-filled>
+      <ds-button-filled variant="label" label="Save" intent="brand" contrast="faint"></ds-button-filled>
     </div>
   `,
 };

@@ -3,10 +3,8 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-chip.js';
 import '../../../../dist/components/ds-icon.js';
 
-const INTENTS    = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
-const CONTRASTS  = ['strong', 'bold', 'medium', 'faint'];
-const ELEVATIONS = ['none', 'flat', 'elevated'];
-const SIZES      = ['md', 'sm', 'xs'];
+const STATES      = ['default', 'active', 'error', 'caution'] as const;
+const SIZES       = ['md', 'sm', 'xs'] as const;
 const BACKGROUNDS = ['', 'faint', 'medium', 'bold', 'strong', 'always-dark'];
 
 const meta: Meta = {
@@ -14,29 +12,23 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     label:      { control: 'text' },
-    intent:     { control: 'select', options: INTENTS },
-    contrast:   { control: 'select', options: CONTRASTS },
-    elevation:  { control: 'select', options: ELEVATIONS },
-    size:       { control: 'select', options: SIZES },
+    state:      { control: 'select', options: [...STATES] },
+    size:       { control: 'select', options: [...SIZES] },
     rounded:    { control: 'boolean' },
     removable:  { control: 'boolean' },
-    inactive:   { control: 'boolean' },
-    pressed:    { control: 'boolean' },
+    isInactive: { control: 'boolean' },
     background: { control: 'select', options: BACKGROUNDS },
     maxWidth:   { control: 'text' },
   },
   args: {
-    label: 'Chip',
-    intent: 'neutral',
-    contrast: 'faint',
-    elevation: 'none',
-    size: 'md',
-    rounded: true,
-    removable: false,
-    inactive: false,
-    pressed: false,
+    label:      'Chip',
+    state:      'default',
+    size:       'md',
+    rounded:    false,
+    removable:  true,
+    isInactive: false,
     background: '',
-    maxWidth: '',
+    maxWidth:   '',
   },
 };
 
@@ -47,44 +39,65 @@ export const Playground: Story = {
   render: args => html`
     <ds-chip
       label=${args['label']}
-      intent=${args['intent']}
-      contrast=${args['contrast']}
-      elevation=${args['elevation']}
+      state=${args['state']}
       size=${args['size']}
       background=${args['background'] || undefined}
       max-width=${args['maxWidth'] || undefined}
       ?rounded=${args['rounded']}
       ?removable=${args['removable']}
-      ?inactive=${args['inactive']}
-      ?pressed=${args['pressed']}
+      ?is-inactive=${args['isInactive']}
     ></ds-chip>
   `,
 };
 
-export const Removable: Story = {
+export const States: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
-      ${SIZES.map(size => html`
-        <ds-chip label="Removable" intent="neutral" contrast="faint" size=${size} removable rounded></ds-chip>
+    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+      ${STATES.map(state => html`
+        <ds-chip label=${state} state=${state}></ds-chip>
       `)}
     </div>
   `,
 };
 
-export const Pressed: Story = {
+export const Sizes: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
-      <ds-chip label="Default" intent="neutral" contrast="faint" rounded></ds-chip>
-      <ds-chip label="Pressed" intent="brand" contrast="faint" rounded pressed></ds-chip>
-      <ds-chip label="Inactive" intent="neutral" contrast="faint" rounded inactive></ds-chip>
+    <div style="display: flex; gap: var(--dimension-space-150); align-items: center">
+      ${SIZES.map(size => html`
+        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
+          <ds-chip label=${size} state="active" size=${size}></ds-chip>
+          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary)">${size}</span>
+        </div>
+      `)}
     </div>
   `,
 };
 
-export const WithIcon: Story = {
+export const Rounded: Story = {
   render: () => html`
-    <ds-chip label="Fleet" intent="brand" contrast="faint" rounded removable>
-      <ds-icon slot="icon" name="Truck" size="sm" color="inherit"></ds-icon>
-    </ds-chip>
+    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+      <ds-chip label="Default" state="default"></ds-chip>
+      <ds-chip label="Rounded" state="active" rounded></ds-chip>
+    </div>
+  `,
+};
+
+/** Trailing dismiss control sized to control-density icon metrics (md/sm/xs). */
+export const Removable: Story = {
+  render: () => html`
+    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+      ${SIZES.map(size => html`
+        <ds-chip label="Removable" state="default" size=${size} removable ?rounded=${size === 'md'}></ds-chip>
+      `)}
+    </div>
+  `,
+};
+
+export const Inactive: Story = {
+  render: () => html`
+    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+      <ds-chip label="Default" state="default"></ds-chip>
+      <ds-chip label="Inactive" state="default" is-inactive></ds-chip>
+    </div>
   `,
 };

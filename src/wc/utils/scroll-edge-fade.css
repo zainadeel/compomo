@@ -10,6 +10,9 @@
   --ds-scroll-edge-fade-size: var(--dimension-size-600);
 }
 
+/* Mask gradients use #000 / transparent as luminance stops — not theme colors. */
+/* stylelint-disable color-no-hex */
+
 .scroll-edge-fade--top {
   -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent 100%);
   mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent 100%);
@@ -73,3 +76,5 @@
   -webkit-mask-image: none;
   mask-image: none;
 }
+
+/* stylelint-enable color-no-hex */

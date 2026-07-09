@@ -2,16 +2,15 @@
    Select — combobox-pattern select using ds-menu for the dropdown.
    ========================================================================== */
 
+@import '../../utils/control-inactive.css';
+
 :host(.select-host) {
   display: inline-block;
   width: 100%;
   position: relative;
 }
 
-:host(.inactive) {
-  opacity: 0.5;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 /* ── Trigger button ──────────────────────────────────────────────────────── */
 

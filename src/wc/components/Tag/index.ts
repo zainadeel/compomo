@@ -1,1 +1,1 @@
-export type { TagIntent, TagContrast, TagElevation, TagSize } from './Tag';
+export type { TagIntent, TagContrast, TagSize } from './Tag';

@@ -7,9 +7,9 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     checked:  { control: 'boolean' },
-    inactive: { control: 'boolean' },
+    isInactive: { control: 'boolean' },
   },
-  args: { checked: false, inactive: false },
+  args: { checked: false, isInactive: false },
 };
 
 export default meta;
@@ -19,7 +19,7 @@ export const Playground: Story = {
   render: args => html`
     <ds-toggle
       ?checked=${args['checked']}
-      ?inactive=${args['inactive']}
+      ?is-inactive=${args['isInactive']}
       aria-label="Playground toggle"
     ></ds-toggle>
   `,
@@ -37,11 +37,11 @@ export const States: Story = {
         <span style="font-size: 13px; color: #555">On</span>
       </div>
       <div style="display: flex; align-items: center; gap: 16px">
-        <ds-toggle inactive aria-label="Inactive off"></ds-toggle>
+        <ds-toggle is-inactive aria-label="Inactive off"></ds-toggle>
         <span style="font-size: 13px; color: #555">Inactive off</span>
       </div>
       <div style="display: flex; align-items: center; gap: 16px">
-        <ds-toggle checked inactive aria-label="Inactive on"></ds-toggle>
+        <ds-toggle checked is-inactive aria-label="Inactive on"></ds-toggle>
         <span style="font-size: 13px; color: #555">Inactive on</span>
       </div>
     </div>

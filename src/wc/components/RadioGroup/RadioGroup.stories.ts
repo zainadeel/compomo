@@ -14,9 +14,9 @@ const meta: Meta = {
   argTypes: {
     value:     { control: 'text' },
     direction: { control: 'radio', options: ['vertical', 'horizontal'] },
-    inactive:  { control: 'boolean' },
+    isInactive:  { control: 'boolean' },
   },
-  args: { value: 'a', direction: 'vertical', inactive: false },
+  args: { value: 'a', direction: 'vertical', isInactive: false },
 };
 
 export default meta;
@@ -28,7 +28,7 @@ export const Playground: Story = {
       .options=${defaultOptions}
       value=${args['value'] ?? 'a'}
       direction=${args['direction'] ?? 'vertical'}
-      ?inactive=${args['inactive']}
+      ?is-inactive=${args['isInactive']}
       aria-label="Playground radio group"
     ></ds-radio-group>
   `,
@@ -60,7 +60,7 @@ export const WithInactiveItem: Story = {
     <ds-radio-group
       .options=${[
         { label: 'Option A', value: 'a' },
-        { label: 'Option B (inactive)', value: 'b', inactive: true },
+        { label: 'Option B (inactive)', value: 'b', isInactive: true },
         { label: 'Option C', value: 'c' },
       ]}
       value="a"

@@ -8,8 +8,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Fill the parent slot — callers size the container (page body, table body, etc.).
+     Do not use --dimension-card-height-* here; those are for card chrome, not empty placeholders. */
   height: 100%;
-  min-height: 400px;
   width: 100%;
 }
 

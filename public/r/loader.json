@@ -45,7 +45,7 @@
   "files": [
     {
       "path": "src/wc/components/Loader/Loader.css",
-      "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  flex-shrink: 0;\n}\n\n.spinner {\n  flex-shrink: 0;\n  animation: spin 0.75s linear infinite;\n}\n\n.status {\n  display: inline-flex;\n  align-items: center;\n}\n\n.visually-hidden {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}\n",
+      "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  flex-shrink: 0;\n}\n\n.spinner {\n  flex-shrink: 0;\n  animation: spin var(--effect-animation-duration-long-1) var(--effect-animation-easing-linear) infinite;\n}\n\n.status {\n  display: inline-flex;\n  align-items: center;\n}\n\n.visually-hidden {\n  position: absolute;\n  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n  /* stylelint-enable declaration-property-value-disallowed-list */\n}\n\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}\n",
       "type": "registry:ui"
     },
     {

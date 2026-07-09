@@ -19,10 +19,6 @@
       },
       "internalDependencies": [
         {
-          "component": "Surface",
-          "note": "Used internally by Modal. Bundled in @ds-mo/ui."
-        },
-        {
           "component": "Text",
           "note": "Used internally by Modal. Bundled in @ds-mo/ui."
         }
@@ -78,7 +74,6 @@
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
-    "surface",
     "text"
   ],
   "files": [

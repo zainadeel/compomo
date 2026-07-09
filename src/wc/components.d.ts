@@ -5,23 +5,20 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AccordionItemData } from "./components/Accordion/Accordion";
 import { NavChromeStyle } from "./nav/nav-chrome";
 import { ShellGradientPreset } from "./nav/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
-import { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
+import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
-import { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
+import { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { FadeSide, FadeSize } from "./components/Fade/Fade";
 import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
@@ -36,32 +33,27 @@ import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
-import { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
-import { TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
+import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
-import { ToastPosition } from "./components/Toast/Toast";
-import { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
-export { AccordionItemData } from "./components/Accordion/Accordion";
+import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { NavChromeStyle } from "./nav/nav-chrome";
 export { ShellGradientPreset } from "./nav/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
-export { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
+export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
-export { ChipBackground, ChipContrast, ChipElevation, ChipIntent, ChipSize } from "./components/Chip/Chip";
+export { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { FadeSide, FadeSize } from "./components/Fade/Fade";
 export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
@@ -76,31 +68,14 @@ export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
-export { SurfaceBackground, SurfaceContrast, SurfaceElement, SurfaceElevation, SurfaceIntent, SurfaceRadius } from "./components/Surface/Surface";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
-export { TagContrast, TagElevation, TagIntent, TagSize } from "./components/Tag/Tag";
+export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
-export { ToastPosition } from "./components/Toast/Toast";
-export { TooltipAlign, TooltipSide } from "./components/Tooltip/Tooltip";
+export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
-    interface DsAccordion {
-        /**
-          * Comma-separated list of expanded item IDs for controlled mode.
-          * @default ''
-         */
-        "expandedIds": string;
-        /**
-          * @default []
-         */
-        "items": AccordionItemData[];
-        /**
-          * @default false
-         */
-        "multiple": boolean;
-    }
     interface DsAppShell {
         /**
           * When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout).
@@ -236,69 +211,68 @@ export namespace Components {
          */
         "value": string;
     }
-    interface DsBreadcrumb {
-        /**
-          * @default []
-         */
-        "items": BreadcrumbItem[];
-        /**
-          * @default '/'
-         */
-        "separator": string;
-    }
     interface DsButtonFilled {
-        /**
-          * @default 'action'
-         */
-        "ariaLabel": string;
+        "ariaLabel": string | undefined;
         /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
         "contrast": ButtonFilledContrast;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon": string;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive": boolean;
         /**
           * Semantic colour intent.
           * @default 'brand'
          */
         "intent": ButtonFilledIntent;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label": string;
         "setFocus": () => Promise<void>;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": ButtonFilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type": 'button' | 'submit' | 'reset';
-    }
-    interface DsButtonUnfilledIcon {
         /**
-          * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant": ButtonFilledVariant;
+    }
+    interface DsButtonUnfilled {
+        /**
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
           * @default true
          */
         "activeFill": boolean;
-        /**
-          * @default 'action'
-         */
-        "ariaLabel": string;
+        "ariaLabel": string | undefined;
         /**
           * Parent surface context for navigation and always-dark chrome.
          */
-        "background": ButtonUnfilledIconBackground | undefined;
+        "background": ButtonUnfilledBackground | undefined;
         /**
           * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
          */
-        "backgroundContrast"?: ButtonUnfilledIconOnBackgroundContrast;
+        "backgroundContrast"?: ButtonUnfilledOnBackgroundContrast;
         "controls": string | undefined;
         /**
-          * Show a notification dot at the top-right of the icon zone.
+          * Show a notification dot at the top-right of the icon zone (icon variant only).
           * @default false
          */
         "dot": boolean;
@@ -308,33 +282,48 @@ export namespace Components {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary border without changing the interaction model.
-          * @default false
+          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * @default true
          */
         "hasBorder": boolean;
         "haspopup": string | undefined;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon": string;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive": boolean;
         /**
           * Active/selected visual state.
           * @default false
          */
         "isActive": boolean;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label": string;
         "pressed": boolean | undefined;
         "setFocus": () => Promise<void>;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": ButtonUnfilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type": 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant": ButtonUnfilledVariant;
     }
     /**
      * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
@@ -385,7 +374,7 @@ export namespace Components {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. External sync dims slices only — the data-viz tooltip is reserved for this component's own pointer/keyboard interaction.
           * @default null
          */
         "activeLabel": string | null;
@@ -482,39 +471,32 @@ export namespace Components {
         /**
           * @default false
          */
-        "inactive": boolean;
+        "indeterminate": boolean;
         /**
           * @default false
          */
-        "indeterminate": boolean;
+        "isInactive": boolean;
         "label": string;
     }
+    /**
+     * Removable chip — same density recipe as Tag, but colored by semantic `state`
+     * (not intent × contrast). Not a toggle/select control; the only intentional
+     * action is remove.
+     */
     interface DsChip {
+        /**
+          * Surface context for interaction-fill tokens when the chip sits on a non-default surface.
+         */
         "background": ChipBackground | undefined;
-        /**
-          * @default 'faint'
-         */
-        "contrast": ChipContrast;
-        /**
-          * @default 'none'
-         */
-        "elevation": ChipElevation;
         /**
           * @default false
          */
-        "inactive": boolean;
-        /**
-          * @default 'neutral'
-         */
-        "intent": ChipIntent;
+        "isInactive": boolean;
         "label": string;
         "maxWidth": string | number | undefined;
         /**
-          * @default false
-         */
-        "pressed": boolean;
-        /**
-          * @default false
+          * When true (default), shows the trailing dismiss control.
+          * @default true
          */
         "removable": boolean;
         /**
@@ -525,6 +507,11 @@ export namespace Components {
           * @default 'md'
          */
         "size": ChipSize;
+        /**
+          * Semantic color state.
+          * @default 'default'
+         */
+        "state": ChipState;
     }
     interface DsDivider {
         /**
@@ -559,27 +546,6 @@ export namespace Components {
           * @default 'no-content'
          */
         "type": EmptyStateType;
-    }
-    interface DsFade {
-        /**
-          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
-         */
-        "height": string | undefined;
-        /**
-          * Edge where content fades as it approaches the scroll boundary.
-          * @default 'bottom'
-         */
-        "side": FadeSide;
-        /**
-          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
-          * @default 'size-600'
-         */
-        "size": FadeSize;
-        /**
-          * Controls the mask without removing the scroll container from layout.
-          * @default true
-         */
-        "visible": boolean;
     }
     interface DsField {
         /**
@@ -634,13 +600,13 @@ export namespace Components {
         "error": boolean;
         "errorMessage": string | undefined;
         /**
-          * @default false
-         */
-        "inactive": boolean;
-        /**
           * Associates the internal input with an external <label>.
          */
         "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
         "placeholder": string | undefined;
         "setFocus": () => Promise<void>;
         /**
@@ -726,7 +692,7 @@ export namespace Components {
         /**
           * @default false
          */
-        "inactive": boolean;
+        "isInactive": boolean;
         /**
           * @default 1
          */
@@ -841,7 +807,7 @@ export namespace Components {
         /**
           * @default false
          */
-        "inactive": boolean;
+        "isInactive": boolean;
         /**
           * @default []
          */
@@ -865,10 +831,10 @@ export namespace Components {
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
         /**
-          * Disables interaction.
+          * Disables interaction (25% opacity via ds-control-inactive).
           * @default false
          */
-        "inactive": boolean;
+        "isInactive": boolean;
         /**
           * Array of options. Set via JS property.
           * @example el.options = [{ label: 'Apple', value: 'apple' }];
@@ -898,7 +864,7 @@ export namespace Components {
         /**
           * @default false
          */
-        "inactive": boolean;
+        "isInactive": boolean;
         /**
           * Wash preset this orb previews.
           * @default DEFAULT_SHELL_GRADIENT_PRESET
@@ -936,13 +902,13 @@ export namespace Components {
     }
     interface DsSlider {
         /**
-          * @default false
-         */
-        "inactive": boolean;
-        /**
           * Associates with an external <label>. Defaults to an auto-generated ID.
          */
         "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
         "label": string;
         /**
           * @default 100
@@ -961,42 +927,6 @@ export namespace Components {
          */
         "value": number;
         "valueText": string | undefined;
-    }
-    interface DsSurface {
-        /**
-          * @default 'div'
-         */
-        "as": SurfaceElement;
-        /**
-          * @default 'transparent'
-         */
-        "background": SurfaceBackground;
-        /**
-          * @default 'faint'
-         */
-        "contrast": SurfaceContrast;
-        /**
-          * Space-separated list of edges: "top bottom" etc. Only applies when elevation='none'.
-         */
-        "edge": string | undefined;
-        /**
-          * @default 'none'
-         */
-        "elevation": SurfaceElevation;
-        /**
-          * @default false
-         */
-        "inactive": boolean;
-        "intent": SurfaceIntent | undefined;
-        /**
-          * @default false
-         */
-        "interactive": boolean;
-        "radius": SurfaceRadius | undefined;
-        /**
-          * @default false
-         */
-        "selected": boolean;
     }
     interface DsTabGroup {
         "ariaLabel": string | undefined;
@@ -1083,10 +1013,6 @@ export namespace Components {
          */
         "contrast": TagContrast;
         /**
-          * @default 'none'
-         */
-        "elevation": TagElevation;
-        /**
           * @default 'neutral'
          */
         "intent": TagIntent;
@@ -1131,12 +1057,6 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
-    interface DsToastProvider {
-        /**
-          * @default 'top-center'
-         */
-        "position": ToastPosition;
-    }
     interface DsToggle {
         /**
           * @default false
@@ -1145,8 +1065,14 @@ export namespace Components {
         /**
           * @default false
          */
-        "inactive": boolean;
+        "isInactive": boolean;
     }
+    /**
+     * Imperative body portal for the popup.
+     * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+     * causes recreate → re-portal →
+     * @State loops that freeze the page.
+     */
     interface DsTooltip {
         /**
           * @default 'center'
@@ -1158,8 +1084,8 @@ export namespace Components {
          */
         "alignOffset": number | string;
         /**
-          * Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`.
-          * @default TOKEN_DEFAULTS.animationDelayMedium1
+          * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
+          * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
         "delay": number | string;
         "label": string;
@@ -1177,6 +1103,11 @@ export namespace Components {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset": number | string;
+        /**
+          * Control density (height, padding, type).
+          * @default 'md'
+         */
+        "size": TooltipSize;
     }
     /**
      * Positioned value/label callout for chart hover interactions (donut slice, bar,
@@ -1187,8 +1118,15 @@ export namespace Components {
      * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
      * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
      * keeps it on-screen.
+     * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+     * keep the instance mounted while the cursor moves so tracking stays instant.
      */
     interface DsTooltipDataViz {
+        /**
+          * Show delay after mount before the callout appears. Default: `--effect-animation-delay-instant` (0ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Charts need immediate feedback while scrubbing; prefer the default. Mount once per hover session so any non-zero delay runs once, then track `x`/`y` instantly.
+          * @default TOKEN_DEFAULTS.animationDelayInstant
+         */
+        "delay": number | string;
         /**
           * @default ''
          */
@@ -1208,10 +1146,6 @@ export namespace Components {
         "y": number;
     }
 }
-export interface DsAccordionCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsAccordionElement;
-}
 export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBannerElement;
@@ -1220,17 +1154,13 @@ export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarNavElement;
 }
-export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsBreadcrumbElement;
-}
 export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
 }
-export interface DsButtonUnfilledIconCustomEvent<T> extends CustomEvent<T> {
+export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsButtonUnfilledIconElement;
+    target: HTMLDsButtonUnfilledElement;
 }
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1313,23 +1243,6 @@ export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
     target: HTMLDsToggleElement;
 }
 declare global {
-    interface HTMLDsAccordionElementEventMap {
-        "dsExpandedChange": string[];
-    }
-    interface HTMLDsAccordionElement extends Components.DsAccordion, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsAccordionElementEventMap>(type: K, listener: (this: HTMLDsAccordionElement, ev: DsAccordionCustomEvent<HTMLDsAccordionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsAccordionElementEventMap>(type: K, listener: (this: HTMLDsAccordionElement, ev: DsAccordionCustomEvent<HTMLDsAccordionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsAccordionElement: {
-        prototype: HTMLDsAccordionElement;
-        new (): HTMLDsAccordionElement;
-    };
     interface HTMLDsAppShellElement extends Components.DsAppShell, HTMLStencilElement {
     }
     var HTMLDsAppShellElement: {
@@ -1376,23 +1289,6 @@ declare global {
         prototype: HTMLDsBarNavElement;
         new (): HTMLDsBarNavElement;
     };
-    interface HTMLDsBreadcrumbElementEventMap {
-        "dsNavigate": { item: BreadcrumbItem; index: number };
-    }
-    interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsBreadcrumbElement: {
-        prototype: HTMLDsBreadcrumbElement;
-        new (): HTMLDsBreadcrumbElement;
-    };
     interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
     }
@@ -1410,23 +1306,23 @@ declare global {
         prototype: HTMLDsButtonFilledElement;
         new (): HTMLDsButtonFilledElement;
     };
-    interface HTMLDsButtonUnfilledIconElementEventMap {
+    interface HTMLDsButtonUnfilledElementEventMap {
         "dsClick": MouseEvent;
         "dsChange": boolean;
     }
-    interface HTMLDsButtonUnfilledIconElement extends Components.DsButtonUnfilledIcon, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsButtonUnfilledIconElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledIconElement, ev: DsButtonUnfilledIconCustomEvent<HTMLDsButtonUnfilledIconElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsButtonUnfilledElement extends Components.DsButtonUnfilled, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonUnfilledElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledElement, ev: DsButtonUnfilledCustomEvent<HTMLDsButtonUnfilledElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsButtonUnfilledIconElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledIconElement, ev: DsButtonUnfilledIconCustomEvent<HTMLDsButtonUnfilledIconElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonUnfilledElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledElement, ev: DsButtonUnfilledCustomEvent<HTMLDsButtonUnfilledElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsButtonUnfilledIconElement: {
-        prototype: HTMLDsButtonUnfilledIconElement;
-        new (): HTMLDsButtonUnfilledIconElement;
+    var HTMLDsButtonUnfilledElement: {
+        prototype: HTMLDsButtonUnfilledElement;
+        new (): HTMLDsButtonUnfilledElement;
     };
     /**
      * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
@@ -1529,9 +1425,12 @@ declare global {
     };
     interface HTMLDsChipElementEventMap {
         "dsRemove": void;
-        "dsClick": void;
-        "dsPressedChange": boolean;
     }
+    /**
+     * Removable chip — same density recipe as Tag, but colored by semantic `state`
+     * (not intent × contrast). Not a toggle/select control; the only intentional
+     * action is remove.
+     */
     interface HTMLDsChipElement extends Components.DsChip, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsChipElementEventMap>(type: K, listener: (this: HTMLDsChipElement, ev: DsChipCustomEvent<HTMLDsChipElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1557,12 +1456,6 @@ declare global {
     var HTMLDsEmptyStateElement: {
         prototype: HTMLDsEmptyStateElement;
         new (): HTMLDsEmptyStateElement;
-    };
-    interface HTMLDsFadeElement extends Components.DsFade, HTMLStencilElement {
-    }
-    var HTMLDsFadeElement: {
-        prototype: HTMLDsFadeElement;
-        new (): HTMLDsFadeElement;
     };
     interface HTMLDsFieldElement extends Components.DsField, HTMLStencilElement {
     }
@@ -1800,12 +1693,6 @@ declare global {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
     };
-    interface HTMLDsSurfaceElement extends Components.DsSurface, HTMLStencilElement {
-    }
-    var HTMLDsSurfaceElement: {
-        prototype: HTMLDsSurfaceElement;
-        new (): HTMLDsSurfaceElement;
-    };
     interface HTMLDsTabGroupElementEventMap {
         "dsChange": string;
     }
@@ -1872,12 +1759,6 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
-    interface HTMLDsToastProviderElement extends Components.DsToastProvider, HTMLStencilElement {
-    }
-    var HTMLDsToastProviderElement: {
-        prototype: HTMLDsToastProviderElement;
-        new (): HTMLDsToastProviderElement;
-    };
     interface HTMLDsToggleElementEventMap {
         "dsChange": boolean;
     }
@@ -1895,6 +1776,12 @@ declare global {
         prototype: HTMLDsToggleElement;
         new (): HTMLDsToggleElement;
     };
+    /**
+     * Imperative body portal for the popup.
+     * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+     * causes recreate → re-portal →
+     * @State loops that freeze the page.
+     */
     interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
     }
     var HTMLDsTooltipElement: {
@@ -1910,6 +1797,8 @@ declare global {
      * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
      * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
      * keeps it on-screen.
+     * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+     * keep the instance mounted while the cursor moves so tracking stays instant.
      */
     interface HTMLDsTooltipDataVizElement extends Components.DsTooltipDataViz, HTMLStencilElement {
     }
@@ -1918,14 +1807,12 @@ declare global {
         new (): HTMLDsTooltipDataVizElement;
     };
     interface HTMLElementTagNameMap {
-        "ds-accordion": HTMLDsAccordionElement;
         "ds-app-shell": HTMLDsAppShellElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
-        "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
-        "ds-button-unfilled-icon": HTMLDsButtonUnfilledIconElement;
+        "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-card-data-viz": HTMLDsCardDataVizElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-chart-bar": HTMLDsChartBarElement;
@@ -1936,7 +1823,6 @@ declare global {
         "ds-chip": HTMLDsChipElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
-        "ds-fade": HTMLDsFadeElement;
         "ds-field": HTMLDsFieldElement;
         "ds-header": HTMLDsHeaderElement;
         "ds-icon": HTMLDsIconElement;
@@ -1954,13 +1840,11 @@ declare global {
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
-        "ds-surface": HTMLDsSurfaceElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tab-group-nav": HTMLDsTabGroupNavElement;
         "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
-        "ds-toast-provider": HTMLDsToastProviderElement;
         "ds-toggle": HTMLDsToggleElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-data-viz": HTMLDsTooltipDataVizElement;
@@ -1969,22 +1853,6 @@ declare global {
 declare namespace LocalJSX {
     type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}` | `prop:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K | `prop:${K}`]?: never } | { [P in `prop:${K}`]: PropT } & { [P in K | `attr:${K}`]?: never };
 
-    interface DsAccordion {
-        /**
-          * Comma-separated list of expanded item IDs for controlled mode.
-          * @default ''
-         */
-        "expandedIds"?: string;
-        /**
-          * @default []
-         */
-        "items"?: AccordionItemData[];
-        /**
-          * @default false
-         */
-        "multiple"?: boolean;
-        "onDsExpandedChange"?: (event: DsAccordionCustomEvent<string[]>) => void;
-    }
     interface DsAppShell {
         /**
           * When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout).
@@ -2125,70 +1993,68 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    interface DsBreadcrumb {
-        /**
-          * @default []
-         */
-        "items"?: BreadcrumbItem[];
-        "onDsNavigate"?: (event: DsBreadcrumbCustomEvent<{ item: BreadcrumbItem; index: number }>) => void;
-        /**
-          * @default '/'
-         */
-        "separator"?: string;
-    }
     interface DsButtonFilled {
-        /**
-          * @default 'action'
-         */
-        "ariaLabel"?: string;
+        "ariaLabel"?: string | undefined;
         /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
         "contrast"?: ButtonFilledContrast;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon"?: string;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive"?: boolean;
         /**
           * Semantic colour intent.
           * @default 'brand'
          */
         "intent"?: ButtonFilledIntent;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label"?: string;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: ButtonFilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type"?: 'button' | 'submit' | 'reset';
-    }
-    interface DsButtonUnfilledIcon {
         /**
-          * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant"?: ButtonFilledVariant;
+    }
+    interface DsButtonUnfilled {
+        /**
+          * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only.
           * @default true
          */
         "activeFill"?: boolean;
-        /**
-          * @default 'action'
-         */
-        "ariaLabel"?: string;
+        "ariaLabel"?: string | undefined;
         /**
           * Parent surface context for navigation and always-dark chrome.
          */
-        "background"?: ButtonUnfilledIconBackground | undefined;
+        "background"?: ButtonUnfilledBackground | undefined;
         /**
           * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
          */
-        "backgroundContrast"?: ButtonUnfilledIconOnBackgroundContrast;
+        "backgroundContrast"?: ButtonUnfilledOnBackgroundContrast;
         "controls"?: string | undefined;
         /**
-          * Show a notification dot at the top-right of the icon zone.
+          * Show a notification dot at the top-right of the icon zone (icon variant only).
           * @default false
          */
         "dot"?: boolean;
@@ -2198,34 +2064,49 @@ declare namespace LocalJSX {
          */
         "focusTabIndex"?: number;
         /**
-          * Show a 1px tertiary border without changing the interaction model.
-          * @default false
+          * Show a 1px tertiary inset border. Default on; shell chrome can pass `false`.
+          * @default true
          */
         "hasBorder"?: boolean;
         "haspopup"?: string | undefined;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon"?: string;
-        /**
-          * Disables interaction.
-          * @default false
-         */
-        "inactive"?: boolean;
         /**
           * Active/selected visual state.
           * @default false
          */
         "isActive"?: boolean;
-        "onDsChange"?: (event: DsButtonUnfilledIconCustomEvent<boolean>) => void;
-        "onDsClick"?: (event: DsButtonUnfilledIconCustomEvent<MouseEvent>) => void;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label"?: string;
+        "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
+        "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
         "pressed"?: boolean | undefined;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: ButtonUnfilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant"?: ButtonUnfilledVariant;
     }
     /**
      * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
@@ -2280,7 +2161,7 @@ declare namespace LocalJSX {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. External sync dims slices only — the data-viz tooltip is reserved for this component's own pointer/keyboard interaction.
           * @default null
          */
         "activeLabel"?: string | null;
@@ -2389,52 +2270,37 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
-        "inactive"?: boolean;
+        "indeterminate"?: boolean;
         /**
           * @default false
          */
-        "indeterminate"?: boolean;
+        "isInactive"?: boolean;
         "label": string;
         "onDsChange"?: (event: DsCheckboxCustomEvent<boolean>) => void;
     }
+    /**
+     * Removable chip — same density recipe as Tag, but colored by semantic `state`
+     * (not intent × contrast). Not a toggle/select control; the only intentional
+     * action is remove.
+     */
     interface DsChip {
+        /**
+          * Surface context for interaction-fill tokens when the chip sits on a non-default surface.
+         */
         "background"?: ChipBackground | undefined;
-        /**
-          * @default 'faint'
-         */
-        "contrast"?: ChipContrast;
-        /**
-          * @default 'none'
-         */
-        "elevation"?: ChipElevation;
         /**
           * @default false
          */
-        "inactive"?: boolean;
-        /**
-          * @default 'neutral'
-         */
-        "intent"?: ChipIntent;
+        "isInactive"?: boolean;
         "label": string;
         "maxWidth"?: string | number | undefined;
-        /**
-          * Fired when an interactive chip is clicked.
-         */
-        "onDsClick"?: (event: DsChipCustomEvent<void>) => void;
-        /**
-          * Fired when the pressed state toggles.
-         */
-        "onDsPressedChange"?: (event: DsChipCustomEvent<boolean>) => void;
         /**
           * Fired when the remove button is clicked.
          */
         "onDsRemove"?: (event: DsChipCustomEvent<void>) => void;
         /**
-          * @default false
-         */
-        "pressed"?: boolean;
-        /**
-          * @default false
+          * When true (default), shows the trailing dismiss control.
+          * @default true
          */
         "removable"?: boolean;
         /**
@@ -2445,6 +2311,11 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: ChipSize;
+        /**
+          * Semantic color state.
+          * @default 'default'
+         */
+        "state"?: ChipState;
     }
     interface DsDivider {
         /**
@@ -2479,27 +2350,6 @@ declare namespace LocalJSX {
           * @default 'no-content'
          */
         "type"?: EmptyStateType;
-    }
-    interface DsFade {
-        /**
-          * Deprecated alias for size. Kept for existing consumers that pass a raw CSS length. Prefer `size`.
-         */
-        "height"?: string | undefined;
-        /**
-          * Edge where content fades as it approaches the scroll boundary.
-          * @default 'bottom'
-         */
-        "side"?: FadeSide;
-        /**
-          * Fade depth along the fade axis. Accepts dimension size token names or any CSS length.
-          * @default 'size-600'
-         */
-        "size"?: FadeSize;
-        /**
-          * Controls the mask without removing the scroll container from layout.
-          * @default true
-         */
-        "visible"?: boolean;
     }
     interface DsField {
         /**
@@ -2554,13 +2404,13 @@ declare namespace LocalJSX {
         "error"?: boolean;
         "errorMessage"?: string | undefined;
         /**
-          * @default false
-         */
-        "inactive"?: boolean;
-        /**
           * Associates the internal input with an external <label>.
          */
         "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
         "onDsChange"?: (event: DsInputCustomEvent<string>) => void;
         "onDsClear"?: (event: DsInputCustomEvent<void>) => void;
         "placeholder"?: string | undefined;
@@ -2654,7 +2504,7 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
-        "inactive"?: boolean;
+        "isInactive"?: boolean;
         "onDsPageChange"?: (event: DsPaginationCustomEvent<number>) => void;
         /**
           * @default 1
@@ -2791,7 +2641,7 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
-        "inactive"?: boolean;
+        "isInactive"?: boolean;
         "onDsChange"?: (event: DsRadioGroupCustomEvent<string>) => void;
         /**
           * @default []
@@ -2816,10 +2666,10 @@ declare namespace LocalJSX {
         "ariaLabel"?: string | undefined;
         "ariaLabelledby"?: string | undefined;
         /**
-          * Disables interaction.
+          * Disables interaction (25% opacity via ds-control-inactive).
           * @default false
          */
-        "inactive"?: boolean;
+        "isInactive"?: boolean;
         /**
           * Emits the selected value string.
          */
@@ -2854,7 +2704,7 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
-        "inactive"?: boolean;
+        "isInactive"?: boolean;
         "onDsSelect"?: (event: DsShellGradientSwatchCustomEvent<ShellGradientPreset1>) => void;
         /**
           * Wash preset this orb previews.
@@ -2893,13 +2743,13 @@ declare namespace LocalJSX {
     }
     interface DsSlider {
         /**
-          * @default false
-         */
-        "inactive"?: boolean;
-        /**
           * Associates with an external <label>. Defaults to an auto-generated ID.
          */
         "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
         "label": string;
         /**
           * @default 100
@@ -2919,42 +2769,6 @@ declare namespace LocalJSX {
          */
         "value"?: number;
         "valueText"?: string | undefined;
-    }
-    interface DsSurface {
-        /**
-          * @default 'div'
-         */
-        "as"?: SurfaceElement;
-        /**
-          * @default 'transparent'
-         */
-        "background"?: SurfaceBackground;
-        /**
-          * @default 'faint'
-         */
-        "contrast"?: SurfaceContrast;
-        /**
-          * Space-separated list of edges: "top bottom" etc. Only applies when elevation='none'.
-         */
-        "edge"?: string | undefined;
-        /**
-          * @default 'none'
-         */
-        "elevation"?: SurfaceElevation;
-        /**
-          * @default false
-         */
-        "inactive"?: boolean;
-        "intent"?: SurfaceIntent | undefined;
-        /**
-          * @default false
-         */
-        "interactive"?: boolean;
-        "radius"?: SurfaceRadius | undefined;
-        /**
-          * @default false
-         */
-        "selected"?: boolean;
     }
     interface DsTabGroup {
         "ariaLabel"?: string | undefined;
@@ -3047,10 +2861,6 @@ declare namespace LocalJSX {
          */
         "contrast"?: TagContrast;
         /**
-          * @default 'none'
-         */
-        "elevation"?: TagElevation;
-        /**
           * @default 'neutral'
          */
         "intent"?: TagIntent;
@@ -3095,12 +2905,6 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
-    interface DsToastProvider {
-        /**
-          * @default 'top-center'
-         */
-        "position"?: ToastPosition;
-    }
     interface DsToggle {
         /**
           * @default false
@@ -3109,9 +2913,15 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
-        "inactive"?: boolean;
+        "isInactive"?: boolean;
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
     }
+    /**
+     * Imperative body portal for the popup.
+     * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+     * causes recreate → re-portal →
+     * @State loops that freeze the page.
+     */
     interface DsTooltip {
         /**
           * @default 'center'
@@ -3123,8 +2933,8 @@ declare namespace LocalJSX {
          */
         "alignOffset"?: number | string;
         /**
-          * Show delay — number (ms) or TokoMo time token / `var(--effect-animation-delay-*)`.
-          * @default TOKEN_DEFAULTS.animationDelayMedium1
+          * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
+          * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
         "delay"?: number | string;
         "label": string;
@@ -3142,6 +2952,11 @@ declare namespace LocalJSX {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset"?: number | string;
+        /**
+          * Control density (height, padding, type).
+          * @default 'md'
+         */
+        "size"?: TooltipSize;
     }
     /**
      * Positioned value/label callout for chart hover interactions (donut slice, bar,
@@ -3152,8 +2967,15 @@ declare namespace LocalJSX {
      * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
      * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
      * keeps it on-screen.
+     * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+     * keep the instance mounted while the cursor moves so tracking stays instant.
      */
     interface DsTooltipDataViz {
+        /**
+          * Show delay after mount before the callout appears. Default: `--effect-animation-delay-instant` (0ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Charts need immediate feedback while scrubbing; prefer the default. Mount once per hover session so any non-zero delay runs once, then track `x`/`y` instantly.
+          * @default TOKEN_DEFAULTS.animationDelayInstant
+         */
+        "delay"?: number | string;
         /**
           * @default ''
          */
@@ -3173,10 +2995,6 @@ declare namespace LocalJSX {
         "y"?: number;
     }
 
-    interface DsAccordionAttributes {
-        "multiple": boolean;
-        "expandedIds": string;
-    }
     interface DsAppShellAttributes {
         "navStyle": NavChromeStyle;
         "gradient": boolean;
@@ -3211,28 +3029,31 @@ declare namespace LocalJSX {
         "basePath": string;
         "currentUrl": string;
     }
-    interface DsBreadcrumbAttributes {
-        "separator": string;
-    }
     interface DsButtonFilledAttributes {
+        "variant": ButtonFilledVariant;
+        "size": ButtonFilledSize;
+        "label": string;
         "icon": string;
         "intent": ButtonFilledIntent;
         "contrast": ButtonFilledContrast;
-        "inactive": boolean;
+        "isInactive": boolean;
         "type": 'button' | 'submit' | 'reset';
-        "ariaLabel": string;
+        "ariaLabel": string | undefined;
     }
-    interface DsButtonUnfilledIconAttributes {
+    interface DsButtonUnfilledAttributes {
+        "variant": ButtonUnfilledVariant;
+        "size": ButtonUnfilledSize;
+        "label": string;
         "icon": string;
         "isActive": boolean;
         "activeFill": boolean;
         "hasBorder": boolean;
         "dot": boolean;
-        "inactive": boolean;
+        "isInactive": boolean;
         "type": 'button' | 'submit' | 'reset';
-        "backgroundContrast": ButtonUnfilledIconOnBackgroundContrast;
-        "background": ButtonUnfilledIconBackground | undefined;
-        "ariaLabel": string;
+        "backgroundContrast": ButtonUnfilledOnBackgroundContrast;
+        "background": ButtonUnfilledBackground | undefined;
+        "ariaLabel": string | undefined;
         "controls": string | undefined;
         "expanded": boolean | undefined;
         "haspopup": string | undefined;
@@ -3275,20 +3096,17 @@ declare namespace LocalJSX {
         "label": string;
         "checked": boolean;
         "indeterminate": boolean;
-        "inactive": boolean;
+        "isInactive": boolean;
     }
     interface DsChipAttributes {
         "label": string;
-        "intent": ChipIntent;
-        "contrast": ChipContrast;
-        "elevation": ChipElevation;
+        "state": ChipState;
         "size": ChipSize;
         "rounded": boolean;
         "removable": boolean;
         "maxWidth": string;
-        "inactive": boolean;
+        "isInactive": boolean;
         "background": ChipBackground | undefined;
-        "pressed": boolean;
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
@@ -3300,12 +3118,6 @@ declare namespace LocalJSX {
     interface DsEmptyStateAttributes {
         "type": EmptyStateType;
         "message": string | undefined;
-    }
-    interface DsFadeAttributes {
-        "side": FadeSide;
-        "size": FadeSize;
-        "height": string | undefined;
-        "visible": boolean;
     }
     interface DsFieldAttributes {
         "label": string;
@@ -3326,7 +3138,7 @@ declare namespace LocalJSX {
         "value": string;
         "placeholder": string | undefined;
         "type": InputType;
-        "inactive": boolean;
+        "isInactive": boolean;
         "autoFocus": boolean;
         "error": boolean;
         "errorMessage": string | undefined;
@@ -3360,7 +3172,7 @@ declare namespace LocalJSX {
         "page": number;
         "totalPages": number;
         "siblingCount": number;
-        "inactive": boolean;
+        "isInactive": boolean;
     }
     interface DsPanelNavAttributes {
         "navStyle": NavChromeStyle;
@@ -3383,7 +3195,7 @@ declare namespace LocalJSX {
     interface DsRadioGroupAttributes {
         "value": string;
         "direction": 'vertical' | 'horizontal';
-        "inactive": boolean;
+        "isInactive": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
@@ -3394,7 +3206,7 @@ declare namespace LocalJSX {
     interface DsSelectAttributes {
         "value": string;
         "placeholder": string;
-        "inactive": boolean;
+        "isInactive": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
     }
@@ -3404,7 +3216,7 @@ declare namespace LocalJSX {
     interface DsShellGradientSwatchAttributes {
         "preset": ShellGradientPreset;
         "selected": boolean;
-        "inactive": boolean;
+        "isInactive": boolean;
         "ariaLabel": string | undefined;
     }
     interface DsSkeletonAttributes {
@@ -3420,21 +3232,9 @@ declare namespace LocalJSX {
         "max": number;
         "step": number;
         "label": string;
-        "inactive": boolean;
+        "isInactive": boolean;
         "valueText": string | undefined;
         "inputId": string | undefined;
-    }
-    interface DsSurfaceAttributes {
-        "background": SurfaceBackground;
-        "intent": SurfaceIntent | undefined;
-        "contrast": SurfaceContrast;
-        "elevation": SurfaceElevation;
-        "edge": string | undefined;
-        "radius": SurfaceRadius | undefined;
-        "interactive": boolean;
-        "selected": boolean;
-        "inactive": boolean;
-        "as": SurfaceElement;
     }
     interface DsTabGroupAttributes {
         "value": string;
@@ -3463,7 +3263,6 @@ declare namespace LocalJSX {
         "label": string;
         "intent": TagIntent;
         "contrast": TagContrast;
-        "elevation": TagElevation;
         "size": TagSize;
         "rounded": boolean;
         "maxWidth": string;
@@ -3480,15 +3279,13 @@ declare namespace LocalJSX {
         "as": TextElement;
         "for": string | undefined;
     }
-    interface DsToastProviderAttributes {
-        "position": ToastPosition;
-    }
     interface DsToggleAttributes {
         "checked": boolean;
-        "inactive": boolean;
+        "isInactive": boolean;
     }
     interface DsTooltipAttributes {
         "label": string;
+        "size": TooltipSize;
         "side": TooltipSide;
         "align": TooltipAlign;
         "sideOffset": string;
@@ -3502,17 +3299,16 @@ declare namespace LocalJSX {
         "label": string;
         "x": number;
         "y": number;
+        "delay": string;
     }
 
     interface IntrinsicElements {
-        "ds-accordion": Omit<DsAccordion, keyof DsAccordionAttributes> & { [K in keyof DsAccordion & keyof DsAccordionAttributes]?: DsAccordion[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `attr:${K}`]?: DsAccordionAttributes[K] } & { [K in keyof DsAccordion & keyof DsAccordionAttributes as `prop:${K}`]?: DsAccordion[K] };
         "ds-app-shell": Omit<DsAppShell, keyof DsAppShellAttributes> & { [K in keyof DsAppShell & keyof DsAppShellAttributes]?: DsAppShell[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `attr:${K}`]?: DsAppShellAttributes[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `prop:${K}`]?: DsAppShell[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
-        "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
-        "ds-button-unfilled-icon": Omit<DsButtonUnfilledIcon, keyof DsButtonUnfilledIconAttributes> & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes]?: DsButtonUnfilledIcon[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `attr:${K}`]?: DsButtonUnfilledIconAttributes[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `prop:${K}`]?: DsButtonUnfilledIcon[K] };
+        "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
@@ -3523,7 +3319,6 @@ declare namespace LocalJSX {
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
-        "ds-fade": Omit<DsFade, keyof DsFadeAttributes> & { [K in keyof DsFade & keyof DsFadeAttributes]?: DsFade[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `attr:${K}`]?: DsFadeAttributes[K] } & { [K in keyof DsFade & keyof DsFadeAttributes as `prop:${K}`]?: DsFade[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
@@ -3541,13 +3336,11 @@ declare namespace LocalJSX {
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
-        "ds-surface": Omit<DsSurface, keyof DsSurfaceAttributes> & { [K in keyof DsSurface & keyof DsSurfaceAttributes]?: DsSurface[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `attr:${K}`]?: DsSurfaceAttributes[K] } & { [K in keyof DsSurface & keyof DsSurfaceAttributes as `prop:${K}`]?: DsSurface[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tab-group-nav": Omit<DsTabGroupNav, keyof DsTabGroupNavAttributes> & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes]?: DsTabGroupNav[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `attr:${K}`]?: DsTabGroupNavAttributes[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `prop:${K}`]?: DsTabGroupNav[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
-        "ds-toast-provider": Omit<DsToastProvider, keyof DsToastProviderAttributes> & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes]?: DsToastProvider[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `attr:${K}`]?: DsToastProviderAttributes[K] } & { [K in keyof DsToastProvider & keyof DsToastProviderAttributes as `prop:${K}`]?: DsToastProvider[K] };
         "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-data-viz": Omit<DsTooltipDataViz, keyof DsTooltipDataVizAttributes> & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes]?: DsTooltipDataViz[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `attr:${K}`]?: DsTooltipDataVizAttributes[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `prop:${K}`]?: DsTooltipDataViz[K] };
@@ -3557,14 +3350,12 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ds-accordion": LocalJSX.IntrinsicElements["ds-accordion"] & JSXBase.HTMLAttributes<HTMLDsAccordionElement>;
             "ds-app-shell": LocalJSX.IntrinsicElements["ds-app-shell"] & JSXBase.HTMLAttributes<HTMLDsAppShellElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
-            "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
-            "ds-button-unfilled-icon": LocalJSX.IntrinsicElements["ds-button-unfilled-icon"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledIconElement>;
+            "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
              * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
              * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit
@@ -3584,10 +3375,14 @@ declare module "@stencil/core" {
             "ds-chart-legend": LocalJSX.IntrinsicElements["ds-chart-legend"] & JSXBase.HTMLAttributes<HTMLDsChartLegendElement>;
             "ds-chart-line": LocalJSX.IntrinsicElements["ds-chart-line"] & JSXBase.HTMLAttributes<HTMLDsChartLineElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
+            /**
+             * Removable chip — same density recipe as Tag, but colored by semantic `state`
+             * (not intent × contrast). Not a toggle/select control; the only intentional
+             * action is remove.
+             */
             "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
-            "ds-fade": LocalJSX.IntrinsicElements["ds-fade"] & JSXBase.HTMLAttributes<HTMLDsFadeElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
@@ -3605,14 +3400,18 @@ declare module "@stencil/core" {
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
-            "ds-surface": LocalJSX.IntrinsicElements["ds-surface"] & JSXBase.HTMLAttributes<HTMLDsSurfaceElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tab-group-nav": LocalJSX.IntrinsicElements["ds-tab-group-nav"] & JSXBase.HTMLAttributes<HTMLDsTabGroupNavElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
-            "ds-toast-provider": LocalJSX.IntrinsicElements["ds-toast-provider"] & JSXBase.HTMLAttributes<HTMLDsToastProviderElement>;
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            /**
+             * Imperative body portal for the popup.
+             * Stencil must not own the portaled node — moving a VDOM child to `document.body`
+             * causes recreate → re-portal →
+             * @State loops that freeze the page.
+             */
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             /**
              * Positioned value/label callout for chart hover interactions (donut slice, bar,
@@ -3623,6 +3422,8 @@ declare module "@stencil/core" {
              * with `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right
              * of the anchor (matching cursor-following tooltips), flipping to whichever side/edge
              * keeps it on-screen.
+             * Mount (or remount) when a hover session starts so `delay` applies once per hover;
+             * keep the instance mounted while the cursor moves so tracking stays instant.
              */
             "ds-tooltip-data-viz": LocalJSX.IntrinsicElements["ds-tooltip-data-viz"] & JSXBase.HTMLAttributes<HTMLDsTooltipDataVizElement>;
         }

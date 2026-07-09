@@ -1,81 +1,32 @@
 /* ==========================================================================
-   ds-tag
+   ds-tag / ds-chip shared visual recipe
    ========================================================================== */
+
+@import '../../utils/control-density.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
 
 :host {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--dimension-radius-050);
   box-sizing: border-box;
   color: var(--color-foreground-primary);
   position: relative;
-
-  --_hover-bg: var(--color-interaction-hover);
-  --_pressed-bg: var(--color-interaction-pressed);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  height: var(--ds-control-height);
+  padding: 0 var(--ds-control-padding-inline);
+  gap: var(--ds-control-gap);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* ── Sizes ──────────────────────────────────────────────────────────────── */
-
-:host(.tag--size-md) { height: var(--dimension-size-400); padding: 0 var(--dimension-space-075); gap: 0; }
-:host(.tag--size-sm) { height: var(--dimension-size-300); padding: 0 var(--dimension-space-050); gap: 0; }
-:host(.tag--size-xs) { height: var(--dimension-size-200); padding: 0 var(--dimension-space-025); gap: 0; }
+/* Density vars come from .ds-control--md|sm|xs on the host (set in TSX). */
+/* Hover/press overlay comes from .ds-interaction-fill (Chip); do not swap host bg. */
 
 /* ── Rounded ────────────────────────────────────────────────────────────── */
 
 :host(.tag--rounded) { border-radius: var(--dimension-radius-half); }
-
-/* ── Background context ─────────────────────────────────────────────────── */
-
-:host(.tag--on-medium)      { --_hover-bg: var(--color-interaction-on-medium-background-hover);      --_pressed-bg: var(--color-interaction-on-medium-background-pressed); }
-:host(.tag--on-bold)        { --_hover-bg: var(--color-interaction-on-bold-background-hover);        --_pressed-bg: var(--color-interaction-on-bold-background-pressed); }
-:host(.tag--on-strong)      { --_hover-bg: var(--color-interaction-on-strong-background-hover);      --_pressed-bg: var(--color-interaction-on-strong-background-pressed); }
-:host(.tag--on-always-dark) { --_hover-bg: var(--color-always-dark-interaction-hover);               --_pressed-bg: var(--color-always-dark-interaction-pressed); }
-
-/* ── Elevation ──────────────────────────────────────────────────────────── */
-
-:host(.tag--elevation-flat) {
-  background-color: transparent !important;
-  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) currentColor;
-}
-
-:host(.tag--elevation-elevated) { box-shadow: var(--effect-elevation-elevated-sm); }
-
-/* Flat foreground — bold */
-:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-bold)   { color: var(--color-foreground-bold-neutral);   }
-:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-bold)     { color: var(--color-foreground-bold-brand);     }
-:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-bold)        { color: var(--color-foreground-bold-ai);        }
-:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-bold)  { color: var(--color-foreground-bold-negative);  }
-:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-bold)   { color: var(--color-foreground-bold-warning);   }
-:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-bold)   { color: var(--color-foreground-bold-caution);   }
-:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-bold)  { color: var(--color-foreground-bold-positive);  }
-
-/* Flat foreground — strong */
-:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-strong)   { color: var(--color-foreground-strong-neutral);   }
-:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-strong)     { color: var(--color-foreground-strong-brand);     }
-:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-strong)        { color: var(--color-foreground-strong-ai);        }
-:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-strong)  { color: var(--color-foreground-strong-negative);  }
-:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-strong)   { color: var(--color-foreground-strong-warning);   }
-:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-strong)   { color: var(--color-foreground-strong-caution);   }
-:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-strong)  { color: var(--color-foreground-strong-positive);  }
-
-/* Flat foreground — medium */
-:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-medium)   { color: var(--color-foreground-medium-neutral);   }
-:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-medium)     { color: var(--color-foreground-medium-brand);     }
-:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-medium)        { color: var(--color-foreground-medium-ai);        }
-:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-medium)  { color: var(--color-foreground-medium-negative);  }
-:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-medium)   { color: var(--color-foreground-medium-warning);   }
-:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-medium)   { color: var(--color-foreground-medium-caution);   }
-:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-medium)  { color: var(--color-foreground-medium-positive);  }
-
-/* Flat foreground — faint */
-:host(.tag--elevation-flat.tag--intent-neutral.tag--contrast-faint)   { color: var(--color-foreground-faint-neutral);   }
-:host(.tag--elevation-flat.tag--intent-brand.tag--contrast-faint)     { color: var(--color-foreground-faint-brand);     }
-:host(.tag--elevation-flat.tag--intent-ai.tag--contrast-faint)        { color: var(--color-foreground-faint-ai);        }
-:host(.tag--elevation-flat.tag--intent-negative.tag--contrast-faint)  { color: var(--color-foreground-faint-negative);  }
-:host(.tag--elevation-flat.tag--intent-warning.tag--contrast-faint)   { color: var(--color-foreground-faint-warning);   }
-:host(.tag--elevation-flat.tag--intent-caution.tag--contrast-faint)   { color: var(--color-foreground-faint-caution);   }
-:host(.tag--elevation-flat.tag--intent-positive.tag--contrast-faint)  { color: var(--color-foreground-faint-positive);  }
 
 /* ── Intent × Contrast — strong ─────────────────────────────────────────── */
 
@@ -117,49 +68,50 @@
 :host(.tag--intent-caution.tag--contrast-faint)  { background-color: var(--color-background-faint-caution);  color: var(--color-foreground-bold-caution);  }
 :host(.tag--intent-positive.tag--contrast-faint) { background-color: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }
 
-/* ── Interactive ────────────────────────────────────────────────────────── */
+/* ── Interactive (Chip) ─────────────────────────────────────────────────── */
 
 :host(.tag--interactive) {
   cursor: pointer;
-  user-select: none;
   outline: none;
 }
 
-:host(.tag--interactive:hover)  { background-color: var(--_hover-bg); }
-:host(.tag--interactive:active) { background-color: var(--_pressed-bg); }
-
-:host(.tag--interactive:focus-visible) {
-  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
-  outline-offset: var(--dimension-space-025);
-}
-
-/* ── Pressed ────────────────────────────────────────────────────────────── */
-
-:host(.tag--pressed) {
-  background-color: var(--color-background-faint-brand) !important;
-  color: var(--color-foreground-bold-brand) !important;
-}
+/* Hover/press: `.ds-interaction-fill` paints via ::after — keep intent bg intact. */
 
 /* ── Label ──────────────────────────────────────────────────────────────── */
 
 .tag__label {
+  position: relative;
+  z-index: 2;
   line-height: 0;
-  padding: 0 var(--dimension-space-025);
+  padding: 0 var(--ds-control-label-inset);
   white-space: nowrap;
   flex-shrink: 0;
+  min-width: 0;
 }
 
 /* ── Icon slot ──────────────────────────────────────────────────────────── */
 
+/*
+ * `display: contents` so an unused icon slot doesn't reserve a gap; when a
+ * consumer slots an icon it becomes a flex child of the host and picks up
+ * `--ds-control-gap`. Prefer matching `ds-icon` size to the tag size (md/sm/xs).
+ */
 .tag__icon-slot {
   display: contents;
 }
 
-/* ── Remove button ──────────────────────────────────────────────────────── */
+.tag__icon-slot ::slotted(*) {
+  flex-shrink: 0;
+  width: var(--ds-control-icon);
+  height: var(--ds-control-icon);
+}
 
-/* Label↔dismiss spacing only: host `gap` would also space icon↔label (icon slot is display:contents). */
-:host(.tag--removable) .tag__label { padding-inline-end: 0; }
+/* ── Remove button (Chip) ───────────────────────────────────────────────── */
 
+/*
+ * Label↔dismiss uses host `gap` (`--ds-control-gap`) — same as Tag icon↔label.
+ * Keep label inset on both sides so spacing mirrors Tag: [inset][text][inset][gap][icon].
+ */
 .tag__remove {
   padding: 0;
   margin: 0;
@@ -172,23 +124,16 @@
   color: inherit;
   flex-shrink: 0;
   position: relative;
-  border-radius: var(--dimension-radius-050);
-}
-
-:host(.tag--size-md.tag--removable) .tag__remove,
-:host(.tag--size-sm.tag--removable) .tag__remove {
-  margin-inline-start: var(--dimension-space-050);
-}
-
-:host(.tag--size-xs.tag--removable) .tag__remove {
-  margin-inline-start: var(--dimension-space-025);
+  z-index: 2;
+  border-radius: var(--dimension-radius-half);
 }
 
 .tag__remove::before {
   content: '';
   position: absolute;
-  inset: -2px;
-  border-radius: var(--dimension-radius-025);
+  /* Expand hover fill slightly past the glyph so the remove control feels clickable. */
+  inset: var(--dimension-space-n025);
+  border-radius: var(--dimension-radius-half);
   background-color: transparent;
   transition: var(--effect-transition-interaction-background-short-2);
   pointer-events: none;
@@ -197,18 +142,19 @@
 .tag__remove:hover::before  { background-color: var(--color-interaction-hover); }
 .tag__remove:active::before { background-color: var(--color-interaction-pressed); }
 
-:host(.tag--size-sm) .tag__remove::before { inset: -1px; border-radius: 3px; }
-:host(.tag--size-xs) .tag__remove::before { inset: 0; border-radius: var(--dimension-radius-050); }
-
-:host(.tag--rounded) .tag__remove,
-:host(.tag--rounded) .tag__remove::before { border-radius: var(--dimension-radius-half); }
+:host(.tag--size-sm) .tag__remove::before { inset: var(--dimension-space-n012); }
+:host(.tag--size-xs) .tag__remove::before { inset: 0; }
 
 .tag__remove-x {
   display: inline-flex;
-  line-height: 0;
-  font-size: inherit;
+  flex-shrink: 0;
+  /* Box sized by ds-icon’s size prop (md/sm/xs → iconography tokens). */
+  width: var(--ds-control-icon);
+  height: var(--ds-control-icon);
 }
 
-/* ── Inactive ───────────────────────────────────────────────────────────── */
-
-:host(.tag--inactive) { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+.tag__remove ::slotted(*) {
+  flex-shrink: 0;
+  width: var(--ds-control-icon);
+  height: var(--ds-control-icon);
+}

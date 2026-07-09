@@ -1,4 +1,6 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
 
 :host {
   display: block;
@@ -19,7 +21,6 @@
   box-sizing: border-box;
 }
 
-/* Vertical orientation */
 .tab-list--vertical {
   flex-direction: column;
   align-items: stretch;
@@ -32,118 +33,84 @@
   gap: var(--dimension-space-050);
   padding: var(--dimension-space-050);
   background-color: transparent;
-  border: var(--dimension-stroke-width-012) solid transparent;
+  border: none;
   border-radius: var(--dimension-radius-half);
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
   color: var(--color-foreground-secondary);
-  position: relative;
-  /* Only transition color — hover bg is instant (see ::after below) */
   transition: color var(--effect-motion-short-2);
   flex-shrink: 0;
   height: var(--dimension-size-300);
   min-width: var(--dimension-size-400);
   box-sizing: border-box;
-  --_hover-bg: var(--color-interaction-hover);
-  --_pressed-bg: var(--color-interaction-pressed);
   --_dot: var(--color-foreground-bold-brand);
   --_dot-ring: var(--color-background-secondary);
+  /* Hover/press: `.ds-interaction-fill` — fills cover full 24px box (no layout border). */
 }
-
-/* Interaction layer — same pattern as PanelNav */
-.tab::after {
-  content: '';
-  position: absolute;
-  inset: calc(var(--dimension-stroke-width-012) * -1);
-  border-radius: inherit;
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.tab:hover::after  { background: var(--_hover-bg);   transition: none; }
-.tab:active::after { background: var(--_pressed-bg);  transition: none; }
 
 .tab--selected {
   color: var(--color-foreground-primary);
   background-color: var(--color-background-primary);
-  border-color: var(--color-border-tertiary);
+  /* Inset stroke on interaction-fill ::after — stays above hover wash. */
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--color-border-tertiary);
 }
 
-.tab:disabled,
-.tab[aria-disabled="true"] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+.tab--selected:not(.ds-interaction-fill) {
+  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
-/* Vertical tabs read as a list — left-align the label */
+/* Inactive: `.ds-control-inactive` (25% opacity) — applied via class in TSX. */
+
 .tab-list--vertical .tab { justify-content: flex-start; }
 
-/* Label — dot anchors top-right like BarNav action icon zone */
 .tab__label {
   position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   padding: 0 var(--dimension-space-025);
   white-space: nowrap;
 }
 
-/* Clearance for top-right dot — slightly less than space-025 + space-075 */
 .tab__label--dot {
   padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
 }
 
-/* Notification dot — top-right corner of the label zone */
 .tab__dot {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 2;
   pointer-events: none;
 }
 
-/* Background context */
 .on-medium {
-  --_hover-bg: var(--color-interaction-on-medium-background-hover);
-  --_pressed-bg: var(--color-interaction-on-medium-background-pressed);
   --_dot-ring: var(--color-background-medium-neutral);
-  --ds-focus-ring-color: var(--color-interaction-on-medium-background-focus);
 }
 
 .on-bold {
-  --_hover-bg: var(--color-interaction-on-bold-background-hover);
-  --_pressed-bg: var(--color-interaction-on-bold-background-pressed);
   --_dot-ring: var(--color-background-bold-neutral);
-  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
 .on-bold.tab--selected { color: var(--color-foreground-on-bold-background-primary); }
 
 .on-strong {
-  --_hover-bg: var(--color-interaction-on-strong-background-hover);
-  --_pressed-bg: var(--color-interaction-on-strong-background-pressed);
   --_dot-ring: var(--color-background-strong-neutral);
-  --ds-focus-ring-color: var(--color-interaction-on-strong-background-focus);
   color: var(--color-foreground-on-bold-background-secondary);
 }
 
 .on-strong.tab--selected { color: var(--color-foreground-on-bold-background-primary); }
 
 .on-always-dark {
-  --_hover-bg: var(--color-always-dark-interaction-hover);
-  --_pressed-bg: var(--color-always-dark-interaction-pressed);
   --_dot-ring: var(--color-always-dark-background);
-  --ds-focus-ring-color: var(--color-always-dark-interaction-focus);
   color: var(--color-always-dark-foreground-secondary);
 }
 
 .on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }
 
-/* In-tablist visual group separator — not focusable, skipped by keyboard nav.
-   Pill tabs use text-body-small (line-height sm / 16px). Width is only the line;
-   `.tab-list` gap supplies the same spacing as between tabs. */
 .tab-divider {
   display: flex;
   align-items: center;

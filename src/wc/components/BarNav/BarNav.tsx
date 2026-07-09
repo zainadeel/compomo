@@ -687,15 +687,16 @@ export class BarNav {
             )}
 
             {hasTabs && this.hasOverflowTabs && (
-              <ds-button-unfilled-icon
+              <ds-button-unfilled variant="icon"
                 class={{
                   'bar-nav__overflow-trigger': true,
                 }}
                 icon="Ellipses"
                 isActive={this.menuOpen}
                 activeFill={false}
+                hasBorder={false}
                 focusTabIndex={this.overflowRovingFocused ? 0 : -1}
-                ref={(el?: HTMLDsButtonUnfilledIconElement) => {
+                ref={(el?: HTMLDsButtonUnfilledElement) => {
                   this.triggerEl = (el as (HTMLElement & { setFocus?: () => Promise<void> })) ?? null;
                 }}
                 haspopup="menu"

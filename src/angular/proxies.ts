@@ -8,34 +8,6 @@ import { Components } from '@ds-mo/ui';
 
 
 @ProxyCmp({
-  inputs: ['expandedIds', 'items', 'multiple']
-})
-@Component({
-  selector: 'ds-accordion',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['expandedIds', 'items', 'multiple'],
-  outputs: ['dsExpandedChange'],
-  standalone: false
-})
-export class DsAccordion {
-  protected el: HTMLDsAccordionElement;
-  @Output() dsExpandedChange = new EventEmitter<CustomEvent<string[]>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsAccordion extends Components.DsAccordion {
-
-  dsExpandedChange: EventEmitter<CustomEvent<string[]>>;
-}
-
-
-@ProxyCmp({
   inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
@@ -140,37 +112,7 @@ export declare interface DsBarNav extends Components.DsBarNav {
 
 
 @ProxyCmp({
-  inputs: ['items', 'separator']
-})
-@Component({
-  selector: 'ds-breadcrumb',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['items', 'separator'],
-  outputs: ['dsNavigate'],
-  standalone: false
-})
-export class DsBreadcrumb {
-  protected el: HTMLDsBreadcrumbElement;
-  @Output() dsNavigate = new EventEmitter<CustomEvent<{ item: IDsBreadcrumbBreadcrumbItem; index: number }>>();
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-import type { BreadcrumbItem as IDsBreadcrumbBreadcrumbItem } from '@ds-mo/ui';
-
-export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
-
-  dsNavigate: EventEmitter<CustomEvent<{ item: IDsBreadcrumbBreadcrumbItem; index: number }>>;
-}
-
-
-@ProxyCmp({
-  inputs: ['ariaLabel', 'contrast', 'icon', 'inactive', 'intent', 'type'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
   methods: ['setFocus']
 })
 @Component({
@@ -178,7 +120,7 @@ export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'contrast', 'icon', 'inactive', 'intent', 'type'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
   outputs: ['dsClick'],
   standalone: false
 })
@@ -199,20 +141,20 @@ export declare interface DsButtonFilled extends Components.DsButtonFilled {
 
 
 @ProxyCmp({
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
   methods: ['setFocus']
 })
 @Component({
-  selector: 'ds-button-unfilled-icon',
+  selector: 'ds-button-unfilled',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'inactive', 'isActive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
   outputs: ['dsClick', 'dsChange'],
   standalone: false
 })
-export class DsButtonUnfilledIcon {
-  protected el: HTMLDsButtonUnfilledIconElement;
+export class DsButtonUnfilled {
+  protected el: HTMLDsButtonUnfilledElement;
   @Output() dsClick = new EventEmitter<CustomEvent<MouseEvent>>();
   @Output() dsChange = new EventEmitter<CustomEvent<boolean>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
@@ -222,7 +164,7 @@ export class DsButtonUnfilledIcon {
 }
 
 
-export declare interface DsButtonUnfilledIcon extends Components.DsButtonUnfilledIcon {
+export declare interface DsButtonUnfilled extends Components.DsButtonUnfilled {
 
   dsClick: EventEmitter<CustomEvent<MouseEvent>>;
 
@@ -399,14 +341,14 @@ export declare interface DsChartLine extends Components.DsChartLine {}
 
 
 @ProxyCmp({
-  inputs: ['checked', 'inactive', 'indeterminate', 'label']
+  inputs: ['checked', 'indeterminate', 'isInactive', 'label']
 })
 @Component({
   selector: 'ds-checkbox',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['checked', 'inactive', 'indeterminate', { name: 'label', required: true }],
+  inputs: ['checked', 'indeterminate', 'isInactive', { name: 'label', required: true }],
   outputs: ['dsChange'],
   standalone: false
 })
@@ -427,22 +369,20 @@ export declare interface DsCheckbox extends Components.DsCheckbox {
 
 
 @ProxyCmp({
-  inputs: ['background', 'contrast', 'elevation', 'inactive', 'intent', 'label', 'maxWidth', 'pressed', 'removable', 'rounded', 'size']
+  inputs: ['background', 'isInactive', 'label', 'maxWidth', 'removable', 'rounded', 'size', 'state']
 })
 @Component({
   selector: 'ds-chip',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'contrast', 'elevation', 'inactive', 'intent', { name: 'label', required: true }, 'maxWidth', 'pressed', 'removable', 'rounded', 'size'],
-  outputs: ['dsRemove', 'dsClick', 'dsPressedChange'],
+  inputs: ['background', 'isInactive', { name: 'label', required: true }, 'maxWidth', 'removable', 'rounded', 'size', 'state'],
+  outputs: ['dsRemove'],
   standalone: false
 })
 export class DsChip {
   protected el: HTMLDsChipElement;
   @Output() dsRemove = new EventEmitter<CustomEvent<void>>();
-  @Output() dsClick = new EventEmitter<CustomEvent<void>>();
-  @Output() dsPressedChange = new EventEmitter<CustomEvent<boolean>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -455,14 +395,6 @@ export declare interface DsChip extends Components.DsChip {
    * Fired when the remove button is clicked.
    */
   dsRemove: EventEmitter<CustomEvent<void>>;
-  /**
-   * Fired when an interactive chip is clicked.
-   */
-  dsClick: EventEmitter<CustomEvent<void>>;
-  /**
-   * Fired when the pressed state toggles.
-   */
-  dsPressedChange: EventEmitter<CustomEvent<boolean>>;
 }
 
 
@@ -510,29 +442,6 @@ export class DsEmptyState {
 
 
 export declare interface DsEmptyState extends Components.DsEmptyState {}
-
-
-@ProxyCmp({
-  inputs: ['height', 'side', 'size', 'visible']
-})
-@Component({
-  selector: 'ds-fade',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['height', 'side', 'size', 'visible'],
-  standalone: false
-})
-export class DsFade {
-  protected el: HTMLDsFadeElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsFade extends Components.DsFade {}
 
 
 @ProxyCmp({
@@ -605,7 +514,7 @@ export declare interface DsIcon extends Components.DsIcon {}
 
 
 @ProxyCmp({
-  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'error', 'errorMessage', 'inactive', 'inputId', 'placeholder', 'type', 'value'],
+  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'error', 'errorMessage', 'inputId', 'isInactive', 'placeholder', 'type', 'value'],
   methods: ['setFocus']
 })
 @Component({
@@ -613,7 +522,7 @@ export declare interface DsIcon extends Components.DsIcon {}
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'error', 'errorMessage', 'inactive', 'inputId', 'placeholder', 'type', 'value'],
+  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'error', 'errorMessage', 'inputId', 'isInactive', 'placeholder', 'type', 'value'],
   outputs: ['dsChange', 'dsClear'],
   standalone: false
 })
@@ -727,14 +636,14 @@ export declare interface DsModal extends Components.DsModal {
 
 
 @ProxyCmp({
-  inputs: ['inactive', 'page', 'siblingCount', 'totalPages']
+  inputs: ['isInactive', 'page', 'siblingCount', 'totalPages']
 })
 @Component({
   selector: 'ds-pagination',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['inactive', 'page', 'siblingCount', 'totalPages'],
+  inputs: ['isInactive', 'page', 'siblingCount', 'totalPages'],
   outputs: ['dsPageChange'],
   standalone: false
 })
@@ -854,14 +763,14 @@ export declare interface DsPanelTools extends Components.DsPanelTools {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'inactive', 'options', 'value']
+  inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'isInactive', 'options', 'value']
 })
 @Component({
   selector: 'ds-radio-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'inactive', 'options', 'value'],
+  inputs: ['ariaLabel', 'ariaLabelledby', 'direction', 'isInactive', 'options', 'value'],
   outputs: ['dsChange'],
   standalone: false
 })
@@ -905,14 +814,14 @@ export declare interface DsScrollbar extends Components.DsScrollbar {}
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'ariaLabelledby', 'inactive', 'options', 'placeholder', 'value']
+  inputs: ['ariaLabel', 'ariaLabelledby', 'isInactive', 'options', 'placeholder', 'value']
 })
 @Component({
   selector: 'ds-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'ariaLabelledby', 'inactive', 'options', 'placeholder', 'value'],
+  inputs: ['ariaLabel', 'ariaLabelledby', 'isInactive', 'options', 'placeholder', 'value'],
   outputs: ['dsChange'],
   standalone: false
 })
@@ -965,14 +874,14 @@ export declare interface DsShellGradientPicker extends Components.DsShellGradien
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'inactive', 'preset', 'selected']
+  inputs: ['ariaLabel', 'isInactive', 'preset', 'selected']
 })
 @Component({
   selector: 'ds-shell-gradient-swatch',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'inactive', 'preset', 'selected'],
+  inputs: ['ariaLabel', 'isInactive', 'preset', 'selected'],
   outputs: ['dsSelect'],
   standalone: false
 })
@@ -1018,14 +927,14 @@ export declare interface DsSkeleton extends Components.DsSkeleton {}
 
 
 @ProxyCmp({
-  inputs: ['inactive', 'inputId', 'label', 'max', 'min', 'step', 'value', 'valueText']
+  inputs: ['inputId', 'isInactive', 'label', 'max', 'min', 'step', 'value', 'valueText']
 })
 @Component({
   selector: 'ds-slider',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['inactive', 'inputId', { name: 'label', required: true }, 'max', 'min', 'step', 'value', 'valueText'],
+  inputs: ['inputId', 'isInactive', { name: 'label', required: true }, 'max', 'min', 'step', 'value', 'valueText'],
   outputs: ['dsChange'],
   standalone: false
 })
@@ -1043,29 +952,6 @@ export declare interface DsSlider extends Components.DsSlider {
 
   dsChange: EventEmitter<CustomEvent<number>>;
 }
-
-
-@ProxyCmp({
-  inputs: ['as', 'background', 'contrast', 'edge', 'elevation', 'inactive', 'intent', 'interactive', 'radius', 'selected']
-})
-@Component({
-  selector: 'ds-surface',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['as', 'background', 'contrast', 'edge', 'elevation', 'inactive', 'intent', 'interactive', 'radius', 'selected'],
-  standalone: false
-})
-export class DsSurface {
-  protected el: HTMLDsSurfaceElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsSurface extends Components.DsSurface {}
 
 
 @ProxyCmp({
@@ -1165,14 +1051,14 @@ export declare interface DsTable extends Components.DsTable {
 
 
 @ProxyCmp({
-  inputs: ['contrast', 'elevation', 'intent', 'label', 'maxWidth', 'rounded', 'size']
+  inputs: ['contrast', 'intent', 'label', 'maxWidth', 'rounded', 'size']
 })
 @Component({
   selector: 'ds-tag',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['contrast', 'elevation', 'intent', { name: 'label', required: true }, 'maxWidth', 'rounded', 'size'],
+  inputs: ['contrast', 'intent', { name: 'label', required: true }, 'maxWidth', 'rounded', 'size'],
   standalone: false
 })
 export class DsTag {
@@ -1211,37 +1097,14 @@ export declare interface DsText extends Components.DsText {}
 
 
 @ProxyCmp({
-  inputs: ['position']
-})
-@Component({
-  selector: 'ds-toast-provider',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['position'],
-  standalone: false
-})
-export class DsToastProvider {
-  protected el: HTMLDsToastProviderElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsToastProvider extends Components.DsToastProvider {}
-
-
-@ProxyCmp({
-  inputs: ['checked', 'inactive']
+  inputs: ['checked', 'isInactive']
 })
 @Component({
   selector: 'ds-toggle',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['checked', 'inactive'],
+  inputs: ['checked', 'isInactive'],
   outputs: ['dsChange'],
   standalone: false
 })
@@ -1262,14 +1125,14 @@ export declare interface DsToggle extends Components.DsToggle {
 
 
 @ProxyCmp({
-  inputs: ['align', 'alignOffset', 'delay', 'label', 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset']
+  inputs: ['align', 'alignOffset', 'delay', 'label', 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset', 'size']
 })
 @Component({
   selector: 'ds-tooltip',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'alignOffset', 'delay', { name: 'label', required: true }, 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset'],
+  inputs: ['align', 'alignOffset', 'delay', { name: 'label', required: true }, 'shortcutKey', 'shortcutKeyPosition', 'side', 'sideOffset', 'size'],
   standalone: false
 })
 export class DsTooltip {
@@ -1285,14 +1148,14 @@ export declare interface DsTooltip extends Components.DsTooltip {}
 
 
 @ProxyCmp({
-  inputs: ['label', 'value', 'x', 'y']
+  inputs: ['delay', 'label', 'value', 'x', 'y']
 })
 @Component({
   selector: 'ds-tooltip-data-viz',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['label', 'value', 'x', 'y'],
+  inputs: ['delay', 'label', 'value', 'x', 'y'],
   standalone: false
 })
 export class DsTooltipDataViz {

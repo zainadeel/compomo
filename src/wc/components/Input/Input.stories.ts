@@ -9,11 +9,11 @@ const meta: Meta = {
     value:        { control: 'text' },
     placeholder:  { control: 'text' },
     type:         { control: 'select', options: ['text', 'email', 'tel', 'url', 'search', 'password'] },
-    inactive:     { control: 'boolean' },
+    isInactive:     { control: 'boolean' },
     error:        { control: 'boolean' },
     errorMessage: { control: 'text' },
   },
-  args: { value: '', placeholder: 'Placeholder text', type: 'text', inactive: false, error: false },
+  args: { value: '', placeholder: 'Placeholder text', type: 'text', isInactive: false, error: false },
 };
 
 export default meta;
@@ -26,7 +26,7 @@ export const Playground: Story = {
         value=${args['value'] ?? ''}
         placeholder=${args['placeholder'] ?? ''}
         type=${args['type'] ?? 'text'}
-        ?inactive=${args['inactive']}
+        ?is-inactive=${args['isInactive']}
         ?error=${args['error']}
         errorMessage=${args['errorMessage'] ?? ''}
         aria-label="Playground input"
@@ -43,7 +43,7 @@ export const Variants: Story = {
       <ds-input value="search query" type="search" aria-label="Search"></ds-input>
       <ds-input value="" placeholder="Password" type="password" aria-label="Password"></ds-input>
       <ds-input value="" placeholder="Error state" error errorMessage="This field is required" aria-label="Error input"></ds-input>
-      <ds-input value="Inactive" inactive aria-label="Inactive input"></ds-input>
+      <ds-input value="Inactive" is-inactive aria-label="Inactive input"></ds-input>
     </div>
   `,
 };

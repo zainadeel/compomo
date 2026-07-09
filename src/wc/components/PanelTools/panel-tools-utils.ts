@@ -24,7 +24,7 @@ export function shouldResyncPanelToolsItems(
       prior.icon !== item.icon ||
       prior.selected !== item.selected ||
       prior.dot !== item.dot ||
-      prior.inactive !== item.inactive ||
+      prior.isInactive !== item.isInactive ||
       prior.ariaLabel !== item.ariaLabel
     );
   });

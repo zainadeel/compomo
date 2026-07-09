@@ -91,23 +91,23 @@ export class TabGroupNav {
   @Method()
   async focusLastTab() {
     const tabs = this.selectableTabs;
-    const last = [...tabs].reverse().find(tab => !tab.disabled);
+    const last = [...tabs].reverse().find(tab => !tab.isInactive);
     if (last) await this.focusTab(last.id);
   }
 
   @Method()
   async focusFirstTab() {
-    const first = this.selectableTabs.find(tab => !tab.disabled);
+    const first = this.selectableTabs.find(tab => !tab.isInactive);
     if (first) await this.focusTab(first.id);
   }
 
   private syncFocusedTabId(preferred: string) {
     const tabs = this.selectableTabs;
-    if (tabs.some(tab => tab.id === preferred && !tab.disabled)) {
+    if (tabs.some(tab => tab.id === preferred && !tab.isInactive)) {
       this.focusedTabId = preferred;
       return;
     }
-    const first = tabs.find(tab => !tab.disabled);
+    const first = tabs.find(tab => !tab.isInactive);
     this.focusedTabId = first?.id ?? '';
   }
 
@@ -127,13 +127,13 @@ export class TabGroupNav {
   private findEnabledLinear(from: number, step: 1 | -1): number | null {
     const tabs = this.selectableTabs;
     for (let i = from + step; i >= 0 && i < tabs.length; i += step) {
-      if (!tabs[i]?.disabled) return i;
+      if (!tabs[i]?.isInactive) return i;
     }
     return null;
   }
 
   /**
-   * Find the next non-disabled tab index relative to `from`, stepping by `step`.
+   * Find the next non-inactive tab index relative to `from`, stepping by `step`.
    * Returns `from` unchanged if no other enabled tab exists.
    */
   private findEnabled(from: number, step: 1 | -1): number {
@@ -141,7 +141,7 @@ export class TabGroupNav {
     const len = tabs.length;
     for (let n = 0; n < len; n++) {
       const i = (from + step * (n + 1) + len * (n + 1)) % len;
-      if (!tabs[i]?.disabled) return i;
+      if (!tabs[i]?.isInactive) return i;
     }
     return from;
   }
@@ -156,7 +156,7 @@ export class TabGroupNav {
   private activateFocusedTab(e: KeyboardEvent) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const tab = this.selectableTabs.find(item => item.id === this.focusedTabId);
-    if (!tab || tab.disabled) return;
+    if (!tab || tab.isInactive) return;
     e.preventDefault();
     this.selectTab(tab.id, { focus: true });
   }
@@ -221,10 +221,10 @@ export class TabGroupNav {
     }
 
     if (e.key === 'Home') {
-      const first = tabs.findIndex(t => !t.disabled);
+      const first = tabs.findIndex(t => !t.isInactive);
       nextIdx = first === -1 ? null : first;
     } else if (e.key === 'End') {
-      const lastEnabled = [...tabs].reverse().findIndex(t => !t.disabled);
+      const lastEnabled = [...tabs].reverse().findIndex(t => !t.isInactive);
       nextIdx = lastEnabled === -1 ? null : tabs.length - 1 - lastEnabled;
     }
 
@@ -305,14 +305,15 @@ export class TabGroupNav {
                   tab: true,
                   'tab--selected': isSelected,
                   'ds-focus-ring-inset': true,
+                  'ds-control-inactive': !!tab.isInactive,
                   [bgClass]: !!bgClass,
                 }}
                 aria-selected={isSelected}
-                aria-disabled={tab.disabled || undefined}
+                aria-disabled={tab.isInactive || undefined}
                 aria-controls={tab.panelId ?? undefined}
-                disabled={tab.disabled}
+                disabled={tab.isInactive}
                 tabIndex={this.tabIndexForTab(tab)}
-                onClick={() => !tab.disabled && this.selectTab(tab.id)}
+                onClick={() => !tab.isInactive && this.selectTab(tab.id)}
                 onFocus={() => {
                   if (!this.selectionFollowsFocus) {
                     this.focusedTabId = tab.id;

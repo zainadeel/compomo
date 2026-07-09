@@ -4,14 +4,12 @@
  */
 
 /* eslint-disable */
-export { DsAccordion } from "./ds-accordion.js";
 export { DsAppShell } from "./ds-app-shell.js";
 export { DsBadge } from "./ds-badge.js";
 export { DsBanner } from "./ds-banner.js";
 export { DsBarNav } from "./ds-bar-nav.js";
-export { DsBreadcrumb } from "./ds-breadcrumb.js";
 export { DsButtonFilled } from "./ds-button-filled.js";
-export { DsButtonUnfilledIcon } from "./ds-button-unfilled-icon.js";
+export { DsButtonUnfilled } from "./ds-button-unfilled.js";
 export { DsCardDataViz } from "./ds-card-data-viz.js";
 export { DsCardSetting } from "./ds-card-setting.js";
 export { DsChartBar } from "./ds-chart-bar.js";
@@ -22,7 +20,6 @@ export { DsCheckbox } from "./ds-checkbox.js";
 export { DsChip } from "./ds-chip.js";
 export { DsDivider } from "./ds-divider.js";
 export { DsEmptyState } from "./ds-empty-state.js";
-export { DsFade } from "./ds-fade.js";
 export { DsField } from "./ds-field.js";
 export { DsHeader } from "./ds-header.js";
 export { DsIcon } from "./ds-icon.js";
@@ -40,13 +37,11 @@ export { DsShellGradientPicker } from "./ds-shell-gradient-picker.js";
 export { DsShellGradientSwatch } from "./ds-shell-gradient-swatch.js";
 export { DsSkeleton } from "./ds-skeleton.js";
 export { DsSlider } from "./ds-slider.js";
-export { DsSurface } from "./ds-surface.js";
 export { DsTabGroupNav } from "./ds-tab-group-nav.js";
 export { DsTabGroup } from "./ds-tab-group.js";
 export { DsTable } from "./ds-table.js";
 export { DsTag } from "./ds-tag.js";
 export { DsText } from "./ds-text.js";
-export { DsToastProvider } from "./ds-toast-provider.js";
 export { DsToggle } from "./ds-toggle.js";
 export { DsTooltipDataViz } from "./ds-tooltip-data-viz.js";
 export { DsTooltip } from "./ds-tooltip.js";

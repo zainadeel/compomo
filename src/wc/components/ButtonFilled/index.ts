@@ -1,1 +1,6 @@
-export type { ButtonFilledContrast, ButtonFilledIntent } from './ButtonFilled';
+export type {
+  ButtonFilledContrast,
+  ButtonFilledIntent,
+  ButtonFilledSize,
+  ButtonFilledVariant,
+} from './ButtonFilled';

@@ -1,4 +1,7 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
+@import '../../utils/control-density.css';
 
 /* ── Popup shell ─────────────────────────────────────────────────────────── */
 
@@ -57,8 +60,8 @@
 .section-header {
   display: flex;
   align-items: center;
-  height: var(--dimension-size-400);
-  padding: var(--dimension-space-050) var(--dimension-space-075);
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
   -webkit-user-select: none;
   user-select: none;
 }
@@ -66,77 +69,46 @@
 .section-label {
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--dimension-space-025);
-  color: var(--color-foreground-secondary);
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  color: var(--color-foreground-primary);
 }
 
-/* ── Items ───────────────────────────────────────────────────────────────── */
+/* ── Items (md control-density + interaction-fill + inset focus) ─────────── */
 
 .menu-item {
   display: flex;
   align-items: center;
-  gap: var(--dimension-space-050);
-  position: relative;
+  gap: var(--ds-control-gap, var(--dimension-space-050));
   width: 100%;
-  min-height: var(--dimension-size-400);
-  padding: var(--dimension-space-075);
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
   box-sizing: border-box;
   border: none;
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   background: transparent;
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
   text-align: left;
   color: inherit;
-  --_hover-bg: var(--color-interaction-hover);
-  --_pressed-bg: var(--color-interaction-pressed);
-  --_selected-bg: var(--color-interaction-active);
+  /* Hover/press/selected: `.ds-interaction-fill` (+ `--selected`). */
 }
 
+/* Subtext rows grow past the density height. */
 .menu-item:has(.menu-item__subtext) {
+  height: auto;
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+  padding-block: var(--ds-control-padding-inline, var(--dimension-space-075));
   align-items: flex-start;
 }
 
-/* Interaction layer — same ::after pattern as tabs / BarNav trigger */
-.menu-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.menu-item--selected::after {
-  background: var(--_selected-bg);
-  transition: none;
-}
-
-.menu-item:hover:not(:disabled):not(.menu-item--selected)::after {
-  background: var(--_hover-bg);
-  transition: none;
-}
-
-.menu-item:active:not(:disabled)::after {
-  background: var(--_pressed-bg);
-  transition: none;
-}
-
-.menu-item--inactive {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 .menu-item--destructive .menu-item__label {
   color: var(--color-foreground-bold-negative) !important;
 }
 
 .menu-item__content {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -145,7 +117,7 @@
 }
 
 .menu-item__label {
-  padding: 0 var(--dimension-space-025);
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   color: var(--color-foreground-secondary);
 }
 
@@ -155,7 +127,7 @@
 }
 
 .menu-item__subtext {
-  padding: 0 var(--dimension-space-025);
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   color: var(--color-foreground-secondary);
   line-height: 1.4;
 }
@@ -164,7 +136,6 @@
 
 .menu-item__toggle {
   position: relative;
-  z-index: 1;
   flex-shrink: 0;
   width: calc(var(--dimension-size-400) + var(--dimension-size-050));
   height: var(--dimension-size-250);

@@ -13,12 +13,12 @@ export class Checkbox {
   @Prop() label!: string;
   @Prop({ mutable: true }) checked: boolean = false;
   @Prop() indeterminate: boolean = false;
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
 
   @Event() dsChange!: EventEmitter<boolean>;
 
   private handleActivate = () => {
-    if (this.inactive) return;
+    if (this.isInactive) return;
     this.checked = !this.checked;
     this.dsChange.emit(this.checked);
   };
@@ -37,10 +37,10 @@ export class Checkbox {
       <Host
         role="checkbox"
         aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}
-        aria-disabled={this.inactive || undefined}
+        aria-disabled={this.isInactive || undefined}
         aria-labelledby={this.labelId}
-        tabIndex={this.inactive ? -1 : 0}
-        class={{ checkbox: true, inactive: this.inactive }}
+        tabIndex={this.isInactive ? -1 : 0}
+        class={{ checkbox: true, 'ds-control-inactive': this.isInactive }}
         onClick={this.handleActivate}
         onKeyDown={this.handleKeyDown}
       >

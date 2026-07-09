@@ -58,7 +58,6 @@
 }
 
 .card-setting__body {
-  min-height: var(--dimension-card-width-sm);
   border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);
   background-color: var(--color-background-primary);
 }

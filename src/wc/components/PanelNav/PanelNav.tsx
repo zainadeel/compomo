@@ -480,6 +480,70 @@ export class PanelNav {
     window.addEventListener('mouseup', onUp);
   }
 
+  private renderFooterAction(isDashboardChrome: boolean) {
+    const footerLabel = isDashboardChrome ? 'Open settings' : 'Go to dashboard';
+    return (
+      <ds-tooltip label={footerLabel} side="right" size="sm">
+        <ds-button-unfilled variant="icon"
+          class="panel-nav__footer-btn"
+          icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
+          activeFill={false}
+          hasBorder={false}
+          focusTabIndex={this.rovingIndex === this.getFooterRovingIndex() ? 0 : -1}
+          aria-label={footerLabel}
+          onDsClick={() => this.handleFooterAction()}
+          onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getFooterRovingIndex())}
+          onFocusin={() => { this.rovingIndex = this.getFooterRovingIndex(); }}
+        />
+      </ds-tooltip>
+    );
+  }
+
+  private renderFooterUser(collapsed: boolean, userName: string, userInitial: string) {
+    const userLabel = collapsed ? `User: ${userName}` : `User menu for ${userName}`;
+    const userButton = (
+      <button
+        type="button"
+        id={PANEL_NAV_USER_MENU_ANCHOR_ID}
+        class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset ds-interaction-fill"
+        tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
+        aria-label={userLabel}
+        onClick={(e) => this.handleUserAction(e)}
+        onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
+        onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
+      >
+        <span class="panel-nav__item-label panel-nav__footer-user-label">
+          <span class="panel-nav__item-label-text">
+            <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+              {userName}
+            </ds-text>
+          </span>
+        </span>
+        <span class="panel-nav__item-icon panel-nav__footer-user-icon" aria-hidden="true">
+          <span class="panel-nav__footer-icon-expanded">
+            <ds-icon name="ChevronUpDown" size="md" color="inherit" />
+          </span>
+          <span class="panel-nav__footer-icon-collapsed">
+            <ds-icon name="Circle" size="md" color="inherit" />
+            <span class="panel-nav__user-initial">
+              <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                {userInitial}
+              </ds-text>
+            </span>
+          </span>
+        </span>
+      </button>
+    );
+
+    if (!collapsed) return userButton;
+
+    return (
+      <ds-tooltip label={userLabel} side="right" size="sm">
+        {userButton}
+      </ds-tooltip>
+    );
+  }
+
   private renderNavItem(item: PanelNavItem, idx: number, collapsed: boolean) {
     const isActive = item.id === this.effectiveActiveId;
     const rovingPosition = idx + 1;
@@ -515,9 +579,9 @@ export class PanelNav {
         'panel-nav__item': true,
         'panel-nav__item--active': isActive,
         'ds-focus-ring-inset': true,
+        'ds-interaction-fill': true,
       },
       'aria-current': isActive ? ('page' as const) : undefined,
-      title: collapsed ? item.label : undefined,
       tabIndex: rovingPosition === this.rovingIndex ? 0 : -1,
       onClick: () => this.handleItemClick(item.id),
       onKeyDown: (e: KeyboardEvent) => this.handleRovingKeyDown(e, rovingPosition),
@@ -525,10 +589,17 @@ export class PanelNav {
     };
 
     const useAnchor = this.routerMode === 'anchor' && item.href;
-
-    return useAnchor
+    const control = useAnchor
       ? <a {...sharedProps} href={item.href}>{itemContent}</a>
       : <button {...sharedProps} type="button">{itemContent}</button>;
+
+    if (!collapsed) return control;
+
+    return (
+      <ds-tooltip label={item.label} side="right" size="sm">
+        {control}
+      </ds-tooltip>
+    );
   }
 
   render() {
@@ -557,7 +628,7 @@ export class PanelNav {
           <div class="panel-nav__header">
             <button
               type="button"
-              class="panel-nav__header-btn ds-focus-ring-inset"
+              class="panel-nav__header-btn ds-focus-ring-inset ds-interaction-fill"
               tabIndex={this.rovingIndex === 0 ? 0 : -1}
               onClick={() => this.handleToggle()}
               onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, 0)}
@@ -610,50 +681,8 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
-            <ds-button-unfilled-icon
-              class="panel-nav__footer-btn"
-              icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
-              activeFill={false}
-              focusTabIndex={this.rovingIndex === this.getFooterRovingIndex() ? 0 : -1}
-              title={isDashboardChrome ? 'Settings' : 'Dashboard'}
-              aria-label={isDashboardChrome ? 'Open settings' : 'Go to dashboard'}
-              onDsClick={() => this.handleFooterAction()}
-              onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getFooterRovingIndex())}
-              onFocusin={() => { this.rovingIndex = this.getFooterRovingIndex(); }}
-            />
-
-            {/* Right user — label fades like nav items; right icon cross-fades chevron ↔ circle+initial */}
-            <button
-              type="button"
-              id={PANEL_NAV_USER_MENU_ANCHOR_ID}
-              class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset"
-              tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
-              aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
-              onClick={(e) => this.handleUserAction(e)}
-              onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
-              onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
-            >
-              <span class="panel-nav__item-label panel-nav__footer-user-label">
-                <span class="panel-nav__item-label-text">
-                  <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
-                    {userName}
-                  </ds-text>
-                </span>
-              </span>
-              <span class="panel-nav__item-icon panel-nav__footer-user-icon" aria-hidden="true">
-                <span class="panel-nav__footer-icon-expanded">
-                  <ds-icon name="ChevronUpDown" size="md" color="inherit" />
-                </span>
-                <span class="panel-nav__footer-icon-collapsed">
-                  <ds-icon name="Circle" size="md" color="inherit" />
-                  <span class="panel-nav__user-initial">
-                    <ds-text as="span" variant="text-caption-emphasis" color="inherit">
-                      {userInitial}
-                    </ds-text>
-                  </span>
-                </span>
-              </span>
-            </button>
+            {this.renderFooterAction(isDashboardChrome)}
+            {this.renderFooterUser(collapsed, userName, userInitial)}
           </div>
 
         </nav>

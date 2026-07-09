@@ -18,7 +18,7 @@ export class Input {
   @Prop() value: string = '';
   @Prop() placeholder: string | undefined;
   @Prop() type: InputType = 'text';
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
   @Prop() autoFocus: boolean = false;
   @Prop() error: boolean = false;
   @Prop() errorMessage: string | undefined;
@@ -48,7 +48,7 @@ export class Input {
 
   render() {
     const inputId = this.inputId ?? this.generatedId;
-    const showClear = this.type === 'search' && this.value.length > 0 && !this.inactive;
+    const showClear = this.type === 'search' && this.value.length > 0 && !this.isInactive;
     const showError = this.error && Boolean(this.errorMessage);
 
     const describedBy = [
@@ -57,7 +57,7 @@ export class Input {
     ].filter(Boolean).join(' ') || undefined;
 
     return (
-      <Host class="input-container">
+      <Host class={{ 'input-container': true, 'ds-control-inactive': this.isInactive }}>
         <div class={{ wrapper: true, 'wrapper--error': this.error }}>
           <div class="row">
             <input
@@ -65,7 +65,7 @@ export class Input {
               id={inputId}
               value={this.value}
               placeholder={this.placeholder}
-              disabled={this.inactive}
+              disabled={this.isInactive}
               autoFocus={this.autoFocus}
               class="native-input"
               aria-label={this.ariaLabel}

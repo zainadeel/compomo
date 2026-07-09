@@ -1,36 +1,53 @@
+@import '../../utils/control-density.css';
+
 .tooltip-popup {
   box-sizing: border-box;
   background-color: var(--color-background-primary);
-  border-radius: var(--dimension-radius-075);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   box-shadow: var(--effect-elevation-elevated-floating);
-  padding: var(--dimension-space-050);
   white-space: nowrap;
+  pointer-events: none;
   animation: tooltipFadeIn var(--effect-motion-short-2) forwards;
   will-change: transform;
   backface-visibility: hidden;
+}
+
+/* Warm handoff between nearby triggers — no enter fade (avoids 20–100ms lag). */
+.tooltip-popup--instant {
+  animation: none;
+  opacity: 1;
 }
 
 .tooltip-popup--closing {
   animation: tooltipFadeOut var(--effect-motion-short-3) forwards;
 }
 
+/* Density: md / sm / xs via `.ds-control--*` on `.tooltip-inner`. */
 .tooltip-inner {
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: var(--dimension-space-050);
+  gap: var(--ds-control-gap, var(--dimension-space-050));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+}
+
+.tooltip-label {
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  color: var(--color-foreground-primary);
 }
 
 .key-hint {
-  width: var(--dimension-size-200);
-  height: var(--dimension-size-200);
+  width: var(--ds-control-icon, var(--dimension-size-200));
+  height: var(--ds-control-icon, var(--dimension-size-200));
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--dimension-stroke-width-015) solid var(--color-foreground-tertiary);
+  border: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
   border-bottom-width: var(--dimension-stroke-width-025);
   border-radius: var(--dimension-radius-025);
+  color: var(--color-foreground-primary);
 }
 
 @keyframes tooltipFadeIn {

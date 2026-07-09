@@ -160,16 +160,16 @@ export const Vertical: Story = {
   },
 };
 
-export const WithDisabled: Story = {
+export const WithInactive: Story = {
   render: () => html`
     <ds-tab-group
       .tabs=${[
         { id: 'overview', label: 'Overview' },
-        { id: 'activity', label: 'Activity', disabled: true },
+        { id: 'activity', label: 'Activity', isInactive: true },
         { id: 'settings', label: 'Settings' },
       ]}
       value="overview"
-      aria-label="Tabs with disabled item"
+      aria-label="Tabs with inactive item"
     ></ds-tab-group>
   `,
 };

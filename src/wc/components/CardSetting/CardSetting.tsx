@@ -1,9 +1,8 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 
-export type CardSettingWidth = 'xs' | 'sm' | 'md' | 'lg';
+export type CardSettingWidth = 'sm' | 'md' | 'lg';
 
 const CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {
-  xs: 'var(--dimension-card-width-xs)',
   sm: 'var(--dimension-card-width-sm)',
   md: 'var(--dimension-card-width-md)',
   lg: 'var(--dimension-card-width-lg)',
@@ -60,7 +59,7 @@ export class CardSetting {
             </ds-text>
           </div>
           {!editing ? (
-            <ds-button-unfilled-icon
+            <ds-button-unfilled variant="icon"
               type="button"
               icon="Pencil"
               aria-label="Edit"
@@ -68,15 +67,14 @@ export class CardSetting {
             />
           ) : (
             <div class="card-setting__actions">
-              <ds-button-unfilled-icon
+              <ds-button-unfilled variant="icon"
                 type="button"
                 icon="Cross"
                 backgroundContrast="bold"
-                has-border
                 aria-label="Cancel"
                 onDsClick={this.exitEdit}
               />
-              <ds-button-filled
+              <ds-button-filled variant="icon"
                 type="button"
                 icon="Check"
                 intent="brand"

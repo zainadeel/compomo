@@ -9,9 +9,9 @@ const meta: Meta = {
     label:         { control: 'text' },
     checked:       { control: 'boolean' },
     indeterminate: { control: 'boolean' },
-    inactive:      { control: 'boolean' },
+    isInactive:      { control: 'boolean' },
   },
-  args: { label: 'Checkbox label', checked: false, indeterminate: false, inactive: false },
+  args: { label: 'Checkbox label', checked: false, indeterminate: false, isInactive: false },
 };
 
 export default meta;
@@ -23,7 +23,7 @@ export const Playground: Story = {
       label=${args['label']}
       ?checked=${args['checked']}
       ?indeterminate=${args['indeterminate']}
-      ?inactive=${args['inactive']}
+      ?is-inactive=${args['isInactive']}
     ></ds-checkbox>
   `,
 };
@@ -34,8 +34,8 @@ export const States: Story = {
       <ds-checkbox label="Unchecked"></ds-checkbox>
       <ds-checkbox label="Checked" checked></ds-checkbox>
       <ds-checkbox label="Indeterminate" indeterminate></ds-checkbox>
-      <ds-checkbox label="Inactive unchecked" inactive></ds-checkbox>
-      <ds-checkbox label="Inactive checked" checked inactive></ds-checkbox>
+      <ds-checkbox label="Inactive unchecked" is-inactive></ds-checkbox>
+      <ds-checkbox label="Inactive checked" checked is-inactive></ds-checkbox>
     </div>
   `,
 };

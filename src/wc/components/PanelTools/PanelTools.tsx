@@ -152,7 +152,7 @@ export class PanelTools {
   @Method()
   async activateTool(id: PanelToolsToolId) {
     const item = this.railItems.find(entry => entry.id === id);
-    if (!item || item.inactive) return;
+    if (!item || item.isInactive) return;
     this.handleToolChange(id);
   }
 
@@ -204,22 +204,25 @@ export class PanelTools {
   };
 
   private renderRailAction(item: PanelToolsItem, index: number) {
+    const label = item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id];
     return (
-      <ds-button-unfilled-icon
-        key={item.id}
-        class="panel-tools__rail-action"
-        icon={item.icon}
-        isActive={this.isRailSelected(item.id)}
-        activeFill={false}
-        dot={item.dot ?? false}
-        inactive={item.inactive}
-        focusTabIndex={index === this.rovingIndex ? 0 : -1}
-        aria-label={item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id]}
-        pressed={this.isRailSelected(item.id)}
-        onFocusin={() => { this.rovingIndex = index; }}
-        onKeyDown={(e: KeyboardEvent) => this.handleRailKeyDown(e, index)}
-        onDsClick={() => this.handleToolChange(item.id)}
-      />
+      <ds-tooltip key={item.id} label={label} side="left" size="sm">
+        <ds-button-unfilled variant="icon"
+          class="panel-tools__rail-action"
+          icon={item.icon}
+          isActive={this.isRailSelected(item.id)}
+          activeFill={false}
+          hasBorder={false}
+          dot={item.dot ?? false}
+          isInactive={item.isInactive}
+          focusTabIndex={index === this.rovingIndex ? 0 : -1}
+          aria-label={label}
+          pressed={this.isRailSelected(item.id)}
+          onFocusin={() => { this.rovingIndex = index; }}
+          onKeyDown={(e: KeyboardEvent) => this.handleRailKeyDown(e, index)}
+          onDsClick={() => this.handleToolChange(item.id)}
+        />
+      </ds-tooltip>
     );
   }
 

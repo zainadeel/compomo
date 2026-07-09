@@ -55,8 +55,8 @@
   flex-shrink: 0;
   border-radius: var(--dimension-radius-050);
   position: relative;
-  font-size: 18px;
-  line-height: 1;
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
 }
 
 .banner-dismiss::before {

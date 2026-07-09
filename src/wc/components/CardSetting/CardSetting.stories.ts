@@ -2,12 +2,14 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-card-setting.js';
 
+const WIDTHS = ['sm', 'md', 'lg'] as const;
+
 const meta: Meta = {
   title: 'Layout/CardSetting',
   tags: ['autodocs'],
   argTypes: {
     heading: { control: 'text' },
-    cardWidth: { control: 'select', options: ['xs', 'sm', 'md', 'lg'] },
+    cardWidth: { control: 'select', options: [...WIDTHS] },
     editing: { control: 'boolean' },
   },
   args: {
@@ -38,6 +40,26 @@ export const Edit: Story = {
       card-width=${args['cardWidth']}
       ?editing=${true}
     ></ds-card-setting>
+  `,
+};
+
+/** Side-by-side sm / md / lg — check header + body hold at each width. */
+export const Widths: Story = {
+  parameters: { controls: { exclude: ['cardWidth'] } },
+  render: args => html`
+    <div
+      style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--dimension-space-300);"
+    >
+      ${WIDTHS.map(
+        width => html`
+          <ds-card-setting
+            heading=${`${args['heading']} (${width})`}
+            card-width=${width}
+            ?editing=${args['editing']}
+          ></ds-card-setting>
+        `,
+      )}
+    </div>
   `,
 };
 

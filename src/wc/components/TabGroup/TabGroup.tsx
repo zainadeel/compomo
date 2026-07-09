@@ -64,7 +64,7 @@ export class TabGroup {
   }
 
   /**
-   * Find the next non-disabled tab index relative to `from`, stepping by `step`.
+   * Find the next non-inactive tab index relative to `from`, stepping by `step`.
    * Returns `from` unchanged if no other enabled tab exists.
    */
   private findEnabled(from: number, step: 1 | -1): number {
@@ -72,7 +72,7 @@ export class TabGroup {
     const len = tabs.length;
     for (let n = 0; n < len; n++) {
       const i = (from + step * (n + 1) + len * (n + 1)) % len;
-      if (!tabs[i]?.disabled) return i;
+      if (!tabs[i]?.isInactive) return i;
     }
     return from;
   }
@@ -102,10 +102,10 @@ export class TabGroup {
     }
 
     if (e.key === 'Home') {
-      const first = tabs.findIndex(t => !t.disabled);
+      const first = tabs.findIndex(t => !t.isInactive);
       nextIdx = first === -1 ? null : first;
     } else if (e.key === 'End') {
-      const lastEnabled = [...tabs].reverse().findIndex(t => !t.disabled);
+      const lastEnabled = [...tabs].reverse().findIndex(t => !t.isInactive);
       nextIdx = lastEnabled === -1 ? null : tabs.length - 1 - lastEnabled;
     }
 
@@ -162,14 +162,20 @@ export class TabGroup {
                   tab: true,
                   'tab--selected': isSelected,
                   'ds-focus-ring-inset': true,
+                  'ds-interaction-fill': !tab.isInactive,
+                  'ds-interaction-fill--on-medium': bgClass === 'on-medium',
+                  'ds-interaction-fill--on-bold': bgClass === 'on-bold',
+                  'ds-interaction-fill--on-strong': bgClass === 'on-strong',
+                  'ds-interaction-fill--on-always-dark': bgClass === 'on-always-dark',
+                  'ds-control-inactive': !!tab.isInactive,
                   [bgClass]: !!bgClass,
                 }}
                 aria-selected={isSelected}
-                aria-disabled={tab.disabled || undefined}
+                aria-disabled={tab.isInactive || undefined}
                 aria-controls={tab.panelId ?? undefined}
-                disabled={tab.disabled}
+                disabled={tab.isInactive}
                 tabIndex={isSelected ? 0 : -1}
-                onClick={() => !tab.disabled && this.selectTab(tab.id)}
+                onClick={() => !tab.isInactive && this.selectTab(tab.id)}
               >
                 <span class={{
                   tab__label: true,

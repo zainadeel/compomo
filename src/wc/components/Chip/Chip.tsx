@@ -1,19 +1,35 @@
 import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
 
-export type ChipIntent     = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';
-export type ChipContrast   = 'strong' | 'bold' | 'medium' | 'faint';
-export type ChipElevation  = 'none' | 'flat' | 'elevated';
-export type ChipSize       = 'md' | 'sm' | 'xs';
+/**
+ * Semantic chip state — replaces Tag’s intent × contrast matrix.
+ * - `default` — neutral faint
+ * - `active` — brand faint
+ * - `error` — negative faint
+ * - `caution` — caution faint
+ */
+export type ChipState = 'default' | 'active' | 'error' | 'caution';
+export type ChipSize = 'md' | 'sm' | 'xs';
 export type ChipBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
 
+/** Text variant per control-density recipe (md / sm / xs). */
 const TEXT_VARIANT: Record<ChipSize, string> = {
   md: 'text-body-medium',
   sm: 'text-body-small',
   xs: 'text-caption',
 };
 
-const ICON_SIZE: Record<ChipSize, number> = { md: 20, sm: 16, xs: 12 };
+/** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */
+const ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {
+  md: 'md',
+  sm: 'sm',
+  xs: 'xs',
+};
 
+/**
+ * Removable chip — same density recipe as Tag, but colored by semantic `state`
+ * (not intent × contrast). Not a toggle/select control; the only intentional
+ * action is remove.
+ */
 @Component({
   tag: 'ds-chip',
   styleUrl: 'Chip.css',
@@ -21,46 +37,27 @@ const ICON_SIZE: Record<ChipSize, number> = { md: 20, sm: 16, xs: 12 };
 })
 export class Chip {
   @Prop() label!: string;
-  @Prop() intent: ChipIntent = 'neutral';
-  @Prop() contrast: ChipContrast = 'faint';
-  @Prop() elevation: ChipElevation = 'none';
+  /** Semantic color state. @default 'default' */
+  @Prop() state: ChipState = 'default';
   @Prop() size: ChipSize = 'md';
   @Prop() rounded: boolean = false;
-  @Prop() removable: boolean = false;
+  /** When true (default), shows the trailing dismiss control. */
+  @Prop() removable: boolean = true;
   @Prop() maxWidth: string | number | undefined;
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
+  /** Surface context for interaction-fill tokens when the chip sits on a non-default surface. */
   @Prop() background: ChipBackground | undefined;
-  @Prop({ mutable: true }) pressed: boolean = false;
 
   /** Fired when the remove button is clicked. */
   @Event() dsRemove!: EventEmitter<void>;
-  /** Fired when an interactive chip is clicked. */
-  @Event() dsClick!: EventEmitter<void>;
-  /** Fired when the pressed state toggles. */
-  @Event() dsPressedChange!: EventEmitter<boolean>;
-
-  private handleClick = () => {
-    if (this.inactive) return;
-    this.pressed = !this.pressed;
-    this.dsPressedChange.emit(this.pressed);
-    this.dsClick.emit();
-  };
-
-  private handleKeyDown = (e: KeyboardEvent) => {
-    if (this.inactive) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      this.handleClick();
-    }
-  };
 
   private handleRemove = (e: MouseEvent) => {
     e.stopPropagation();
+    if (this.isInactive) return;
     this.dsRemove.emit();
   };
 
   render() {
-    const sz = this.size.toUpperCase() as 'MD' | 'SM' | 'XS';
     const textVariant = TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
@@ -68,56 +65,42 @@ export class Chip {
       ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }
       : undefined;
 
-    const hostCls: Record<string, boolean> = {
-      'tag': true,
-      [`tag--intent-${this.intent}`]: true,
-      [`tag--contrast-${this.contrast}`]: true,
-      [`tag--elevation-${this.elevation}`]: true,
-      [`tag--size-${this.size}`]: true,
-      'tag--rounded': this.rounded,
-      'tag--rounded-no-icon-left': this.rounded,
-      'tag--rounded-no-remove-right': this.rounded && !this.removable,
-      [`tag--icon-left-${sz}`]: false,
-      [`tag--icon-right-${sz}`]: this.removable,
-      'tag--removable': this.removable,
-      'tag--interactive': true,
-      'tag--inactive': this.inactive,
-      'tag--pressed': this.pressed,
-      'tag--on-medium':      this.background === 'medium',
-      'tag--on-bold':        this.background === 'bold',
-      'tag--on-strong':      this.background === 'strong',
-      'tag--on-always-dark': this.background === 'always-dark',
-    };
-
     return (
       <Host
-        class={hostCls}
+        class={{
+          'tag': true,
+          'chip': true,
+          [`chip--${this.state}`]: true,
+          [`tag--size-${this.size}`]: true,
+          'ds-control--md': this.size === 'md',
+          'ds-control--sm': this.size === 'sm',
+          'ds-control--xs': this.size === 'xs',
+          'tag--rounded': this.rounded,
+          'tag--removable': this.removable,
+          /* Hover overlay on the chip surface — dismiss is the only action. */
+          'ds-interaction-fill': !this.isInactive && this.removable,
+          'ds-interaction-fill--on-medium': this.background === 'medium',
+          'ds-interaction-fill--on-bold': this.background === 'bold',
+          'ds-interaction-fill--on-strong': this.background === 'strong',
+          'ds-interaction-fill--on-always-dark': this.background === 'always-dark',
+          'ds-control-inactive': this.isInactive,
+        }}
         style={maxWidthStyle}
-        onClick={this.handleClick}
-        onKeyDown={this.handleKeyDown}
-        role="button"
-        tabIndex={this.inactive ? -1 : 0}
-        aria-pressed={String(this.pressed)}
-        aria-disabled={this.inactive || undefined}
+        aria-disabled={this.isInactive || undefined}
       >
-        <span class="tag__icon-slot" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>
-          <slot name="icon" />
-        </span>
         <span class={{ 'tag__label': true, [textVariant]: true }}>
           {this.label}
         </span>
         {this.removable && (
           <button
             type="button"
-            class="tag__remove"
+            class="tag__remove ds-focus-ring-inset"
             onClick={this.handleRemove}
             aria-label={`Remove ${this.label}`}
-            tabIndex={-1}
+            disabled={this.isInactive || undefined}
           >
             <slot name="remove-icon">
-              <span class="tag__remove-x" style={{ fontSize: `${iconSize}px`, lineHeight: '0' }}>
-                ✕
-              </span>
+              <ds-icon class="tag__remove-x" name="Cross" size={iconSize} color="inherit"></ds-icon>
             </slot>
           </button>
         )}

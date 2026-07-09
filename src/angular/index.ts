@@ -2,14 +2,12 @@
 import * as d from './proxies';
 
 export const DIRECTIVES = [
-  d.DsAccordion,
   d.DsAppShell,
   d.DsBadge,
   d.DsBanner,
   d.DsBarNav,
-  d.DsBreadcrumb,
   d.DsButtonFilled,
-  d.DsButtonUnfilledIcon,
+  d.DsButtonUnfilled,
   d.DsCardDataViz,
   d.DsCardSetting,
   d.DsChartBar,
@@ -20,7 +18,6 @@ export const DIRECTIVES = [
   d.DsChip,
   d.DsDivider,
   d.DsEmptyState,
-  d.DsFade,
   d.DsField,
   d.DsHeader,
   d.DsIcon,
@@ -38,13 +35,11 @@ export const DIRECTIVES = [
   d.DsShellGradientSwatch,
   d.DsSkeleton,
   d.DsSlider,
-  d.DsSurface,
   d.DsTabGroup,
   d.DsTabGroupNav,
   d.DsTable,
   d.DsTag,
   d.DsText,
-  d.DsToastProvider,
   d.DsToggle,
   d.DsTooltip,
   d.DsTooltipDataViz

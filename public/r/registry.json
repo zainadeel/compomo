@@ -77,67 +77,6 @@
       "registryDependencies": []
     },
     {
-      "name": "surface",
-      "title": "Surface",
-      "description": "Foundational container with intent-based or background-based coloring, elevation, edges, radius, and interactive states.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/surface",
-        "exports": [
-          "Surface"
-        ],
-        "props": {
-          "intent": {
-            "type": "'brand' | 'positive' | 'negative' | 'warning' | 'caution' | 'ai' | 'neutral' | 'walkthrough' | 'guide'",
-            "required": false
-          },
-          "contrast": {
-            "type": "'faint' | 'medium' | 'bold' | 'strong'",
-            "required": false
-          },
-          "background": {
-            "type": "'primary' | 'secondary' | 'transparent' | 'translucent'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'depressed' | 'depressed-md' | 'flat' | 'elevated' | 'floating' | 'overlayTop' | 'overlayRight' | 'overlayBottom' | 'overlayLeft'",
-            "required": false
-          },
-          "edge": {
-            "type": "SurfaceEdge | SurfaceEdge[]",
-            "required": false
-          },
-          "radius": {
-            "type": "'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | string",
-            "required": false
-          },
-          "interactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "selected": {
-            "type": "boolean",
-            "required": false
-          },
-          "inactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "as": {
-            "type": "'div' | 'section' | 'aside' | 'article' | 'header' | 'footer' | 'main' | 'nav' | 'span' | 'button' | 'td' | 'th'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
       "name": "card-setting",
       "title": "CardSetting",
       "description": "Settings page section shell with view/edit header chrome, outset border rings, and slotted body content. Edit state is controlled by the parent.",
@@ -155,7 +94,7 @@
             "required": true
           },
           "cardWidth": {
-            "type": "'xs' | 'sm' | 'md' | 'lg'",
+            "type": "'sm' | 'md' | 'lg'",
             "required": false
           },
           "editing": {
@@ -171,14 +110,14 @@
       ],
       "registryDependencies": [
         "text",
-        "button-unfilled-icon",
+        "button-unfilled",
         "button-filled"
       ]
     },
     {
       "name": "button-filled",
       "title": "ButtonFilled",
-      "description": "Square filled primary icon button. Intent-based colours with contrast fill pairing (bold→faint fg, strong→medium, medium→strong, faint→bold).",
+      "description": "Filled button with variant (label / icon / icon-label), control-density sizes, and intent×contrast fills.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -188,9 +127,21 @@
           "ButtonFilled"
         ],
         "props": {
+          "variant": {
+            "type": "'icon' | 'label' | 'icon-label'",
+            "required": false
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
           "icon": {
             "type": "string",
-            "required": true
+            "required": false
           },
           "intent": {
             "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'",
@@ -200,7 +151,7 @@
             "type": "'bold' | 'strong' | 'medium' | 'faint'",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -220,21 +171,33 @@
       ]
     },
     {
-      "name": "button-unfilled-icon",
-      "title": "ButtonUnfilledIcon",
-      "description": "Square unfilled icon button for chrome actions, overflow triggers, and tool rail actions. Supports active, active-without-fill, bordered, dot, inactive, and surface-aware interaction states.",
+      "name": "button-unfilled",
+      "title": "ButtonUnfilled",
+      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, active/border/dot, and surface-aware interaction states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled-icon",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
         "exports": [
-          "ButtonUnfilledIcon"
+          "ButtonUnfilled"
         ],
         "props": {
+          "variant": {
+            "type": "'icon' | 'label' | 'icon-label'",
+            "required": false
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
           "icon": {
             "type": "string",
-            "required": true
+            "required": false
           },
           "isActive": {
             "type": "boolean",
@@ -252,7 +215,7 @@
             "type": "boolean",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -283,7 +246,7 @@
     {
       "name": "tag",
       "title": "Tag",
-      "description": "Static metadata label with intent coloring and optional icon support.",
+      "description": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -303,10 +266,6 @@
           },
           "contrast": {
             "type": "'strong' | 'bold' | 'medium' | 'faint'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'flat' | 'elevated'",
             "required": false
           },
           "size": {
@@ -339,7 +298,7 @@
     {
       "name": "chip",
       "title": "Chip",
-      "description": "Interactive metadata chip with pressed, inactive, removable, and icon states.",
+      "description": "Removable metadata chip — same control-density recipe as Tag, colored by semantic state (default / active / error / caution). Not a toggle/select control.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -353,16 +312,8 @@
             "type": "string",
             "required": true
           },
-          "intent": {
-            "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive'",
-            "required": false
-          },
-          "contrast": {
-            "type": "'strong' | 'bold' | 'medium' | 'faint'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'flat' | 'elevated'",
+          "state": {
+            "type": "'default' | 'active' | 'error' | 'caution'",
             "required": false
           },
           "size": {
@@ -373,10 +324,6 @@
             "type": "boolean",
             "required": false
           },
-          "icon": {
-            "type": "IconComponent",
-            "required": false
-          },
           "removable": {
             "type": "boolean",
             "required": false
@@ -385,20 +332,12 @@
             "type": "() => void",
             "required": false
           },
-          "pressed": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
-          "onPressedChange": {
-            "type": "(pressed: boolean) => void",
-            "required": false
-          },
-          "onClick": {
-            "type": "() => void",
-            "required": false
-          },
-          "inactive": {
-            "type": "boolean",
+          "background": {
+            "type": "'faint' | 'medium' | 'bold' | 'strong' | 'always-dark'",
             "required": false
           },
           "maxWidth": {
@@ -413,7 +352,8 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
-        "text"
+        "text",
+        "icon"
       ]
     },
     {
@@ -509,7 +449,7 @@
             "type": "(checked: boolean) => void",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -554,7 +494,7 @@
             "type": "(checked: boolean) => void",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -614,7 +554,7 @@
             "type": "React.ReactNode",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -667,7 +607,7 @@
             "type": "string",
             "required": true
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           }
@@ -719,7 +659,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Dropdown select using `ds-menu` internally. Supports placeholder, inactive state, and custom chevron icon.",
+      "description": "Dropdown select using `ds-menu` internally. Supports placeholder, isInactive state, and custom chevron icon.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -745,7 +685,7 @@
             "type": "string",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -761,7 +701,6 @@
       ],
       "registryDependencies": [
         "menu",
-        "surface",
         "text"
       ]
     },
@@ -813,7 +752,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "surface",
         "text"
       ]
     },
@@ -869,7 +807,7 @@
     {
       "name": "tooltip",
       "title": "Tooltip",
-      "description": "Positioned tooltip with portal rendering, delay, keyboard shortcut display, and viewport clamping.",
+      "description": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -882,6 +820,10 @@
           "label": {
             "type": "string",
             "required": true
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
           },
           "children": {
             "type": "React.ReactElement",
@@ -896,7 +838,7 @@
             "required": false
           },
           "delay": {
-            "type": "number",
+            "type": "number | string",
             "required": false
           },
           "shortcutKey": {
@@ -957,7 +899,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "surface",
         "text"
       ]
     },
@@ -1022,7 +963,6 @@
       ],
       "registryDependencies": [
         "text",
-        "surface",
         "skeleton"
       ]
     },
@@ -1056,43 +996,6 @@
       "registryDependencies": [
         "text"
       ]
-    },
-    {
-      "name": "fade",
-      "title": "Fade",
-      "description": "Scroll-edge fade wrapper — masks overflow content so gradients and textured surfaces show through.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/fade",
-        "exports": [
-          "Fade"
-        ],
-        "props": {
-          "side": {
-            "type": "'top' | 'bottom' | 'left' | 'right'",
-            "required": false
-          },
-          "size": {
-            "type": "'size-000' | 'size-050' | 'size-075' | 'size-100' | 'size-150' | 'size-200' | 'size-250' | 'size-300' | 'size-400' | 'size-500' | 'size-600' | 'size-800' | string",
-            "required": false
-          },
-          "visible": {
-            "type": "boolean",
-            "required": false
-          },
-          "height": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
     },
     {
       "name": "scrollbar",
@@ -1158,14 +1061,12 @@
         "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
-      "registryDependencies": [
-        "surface"
-      ]
+      "registryDependencies": []
     },
     {
       "name": "radio-group",
       "title": "RadioGroup",
-      "description": "Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option inactive, and keyboard navigation.",
+      "description": "Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option isInactive, and keyboard navigation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1191,7 +1092,7 @@
             "type": "'vertical' | 'horizontal'",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -1268,77 +1169,6 @@
       "registryDependencies": []
     },
     {
-      "name": "accordion",
-      "title": "Accordion",
-      "description": "Collapsible section list with single or multiple expand mode, animated height transitions, and controlled/uncontrolled state.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/accordion",
-        "exports": [
-          "Accordion",
-          "AccordionItem"
-        ],
-        "props": {
-          "items": {
-            "type": "AccordionItemData[]",
-            "required": true
-          },
-          "multiple": {
-            "type": "boolean",
-            "required": false
-          },
-          "expandedIds": {
-            "type": "string[]",
-            "required": false
-          },
-          "onExpandedChange": {
-            "type": "(ids: string[]) => void",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "breadcrumb",
-      "title": "Breadcrumb",
-      "description": "Hierarchical navigation with link or button items, custom separator, and aria-current on the last item.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/breadcrumb",
-        "exports": [
-          "Breadcrumb"
-        ],
-        "props": {
-          "items": {
-            "type": "BreadcrumbItem[]",
-            "required": true
-          },
-          "separator": {
-            "type": "React.ReactNode",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "pagination",
       "title": "Pagination",
       "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
@@ -1367,7 +1197,7 @@
             "type": "number",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           }
@@ -1462,36 +1292,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
-    },
-    {
-      "name": "toast",
-      "title": "Toast",
-      "description": "Imperative toast notification system. Use toast.success()/error()/warning()/info() to show toasts. Place <ToastContainer /> once at the app root.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toast",
-        "exports": [
-          "ToastContainer",
-          "toast",
-          "useToasts"
-        ],
-        "props": {
-          "position": {
-            "type": "'top-center' | 'top-right' | 'bottom-center' | 'bottom-right'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "surface",
-        "text"
-      ]
     }
   ]
 }

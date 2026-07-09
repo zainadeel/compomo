@@ -1,0 +1,20 @@
+/**
+ * Control inactive — shared disabled/inactive visual for interactive controls.
+ *
+ * Apply `.ds-control-inactive` when the control’s `isInactive` prop (or item
+ * `isInactive` field) is true. Opacity is 25% so inactive chrome stays
+ * recognizable but clearly non-interactive.
+ *
+ * Both `:host(.ds-control-inactive)` and `.ds-control-inactive` are listed so
+ * Stencil scoped components work whether the class is on the host (Chip) or an
+ * inner control (button, menu item, tab).
+ *
+ * @see AGENTS.md — "Control inactive"
+ */
+
+:host(.ds-control-inactive),
+.ds-control-inactive {
+  opacity: 0.25;
+  pointer-events: none;
+  cursor: not-allowed;
+}

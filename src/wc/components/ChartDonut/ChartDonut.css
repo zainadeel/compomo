@@ -6,6 +6,8 @@
 
 .chart-donut__wrapper {
   position: relative;
+  /* Allow cursor-following tooltip to paint past the chart box. */
+  overflow: visible;
 }
 
 .chart-donut__svg path {

@@ -1,3 +1,5 @@
+@import '../../utils/control-inactive.css';
+
 :host {
   position: relative;
   display: inline-flex;
@@ -36,10 +38,7 @@
   background-color: var(--color-foreground-bold-brand);
 }
 
-:host(.inactive) {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 /* ── Thumb ───────────────────────────────────────────────────────────────── */
 
@@ -66,11 +65,11 @@
   pointer-events: none;
 }
 
-:host(:hover:not(.inactive)) .thumb::after {
+:host(:hover:not(.ds-control-inactive)) .thumb::after {
   background-color: var(--color-interaction-hover);
 }
 
-:host(:active:not(.inactive)) .thumb::after {
+:host(:active:not(.ds-control-inactive)) .thumb::after {
   background-color: var(--color-interaction-pressed);
 }
 
@@ -78,12 +77,12 @@
   transform: translateX(var(--dimension-offset-150));
 }
 
-:host(:active:not(.inactive)) .thumb {
+:host(:active:not(.ds-control-inactive)) .thumb {
   transform: translateX(0) scale(var(--dimension-scale-subtle)) !important;
   transition: transform var(--effect-motion-instant);
 }
 
-:host(.checked:active:not(.inactive)) .thumb {
+:host(.checked:active:not(.ds-control-inactive)) .thumb {
   transform: translateX(var(--dimension-offset-150)) scale(var(--dimension-scale-subtle)) !important;
   transition: transform var(--effect-motion-instant);
 }

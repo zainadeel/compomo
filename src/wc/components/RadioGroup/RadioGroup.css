@@ -1,3 +1,5 @@
+@import '../../utils/control-inactive.css';
+
 .group {
   display: flex;
   flex-direction: column;
@@ -38,19 +40,15 @@
   outline-offset: var(--dimension-space-025);
 }
 
-.radio-item--inactive {
-  cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 /* ── Circle indicator ────────────────────────────────────────────────────── */
 
 .circle {
-  width: 20px;
-  height: 20px;
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
   flex-shrink: 0;
-  border: 1.5px solid var(--color-foreground-secondary);
+  border: var(--dimension-stroke-width-018) solid var(--color-foreground-secondary);
   border-radius: var(--dimension-radius-half);
   display: flex;
   align-items: center;
@@ -64,8 +62,8 @@
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: var(--dimension-size-150);
+  height: var(--dimension-size-150);
   border-radius: var(--dimension-radius-half);
   background-color: var(--color-foreground-primary);
 }

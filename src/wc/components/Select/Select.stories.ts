@@ -25,12 +25,12 @@ const meta: Meta = {
   argTypes: {
     value:       { control: 'text' },
     placeholder: { control: 'text' },
-    inactive:    { control: 'boolean' },
+    isInactive:    { control: 'boolean' },
   },
   args: {
     value: '',
     placeholder: 'Select option',
-    inactive: false,
+    isInactive: false,
   },
 };
 
@@ -46,7 +46,7 @@ export const Playground: Story = {
       <ds-select
         value=${args['value'] ?? ''}
         placeholder=${args['placeholder'] ?? 'Select option'}
-        ?inactive=${args['inactive']}
+        ?is-inactive=${args['isInactive']}
         ${ref(el => {
           if (!el) return;
           (el as any).options = FRUIT_OPTIONS;
@@ -86,7 +86,7 @@ export const Inactive: Story = {
     <div style="${COL}">
       <span style="${LBL}">Inactive with no selection</span>
       <ds-select
-        inactive
+        is-inactive
         placeholder="Disabled select"
         ${ref(el => {
           if (!el) return;
@@ -96,7 +96,7 @@ export const Inactive: Story = {
 
       <span style="${LBL}">Inactive with selection</span>
       <ds-select
-        inactive
+        is-inactive
         ${ref(el => {
           if (!el) return;
           (el as any).options = STATUS_OPTIONS;
