@@ -468,29 +468,6 @@ export declare interface DsField extends Components.DsField {}
 
 
 @ProxyCmp({
-  inputs: ['background', 'heading']
-})
-@Component({
-  selector: 'ds-header',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'heading'],
-  standalone: false
-})
-export class DsHeader {
-  protected el: HTMLDsHeaderElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsHeader extends Components.DsHeader {}
-
-
-@ProxyCmp({
   inputs: ['color', 'flag', 'label', 'name', 'size']
 })
 @Component({
@@ -788,29 +765,6 @@ export declare interface DsRadioGroup extends Components.DsRadioGroup {
 
   dsChange: EventEmitter<CustomEvent<string>>;
 }
-
-
-@ProxyCmp({
-  inputs: ['showTrackOnHover', 'variant']
-})
-@Component({
-  selector: 'ds-scrollbar',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content></ng-content>',
-  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['showTrackOnHover', 'variant'],
-  standalone: false
-})
-export class DsScrollbar {
-  protected el: HTMLDsScrollbarElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
-    c.detach();
-    this.el = r.nativeElement;
-  }
-}
-
-
-export declare interface DsScrollbar extends Components.DsScrollbar {}
 
 
 @ProxyCmp({

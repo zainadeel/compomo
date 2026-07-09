@@ -415,35 +415,6 @@ const COMPONENTS = [
     usesIcons: false,
     internalDeps: ['Text'],
   }],
-  ['Scrollbar', {
-    title: 'Scrollbar',
-    description: 'Custom scrollbar with draggable thumb, proportional sizing, and hover reveal.',
-    exports: ['Scrollbar'],
-    types: ['ScrollbarProps', 'ScrollbarVariant'],
-    props: {
-      children: { type: 'React.ReactNode', required: true },
-      variant: { type: "'default' | 'thick'", default: "'default'" },
-      showTrackOnHover: { type: 'boolean', default: 'true' },
-      onScroll: { type: '(e: React.UIEvent<HTMLDivElement>) => void' },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: [],
-  }],
-  ['Header', {
-    title: 'Header',
-    description: 'App header bar with background variants.',
-    exports: ['Header'],
-    types: ['HeaderProps', 'HeaderBackground'],
-    props: {
-      children: { type: 'React.ReactNode' },
-      background: { type: 'HeaderBackground' },
-    },
-    usesTokens: true,
-    usesIcons: false,
-    internalDeps: [],
-  }],
-
   // Classic
   ['RadioGroup', {
     title: 'RadioGroup',

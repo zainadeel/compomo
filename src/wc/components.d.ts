@@ -19,7 +19,6 @@ import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 import { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
-import { HeaderBackground } from "./components/Header/Header";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
@@ -29,7 +28,6 @@ import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./c
 import { ChromeTransitionDetail } from "./nav/chrome-transition";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
-import { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 import { SelectOption } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
@@ -54,7 +52,6 @@ export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 export { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
-export { HeaderBackground } from "./components/Header/Header";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
@@ -64,7 +61,6 @@ export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./c
 export { ChromeTransitionDetail } from "./nav/chrome-transition";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
-export { ScrollbarVariant } from "./components/Scrollbar/Scrollbar";
 export { SelectOption } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
@@ -554,13 +550,6 @@ export namespace Components {
         "fieldId": string | undefined;
         "label": string;
     }
-    interface DsHeader {
-        /**
-          * @default 'secondary'
-         */
-        "background": HeaderBackground;
-        "heading": string | undefined;
-    }
     interface DsIcon {
         /**
           * Semantic foreground color token, or a raw CSS var reference.
@@ -816,16 +805,6 @@ export namespace Components {
           * @default ''
          */
         "value": string;
-    }
-    interface DsScrollbar {
-        /**
-          * @default true
-         */
-        "showTrackOnHover": boolean;
-        /**
-          * @default 'default'
-         */
-        "variant": ScrollbarVariant;
     }
     interface DsSelect {
         "ariaLabel": string | undefined;
@@ -1463,12 +1442,6 @@ declare global {
         prototype: HTMLDsFieldElement;
         new (): HTMLDsFieldElement;
     };
-    interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
-    }
-    var HTMLDsHeaderElement: {
-        prototype: HTMLDsHeaderElement;
-        new (): HTMLDsHeaderElement;
-    };
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
     var HTMLDsIconElement: {
@@ -1612,12 +1585,6 @@ declare global {
     var HTMLDsRadioGroupElement: {
         prototype: HTMLDsRadioGroupElement;
         new (): HTMLDsRadioGroupElement;
-    };
-    interface HTMLDsScrollbarElement extends Components.DsScrollbar, HTMLStencilElement {
-    }
-    var HTMLDsScrollbarElement: {
-        prototype: HTMLDsScrollbarElement;
-        new (): HTMLDsScrollbarElement;
     };
     interface HTMLDsSelectElementEventMap {
         "dsChange": string;
@@ -1824,7 +1791,6 @@ declare global {
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-field": HTMLDsFieldElement;
-        "ds-header": HTMLDsHeaderElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
@@ -1834,7 +1800,6 @@ declare global {
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
-        "ds-scrollbar": HTMLDsScrollbarElement;
         "ds-select": HTMLDsSelectElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
@@ -2358,13 +2323,6 @@ declare namespace LocalJSX {
         "fieldId"?: string | undefined;
         "label": string;
     }
-    interface DsHeader {
-        /**
-          * @default 'secondary'
-         */
-        "background"?: HeaderBackground;
-        "heading"?: string | undefined;
-    }
     interface DsIcon {
         /**
           * Semantic foreground color token, or a raw CSS var reference.
@@ -2651,16 +2609,6 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
-    }
-    interface DsScrollbar {
-        /**
-          * @default true
-         */
-        "showTrackOnHover"?: boolean;
-        /**
-          * @default 'default'
-         */
-        "variant"?: ScrollbarVariant;
     }
     interface DsSelect {
         "ariaLabel"?: string | undefined;
@@ -3123,10 +3071,6 @@ declare namespace LocalJSX {
         "label": string;
         "fieldId": string | undefined;
     }
-    interface DsHeaderAttributes {
-        "heading": string | undefined;
-        "background": HeaderBackground;
-    }
     interface DsIconAttributes {
         "name": string;
         "size": IconSize;
@@ -3198,10 +3142,6 @@ declare namespace LocalJSX {
         "isInactive": boolean;
         "ariaLabel": string | undefined;
         "ariaLabelledby": string | undefined;
-    }
-    interface DsScrollbarAttributes {
-        "variant": ScrollbarVariant;
-        "showTrackOnHover": boolean;
     }
     interface DsSelectAttributes {
         "value": string;
@@ -3320,7 +3260,6 @@ declare namespace LocalJSX {
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
-        "ds-header": Omit<DsHeader, keyof DsHeaderAttributes> & { [K in keyof DsHeader & keyof DsHeaderAttributes]?: DsHeader[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `attr:${K}`]?: DsHeaderAttributes[K] } & { [K in keyof DsHeader & keyof DsHeaderAttributes as `prop:${K}`]?: DsHeader[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
@@ -3330,7 +3269,6 @@ declare namespace LocalJSX {
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
-        "ds-scrollbar": Omit<DsScrollbar, keyof DsScrollbarAttributes> & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes]?: DsScrollbar[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `attr:${K}`]?: DsScrollbarAttributes[K] } & { [K in keyof DsScrollbar & keyof DsScrollbarAttributes as `prop:${K}`]?: DsScrollbar[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
@@ -3384,7 +3322,6 @@ declare module "@stencil/core" {
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
-            "ds-header": LocalJSX.IntrinsicElements["ds-header"] & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
@@ -3394,7 +3331,6 @@ declare module "@stencil/core" {
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
-            "ds-scrollbar": LocalJSX.IntrinsicElements["ds-scrollbar"] & JSXBase.HTMLAttributes<HTMLDsScrollbarElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
