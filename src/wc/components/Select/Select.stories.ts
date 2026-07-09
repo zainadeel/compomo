@@ -223,10 +223,16 @@ const bindOpen = (options: typeof FRUIT_OPTIONS, value: string) =>
     const select = el as HTMLDsSelectElement;
     select.options = options;
     select.value = value;
-    // Defer until the trigger button exists in the light DOM.
-    requestAnimationFrame(() => {
-      select.querySelector('button')?.click();
-    });
+    // Wait for Stencil to paint the trigger, then open.
+    const tryOpen = (attempt = 0) => {
+      const btn = select.querySelector('button');
+      if (btn) {
+        btn.click();
+        return;
+      }
+      if (attempt < 10) requestAnimationFrame(() => tryOpen(attempt + 1));
+    };
+    requestAnimationFrame(() => tryOpen());
   });
 
 /**
