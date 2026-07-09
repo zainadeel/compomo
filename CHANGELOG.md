@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.11.1](https://github.com/zainadeel/compomo/compare/v2.11.0...v2.11.1) (2026-07-09)
+
+
+### Fixed
+
+* **ci:** pin OIDC-publish npm upgrade to the 11.x line ([be41296](https://github.com/zainadeel/compomo/commit/be41296b11b4a78d4d99f2c7513031c3a9234357))
+* pin OIDC-publish npm upgrade to the 11.x line ([d75347e](https://github.com/zainadeel/compomo/commit/d75347ece303a23a5f1605b05c40b1234f578700))
+
 ## [2.11.0](https://github.com/zainadeel/compomo/compare/v2.10.4...v2.11.0) (2026-07-09)
 
 
