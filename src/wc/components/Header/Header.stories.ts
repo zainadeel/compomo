@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-header.js';
 import '../../../../dist/components/ds-button-filled.js';
-import '../../../../dist/components/ds-button-unfilled-icon.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 
 const meta: Meta = {
   title: 'Layout/Header',
@@ -27,8 +27,8 @@ export const Playground: Story = {
 export const WithSlots: Story = {
   render: () => html`
     <ds-header heading="Dashboard">
-      <ds-button-unfilled-icon slot="left" icon="Menu" aria-label="Menu"></ds-button-unfilled-icon>
-      <ds-button-filled slot="right" icon="Plus" intent="brand" aria-label="New"></ds-button-filled>
+      <ds-button-unfilled variant="icon" slot="left" icon="Menu" aria-label="Menu"></ds-button-unfilled>
+      <ds-button-filled variant="icon" slot="right" icon="Plus" intent="brand" aria-label="New"></ds-button-filled>
     </ds-header>
   `,
 };
@@ -36,9 +36,9 @@ export const WithSlots: Story = {
 export const WithCenterSlot: Story = {
   render: () => html`
     <ds-header>
-      <ds-button-unfilled-icon slot="left" icon="ArrowLeft" aria-label="Back"></ds-button-unfilled-icon>
+      <ds-button-unfilled variant="icon" slot="left" icon="ArrowLeft" aria-label="Back"></ds-button-unfilled>
       <span slot="center" style="font-weight: 600; font-size: 14px">Centered Title</span>
-      <ds-button-unfilled-icon slot="right" icon="Cross" aria-label="Cancel"></ds-button-unfilled-icon>
+      <ds-button-unfilled variant="icon" slot="right" icon="Cross" aria-label="Cancel"></ds-button-unfilled>
     </ds-header>
   `,
 };

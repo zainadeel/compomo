@@ -8,7 +8,7 @@ export const DIRECTIVES = [
   d.DsBarNav,
   d.DsBreadcrumb,
   d.DsButtonFilled,
-  d.DsButtonUnfilledIcon,
+  d.DsButtonUnfilled,
   d.DsCardDataViz,
   d.DsCardSetting,
   d.DsChartBar,

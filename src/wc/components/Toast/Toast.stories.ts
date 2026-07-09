@@ -19,10 +19,10 @@ export const Playground: Story = {
   render: args => html`
     <ds-toast-provider id="toast-provider" position=${args['position'] ?? 'top-center'}></ds-toast-provider>
     <div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 16px">
-      <ds-button-filled id="toast-neutral" icon="Bell" intent="neutral" aria-label="Show neutral"></ds-button-filled>
-      <ds-button-filled id="toast-success" icon="Check" intent="positive" aria-label="Show success"></ds-button-filled>
-      <ds-button-filled id="toast-error" icon="Cross" intent="negative" aria-label="Show error"></ds-button-filled>
-      <ds-button-filled id="toast-warning" icon="Warning" intent="warning" aria-label="Show warning"></ds-button-filled>
+      <ds-button-filled variant="icon" id="toast-neutral" icon="Bell" intent="neutral" aria-label="Show neutral"></ds-button-filled>
+      <ds-button-filled variant="icon" id="toast-success" icon="Check" intent="positive" aria-label="Show success"></ds-button-filled>
+      <ds-button-filled variant="icon" id="toast-error" icon="Cross" intent="negative" aria-label="Show error"></ds-button-filled>
+      <ds-button-filled variant="icon" id="toast-warning" icon="Warning" intent="warning" aria-label="Show warning"></ds-button-filled>
     </div>
     <script type="module">
       import { toast } from '/src/wc/components/Toast/toast-service.ts';
@@ -38,12 +38,12 @@ export const AllIntents: Story = {
   render: () => html`
     <ds-toast-provider id="intents-provider" position="top-center"></ds-toast-provider>
     <div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 16px">
-      <ds-button-filled id="t-neutral" icon="Bell" intent="neutral" aria-label="Neutral"></ds-button-filled>
-      <ds-button-filled id="t-brand" icon="Bell" intent="brand" aria-label="Brand"></ds-button-filled>
-      <ds-button-filled id="t-positive" icon="Check" intent="positive" aria-label="Positive"></ds-button-filled>
-      <ds-button-filled id="t-negative" icon="Cross" intent="negative" aria-label="Negative"></ds-button-filled>
-      <ds-button-filled id="t-warning" icon="Warning" intent="warning" aria-label="Warning"></ds-button-filled>
-      <ds-button-filled id="t-caution" icon="Warning" intent="caution" aria-label="Caution"></ds-button-filled>
+      <ds-button-filled variant="icon" id="t-neutral" icon="Bell" intent="neutral" aria-label="Neutral"></ds-button-filled>
+      <ds-button-filled variant="icon" id="t-brand" icon="Bell" intent="brand" aria-label="Brand"></ds-button-filled>
+      <ds-button-filled variant="icon" id="t-positive" icon="Check" intent="positive" aria-label="Positive"></ds-button-filled>
+      <ds-button-filled variant="icon" id="t-negative" icon="Cross" intent="negative" aria-label="Negative"></ds-button-filled>
+      <ds-button-filled variant="icon" id="t-warning" icon="Warning" intent="warning" aria-label="Warning"></ds-button-filled>
+      <ds-button-filled variant="icon" id="t-caution" icon="Warning" intent="caution" aria-label="Caution"></ds-button-filled>
     </div>
     <script type="module">
       import { toast } from '/src/wc/components/Toast/toast-service.ts';

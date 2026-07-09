@@ -1,0 +1,121 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
+@import '../../utils/control-density.css';
+
+:host {
+  display: inline-flex;
+  flex: 0 0 auto;
+  outline: none;
+  --ds-button-unfilled-fg: var(--color-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-background-secondary);
+  --ds-button-unfilled-border: var(--color-border-tertiary);
+}
+
+/* Icon-only: fixed square from density height. */
+:host(.button-unfilled-host--icon) {
+  width: var(--ds-control-height, var(--dimension-size-400));
+  height: var(--ds-control-height, var(--dimension-size-400));
+  min-width: var(--ds-control-height, var(--dimension-size-400));
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+}
+
+.button-unfilled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+  gap: var(--ds-control-gap, var(--dimension-space-050));
+  background: transparent;
+  border: none;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  color: var(--ds-button-unfilled-fg);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+  transition: color var(--effect-motion-short-2);
+  /* Hover/press/selected: `.ds-interaction-fill` (+ `--selected` / `--on-*`). */
+}
+
+.button-unfilled--icon {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.button-unfilled--active {
+  color: var(--ds-button-unfilled-fg-active);
+}
+
+.button-unfilled--bordered {
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--ds-button-unfilled-border);
+}
+
+/* Inactive: `.ds-control-inactive` (25% opacity). */
+
+/* Foreground / chrome tokens per surface — interaction tokens come from util `--on-*`. */
+.button-unfilled--contrast-medium {
+  --ds-button-unfilled-fg: var(--color-foreground-on-medium-background-secondary);
+  --ds-button-unfilled-fg-active: var(--color-foreground-on-medium-background-primary);
+  --ds-button-unfilled-dot-ring: var(--color-background-medium-neutral);
+  --ds-button-unfilled-border: var(--color-border-on-medium-background-tertiary);
+}
+
+.button-unfilled--contrast-bold {
+  --ds-button-unfilled-fg: var(--color-foreground-on-bold-background-secondary);
+  --ds-button-unfilled-fg-active: var(--color-foreground-on-bold-background-primary);
+  --ds-button-unfilled-dot-ring: var(--color-background-bold-neutral);
+  --ds-button-unfilled-border: var(--color-border-on-bold-background-tertiary);
+}
+
+.button-unfilled--contrast-strong {
+  --ds-button-unfilled-fg: var(--color-foreground-on-strong-background-secondary);
+  --ds-button-unfilled-fg-active: var(--color-foreground-on-strong-background-primary);
+  --ds-button-unfilled-dot-ring: var(--color-background-strong-neutral);
+  --ds-button-unfilled-border: var(--color-border-on-strong-background-tertiary);
+}
+
+.button-unfilled--on-always-dark {
+  --ds-button-unfilled-fg: var(--color-always-dark-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-always-dark-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-always-dark-background);
+}
+
+.button-unfilled--on-navigation {
+  --ds-button-unfilled-fg: var(--color-navigation-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-navigation-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-navigation-background);
+}
+
+.button-unfilled__icon-wrap {
+  position: relative;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.button-unfilled__label {
+  position: relative;
+  z-index: 2;
+  line-height: 0;
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.button-unfilled__dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  pointer-events: none;
+}

@@ -29,7 +29,7 @@ Register the custom elements you render (each import auto-defines its tag):
 
 ```ts
 import '@ds-mo/ui/dist/components/ds-button-filled.js';
-import '@ds-mo/ui/dist/components/ds-button-unfilled-icon.js';
+import '@ds-mo/ui/dist/components/ds-button-unfilled.js';
 import '@ds-mo/ui/dist/components/ds-bar-nav.js';
 // …import only the <ds-*> tags your app uses
 ```
@@ -56,8 +56,8 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Text**, **Card**, **Input**, **Slider**, **Field**, **Divider**, **Icon**
 
 ### Actions
-- **ButtonFilled** — square filled primary icon button; intent + contrast fill
-- **ButtonUnfilledIcon** — square unfilled icon button; `on-background-contrast` for parent surfaces
+- **ButtonFilled** — filled button; `variant` (label / icon / icon-label) + `size` + intent×contrast
+- **ButtonUnfilled** — unfilled button; same variants/sizes; surface-aware chrome (`on-background-contrast`, `background`)
 
 ### Controls
 - **Toggle**, **Checkbox**, **RadioGroup**
@@ -84,8 +84,9 @@ All styling uses TokoMo CSS custom properties. No hardcoded colors, sizes, or sh
 Components that accept icons use a named `icon` slot:
 
 ```html
-<ds-button-filled icon="Check" intent="brand" aria-label="Save"></ds-button-filled>
-<ds-button-unfilled-icon icon="Pencil" aria-label="Edit"></ds-button-unfilled-icon>
+<ds-button-filled variant="icon" icon="Check" intent="brand" aria-label="Save"></ds-button-filled>
+<ds-button-unfilled variant="icon" icon="Pencil" aria-label="Edit"></ds-button-unfilled>
+<ds-button-filled label="Save" intent="brand"></ds-button-filled>
 ```
 
 `icon` / `name` must be a canonical IcoMo export key (`ArrowRight`, `Bell`, …).

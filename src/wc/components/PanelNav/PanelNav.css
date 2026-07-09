@@ -347,8 +347,8 @@
   position: absolute;
   left: var(--_nav-padding-x);
   top: var(--_nav-padding-y);
-  --ds-button-unfilled-icon-fg: var(--_nav-fg-secondary);
-  --ds-button-unfilled-icon-fg-active: var(--_nav-fg-primary);
+  --ds-button-unfilled-fg: var(--_nav-fg-secondary);
+  --ds-button-unfilled-fg-active: var(--_nav-fg-primary);
   --ds-interaction-hover: var(--_nav-hover);
   --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);

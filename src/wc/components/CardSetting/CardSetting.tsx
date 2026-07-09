@@ -59,7 +59,7 @@ export class CardSetting {
             </ds-text>
           </div>
           {!editing ? (
-            <ds-button-unfilled-icon
+            <ds-button-unfilled variant="icon"
               type="button"
               icon="Pencil"
               aria-label="Edit"
@@ -67,7 +67,7 @@ export class CardSetting {
             />
           ) : (
             <div class="card-setting__actions">
-              <ds-button-unfilled-icon
+              <ds-button-unfilled variant="icon"
                 type="button"
                 icon="Cross"
                 backgroundContrast="bold"
@@ -75,7 +75,7 @@ export class CardSetting {
                 aria-label="Cancel"
                 onDsClick={this.exitEdit}
               />
-              <ds-button-filled
+              <ds-button-filled variant="icon"
                 type="button"
                 icon="Check"
                 intent="brand"

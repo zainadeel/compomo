@@ -10,7 +10,7 @@ export { DsBanner } from "./ds-banner.js";
 export { DsBarNav } from "./ds-bar-nav.js";
 export { DsBreadcrumb } from "./ds-breadcrumb.js";
 export { DsButtonFilled } from "./ds-button-filled.js";
-export { DsButtonUnfilledIcon } from "./ds-button-unfilled-icon.js";
+export { DsButtonUnfilled } from "./ds-button-unfilled.js";
 export { DsCardDataViz } from "./ds-card-data-viz.js";
 export { DsCardSetting } from "./ds-card-setting.js";
 export { DsChartBar } from "./ds-chart-bar.js";

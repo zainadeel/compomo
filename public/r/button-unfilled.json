@@ -1,0 +1,141 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-unfilled",
+  "title": "ButtonUnfilled",
+  "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, active/border/dot, and surface-aware interaction states.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
+      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-button-unfilled.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
+      "usage": {
+        "html": "<ds-button-unfilled></ds-button-unfilled>",
+        "react": "<ds-button-unfilled></ds-button-unfilled>",
+        "angular": "<ds-button-unfilled></ds-button-unfilled>"
+      },
+      "events": [
+        {
+          "name": "dsClick",
+          "listen": "element.addEventListener('dsClick', handler)",
+          "reactProp": "onDsClick={handler}",
+          "angularBinding": "(dsClick)=\"handler($event)\""
+        },
+        {
+          "name": "dsChange",
+          "listen": "element.addEventListener('dsChange', handler)",
+          "reactProp": "onDsChange={handler}",
+          "angularBinding": "(dsChange)=\"handler($event)\""
+        }
+      ],
+      "internalDependencies": [
+        {
+          "component": "Icon",
+          "note": "Used internally by ButtonUnfilled. Bundled in @ds-mo/ui."
+        },
+        {
+          "component": "Badge",
+          "note": "Used internally by ButtonUnfilled. Bundled in @ds-mo/ui."
+        }
+      ],
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens >=2.9.0",
+          "@ds-mo/icons ^5.0.1"
+        ],
+        "optional": [],
+        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+      }
+    },
+    "props": {
+      "variant": {
+        "type": "'icon' | 'label' | 'icon-label'",
+        "default": "'label'",
+        "description": "Content layout. Icon-only chrome must pass variant=\"icon\"."
+      },
+      "size": {
+        "type": "'md' | 'sm' | 'xs'",
+        "default": "'md'",
+        "description": "Control-density height/padding/icon/type."
+      },
+      "label": {
+        "type": "string",
+        "description": "Visible text for label / icon-label variants."
+      },
+      "icon": {
+        "type": "string",
+        "description": "Canonical IcoMo icon export name for icon / icon-label variants."
+      },
+      "isActive": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Active/selected state. Active always promotes icon/label color."
+      },
+      "activeFill": {
+        "type": "boolean",
+        "default": "true",
+        "description": "Set false for shell chrome that needs active color without active fill."
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Adds a tertiary 1px inset border."
+      },
+      "dot": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Notification dot (icon variant only)."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Disables interaction (25% opacity via ds-control-inactive)."
+      },
+      "backgroundContrast": {
+        "type": "'default' | 'medium' | 'bold' | 'strong'",
+        "description": "Parent surface contrast for interaction and focus tokens."
+      },
+      "background": {
+        "type": "'always-dark' | 'navigation'",
+        "description": "Navigation and always-dark chrome surfaces."
+      },
+      "ariaLabel": {
+        "type": "string",
+        "description": "Accessible name (required for icon-only when label is empty)."
+      }
+    },
+    "exports": [
+      "ButtonUnfilled"
+    ],
+    "types": [
+      "ButtonUnfilledBackground",
+      "ButtonUnfilledOnBackgroundContrast",
+      "ButtonUnfilledVariant",
+      "ButtonUnfilledSize"
+    ]
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.css",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n\n:host {\n  display: inline-flex;\n  flex: 0 0 auto;\n  outline: none;\n  --ds-button-unfilled-fg: var(--color-foreground-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-secondary);\n  --ds-button-unfilled-border: var(--color-border-tertiary);\n}\n\n/* Icon-only: fixed square from density height. */\n:host(.button-unfilled-host--icon) {\n  width: var(--ds-control-height, var(--dimension-size-400));\n  height: var(--ds-control-height, var(--dimension-size-400));\n  min-width: var(--ds-control-height, var(--dimension-size-400));\n  min-height: var(--ds-control-height, var(--dimension-size-400));\n}\n\n.button-unfilled {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  height: var(--ds-control-height, var(--dimension-size-400));\n  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));\n  gap: var(--ds-control-gap, var(--dimension-space-050));\n  background: transparent;\n  border: none;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  color: var(--ds-button-unfilled-fg);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  overflow: hidden;\n  transition: color var(--effect-motion-short-2);\n  /* Hover/press/selected: `.ds-interaction-fill` (+ `--selected` / `--on-*`). */\n}\n\n.button-unfilled--icon {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n}\n\n.button-unfilled--active {\n  color: var(--ds-button-unfilled-fg-active);\n}\n\n.button-unfilled--bordered {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--ds-button-unfilled-border);\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n/* Foreground / chrome tokens per surface — interaction tokens come from util `--on-*`. */\n.button-unfilled--contrast-medium {\n  --ds-button-unfilled-fg: var(--color-foreground-on-medium-background-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-on-medium-background-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-medium-neutral);\n  --ds-button-unfilled-border: var(--color-border-on-medium-background-tertiary);\n}\n\n.button-unfilled--contrast-bold {\n  --ds-button-unfilled-fg: var(--color-foreground-on-bold-background-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-on-bold-background-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-bold-neutral);\n  --ds-button-unfilled-border: var(--color-border-on-bold-background-tertiary);\n}\n\n.button-unfilled--contrast-strong {\n  --ds-button-unfilled-fg: var(--color-foreground-on-strong-background-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-on-strong-background-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-strong-neutral);\n  --ds-button-unfilled-border: var(--color-border-on-strong-background-tertiary);\n}\n\n.button-unfilled--on-always-dark {\n  --ds-button-unfilled-fg: var(--color-always-dark-foreground-secondary);\n  --ds-button-unfilled-fg-active: var(--color-always-dark-foreground-primary);\n  --ds-button-unfilled-dot-ring: var(--color-always-dark-background);\n}\n\n.button-unfilled--on-navigation {\n  --ds-button-unfilled-fg: var(--color-navigation-foreground-secondary);\n  --ds-button-unfilled-fg-active: var(--color-navigation-foreground-primary);\n  --ds-button-unfilled-dot-ring: var(--color-navigation-background);\n}\n\n.button-unfilled__icon-wrap {\n  position: relative;\n  width: var(--ds-control-icon, var(--dimension-iconography-md));\n  height: var(--ds-control-icon, var(--dimension-iconography-md));\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  z-index: 2;\n}\n\n.button-unfilled__label {\n  position: relative;\n  z-index: 2;\n  line-height: 0;\n  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));\n  white-space: nowrap;\n  flex-shrink: 0;\n  min-width: 0;\n}\n\n.button-unfilled__dot {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  pointer-events: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\n\nexport type ButtonUnfilledOnBackgroundContrast = 'default' | 'medium' | 'bold' | 'strong';\n\nexport type ButtonUnfilledBackground = 'always-dark' | 'navigation';\n\nexport type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';\n\nexport type ButtonUnfilledSize = 'md' | 'sm' | 'xs';\n\n/** Text variant per control-density recipe (md / sm / xs). */\nconst TEXT_VARIANT: Record<ButtonUnfilledSize, string> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\n/**\n * `ds-icon` size prop matching control-density icon metrics\n * (md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).\n */\nconst ICON_SIZE: Record<ButtonUnfilledSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n@Component({\n  tag: 'ds-button-unfilled',\n  styleUrl: 'ButtonUnfilled.css',\n  scoped: true,\n})\nexport class ButtonUnfilled {\n  @Element() el!: HTMLElement;\n\n  /**\n   * Content layout. Default is label-only; pass `icon` for icon-only chrome\n   * (nav / tool rails) or `icon-label` for leading icon + text.\n   */\n  @Prop() variant: ButtonUnfilledVariant = 'label';\n\n  /** Control density (height, padding, icon, type). */\n  @Prop() size: ButtonUnfilledSize = 'md';\n\n  /** Visible text for `label` / `icon-label` variants. */\n  @Prop() label: string = '';\n\n  /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */\n  @Prop() icon: string = '';\n\n  /** Active/selected visual state. */\n  @Prop() isActive: boolean = false;\n\n  /** When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour. */\n  @Prop() activeFill: boolean = true;\n\n  /** Show a 1px tertiary border without changing the interaction model. */\n  @Prop() hasBorder: boolean = false;\n\n  /** Show a notification dot at the top-right of the icon zone (icon variant only). */\n  @Prop() dot: boolean = false;\n\n  /** Disables interaction. */\n  @Prop() isInactive: boolean = false;\n\n  /** Native button type. */\n  @Prop() type: 'button' | 'submit' | 'reset' = 'button';\n\n  /**\n   * Foreground and interaction tokens when the button sits on a contrasting parent\n   * background (default, medium, bold, or strong).\n   */\n  @Prop({ attribute: 'on-background-contrast' })\n  backgroundContrast?: ButtonUnfilledOnBackgroundContrast;\n\n  /** Parent surface context for navigation and always-dark chrome. */\n  @Prop() background: ButtonUnfilledBackground | undefined;\n\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;\n  @Prop() controls: string | undefined;\n  @Prop() expanded: boolean | undefined;\n  @Prop() haspopup: string | undefined;\n  @Prop() pressed: boolean | undefined;\n\n  /**\n   * Native `tabindex` for roving keyboard groups in shell chrome.\n   * Omit for the default button tab stop (`0`).\n   */\n  @Prop({ attribute: 'tab-index' }) focusTabIndex?: number;\n\n  @Event() dsClick!: EventEmitter<MouseEvent>;\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private buttonEl: HTMLButtonElement | null = null;\n\n  @Method()\n  async setFocus() {\n    this.buttonEl?.focus();\n  }\n\n  private handleClick = (event: MouseEvent) => {\n    if (this.isInactive) return;\n    this.dsClick.emit(event);\n    this.dsChange.emit(!this.isActive);\n  };\n\n  private effectiveContrast(): ButtonUnfilledOnBackgroundContrast {\n    return this.backgroundContrast ?? 'default';\n  }\n\n  private get showIcon(): boolean {\n    return this.variant === 'icon' || this.variant === 'icon-label';\n  }\n\n  private get showLabel(): boolean {\n    return this.variant === 'label' || this.variant === 'icon-label';\n  }\n\n  private get showDot(): boolean {\n    return this.variant === 'icon' && this.dot;\n  }\n\n  private get accessibleName(): string | undefined {\n    if (this.ariaLabel) return this.ariaLabel;\n    if (this.showLabel && this.label) return undefined;\n    if (this.variant === 'icon') return this.icon || 'action';\n    return this.label || 'action';\n  }\n\n  render() {\n    const bg = this.background;\n    const contrast = this.effectiveContrast();\n    const textVariant = TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const cls: Record<string, boolean> = {\n      'button-unfilled': true,\n      'ds-focus-ring-inset': true,\n      'ds-interaction-fill': !this.isInactive,\n      'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,\n      'ds-interaction-fill--on-medium': contrast === 'medium',\n      'ds-interaction-fill--on-bold': contrast === 'bold',\n      'ds-interaction-fill--on-strong': contrast === 'strong',\n      'ds-interaction-fill--on-always-dark': bg === 'always-dark',\n      'ds-interaction-fill--on-navigation': bg === 'navigation',\n      'button-unfilled--active': this.isActive,\n      'button-unfilled--bordered': this.hasBorder,\n      'ds-control-inactive': this.isInactive,\n      'ds-control--md': this.size === 'md',\n      'ds-control--sm': this.size === 'sm',\n      'ds-control--xs': this.size === 'xs',\n      'button-unfilled--icon': this.variant === 'icon',\n      'button-unfilled--label': this.variant === 'label',\n      'button-unfilled--icon-label': this.variant === 'icon-label',\n      'button-unfilled--contrast-medium': contrast === 'medium',\n      'button-unfilled--contrast-bold': contrast === 'bold',\n      'button-unfilled--contrast-strong': contrast === 'strong',\n      'button-unfilled--on-always-dark': bg === 'always-dark',\n      'button-unfilled--on-navigation': bg === 'navigation',\n    };\n\n    return (\n      <Host\n        class={{\n          'button-unfilled-host': true,\n          'button-unfilled-host--icon': this.variant === 'icon',\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n        }}\n        tabIndex={-1}\n      >\n        <button\n          ref={el => {\n            this.buttonEl = el ?? null;\n          }}\n          type={this.type}\n          class={cls}\n          disabled={this.isInactive}\n          tabIndex={this.focusTabIndex ?? 0}\n          aria-label={this.accessibleName}\n          aria-controls={this.controls}\n          aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}\n          aria-haspopup={this.haspopup}\n          aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}\n          onClick={this.handleClick}\n        >\n          {this.showIcon && (\n            <span class=\"button-unfilled__icon-wrap ds-interaction-fill__content\">\n              <ds-icon name={this.icon} size={iconSize} color=\"inherit\" />\n              {this.showDot && (\n                <ds-badge\n                  class=\"button-unfilled__dot\"\n                  variant=\"dot\"\n                  background=\"var(--ds-button-unfilled-dot-ring)\"\n                  label=\"\"\n                  aria-hidden=\"true\"\n                />\n              )}\n            </span>\n          )}\n          {this.showLabel && (\n            <span class={{ 'button-unfilled__label': true, [textVariant]: true, 'ds-interaction-fill__content': true }}>\n              {this.label}\n            </span>\n          )}\n        </button>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

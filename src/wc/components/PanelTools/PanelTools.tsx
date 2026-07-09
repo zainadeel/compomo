@@ -205,7 +205,7 @@ export class PanelTools {
 
   private renderRailAction(item: PanelToolsItem, index: number) {
     return (
-      <ds-button-unfilled-icon
+      <ds-button-unfilled variant="icon"
         key={item.id}
         class="panel-tools__rail-action"
         icon={item.icon}

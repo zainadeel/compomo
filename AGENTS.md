@@ -125,7 +125,7 @@ npm install @ds-mo/tokens @ds-mo/icons @ds-mo/ui
 ```ts
 // Custom elements — import each tag you use (auto-defines)
 import '@ds-mo/ui/dist/components/ds-button-filled.js';
-import '@ds-mo/ui/dist/components/ds-button-unfilled-icon.js';
+import '@ds-mo/ui/dist/components/ds-button-unfilled.js';
 import '@ds-mo/tokens';
 
 // Angular — Stencil-generated proxy directives
@@ -217,11 +217,14 @@ export class MyComponent {
 - Token families by property category: `--color-*` (color/fill/stroke), `--dimension-space-*` (margin/padding/gap/inset), `--dimension-size-*` / `--dimension-iconography-*` / component width tokens (width/height), `--dimension-radius-*`, `--dimension-stroke-width-*`, `--typography-*`, `--effect-*` / `--dimension-z-index-*`.
 - Justify unavoidable exceptions with `/* stylelint-disable-next-line <rule> -- reason */`.
 
-**Icon-only unfilled buttons**
+**Buttons (filled / unfilled)**
 
-- Use `ds-button-unfilled-icon` for unfilled square icon buttons, including nav chrome actions, overflow triggers, and tool rail actions.
-- Use `isActive` for the active/selected visual state. Active state changes icon color to primary and uses the active interaction fill by default; set `activeFill={false}` only for shell chrome cases that need primary icon color without a filled active background.
-- Use `hasBorder` only when the button needs the optional 1px `--color-border-tertiary` stroke.
+- Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density.
+- Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
+- Use `ds-button-unfilled` (not a separate icon-only tag) for unfilled actions.
+- **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
+- Use `isActive` for the active/selected visual state on unfilled. Active promotes foreground color and uses the active interaction fill by default; set `activeFill={false}` only for shell chrome that needs active color without a filled active background.
+- Use `hasBorder` only when the button needs the optional 1px `--color-border-tertiary` inset stroke.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
 
 **Control density recipes**
@@ -258,13 +261,13 @@ Rules:
 
 - Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
 - Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
-- `::before` = selected/active only. Omit `--selected` when chrome wants icon-color-only selection (`activeFill={false}` on `ds-button-unfilled-icon`, PanelNav/BarNav).
+- `::before` = selected/active only. Omit `--selected` when chrome wants icon-color-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav).
 - `::after` = hover + press (`transition: none`), **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
 - Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
 - If a control uses `all: unset`, re-assert `position: relative; z-index: 0` afterward so the util’s stacking context still applies (see PanelNav items).
 - Omit `.ds-interaction-fill` when `isInactive`, or rely on `:disabled` (util skips hover/press on `:disabled`).
 - Persistent selected *product* state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only — no select/toggle.
-- **Inset borders on interaction targets:** control chrome strokes sit *inside* the fixed height so hover/press/selected fills (`inset: 0`) cover the full edge, including the stroke. Prefer `box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) <token>` (see `ButtonUnfilledIcon--bordered`, TabGroup selected tabs). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use inset strokes.
+- **Inset borders on interaction targets:** control chrome strokes sit *inside* the fixed height so hover/press/selected fills (`inset: 0`) cover the full edge, including the stroke. Prefer `box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) <token>` (see `ButtonUnfilled--bordered`, TabGroup selected tabs). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use inset strokes.
 
 **Control inactive**
 
@@ -276,7 +279,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled-icon`, `ds-chip`, `ds-checkbox`, `ds-toggle`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-toggle`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 

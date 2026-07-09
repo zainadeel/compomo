@@ -41,7 +41,7 @@ export const Playground: Story = {
           tip.sideOffset = typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : raw;
         })}
       >
-        <ds-button-filled icon="Bell" intent="brand" aria-label="Hover me"></ds-button-filled>
+        <ds-button-filled variant="icon" icon="Bell" intent="brand" aria-label="Hover me"></ds-button-filled>
       </ds-tooltip>
     </div>
   `,
@@ -52,21 +52,21 @@ export const Sides: Story = {
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 80px; place-items: center">
       <div></div>
       <ds-tooltip label="Top tooltip" side="top">
-        <ds-button-filled icon="ArrowUp" intent="brand" aria-label="Top"></ds-button-filled>
+        <ds-button-filled variant="icon" icon="ArrowUp" intent="brand" aria-label="Top"></ds-button-filled>
       </ds-tooltip>
       <div></div>
 
       <ds-tooltip label="Left tooltip" side="left">
-        <ds-button-filled icon="ArrowLeft" intent="brand" aria-label="Left"></ds-button-filled>
+        <ds-button-filled variant="icon" icon="ArrowLeft" intent="brand" aria-label="Left"></ds-button-filled>
       </ds-tooltip>
       <div></div>
       <ds-tooltip label="Right tooltip" side="right">
-        <ds-button-filled icon="ArrowRight" intent="brand" aria-label="Right"></ds-button-filled>
+        <ds-button-filled variant="icon" icon="ArrowRight" intent="brand" aria-label="Right"></ds-button-filled>
       </ds-tooltip>
 
       <div></div>
       <ds-tooltip label="Bottom tooltip" side="bottom">
-        <ds-button-filled icon="ArrowDown" intent="brand" aria-label="Bottom"></ds-button-filled>
+        <ds-button-filled variant="icon" icon="ArrowDown" intent="brand" aria-label="Bottom"></ds-button-filled>
       </ds-tooltip>
       <div></div>
     </div>
@@ -77,7 +77,7 @@ export const WithShortcut: Story = {
   render: () => html`
     <div style="display: flex; justify-content: center; padding: 80px">
       <ds-tooltip label="Save file" shortcut-key="⌘S">
-        <ds-button-filled icon="Check" intent="brand" aria-label="Save"></ds-button-filled>
+        <ds-button-filled variant="icon" icon="Check" intent="brand" aria-label="Save"></ds-button-filled>
       </ds-tooltip>
     </div>
   `,

@@ -142,7 +142,7 @@ export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
 
 
 @ProxyCmp({
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'type'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
   methods: ['setFocus']
 })
 @Component({
@@ -150,7 +150,7 @@ export declare interface DsBreadcrumb extends Components.DsBreadcrumb {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'type'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant'],
   outputs: ['dsClick'],
   standalone: false
 })
@@ -171,20 +171,20 @@ export declare interface DsButtonFilled extends Components.DsButtonFilled {
 
 
 @ProxyCmp({
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
   methods: ['setFocus']
 })
 @Component({
-  selector: 'ds-button-unfilled-icon',
+  selector: 'ds-button-unfilled',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'pressed', 'type'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant'],
   outputs: ['dsClick', 'dsChange'],
   standalone: false
 })
-export class DsButtonUnfilledIcon {
-  protected el: HTMLDsButtonUnfilledIconElement;
+export class DsButtonUnfilled {
+  protected el: HTMLDsButtonUnfilledElement;
   @Output() dsClick = new EventEmitter<CustomEvent<MouseEvent>>();
   @Output() dsChange = new EventEmitter<CustomEvent<boolean>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
@@ -194,7 +194,7 @@ export class DsButtonUnfilledIcon {
 }
 
 
-export declare interface DsButtonUnfilledIcon extends Components.DsButtonUnfilledIcon {
+export declare interface DsButtonUnfilled extends Components.DsButtonUnfilled {
 
   dsClick: EventEmitter<CustomEvent<MouseEvent>>;
 

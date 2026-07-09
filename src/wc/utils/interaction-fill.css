@@ -31,7 +31,7 @@
  *
  * Borders on interaction targets must be inset (inside the fixed height) so
  * fills cover the stroke edge — use inset box-shadow, not layout `border`.
- * See AGENTS.md "Interaction fill" / ButtonUnfilledIcon--bordered.
+ * See AGENTS.md "Interaction fill" / ButtonUnfilled--bordered.
  *
  * @see AGENTS.md — "Interaction fill"
  */

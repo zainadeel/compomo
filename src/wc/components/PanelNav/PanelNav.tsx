@@ -611,7 +611,7 @@ export class PanelNav {
 
           {/* ── Footer ── */}
           <div class="panel-nav__footer">
-            <ds-button-unfilled-icon
+            <ds-button-unfilled variant="icon"
               class="panel-nav__footer-btn"
               icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
               activeFill={false}

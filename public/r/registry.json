@@ -110,14 +110,14 @@
       ],
       "registryDependencies": [
         "text",
-        "button-unfilled-icon",
+        "button-unfilled",
         "button-filled"
       ]
     },
     {
       "name": "button-filled",
       "title": "ButtonFilled",
-      "description": "Square filled primary icon button. Intent-based colours with contrast fill pairing (bold→faint fg, strong→medium, medium→strong, faint→bold).",
+      "description": "Filled button with variant (label / icon / icon-label), control-density sizes, and intent×contrast fills.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -127,9 +127,21 @@
           "ButtonFilled"
         ],
         "props": {
+          "variant": {
+            "type": "'icon' | 'label' | 'icon-label'",
+            "required": false
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
           "icon": {
             "type": "string",
-            "required": true
+            "required": false
           },
           "intent": {
             "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'",
@@ -159,21 +171,33 @@
       ]
     },
     {
-      "name": "button-unfilled-icon",
-      "title": "ButtonUnfilledIcon",
-      "description": "Square unfilled icon button for chrome actions, overflow triggers, and tool rail actions. Supports active, active-without-fill, bordered, dot, isInactive, and surface-aware interaction states.",
+      "name": "button-unfilled",
+      "title": "ButtonUnfilled",
+      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, active/border/dot, and surface-aware interaction states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled-icon",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
         "exports": [
-          "ButtonUnfilledIcon"
+          "ButtonUnfilled"
         ],
         "props": {
+          "variant": {
+            "type": "'icon' | 'label' | 'icon-label'",
+            "required": false
+          },
+          "size": {
+            "type": "'md' | 'sm' | 'xs'",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
           "icon": {
             "type": "string",
-            "required": true
+            "required": false
           },
           "isActive": {
             "type": "boolean",

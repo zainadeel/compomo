@@ -98,7 +98,7 @@
 }
 
 /* Demo control — transparent chrome so selected/hover washes composite over
-   the parent surface (same as ButtonUnfilledIcon / Menu / PanelNav). */
+   the parent surface (same as ButtonUnfilled / Menu / PanelNav). */
 .util-demo-control {
   display: inline-flex;
   align-items: center;

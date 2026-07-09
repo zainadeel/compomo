@@ -11,8 +11,8 @@ import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
-import { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
+import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -48,8 +48,8 @@ export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { BreadcrumbItem } from "./components/Breadcrumb/Breadcrumb";
-export { ButtonFilledContrast, ButtonFilledIntent } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledIconBackground, ButtonUnfilledIconOnBackgroundContrast } from "./components/ButtonUnfilledIcon/ButtonUnfilledIcon";
+export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -226,17 +226,14 @@ export namespace Components {
         "separator": string;
     }
     interface DsButtonFilled {
-        /**
-          * @default 'action'
-         */
-        "ariaLabel": string;
+        "ariaLabel": string | undefined;
         /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
         "contrast": ButtonFilledContrast;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon": string;
@@ -250,34 +247,46 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label": string;
         "setFocus": () => Promise<void>;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": ButtonFilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type": 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant": ButtonFilledVariant;
     }
-    interface DsButtonUnfilledIcon {
+    interface DsButtonUnfilled {
         /**
           * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
           * @default true
          */
         "activeFill": boolean;
-        /**
-          * @default 'action'
-         */
-        "ariaLabel": string;
+        "ariaLabel": string | undefined;
         /**
           * Parent surface context for navigation and always-dark chrome.
          */
-        "background": ButtonUnfilledIconBackground | undefined;
+        "background": ButtonUnfilledBackground | undefined;
         /**
           * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
          */
-        "backgroundContrast"?: ButtonUnfilledIconOnBackgroundContrast;
+        "backgroundContrast"?: ButtonUnfilledOnBackgroundContrast;
         "controls": string | undefined;
         /**
-          * Show a notification dot at the top-right of the icon zone.
+          * Show a notification dot at the top-right of the icon zone (icon variant only).
           * @default false
          */
         "dot": boolean;
@@ -293,7 +302,7 @@ export namespace Components {
         "hasBorder": boolean;
         "haspopup": string | undefined;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon": string;
@@ -307,13 +316,28 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label": string;
         "pressed": boolean | undefined;
         "setFocus": () => Promise<void>;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": ButtonUnfilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type": 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant": ButtonUnfilledVariant;
     }
     /**
      * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
@@ -1140,9 +1164,9 @@ export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
 }
-export interface DsButtonUnfilledIconCustomEvent<T> extends CustomEvent<T> {
+export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsButtonUnfilledIconElement;
+    target: HTMLDsButtonUnfilledElement;
 }
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1305,23 +1329,23 @@ declare global {
         prototype: HTMLDsButtonFilledElement;
         new (): HTMLDsButtonFilledElement;
     };
-    interface HTMLDsButtonUnfilledIconElementEventMap {
+    interface HTMLDsButtonUnfilledElementEventMap {
         "dsClick": MouseEvent;
         "dsChange": boolean;
     }
-    interface HTMLDsButtonUnfilledIconElement extends Components.DsButtonUnfilledIcon, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsButtonUnfilledIconElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledIconElement, ev: DsButtonUnfilledIconCustomEvent<HTMLDsButtonUnfilledIconElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsButtonUnfilledElement extends Components.DsButtonUnfilled, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonUnfilledElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledElement, ev: DsButtonUnfilledCustomEvent<HTMLDsButtonUnfilledElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsButtonUnfilledIconElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledIconElement, ev: DsButtonUnfilledIconCustomEvent<HTMLDsButtonUnfilledIconElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonUnfilledElementEventMap>(type: K, listener: (this: HTMLDsButtonUnfilledElement, ev: DsButtonUnfilledCustomEvent<HTMLDsButtonUnfilledElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsButtonUnfilledIconElement: {
-        prototype: HTMLDsButtonUnfilledIconElement;
-        new (): HTMLDsButtonUnfilledIconElement;
+    var HTMLDsButtonUnfilledElement: {
+        prototype: HTMLDsButtonUnfilledElement;
+        new (): HTMLDsButtonUnfilledElement;
     };
     /**
      * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
@@ -1810,7 +1834,7 @@ declare global {
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
-        "ds-button-unfilled-icon": HTMLDsButtonUnfilledIconElement;
+        "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-card-data-viz": HTMLDsCardDataVizElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-chart-bar": HTMLDsChartBarElement;
@@ -2004,17 +2028,14 @@ declare namespace LocalJSX {
         "separator"?: string;
     }
     interface DsButtonFilled {
-        /**
-          * @default 'action'
-         */
-        "ariaLabel"?: string;
+        "ariaLabel"?: string | undefined;
         /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
         "contrast"?: ButtonFilledContrast;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon"?: string;
@@ -2028,34 +2049,46 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label"?: string;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: ButtonFilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant"?: ButtonFilledVariant;
     }
-    interface DsButtonUnfilledIcon {
+    interface DsButtonUnfilled {
         /**
           * When active, render the active interaction fill. Shell chrome can disable this while keeping active icon colour.
           * @default true
          */
         "activeFill"?: boolean;
-        /**
-          * @default 'action'
-         */
-        "ariaLabel"?: string;
+        "ariaLabel"?: string | undefined;
         /**
           * Parent surface context for navigation and always-dark chrome.
          */
-        "background"?: ButtonUnfilledIconBackground | undefined;
+        "background"?: ButtonUnfilledBackground | undefined;
         /**
           * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
          */
-        "backgroundContrast"?: ButtonUnfilledIconOnBackgroundContrast;
+        "backgroundContrast"?: ButtonUnfilledOnBackgroundContrast;
         "controls"?: string | undefined;
         /**
-          * Show a notification dot at the top-right of the icon zone.
+          * Show a notification dot at the top-right of the icon zone (icon variant only).
           * @default false
          */
         "dot"?: boolean;
@@ -2071,7 +2104,7 @@ declare namespace LocalJSX {
         "hasBorder"?: boolean;
         "haspopup"?: string | undefined;
         /**
-          * Icon name passed to <ds-icon>.
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
          */
         "icon"?: string;
@@ -2085,14 +2118,29 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
-        "onDsChange"?: (event: DsButtonUnfilledIconCustomEvent<boolean>) => void;
-        "onDsClick"?: (event: DsButtonUnfilledIconCustomEvent<MouseEvent>) => void;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label"?: string;
+        "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
+        "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
         "pressed"?: boolean | undefined;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: ButtonUnfilledSize;
         /**
           * Native button type.
           * @default 'button'
          */
         "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome (nav / tool rails) or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant"?: ButtonUnfilledVariant;
     }
     /**
      * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
@@ -3007,14 +3055,20 @@ declare namespace LocalJSX {
         "separator": string;
     }
     interface DsButtonFilledAttributes {
+        "variant": ButtonFilledVariant;
+        "size": ButtonFilledSize;
+        "label": string;
         "icon": string;
         "intent": ButtonFilledIntent;
         "contrast": ButtonFilledContrast;
         "isInactive": boolean;
         "type": 'button' | 'submit' | 'reset';
-        "ariaLabel": string;
+        "ariaLabel": string | undefined;
     }
-    interface DsButtonUnfilledIconAttributes {
+    interface DsButtonUnfilledAttributes {
+        "variant": ButtonUnfilledVariant;
+        "size": ButtonUnfilledSize;
+        "label": string;
         "icon": string;
         "isActive": boolean;
         "activeFill": boolean;
@@ -3022,9 +3076,9 @@ declare namespace LocalJSX {
         "dot": boolean;
         "isInactive": boolean;
         "type": 'button' | 'submit' | 'reset';
-        "backgroundContrast": ButtonUnfilledIconOnBackgroundContrast;
-        "background": ButtonUnfilledIconBackground | undefined;
-        "ariaLabel": string;
+        "backgroundContrast": ButtonUnfilledOnBackgroundContrast;
+        "background": ButtonUnfilledBackground | undefined;
+        "ariaLabel": string | undefined;
         "controls": string | undefined;
         "expanded": boolean | undefined;
         "haspopup": string | undefined;
@@ -3281,7 +3335,7 @@ declare namespace LocalJSX {
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
-        "ds-button-unfilled-icon": Omit<DsButtonUnfilledIcon, keyof DsButtonUnfilledIconAttributes> & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes]?: DsButtonUnfilledIcon[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `attr:${K}`]?: DsButtonUnfilledIconAttributes[K] } & { [K in keyof DsButtonUnfilledIcon & keyof DsButtonUnfilledIconAttributes as `prop:${K}`]?: DsButtonUnfilledIcon[K] };
+        "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
@@ -3330,7 +3384,7 @@ declare module "@stencil/core" {
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
-            "ds-button-unfilled-icon": LocalJSX.IntrinsicElements["ds-button-unfilled-icon"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledIconElement>;
+            "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
              * Copied from CardSetting as a starting scaffold — header edit affordance removed for now
              * (data-viz widgets don't have an obvious "edit" action the way settings fields do); revisit

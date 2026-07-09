@@ -1,32 +1,37 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
+@import '../../utils/control-density.css';
 
 :host {
   display: inline-flex;
   flex: 0 0 auto;
-  width: var(--dimension-size-400);
-  height: var(--dimension-size-400);
-  min-width: var(--dimension-size-400);
-  min-height: var(--dimension-size-400);
   outline: none;
   --ds-button-filled-bg: var(--color-background-bold-brand);
   --ds-button-filled-fg: var(--color-foreground-faint-brand);
+}
+
+/* Icon-only: fixed square from density height. */
+:host(.button-filled-host--icon) {
+  width: var(--ds-control-height, var(--dimension-size-400));
+  height: var(--ds-control-height, var(--dimension-size-400));
+  min-width: var(--ds-control-height, var(--dimension-size-400));
+  min-height: var(--ds-control-height, var(--dimension-size-400));
 }
 
 .button-filled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: var(--dimension-space-075);
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+  gap: var(--ds-control-gap, var(--dimension-space-050));
   border: none;
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   background-color: var(--ds-button-filled-bg);
   color: var(--ds-button-filled-fg);
   cursor: pointer;
-  box-sizing: border-box;
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;
@@ -37,6 +42,12 @@
   /* Hover/press: `.ds-interaction-fill` + contrast → `--on-*` (token overlay, not color-mix). */
 }
 
+.button-filled--icon {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
 .button-filled:active:not(:disabled):not(.ds-control-inactive) {
   transform: scale(var(--dimension-scale-subtle));
 }
@@ -45,13 +56,23 @@
 
 .button-filled__icon-wrap {
   position: relative;
-  width: var(--dimension-iconography-md);
-  height: var(--dimension-iconography-md);
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   z-index: 2;
+}
+
+.button-filled__label {
+  position: relative;
+  z-index: 2;
+  line-height: 0;
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 /* ── Intent + contrast (bold default) ─────────────────────────────────────── */
