@@ -3,7 +3,7 @@ import { Component, Prop, Event, EventEmitter, Element, Listen, h, Host } from '
 export interface RadioOption {
   label: string;
   value: string;
-  inactive?: boolean;
+  isInactive?: boolean;
 }
 
 @Component({
@@ -17,7 +17,7 @@ export class RadioGroup {
   @Prop() options: RadioOption[] = [];
   @Prop({ mutable: true }) value: string = '';
   @Prop() direction: 'vertical' | 'horizontal' = 'vertical';
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
 
@@ -70,7 +70,7 @@ export class RadioGroup {
   }
 
   private selectItem(optValue: string) {
-    if (this.inactive) return;
+    if (this.isInactive) return;
     if (optValue !== this.value) {
       this.value = optValue;
       this.dsChange.emit(optValue);
@@ -79,8 +79,8 @@ export class RadioGroup {
 
   render() {
     const selectedIdx = this.options.findIndex(o => o.value === this.value);
-    const firstActiveIdx = this.options.findIndex(o => !this.inactive && !o.inactive);
-    const focusableIdx = selectedIdx >= 0 && !this.inactive && !this.options[selectedIdx]?.inactive
+    const firstActiveIdx = this.options.findIndex(o => !this.isInactive && !o.isInactive);
+    const focusableIdx = selectedIdx >= 0 && !this.isInactive && !this.options[selectedIdx]?.isInactive
       ? selectedIdx
       : firstActiveIdx;
 
@@ -92,7 +92,7 @@ export class RadioGroup {
         class={{ group: true, 'group--horizontal': this.direction === 'horizontal' }}
       >
         {this.options.map((opt, i) => {
-          const isItemInactive = this.inactive || !!opt.inactive;
+          const isItemInactive = this.isInactive || !!opt.isInactive;
           const isChecked = opt.value === this.value;
           const tabIdx = isItemInactive ? -1 : (i === focusableIdx ? 0 : -1);
 
@@ -106,7 +106,7 @@ export class RadioGroup {
               data-radio-item
               data-value={opt.value}
               data-inactive={isItemInactive || undefined}
-              class={{ 'radio-item': true, 'radio-item--inactive': isItemInactive }}
+              class={{ 'radio-item': true, 'ds-control-inactive': isItemInactive }}
               onClick={() => !isItemInactive && this.selectItem(opt.value)}
               onKeyDown={(e: KeyboardEvent) => {
                 if ((e.key === ' ' || e.key === 'Enter') && !isItemInactive) {

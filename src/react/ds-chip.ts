@@ -15,21 +15,13 @@ import { type DsChipCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsChip as DsChipElement, defineCustomElement as defineDsChip } from "@ds-mo/ui/dist/components/ds-chip.js";
 
-export type DsChipEvents = {
-    onDsRemove: EventName<DsChipCustomEvent<void>>,
-    onDsClick: EventName<DsChipCustomEvent<void>>,
-    onDsPressedChange: EventName<DsChipCustomEvent<boolean>>
-};
+export type DsChipEvents = { onDsRemove: EventName<DsChipCustomEvent<void>> };
 
 export const DsChip: StencilReactComponent<DsChipElement, DsChipEvents, Components.DsChip> = /*@__PURE__*/ createComponent<DsChipElement, DsChipEvents, Components.DsChip>({
     tagName: 'ds-chip',
     elementClass: DsChipElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {
-        onDsRemove: 'dsRemove',
-        onDsClick: 'dsClick',
-        onDsPressedChange: 'dsPressedChange'
-    } as DsChipEvents,
+    events: { onDsRemove: 'dsRemove' } as DsChipEvents,
     defineCustomElement: defineDsChip
 });

@@ -15,7 +15,7 @@ export class Slider {
   @Prop() max: number = 100;
   @Prop() step: number = 1;
   @Prop() label!: string;
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
   @Prop() valueText: string | undefined;
   /** Associates with an external <label>. Defaults to an auto-generated ID. */
   @Prop() inputId: string | undefined;
@@ -42,7 +42,11 @@ export class Slider {
           <span class="text-body-small-emphasis">{this.value}</span>
         </div>
         <div
-          class={{ track: true, 'track--inactive': this.inactive, 'track--at-min': pct === 0 }}
+          class={{
+            track: true,
+            'ds-control-inactive': this.isInactive,
+            'track--at-min': pct === 0,
+          }}
           style={{ '--slider-pct': String(pct) } as Record<string, string>}
         >
           <div class="track-inner">
@@ -56,7 +60,7 @@ export class Slider {
             max={this.max}
             step={this.step}
             value={this.value}
-            disabled={this.inactive}
+            disabled={this.isInactive}
             class="range-input"
             aria-valuetext={this.valueText}
             onInput={this.handleInput}

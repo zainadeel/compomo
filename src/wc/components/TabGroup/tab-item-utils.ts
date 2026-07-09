@@ -5,7 +5,8 @@ export interface TabItemDivider {
 export interface TabItemTab {
   id: string;
   label: string;
-  disabled?: boolean;
+  /** Disables the tab (same meaning as control `isInactive`). */
+  isInactive?: boolean;
   /** id of the tabpanel this tab controls */
   panelId?: string;
   /** Show a notification dot (brand) on the tab — no count, matching panel-nav. */

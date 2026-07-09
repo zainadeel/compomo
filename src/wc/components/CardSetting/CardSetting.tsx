@@ -1,9 +1,8 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 
-export type CardSettingWidth = 'xs' | 'sm' | 'md' | 'lg';
+export type CardSettingWidth = 'sm' | 'md' | 'lg';
 
 const CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {
-  xs: 'var(--dimension-card-width-xs)',
   sm: 'var(--dimension-card-width-sm)',
   md: 'var(--dimension-card-width-md)',
   lg: 'var(--dimension-card-width-lg)',

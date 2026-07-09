@@ -1,0 +1,42 @@
+/**
+ * Control density recipes — shared metrics for md / sm / xs interactive controls
+ * (Tag, PanelNav items, BarNav tabs, Menu items, Chip, etc.).
+ *
+ * Apply `.ds-control--md|sm|xs` on the control (host or inner row). Then use the
+ * `--ds-control-*` vars for height, padding, icon box, label inset, gap, and radius.
+ *
+ * Both `:host(.ds-control--*)` and `.ds-control--*` are listed so Stencil scoped
+ * components work whether the class is on the host (Tag) or an inner item (PanelNav).
+ *
+ * @see AGENTS.md — "Control density recipes"
+ */
+
+:host(.ds-control--md),
+.ds-control--md {
+  --ds-control-height: var(--dimension-size-400);
+  --ds-control-icon: var(--dimension-iconography-md);
+  --ds-control-padding-inline: var(--dimension-space-075);
+  --ds-control-label-inset: var(--dimension-space-025);
+  --ds-control-gap: var(--dimension-space-050);
+  --ds-control-radius: var(--dimension-radius-025);
+}
+
+:host(.ds-control--sm),
+.ds-control--sm {
+  --ds-control-height: var(--dimension-size-300);
+  --ds-control-icon: var(--dimension-iconography-sm);
+  --ds-control-padding-inline: var(--dimension-space-050);
+  --ds-control-label-inset: var(--dimension-space-025);
+  --ds-control-gap: var(--dimension-space-025);
+  --ds-control-radius: var(--dimension-radius-025);
+}
+
+:host(.ds-control--xs),
+.ds-control--xs {
+  --ds-control-height: var(--dimension-size-200);
+  --ds-control-icon: var(--dimension-iconography-xs);
+  --ds-control-padding-inline: var(--dimension-space-025);
+  --ds-control-label-inset: var(--dimension-space-025);
+  --ds-control-gap: var(--dimension-space-025);
+  --ds-control-radius: var(--dimension-radius-025);
+}

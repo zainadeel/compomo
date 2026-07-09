@@ -29,12 +29,12 @@ export class Pagination {
   @Prop({ mutable: true }) page: number = 1;
   @Prop() totalPages: number = 1;
   @Prop() siblingCount: number = 1;
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
 
   @Event() dsPageChange!: EventEmitter<number>;
 
   private go(p: number) {
-    if (this.inactive) return;
+    if (this.isInactive) return;
     this.page = p;
     this.dsPageChange.emit(p);
   }
@@ -47,13 +47,13 @@ export class Pagination {
     return (
       <Host>
         <nav
-          class={{ pagination: true, 'pagination--inactive': this.inactive }}
+          class={{ pagination: true, 'ds-control-inactive': this.isInactive }}
           aria-label="Pagination"
         >
           <button
             type="button"
             class="button button--nav"
-            disabled={this.page <= 1 || this.inactive}
+            disabled={this.page <= 1 || this.isInactive}
             onClick={() => this.go(this.page - 1)}
             aria-label="Previous page"
           >
@@ -72,7 +72,7 @@ export class Pagination {
                 class={{ button: true, 'button--active': item === this.page }}
                 onClick={() => this.go(item)}
                 aria-current={item === this.page ? 'page' : undefined}
-                disabled={this.inactive}
+                disabled={this.isInactive}
               >
                 <span class={item === this.page ? 'text-body-small-emphasis' : 'text-body-small'}>
                   {item}
@@ -84,7 +84,7 @@ export class Pagination {
           <button
             type="button"
             class="button button--nav"
-            disabled={this.page >= this.totalPages || this.inactive}
+            disabled={this.page >= this.totalPages || this.isInactive}
             onClick={() => this.go(this.page + 1)}
             aria-label="Next page"
           >

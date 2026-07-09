@@ -1,3 +1,5 @@
+@import '../../utils/control-inactive.css';
+
 .checkbox {
   display: flex;
   align-items: center;
@@ -19,19 +21,15 @@
   background-color: var(--color-interaction-pressed);
 }
 
-.inactive {
-  cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 /* ── Default box indicator ───────────────────────────────────────────────── */
 
 .box {
-  width: 20px;
-  height: 20px;
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
   flex-shrink: 0;
-  border: 1.5px solid var(--color-foreground-secondary);
+  border: var(--dimension-stroke-width-018) solid var(--color-foreground-secondary);
   border-radius: var(--dimension-radius-050);
   display: flex;
   align-items: center;
@@ -47,9 +45,9 @@
 
 .checkmark {
   color: var(--color-foreground-on-bold-background-primary);
-  font-size: 14px;
-  line-height: 1;
-  font-weight: 700;
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-bold);
 }
 
 /* ── Label ───────────────────────────────────────────────────────────────── */

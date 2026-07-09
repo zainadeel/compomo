@@ -4,7 +4,6 @@
  */
 
 /* eslint-disable */
-export { DsAccordion } from "./ds-accordion.js";
 export { DsAppShell } from "./ds-app-shell.js";
 export { DsBadge } from "./ds-badge.js";
 export { DsBanner } from "./ds-banner.js";

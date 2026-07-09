@@ -63,7 +63,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Toggle**, **Checkbox**, **RadioGroup**
 
 ### Data display
-- **Tag**, **Chip**, **Badge**, **Table**, **Accordion**, **Pagination**
+- **Tag**, **Chip**, **Badge**, **Table**, **Pagination**
 
 ### Overlays
 - **Modal**, **Menu**, **Tooltip**, **Select**, **ToastProvider** (`ds-toast-provider`), **Banner**

@@ -1,4 +1,6 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
 
 /* ── Popup shell ─────────────────────────────────────────────────────────── */
 
@@ -76,7 +78,6 @@
   display: flex;
   align-items: center;
   gap: var(--dimension-space-050);
-  position: relative;
   width: 100%;
   min-height: var(--dimension-size-400);
   padding: var(--dimension-space-075);
@@ -89,46 +90,14 @@
   user-select: none;
   text-align: left;
   color: inherit;
-  --_hover-bg: var(--color-interaction-hover);
-  --_pressed-bg: var(--color-interaction-pressed);
-  --_selected-bg: var(--color-interaction-active);
+  /* Hover/press/selected: `.ds-interaction-fill` (+ `--selected`). */
 }
 
 .menu-item:has(.menu-item__subtext) {
   align-items: flex-start;
 }
 
-/* Interaction layer — same ::after pattern as tabs / BarNav trigger */
-.menu-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.menu-item--selected::after {
-  background: var(--_selected-bg);
-  transition: none;
-}
-
-.menu-item:hover:not(:disabled):not(.menu-item--selected)::after {
-  background: var(--_hover-bg);
-  transition: none;
-}
-
-.menu-item:active:not(:disabled)::after {
-  background: var(--_pressed-bg);
-  transition: none;
-}
-
-.menu-item--inactive {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 .menu-item--destructive .menu-item__label {
   color: var(--color-foreground-bold-negative) !important;
@@ -136,7 +105,7 @@
 
 .menu-item__content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -164,7 +133,7 @@
 
 .menu-item__toggle {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   flex-shrink: 0;
   width: calc(var(--dimension-size-400) + var(--dimension-size-050));
   height: var(--dimension-size-250);

@@ -11,7 +11,7 @@ const meta: Meta = {
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
     dot: { control: 'boolean' },
-    inactive: { control: 'boolean' },
+    isInactive: { control: 'boolean' },
     ariaLabel: { control: 'text' },
     backgroundContrast: {
       name: 'on-background-contrast',
@@ -30,7 +30,7 @@ const meta: Meta = {
     activeFill: true,
     hasBorder: false,
     dot: false,
-    inactive: false,
+    isInactive: false,
     backgroundContrast: 'default',
     background: '',
   },
@@ -54,7 +54,7 @@ export const Playground: Story = {
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
       ?dot=${args['dot']}
-      ?inactive=${args['inactive']}
+      ?is-inactive=${args['isInactive']}
       aria-label=${args['ariaLabel']}
       on-background-contrast=${args['backgroundContrast']}
       background=${args['background'] || ''}
@@ -87,8 +87,8 @@ export const States: Story = {
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">inactive</span>
-        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications inactive" inactive></ds-button-unfilled-icon>
-        <ds-button-unfilled-icon icon="Inbox" aria-label="Inbox inactive" inactive dot></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Bell" aria-label="Notifications inactive" is-inactive></ds-button-unfilled-icon>
+        <ds-button-unfilled-icon icon="Inbox" aria-label="Inbox inactive" is-inactive dot></ds-button-unfilled-icon>
       </div>
     </div>
   `,

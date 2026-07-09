@@ -1,4 +1,6 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
 
 :host {
   display: inline-flex;
@@ -27,50 +29,19 @@
   box-sizing: border-box;
   -webkit-user-select: none;
   user-select: none;
-  position: relative;
   overflow: hidden;
   transition:
     background-color var(--effect-motion-short-2),
     color var(--effect-motion-short-2),
     transform var(--effect-motion-short-2);
+  /* Hover/press: `.ds-interaction-fill` + contrast → `--on-*` (token overlay, not color-mix). */
 }
 
-.button-filled::before,
-.button-filled::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.button-filled::before {
-  z-index: 1;
-}
-
-.button-filled::after {
-  z-index: 2;
-}
-
-.button-filled:hover:not(.button-filled--inactive)::before {
-  background: color-mix(in oklch, var(--ds-button-filled-bg) 85%, var(--ds-button-filled-fg));
-}
-
-.button-filled:active:not(.button-filled--inactive) {
+.button-filled:active:not(:disabled):not(.ds-control-inactive) {
   transform: scale(var(--dimension-scale-subtle));
 }
 
-.button-filled:active:not(.button-filled--inactive)::before {
-  background: color-mix(in oklch, var(--ds-button-filled-bg) 80%, var(--ds-button-filled-fg));
-}
-
-.button-filled--inactive {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 .button-filled__icon-wrap {
   position: relative;

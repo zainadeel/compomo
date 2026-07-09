@@ -26,8 +26,8 @@ export class Select {
   /** Placeholder shown when no value is selected. */
   @Prop() placeholder: string = 'Select option';
 
-  /** Disables interaction. */
-  @Prop() inactive: boolean = false;
+  /** Disables interaction (25% opacity via ds-control-inactive). */
+  @Prop() isInactive: boolean = false;
 
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
@@ -87,7 +87,7 @@ export class Select {
   }
 
   private open() {
-    if (this.inactive || !this.options.length) return;
+    if (this.isInactive || !this.options.length) return;
     // Sync menu width to trigger width
     if (this.menuEl && this.triggerEl) {
       this.menuEl.menuWidth = `${this.triggerEl.offsetWidth}px`;
@@ -147,14 +147,14 @@ export class Select {
     const showPlaceholder = !this.hasSelection;
 
     return (
-      <Host class={{ 'select-host': true, inactive: this.inactive }}>
+      <Host class={{ 'select-host': true, 'ds-control-inactive': this.isInactive }}>
         <button
           ref={el => {
             this.triggerEl = (el as HTMLButtonElement) ?? null;
           }}
           type="button"
           class={{ trigger: true, 'trigger--open': this.isOpen }}
-          disabled={this.inactive}
+          disabled={this.isInactive}
           role="combobox"
           aria-haspopup="listbox"
           aria-expanded={this.isOpen}

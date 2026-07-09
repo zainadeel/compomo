@@ -1,1 +1,1 @@
-export type { ChipIntent, ChipContrast, ChipElevation, ChipSize, ChipBackground } from './Chip';
+export type { ChipState, ChipSize, ChipBackground } from './Chip';

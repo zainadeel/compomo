@@ -73,6 +73,9 @@ export class ChartLegend {
                   class={{
                     'chart-legend__item': true,
                     'chart-legend__item--interactive': !!item.href,
+                    'ds-control--md': true,
+                    'ds-interaction-fill': true,
+                    'ds-focus-ring-inset': !!item.href,
                   }}
                   style={{ opacity: isDimmed ? String(DIMMED_OPACITY) : '1' }}
                   href={item.href}

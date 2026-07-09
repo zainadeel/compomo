@@ -38,11 +38,7 @@ Shared `tag--*` CSS applies to both `ds-tag` and `ds-chip`. Optical gap classes:
 | SM   | 20px   | 16px | 2px         | `iconLeftSM` / `iconRightSM` = `space-025` |
 | MD   | 28px   | 20px | 4px         | `iconLeftMD` / `iconRightMD` = `space-050` |
 
-**`ds-chip`:** `tag--icon-right-{SIZE}` is applied when `removable` is true (remove button). Leading-icon classes (`tag--icon-left-*`) are not toggled yet — slot detection is TODO.
-
-**`ds-tag`:** same CSS; TSX does not render a remove button and does not toggle icon optical classes yet.
-
-For Chip, the remove-button side (right) is corrected when `removable` is set. Leading-icon correction will apply once slot presence is wired.
+**`ds-chip` / `ds-tag`:** both use control-density recipes (`ds-control--md|sm|xs`). Tag may slot a leading icon; Chip has no leading icon — its trailing dismiss (✕) uses `--ds-control-icon` / `--ds-control-gap` from the same recipe. Legacy `tag--icon-left-*` / `tag--icon-right-*` optical classes are unused.
 
 ---
 
@@ -62,16 +58,9 @@ iconAndLabel: left  = icon-edge padding + space-050
               right = base + space-050
 ```
 
-**Tag / Chip (rounded — pill padding correction classes):**
+**Tag / Chip (rounded):**
 
-Host classes `tag--rounded-no-icon-left` and `tag--rounded-no-remove-right` add `space-050` on bare label edges.
-
-| Component   | No leading icon (left)     | No remove button (right)        |
-|-------------|----------------------------|---------------------------------|
-| `ds-chip`   | `tag--rounded-no-icon-left` when `rounded` (icon slot TODO) | `tag--rounded-no-remove-right` when `rounded && !removable` |
-| `ds-tag`    | same class when `rounded`  | same when `rounded` (no remove UI yet) |
-
-When both an icon and a remove button are present, neither trailing correction applies on Chip. When neither is present (label only), both can apply.
+Both use `--dimension-radius-half` when `rounded`. Pill edge padding corrections via `tag--rounded-no-icon-left` / `tag--rounded-no-remove-right` are not currently applied — density padding comes from `--ds-control-padding-inline` only.
 
 ---
 

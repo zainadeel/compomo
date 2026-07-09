@@ -116,8 +116,8 @@
   margin-left: auto;
   --ds-button-unfilled-icon-fg: var(--_bar-nav-fg-secondary);
   --ds-button-unfilled-icon-fg-active: var(--_bar-nav-fg-primary);
-  --ds-button-unfilled-icon-hover-bg: var(--_bar-nav-hover);
-  --ds-button-unfilled-icon-pressed-bg: var(--_bar-nav-pressed);
+  --ds-interaction-hover: var(--_bar-nav-hover);
+  --ds-interaction-pressed: var(--_bar-nav-pressed);
   --ds-focus-ring-color: var(--_bar-nav-focus);
 }
 

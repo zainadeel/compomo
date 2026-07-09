@@ -13,9 +13,9 @@ const meta: Meta = {
     radius:     { control: 'select', options: ['', 'none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'] },
     interactive: { control: 'boolean' },
     selected:    { control: 'boolean' },
-    inactive:    { control: 'boolean' },
+    isInactive:    { control: 'boolean' },
   },
-  args: { background: 'primary', contrast: 'faint', elevation: 'none', interactive: false, selected: false, inactive: false },
+  args: { background: 'primary', contrast: 'faint', elevation: 'none', interactive: false, selected: false, isInactive: false },
 };
 
 export default meta;
@@ -31,7 +31,7 @@ export const Playground: Story = {
       radius=${args['radius'] ?? ''}
       ?interactive=${args['interactive']}
       ?selected=${args['selected']}
-      ?inactive=${args['inactive']}
+      ?is-inactive=${args['isInactive']}
       style="padding: 24px; min-width: 200px"
     >
       Surface content

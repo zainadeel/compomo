@@ -1,1 +1,26 @@
 @import '../Tag/Tag.css';
+@import '../../utils/control-inactive.css';
+
+/*
+ * Semantic state colors — Chip’s differentiator from Tag.
+ * All states use the faint contrast weight; hue comes from the state.
+ */
+:host(.chip--default) {
+  background-color: var(--color-background-faint-neutral);
+  color: var(--color-foreground-bold-neutral);
+}
+
+:host(.chip--active) {
+  background-color: var(--color-background-faint-brand);
+  color: var(--color-foreground-bold-brand);
+}
+
+:host(.chip--error) {
+  background-color: var(--color-background-faint-negative);
+  color: var(--color-foreground-bold-negative);
+}
+
+:host(.chip--caution) {
+  background-color: var(--color-background-faint-caution);
+  color: var(--color-foreground-bold-caution);
+}

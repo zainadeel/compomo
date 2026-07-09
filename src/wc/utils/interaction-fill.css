@@ -1,0 +1,135 @@
+/**
+ * Interaction fill — selected (`::before`) + hover/press (`::after`) overlays.
+ *
+ * Paint translucent interaction tokens *over* the control’s own background —
+ * never by swapping `background-color` on `:hover` / `:active`, and never via
+ * `color-mix(bg, fg)` for control chrome.
+ *
+ * Paint order (bottom → top):
+ *   1. Element background (intent / surface)
+ *   2. `::before` — selected / active (opt-in via `.ds-interaction-fill--selected`)
+ *   3. Label / icon / badge content (`.ds-interaction-fill__content` or z-index: 2)
+ *   4. `::after` — hover / press (+ inset focus ring) — topmost wash over content + dots
+ *
+ * Apply `.ds-interaction-fill` on the interactive element (host or inner row).
+ * Omit `.ds-interaction-fill--selected` when chrome wants icon-color-only
+ * selection (`activeFill={false}` on unfilled icon buttons).
+ *
+ * Fills use positive z-index so they paint *above* an opaque host background
+ * (Chip, ButtonFilled). Content sits under the hover wash so badge dots are
+ * covered; raise label/icon with `.ds-interaction-fill__content` (z-index: 2)
+ * — never above `::after` (z-index: 3).
+ *
+ * If the control uses `all: unset`, re-assert `position: relative; z-index: 0`
+ * after the unset so this util’s stacking context still applies.
+ *
+ * Surface helpers remap tokens + `--ds-focus-ring-color`:
+ *   `.ds-interaction-fill--on-medium|bold|strong|always-dark|navigation`
+ *
+ * Override hooks: `--ds-interaction-hover`, `--ds-interaction-pressed`,
+ * `--ds-interaction-active`.
+ *
+ * Borders on interaction targets must be inset (inside the fixed height) so
+ * fills cover the stroke edge — use inset box-shadow, not layout `border`.
+ * See AGENTS.md "Interaction fill" / ButtonUnfilledIcon--bordered.
+ *
+ * @see AGENTS.md — "Interaction fill"
+ */
+
+:host(.ds-interaction-fill),
+.ds-interaction-fill {
+  position: relative;
+  z-index: 0;
+  --ds-interaction-hover: var(--color-interaction-hover);
+  --ds-interaction-pressed: var(--color-interaction-pressed);
+  --ds-interaction-active: var(--color-interaction-active);
+}
+
+:host(.ds-interaction-fill)::before,
+.ds-interaction-fill::before,
+:host(.ds-interaction-fill)::after,
+.ds-interaction-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  transition: none;
+}
+
+/* Layer stack (bottom → top): selected → content → hover/press (topmost). */
+:host(.ds-interaction-fill)::before,
+.ds-interaction-fill::before {
+  z-index: 1;
+}
+
+:host(.ds-interaction-fill)::after,
+.ds-interaction-fill::after {
+  z-index: 3;
+}
+
+:host(.ds-interaction-fill--selected)::before,
+.ds-interaction-fill--selected::before {
+  background: var(--ds-interaction-active);
+}
+
+:host(.ds-interaction-fill:hover:not(:disabled))::after,
+.ds-interaction-fill:hover:not(:disabled)::after {
+  background: var(--ds-interaction-hover);
+}
+
+:host(.ds-interaction-fill:active:not(:disabled))::after,
+.ds-interaction-fill:active:not(:disabled)::after {
+  background: var(--ds-interaction-pressed);
+}
+
+/* Content under the hover wash (so badge dots are covered by ::after). */
+:host(.ds-interaction-fill) > .ds-interaction-fill__content,
+.ds-interaction-fill > .ds-interaction-fill__content,
+.ds-interaction-fill__content {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Surface context ─────────────────────────────────────────────────────── */
+
+:host(.ds-interaction-fill--on-medium),
+.ds-interaction-fill--on-medium {
+  --ds-interaction-hover: var(--color-interaction-on-medium-background-hover);
+  --ds-interaction-pressed: var(--color-interaction-on-medium-background-pressed);
+  --ds-interaction-active: var(--color-interaction-on-medium-background-active);
+  --ds-focus-ring-color: var(--color-interaction-on-medium-background-focus);
+}
+
+:host(.ds-interaction-fill--on-bold),
+.ds-interaction-fill--on-bold {
+  --ds-interaction-hover: var(--color-interaction-on-bold-background-hover);
+  --ds-interaction-pressed: var(--color-interaction-on-bold-background-pressed);
+  --ds-interaction-active: var(--color-interaction-on-bold-background-active);
+  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
+}
+
+:host(.ds-interaction-fill--on-strong),
+.ds-interaction-fill--on-strong {
+  --ds-interaction-hover: var(--color-interaction-on-strong-background-hover);
+  --ds-interaction-pressed: var(--color-interaction-on-strong-background-pressed);
+  --ds-interaction-active: var(--color-interaction-on-strong-background-active);
+  --ds-focus-ring-color: var(--color-interaction-on-strong-background-focus);
+}
+
+:host(.ds-interaction-fill--on-always-dark),
+.ds-interaction-fill--on-always-dark {
+  --ds-interaction-hover: var(--color-always-dark-interaction-hover);
+  --ds-interaction-pressed: var(--color-always-dark-interaction-pressed);
+  --ds-interaction-active: var(--color-always-dark-interaction-active);
+  --ds-focus-ring-color: var(--color-always-dark-interaction-focus);
+}
+
+:host(.ds-interaction-fill--on-navigation),
+.ds-interaction-fill--on-navigation {
+  --ds-interaction-hover: var(--color-navigation-interaction-hover);
+  --ds-interaction-pressed: var(--color-navigation-interaction-pressed);
+  --ds-interaction-active: var(--color-navigation-interaction-active);
+  --ds-focus-ring-color: var(--color-navigation-interaction-focus);
+}

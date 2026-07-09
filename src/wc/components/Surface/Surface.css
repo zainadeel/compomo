@@ -1,3 +1,5 @@
+@import '../../utils/control-inactive.css';
+
 .surface {
   box-sizing: border-box;
   position: relative;
@@ -116,5 +118,4 @@
 }
 .selected > * { position: relative; z-index: 1; }
 
-/* Inactive */
-.inactive { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+/* Inactive: `.ds-control-inactive` (25% opacity). */

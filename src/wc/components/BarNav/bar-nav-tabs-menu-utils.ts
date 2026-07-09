@@ -24,7 +24,7 @@ export function tabsToMenuSections(tabs: TabItem[], selectedId: string): MenuSec
       label: item.label,
       value: item.id,
       isSelected: item.id === selectedId,
-      isInactive: item.disabled,
+      isInactive: item.isInactive,
     });
   }
 

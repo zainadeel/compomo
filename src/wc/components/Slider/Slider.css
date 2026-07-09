@@ -1,3 +1,5 @@
+@import '../../utils/control-inactive.css';
+
 .field {
   display: flex;
   flex-direction: column;
@@ -93,14 +95,14 @@
   inset: var(--dimension-space-025);
   background-color: transparent;
   border-radius: var(--dimension-radius-050);
-  transition: background-color 100ms ease;
+  transition: background-color var(--effect-motion-short-2);
 }
 
-.track:hover:not(.track--inactive) .thumb::after {
+.track:hover:not(.ds-control-inactive) .thumb::after {
   background-color: var(--color-interaction-hover);
 }
 
-.track:active:not(.track--inactive) .thumb::after {
+.track:active:not(.ds-control-inactive) .thumb::after {
   background-color: var(--color-interaction-pressed);
 }
 
@@ -133,10 +135,7 @@
   cursor: grabbing;
 }
 
-.track--inactive {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity) on `.track`. */
 
 .track:focus-within .track-inner {
   box-shadow: var(--effect-elevation-depressed-sm), inset 0 0 0 1.25px var(--color-interaction-focus);

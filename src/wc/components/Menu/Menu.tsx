@@ -381,8 +381,10 @@ export class Menu {
                       'menu-item': true,
                       'ds-focus-ring-inset': true,
                       'ds-focus-ring--visible': isFocused && this.focusRingVisible,
+                      'ds-interaction-fill': !item.isInactive,
+                      'ds-interaction-fill--selected': !!item.isSelected && !item.isInactive,
                       'menu-item--selected': !!item.isSelected,
-                      'menu-item--inactive': !!item.isInactive,
+                      'ds-control-inactive': !!item.isInactive,
                       'menu-item--destructive': !!item.isDestructive,
                       'menu-item--focused': isFocused,
                     }}

@@ -1,3 +1,5 @@
+@import '../../utils/control-inactive.css';
+
 :host {
   display: inline-block;
 }
@@ -10,10 +12,7 @@
   user-select: none;
 }
 
-.pagination--inactive {
-  opacity: 0.5;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 .button {
   display: flex;
@@ -55,7 +54,8 @@
 }
 
 .button--nav {
-  font-size: 18px;
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
 }
 
 .ellipsis {

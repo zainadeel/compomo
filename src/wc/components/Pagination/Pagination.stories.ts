@@ -9,9 +9,9 @@ const meta: Meta = {
     page:         { control: 'number' },
     totalPages:   { control: 'number' },
     siblingCount: { control: 'number' },
-    inactive:     { control: 'boolean' },
+    isInactive:     { control: 'boolean' },
   },
-  args: { page: 5, totalPages: 20, siblingCount: 1, inactive: false },
+  args: { page: 5, totalPages: 20, siblingCount: 1, isInactive: false },
 };
 
 export default meta;
@@ -24,7 +24,7 @@ export const Playground: Story = {
         page=${args['page'] ?? 5}
         total-pages=${args['totalPages'] ?? 20}
         sibling-count=${args['siblingCount'] ?? 1}
-        ?inactive=${args['inactive'] ?? false}
+        ?is-inactive=${args['isInactive'] ?? false}
       ></ds-pagination>
     </div>
   `,
@@ -49,7 +49,7 @@ export const ManyPages: Story = {
 export const Inactive: Story = {
   render: () => html`
     <div style="padding: 16px">
-      <ds-pagination page="3" total-pages="10" ?inactive=${true}></ds-pagination>
+      <ds-pagination page="3" total-pages="10" ?is-inactive=${true}></ds-pagination>
     </div>
   `,
 };

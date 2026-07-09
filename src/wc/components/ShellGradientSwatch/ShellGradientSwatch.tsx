@@ -19,14 +19,14 @@ export class ShellGradientSwatch {
   /** Selected — brand stroke + halo over inner fill/border/interaction stack. */
   @Prop({ reflect: true }) selected = false;
 
-  @Prop() inactive = false;
+  @Prop() isInactive = false;
 
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
 
   @Event() dsSelect!: EventEmitter<ShellGradientPreset>;
 
   private handleClick = () => {
-    if (this.inactive) return;
+    if (this.isInactive) return;
     this.dsSelect.emit(this.preset);
   };
 
@@ -40,6 +40,7 @@ export class ShellGradientSwatch {
           class={{
             'shell-gradient-swatch': true,
             'ds-focus-ring-inset': true,
+            'ds-control-inactive': this.isInactive,
             'shell-gradient-swatch--selected': this.selected,
             'shell-gradient-swatch--none': this.preset === 'none',
           }}
@@ -53,7 +54,7 @@ export class ShellGradientSwatch {
           }
           aria-label={label}
           aria-pressed={this.selected ? 'true' : 'false'}
-          disabled={this.inactive}
+          disabled={this.isInactive}
           onClick={this.handleClick}
         >
           <span class="shell-gradient-swatch__fill" aria-hidden="true" />

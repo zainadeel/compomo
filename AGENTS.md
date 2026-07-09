@@ -31,7 +31,7 @@ src/
         ButtonFilled.tsx
         ButtonFilled.css
         ButtonFilled.stories.ts
-      ...               # All ported components (Accordion, Badge, Banner, …)
+      ...               # All ported components (Badge, Banner, …)
     components.d.ts     # Auto-generated Stencil type declarations — do not edit
   angular/              # Auto-generated Angular proxies (proxies.ts, index.ts) — do not edit
   react/                # Auto-generated React wrappers — do not edit
@@ -76,7 +76,8 @@ npm run dev              # Stencil watch using normal dist output (updates dist/
 npm run storybook        # Stencil watch + Storybook on :6006 (auto-reloads when dist/ rebuilds)
 npm run storybook:build  # Build static Storybook
 npm run typecheck        # tsc --noEmit (Stencil source in src/wc)
-npm run lint             # eslint src/
+npm run lint             # eslint src/ + stylelint component/utils CSS (warnings)
+npm run lint:css         # stylelint TokoMo token category + disallow rules (warnings)
 npm run registry:build   # Regenerate public/r/ (component registry)
 npm run mcp              # Run the in-repo MCP server
 npm run figma:connect:publish:dry-run # Figma Code Connect — dry-run publish (set FIGMA_ACCESS_TOKEN or --token)
@@ -210,12 +211,74 @@ export class MyComponent {
 - Use `:host` for component-level styles; use class selectors for internal elements.
 - Theming is driven by the `data-theme` attribute on a parent element (`@ds-mo/tokens` provides light/dark).
 
+**CSS lint (`npm run lint:css`)**
+
+- Stylelint warns (does not fail CI) when component/utils CSS uses raw lengths/times/colors where TokoMo tokens belong, or uses a `*-width` component token as `height` / `min-height` / `max-height`.
+- Token families by property category: `--color-*` (color/fill/stroke), `--dimension-space-*` (margin/padding/gap/inset), `--dimension-size-*` / `--dimension-iconography-*` / component width tokens (width/height), `--dimension-radius-*`, `--dimension-stroke-width-*`, `--typography-*`, `--effect-*` / `--dimension-z-index-*`.
+- Justify unavoidable exceptions with `/* stylelint-disable-next-line <rule> -- reason */`.
+
 **Icon-only unfilled buttons**
 
 - Use `ds-button-unfilled-icon` for unfilled square icon buttons, including nav chrome actions, overflow triggers, and tool rail actions.
 - Use `isActive` for the active/selected visual state. Active state changes icon color to primary and uses the active interaction fill by default; set `activeFill={false}` only for shell chrome cases that need primary icon color without a filled active background.
 - Use `hasBorder` only when the button needs the optional 1px `--color-border-tertiary` stroke.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
+
+**Control density recipes**
+
+Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNav tabs, Menu items, Chip, …). Import `src/wc/utils/control-density.css` and apply `.ds-control--md|sm|xs` on the host (or set the same `--ds-control-*` vars from your size class).
+
+| | **md** | **sm** | **xs** |
+|---|---|---|---|
+| Height | `--dimension-size-400` (32) | `--dimension-size-300` (24) | `--dimension-size-200` (16) |
+| Icon | `--dimension-iconography-md` (20) | `--dimension-iconography-sm` (16) | `--dimension-iconography-xs` (12) |
+| Text | `text-body-medium` (14/20) | `text-body-small` (12/16) | `text-caption` (9/12) |
+| Row padding-inline | `--dimension-space-075` (6) | `--dimension-space-050` (4) | `--dimension-space-025` (2) |
+| Label inset | `--dimension-space-025` (2) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
+| Icon↔label gap | `--dimension-space-050` (4) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
+| Default radius | `--dimension-radius-025` (2) | same | same |
+| Rounded | `--dimension-radius-half` | same | same |
+
+CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Use a fixed `height` + `align-items: center` + horizontal-only padding (see gotcha below).
+
+**Interaction fill**
+
+Shared layer recipe for interactive controls (buttons, Chip, PanelNav items, Menu items, TabGroup tabs, ChartLegend rows, …). Import `src/wc/utils/interaction-fill.css` and apply `.ds-interaction-fill` on the interactive element.
+
+Paint order (bottom → top): element background → `::before` (selected/active, opt-in) → label/icon/badge content → `::after` (hover/press + inset focus, topmost).
+
+| Class / var | Role |
+|---|---|
+| `.ds-interaction-fill` | Stacking context + `::before`/`::after` shells |
+| `.ds-interaction-fill--selected` | Fills `::before` with `--ds-interaction-active` |
+| `.ds-interaction-fill--on-medium\|bold\|strong\|always-dark\|navigation` | Remap hover/pressed/active + `--ds-focus-ring-color` |
+| `--ds-interaction-hover\|pressed\|active` | Overridable token hooks |
+
+Rules:
+
+- Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
+- Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
+- `::before` = selected/active only. Omit `--selected` when chrome wants icon-color-only selection (`activeFill={false}` on `ds-button-unfilled-icon`, PanelNav/BarNav).
+- `::after` = hover + press (`transition: none`), **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
+- Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
+- If a control uses `all: unset`, re-assert `position: relative; z-index: 0` afterward so the util’s stacking context still applies (see PanelNav items).
+- Omit `.ds-interaction-fill` when `isInactive`, or rely on `:disabled` (util skips hover/press on `:disabled`).
+- Persistent selected *product* state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only — no select/toggle.
+- **Inset borders on interaction targets:** control chrome strokes sit *inside* the fixed height so hover/press/selected fills (`inset: 0`) cover the full edge, including the stroke. Prefer `box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) <token>` (see `ButtonUnfilledIcon--bordered`, TabGroup selected tabs). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use inset strokes.
+
+**Control inactive**
+
+Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/control-inactive.css` and apply `.ds-control-inactive` when inactive.
+
+| Class | Role |
+|---|---|
+| `.ds-control-inactive` | `opacity: 0.25`, `pointer-events: none`, `cursor: not-allowed` |
+
+Rules:
+
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled-icon`, `ds-chip`, `ds-checkbox`, `ds-toggle`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-surface`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
+- Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
+- Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 
 **Focus states**
 
@@ -288,7 +351,7 @@ render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`
 A block box's rendered line height is the *taller* of its own inherited "strut" (based on whatever font-size/line-height it inherits) and its actual inline content. A plain wrapper `<span>` around `<ds-text>` doesn't inherit `text-body-medium`'s line-height from anywhere — only `<ds-text>`'s own inner tag has it. Left unset, the wrapper falls back to the browser default (`line-height: normal`, ~1.5×), which is usually *taller* than the intended type scale and silently inflates whatever contains it. Set the wrapper's `line-height` to match the same token used by the nested `<ds-text variant>` (e.g. `line-height: var(--typography-lineheight-md)` for `text-body-medium`) so the wrapper hugs its actual content.
 
 **`position: relative` alone does NOT create a stacking context — you also need a non-`auto` `z-index`.**
-A `::after`/`::before` pseudo-layer with `z-index: -1` (the interaction-fill pattern used by buttons, `ChartLegend`, etc.) is meant to paint just behind its own element. But if the parent only has `position: relative` and no explicit `z-index`, it never becomes its own stacking context — so the pseudo's `z-index: -1` escapes past the parent and can paint behind some ancestor's opaque background instead. Fix: give the parent `z-index: 0` (or any non-`auto` value) alongside `position: relative`. For genuinely floating elements that must sit above unrelated siblings (tooltips, popovers), use the `--dimension-z-index-*` token scale (`base` 0, `raised` 50, `overlay` 250, `modal` 450, `floating` 500, `tooltip` 750) rather than a magic number — see `TooltipDataViz.css`.
+`.ds-interaction-fill` sets `z-index: 0` on the control so its `::before`/`::after` fills stay inside that stacking context. Paint order: selected (`::before` z-index 1) → content (z-index 2) → hover/press (`::after` z-index 3, topmost — covers badge dots). Place label/icon with `.ds-interaction-fill__content` or `position: relative; z-index: 2` on children — never above `::after`. For genuinely floating elements that must sit above unrelated siblings (tooltips, popovers), use the `--dimension-z-index-*` token scale (`base` 0, `raised` 50, `overlay` 250, `modal` 450, `floating` 500, `tooltip` 750) rather than a magic number — see `TooltipDataViz.css`.
 
 **Cross-component hover-sync: keep "external highlight" and "own hover" as separate state, don't collapse them into one prop.**
 When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong *only* to a genuine pointer/keyboard interaction on that specific element (a tooltip, a hover-fill affordance implying "you can click here") and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did *this* element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. See `ChartDonut`/`ChartLegend`.

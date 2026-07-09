@@ -64,7 +64,7 @@ export class TooltipDataViz {
         class="tooltip-data-viz"
         style={{ left: `${this.x}px`, top: `${this.y}px`, transform: `translate(${translateX}, ${translateY})` }}
       >
-        <div class="tooltip-data-viz__item">
+        <div class="tooltip-data-viz__item ds-control--md">
           <span class="tooltip-data-viz__label">
             <ds-text as="span" variant="text-body-medium" color="var(--color-foreground-on-translucent-background-secondary)">
               {this.label}

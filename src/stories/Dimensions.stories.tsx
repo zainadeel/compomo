@@ -167,7 +167,8 @@ function Strokes() {
       <Section title="Component Widths" subtitle="Cards, modals, forms, menus, panels">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
           {[
-            { group: 'card-width', tokens: ['sm', 'md', 'lg'], values: ['400', '600', '800'] },
+            { group: 'card-width', tokens: ['sm', 'md', 'lg'], values: ['400', '500', '600'] },
+            { group: 'card-height', tokens: ['sm', 'md', 'lg'], values: ['400', '500', '600'] },
             { group: 'modal-width', tokens: ['sm', 'md', 'lg'], values: ['400', '600', '800'] },
             { group: 'menu-width', tokens: ['sm', 'md', 'lg'], values: ['200', '400', '600'] },
             { group: 'panel-width', tokens: ['xs', 'sm', 'md', 'lg', 'xl'], values: ['200', '300', '400', '500', '600'] },

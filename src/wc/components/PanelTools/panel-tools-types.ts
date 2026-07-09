@@ -28,6 +28,6 @@ export interface PanelToolsItem {
   selected?: boolean;
   /** Show a notification dot. */
   dot?: boolean;
-  inactive?: boolean;
+  isInactive?: boolean;
   ariaLabel?: string;
 }

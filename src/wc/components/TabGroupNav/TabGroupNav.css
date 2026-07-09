@@ -1,4 +1,5 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
 
 :host {
   display: block;
@@ -59,12 +60,7 @@
 
 .tab--selected { color: var(--color-foreground-primary); }
 
-.tab:disabled,
-.tab[aria-disabled="true"] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity) — applied via class in TSX. */
 
 /* Vertical tabs read as a list — left-align the label */
 .tab-list--vertical .tab { justify-content: flex-start; }

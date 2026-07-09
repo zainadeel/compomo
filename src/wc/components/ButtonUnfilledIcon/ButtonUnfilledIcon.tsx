@@ -28,7 +28,7 @@ export class ButtonUnfilledIcon {
   @Prop() dot: boolean = false;
 
   /** Disables interaction. */
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
 
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
@@ -66,7 +66,7 @@ export class ButtonUnfilledIcon {
   }
 
   private handleClick = (event: MouseEvent) => {
-    if (this.inactive) return;
+    if (this.isInactive) return;
     this.dsClick.emit(event);
     this.dsChange.emit(!this.isActive);
   };
@@ -82,10 +82,16 @@ export class ButtonUnfilledIcon {
     const cls: Record<string, boolean> = {
       'button-icon': true,
       'ds-focus-ring-inset': true,
+      'ds-interaction-fill': !this.isInactive,
+      'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
+      'ds-interaction-fill--on-medium': contrast === 'medium',
+      'ds-interaction-fill--on-bold': contrast === 'bold',
+      'ds-interaction-fill--on-strong': contrast === 'strong',
+      'ds-interaction-fill--on-always-dark': bg === 'always-dark',
+      'ds-interaction-fill--on-navigation': bg === 'navigation',
       'button-icon--active': this.isActive,
-      'button-icon--active-fill': this.isActive && this.activeFill,
       'button-icon--bordered': this.hasBorder,
-      'button-icon--inactive': this.inactive,
+      'ds-control-inactive': this.isInactive,
       'button-icon--contrast-medium': contrast === 'medium',
       'button-icon--contrast-bold': contrast === 'bold',
       'button-icon--contrast-strong': contrast === 'strong',
@@ -101,7 +107,7 @@ export class ButtonUnfilledIcon {
           }}
           type={this.type}
           class={cls}
-          disabled={this.inactive}
+          disabled={this.isInactive}
           tabIndex={this.focusTabIndex ?? 0}
           aria-label={this.ariaLabel}
           aria-controls={this.controls}

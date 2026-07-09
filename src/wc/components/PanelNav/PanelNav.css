@@ -1,4 +1,5 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
 
 /* ── Theme variables ──────────────────────────────────────────────────────── */
 
@@ -34,6 +35,8 @@
   --_nav-pressed:      var(--color-interaction-pressed);
   --_nav-focus:        var(--color-interaction-focus);
   --_nav-dot:          var(--color-foreground-bold-brand);
+  --ds-interaction-hover: var(--_nav-hover);
+  --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);
 }
 
@@ -57,6 +60,9 @@
   --_nav-pressed:      var(--color-interaction-pressed);
   --_nav-focus:        var(--color-interaction-focus);
   --_nav-dot:          var(--color-foreground-bold-brand);
+  --ds-interaction-hover: var(--_nav-hover);
+  --ds-interaction-pressed: var(--_nav-pressed);
+  --ds-focus-ring-color: var(--_nav-focus);
 }
 
 /* ── Shell ───────────────────────────────────────────────────────────────── */
@@ -108,6 +114,9 @@
 
 .panel-nav__header-btn {
   all: unset;
+  /* Re-assert after unset — required for `.ds-interaction-fill` stacking. */
+  position: relative;
+  z-index: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,25 +124,11 @@
   border-radius: var(--dimension-radius-025, 2px);
   cursor: pointer;
   color: var(--_nav-fg-primary);
-  position: relative;
   flex-shrink: 0;
   box-sizing: border-box;
   transition: color var(--effect-motion-short-3, 200ms ease);
+  /* Hover/press: `.ds-interaction-fill` (tokens from --_nav-* via --ds-interaction-*). */
 }
-
-/* Interaction pseudo-element */
-.panel-nav__header-btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--dimension-radius-025, 2px);
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.panel-nav__header-btn:hover::after  { background: var(--_nav-hover);   transition: none; }
-.panel-nav__header-btn:active::after { background: var(--_nav-pressed); transition: none; }
 
 /* Logo — visible by default; instant swap to toggle on hover (no crossfade overlap) */
 .panel-nav__header-logo {
@@ -141,7 +136,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   opacity: 1;
 }
 
@@ -151,7 +146,7 @@
   display: block;
 }
 
-/* Toggle icon — stacked on logo; opacity swap matches hover bg (instant) */
+/* Toggle icon — stacked on logo; under hover wash (::after z-index 3) */
 .panel-nav__header-toggle {
   display: flex;
   align-items: center;
@@ -215,6 +210,9 @@
 
 .panel-nav__item {
   all: unset;
+  /* Re-assert after unset — required for `.ds-interaction-fill` stacking. */
+  position: relative;
+  z-index: 0;
   display: flex;
   align-items: center;
   gap: var(--dimension-space-050, 4px);
@@ -223,26 +221,12 @@
   border-radius: var(--dimension-radius-025, 2px);
   cursor: pointer;
   color: var(--_nav-fg-secondary);
-  position: relative;
   box-sizing: border-box;
   width: 100%;
   user-select: none;
   transition: color var(--effect-motion-short-1, 50ms ease-in-out);
+  /* Hover/press: `.ds-interaction-fill` — no --selected (icon/type weight only). */
 }
-
-/* Interaction layer */
-.panel-nav__item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--dimension-radius-025, 2px);
-  background: transparent;
-  pointer-events: none;
-  transition: none;
-}
-
-.panel-nav__item:hover::after  { background: var(--_nav-hover);   transition: none; }
-.panel-nav__item:active::after { background: var(--_nav-pressed); transition: none; }
 
 /* ── Active item ─────────────────────────────────────────────────────────── */
 
@@ -261,11 +245,14 @@
   width: var(--dimension-iconography-md, 20px);
   height: var(--dimension-iconography-md, 20px);
   position: relative;
+  z-index: 2;
 }
 
 /* ── Item label ──────────────────────────────────────────────────────────── */
 
 .panel-nav__item-label {
+  position: relative;
+  z-index: 2;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -275,7 +262,9 @@
   line-height: var(--typography-lineheight-md, 20px);
   opacity: 1;
   /* Gradient wipe: mask sweeps left-to-right on expand, right-to-left on collapse */
+  /* stylelint-disable-next-line color-named -- mask luminance stops, not theme colors */
   mask-image: linear-gradient(to right, black 50%, transparent 100%);
+  /* stylelint-disable-next-line color-named -- mask luminance stops, not theme colors */
   -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
   mask-size: 200% 100%;
   -webkit-mask-size: 200% 100%;
@@ -295,6 +284,7 @@
 
 .panel-nav__item-dot {
   position: absolute;
+  z-index: 2;
   right: calc(var(--dimension-space-100, 8px) + var(--dimension-space-050, 4px) + var(--dimension-stroke-width-012, 1px));
   top: calc(var(--dimension-space-100, 8px) + var(--dimension-space-050, 4px) + var(--dimension-stroke-width-012, 1px));
   pointer-events: none;
@@ -359,8 +349,8 @@
   top: var(--_nav-padding-y);
   --ds-button-unfilled-icon-fg: var(--_nav-fg-secondary);
   --ds-button-unfilled-icon-fg-active: var(--_nav-fg-primary);
-  --ds-button-unfilled-icon-hover-bg: var(--_nav-hover);
-  --ds-button-unfilled-icon-pressed-bg: var(--_nav-pressed);
+  --ds-interaction-hover: var(--_nav-hover);
+  --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);
 }
 
@@ -494,6 +484,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  /* stylelint-disable-next-line color-named -- near-invisible hit-test fill; not a theme color */
   background: rgba(0, 0, 0, 0.001);
 }
 
@@ -526,8 +517,9 @@
   .panel-nav__resize-handle,
   .panel-nav__resize-handle::before,
   .panel-nav__resize-handle::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    transition-delay: 0.01ms !important;
+    /* Near-instant — browsers treat 0 as "no transition" and can skip the end state. */
+    transition-duration: var(--effect-animation-duration-instant) !important;
+    animation-duration: var(--effect-animation-duration-instant) !important;
+    transition-delay: var(--effect-animation-duration-instant) !important;
   }
 }

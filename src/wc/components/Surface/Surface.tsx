@@ -29,7 +29,7 @@ export class Surface {
   @Prop() radius: SurfaceRadius | undefined;
   @Prop() interactive: boolean = false;
   @Prop() selected: boolean = false;
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
   @Prop() as: SurfaceElement = 'div';
 
   render() {
@@ -64,7 +64,7 @@ export class Surface {
       radiusClass,
       this.interactive ? 'interactive' : '',
       this.selected ? 'selected' : '',
-      this.inactive ? 'inactive' : '',
+      this.isInactive ? 'ds-control-inactive' : '',
     ].filter(Boolean).join(' ');
 
     return (

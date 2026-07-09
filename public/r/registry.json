@@ -121,7 +121,7 @@
             "type": "boolean",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -155,7 +155,7 @@
             "required": true
           },
           "cardWidth": {
-            "type": "'xs' | 'sm' | 'md' | 'lg'",
+            "type": "'sm' | 'md' | 'lg'",
             "required": false
           },
           "editing": {
@@ -200,7 +200,7 @@
             "type": "'bold' | 'strong' | 'medium' | 'faint'",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -222,7 +222,7 @@
     {
       "name": "button-unfilled-icon",
       "title": "ButtonUnfilledIcon",
-      "description": "Square unfilled icon button for chrome actions, overflow triggers, and tool rail actions. Supports active, active-without-fill, bordered, dot, inactive, and surface-aware interaction states.",
+      "description": "Square unfilled icon button for chrome actions, overflow triggers, and tool rail actions. Supports active, active-without-fill, bordered, dot, isInactive, and surface-aware interaction states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -252,7 +252,7 @@
             "type": "boolean",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -283,7 +283,7 @@
     {
       "name": "tag",
       "title": "Tag",
-      "description": "Static metadata label with intent coloring and optional icon support.",
+      "description": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -303,10 +303,6 @@
           },
           "contrast": {
             "type": "'strong' | 'bold' | 'medium' | 'faint'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'flat' | 'elevated'",
             "required": false
           },
           "size": {
@@ -339,7 +335,7 @@
     {
       "name": "chip",
       "title": "Chip",
-      "description": "Interactive metadata chip with pressed, inactive, removable, and icon states.",
+      "description": "Removable metadata chip — same control-density recipe as Tag, colored by semantic state (default / active / error / caution). Not a toggle/select control.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -353,16 +349,8 @@
             "type": "string",
             "required": true
           },
-          "intent": {
-            "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive'",
-            "required": false
-          },
-          "contrast": {
-            "type": "'strong' | 'bold' | 'medium' | 'faint'",
-            "required": false
-          },
-          "elevation": {
-            "type": "'none' | 'flat' | 'elevated'",
+          "state": {
+            "type": "'default' | 'active' | 'error' | 'caution'",
             "required": false
           },
           "size": {
@@ -373,10 +361,6 @@
             "type": "boolean",
             "required": false
           },
-          "icon": {
-            "type": "IconComponent",
-            "required": false
-          },
           "removable": {
             "type": "boolean",
             "required": false
@@ -385,20 +369,12 @@
             "type": "() => void",
             "required": false
           },
-          "pressed": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
-          "onPressedChange": {
-            "type": "(pressed: boolean) => void",
-            "required": false
-          },
-          "onClick": {
-            "type": "() => void",
-            "required": false
-          },
-          "inactive": {
-            "type": "boolean",
+          "background": {
+            "type": "'faint' | 'medium' | 'bold' | 'strong' | 'always-dark'",
             "required": false
           },
           "maxWidth": {
@@ -413,7 +389,8 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
-        "text"
+        "text",
+        "icon"
       ]
     },
     {
@@ -509,7 +486,7 @@
             "type": "(checked: boolean) => void",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -554,7 +531,7 @@
             "type": "(checked: boolean) => void",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -614,7 +591,7 @@
             "type": "React.ReactNode",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -667,7 +644,7 @@
             "type": "string",
             "required": true
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           }
@@ -719,7 +696,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Dropdown select using `ds-menu` internally. Supports placeholder, inactive state, and custom chevron icon.",
+      "description": "Dropdown select using `ds-menu` internally. Supports placeholder, isInactive state, and custom chevron icon.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -745,7 +722,7 @@
             "type": "string",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -1165,7 +1142,7 @@
     {
       "name": "radio-group",
       "title": "RadioGroup",
-      "description": "Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option inactive, and keyboard navigation.",
+      "description": "Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option isInactive, and keyboard navigation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1191,7 +1168,7 @@
             "type": "'vertical' | 'horizontal'",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           },
@@ -1268,46 +1245,6 @@
       "registryDependencies": []
     },
     {
-      "name": "accordion",
-      "title": "Accordion",
-      "description": "Collapsible section list with single or multiple expand mode, animated height transitions, and controlled/uncontrolled state.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/accordion",
-        "exports": [
-          "Accordion",
-          "AccordionItem"
-        ],
-        "props": {
-          "items": {
-            "type": "AccordionItemData[]",
-            "required": true
-          },
-          "multiple": {
-            "type": "boolean",
-            "required": false
-          },
-          "expandedIds": {
-            "type": "string[]",
-            "required": false
-          },
-          "onExpandedChange": {
-            "type": "(ids: string[]) => void",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "breadcrumb",
       "title": "Breadcrumb",
       "description": "Hierarchical navigation with link or button items, custom separator, and aria-current on the last item.",
@@ -1367,7 +1304,7 @@
             "type": "number",
             "required": false
           },
-          "inactive": {
+          "isInactive": {
             "type": "boolean",
             "required": false
           }

@@ -34,7 +34,7 @@ export class ButtonFilled {
   @Prop() contrast: ButtonFilledContrast = 'bold';
 
   /** Disables interaction. */
-  @Prop() inactive: boolean = false;
+  @Prop() isInactive: boolean = false;
 
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
@@ -51,7 +51,7 @@ export class ButtonFilled {
   }
 
   private handleClick = (event: MouseEvent) => {
-    if (this.inactive) return;
+    if (this.isInactive) return;
     this.dsClick.emit(event);
   };
 
@@ -59,7 +59,13 @@ export class ButtonFilled {
     const cls: Record<string, boolean> = {
       'button-filled': true,
       'ds-focus-ring-inset': true,
-      'button-filled--inactive': this.inactive,
+      'ds-interaction-fill': !this.isInactive,
+      /* Bold is the default filled contrast — on-bold interaction tokens. */
+      'ds-interaction-fill--on-bold': this.contrast === 'bold',
+      'ds-interaction-fill--on-strong': this.contrast === 'strong',
+      'ds-interaction-fill--on-medium': this.contrast === 'medium',
+      /* faint → default app interaction tokens (no --on-*). */
+      'ds-control-inactive': this.isInactive,
       [`button-filled--intent-${this.intent}`]: true,
       [`button-filled--contrast-${this.contrast}`]: this.contrast !== 'bold',
     };
@@ -72,7 +78,7 @@ export class ButtonFilled {
           }}
           type={this.type}
           class={cls}
-          disabled={this.inactive}
+          disabled={this.isInactive}
           aria-label={this.ariaLabel}
           onClick={this.handleClick}
         >

@@ -56,7 +56,8 @@
 }
 
 .sort-indicator {
-  font-size: 12px;
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
   color: var(--color-foreground-secondary);
 }
 
@@ -125,11 +126,11 @@
 /* ─── Loading skeleton ──────────────────────────────────────────────────────── */
 
 .skeleton {
-  height: 14px;
+  height: var(--typography-fontsize-md);
   width: 60%;
   background-color: var(--color-background-translucent);
   border-radius: var(--dimension-radius-050);
-  animation: shimmer 1.5s infinite;
+  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;
 }
 
 @keyframes shimmer {

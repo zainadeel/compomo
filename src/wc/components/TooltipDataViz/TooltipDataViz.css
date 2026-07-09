@@ -1,3 +1,5 @@
+@import '../../utils/control-density.css';
+
 /* No padding here — the item div below owns all the spacing, so there's exactly one padding
    box instead of stacking the host's padding on top of the item's. */
 :host {
@@ -8,32 +10,29 @@
   background-color: var(--color-background-translucent);
   backdrop-filter: blur(var(--effect-blur-md));
   -webkit-backdrop-filter: blur(var(--effect-blur-md));
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   box-shadow: var(--effect-elevation-elevated-floating);
   white-space: nowrap;
   pointer-events: none;
   animation: tooltip-data-viz-fade-in var(--effect-motion-short-2) forwards;
 }
 
-/* Fixed height (not derived from padding + line-height) — same fix as ChartLegend's items:
-   a plain wrapper can inherit a taller default line-height than its actual content and inflate
-   the row. A hard height + horizontal-only padding sidesteps that. */
+/* Density: md control recipe (height / pad / label inset) — non-interactive, no interaction-fill. */
 .tooltip-data-viz__item {
   box-sizing: border-box;
-  height: var(--dimension-size-400);
+  height: var(--ds-control-height, var(--dimension-size-400));
   display: flex;
   align-items: center;
   gap: var(--dimension-space-025);
-  padding: 0 var(--dimension-space-075);
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
 }
 
 /* <ds-text>'s host is `display: contents` — padding/line-height on it would no-op, so this
-   wrapper owns both: 2px horizontal padding around the text, and line-height matching
-   text-body-medium so the wrapper hugs its actual content instead of inheriting the browser
-   default. */
+   wrapper owns both: label inset around the text, and line-height matching text-body-medium
+   so the wrapper hugs its actual content instead of inheriting the browser default. */
 .tooltip-data-viz__label,
 .tooltip-data-viz__value {
-  padding: 0 var(--dimension-space-025);
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   line-height: var(--typography-lineheight-md);
 }
 

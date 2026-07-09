@@ -515,6 +515,7 @@ export class PanelNav {
         'panel-nav__item': true,
         'panel-nav__item--active': isActive,
         'ds-focus-ring-inset': true,
+        'ds-interaction-fill': true,
       },
       'aria-current': isActive ? ('page' as const) : undefined,
       title: collapsed ? item.label : undefined,
@@ -557,7 +558,7 @@ export class PanelNav {
           <div class="panel-nav__header">
             <button
               type="button"
-              class="panel-nav__header-btn ds-focus-ring-inset"
+              class="panel-nav__header-btn ds-focus-ring-inset ds-interaction-fill"
               tabIndex={this.rovingIndex === 0 ? 0 : -1}
               onClick={() => this.handleToggle()}
               onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, 0)}
@@ -626,7 +627,7 @@ export class PanelNav {
             <button
               type="button"
               id={PANEL_NAV_USER_MENU_ANCHOR_ID}
-              class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset"
+              class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset ds-interaction-fill"
               tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
               aria-label={collapsed ? `User: ${userName}` : `User menu for ${userName}`}
               onClick={(e) => this.handleUserAction(e)}

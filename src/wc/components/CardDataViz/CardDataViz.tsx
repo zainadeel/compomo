@@ -1,6 +1,6 @@
 import { Component, Element, State, h, Host, Prop } from '@stencil/core';
 
-export type CardDataVizWidth = 'xs' | 'sm' | 'md' | 'lg';
+export type CardDataVizWidth = 'sm' | 'md' | 'lg';
 
 /** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */
 type HoveredDatum = { label: string } | null;
@@ -9,7 +9,6 @@ type HoveredDatum = { label: string } | null;
 type SyncableSlot = HTMLElement & { activeLabel?: string | null };
 
 const CARD_WIDTH_VARS: Record<CardDataVizWidth, string> = {
-  xs: 'var(--dimension-card-width-xs)',
   sm: 'var(--dimension-card-width-sm)',
   md: 'var(--dimension-card-width-md)',
   lg: 'var(--dimension-card-width-lg)',

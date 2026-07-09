@@ -152,7 +152,7 @@ export class PanelTools {
   @Method()
   async activateTool(id: PanelToolsToolId) {
     const item = this.railItems.find(entry => entry.id === id);
-    if (!item || item.inactive) return;
+    if (!item || item.isInactive) return;
     this.handleToolChange(id);
   }
 
@@ -212,7 +212,7 @@ export class PanelTools {
         isActive={this.isRailSelected(item.id)}
         activeFill={false}
         dot={item.dot ?? false}
-        inactive={item.inactive}
+        isInactive={item.isInactive}
         focusTabIndex={index === this.rovingIndex ? 0 : -1}
         aria-label={item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id]}
         pressed={this.isRailSelected(item.id)}

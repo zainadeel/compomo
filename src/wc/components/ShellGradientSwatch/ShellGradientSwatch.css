@@ -1,4 +1,5 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
 
 /**
  * Swatch — 24×24 orb (size-300). Spacing lives on the picker row.
@@ -142,10 +143,7 @@
   transform: scale(1);
 }
 
-.shell-gradient-swatch:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+/* Inactive: `.ds-control-inactive` (25% opacity). */
 
 @media (prefers-reduced-motion: reduce) {
   .shell-gradient-swatch__fill,

@@ -23,14 +23,14 @@ const meta: Meta = {
     icon: { control: 'text' },
     intent: { control: 'select', options: [...INTENTS] },
     contrast: { control: 'select', options: [...CONTRASTS] },
-    inactive: { control: 'boolean' },
+    isInactive: { control: 'boolean' },
     ariaLabel: { control: 'text' },
   },
   args: {
     icon: 'Check',
     intent: 'brand',
     contrast: 'bold',
-    inactive: false,
+    isInactive: false,
     ariaLabel: 'Confirm',
   },
 };
@@ -49,7 +49,7 @@ export const Playground: Story = {
       icon=${args['icon']}
       intent=${args['intent']}
       contrast=${args['contrast']}
-      ?inactive=${args['inactive']}
+      ?is-inactive=${args['isInactive']}
       aria-label=${args['ariaLabel']}
     ></ds-button-filled>
   `,

@@ -13,21 +13,21 @@
 
 :host(.text),
 .text {
-  height: 14px;
+  height: var(--typography-fontsize-md);
   border-radius: var(--dimension-radius-050);
   width: 100%;
 }
 
 :host(.circular) {
-  width: 40px;
-  height: 40px;
+  width: var(--dimension-size-500);
+  height: var(--dimension-size-500);
   border-radius: var(--dimension-radius-half);
 }
 
 :host(.rectangular),
 .rectangular {
   width: 100%;
-  height: 80px;
+  height: var(--dimension-size-800, 80px);
   border-radius: var(--dimension-radius-075);
 }
 
@@ -58,7 +58,7 @@
     var(--color-interaction-hover) 50%,
     transparent 100%
   );
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;
 }
 
 @keyframes shimmer {
