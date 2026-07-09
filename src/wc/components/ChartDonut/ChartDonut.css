@@ -9,7 +9,7 @@
 }
 
 .chart-donut__svg path {
-  cursor: pointer;
+  cursor: default;
   transition: opacity var(--effect-motion-short-2);
 }
 
