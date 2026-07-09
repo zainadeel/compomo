@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.13.0](https://github.com/zainadeel/compomo/compare/v2.12.0...v2.13.0) (2026-07-09)
+
+
+### Added
+
+* card shell, Select polish, and shared control width ([75d083c](https://github.com/zainadeel/compomo/commit/75d083c90479db053018d220cb1b91000a29d180))
+* **CardSetting:** min-height from matching card height token ([157b897](https://github.com/zainadeel/compomo/commit/157b897286574e1a340a435e1f1bd6f2c3630c98))
+* **Card:** shared shell and CardDataVizDonut with fill ChartDonut ([889a6ba](https://github.com/zainadeel/compomo/commit/889a6ba1a1fd6a1f65e0a77ffc45e82d43132f4e))
+* select polish, control width, and card shell follow-ups ([bcba023](https://github.com/zainadeel/compomo/commit/bcba023020d3682b767a20212227c28cea79e5bc))
+
+
+### Fixed
+
+* **build:** restore menu placement exports in components.d.ts ([677dedc](https://github.com/zainadeel/compomo/commit/677dedccde5e6be0566c8337b721f82da9e01625))
+* **build:** stop patching components.d.ts for menu placement ([93a4f18](https://github.com/zainadeel/compomo/commit/93a4f184f1e24b7097fb1696371df33dd3f810ed))
+* **Select:** align menu labels with trigger and allow wider menus ([0adfbdc](https://github.com/zainadeel/compomo/commit/0adfbdc9e21d9eaf43e9b9414dfb976387b48550))
+
 ## [2.12.0](https://github.com/zainadeel/compomo/compare/v2.11.2...v2.12.0) (2026-07-09)
 
 
