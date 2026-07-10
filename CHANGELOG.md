@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.14.0](https://github.com/zainadeel/compomo/compare/v2.13.1...v2.14.0) (2026-07-10)
+
+
+### Added
+
+* **PanelTools:** add Help & Support footer rail tool ([7587277](https://github.com/zainadeel/compomo/commit/758727790f25426dcc0b93824cb564fe100b1788))
+* **PanelTools:** add Help & Support footer rail tool ([81188c4](https://github.com/zainadeel/compomo/commit/81188c4007df2f2e199478583ef1f2b617c099e2))
+
 ## [2.13.1](https://github.com/zainadeel/compomo/compare/v2.13.0...v2.13.1) (2026-07-10)
 
 
