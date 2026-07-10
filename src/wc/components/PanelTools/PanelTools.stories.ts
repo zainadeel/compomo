@@ -11,6 +11,7 @@ const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
+  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
 ];
 
 const meta: Meta = {
@@ -21,7 +22,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Tool rail + sliding drawer. Each tool has a **named slot** (`search`, `agents`, `messages`, `stacks`, `activity`) for its own composed UI. The component shows the active tool’s slot while the drawer is open; closing slides the drawer shut without unmounting slotted content.',
+          'Tool rail + sliding drawer. Each tool has a **named slot** (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) for its own composed UI. Search sits in the rail header; **Help & Support** is flush to the rail footer. The component shows the active tool’s slot while the drawer is open; closing slides the drawer shut without unmounting slotted content.',
       },
     },
   },
@@ -79,6 +80,7 @@ function toolsShell(open: boolean, activeTool: PanelToolsToolId) {
         <p slot="stacks">Stacks tool UI</p>
         <p slot="activity">Activity tool UI</p>
         <p slot="agents">Agents tool UI</p>
+        <p slot="help">Help &amp; Support tool UI</p>
       </ds-panel-tools>
     </div>
   `;
@@ -107,6 +109,11 @@ export const ActivityOpen: Story = {
 export const AgentsOpen: Story = {
   name: 'Agents open',
   render: () => toolsShell(true, 'agents'),
+};
+
+export const HelpOpen: Story = {
+  name: 'Help & Support open',
+  render: () => toolsShell(true, 'help'),
 };
 
 export const RailOnly: Story = {
@@ -166,6 +173,7 @@ export const Interactive: Story = {
         <p slot="stacks">Stacks content</p>
         <p slot="activity">Activity content</p>
         <p slot="agents">Agents content</p>
+        <p slot="help">Help &amp; Support content</p>
       </ds-panel-tools>
     </div>
   `,
@@ -220,6 +228,7 @@ export const InGradientShell: Story = {
           <p slot="messages">Messages drawer over shell chrome</p>
           <p slot="stacks">Stacks drawer over shell chrome</p>
           <p slot="activity">Activity drawer over shell chrome</p>
+          <p slot="help">Help &amp; Support drawer over shell chrome</p>
         </ds-panel-tools>
       </ds-app-shell>
     </div>

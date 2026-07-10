@@ -793,7 +793,7 @@ export namespace Components {
          */
         "activateTool": (id: PanelToolsToolId) => Promise<void>;
         /**
-          * Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`.
+          * Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`.
           * @default ''
          */
         "activeTool": PanelToolsToolId | '';
@@ -2677,7 +2677,7 @@ declare namespace LocalJSX {
     }
     interface DsPanelTools {
         /**
-          * Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`.
+          * Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`.
           * @default ''
          */
         "activeTool"?: PanelToolsToolId | '';
