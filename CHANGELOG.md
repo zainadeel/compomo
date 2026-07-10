@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.0.0](https://github.com/zainadeel/compomo/compare/v2.15.0...v3.0.0) (2026-07-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **Loader:** ds-loader size is now an iconography token (xs–3xl), not a pixel number.
+
+### Added
+
+* **Loader:** match icon size/color API with spinner SVG ([0b17e25](https://github.com/zainadeel/compomo/commit/0b17e253650189e8b2ed526064c370a4577b464d))
+* **Loader:** match icon size/color API with spinner SVG ([965ccd5](https://github.com/zainadeel/compomo/commit/965ccd5a3fe56b4a4c158c9a65ddffb1a3704be1))
+* **Text:** make ds-text a deterministic metric box ([e4848af](https://github.com/zainadeel/compomo/commit/e4848afa623412becd888b41ed8d3b0c6c782794))
+* **Text:** make ds-text a deterministic metric box ([7330355](https://github.com/zainadeel/compomo/commit/7330355f47cedef77cd8a14824805f8204f87af2))
+
 ## [2.15.0](https://github.com/zainadeel/compomo/compare/v2.14.0...v2.15.0) (2026-07-10)
 
 
