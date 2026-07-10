@@ -188,28 +188,39 @@ export const Alignment: Story = {
 
 export const SemanticElements: Story = {
   name: 'Semantic Elements',
-  render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 12px">
-      ${(['h1','h2','h3','h4','h5','h6'] as const).map((tag, i) => {
-        const variants = ['text-display-medium','text-display-small','text-title-large','text-title-medium','text-title-small','text-body-large'] as const;
-        return html`
+  render: () => {
+    // Recommended variant per heading level. h5 and h6 share title-small —
+    // HTML has six levels; the type scale stops at title-small for compact titles.
+    const headingVariant = {
+      h1: 'text-display-medium',
+      h2: 'text-display-small',
+      h3: 'text-title-large',
+      h4: 'text-title-medium',
+      h5: 'text-title-small',
+      h6: 'text-title-small',
+    } as const;
+
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        ${(['h1','h2','h3','h4','h5','h6'] as const).map((tag, i) => html`
           <div style="${ROW}">
-            <span style="${LBL}">as="${tag}"</span>
-            <ds-text as=${tag} variant=${variants[i]} emphasis>Heading level ${i + 1}</ds-text>
-          </div>`;
-      })}
-      <div style="${ROW}">
-        <span style="${LBL}">as="p" (default)</span>
-        <ds-text as="p">Paragraph text — the quick brown fox.</ds-text>
+            <span style="${LBL}">as="${tag}" → ${headingVariant[tag]}</span>
+            <ds-text as=${tag} variant=${headingVariant[tag]} emphasis>Heading level ${i + 1}</ds-text>
+          </div>
+        `)}
+        <div style="${ROW}">
+          <span style="${LBL}">as="p" (default)</span>
+          <ds-text as="p">Paragraph text — the quick brown fox.</ds-text>
+        </div>
+        <div style="${ROW}">
+          <span style="${LBL}">as="span"</span>
+          <ds-text as="span" variant="text-body-small" color="secondary">Inline span text</ds-text>
+        </div>
+        <div style="${ROW}">
+          <span style="${LBL}">as="label"</span>
+          <ds-text as="label" variant="text-caption" .emphasis=${true}>Form label</ds-text>
+        </div>
       </div>
-      <div style="${ROW}">
-        <span style="${LBL}">as="span"</span>
-        <ds-text as="span" variant="text-body-small" color="secondary">Inline span text</ds-text>
-      </div>
-      <div style="${ROW}">
-        <span style="${LBL}">as="label"</span>
-        <ds-text as="label" variant="text-caption" .emphasis=${true}>Form label</ds-text>
-      </div>
-    </div>
-  `,
+    `;
+  },
 };

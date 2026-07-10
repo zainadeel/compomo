@@ -1,12 +1,22 @@
-:host {
+/* ── Base loader (mirrors ds-icon box metrics) ───────────────────────────── */
+
+.loader {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  line-height: 0;
+  color: var(--color-foreground-primary);
+  width: var(--_loader-sz, var(--dimension-iconography-md));
+  height: var(--_loader-sz, var(--dimension-iconography-md));
+  animation: loader-spin var(--effect-animation-duration-long-2) var(--effect-animation-easing-linear) infinite;
 }
 
-.spinner {
+.loader__svg {
+  display: block;
   flex-shrink: 0;
-  animation: spin var(--effect-animation-duration-long-1) var(--effect-animation-easing-linear) infinite;
+  width: 100%;
+  height: 100%;
 }
 
 .status {
@@ -28,7 +38,82 @@
   /* stylelint-enable declaration-property-value-disallowed-list */
 }
 
-@keyframes spin {
+/* Anti-clockwise continuous spin — 1000ms via long-2. */
+@keyframes loader-spin {
   from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to   { transform: rotate(-360deg); }
 }
+
+/* ── Sizes (same tokens as ds-icon) ──────────────────────────────────────── */
+
+.loader--size-xs  { --_loader-sz: var(--dimension-iconography-xs);  }
+.loader--size-sm  { --_loader-sz: var(--dimension-iconography-sm);  }
+.loader--size-md  { --_loader-sz: var(--dimension-iconography-md);  }
+.loader--size-lg  { --_loader-sz: var(--dimension-iconography-lg);  }
+.loader--size-xl  { --_loader-sz: var(--dimension-iconography-xl);  }
+.loader--size-2xl { --_loader-sz: var(--dimension-iconography-2xl); }
+.loader--size-3xl { --_loader-sz: var(--dimension-iconography-3xl); }
+
+/* ── Colors — hierarchy ──────────────────────────────────────────────────── */
+
+.loader--color-primary    { color: var(--color-foreground-primary);    }
+.loader--color-secondary  { color: var(--color-foreground-secondary);  }
+.loader--color-tertiary   { color: var(--color-foreground-tertiary);   }
+.loader--color-quaternary { color: var(--color-foreground-quaternary); }
+.loader--color-inherit    { color: inherit; }
+
+/* ── Colors — intent (bold contrast default) ─────────────────────────────── */
+
+.loader--color-brand    { color: var(--color-foreground-bold-brand);    }
+.loader--color-negative { color: var(--color-foreground-bold-negative); }
+.loader--color-positive { color: var(--color-foreground-bold-positive); }
+.loader--color-warning  { color: var(--color-foreground-bold-warning);  }
+.loader--color-caution  { color: var(--color-foreground-bold-caution);  }
+.loader--color-ai       { color: var(--color-foreground-bold-ai);       }
+.loader--color-guide    { color: var(--color-foreground-bold-guide);    }
+.loader--color-neutral  { color: var(--color-foreground-bold-neutral);  }
+
+/* ── Colors — intent faint ───────────────────────────────────────────────── */
+
+.loader--color-faint-brand    { color: var(--color-foreground-faint-brand);    }
+.loader--color-faint-negative { color: var(--color-foreground-faint-negative); }
+.loader--color-faint-positive { color: var(--color-foreground-faint-positive); }
+.loader--color-faint-warning  { color: var(--color-foreground-faint-warning);  }
+.loader--color-faint-caution  { color: var(--color-foreground-faint-caution);  }
+.loader--color-faint-ai       { color: var(--color-foreground-faint-ai);       }
+.loader--color-faint-neutral  { color: var(--color-foreground-faint-neutral);  }
+
+/* ── Colors — intent medium ─────────────────────────────────────────────── */
+
+.loader--color-medium-brand    { color: var(--color-foreground-medium-brand);    }
+.loader--color-medium-negative { color: var(--color-foreground-medium-negative); }
+.loader--color-medium-positive { color: var(--color-foreground-medium-positive); }
+.loader--color-medium-warning  { color: var(--color-foreground-medium-warning);  }
+.loader--color-medium-caution  { color: var(--color-foreground-medium-caution);  }
+.loader--color-medium-ai       { color: var(--color-foreground-medium-ai);       }
+.loader--color-medium-neutral  { color: var(--color-foreground-medium-neutral);  }
+
+/* ── Colors — intent bold (explicit) ────────────────────────────────────── */
+
+.loader--color-bold-brand    { color: var(--color-foreground-bold-brand);    }
+.loader--color-bold-negative { color: var(--color-foreground-bold-negative); }
+.loader--color-bold-positive { color: var(--color-foreground-bold-positive); }
+.loader--color-bold-warning  { color: var(--color-foreground-bold-warning);  }
+.loader--color-bold-caution  { color: var(--color-foreground-bold-caution);  }
+.loader--color-bold-ai       { color: var(--color-foreground-bold-ai);       }
+.loader--color-bold-neutral  { color: var(--color-foreground-bold-neutral);  }
+
+/* ── Colors — intent strong ──────────────────────────────────────────────── */
+
+.loader--color-strong-brand    { color: var(--color-foreground-strong-brand);    }
+.loader--color-strong-negative { color: var(--color-foreground-strong-negative); }
+.loader--color-strong-positive { color: var(--color-foreground-strong-positive); }
+.loader--color-strong-warning  { color: var(--color-foreground-strong-warning);  }
+.loader--color-strong-caution  { color: var(--color-foreground-strong-caution);  }
+.loader--color-strong-ai       { color: var(--color-foreground-strong-ai);       }
+.loader--color-strong-neutral  { color: var(--color-foreground-strong-neutral);  }
+
+/* ── Colors — contextual ────────────────────────────────────────────────── */
+
+.loader--color-on-strong { color: var(--color-foreground-on-strong-background-primary); }
+.loader--color-on-bold   { color: var(--color-foreground-on-bold-background-primary);   }

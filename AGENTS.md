@@ -271,7 +271,7 @@ Paint order (bottom → top): element background → `::before` (selected/active
 |---|---|
 | `.ds-interaction-fill` | Stacking context + `::before`/`::after` shells |
 | `.ds-interaction-fill--selected` | Fills `::before` with `--ds-interaction-active` |
-| `.ds-interaction-fill--bordered` | Inset tertiary stroke on `::after` (above selected / hover) |
+| `.ds-interaction-fill--bordered` | Inset secondary stroke on `::after` (above selected / hover) |
 | `.ds-interaction-fill--on-medium\|bold\|strong\|always-dark\|navigation` | Remap hover/pressed/active + `--ds-focus-ring-color` |
 | `--ds-interaction-hover\|pressed\|active` | Overridable token hooks |
 | `--ds-interaction-border-width\|color` | Inset stroke on `::after` (default off) |
