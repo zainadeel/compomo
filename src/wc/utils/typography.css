@@ -73,7 +73,7 @@
 :host(.ds-text--display-small.ds-text--regular),
 .ds-text--display-medium.ds-text--regular,
 .ds-text--display-small.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
+  font-weight: var(--typography-weight-semibold);
   letter-spacing: var(--typography-letterspacing-negative);
 }
 
@@ -85,7 +85,7 @@
 
 :host(.ds-text--title-large.ds-text--regular),
 .ds-text--title-large.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
+  font-weight: var(--typography-weight-medium);
   letter-spacing: var(--typography-letterspacing-negative);
 }
 
@@ -101,7 +101,7 @@
 :host(.ds-text--title-small.ds-text--regular),
 .ds-text--title-medium.ds-text--regular,
 .ds-text--title-small.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
+  font-weight: var(--typography-weight-medium);
   letter-spacing: var(--typography-letterspacing-negative-half);
 }
 

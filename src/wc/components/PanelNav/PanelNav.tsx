@@ -530,7 +530,14 @@ export class PanelNav {
           </span>
           <span class="panel-nav__footer-icon-collapsed">
             <ds-icon name="Circle" size="md" color="inherit" />
-            <ds-text class="panel-nav__user-initial" as="span" variant="text-caption" emphasis color="inherit">
+            <ds-text
+              class="panel-nav__user-initial"
+              as="span"
+              variant="text-caption"
+              emphasis
+              align="center"
+              color="inherit"
+            >
               {userInitial}
             </ds-text>
           </span>
@@ -665,7 +672,7 @@ export class PanelNav {
                 <div class="panel-nav__group">
                   {group.label && (
                     <ds-text
-                      class="panel-nav__group-label panel-nav__item-label-text"
+                      class="panel-nav__group-label"
                       as="span"
                       variant="text-caption"
                       emphasis

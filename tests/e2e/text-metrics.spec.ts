@@ -136,10 +136,16 @@ test.describe('ds-text metric box', () => {
     await page.locator('#tooltip-xs button').hover();
     const tooltipGeometry = await page.locator('.tooltip-inner').evaluate(element => {
       const controlRect = element.getBoundingClientRect();
-      const textRect = element.querySelector('ds-text')!.getBoundingClientRect();
+      const text = element.querySelector(':scope > ds-text')!;
+      const textRect = text.getBoundingClientRect();
+      const cs = getComputedStyle(text);
       return {
         controlHeight: controlRect.height,
+        controlWidth: controlRect.width,
         textHeight: textRect.height,
+        textWidth: textRect.width,
+        labelText: text.textContent?.trim() ?? '',
+        paddingInline: cs.paddingLeft,
         centerDelta:
           (textRect.top + textRect.height / 2) -
           (controlRect.top + controlRect.height / 2),
@@ -149,5 +155,11 @@ test.describe('ds-text metric box', () => {
     expect(tooltipGeometry.controlHeight).toBeCloseTo(16, 5);
     expect(tooltipGeometry.textHeight).toBeCloseTo(12, 5);
     expect(Math.abs(tooltipGeometry.centerDelta)).toBeLessThanOrEqual(0.5);
+    expect(tooltipGeometry.labelText).toBe('Tooltip xs');
+    // Control-density label inset (--dimension-space-025 = 2px).
+    expect(tooltipGeometry.paddingInline).toBe('2px');
+    // ds-text must not collapse under its default min-width:0 flex shrink.
+    expect(tooltipGeometry.textWidth).toBeGreaterThan(40);
+    expect(tooltipGeometry.controlWidth).toBeGreaterThanOrEqual(tooltipGeometry.textWidth);
   });
 });

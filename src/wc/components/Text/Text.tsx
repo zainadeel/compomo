@@ -20,7 +20,8 @@ export class Text {
   @Prop() variant: TextVariant = 'text-body-medium';
   /**
    * Heavier weight + tighter letter-spacing for the variant.
-   * `false` (default): regular weight (caption stays medium).
+   * `false` (default): one step below emphasis (display semibold, title/body
+   * medium, caption medium).
    * `true`: display bold, title/caption semibold, body medium.
    */
   @Prop() emphasis: boolean = false;
