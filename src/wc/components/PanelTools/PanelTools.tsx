@@ -290,11 +290,16 @@ export class PanelTools {
           >
             <div class="panel-tools__drawer-surface">
               <header class="panel-tools__header">
-                <span class="panel-tools__title">
-                  <ds-text as="span" variant="text-body-medium" emphasis color="inherit" wrap="nowrap">
-                    {headerLabel}
-                  </ds-text>
-                </span>
+                <ds-text
+                  class="panel-tools__title"
+                  as="span"
+                  variant="text-body-medium"
+                  emphasis
+                  color="inherit"
+                  wrap="nowrap"
+                >
+                  {headerLabel}
+                </ds-text>
               </header>
               <div class="panel-tools__body">
                 <div

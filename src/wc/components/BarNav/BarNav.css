@@ -130,7 +130,6 @@
   height: var(--dimension-size-400);
   padding-inline: var(--dimension-space-100);
   color: var(--_bar-nav-fg-primary);
-  line-height: var(--typography-lineheight-md);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

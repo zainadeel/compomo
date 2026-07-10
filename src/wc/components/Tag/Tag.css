@@ -82,7 +82,6 @@
 .tag__label {
   position: relative;
   z-index: 2;
-  line-height: 0;
   padding: 0 var(--ds-control-label-inset);
   white-space: nowrap;
   flex-shrink: 0;

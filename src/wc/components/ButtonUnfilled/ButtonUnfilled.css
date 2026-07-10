@@ -132,7 +132,6 @@
 .button-unfilled__label {
   position: relative;
   z-index: 2;
-  line-height: 0;
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   white-space: nowrap;
   flex-shrink: 0;

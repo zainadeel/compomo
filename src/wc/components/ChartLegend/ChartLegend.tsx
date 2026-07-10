@@ -87,24 +87,32 @@ export class ChartLegend {
                   <span class="chart-legend__swatch-box">
                     <span class="chart-legend__swatch" style={{ backgroundColor: item.color ?? categoryColor(i) }} />
                   </span>
-                  <span class="chart-legend__label" title={item.label}>
-                    <ds-text as="span" variant="text-body-medium" color="secondary">
-                      {item.label}
-                    </ds-text>
-                  </span>
+                  <ds-text
+                    class="chart-legend__label"
+                    as="span"
+                    variant="text-body-medium"
+                    color="secondary"
+                    lineTruncation={1}
+                    title={item.label}
+                  >
+                    {item.label}
+                  </ds-text>
                   {item.value != null && (
-                    <span class="chart-legend__value" title={String(item.value)}>
-                      <ds-text as="span" variant="text-body-medium" color="primary">
-                        {formatCompactNumber(item.value)}
-                      </ds-text>
-                    </span>
+                    <ds-text
+                      class="chart-legend__value"
+                      as="span"
+                      variant="text-body-medium"
+                      color="primary"
+                      lineTruncation={1}
+                      title={String(item.value)}
+                    >
+                      {formatCompactNumber(item.value)}
+                    </ds-text>
                   )}
                   {item.value != null && this.showPercentage && (
-                    <span class="chart-legend__percentage">
-                      <ds-text as="span" variant="text-body-medium" color="primary">
-                        {(total ? (item.value / total) * 100 : 0).toFixed(1)}%
-                      </ds-text>
-                    </span>
+                    <ds-text class="chart-legend__percentage" as="span" variant="text-body-medium" color="primary">
+                      {(total ? (item.value / total) * 100 : 0).toFixed(1)}%
+                    </ds-text>
                   )}
                 </RowTag>
               </li>

@@ -22,8 +22,6 @@
   /* Stretch the slotted donut to the full region; the donut centers its own SVG. */
   display: grid;
   padding: var(--dimension-space-400) var(--dimension-space-400) 0 var(--dimension-space-400);
-  /* Cursor-following tooltip may extend past the chart; don't clip it here. */
-  overflow: visible;
   box-sizing: border-box;
 }
 

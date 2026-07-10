@@ -82,11 +82,9 @@ export class Chip {
         style={maxWidthStyle}
         aria-disabled={this.isInactive || undefined}
       >
-        <span class="tag__label">
-          <ds-text as="span" variant={textVariant} color="inherit">
-            {this.label}
-          </ds-text>
-        </span>
+        <ds-text class="tag__label" as="span" variant={textVariant} color="inherit">
+          {this.label}
+        </ds-text>
         {this.removable && (
           <button
             type="button"

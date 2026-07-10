@@ -40,6 +40,7 @@ export default tseslint.config(
       // Primitives — warn only (same posture as stylelint). Prefer ds-text / ds-icon.
       'local/prefer-ds-text': 'warn',
       'local/prefer-ds-icon': 'warn',
+      'local/prefer-direct-ds-text': 'warn',
     },
   },
   {

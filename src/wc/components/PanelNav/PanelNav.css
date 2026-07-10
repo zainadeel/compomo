@@ -193,7 +193,6 @@
   color: var(--_nav-fg-secondary);
   user-select: none;
   height: var(--dimension-size-300, 24px);
-  line-height: var(--typography-lineheight-xs, 12px);
   padding: 0 var(--dimension-space-075, 6px);
   white-space: nowrap;
   overflow: hidden;
@@ -259,7 +258,6 @@
   white-space: nowrap;
   min-width: 0;
   height: var(--typography-lineheight-md, 20px);
-  line-height: var(--typography-lineheight-md, 20px);
   opacity: 1;
   /* Gradient wipe: mask sweeps left-to-right on expand, right-to-left on collapse */
   /* stylelint-disable-next-line color-named -- mask luminance stops, not theme colors */
@@ -456,8 +454,6 @@
   align-items: center;
   justify-content: center;
   color: var(--_nav-fg-secondary);
-  text-transform: uppercase;
-  line-height: 1;
   pointer-events: none;
   transition: color var(--effect-motion-short-3, 200ms ease);
 }

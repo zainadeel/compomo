@@ -162,8 +162,8 @@ export const CenterTextTruncation: Story = {
  * real `<a>`; click is intercepted here only so the demo doesn't leave Storybook.
  *
  * Both directions only dim opacity — neither shows a hover-fill on the other side.
- * The donut's data-viz tooltip only appears for real pointer/keyboard interaction on
- * a slice (not when the legend syncs `activeLabel`).
+ * Donut slices do not show a data-viz tooltip on hover (the legend already surfaces
+ * label/value); bar/line charts will use `ds-tooltip-data-viz` when those land.
  * Legend rows keep their own hover-fill (`:hover`/`:focus-visible` in CSS) for real pointer/
  * keyboard interaction, since that's a "you can click here" affordance that shouldn't appear just
  * because the donut was hovered.

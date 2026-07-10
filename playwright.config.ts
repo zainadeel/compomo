@@ -8,9 +8,18 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    ...devices['Desktop Chrome'],
     baseURL: 'http://localhost:5199',
   },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+  ],
   webServer: {
     command: 'npx vite --config tests/e2e/vite.config.mts',
     url: 'http://localhost:5199',

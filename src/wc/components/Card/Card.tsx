@@ -56,18 +56,15 @@ export class Card {
         }}
       >
         <header class="card__header">
-          <div class="card__title-wrap">
-            <span class="card__title">
-              <ds-text
-                variant="text-title-small"
-                emphasis
-                color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
-                as="h2"
-              >
-                {this.heading}
-              </ds-text>
-            </span>
-          </div>
+          <ds-text
+            class="card__title-wrap card__title"
+            variant="text-title-small"
+            emphasis
+            color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
+            as="h2"
+          >
+            {this.heading}
+          </ds-text>
           <div class="card__actions">
             <slot name="actions" />
           </div>

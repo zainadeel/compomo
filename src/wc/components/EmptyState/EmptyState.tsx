@@ -21,11 +21,9 @@ export class EmptyState {
   render() {
     return (
       <Host>
-        <div class="empty-state">
-          <ds-text as="p" variant="text-body-medium" color="secondary">
-            {this.message || DEFAULT_MESSAGES[this.type]}
-          </ds-text>
-        </div>
+        <ds-text class="empty-state" as="p" variant="text-body-medium" color="secondary">
+          {this.message || DEFAULT_MESSAGES[this.type]}
+        </ds-text>
       </Host>
     );
   }

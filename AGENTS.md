@@ -221,7 +221,17 @@ export class MyComponent {
 
 - `local/prefer-ds-text` — flag TokoMo typography utility classes (`text-body-*`, `text-caption*`, …) in `class` / `className`. Use `<ds-text variant="…" emphasis>`. Allowlisted: `Text/`, `control-text.ts`, Typography stories.
 - `local/prefer-ds-icon` — flag raw `<svg>` / `createElement('svg')` and `@ds-mo/icons` imports in components. Use `<ds-icon name="…">`. Allowlisted: `Icon/`, `Loader/`, chart components, PanelNav M-mark, Icons stories.
-- Disable with `// eslint-disable-next-line local/prefer-ds-text -- reason` (same for `prefer-ds-icon`) when an exception is intentional.
+- `local/prefer-direct-ds-text` — flag neutral `<span>`/`<div>` elements whose only child is `<ds-text>`. Move layout classes to the `ds-text` host; keep wrappers only for real structural behavior or mixed content.
+- Disable with `// eslint-disable-next-line local/prefer-ds-text -- reason` (same for `prefer-ds-icon` / `prefer-direct-ds-text`) when an exception is intentional.
+
+**Text metric-box contract**
+
+- `ds-text` owns a real, measurable box — never `display: contents`. `span`/`label` use an inline box; paragraphs, divs, and headings use a block box.
+- A variant is atomic: its font-size, line-height, weight, and letter-spacing come from the shared typography recipe. Parent controls/density classes must never override text line-height.
+- One rendered line is exactly one variant line-height; N lines are N × that token. Width constraints determine wrapping.
+- Put layout classes (padding, flex/grid participation, truncation width, z-index) directly on `ds-text`. Do not add a wrapper whose only purpose is layout.
+- Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to a future prose/app renderer, not `ds-text`.
+- Native form values cannot contain a custom element. Native inputs use the internal `typography.css` recipe as the explicit exception.
 
 **Buttons (filled / unfilled)**
 
@@ -243,14 +253,13 @@ Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNa
 | Height | `--dimension-size-400` (32) | `--dimension-size-300` (24) | `--dimension-size-200` (16) |
 | Icon | `--dimension-iconography-md` (20) | `--dimension-iconography-sm` (16) | `--dimension-iconography-xs` (12) |
 | Text | `text-body-medium` (14/20) | `text-body-small` (12/16) | `text-caption` (9/12) |
-| Line-height (wrappers) | `--typography-lineheight-md` | `--typography-lineheight-sm` | `--typography-lineheight-xs` |
 | Row padding-inline | `--dimension-space-075` (6) | `--dimension-space-050` (4) | `--dimension-space-025` (2) |
 | Label inset | `--dimension-space-025` (2) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
 | Icon↔label gap | `--dimension-space-050` (4) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
 | Default radius | `--dimension-radius-025` (2) | same | same |
 | Rounded | `--dimension-radius-half` | same | same |
 
-CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`, `--ds-control-line-height`. Use a fixed `height` + `align-items: center` + horizontal-only padding (see gotcha below). Layout wrappers around `ds-text` should set `line-height: var(--ds-control-line-height)` (or the matching `--typography-lineheight-*`).
+CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Text line-height is not a density variable; the control's `size` maps internally to a complete `ds-text` variant via `CONTROL_TEXT_VARIANT`.
 
 **Interaction fill**
 
@@ -357,19 +366,16 @@ render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`
 ## Common gotchas
 
 **Fixed-height rows/controls: use `height` + `align-items: center`, not padding + line-height math.**
-`PanelNav`'s and `BarNav`'s items both size to 32px (`--dimension-size-400`) via a *fixed* `height` on a flex/grid container with `align-items: center`, plus **horizontal-only** padding. Don't try to hit a target height by stacking `padding: Npx` + "the content's line-height should be Mpx" — that only works as long as every child's font metrics stay exactly as assumed. The moment a child's typography changes (e.g. moving text into a wrapped `<ds-text>`, see below), the row's height silently drifts because it was never actually fixed — it was derived. A hard `height` sidesteps this permanently: content is centered regardless of its own font metrics.
+`PanelNav`'s and `BarNav`'s items both size to 32px (`--dimension-size-400`) via a *fixed* `height` on a flex/grid container with `align-items: center`, `box-sizing: border-box`, plus **horizontal-only** padding. Do not calculate outer height by adding text leading + vertical padding + border. The 20px body-medium `ds-text` box centers inside 32px, leaving 6px geometric space per side. Symmetric real borders (border-box) or shared inset interaction strokes must not change the declared outer height.
 
-**`<ds-text>`'s host is `display: contents` — box-model CSS on it silently no-ops.**
-`display: contents` removes the element's own box entirely; only its *children* generate boxes. So a `class` with `margin`/`padding`/`overflow`/`min-width`/`width` etc. placed directly on `<ds-text class="...">` does nothing — those properties have no box to apply to. If a text node needs layout responsibilities (grid/flex participation, truncation, spacing), wrap `<ds-text>` in a plain `<span>`/`<div>` that owns the layout, and let `<ds-text>` only carry `variant`/`color`. See `ChartLegend.tsx` for the pattern.
-
-**Corollary: a layout wrapper around `<ds-text>` needs its own `line-height` set explicitly.**
-A block box's rendered line height is the *taller* of its own inherited "strut" (based on whatever font-size/line-height it inherits) and its actual inline content. A plain wrapper `<span>` around `<ds-text>` doesn't inherit `text-body-medium`'s line-height from anywhere — only `<ds-text>`'s own inner tag has it. Left unset, the wrapper falls back to the browser default (`line-height: normal`, ~1.5×), which is usually *taller* than the intended type scale and silently inflates whatever contains it. Set the wrapper's `line-height` to match the same token used by the nested `<ds-text variant>` (e.g. `line-height: var(--typography-lineheight-md)` for `text-body-medium`) so the wrapper hugs its actual content.
+**`ds-text` is the layout box — don't wrap it just to style it.**
+Apply padding, flex/grid sizing, overflow width, z-index, and component classes directly to `<ds-text>`. Its inner native element exists only for semantics (`label`, headings, paragraph, IDs/`for`) and inherits the host's complete typography recipe. A neutral wrapper around only `ds-text` recreates the old split-box problem and is flagged by `local/prefer-direct-ds-text`. Keep a wrapper only when it owns real structure (mixed icon/dot/badge content, animation masks, semantic interaction targets).
 
 **`position: relative` alone does NOT create a stacking context — you also need a non-`auto` `z-index`.**
 `.ds-interaction-fill` sets `z-index: 0` on the control so its `::before`/`::after` fills stay inside that stacking context. Paint order: selected (`::before` z-index 1) → content (z-index 2) → hover/press (`::after` z-index 3, topmost — covers badge dots). Place label/icon with `.ds-interaction-fill__content` or `position: relative; z-index: 2` on children — never above `::after`. For genuinely floating elements that must sit above unrelated siblings (tooltips, popovers), use the `--dimension-z-index-*` token scale (`base` 0, `raised` 50, `overlay` 250, `modal` 450, `floating` 500, `tooltip` 750) rather than a magic number — see `TooltipDataViz.css`.
 
 **Cross-component hover-sync: keep "external highlight" and "own hover" as separate state, don't collapse them into one prop.**
-When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong *only* to a genuine pointer/keyboard interaction on that specific element (a tooltip, a hover-fill affordance implying "you can click here") and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did *this* element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. See `ChartDonut`/`ChartLegend`.
+When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong *only* to a genuine pointer/keyboard interaction on that specific element (a hover-fill affordance implying "you can click here", or a data-viz tooltip on bar/line) and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did *this* element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. Donut skips the tooltip entirely — the legend already shows label/value. See `ChartDonut`/`ChartLegend`.
 
 **Hover lists: put the "clear" listener on the container, not on each row, to avoid gap-crossing flicker.**
 A list of hoverable rows with visual `gap`/`row-gap` between them has dead space that belongs to no row. If each row clears the highlight on its own `mouseleave`, moving the pointer from one row to the next (crossing that gap) causes a flicker: highlight → none → highlight. Fix: attach `mouseenter` per row (to set the highlight) but attach `mouseleave` once, on the container — the gap is still inside the container's box, so crossing it never fires the container's `mouseleave`; only actually leaving the whole list does, and that clears instantly with no timer/debounce needed. See `ChartLegend.tsx`.

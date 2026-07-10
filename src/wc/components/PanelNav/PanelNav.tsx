@@ -515,24 +515,24 @@ export class PanelNav {
         onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
         onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
       >
-        <span class="panel-nav__item-label panel-nav__footer-user-label">
-          <span class="panel-nav__item-label-text">
-            <ds-text as="span" variant="text-body-medium" emphasis color="inherit">
-              {userName}
-            </ds-text>
-          </span>
-        </span>
+        <ds-text
+          class="panel-nav__item-label panel-nav__footer-user-label panel-nav__item-label-text"
+          as="span"
+          variant="text-body-medium"
+          emphasis
+          color="inherit"
+        >
+          {userName}
+        </ds-text>
         <span class="panel-nav__item-icon panel-nav__footer-user-icon" aria-hidden="true">
           <span class="panel-nav__footer-icon-expanded">
             <ds-icon name="ChevronUpDown" size="md" color="inherit" />
           </span>
           <span class="panel-nav__footer-icon-collapsed">
             <ds-icon name="Circle" size="md" color="inherit" />
-            <span class="panel-nav__user-initial">
-              <ds-text as="span" variant="text-caption" emphasis color="inherit">
-                {userInitial}
-              </ds-text>
-            </span>
+            <ds-text class="panel-nav__user-initial" as="span" variant="text-caption" emphasis color="inherit">
+              {userInitial}
+            </ds-text>
           </span>
         </span>
       </button>
@@ -553,18 +553,15 @@ export class PanelNav {
       <span class="panel-nav__item-icon">
         <ds-icon name={item.icon} size="md" color="inherit" flag={item.flag} />
       </span>,
-      <span class="panel-nav__item-label">
-        <span class="panel-nav__item-label-text">
-          <ds-text
-            as="span"
-            variant="text-body-medium"
-            emphasis={isActive}
-            color="inherit"
-          >
-            {item.label}
-          </ds-text>
-        </span>
-      </span>,
+      <ds-text
+        class="panel-nav__item-label panel-nav__item-label-text"
+        as="span"
+        variant="text-body-medium"
+        emphasis={isActive}
+        color="inherit"
+      >
+        {item.label}
+      </ds-text>,
       item.dot && (
         <ds-badge
           class="panel-nav__item-dot"
@@ -667,13 +664,15 @@ export class PanelNav {
               return this.parsedGroups.map(group => (
                 <div class="panel-nav__group">
                   {group.label && (
-                    <span class="panel-nav__group-label">
-                      <span class="panel-nav__item-label-text">
-                        <ds-text as="span" variant="text-caption" emphasis color="inherit">
-                          {group.label}
-                        </ds-text>
-                      </span>
-                    </span>
+                    <ds-text
+                      class="panel-nav__group-label panel-nav__item-label-text"
+                      as="span"
+                      variant="text-caption"
+                      emphasis
+                      color="inherit"
+                    >
+                      {group.label}
+                    </ds-text>
                   )}
                   {group.items.map(item => this.renderNavItem(item, flatIdx++, collapsed))}
                 </div>

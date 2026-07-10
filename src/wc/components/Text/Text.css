@@ -1,151 +1,97 @@
-.ds-text {
+@import '../../utils/typography.css';
+
+:host {
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
   margin: 0;
+  padding: 0;
+  border: 0;
   font-family: var(--typography-font-family);
 }
 
-/* ── Variant: size / leading / (caption) case ───────────────────────────── */
-
-.ds-text--display-medium {
-  font-size: var(--typography-fontsize-3xl);
-  line-height: var(--typography-lineheight-3xl);
+:host(.ds-text--inline-box) {
+  display: inline-block;
 }
 
-.ds-text--display-small {
-  font-size: var(--typography-fontsize-2xl);
-  line-height: var(--typography-lineheight-2xl);
+:host(.ds-text--block-box) {
+  display: block;
+  width: 100%;
 }
 
-.ds-text--title-large {
-  font-size: var(--typography-fontsize-xl);
-  line-height: var(--typography-lineheight-xl);
-}
-
-.ds-text--title-medium {
-  font-size: var(--typography-fontsize-lg);
-  line-height: var(--typography-lineheight-lg);
-}
-
-.ds-text--title-small {
-  font-size: var(--typography-fontsize-md);
-  line-height: var(--typography-lineheight-md);
-}
-
-.ds-text--body-large {
-  font-size: var(--typography-fontsize-lg);
-  line-height: var(--typography-lineheight-lg);
-}
-
-.ds-text--body-medium {
-  font-size: var(--typography-fontsize-md);
-  line-height: var(--typography-lineheight-md);
-}
-
-.ds-text--body-small {
-  font-size: var(--typography-fontsize-sm);
-  line-height: var(--typography-lineheight-sm);
-}
-
-.ds-text--caption {
-  font-size: var(--typography-fontsize-xs);
-  line-height: var(--typography-lineheight-xs);
-  text-transform: uppercase;
-}
-
-/* ── Emphasis: weight + letter-spacing ──────────────────────────────────── */
-
-.ds-text--display-medium.ds-text--emphasis,
-.ds-text--display-small.ds-text--emphasis {
-  font-weight: var(--typography-weight-bold);
-  letter-spacing: var(--typography-letterspacing-negative-double);
-}
-
-.ds-text--display-medium.ds-text--regular,
-.ds-text--display-small.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
-  letter-spacing: var(--typography-letterspacing-negative);
-}
-
-.ds-text--title-large.ds-text--emphasis {
-  font-weight: var(--typography-weight-semibold);
-  letter-spacing: var(--typography-letterspacing-negative-double);
-}
-
-.ds-text--title-large.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
-  letter-spacing: var(--typography-letterspacing-negative);
-}
-
-.ds-text--title-medium.ds-text--emphasis,
-.ds-text--title-small.ds-text--emphasis {
-  font-weight: var(--typography-weight-semibold);
-  letter-spacing: var(--typography-letterspacing-negative);
-}
-
-.ds-text--title-medium.ds-text--regular,
-.ds-text--title-small.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
-  letter-spacing: var(--typography-letterspacing-negative-half);
-}
-
-.ds-text--body-large.ds-text--emphasis,
-.ds-text--body-medium.ds-text--emphasis {
-  font-weight: var(--typography-weight-medium);
-  letter-spacing: var(--typography-letterspacing-negative);
-}
-
-.ds-text--body-large.ds-text--regular,
-.ds-text--body-medium.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
-  letter-spacing: var(--typography-letterspacing-negative-half);
-}
-
-.ds-text--body-small.ds-text--emphasis {
-  font-weight: var(--typography-weight-medium);
-  letter-spacing: var(--typography-letterspacing-negative-half);
-}
-
-.ds-text--body-small.ds-text--regular {
-  font-weight: var(--typography-weight-regular);
-  letter-spacing: var(--typography-letterspacing-none);
-}
-
-.ds-text--caption.ds-text--emphasis {
-  font-weight: var(--typography-weight-semibold);
-  letter-spacing: var(--typography-letterspacing-positive);
-}
-
-.ds-text--caption.ds-text--regular {
-  font-weight: var(--typography-weight-medium);
-  letter-spacing: var(--typography-letterspacing-positive);
+/*
+ * The host is the measurable typography box. The semantic inner element fills
+ * it and inherits every text metric without adding margins, padding, or its own
+ * line-height strut. One rendered line therefore measures exactly one token
+ * line-height; N lines measure N × that token.
+ */
+.ds-text__element {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-transform: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  font-style: inherit;
+  font-variant-numeric: inherit;
+  font-feature-settings: inherit;
+  white-space: inherit;
+  text-wrap: inherit;
+  overflow-wrap: inherit;
+  word-break: inherit;
+  /* Consumer truncation on the host (PanelNav, ChartLegend, …) must reach the
+     text node — overflow/text-overflow are not inherited by default. */
+  overflow: inherit;
+  text-overflow: inherit;
 }
 
 /* ── Truncation ─────────────────────────────────────────────────────────── */
 
-.ds-text--truncate-1 {
+:host(.ds-text--truncate-1) {
+  overflow: hidden;
+}
+
+:host(.ds-text--truncate-1) .ds-text__element {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ds-text--truncate-2,
-.ds-text--truncate-3,
-.ds-text--truncate-4,
-.ds-text--truncate-5 {
+:host(.ds-text--truncate-2),
+:host(.ds-text--truncate-3),
+:host(.ds-text--truncate-4),
+:host(.ds-text--truncate-5) {
   overflow: hidden;
+}
+
+:host(.ds-text--truncate-2) .ds-text__element,
+:host(.ds-text--truncate-3) .ds-text__element,
+:host(.ds-text--truncate-4) .ds-text__element,
+:host(.ds-text--truncate-5) .ds-text__element {
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
 }
 
-.ds-text--truncate-2 { -webkit-line-clamp: 2; }
-.ds-text--truncate-3 { -webkit-line-clamp: 3; }
-.ds-text--truncate-4 { -webkit-line-clamp: 4; }
-.ds-text--truncate-5 { -webkit-line-clamp: 5; }
+:host(.ds-text--truncate-2) .ds-text__element { -webkit-line-clamp: 2; }
+:host(.ds-text--truncate-3) .ds-text__element { -webkit-line-clamp: 3; }
+:host(.ds-text--truncate-4) .ds-text__element { -webkit-line-clamp: 4; }
+:host(.ds-text--truncate-5) .ds-text__element { -webkit-line-clamp: 5; }
 
 /* ── Wrap ───────────────────────────────────────────────────────────────── */
 
-.ds-text--nowrap {
+:host(.ds-text--nowrap),
+:host(.ds-text--nowrap) .ds-text__element {
   white-space: nowrap;
   word-break: normal;
   overflow: hidden;
@@ -153,33 +99,36 @@
   min-width: 0;
 }
 
-.ds-text--balance { text-wrap: balance; }
-.ds-text--pretty  { text-wrap: pretty; }
+:host(.ds-text--balance),
+:host(.ds-text--balance) .ds-text__element { text-wrap: balance; }
+
+:host(.ds-text--pretty),
+:host(.ds-text--pretty) .ds-text__element { text-wrap: pretty; }
 
 /* ── Color ──────────────────────────────────────────────────────────────── */
 
-.ds-text--color-primary   { color: var(--color-foreground-primary); }
-.ds-text--color-secondary { color: var(--color-foreground-secondary); }
-.ds-text--color-tertiary  { color: var(--color-foreground-tertiary); }
-.ds-text--color-brand     { color: var(--color-foreground-bold-brand); }
-.ds-text--color-negative  { color: var(--color-foreground-bold-negative); }
-.ds-text--color-positive  { color: var(--color-foreground-bold-positive); }
-.ds-text--color-warning   { color: var(--color-foreground-bold-warning); }
-.ds-text--color-caution   { color: var(--color-foreground-bold-caution); }
-.ds-text--color-ai        { color: var(--color-foreground-bold-ai); }
-.ds-text--color-on-strong { color: var(--color-foreground-on-strong-background-primary); }
-.ds-text--color-on-bold   { color: var(--color-foreground-on-bold-background-primary); }
-.ds-text--color-inherit   { color: inherit; }
+:host(.ds-text--color-primary)   { color: var(--color-foreground-primary); }
+:host(.ds-text--color-secondary) { color: var(--color-foreground-secondary); }
+:host(.ds-text--color-tertiary)  { color: var(--color-foreground-tertiary); }
+:host(.ds-text--color-brand)     { color: var(--color-foreground-bold-brand); }
+:host(.ds-text--color-negative)  { color: var(--color-foreground-bold-negative); }
+:host(.ds-text--color-positive)  { color: var(--color-foreground-bold-positive); }
+:host(.ds-text--color-warning)   { color: var(--color-foreground-bold-warning); }
+:host(.ds-text--color-caution)   { color: var(--color-foreground-bold-caution); }
+:host(.ds-text--color-ai)        { color: var(--color-foreground-bold-ai); }
+:host(.ds-text--color-on-strong) { color: var(--color-foreground-on-strong-background-primary); }
+:host(.ds-text--color-on-bold)   { color: var(--color-foreground-on-bold-background-primary); }
+:host(.ds-text--color-inherit)   { color: inherit; }
 
 /* ── Decorations ─────────────────────────────────────────────────────────── */
 
-.ds-text--decoration-underline {
+:host(.ds-text--decoration-underline) {
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
 }
 
-.ds-text--decoration-dotted-underline {
+:host(.ds-text--decoration-dotted-underline) {
   text-decoration: underline dotted;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
@@ -187,15 +136,15 @@
 
 /* ── Style ──────────────────────────────────────────────────────────────── */
 
-.ds-text--italic { font-style: italic; }
+:host(.ds-text--italic) { font-style: italic; }
 
-.ds-text--font-feature-tabular-nums {
+:host(.ds-text--font-feature-tabular-nums) {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
 }
 
 /* ── Align ──────────────────────────────────────────────────────────────── */
 
-.ds-text--align-left   { text-align: left; }
-.ds-text--align-center { text-align: center; }
-.ds-text--align-right  { text-align: right; }
+:host(.ds-text--align-left)   { text-align: left; }
+:host(.ds-text--align-center) { text-align: center; }
+:host(.ds-text--align-right)  { text-align: right; }

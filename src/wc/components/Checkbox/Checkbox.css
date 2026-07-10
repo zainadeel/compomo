@@ -55,5 +55,4 @@
 .checkbox__label {
   flex: 1;
   min-width: 0;
-  line-height: var(--typography-lineheight-md);
 }

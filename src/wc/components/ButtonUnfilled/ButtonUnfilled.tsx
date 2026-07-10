@@ -212,11 +212,15 @@ export class ButtonUnfilled {
             </span>
           )}
           {this.showLabel && (
-            <span class="button-unfilled__label ds-interaction-fill__content">
-              <ds-text as="span" variant={textVariant} emphasis color="inherit">
-                {this.label}
-              </ds-text>
-            </span>
+            <ds-text
+              class="button-unfilled__label ds-interaction-fill__content"
+              as="span"
+              variant={textVariant}
+              emphasis
+              color="inherit"
+            >
+              {this.label}
+            </ds-text>
           )}
         </button>
       </Host>

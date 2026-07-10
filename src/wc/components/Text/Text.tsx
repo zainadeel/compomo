@@ -1,5 +1,5 @@
 import { Component, Prop, h, Host } from '@stencil/core';
-import { textVariantClass } from './text-utils';
+import { textDisplayClass, textVariantClass } from './text-utils';
 import type {
   TextAlign,
   TextColor,
@@ -46,6 +46,7 @@ export class Text {
 
     const cls: Record<string, boolean> = {
       'ds-text': true,
+      [textDisplayClass(this.as)]: true,
       [textVariantClass(this.variant)]: true,
       'ds-text--emphasis': this.emphasis,
       'ds-text--regular': !this.emphasis,
@@ -87,8 +88,8 @@ export class Text {
     if (this.textId) extraProps['id'] = this.textId;
 
     return (
-      <Host style={{ display: 'contents' }}>
-        <Tag class={cls} style={style} {...extraProps}>
+      <Host class={cls} style={style}>
+        <Tag class="ds-text__element" {...extraProps}>
           <slot />
         </Tag>
       </Host>

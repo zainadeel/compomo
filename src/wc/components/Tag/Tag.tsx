@@ -54,11 +54,9 @@ export class Tag {
         <span class="tag__icon-slot" data-icon-size={iconSize}>
           <slot name="icon" />
         </span>
-        <span class="tag__label">
-          <ds-text as="span" variant={textVariant} color="inherit">
-            {this.label}
-          </ds-text>
-        </span>
+        <ds-text class="tag__label" as="span" variant={textVariant} color="inherit">
+          {this.label}
+        </ds-text>
       </Host>
     );
   }
