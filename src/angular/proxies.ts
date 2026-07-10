@@ -553,14 +553,14 @@ export declare interface DsInput extends Components.DsInput {
 
 
 @ProxyCmp({
-  inputs: ['label', 'size']
+  inputs: ['color', 'label', 'size']
 })
 @Component({
   selector: 'ds-loader',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['label', 'size'],
+  inputs: ['color', 'label', 'size'],
   standalone: false
 })
 export class DsLoader {

@@ -22,6 +22,7 @@ import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from 
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
+import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
@@ -56,6 +57,7 @@ export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from 
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
+export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
@@ -640,14 +642,18 @@ export namespace Components {
     }
     interface DsLoader {
         /**
+          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+         */
+        "color": LoaderColor | undefined;
+        /**
           * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
          */
         "label": string | undefined;
         /**
-          * Render size — number (px) or TokoMo length (`var(--dimension-iconography-md)`, etc.).
-          * @default TOKEN_DEFAULTS.iconographyMd
+          * Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px.
+          * @default 'md'
          */
-        "size": number | string;
+        "size": LoaderSize;
     }
     interface DsMenu {
         /**
@@ -2514,14 +2520,18 @@ declare namespace LocalJSX {
     }
     interface DsLoader {
         /**
+          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+         */
+        "color"?: LoaderColor | undefined;
+        /**
           * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
          */
         "label"?: string | undefined;
         /**
-          * Render size — number (px) or TokoMo length (`var(--dimension-iconography-md)`, etc.).
-          * @default TOKEN_DEFAULTS.iconographyMd
+          * Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px.
+          * @default 'md'
          */
-        "size"?: number | string;
+        "size"?: LoaderSize;
     }
     interface DsMenu {
         /**
@@ -3267,7 +3277,8 @@ declare namespace LocalJSX {
         "ariaDescribedby": string | undefined;
     }
     interface DsLoaderAttributes {
-        "size": string;
+        "size": LoaderSize;
+        "color": LoaderColor | undefined;
         "label": string | undefined;
     }
     interface DsMenuAttributes {

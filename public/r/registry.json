@@ -501,7 +501,7 @@
     {
       "name": "loader",
       "title": "Loader",
-      "description": "SVG spinner that scales proportionally. Uses currentColor for theming.",
+      "description": "Anti-clockwise SVG spinner matching ds-icon size/color tokens. Spins in 1s via --effect-animation-duration-long-2.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -512,7 +512,15 @@
         ],
         "props": {
           "size": {
-            "type": "number",
+            "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'",
+            "required": false
+          },
+          "color": {
+            "type": "IconColor",
+            "required": false
+          },
+          "label": {
+            "type": "string",
             "required": false
           }
         }
