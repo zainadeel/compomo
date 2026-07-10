@@ -63,7 +63,7 @@ export class Pagination {
           {pages.map((item, i) =>
             item === 'ellipsis' ? (
               <span key={`e${i}`} class="ellipsis">
-                <span class="text-body-small" style={{ color: 'var(--color-foreground-tertiary)' }}>…</span>
+                <ds-text as="span" variant="text-body-small" color="tertiary">…</ds-text>
               </span>
             ) : (
               <button
@@ -74,9 +74,9 @@ export class Pagination {
                 aria-current={item === this.page ? 'page' : undefined}
                 disabled={this.isInactive}
               >
-                <span class={item === this.page ? 'text-body-small-emphasis' : 'text-body-small'}>
+                <ds-text as="span" variant="text-body-small" emphasis={item === this.page}>
                   {item}
-                </span>
+                </ds-text>
               </button>
             )
           )}

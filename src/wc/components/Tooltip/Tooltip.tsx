@@ -1,22 +1,18 @@
 import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
-import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
+import {
+  CONTROL_TEXT_VARIANT,
+  resolveCssLengthPx,
+  resolveCssTimeMs,
+  TOKEN_CSS_LENGTHS,
+  TOKEN_DEFAULTS,
+} from '../../utils';
+import type { TextVariant } from '../Text/text-types';
+// Side-effect: register `ds-text` — the portal builds it via createElement, not JSX.
+import '../Text/Text';
 
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
 export type TooltipAlign = 'start' | 'center' | 'end';
 export type TooltipSize = 'md' | 'sm' | 'xs';
-
-/** Body text per control-density size (regular weight — not emphasis). */
-const TEXT_VARIANT: Record<TooltipSize, string> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
-
-const LINE_HEIGHT: Record<TooltipSize, string> = {
-  md: 'var(--typography-lineheight-md)',
-  sm: 'var(--typography-lineheight-sm)',
-  xs: 'var(--typography-lineheight-xs)',
-};
 
 const FALLBACK_HEIGHT: Record<TooltipSize, string> = {
   md: TOKEN_DEFAULTS.size400,
@@ -28,6 +24,28 @@ let lastDismissedAt = 0;
 let tooltipIdCounter = 0;
 /** Currently open tooltip — force-cleared on warm handoff so tips don't cross-fade. */
 let activeTooltip: Tooltip | null = null;
+
+type DsTextEl = HTMLElement & {
+  as: string;
+  variant: TextVariant;
+  emphasis: boolean;
+  color: string;
+};
+
+function createDsText(opts: {
+  variant: TextVariant;
+  emphasis?: boolean;
+  color?: string;
+  text: string;
+}): DsTextEl {
+  const el = document.createElement('ds-text') as DsTextEl;
+  el.as = 'span';
+  el.variant = opts.variant;
+  el.emphasis = opts.emphasis ?? false;
+  el.color = opts.color ?? 'inherit';
+  el.textContent = opts.text;
+  return el;
+}
 
 /**
  * Imperative body portal for the popup.
@@ -263,28 +281,36 @@ export class Tooltip {
 
   private renderPopupContent() {
     if (!this.popupEl) return;
-    const textVariant = TEXT_VARIANT[this.size];
-    const lineHeight = LINE_HEIGHT[this.size];
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const density =
       this.size === 'md' ? 'ds-control--md' : this.size === 'sm' ? 'ds-control--sm' : 'ds-control--xs';
-    // Every node needs `sc-ds-tooltip` so scoped selectors (`.foo.sc-ds-tooltip`) match.
+    // Every layout node needs `sc-ds-tooltip` so scoped selectors (`.foo.sc-ds-tooltip`) match.
     const sc = 'sc-ds-tooltip';
 
-    const startKey =
-      this.shortcutKey && this.shortcutKeyPosition === 'start'
-        ? `<div class="key-hint ${sc}" aria-hidden="true"><span class="text-caption-emphasis ${sc}">${escapeHtml(this.shortcutKey)}</span></div>`
-        : '';
-    const endKey =
-      this.shortcutKey && this.shortcutKeyPosition === 'end'
-        ? `<div class="key-hint ${sc}" aria-hidden="true"><span class="text-caption-emphasis ${sc}">${escapeHtml(this.shortcutKey)}</span></div>`
-        : '';
+    const inner = document.createElement('div');
+    inner.className = `tooltip-inner ${density} ${sc}`;
 
-    this.popupEl.innerHTML =
-      `<div class="tooltip-inner ${density} ${sc}">` +
-      startKey +
-      `<span class="tooltip-label ${textVariant} ${sc}" style="line-height:${lineHeight}">${escapeHtml(this.label)}</span>` +
-      endKey +
-      `</div>`;
+    const appendShortcut = (position: 'start' | 'end') => {
+      if (!this.shortcutKey || this.shortcutKeyPosition !== position) return;
+      const hint = document.createElement('div');
+      hint.className = `key-hint ${sc}`;
+      hint.setAttribute('aria-hidden', 'true');
+      hint.appendChild(
+        createDsText({ variant: 'text-caption', emphasis: true, text: this.shortcutKey }),
+      );
+      inner.appendChild(hint);
+    };
+
+    appendShortcut('start');
+
+    const labelWrap = document.createElement('span');
+    labelWrap.className = `tooltip-label ${sc}`;
+    labelWrap.appendChild(createDsText({ variant: textVariant, text: this.label }));
+    inner.appendChild(labelWrap);
+
+    appendShortcut('end');
+
+    this.popupEl.replaceChildren(inner);
   }
 
   private calculatePosition() {
@@ -337,13 +363,4 @@ export class Tooltip {
       </Host>
     );
   }
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }

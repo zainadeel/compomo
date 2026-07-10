@@ -5,10 +5,8 @@ import '../../../../dist/components/ds-text.js';
 const VARIANTS = [
   'text-display-medium', 'text-display-small',
   'text-title-large', 'text-title-medium', 'text-title-small',
-  'text-body-large', 'text-body-large-emphasis',
-  'text-body-medium', 'text-body-medium-emphasis',
-  'text-body-small', 'text-body-small-emphasis',
-  'text-caption', 'text-caption-emphasis',
+  'text-body-large', 'text-body-medium', 'text-body-small',
+  'text-caption',
 ];
 
 const COLORS = [
@@ -22,6 +20,11 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     variant:       { control: 'select', options: VARIANTS },
+    emphasis: {
+      control: 'boolean',
+      description:
+        'Heavier weight + tighter letter-spacing. Default false (regular / caption medium). Pass true for display bold, title/caption semibold, body medium.',
+    },
     color: {
       control: 'text',
       description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
@@ -38,6 +41,7 @@ const meta: Meta = {
   },
   args: {
     variant: 'text-body-medium',
+    emphasis: false,
     color: 'primary',
     as: 'p',
     align: 'left',
@@ -59,6 +63,7 @@ export const Playground: Story = {
     <div style="max-width: 360px;">
       <ds-text
         variant=${args['variant']}
+        .emphasis=${args['emphasis'] as boolean}
         color=${args['color'] || undefined}
         as=${args['as']}
         align=${args['align'] || undefined}
@@ -76,12 +81,29 @@ export const Playground: Story = {
 };
 
 export const AllVariants: Story = {
+  name: 'All variants',
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 8px">
       ${VARIANTS.map(v => html`
         <div style="display: flex; align-items: baseline; gap: 16px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 220px; flex-shrink: 0">${v}</span>
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0">${v}</span>
           <ds-text variant=${v}>The quick brown fox jumps over the lazy dog</ds-text>
+          <ds-text variant=${v} emphasis>emphasis</ds-text>
+        </div>
+      `)}
+    </div>
+  `,
+};
+
+export const Emphasis: Story = {
+  name: 'Emphasis pairs',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      ${VARIANTS.map(v => html`
+        <div style="display: flex; align-items: baseline; gap: 24px">
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0">${v}</span>
+          <ds-text variant=${v} .emphasis=${false} as="span">regular</ds-text>
+          <ds-text variant=${v} .emphasis=${true} as="span">emphasis</ds-text>
         </div>
       `)}
     </div>
@@ -120,7 +142,7 @@ export const Truncation: Story = {
 const ROW = 'display: flex; align-items: baseline; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border-tertiary)';
 const LBL = 'font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0';
 
-export const Decoration: Story = {
+export const Decorations: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 0">
       <div style="${ROW}">
@@ -169,11 +191,11 @@ export const SemanticElements: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 12px">
       ${(['h1','h2','h3','h4','h5','h6'] as const).map((tag, i) => {
-        const variants = ['text-display-medium','text-display-small','text-title-large','text-title-medium','text-title-small','text-body-large-emphasis'] as const;
+        const variants = ['text-display-medium','text-display-small','text-title-large','text-title-medium','text-title-small','text-body-large'] as const;
         return html`
           <div style="${ROW}">
             <span style="${LBL}">as="${tag}"</span>
-            <ds-text as=${tag} variant=${variants[i]}>Heading level ${i + 1}</ds-text>
+            <ds-text as=${tag} variant=${variants[i]} emphasis>Heading level ${i + 1}</ds-text>
           </div>`;
       })}
       <div style="${ROW}">
@@ -186,7 +208,7 @@ export const SemanticElements: Story = {
       </div>
       <div style="${ROW}">
         <span style="${LBL}">as="label"</span>
-        <ds-text as="label" variant="text-caption-emphasis">Form label</ds-text>
+        <ds-text as="label" variant="text-caption" .emphasis=${true}>Form label</ds-text>
       </div>
     </div>
   `,

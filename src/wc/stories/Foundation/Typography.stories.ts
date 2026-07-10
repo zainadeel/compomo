@@ -26,22 +26,33 @@ function sectionHead(title: string): TemplateResult {
 
 // ── Variants ───────────────────────────────────────────────────────────────
 
-type VariantSpec = { variant: TextVariant; spec: string; sample: string };
+type VariantSpec = {
+  variant: TextVariant;
+  emphasis?: boolean;
+  label: string;
+  spec: string;
+  sample: string;
+};
 
 const VARIANTS: VariantSpec[] = [
-  { variant: 'text-display-medium',       spec: '44px / 64px  bold',          sample: 'Display Medium'         },
-  { variant: 'text-display-small',        spec: '32px / 48px  bold',          sample: 'Display Small'          },
-  { variant: 'text-title-large',          spec: '24px / 32px  semibold',      sample: 'Title Large'            },
-  { variant: 'text-title-medium',         spec: '18px / 24px  semibold',      sample: 'Title Medium'           },
-  { variant: 'text-title-small',          spec: '14px / 20px  semibold',      sample: 'Title Small'            },
-  { variant: 'text-body-large',           spec: '18px / 24px  regular',       sample: 'The quick brown fox jumps over the lazy dog' },
-  { variant: 'text-body-large-emphasis',  spec: '18px / 24px  medium',        sample: 'The quick brown fox jumps over the lazy dog' },
-  { variant: 'text-body-medium',          spec: '14px / 20px  regular',       sample: 'The quick brown fox jumps over the lazy dog' },
-  { variant: 'text-body-medium-emphasis', spec: '14px / 20px  medium',        sample: 'The quick brown fox jumps over the lazy dog' },
-  { variant: 'text-body-small',           spec: '12px / 16px  regular',       sample: 'The quick brown fox jumps over the lazy dog' },
-  { variant: 'text-body-small-emphasis',  spec: '12px / 16px  medium',        sample: 'The quick brown fox jumps over the lazy dog' },
-  { variant: 'text-caption',              spec: '9px  / 12px  medium  upper', sample: 'caption label'          },
-  { variant: 'text-caption-emphasis',     spec: '9px  / 12px  semibold upper',sample: 'caption emphasis'       },
+  { variant: 'text-display-medium', emphasis: true,  label: 'text-display-medium', spec: '44px / 64px  bold', sample: 'Display Medium' },
+  { variant: 'text-display-medium', emphasis: false, label: 'text-display-medium regular', spec: '44px / 64px  regular', sample: 'Display Medium' },
+  { variant: 'text-display-small',  emphasis: true,  label: 'text-display-small', spec: '32px / 48px  bold', sample: 'Display Small' },
+  { variant: 'text-display-small',  emphasis: false, label: 'text-display-small regular', spec: '32px / 48px  regular', sample: 'Display Small' },
+  { variant: 'text-title-large',    emphasis: true,  label: 'text-title-large', spec: '24px / 32px  semibold', sample: 'Title Large' },
+  { variant: 'text-title-large',    emphasis: false, label: 'text-title-large regular', spec: '24px / 32px  regular', sample: 'Title Large' },
+  { variant: 'text-title-medium',   emphasis: true,  label: 'text-title-medium', spec: '18px / 24px  semibold', sample: 'Title Medium' },
+  { variant: 'text-title-medium',   emphasis: false, label: 'text-title-medium regular', spec: '18px / 24px  regular', sample: 'Title Medium' },
+  { variant: 'text-title-small',    emphasis: true,  label: 'text-title-small', spec: '14px / 20px  semibold', sample: 'Title Small' },
+  { variant: 'text-title-small',    emphasis: false, label: 'text-title-small regular', spec: '14px / 20px  regular', sample: 'Title Small' },
+  { variant: 'text-body-large',     emphasis: false, label: 'text-body-large', spec: '18px / 24px  regular', sample: 'The quick brown fox jumps over the lazy dog' },
+  { variant: 'text-body-large',     emphasis: true,  label: 'text-body-large emphasis', spec: '18px / 24px  medium', sample: 'The quick brown fox jumps over the lazy dog' },
+  { variant: 'text-body-medium',    emphasis: false, label: 'text-body-medium', spec: '14px / 20px  regular', sample: 'The quick brown fox jumps over the lazy dog' },
+  { variant: 'text-body-medium',    emphasis: true,  label: 'text-body-medium emphasis', spec: '14px / 20px  medium', sample: 'The quick brown fox jumps over the lazy dog' },
+  { variant: 'text-body-small',     emphasis: false, label: 'text-body-small', spec: '12px / 16px  regular', sample: 'The quick brown fox jumps over the lazy dog' },
+  { variant: 'text-body-small',     emphasis: true,  label: 'text-body-small emphasis', spec: '12px / 16px  medium', sample: 'The quick brown fox jumps over the lazy dog' },
+  { variant: 'text-caption',        emphasis: false, label: 'text-caption', spec: '9px  / 12px  medium  upper', sample: 'caption label' },
+  { variant: 'text-caption',        emphasis: true,  label: 'text-caption emphasis', spec: '9px  / 12px  semibold upper', sample: 'caption emphasis' },
 ];
 
 function VariantsStory(): TemplateResult {
@@ -49,11 +60,16 @@ function VariantsStory(): TemplateResult {
     <div style="${PAGE}">
       ${sectionHead('Variants')}
       <div style="${SECTION}">
-        ${VARIANTS.map(({ variant, spec, sample }) => html`
+        ${VARIANTS.map(({ variant, emphasis, label, spec, sample }) => html`
           <div style="${ROW}">
-            <span style="${LBL}">${variant}</span>
+            <span style="${LBL}">${label}</span>
             <span style="${SPEC}">${spec}</span>
-            <ds-text variant=${variant} color="primary" as="span">${sample}</ds-text>
+            <ds-text
+              variant=${variant}
+              .emphasis=${emphasis ?? false}
+              color="primary"
+              as="span"
+            >${sample}</ds-text>
           </div>
         `)}
       </div>

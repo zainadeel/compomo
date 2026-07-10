@@ -290,14 +290,17 @@ export class PanelTools {
           >
             <div class="panel-tools__drawer-surface">
               <header class="panel-tools__header">
-                <span class="panel-tools__title text-body-medium-emphasis">{headerLabel}</span>
+                <span class="panel-tools__title">
+                  <ds-text as="span" variant="text-body-medium" emphasis color="inherit" wrap="nowrap">
+                    {headerLabel}
+                  </ds-text>
+                </span>
               </header>
               <div class="panel-tools__body">
                 <div
                   class={{
                     'panel-tools__view': true,
                     'panel-tools__view--active': this.isViewActive('search'),
-                    'text-body-medium': true,
                   }}
                   hidden={!this.isViewActive('search')}
                 >
@@ -307,7 +310,6 @@ export class PanelTools {
                   class={{
                     'panel-tools__view': true,
                     'panel-tools__view--active': this.isViewActive('messages'),
-                    'text-body-medium': true,
                   }}
                   hidden={!this.isViewActive('messages')}
                 >
@@ -317,7 +319,6 @@ export class PanelTools {
                   class={{
                     'panel-tools__view': true,
                     'panel-tools__view--active': this.isViewActive('stacks'),
-                    'text-body-medium': true,
                   }}
                   hidden={!this.isViewActive('stacks')}
                 >
@@ -327,7 +328,6 @@ export class PanelTools {
                   class={{
                     'panel-tools__view': true,
                     'panel-tools__view--active': this.isViewActive('activity'),
-                    'text-body-medium': true,
                   }}
                   hidden={!this.isViewActive('activity')}
                 >
@@ -337,7 +337,6 @@ export class PanelTools {
                   class={{
                     'panel-tools__view': true,
                     'panel-tools__view--active': this.isViewActive('agents'),
-                    'text-body-medium': true,
                   }}
                   hidden={!this.isViewActive('agents')}
                 >
@@ -347,7 +346,6 @@ export class PanelTools {
                   class={{
                     'panel-tools__view': true,
                     'panel-tools__view--active': this.isViewActive('help'),
-                    'text-body-medium': true,
                   }}
                   hidden={!this.isViewActive('help')}
                 >

@@ -88,6 +88,7 @@
   align-items: center;
   height: var(--dimension-size-400);
   padding-inline: var(--dimension-space-100);
+  line-height: var(--typography-lineheight-md);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -1,4 +1,5 @@
 import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
+import { CONTROL_TEXT_VARIANT } from '../../utils';
 
 /**
  * Semantic chip state — replaces Tag’s intent × contrast matrix.
@@ -10,13 +11,6 @@ import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
 export type ChipState = 'default' | 'active' | 'error' | 'caution';
 export type ChipSize = 'md' | 'sm' | 'xs';
 export type ChipBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
-
-/** Text variant per control-density recipe (md / sm / xs). */
-const TEXT_VARIANT: Record<ChipSize, string> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
 
 /** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */
 const ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {
@@ -58,7 +52,7 @@ export class Chip {
   };
 
   render() {
-    const textVariant = TEXT_VARIANT[this.size];
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
     const maxWidthStyle = this.maxWidth != null
@@ -88,8 +82,10 @@ export class Chip {
         style={maxWidthStyle}
         aria-disabled={this.isInactive || undefined}
       >
-        <span class={{ 'tag__label': true, [textVariant]: true }}>
-          {this.label}
+        <span class="tag__label">
+          <ds-text as="span" variant={textVariant} color="inherit">
+            {this.label}
+          </ds-text>
         </span>
         {this.removable && (
           <button

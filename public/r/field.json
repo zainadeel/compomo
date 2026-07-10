@@ -62,12 +62,12 @@
   "files": [
     {
       "path": "src/wc/components/Field/Field.css",
-      "content": ":host {\n  display: block;\n}\n\n.field {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n}\n\n.field__label {\n  display: block;\n}\n",
+      "content": ":host {\n  display: block;\n}\n\n.field {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Field/Field.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nlet fieldCounter = 0;\n\n@Component({\n  tag: 'ds-field',\n  styleUrl: 'Field.css',\n  scoped: true,\n})\nexport class Field {\n  @Prop() label!: string;\n  /** ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted. */\n  @Prop() fieldId: string | undefined;\n\n  private resolvedId = `ds-field-${++fieldCounter}`;\n\n  render() {\n    const id = this.fieldId || this.resolvedId;\n    return (\n      <Host>\n        <div class=\"field\">\n          <label class=\"text-body-small-emphasis field__label\" htmlFor={id}>{this.label}</label>\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nlet fieldCounter = 0;\n\n@Component({\n  tag: 'ds-field',\n  styleUrl: 'Field.css',\n  scoped: true,\n})\nexport class Field {\n  @Prop() label!: string;\n  /** ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted. */\n  @Prop() fieldId: string | undefined;\n\n  private resolvedId = `ds-field-${++fieldCounter}`;\n\n  render() {\n    const id = this.fieldId || this.resolvedId;\n    return (\n      <Host>\n        <div class=\"field\">\n          <ds-text as=\"label\" variant=\"text-body-small\" emphasis for={id}>\n            {this.label}\n          </ds-text>\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

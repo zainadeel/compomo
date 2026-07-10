@@ -38,8 +38,12 @@ export class Slider {
     return (
       <Host class="field">
         <div class="label-row">
-          <label class="text-body-small-emphasis" htmlFor={finalId}>{this.label}</label>
-          <span class="text-body-small-emphasis">{this.value}</span>
+          <ds-text as="label" variant="text-body-small" emphasis for={finalId}>
+            {this.label}
+          </ds-text>
+          <ds-text as="span" variant="text-body-small" emphasis>
+            {this.value}
+          </ds-text>
         </div>
         <div
           class={{

@@ -1058,14 +1058,14 @@ export declare interface DsTag extends Components.DsTag {}
 
 
 @ProxyCmp({
-  inputs: ['align', 'as', 'color', 'decoration', 'fontFeature', 'for', 'italic', 'lineTruncation', 'variant', 'wrap']
+  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'textId', 'variant', 'wrap']
 })
 @Component({
   selector: 'ds-text',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'as', 'color', 'decoration', 'fontFeature', 'for', 'italic', 'lineTruncation', 'variant', 'wrap'],
+  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'textId', 'variant', 'wrap'],
   standalone: false
 })
 export class DsText {

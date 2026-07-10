@@ -118,7 +118,11 @@ export class RadioGroup {
               <span class={{ circle: true, 'circle--checked': isChecked }}>
                 {isChecked && <span class="dot" />}
               </span>
-              <span class="text-body-medium radio-label">{opt.label}</span>
+              <span class="radio-label">
+                <ds-text as="span" variant="text-body-medium">
+                  {opt.label}
+                </ds-text>
+              </span>
             </div>
           );
         })}

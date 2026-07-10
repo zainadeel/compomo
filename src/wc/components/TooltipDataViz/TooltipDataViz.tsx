@@ -126,7 +126,7 @@ export class TooltipDataViz {
             </ds-text>
           </span>
           <span class="tooltip-data-viz__value">
-            <ds-text as="span" variant="text-body-medium-emphasis" color="var(--color-foreground-on-translucent-background-primary)">
+            <ds-text as="span" variant="text-body-medium" emphasis color="var(--color-foreground-on-translucent-background-primary)">
               {this.value}
             </ds-text>
           </span>

@@ -47,15 +47,29 @@ const COMPONENTS = [
     exports: ['Text'],
     types: ['TextProps', 'TextVariant', 'TextStyle', 'TextColor', 'TextColorToken', 'TextDecoration', 'TextAlign', 'LineTruncation', 'TextWrap', 'TextElement'],
     props: {
-      variant: { type: 'TextVariant', default: "'text-body-medium'", description: 'Typography variant from design tokens.' },
+      variant: {
+        type: 'TextVariant',
+        default: "'text-body-medium'",
+        description:
+          'Size/leading recipe (display, title, body, caption). Emphasis weight + tracking is a separate prop.',
+      },
+      emphasis: {
+        type: 'boolean',
+        default: 'false',
+        description:
+          'Heavier weight + tighter letter-spacing. Default false. True: display bold, title/caption semibold, body medium.',
+      },
       children: { type: 'React.ReactNode', required: true },
       color: { type: 'TextColor', description: 'Token-based text color.' },
       as: { type: "'p' | 'span' | 'div' | 'label' | 'h1'-'h6'", default: "'p'" },
+      for: { type: 'string', description: 'Maps to `for` on label elements.' },
+      textId: { type: 'string', description: 'DOM id on the inner text element (aria-labelledby / aria-describedby targets).' },
       lineTruncation: { type: '1 | 2 | 3 | 4 | 5 | "none"', default: "'none'" },
       decoration: { type: "'none' | 'underline' | 'dotted-underline'" },
       italic: { type: 'boolean' },
       align: { type: "'left' | 'center' | 'right'" },
       wrap: { type: "'wrap' | 'nowrap' | 'balance' | 'pretty'" },
+      fontFeature: { type: "'normal' | 'tabular-nums'", default: "'normal'" },
     },
     usesTokens: true,
     usesIcons: false,

@@ -1,6 +1,6 @@
 :host {
   display: inline-flex;
-  font-family: inherit;
+  font-family: var(--typography-font-family);
 }
 
 .chart-bar__gridline {
@@ -8,9 +8,14 @@
   stroke-width: 1;
 }
 
+/* Matches ds-text text-caption regular (SVG cannot host ds-text). */
 .chart-bar__axis-label {
   fill: var(--color-foreground-tertiary);
+  font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-xs);
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: var(--typography-letterspacing-positive);
+  text-transform: uppercase;
 }
 
 .chart-bar__bar {

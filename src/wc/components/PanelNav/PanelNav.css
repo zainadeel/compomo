@@ -186,7 +186,7 @@
 }
 
 .panel-nav__group-label {
-  /* Typography via ds-text (text-caption-emphasis) */
+  /* Typography via ds-text (text-caption + emphasis) */
   display: flex;
   align-items: center;
   text-transform: uppercase;
@@ -232,7 +232,7 @@
 
 .panel-nav__item--active {
   color: var(--_nav-fg-primary);
-  /* Bold typography via ds-text (text-body-medium-emphasis) on the label */
+  /* Bold typography via ds-text (text-body-medium + emphasis) on the label */
 }
 
 /* ── Item icon ───────────────────────────────────────────────────────────── */

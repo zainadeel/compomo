@@ -22,9 +22,9 @@ export class EmptyState {
     return (
       <Host>
         <div class="empty-state">
-          <p class="text-body-medium" style={{ color: 'var(--color-foreground-secondary)' }}>
+          <ds-text as="p" variant="text-body-medium" color="secondary">
             {this.message || DEFAULT_MESSAGES[this.type]}
-          </p>
+          </ds-text>
         </div>
       </Host>
     );

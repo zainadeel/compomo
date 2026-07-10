@@ -4,7 +4,7 @@
 
 :host {
   display: block;
-  font-family: inherit;
+  font-family: var(--typography-font-family);
   user-select: none;
 }
 

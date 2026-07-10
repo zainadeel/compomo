@@ -358,7 +358,11 @@ export class Menu {
             >
               {section.header && (
                 <div class="section-header ds-control--md" aria-hidden="true">
-                  <span class="text-body-small-emphasis section-label">{section.header}</span>
+                  <span class="section-label">
+                    <ds-text as="span" variant="text-body-small" emphasis color="inherit">
+                      {section.header}
+                    </ds-text>
+                  </span>
                 </div>
               )}
               {isMenuGradientPickerSection(section) ? (
@@ -398,11 +402,17 @@ export class Menu {
                     onFocus={() => { this.focusedIndex = idx; }}
                   >
                     <div class="menu-item__content ds-interaction-fill__content">
-                      <span class={item.isSelected ? 'text-body-medium-emphasis menu-item__label' : 'text-body-medium menu-item__label'}>
-                        {item.label}
+                      <span class="menu-item__label">
+                        <ds-text as="span" variant="text-body-medium" emphasis={!!item.isSelected} color="inherit">
+                          {item.label}
+                        </ds-text>
                       </span>
                       {item.subtext && (
-                        <span class="text-body-small menu-item__subtext">{item.subtext}</span>
+                        <span class="menu-item__subtext">
+                          <ds-text as="span" variant="text-body-small" color="inherit">
+                            {item.subtext}
+                          </ds-text>
+                        </span>
                       )}
                     </div>
                     {item.showToggle && (

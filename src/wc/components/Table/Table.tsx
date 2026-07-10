@@ -150,9 +150,9 @@ export class Table {
                       }}
                       style={col.minWidth ? { minWidth: typeof col.minWidth === 'number' ? `${col.minWidth}px` : col.minWidth as string } : undefined}
                     >
-                      <span class="text-body-small-emphasis" style={{ color: 'var(--color-foreground-secondary)' }}>
+                      <ds-text as="span" variant="text-body-small" emphasis color="secondary">
                         {col.header}
-                      </span>
+                      </ds-text>
                       {isSorted && (
                         <span class="sort-indicator" aria-hidden="true">
                           {sort.direction === 'asc' ? '↑' : '↓'}
@@ -182,9 +182,9 @@ export class Table {
               {/* Empty state */}
               {isEmpty && (
                 <div class="empty-row" style={{ gridColumn: '1 / -1' }}>
-                  <p class="text-body-medium" style={{ margin: '0', color: 'var(--color-foreground-secondary)' }}>
+                  <ds-text as="p" variant="text-body-medium" color="secondary">
                     {this.emptyMessage}
-                  </p>
+                  </ds-text>
                 </div>
               )}
 
@@ -220,8 +220,10 @@ export class Table {
                         }}
                         role="cell"
                       >
-                        <span class="text-body-medium cell-value">
-                          {String(getCellValue(col, row) ?? '')}
+                        <span class="cell-value">
+                          <ds-text as="span" variant="text-body-medium">
+                            {String(getCellValue(col, row) ?? '')}
+                          </ds-text>
                         </span>
                       </div>
                     ))}
@@ -243,11 +245,11 @@ export class Table {
                   this.dsPageChange.emit({ pageIndex: this.pageIndex });
                 }}
               >
-                <span class="text-body-small">Previous</span>
+                <ds-text as="span" variant="text-body-small">Previous</ds-text>
               </button>
-              <span class="text-body-small" style={{ color: 'var(--color-foreground-secondary)' }}>
+              <ds-text as="span" variant="text-body-small" color="secondary">
                 Page {this.pageIndex! + 1} of {totalPages}
-              </span>
+              </ds-text>
               <button
                 type="button"
                 class="page-button"
@@ -257,7 +259,7 @@ export class Table {
                   this.dsPageChange.emit({ pageIndex: this.pageIndex });
                 }}
               >
-                <span class="text-body-small">Next</span>
+                <ds-text as="span" variant="text-body-small">Next</ds-text>
               </button>
             </div>
           )}

@@ -51,8 +51,10 @@ export class Checkbox {
             </span>
           )}
         </span>
-        <span id={this.labelId} class="text-body-medium checkbox__label">
-          {this.label}
+        <span class="checkbox__label">
+          <ds-text as="span" variant="text-body-medium" textId={this.labelId}>
+            {this.label}
+          </ds-text>
         </span>
       </Host>
     );

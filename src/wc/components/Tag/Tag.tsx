@@ -1,15 +1,9 @@
 import { Component, Prop, h, Host } from '@stencil/core';
+import { CONTROL_TEXT_VARIANT } from '../../utils';
 
 export type TagIntent   = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';
 export type TagContrast = 'strong' | 'bold' | 'medium' | 'faint';
 export type TagSize     = 'md' | 'sm' | 'xs';
-
-/** Text variant per control-density recipe (md / sm / xs). */
-const TEXT_VARIANT: Record<TagSize, string> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
 
 /**
  * `ds-icon` size prop matching control-density icon metrics
@@ -35,7 +29,7 @@ export class Tag {
   @Prop() maxWidth: string | number | undefined;
 
   render() {
-    const textVariant = TEXT_VARIANT[this.size];
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
     const maxWidthStyle = this.maxWidth != null
@@ -60,8 +54,10 @@ export class Tag {
         <span class="tag__icon-slot" data-icon-size={iconSize}>
           <slot name="icon" />
         </span>
-        <span class={{ 'tag__label': true, [textVariant]: true }}>
-          {this.label}
+        <span class="tag__label">
+          <ds-text as="span" variant={textVariant} color="inherit">
+            {this.label}
+          </ds-text>
         </span>
       </Host>
     );
