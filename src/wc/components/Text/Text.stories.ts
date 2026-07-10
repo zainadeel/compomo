@@ -23,7 +23,7 @@ const meta: Meta = {
     emphasis: {
       control: 'boolean',
       description:
-        'Heavier weight + tighter letter-spacing. Default false (regular / caption medium). Pass true for display bold, title/caption semibold, body medium.',
+        'Heavier weight + tighter letter-spacing. Default false = one step below emphasis (display semibold, title medium). Pass true for display bold, title/caption semibold, body medium.',
     },
     color: {
       control: 'text',

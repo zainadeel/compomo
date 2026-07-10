@@ -185,15 +185,21 @@
   gap: var(--dimension-space-050, 4px);
 }
 
-.panel-nav__group-label {
-  /* Typography via ds-text (text-caption + emphasis) */
+/*
+ * Section headers — typography via ds-text (text-caption + emphasis).
+ * Element selector so display:flex beats Text's inline-block, and padding
+ * isn't clobbered by sharing `.panel-nav__item-label-text` on the same host.
+ */
+ds-text.panel-nav__group-label {
   display: flex;
   align-items: center;
+  box-sizing: border-box;
   text-transform: uppercase;
   color: var(--_nav-fg-secondary);
   user-select: none;
   height: var(--dimension-size-300, 24px);
-  padding: 0 var(--dimension-space-075, 6px);
+  /* Former nested pad: group-label (075) + item-label-text (025). */
+  padding: 0 calc(var(--dimension-space-075, 6px) + var(--dimension-space-025, 2px));
   white-space: nowrap;
   overflow: hidden;
   max-height: var(--dimension-size-300, 24px);
@@ -312,10 +318,10 @@
     -webkit-mask-position var(--_nav-label-fade-out-motion) 0ms;
 }
 
-.panel-nav--collapsed .panel-nav__group-label {
+.panel-nav--collapsed ds-text.panel-nav__group-label {
   opacity: 0;
   max-height: 0;
-  padding: 0 var(--dimension-space-075, 6px);
+  padding: 0 calc(var(--dimension-space-075, 6px) + var(--dimension-space-025, 2px));
   pointer-events: none;
   transition:
     opacity var(--_nav-label-fade-out-motion) 0ms,
@@ -447,12 +453,26 @@
 
 /* ── User initial — overlaid on the circle icon ─────────────────────────── */
 
-.panel-nav__user-initial {
+/*
+ * Center the caption glyph on the Circle icon. Don't use inset:0 + flex — the
+ * inner `.ds-text__element { width: 100% }` stretches and left-aligns the letter.
+ * Translate-centering + line-height:1 matches pre-migration optical position.
+ * (Do not set `inset: auto` after top/left — it resets them.)
+ */
+ds-text.panel-nav__user-initial,
+ds-text.panel-nav__user-initial.ds-text--caption {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: max-content;
+  max-width: none;
+  min-width: 0;
+  line-height: 1;
+  text-align: center;
   color: var(--_nav-fg-secondary);
   pointer-events: none;
   transition: color var(--effect-motion-short-3, 200ms ease);

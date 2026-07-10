@@ -32,8 +32,16 @@
   padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
 }
 
-/* ds-text itself is the token-height flex item; the row centers it directly. */
-.tooltip-label {
+/*
+ * Label layout lives on ds-text (metric-box + control label-inset).
+ * NOTE: Stencil scopes this to `ds-text.sc-ds-tooltip`, but portaled
+ * createElement ds-text loses that class when Text's <Host class> renders.
+ * `renderPopupContent` therefore also sets these as inline styles.
+ */
+.tooltip-inner > ds-text {
+  flex-shrink: 0;
+  min-width: max-content;
+  max-width: none;
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   color: var(--color-foreground-primary);
 }

@@ -362,7 +362,7 @@ export class Menu {
                   as="span"
                   variant="text-body-small"
                   emphasis
-                  color="inherit"
+                  color="primary"
                   aria-hidden="true"
                 >
                   {section.header}
@@ -410,12 +410,12 @@ export class Menu {
                         as="span"
                         variant="text-body-medium"
                         emphasis={!!item.isSelected}
-                        color="inherit"
+                        color={item.isSelected ? 'primary' : 'secondary'}
                       >
                         {item.label}
                       </ds-text>
                       {item.subtext && (
-                        <ds-text class="menu-item__subtext" as="span" variant="text-body-small" color="inherit">
+                        <ds-text class="menu-item__subtext" as="span" variant="text-body-small" color="secondary">
                           {item.subtext}
                         </ds-text>
                       )}

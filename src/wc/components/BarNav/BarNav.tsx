@@ -613,8 +613,11 @@ export class BarNav {
   }
 
   render() {
+    // Section gating only applies when `basePath` is set (SPA section sync).
+    // Tabs without a base path must still render — otherwise a single-tab bar
+    // (or any non-routed tabs) silently falls through to an empty header.
     const sectionReady =
-      this.basePath !== '' && this.committedSection === this.basePath;
+      this.basePath === '' || this.committedSection === this.basePath;
     const hasTabs =
       sectionReady && this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
     const tabGroupKey = this.basePath || 'no-section';
@@ -688,7 +691,7 @@ export class BarNav {
                 as="span"
                 variant="text-body-medium"
                 emphasis
-                color="inherit"
+                color="primary"
                 wrap="nowrap"
               >
                 {this.heading}

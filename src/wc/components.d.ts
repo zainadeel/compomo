@@ -1076,7 +1076,7 @@ export namespace Components {
         "color": TextColor | undefined;
         "decoration": TextDecoration | undefined;
         /**
-          * Heavier weight + tighter letter-spacing for the variant. `false` (default): regular weight (caption stays medium). `true`: display bold, title/caption semibold, body medium.
+          * Heavier weight + tighter letter-spacing for the variant. `false` (default): one step below emphasis (display semibold, title/body medium, caption medium). `true`: display bold, title/caption semibold, body medium.
           * @default false
          */
         "emphasis": boolean;
@@ -2997,7 +2997,7 @@ declare namespace LocalJSX {
         "color"?: TextColor | undefined;
         "decoration"?: TextDecoration | undefined;
         /**
-          * Heavier weight + tighter letter-spacing for the variant. `false` (default): regular weight (caption stays medium). `true`: display bold, title/caption semibold, body medium.
+          * Heavier weight + tighter letter-spacing for the variant. `false` (default): one step below emphasis (display semibold, title/body medium, caption medium). `true`: display bold, title/caption semibold, body medium.
           * @default false
          */
         "emphasis"?: boolean;

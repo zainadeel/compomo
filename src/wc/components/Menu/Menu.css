@@ -64,7 +64,7 @@
   border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
 }
 
-.section-header {
+ds-text.section-header {
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -74,7 +74,6 @@
     var(--ds-control-padding-inline, var(--dimension-space-075)) +
       var(--ds-control-label-inset, var(--dimension-space-025))
   );
-  color: var(--color-foreground-primary);
   text-align: start;
   -webkit-user-select: none;
   user-select: none;
@@ -112,6 +111,7 @@
 /* Inactive: `.ds-control-inactive` (25% opacity). */
 
 .menu-item--destructive .menu-item__label {
+  /* Beat ds-text color-* host classes for destructive rows. */
   color: var(--color-foreground-bold-negative) !important;
 }
 
@@ -123,19 +123,14 @@
   min-width: 0;
 }
 
-.menu-item__label {
+/* Colors come from ds-text color prop; keep padding on the metric box. */
+ds-text.menu-item__label {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
-  color: var(--color-foreground-secondary);
 }
 
-.menu-item:has(.menu-item__subtext) .menu-item__label,
-.menu-item--selected .menu-item__label {
-  color: var(--color-foreground-primary);
-}
-
-.menu-item__subtext {
+.menu-item__subtext,
+ds-text.menu-item__subtext {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
-  color: var(--color-foreground-secondary);
 }
 
 /* ── Toggle suffix ───────────────────────────────────────────────────────── */

@@ -30,23 +30,37 @@ type DsTextEl = HTMLElement & {
   variant: TextVariant;
   emphasis: boolean;
   color: string;
+  wrap: string;
 };
 
 function createDsText(opts: {
   variant: TextVariant;
   emphasis?: boolean;
   color?: string;
-  className?: string;
+  wrap?: 'wrap' | 'nowrap' | 'balance' | 'pretty';
   text: string;
 }): DsTextEl {
   const el = document.createElement('ds-text') as DsTextEl;
-  if (opts.className) el.className = opts.className;
   el.as = 'span';
   el.variant = opts.variant;
   el.emphasis = opts.emphasis ?? false;
   el.color = opts.color ?? 'inherit';
+  if (opts.wrap) el.wrap = opts.wrap;
   el.textContent = opts.text;
   return el;
+}
+
+/**
+ * Control-density label styles for portaled ds-text.
+ * Scoped CSS requires `sc-ds-tooltip` on the host, but Text's `<Host class>`
+ * overwrites imperative className — so these must be inline to stick.
+ */
+function styleTooltipLabel(el: HTMLElement) {
+  el.style.flexShrink = '0';
+  el.style.minWidth = 'max-content';
+  el.style.maxWidth = 'none';
+  el.style.padding = '0 var(--ds-control-label-inset, var(--dimension-space-025))';
+  el.style.color = 'var(--color-foreground-primary)';
 }
 
 /**
@@ -93,6 +107,7 @@ export class Tooltip {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private anchor: HTMLElement | null = null;
   private popupEl: HTMLElement | null = null;
+  private positionObserver: ResizeObserver | null = null;
   private skipEnterAnimation = false;
   private isOpen = false;
   private mouseEnterHandler: () => void = () => this.show();
@@ -131,7 +146,7 @@ export class Tooltip {
     }
     if (!this.popupEl || !this.isOpen) return;
     this.renderPopupContent();
-    this.calculatePosition();
+    this.schedulePosition();
   }
 
   private get viewportPadPx(): number {
@@ -199,9 +214,37 @@ export class Tooltip {
   }
 
   private destroyPopup() {
+    this.positionObserver?.disconnect();
+    this.positionObserver = null;
     if (!this.popupEl) return;
     this.popupEl.remove();
     this.popupEl = null;
+  }
+
+  /**
+   * Position after `ds-text` upgrades and lays out. Measuring synchronously in
+   * `mountPopup` reads a collapsed/fallback width and places left/right tips wrong.
+   */
+  private schedulePosition() {
+    if (!this.popupEl) return;
+
+    const reapplyLabelStyles = () => {
+      const label = this.popupEl?.querySelector(':scope > .tooltip-inner > ds-text');
+      if (label instanceof HTMLElement) styleTooltipLabel(label);
+    };
+
+    requestAnimationFrame(() => {
+      reapplyLabelStyles();
+      this.calculatePosition();
+      requestAnimationFrame(() => {
+        reapplyLabelStyles();
+        this.calculatePosition();
+      });
+    });
+
+    this.positionObserver?.disconnect();
+    this.positionObserver = new ResizeObserver(() => this.calculatePosition());
+    this.positionObserver.observe(this.popupEl);
   }
 
   /** Drop the open tip immediately (warm handoff to another tooltip). */
@@ -278,7 +321,7 @@ export class Tooltip {
     this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
     this.popupEl.classList.remove('tooltip-popup--closing');
     this.renderPopupContent();
-    this.calculatePosition();
+    this.schedulePosition();
     this.isOpen = true;
   }
 
@@ -306,13 +349,11 @@ export class Tooltip {
 
     appendShortcut('start');
 
-    inner.appendChild(
-      createDsText({
-        className: `tooltip-label ${sc}`,
-        variant: textVariant,
-        text: this.label,
-      }),
-    );
+    // ds-text is the layout box (metric-box + 2px control label-inset).
+    // Inline styles required — see styleTooltipLabel.
+    const label = createDsText({ variant: textVariant, wrap: 'nowrap', text: this.label });
+    styleTooltipLabel(label);
+    inner.appendChild(label);
 
     appendShortcut('end');
 

@@ -295,7 +295,7 @@ export class PanelTools {
                   as="span"
                   variant="text-body-medium"
                   emphasis
-                  color="inherit"
+                  color="primary"
                   wrap="nowrap"
                 >
                   {headerLabel}

@@ -3,6 +3,8 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-bar-nav.js';
 
+const singleTabs = [{ id: 'tab-1', label: 'Tab 1' }];
+
 const multiTabs = [
   { id: 'tab-1', label: 'Tab 1' },
   { id: 'tab-2', label: 'Tab 2' },
@@ -39,7 +41,10 @@ export const SingleTab: Story = {
   name: 'Single tab',
   render: () => html`
     <div style="width: min(100%, 720px);">
-      <ds-bar-nav heading="Tab 1"></ds-bar-nav>
+      <ds-bar-nav
+        .tabs=${singleTabs}
+        value="tab-1"
+      ></ds-bar-nav>
     </div>
   `,
 };
