@@ -1,6 +1,7 @@
 import { Component, Prop, Event, EventEmitter, Element, State, Watch, Method, h, Host } from '@stencil/core';
 import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
 import {
+  PANEL_TOOLS_FOOTER_TOOL_ID,
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_PRIMARY_TOOL_ID,
   type PanelToolsItem,
@@ -19,7 +20,7 @@ export class PanelTools {
   /** When false, only the icon rail is shown. */
   @Prop({ mutable: true, reflect: true }) open: boolean = false;
 
-  /** Active tool view — `search`, `agents`, `messages`, `stacks`, or `activity`. */
+  /** Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`. */
   @Prop({ mutable: true, attribute: 'active-tool', reflect: true })
   activeTool: PanelToolsToolId | '' = '';
 
@@ -62,8 +63,15 @@ export class PanelTools {
   private get orderedRailItems(): PanelToolsItem[] {
     const railItems = this.railItems;
     const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
-    const bodyItems = railItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
-    return headerItem ? [headerItem, ...bodyItems] : bodyItems;
+    const footerItem = railItems.find(item => item.id === PANEL_TOOLS_FOOTER_TOOL_ID);
+    const bodyItems = railItems.filter(
+      item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID && item.id !== PANEL_TOOLS_FOOTER_TOOL_ID,
+    );
+    const ordered: PanelToolsItem[] = [];
+    if (headerItem) ordered.push(headerItem);
+    ordered.push(...bodyItems);
+    if (footerItem) ordered.push(footerItem);
+    return ordered;
   }
 
   disconnectedCallback() {
@@ -230,7 +238,13 @@ export class PanelTools {
     const headerLabel = this.headerLabel();
     const orderedRailItems = this.orderedRailItems;
     const headerItem = orderedRailItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
-    const bodyItems = orderedRailItems.filter(item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID);
+    const footerItem = orderedRailItems.find(item => item.id === PANEL_TOOLS_FOOTER_TOOL_ID);
+    const bodyItems = orderedRailItems.filter(
+      item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID && item.id !== PANEL_TOOLS_FOOTER_TOOL_ID,
+    );
+    const footerIndex = footerItem
+      ? (headerItem ? 1 : 0) + bodyItems.length
+      : -1;
     const showDrawerChrome = this.isDrawerPresent();
     const drawerResting = panelToolsDrawerResting(this.open, this.motion);
 
@@ -259,6 +273,11 @@ export class PanelTools {
                 this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx),
               )}
             </div>
+            {footerItem ? (
+              <div class="panel-tools__rail-footer">
+                {this.renderRailAction(footerItem, footerIndex)}
+              </div>
+            ) : null}
           </nav>
 
           <div
@@ -323,6 +342,16 @@ export class PanelTools {
                   hidden={!this.isViewActive('agents')}
                 >
                   <slot name="agents" />
+                </div>
+                <div
+                  class={{
+                    'panel-tools__view': true,
+                    'panel-tools__view--active': this.isViewActive('help'),
+                    'text-body-medium': true,
+                  }}
+                  hidden={!this.isViewActive('help')}
+                >
+                  <slot name="help" />
                 </div>
               </div>
             </div>

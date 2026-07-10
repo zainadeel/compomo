@@ -41,7 +41,7 @@ Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). To
 
 ### `ds-panel-tools` — one named slot per tool
 
-Each rail tool (`search`, `agents`, `messages`, `stacks`, `activity`) has a **named slot** for its own composed UI. Mount all tool panels in the host; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open (and keeps it visible during the close slide).
+Each rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a **named slot** for its own composed UI. Mount all tool panels in the host; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open (and keeps it visible during the close slide). Search is pinned to the rail header; **Help & Support** (`help`) is flush to the rail footer when included in `items`.
 
 ```html
 <ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>

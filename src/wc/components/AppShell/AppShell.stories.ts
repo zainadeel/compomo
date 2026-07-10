@@ -34,6 +34,7 @@ const PANEL_TOOLS_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
   { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
+  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
 ];
 
 const wiredPanelTools = new WeakSet<Element>();
