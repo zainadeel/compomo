@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.1](https://github.com/zainadeel/compomo/compare/v3.0.0...v3.0.1) (2026-07-10)
+
+
+### Fixed
+
+* **Menu:** restore section/item color hierarchy via ds-text ([2f50ff7](https://github.com/zainadeel/compomo/commit/2f50ff792a73574aa3bf09aa5163ebf9437b289b))
+* **Text:** repair ds-text chrome layout regressions ([7073d0c](https://github.com/zainadeel/compomo/commit/7073d0c9aab7826e640a13efa1fcff7179834533))
+* **Text:** repair tooltip/nav layout and soften display/title regulars ([9f60083](https://github.com/zainadeel/compomo/commit/9f60083f01af0bbd74e01794d01b868cff838065))
+* **Text:** restore chrome layout after ds-text metric-box ([8410728](https://github.com/zainadeel/compomo/commit/8410728e5b2daa10aaa992083ff42cbe5d9310ab))
+
 ## [3.0.0](https://github.com/zainadeel/compomo/compare/v2.15.0...v3.0.0) (2026-07-10)
 
 
