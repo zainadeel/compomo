@@ -481,7 +481,8 @@ export class PanelNav {
   }
 
   private renderFooterAction(isDashboardChrome: boolean) {
-    const footerLabel = isDashboardChrome ? 'Open settings' : 'Go to dashboard';
+    // Short chrome labels — same string for tip + aria (not "Open/Go to …").
+    const footerLabel = isDashboardChrome ? 'Settings' : 'Dashboard';
     return (
       <ds-tooltip label={footerLabel} side="right" size="sm">
         <ds-button-unfilled variant="icon"
@@ -500,14 +501,16 @@ export class PanelNav {
   }
 
   private renderFooterUser(collapsed: boolean, userName: string, userInitial: string) {
-    const userLabel = collapsed ? `User: ${userName}` : `User menu for ${userName}`;
+    // Always wrap so collapse morph CSS can transition on a stable button node.
+    // Tip only when collapsed (empty label → ds-tooltip skips show).
+    const tipLabel = collapsed ? 'Account' : '';
     const userButton = (
       <button
         type="button"
         id={PANEL_NAV_USER_MENU_ANCHOR_ID}
         class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset ds-interaction-fill"
         tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
-        aria-label={userLabel}
+        aria-label="Account"
         onClick={(e) => this.handleUserAction(e)}
         onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
         onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
@@ -535,10 +538,8 @@ export class PanelNav {
       </button>
     );
 
-    if (!collapsed) return userButton;
-
     return (
-      <ds-tooltip label={userLabel} side="right" size="sm">
+      <ds-tooltip label={tipLabel} side="right" size="sm">
         {userButton}
       </ds-tooltip>
     );
@@ -593,10 +594,10 @@ export class PanelNav {
       ? <a {...sharedProps} href={item.href}>{itemContent}</a>
       : <button {...sharedProps} type="button">{itemContent}</button>;
 
-    if (!collapsed) return control;
-
+    // Always wrap so label fade CSS can transition on a stable item node.
+    // Tip only when collapsed (empty label → ds-tooltip skips show).
     return (
-      <ds-tooltip label={item.label} side="right" size="sm">
+      <ds-tooltip label={collapsed ? item.label : ''} side="right" size="sm">
         {control}
       </ds-tooltip>
     );

@@ -1122,6 +1122,9 @@ export namespace Components {
           * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
         "delay": number | string;
+        /**
+          * Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay mounted for layout/animation stability (e.g. PanelNav expand/collapse).
+         */
         "label": string;
         "shortcutKey": string | undefined;
         /**
@@ -3026,6 +3029,9 @@ declare namespace LocalJSX {
           * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
         "delay"?: number | string;
+        /**
+          * Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay mounted for layout/animation stability (e.g. PanelNav expand/collapse).
+         */
         "label": string;
         "shortcutKey"?: string | undefined;
         /**
