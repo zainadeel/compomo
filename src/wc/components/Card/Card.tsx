@@ -57,7 +57,7 @@ export class Card {
       >
         <header class="card__header">
           <ds-text
-            class="card__title-wrap card__title"
+            class="card__title"
             variant="text-title-small"
             emphasis
             color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}

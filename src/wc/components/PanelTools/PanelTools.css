@@ -83,7 +83,12 @@
   user-select: none;
 }
 
-.panel-tools__title {
+/*
+ * Drawer title — match rail action height (size-400) and BarNav heading inset.
+ * Use `ds-text.` so scoped specificity beats Text's `:host(.ds-text--inline-box)`
+ * (class-only `.panel-tools__title` ties and loses when Text CSS loads later).
+ */
+ds-text.panel-tools__title {
   display: inline-flex;
   align-items: center;
   height: var(--dimension-size-400);
@@ -97,25 +102,25 @@
  * Fade title + slot body with the drawer slide (same dur/easing).
  * Header border stays opaque — only inner content opacity animates.
  */
-.panel-tools__title,
+ds-text.panel-tools__title,
 .panel-tools__body {
   opacity: 0;
   transition: none;
 }
 
-:host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__title,
+:host(.panel-tools--ready.panel-tools--motion-opening) ds-text.panel-tools__title,
 :host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__body {
   transition: opacity var(--_panel-tools-expand-dur)
     var(--effect-animation-easing-ease-out, ease-out);
 }
 
-:host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__title,
+:host(.panel-tools--ready.panel-tools--motion-closing) ds-text.panel-tools__title,
 :host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__body {
   transition: opacity var(--_panel-tools-expand-dur)
     var(--effect-animation-easing-ease-in, ease-in);
 }
 
-:host(.panel-tools--open) .panel-tools__title,
+:host(.panel-tools--open) ds-text.panel-tools__title,
 :host(.panel-tools--open) .panel-tools__body {
   opacity: 1;
 }
