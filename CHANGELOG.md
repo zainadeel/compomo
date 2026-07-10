@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.15.0](https://github.com/zainadeel/compomo/compare/v2.14.0...v2.15.0) (2026-07-10)
+
+
+### Added
+
+* **Text:** add emphasis prop and migrate components to ds-text ([39e4229](https://github.com/zainadeel/compomo/commit/39e42298334d13f10180d544c7c6d99c23714e0a))
+* **Text:** add emphasis prop and migrate components to ds-text ([f4ea52c](https://github.com/zainadeel/compomo/commit/f4ea52c6be64f9a32b05da994f27b76c14665916))
+
 ## [2.14.0](https://github.com/zainadeel/compomo/compare/v2.13.1...v2.14.0) (2026-07-10)
 
 
