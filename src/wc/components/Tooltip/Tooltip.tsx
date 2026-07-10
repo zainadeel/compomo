@@ -42,6 +42,10 @@ let activeTooltip: Tooltip | null = null;
 export class Tooltip {
   @Element() el!: HTMLElement;
 
+  /**
+   * Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay
+   * mounted for layout/animation stability (e.g. PanelNav expand/collapse).
+   */
   @Prop() label!: string;
 
   /** Control density (height, padding, type). */
@@ -101,6 +105,10 @@ export class Tooltip {
   @Watch('shortcutKey')
   @Watch('shortcutKeyPosition')
   onContentOrPositionChange() {
+    if (!this.label?.trim()) {
+      if (this.isOpen || this.popupEl) this.hideInstant();
+      return;
+    }
     if (!this.popupEl || !this.isOpen) return;
     this.renderPopupContent();
     this.calculatePosition();
@@ -187,6 +195,9 @@ export class Tooltip {
   }
 
   private show() {
+    // Empty label = wrapper present for DOM stability (e.g. PanelNav expand/collapse)
+    // but no tip should appear.
+    if (!this.label?.trim()) return;
     this.clearTimers();
     let instant = Date.now() - lastDismissedAt < this.instantReopenMs;
     if (activeTooltip && activeTooltip !== this) {
@@ -201,6 +212,7 @@ export class Tooltip {
     }
     this.delayTimer = setTimeout(() => {
       this.delayTimer = null;
+      if (!this.label?.trim()) return;
       this.mountPopup();
     }, this.hoverDelayMs);
   }
