@@ -3,8 +3,8 @@
  * (Tag, PanelNav items, BarNav tabs, Menu items, Chip, etc.).
  *
  * Apply `.ds-control--md|sm|xs` on the control (host or inner row). Then use the
- * `--ds-control-*` vars for height, padding, icon box, label inset, gap, radius,
- * and line-height (for wrappers around `ds-text`).
+ * `--ds-control-*` vars for height, padding, icon box, label inset, gap, and radius.
+ * Text line-height belongs exclusively to the selected `ds-text` variant.
  *
  * Both `:host(.ds-control--*)` and `.ds-control--*` are listed so Stencil scoped
  * components work whether the class is on the host (Tag) or an inner item (PanelNav).
@@ -20,8 +20,6 @@
   --ds-control-label-inset: var(--dimension-space-025);
   --ds-control-gap: var(--dimension-space-050);
   --ds-control-radius: var(--dimension-radius-025);
-  /* Matches text-body-medium line-height — wrappers around ds-text need this. */
-  --ds-control-line-height: var(--typography-lineheight-md);
 }
 
 :host(.ds-control--sm),
@@ -32,7 +30,6 @@
   --ds-control-label-inset: var(--dimension-space-025);
   --ds-control-gap: var(--dimension-space-025);
   --ds-control-radius: var(--dimension-radius-025);
-  --ds-control-line-height: var(--typography-lineheight-sm);
 }
 
 :host(.ds-control--xs),
@@ -43,5 +40,4 @@
   --ds-control-label-inset: var(--dimension-space-025);
   --ds-control-gap: var(--dimension-space-025);
   --ds-control-radius: var(--dimension-radius-025);
-  --ds-control-line-height: var(--typography-lineheight-xs);
 }

@@ -67,7 +67,7 @@ export class Input {
               placeholder={this.placeholder}
               disabled={this.isInactive}
               autoFocus={this.autoFocus}
-              class="native-input"
+              class="native-input ds-text--body-medium ds-text--regular"
               aria-label={this.ariaLabel}
               aria-labelledby={this.ariaLabelledby}
               aria-describedby={describedBy}
@@ -90,9 +90,16 @@ export class Input {
           </div>
         </div>
         {showError && (
-          <div id={this.errorId} role="alert" class="error-text">
+          <ds-text
+            class="error-text"
+            as="div"
+            variant="text-body-small"
+            color="negative"
+            textId={this.errorId}
+            role="alert"
+          >
             {this.errorMessage}
-          </div>
+          </ds-text>
         )}
       </Host>
     );

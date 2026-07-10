@@ -247,11 +247,15 @@ export class Select {
           aria-labelledby={this.ariaLabelledby}
           onClick={() => this.toggle({ focusVisible: false })}
         >
-          <span class="trigger__label ds-interaction-fill__content">
-            <ds-text as="span" variant={textVariant} color="inherit" lineTruncation={1}>
-              {label}
-            </ds-text>
-          </span>
+          <ds-text
+            class="trigger__label ds-interaction-fill__content"
+            as="span"
+            variant={textVariant}
+            color="inherit"
+            lineTruncation={1}
+          >
+            {label}
+          </ds-text>
           <span class="trigger__chevron ds-interaction-fill__content" aria-hidden="true">
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
           </span>

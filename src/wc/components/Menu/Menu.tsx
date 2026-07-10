@@ -357,13 +357,16 @@ export class Menu {
               aria-label={section.header}
             >
               {section.header && (
-                <div class="section-header ds-control--md" aria-hidden="true">
-                  <span class="section-label">
-                    <ds-text as="span" variant="text-body-small" emphasis color="inherit">
-                      {section.header}
-                    </ds-text>
-                  </span>
-                </div>
+                <ds-text
+                  class="section-header ds-control--md"
+                  as="span"
+                  variant="text-body-small"
+                  emphasis
+                  color="inherit"
+                  aria-hidden="true"
+                >
+                  {section.header}
+                </ds-text>
               )}
               {isMenuGradientPickerSection(section) ? (
                 <ds-shell-gradient-picker
@@ -402,17 +405,19 @@ export class Menu {
                     onFocus={() => { this.focusedIndex = idx; }}
                   >
                     <div class="menu-item__content ds-interaction-fill__content">
-                      <span class="menu-item__label">
-                        <ds-text as="span" variant="text-body-medium" emphasis={!!item.isSelected} color="inherit">
-                          {item.label}
-                        </ds-text>
-                      </span>
+                      <ds-text
+                        class="menu-item__label"
+                        as="span"
+                        variant="text-body-medium"
+                        emphasis={!!item.isSelected}
+                        color="inherit"
+                      >
+                        {item.label}
+                      </ds-text>
                       {item.subtext && (
-                        <span class="menu-item__subtext">
-                          <ds-text as="span" variant="text-body-small" color="inherit">
-                            {item.subtext}
-                          </ds-text>
-                        </span>
+                        <ds-text class="menu-item__subtext" as="span" variant="text-body-small" color="inherit">
+                          {item.subtext}
+                        </ds-text>
                       )}
                     </div>
                     {item.showToggle && (

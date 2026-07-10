@@ -181,11 +181,15 @@ export class Table {
 
               {/* Empty state */}
               {isEmpty && (
-                <div class="empty-row" style={{ gridColumn: '1 / -1' }}>
-                  <ds-text as="p" variant="text-body-medium" color="secondary">
-                    {this.emptyMessage}
-                  </ds-text>
-                </div>
+                <ds-text
+                  class="empty-row"
+                  as="p"
+                  variant="text-body-medium"
+                  color="secondary"
+                  style={{ gridColumn: '1 / -1' }}
+                >
+                  {this.emptyMessage}
+                </ds-text>
               )}
 
               {/* Data rows */}
@@ -211,21 +215,20 @@ export class Table {
                     }}
                   >
                     {visibleCols.map(col => (
-                      <div
+                      <ds-text
                         key={col.id}
                         class={{
                           'cell': true,
                           'align-right': col.align === 'right',
                           'align-center': col.align === 'center',
                         }}
+                        as="span"
+                        variant="text-body-medium"
+                        lineTruncation={1}
                         role="cell"
                       >
-                        <span class="cell-value">
-                          <ds-text as="span" variant="text-body-medium">
-                            {String(getCellValue(col, row) ?? '')}
-                          </ds-text>
-                        </span>
-                      </div>
+                        {String(getCellValue(col, row) ?? '')}
+                      </ds-text>
                     ))}
                   </div>
                 );

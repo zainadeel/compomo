@@ -36,9 +36,11 @@ function createDsText(opts: {
   variant: TextVariant;
   emphasis?: boolean;
   color?: string;
+  className?: string;
   text: string;
 }): DsTextEl {
   const el = document.createElement('ds-text') as DsTextEl;
+  if (opts.className) el.className = opts.className;
   el.as = 'span';
   el.variant = opts.variant;
   el.emphasis = opts.emphasis ?? false;
@@ -222,6 +224,7 @@ export class Tooltip {
       activeTooltip.hideInstant();
       instant = true;
     }
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- module singleton tracks the active instance
     activeTooltip = this;
     this.skipEnterAnimation = instant;
     if (instant) {
@@ -303,10 +306,13 @@ export class Tooltip {
 
     appendShortcut('start');
 
-    const labelWrap = document.createElement('span');
-    labelWrap.className = `tooltip-label ${sc}`;
-    labelWrap.appendChild(createDsText({ variant: textVariant, text: this.label }));
-    inner.appendChild(labelWrap);
+    inner.appendChild(
+      createDsText({
+        className: `tooltip-label ${sc}`,
+        variant: textVariant,
+        text: this.label,
+      }),
+    );
 
     appendShortcut('end');
 

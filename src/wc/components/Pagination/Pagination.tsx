@@ -62,9 +62,9 @@ export class Pagination {
 
           {pages.map((item, i) =>
             item === 'ellipsis' ? (
-              <span key={`e${i}`} class="ellipsis">
-                <ds-text as="span" variant="text-body-small" color="tertiary">…</ds-text>
-              </span>
+              <ds-text key={`e${i}`} class="ellipsis" as="span" variant="text-body-small" color="tertiary">
+                …
+              </ds-text>
             ) : (
               <button
                 key={item}

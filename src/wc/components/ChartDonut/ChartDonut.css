@@ -14,8 +14,6 @@
 
 .chart-donut__wrapper {
   position: relative;
-  /* Allow cursor-following tooltip to paint past the chart box. */
-  overflow: visible;
 }
 
 :host(.chart-donut--fill) .chart-donut__wrapper {
@@ -42,6 +40,7 @@
   fill: var(--color-foreground-primary);
   font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-xl);
+  line-height: var(--typography-lineheight-xl);
   font-weight: var(--typography-weight-semibold);
   letter-spacing: var(--typography-letterspacing-negative-double);
   cursor: default;
@@ -52,6 +51,7 @@
   fill: var(--color-foreground-secondary);
   font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
   font-weight: var(--typography-weight-regular);
   letter-spacing: var(--typography-letterspacing-negative-half);
   cursor: default;

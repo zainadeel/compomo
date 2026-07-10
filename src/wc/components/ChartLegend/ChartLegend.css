@@ -91,13 +91,11 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  line-height: var(--typography-lineheight-md);
 }
 
 .chart-legend__percentage {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   text-align: right;
-  line-height: var(--typography-lineheight-md);
 }
 
 .chart-legend__value {
@@ -108,5 +106,4 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  line-height: var(--typography-lineheight-md);
 }

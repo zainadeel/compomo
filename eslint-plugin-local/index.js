@@ -208,10 +208,68 @@ const preferDsIcon = {
   },
 };
 
+function isDsTextJsxName(nameNode) {
+  return nameNode.type === 'JSXIdentifier' && nameNode.name === 'ds-text';
+}
+
+function isWhitespaceJsxText(node) {
+  return node.type === 'JSXText' && !/\S/.test(node.value);
+}
+
+function isNeutralLayoutElement(nameNode) {
+  return (
+    nameNode.type === 'JSXIdentifier' &&
+    (nameNode.name === 'span' || nameNode.name === 'div')
+  );
+}
+
+/**
+ * True when a neutral layout element has exactly one meaningful child and that
+ * child is ds-text. Mixed icon/dot/badge wrappers are intentionally excluded.
+ */
+function isRedundantDsTextWrapper(jsxElement) {
+  if (!isNeutralLayoutElement(jsxElement.openingElement.name)) return false;
+  const meaningful = (jsxElement.children ?? []).filter(child => !isWhitespaceJsxText(child));
+  return (
+    meaningful.length === 1 &&
+    meaningful[0].type === 'JSXElement' &&
+    isDsTextJsxName(meaningful[0].openingElement.name)
+  );
+}
+
+/** @type {import('eslint').Rule.RuleModule} */
+const preferDirectDsText = {
+  meta: {
+    type: 'suggestion',
+    docs: {
+      description:
+        'Prefer ds-text as the layout box instead of wrapping it in a neutral span/div.',
+    },
+    schema: [],
+  },
+  create(context) {
+    const filename = context.filename ?? context.getFilename();
+    if (isTextAllowlisted(filename)) return {};
+
+    return {
+      JSXElement(node) {
+        if (!isRedundantDsTextWrapper(node)) return;
+        context.report({
+          node: node.openingElement,
+          message:
+            'Prefer <ds-text> as the layout box. Move the wrapper class/style to ds-text, ' +
+            'or disable this warning with a reason when the wrapper owns structural behavior.',
+        });
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: 'eslint-plugin-local', version: '1.0.0' },
   rules: {
     'prefer-ds-text': preferDsText,
     'prefer-ds-icon': preferDsIcon,
+    'prefer-direct-ds-text': preferDirectDsText,
   },
 };

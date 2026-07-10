@@ -1,0 +1,146 @@
+/*
+ * Internal typography recipes shared by ds-text and native text surfaces that
+ * cannot render a custom element (for example, an <input> value).
+ *
+ * Each variant owns its font-size + line-height pairing. Never override one
+ * without the other from a consuming component.
+ */
+
+:host(.ds-text--display-medium),
+.ds-text--display-medium {
+  font-size: var(--typography-fontsize-3xl);
+  line-height: var(--typography-lineheight-3xl);
+}
+
+:host(.ds-text--display-small),
+.ds-text--display-small {
+  font-size: var(--typography-fontsize-2xl);
+  line-height: var(--typography-lineheight-2xl);
+}
+
+:host(.ds-text--title-large),
+.ds-text--title-large {
+  font-size: var(--typography-fontsize-xl);
+  line-height: var(--typography-lineheight-xl);
+}
+
+:host(.ds-text--title-medium),
+.ds-text--title-medium {
+  font-size: var(--typography-fontsize-lg);
+  line-height: var(--typography-lineheight-lg);
+}
+
+:host(.ds-text--title-small),
+.ds-text--title-small {
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+}
+
+:host(.ds-text--body-large),
+.ds-text--body-large {
+  font-size: var(--typography-fontsize-lg);
+  line-height: var(--typography-lineheight-lg);
+}
+
+:host(.ds-text--body-medium),
+.ds-text--body-medium {
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+}
+
+:host(.ds-text--body-small),
+.ds-text--body-small {
+  font-size: var(--typography-fontsize-sm);
+  line-height: var(--typography-lineheight-sm);
+}
+
+:host(.ds-text--caption),
+.ds-text--caption {
+  font-size: var(--typography-fontsize-xs);
+  line-height: var(--typography-lineheight-xs);
+  text-transform: uppercase;
+}
+
+:host(.ds-text--display-medium.ds-text--emphasis),
+:host(.ds-text--display-small.ds-text--emphasis),
+.ds-text--display-medium.ds-text--emphasis,
+.ds-text--display-small.ds-text--emphasis {
+  font-weight: var(--typography-weight-bold);
+  letter-spacing: var(--typography-letterspacing-negative-double);
+}
+
+:host(.ds-text--display-medium.ds-text--regular),
+:host(.ds-text--display-small.ds-text--regular),
+.ds-text--display-medium.ds-text--regular,
+.ds-text--display-small.ds-text--regular {
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative);
+}
+
+:host(.ds-text--title-large.ds-text--emphasis),
+.ds-text--title-large.ds-text--emphasis {
+  font-weight: var(--typography-weight-semibold);
+  letter-spacing: var(--typography-letterspacing-negative-double);
+}
+
+:host(.ds-text--title-large.ds-text--regular),
+.ds-text--title-large.ds-text--regular {
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative);
+}
+
+:host(.ds-text--title-medium.ds-text--emphasis),
+:host(.ds-text--title-small.ds-text--emphasis),
+.ds-text--title-medium.ds-text--emphasis,
+.ds-text--title-small.ds-text--emphasis {
+  font-weight: var(--typography-weight-semibold);
+  letter-spacing: var(--typography-letterspacing-negative);
+}
+
+:host(.ds-text--title-medium.ds-text--regular),
+:host(.ds-text--title-small.ds-text--regular),
+.ds-text--title-medium.ds-text--regular,
+.ds-text--title-small.ds-text--regular {
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+:host(.ds-text--body-large.ds-text--emphasis),
+:host(.ds-text--body-medium.ds-text--emphasis),
+.ds-text--body-large.ds-text--emphasis,
+.ds-text--body-medium.ds-text--emphasis {
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: var(--typography-letterspacing-negative);
+}
+
+:host(.ds-text--body-large.ds-text--regular),
+:host(.ds-text--body-medium.ds-text--regular),
+.ds-text--body-large.ds-text--regular,
+.ds-text--body-medium.ds-text--regular {
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+:host(.ds-text--body-small.ds-text--emphasis),
+.ds-text--body-small.ds-text--emphasis {
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+:host(.ds-text--body-small.ds-text--regular),
+.ds-text--body-small.ds-text--regular {
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-none);
+}
+
+:host(.ds-text--caption.ds-text--emphasis),
+.ds-text--caption.ds-text--emphasis {
+  font-weight: var(--typography-weight-semibold);
+  letter-spacing: var(--typography-letterspacing-positive);
+}
+
+:host(.ds-text--caption.ds-text--regular),
+.ds-text--caption.ds-text--regular {
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: var(--typography-letterspacing-positive);
+}

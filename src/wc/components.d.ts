@@ -401,7 +401,7 @@ export namespace Components {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. External sync dims slices only — the data-viz tooltip is reserved for this component's own pointer/keyboard interaction.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. Slice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz tooltip (the legend already surfaces label/value).
           * @default null
          */
         "activeLabel": string | null;
@@ -1156,8 +1156,9 @@ export namespace Components {
         "size": TooltipSize;
     }
     /**
-     * Positioned value/label callout for chart hover interactions (donut slice, bar,
-     * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+     * Positioned value/label callout for chart hover interactions (bar, line point, …).
+     * Donut charts skip this — legend sync already surfaces the hovered slice.
+     * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
      * charts hover-highlight data that lives inside an SVG, so the chart itself computes
      * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
      * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
@@ -1851,8 +1852,9 @@ declare global {
         new (): HTMLDsTooltipElement;
     };
     /**
-     * Positioned value/label callout for chart hover interactions (donut slice, bar,
-     * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+     * Positioned value/label callout for chart hover interactions (bar, line point, …).
+     * Donut charts skip this — legend sync already surfaces the hovered slice.
+     * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
      * charts hover-highlight data that lives inside an SVG, so the chart itself computes
      * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
      * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
@@ -2255,7 +2257,7 @@ declare namespace LocalJSX {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. External sync dims slices only — the data-viz tooltip is reserved for this component's own pointer/keyboard interaction.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. Slice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz tooltip (the legend already surfaces label/value).
           * @default null
          */
         "activeLabel"?: string | null;
@@ -3072,8 +3074,9 @@ declare namespace LocalJSX {
         "size"?: TooltipSize;
     }
     /**
-     * Positioned value/label callout for chart hover interactions (donut slice, bar,
-     * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+     * Positioned value/label callout for chart hover interactions (bar, line point, …).
+     * Donut charts skip this — legend sync already surfaces the hovered slice.
+     * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
      * charts hover-highlight data that lives inside an SVG, so the chart itself computes
      * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
      * Renders `position: absolute` — place inside a `position: relative` chart wrapper,
@@ -3537,8 +3540,9 @@ declare module "@stencil/core" {
              */
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             /**
-             * Positioned value/label callout for chart hover interactions (donut slice, bar,
-             * line point, ...). Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
+             * Positioned value/label callout for chart hover interactions (bar, line point, …).
+             * Donut charts skip this — legend sync already surfaces the hovered slice.
+             * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
              * charts hover-highlight data that lives inside an SVG, so the chart itself computes
              * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
              * Renders `position: absolute` — place inside a `position: relative` chart wrapper,

@@ -1,10 +1,10 @@
 import type { TextVariant } from '../components/Text/text-types';
 
-/** Control-density sizes shared by buttons, tags, chips, select, tooltip. */
-export type ControlDensitySize = 'md' | 'sm' | 'xs';
+/** Shared public control sizes. Typography is derived; it is not a separate density API. */
+export type ControlSize = 'md' | 'sm' | 'xs';
 
-/** Body/caption variant per control-density size (emphasis is separate). */
-export const CONTROL_TEXT_VARIANT: Record<ControlDensitySize, TextVariant> = {
+/** Complete text variant selected internally by each control size. */
+export const CONTROL_TEXT_VARIANT: Record<ControlSize, TextVariant> = {
   md: 'text-body-medium',
   sm: 'text-body-small',
   xs: 'text-caption',

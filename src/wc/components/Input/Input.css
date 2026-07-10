@@ -1,4 +1,5 @@
 @import '../../utils/control-inactive.css';
+@import '../../utils/typography.css';
 
 .input-container {
   display: flex;
@@ -47,8 +48,6 @@
   border: none;
   outline: none;
   font-family: inherit;
-  font-size: var(--typography-fontsize-md);
-  line-height: var(--typography-lineheight-md);
   color: var(--color-foreground-primary);
   border-radius: var(--dimension-radius-075);
   -webkit-appearance: none;
@@ -102,10 +101,4 @@
 
 .suffix:empty {
   display: none;
-}
-
-.error-text {
-  font-size: var(--typography-fontsize-sm);
-  line-height: var(--typography-lineheight-sm);
-  color: var(--color-foreground-bold-negative);
 }

@@ -187,17 +187,16 @@ export class Modal {
                 {this.heading}
               </ds-text>
               {this.subtitle && (
-                <div class="modal-subtitle">
-                  <ds-text
-                    as="div"
-                    variant="text-body-medium"
-                    color="secondary"
-                    wrap="balance"
-                    textId={this.subtitleId}
-                  >
-                    {this.subtitle}
-                  </ds-text>
-                </div>
+                <ds-text
+                  class="modal-subtitle"
+                  as="div"
+                  variant="text-body-medium"
+                  color="secondary"
+                  wrap="balance"
+                  textId={this.subtitleId}
+                >
+                  {this.subtitle}
+                </ds-text>
               )}
             </div>
             <div class="modal-body">

@@ -78,8 +78,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Install Playwright Chromium
-        run: npx playwright install chromium --with-deps
+      - name: Install Playwright browsers
+        run: npx playwright install chromium firefox --with-deps
 
-      - name: E2E tests (BarNav overflow)
+      - name: E2E tests
         run: npx playwright test

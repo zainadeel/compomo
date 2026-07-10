@@ -31,13 +31,9 @@
   padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
 }
 
-/* <ds-text>'s host is `display: contents` — padding/line-height on it would no-op, so this
-   wrapper owns both: label inset around the text, and line-height matching text-body-medium
-   so the wrapper hugs its actual content instead of inheriting the browser default. */
 .tooltip-data-viz__label,
 .tooltip-data-viz__value {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
-  line-height: var(--typography-lineheight-md);
 }
 
 @keyframes tooltip-data-viz-fade-in {

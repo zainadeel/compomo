@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Text metric box e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: var(--typography-font-family, system-ui);
+      }
+
+      .metric {
+        width: 240px;
+      }
+
+      #streaming {
+        width: 120px;
+      }
+
+      #truncate-host {
+        display: inline-block;
+        width: 72px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .control-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="metrics"></section>
+    <section>
+      <ds-text id="streaming" class="metric" as="span" variant="text-body-medium">Streaming</ds-text>
+    </section>
+    <section>
+      <ds-text id="truncate-host" as="span" variant="text-body-medium">
+        Truncation must reach the inner text node
+      </ds-text>
+    </section>
+
+    <section class="control-row">
+      <ds-button-filled id="button-md" size="md" label="Button md"></ds-button-filled>
+      <ds-button-unfilled id="button-bordered-md" size="md" label="Bordered" has-border></ds-button-unfilled>
+      <ds-button-unfilled id="button-borderless-md" size="md" label="Borderless"></ds-button-unfilled>
+      <ds-tag id="tag-sm" size="sm" label="Tag sm"></ds-tag>
+      <ds-select id="select-xs" size="xs" value="one" aria-label="Select xs"></ds-select>
+      <ds-tooltip id="tooltip-xs" size="xs" label="Tooltip xs" delay="0">
+        <ds-button-filled size="xs" variant="icon" icon="Bell" aria-label="Tooltip anchor"></ds-button-filled>
+      </ds-tooltip>
+    </section>
+
+    <script type="module" src="/text-metrics-setup.mjs"></script>
+  </body>
+</html>
