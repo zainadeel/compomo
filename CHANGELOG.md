@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.13.1](https://github.com/zainadeel/compomo/compare/v2.13.0...v2.13.1) (2026-07-10)
+
+
+### Fixed
+
+* **PanelNav:** restore collapse motion and shorten chrome tooltips ([d49244e](https://github.com/zainadeel/compomo/commit/d49244e59b7e12ecd529ac9feeb6722590707096))
+* **PanelNav:** restore collapse motion and shorten chrome tooltips ([dafdd68](https://github.com/zainadeel/compomo/commit/dafdd68c4ab0aaf84713b9d010f6c8f407e14606))
+
 ## [2.13.0](https://github.com/zainadeel/compomo/compare/v2.12.0...v2.13.0) (2026-07-09)
 
 
