@@ -179,10 +179,24 @@ export class Modal {
             style={{ width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))` }}
           >
             <div class="modal-header">
-              <h2 id={this.titleId} class="text-title-small modal-title">{this.heading}</h2>
+              <ds-text
+                as="h2"
+                variant="text-title-small"
+                textId={this.titleId}
+              >
+                {this.heading}
+              </ds-text>
               {this.subtitle && (
-                <div id={this.subtitleId} class="modal-subtitle text-body-medium">
-                  {this.subtitle}
+                <div class="modal-subtitle">
+                  <ds-text
+                    as="div"
+                    variant="text-body-medium"
+                    color="secondary"
+                    wrap="balance"
+                    textId={this.subtitleId}
+                  >
+                    {this.subtitle}
+                  </ds-text>
                 </div>
               )}
             </div>

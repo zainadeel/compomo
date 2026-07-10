@@ -180,9 +180,10 @@ export class TabGroup {
                 <span class={{
                   tab__label: true,
                   'tab__label--dot': !!tab.dot,
-                  [isSelected ? 'text-body-small-emphasis' : 'text-body-small']: true,
                 }}>
-                  {tab.label}
+                  <ds-text as="span" variant="text-body-small" emphasis={isSelected} color="inherit">
+                    {tab.label}
+                  </ds-text>
                   {tab.dot && (
                     <ds-badge
                       class="tab__dot"

@@ -34,7 +34,6 @@
   height: var(--dimension-size-150);
   padding: 0;
   border-radius: var(--dimension-radius-half);
-  font-size: var(--typography-fontsize-xs);
   line-height: 1;
 }
 

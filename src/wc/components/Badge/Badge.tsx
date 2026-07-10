@@ -166,14 +166,12 @@ export class Badge {
         aria-label={ariaLabel}
         style={this.ringHostStyle(ring)}
       >
-        <span
-          class={{
-            'badge__mark': true,
-            'text-caption-emphasis': !isDot,
-          }}
-          aria-hidden="true"
-        >
-          {!isDot && display}
+        <span class="badge__mark" aria-hidden="true">
+          {!isDot && (
+            <ds-text as="span" variant="text-caption" emphasis color="inherit">
+              {display}
+            </ds-text>
+          )}
         </span>
       </Host>
     );

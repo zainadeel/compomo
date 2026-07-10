@@ -1,6 +1,11 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
-import { controlWidthClass, type ControlWidth } from '../../utils/control-width';
-import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
+import {
+  controlWidthClass,
+  CONTROL_TEXT_VARIANT,
+  resolveCssLengthPx,
+  TOKEN_DEFAULTS,
+  type ControlWidth,
+} from '../../utils';
 import type { MenuItemData } from '../Menu/menu-types';
 
 export interface SelectOption {
@@ -11,13 +16,6 @@ export interface SelectOption {
 export type SelectSize = 'md' | 'sm' | 'xs';
 
 export type SelectWidth = ControlWidth;
-
-/** Regular (non-emphasis) type per density — selects stay visually lighter than buttons. */
-const TEXT_VARIANT: Record<SelectSize, string> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
 
 /** `ds-icon` size matching control-density icon metrics. */
 const ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
@@ -207,7 +205,7 @@ export class Select {
     const showPlaceholder = !this.hasSelection;
     const hasValue = !showPlaceholder;
     const label = showPlaceholder ? this.placeholder : this.selectedLabel;
-    const textVariant = TEXT_VARIANT[this.size];
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const density = `ds-control--${this.size}`;
     // Selected fill when a value is set (or while open), gated by `activeFill`.
@@ -249,14 +247,10 @@ export class Select {
           aria-labelledby={this.ariaLabelledby}
           onClick={() => this.toggle({ focusVisible: false })}
         >
-          <span
-            class={{
-              'trigger__label': true,
-              [textVariant]: true,
-              'ds-interaction-fill__content': true,
-            }}
-          >
-            {label}
+          <span class="trigger__label ds-interaction-fill__content">
+            <ds-text as="span" variant={textVariant} color="inherit" lineTruncation={1}>
+              {label}
+            </ds-text>
           </span>
           <span class="trigger__chevron ds-interaction-fill__content" aria-hidden="true">
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />

@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
+import local from './eslint-plugin-local/index.js';
 
 // eslint-plugin-react (v7) does not support ESLint 10 and is unnecessary here —
 // CompoMo is a Stencil web-components library. We keep react-hooks (v7, ESLint
@@ -9,7 +10,7 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', 'storybook-static/**', 'scripts/**', 'src/angular/**'],
+    ignores: ['dist/**', 'node_modules/**', 'storybook-static/**', 'scripts/**', 'src/angular/**', 'eslint-plugin-local/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -27,6 +28,7 @@ export default tseslint.config(
     },
     plugins: {
       'react-hooks': reactHooks,
+      local,
     },
     rules: {
       'react-hooks/rules-of-hooks': 'error',
@@ -35,6 +37,9 @@ export default tseslint.config(
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      // Primitives — warn only (same posture as stylelint). Prefer ds-text / ds-icon.
+      'local/prefer-ds-text': 'warn',
+      'local/prefer-ds-icon': 'warn',
     },
   },
   {

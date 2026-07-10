@@ -36,7 +36,6 @@
 
 .banner-message {
   color: var(--banner-content);
-  line-height: var(--typography-lineheight-md);
   display: block;
   flex: 1;
   min-width: 0;

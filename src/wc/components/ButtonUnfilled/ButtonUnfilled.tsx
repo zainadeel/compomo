@@ -1,5 +1,5 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
-import { controlWidthClass, type ControlWidth } from '../../utils/control-width';
+import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
 
 export type ButtonUnfilledOnBackgroundContrast = 'default' | 'medium' | 'bold' | 'strong';
 
@@ -10,13 +10,6 @@ export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
 export type ButtonUnfilledSize = 'md' | 'sm' | 'xs';
 
 export type ButtonUnfilledWidth = ControlWidth;
-
-/** Emphasis text per control-density size (buttons use emphasis, unlike Tag). */
-const TEXT_VARIANT: Record<ButtonUnfilledSize, string> = {
-  md: 'text-body-medium-emphasis',
-  sm: 'text-body-small-emphasis',
-  xs: 'text-caption-emphasis',
-};
 
 /**
  * `ds-icon` size prop matching control-density icon metrics
@@ -148,7 +141,7 @@ export class ButtonUnfilled {
   render() {
     const bg = this.background;
     const contrast = this.effectiveContrast();
-    const textVariant = TEXT_VARIANT[this.size];
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
     const cls: Record<string, boolean> = {
@@ -219,8 +212,10 @@ export class ButtonUnfilled {
             </span>
           )}
           {this.showLabel && (
-            <span class={{ 'button-unfilled__label': true, [textVariant]: true, 'ds-interaction-fill__content': true }}>
-              {this.label}
+            <span class="button-unfilled__label ds-interaction-fill__content">
+              <ds-text as="span" variant={textVariant} emphasis color="inherit">
+                {this.label}
+              </ds-text>
             </span>
           )}
         </button>

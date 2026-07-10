@@ -71,6 +71,7 @@
   align-items: center;
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   color: var(--color-foreground-primary);
+  line-height: var(--ds-control-line-height, var(--typography-lineheight-sm));
 }
 
 /* ── Items (md control-density + interaction-fill + inset focus) ─────────── */
@@ -119,6 +120,7 @@
 .menu-item__label {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   color: var(--color-foreground-secondary);
+  line-height: var(--ds-control-line-height, var(--typography-lineheight-md));
 }
 
 .menu-item:has(.menu-item__subtext) .menu-item__label,

@@ -517,7 +517,7 @@ export class PanelNav {
       >
         <span class="panel-nav__item-label panel-nav__footer-user-label">
           <span class="panel-nav__item-label-text">
-            <ds-text as="span" variant="text-body-medium-emphasis" color="inherit">
+            <ds-text as="span" variant="text-body-medium" emphasis color="inherit">
               {userName}
             </ds-text>
           </span>
@@ -529,7 +529,7 @@ export class PanelNav {
           <span class="panel-nav__footer-icon-collapsed">
             <ds-icon name="Circle" size="md" color="inherit" />
             <span class="panel-nav__user-initial">
-              <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+              <ds-text as="span" variant="text-caption" emphasis color="inherit">
                 {userInitial}
               </ds-text>
             </span>
@@ -557,7 +557,8 @@ export class PanelNav {
         <span class="panel-nav__item-label-text">
           <ds-text
             as="span"
-            variant={isActive ? 'text-body-medium-emphasis' : 'text-body-medium'}
+            variant="text-body-medium"
+            emphasis={isActive}
             color="inherit"
           >
             {item.label}
@@ -668,7 +669,7 @@ export class PanelNav {
                   {group.label && (
                     <span class="panel-nav__group-label">
                       <span class="panel-nav__item-label-text">
-                        <ds-text as="span" variant="text-caption-emphasis" color="inherit">
+                        <ds-text as="span" variant="text-caption" emphasis color="inherit">
                           {group.label}
                         </ds-text>
                       </span>

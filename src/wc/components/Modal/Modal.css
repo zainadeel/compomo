@@ -52,14 +52,8 @@
   flex-shrink: 0;
 }
 
-.modal-title {
-  margin: 0;
-}
-
 .modal-subtitle {
   margin-top: var(--dimension-space-100);
-  color: var(--color-foreground-secondary);
-  text-wrap: balance;
 }
 
 .modal-body {

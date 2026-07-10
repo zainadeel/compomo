@@ -19,7 +19,9 @@ export class Field {
     return (
       <Host>
         <div class="field">
-          <label class="text-body-small-emphasis field__label" htmlFor={id}>{this.label}</label>
+          <ds-text as="label" variant="text-body-small" emphasis for={id}>
+            {this.label}
+          </ds-text>
           <slot />
         </div>
       </Host>

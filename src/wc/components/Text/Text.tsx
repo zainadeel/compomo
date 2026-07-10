@@ -1,32 +1,15 @@
 import { Component, Prop, h, Host } from '@stencil/core';
-
-export type TextVariant =
-  | 'text-display-medium'
-  | 'text-display-small'
-  | 'text-title-large'
-  | 'text-title-medium'
-  | 'text-title-small'
-  | 'text-body-large'
-  | 'text-body-large-emphasis'
-  | 'text-body-medium'
-  | 'text-body-medium-emphasis'
-  | 'text-body-small'
-  | 'text-body-small-emphasis'
-  | 'text-caption'
-  | 'text-caption-emphasis';
-
-export type TextColorToken =
-  | 'primary' | 'secondary' | 'tertiary'
-  | 'brand' | 'negative' | 'positive' | 'warning' | 'caution' | 'ai'
-  | 'on-strong' | 'on-bold' | 'inherit';
-
-export type TextColor = TextColorToken | `var(--${string})`;
-export type TextDecoration = 'none' | 'underline' | 'dotted-underline';
-export type TextAlign = 'left' | 'center' | 'right';
-export type LineTruncation = 1 | 2 | 3 | 4 | 5 | 'none';
-export type TextWrap = 'wrap' | 'nowrap' | 'balance' | 'pretty';
-export type TextElement = 'p' | 'span' | 'div' | 'label' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-export type TextFontFeature = 'normal' | 'tabular-nums';
+import { textVariantClass } from './text-utils';
+import type {
+  TextAlign,
+  TextColor,
+  TextDecoration,
+  TextElement,
+  TextFontFeature,
+  TextVariant,
+  LineTruncation,
+  TextWrap,
+} from './text-types';
 
 @Component({
   tag: 'ds-text',
@@ -35,6 +18,12 @@ export type TextFontFeature = 'normal' | 'tabular-nums';
 })
 export class Text {
   @Prop() variant: TextVariant = 'text-body-medium';
+  /**
+   * Heavier weight + tighter letter-spacing for the variant.
+   * `false` (default): regular weight (caption stays medium).
+   * `true`: display bold, title/caption semibold, body medium.
+   */
+  @Prop() emphasis: boolean = false;
   @Prop() color: TextColor | undefined;
   @Prop() decoration: TextDecoration | undefined;
   @Prop() italic: boolean = false;
@@ -45,6 +34,8 @@ export class Text {
   @Prop() as: TextElement = 'p';
   /** Maps to `for` attribute on <label> elements. */
   @Prop() for: string | undefined;
+  /** Forwarded to the inner element (e.g. aria-labelledby targets). */
+  @Prop() textId: string | undefined;
 
   render() {
     // Polymorphic element: TSX treats a variable tag as a component, so a
@@ -54,35 +45,37 @@ export class Text {
     const isCustomColor = (c: TextColor) => typeof c === 'string' && c.startsWith('var(--');
 
     const cls: Record<string, boolean> = {
-      [this.variant]: true,
-      'text': true,
-      'text--nowrap': this.wrap === 'nowrap',
-      'text--balance': this.wrap === 'balance',
-      'text--pretty': this.wrap === 'pretty',
-      'text--truncate-1': this.lineTruncation === 1 && this.wrap !== 'nowrap',
-      'text--truncate-2': this.lineTruncation === 2 && this.wrap !== 'nowrap',
-      'text--truncate-3': this.lineTruncation === 3 && this.wrap !== 'nowrap',
-      'text--truncate-4': this.lineTruncation === 4 && this.wrap !== 'nowrap',
-      'text--truncate-5': this.lineTruncation === 5 && this.wrap !== 'nowrap',
-      'text--color-primary':   this.color === 'primary',
-      'text--color-secondary': this.color === 'secondary',
-      'text--color-tertiary':  this.color === 'tertiary',
-      'text--color-brand':     this.color === 'brand',
-      'text--color-negative':  this.color === 'negative',
-      'text--color-positive':  this.color === 'positive',
-      'text--color-warning':   this.color === 'warning',
-      'text--color-caution':   this.color === 'caution',
-      'text--color-ai':        this.color === 'ai',
-      'text--color-on-strong': this.color === 'on-strong',
-      'text--color-on-bold':   this.color === 'on-bold',
-      'text--color-inherit':   this.color === 'inherit',
-      'text--decoration-underline':        this.decoration === 'underline',
-      'text--decoration-dotted-underline': this.decoration === 'dotted-underline',
-      'text--italic': this.italic,
-      'text--align-left':   this.align === 'left',
-      'text--align-center': this.align === 'center',
-      'text--align-right':  this.align === 'right',
-      'text--font-feature-tabular-nums': this.fontFeature === 'tabular-nums',
+      'ds-text': true,
+      [textVariantClass(this.variant)]: true,
+      'ds-text--emphasis': this.emphasis,
+      'ds-text--regular': !this.emphasis,
+      'ds-text--nowrap': this.wrap === 'nowrap',
+      'ds-text--balance': this.wrap === 'balance',
+      'ds-text--pretty': this.wrap === 'pretty',
+      'ds-text--truncate-1': this.lineTruncation === 1 && this.wrap !== 'nowrap',
+      'ds-text--truncate-2': this.lineTruncation === 2 && this.wrap !== 'nowrap',
+      'ds-text--truncate-3': this.lineTruncation === 3 && this.wrap !== 'nowrap',
+      'ds-text--truncate-4': this.lineTruncation === 4 && this.wrap !== 'nowrap',
+      'ds-text--truncate-5': this.lineTruncation === 5 && this.wrap !== 'nowrap',
+      'ds-text--color-primary':   this.color === 'primary',
+      'ds-text--color-secondary': this.color === 'secondary',
+      'ds-text--color-tertiary':  this.color === 'tertiary',
+      'ds-text--color-brand':     this.color === 'brand',
+      'ds-text--color-negative':  this.color === 'negative',
+      'ds-text--color-positive':  this.color === 'positive',
+      'ds-text--color-warning':   this.color === 'warning',
+      'ds-text--color-caution':   this.color === 'caution',
+      'ds-text--color-ai':        this.color === 'ai',
+      'ds-text--color-on-strong': this.color === 'on-strong',
+      'ds-text--color-on-bold':   this.color === 'on-bold',
+      'ds-text--color-inherit':   this.color === 'inherit',
+      'ds-text--decoration-underline':        this.decoration === 'underline',
+      'ds-text--decoration-dotted-underline': this.decoration === 'dotted-underline',
+      'ds-text--italic': this.italic,
+      'ds-text--align-left':   this.align === 'left',
+      'ds-text--align-center': this.align === 'center',
+      'ds-text--align-right':  this.align === 'right',
+      'ds-text--font-feature-tabular-nums': this.fontFeature === 'tabular-nums',
     };
 
     const style = this.color && isCustomColor(this.color)
@@ -91,6 +84,7 @@ export class Text {
 
     const extraProps: Record<string, string> = {};
     if (this.as === 'label' && this.for) extraProps['for'] = this.for;
+    if (this.textId) extraProps['id'] = this.textId;
 
     return (
       <Host style={{ display: 'contents' }}>

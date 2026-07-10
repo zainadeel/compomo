@@ -121,7 +121,11 @@ export class Banner {
             </div>
           )}
           <div class="banner-body">
-            <span class="text-body-medium banner-message">{this.message}</span>
+            <span class="banner-message">
+              <ds-text as="span" variant="text-body-medium" color="inherit">
+                {this.message}
+              </ds-text>
+            </span>
             {this.showDismiss && (
               <button
                 type="button"

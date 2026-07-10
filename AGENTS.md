@@ -217,6 +217,12 @@ export class MyComponent {
 - Token families by property category: `--color-*` (color/fill/stroke), `--dimension-space-*` (margin/padding/gap/inset), `--dimension-size-*` / `--dimension-iconography-*` / component width tokens (width/height), `--dimension-radius-*`, `--dimension-stroke-width-*`, `--typography-*`, `--effect-*` / `--dimension-z-index-*`.
 - Justify unavoidable exceptions with `/* stylelint-disable-next-line <rule> -- reason */`.
 
+**Primitive lint (ESLint, warn-only)**
+
+- `local/prefer-ds-text` — flag TokoMo typography utility classes (`text-body-*`, `text-caption*`, …) in `class` / `className`. Use `<ds-text variant="…" emphasis>`. Allowlisted: `Text/`, `control-text.ts`, Typography stories.
+- `local/prefer-ds-icon` — flag raw `<svg>` / `createElement('svg')` and `@ds-mo/icons` imports in components. Use `<ds-icon name="…">`. Allowlisted: `Icon/`, `Loader/`, chart components, PanelNav M-mark, Icons stories.
+- Disable with `// eslint-disable-next-line local/prefer-ds-text -- reason` (same for `prefer-ds-icon`) when an exception is intentional.
+
 **Buttons (filled / unfilled)**
 
 - Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
@@ -237,13 +243,14 @@ Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNa
 | Height | `--dimension-size-400` (32) | `--dimension-size-300` (24) | `--dimension-size-200` (16) |
 | Icon | `--dimension-iconography-md` (20) | `--dimension-iconography-sm` (16) | `--dimension-iconography-xs` (12) |
 | Text | `text-body-medium` (14/20) | `text-body-small` (12/16) | `text-caption` (9/12) |
+| Line-height (wrappers) | `--typography-lineheight-md` | `--typography-lineheight-sm` | `--typography-lineheight-xs` |
 | Row padding-inline | `--dimension-space-075` (6) | `--dimension-space-050` (4) | `--dimension-space-025` (2) |
 | Label inset | `--dimension-space-025` (2) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
 | Icon↔label gap | `--dimension-space-050` (4) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
 | Default radius | `--dimension-radius-025` (2) | same | same |
 | Rounded | `--dimension-radius-half` | same | same |
 
-CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Use a fixed `height` + `align-items: center` + horizontal-only padding (see gotcha below).
+CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`, `--ds-control-line-height`. Use a fixed `height` + `align-items: center` + horizontal-only padding (see gotcha below). Layout wrappers around `ds-text` should set `line-height: var(--ds-control-line-height)` (or the matching `--typography-lineheight-*`).
 
 **Interaction fill**
 

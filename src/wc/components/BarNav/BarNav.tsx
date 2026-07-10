@@ -683,7 +683,11 @@ export class BarNav {
             )}
 
             {!hasTabs && this.heading && (
-              <span class="bar-nav__heading text-body-medium-emphasis">{this.heading}</span>
+              <span class="bar-nav__heading">
+                <ds-text as="span" variant="text-body-medium" emphasis color="inherit" wrap="nowrap">
+                  {this.heading}
+                </ds-text>
+              </span>
             )}
 
             {hasTabs && this.hasOverflowTabs && (

@@ -37,7 +37,7 @@ import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
-import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
+import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { NavChromeStyle } from "./nav/nav-chrome";
 export { ShellGradientPreset } from "./nav/shell-gradient-presets";
@@ -71,7 +71,7 @@ export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
-export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/Text";
+export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAppShell {
@@ -1070,6 +1070,11 @@ export namespace Components {
         "color": TextColor | undefined;
         "decoration": TextDecoration | undefined;
         /**
+          * Heavier weight + tighter letter-spacing for the variant. `false` (default): regular weight (caption stays medium). `true`: display bold, title/caption semibold, body medium.
+          * @default false
+         */
+        "emphasis": boolean;
+        /**
           * @default 'normal'
          */
         "fontFeature": TextFontFeature;
@@ -1085,6 +1090,10 @@ export namespace Components {
           * @default 'none'
          */
         "lineTruncation": LineTruncation;
+        /**
+          * Forwarded to the inner element (e.g. aria-labelledby targets).
+         */
+        "textId": string | undefined;
         /**
           * @default 'text-body-medium'
          */
@@ -2976,6 +2985,11 @@ declare namespace LocalJSX {
         "color"?: TextColor | undefined;
         "decoration"?: TextDecoration | undefined;
         /**
+          * Heavier weight + tighter letter-spacing for the variant. `false` (default): regular weight (caption stays medium). `true`: display bold, title/caption semibold, body medium.
+          * @default false
+         */
+        "emphasis"?: boolean;
+        /**
           * @default 'normal'
          */
         "fontFeature"?: TextFontFeature;
@@ -2991,6 +3005,10 @@ declare namespace LocalJSX {
           * @default 'none'
          */
         "lineTruncation"?: LineTruncation;
+        /**
+          * Forwarded to the inner element (e.g. aria-labelledby targets).
+         */
+        "textId"?: string | undefined;
         /**
           * @default 'text-body-medium'
          */
@@ -3367,6 +3385,7 @@ declare namespace LocalJSX {
     }
     interface DsTextAttributes {
         "variant": TextVariant;
+        "emphasis": boolean;
         "color": TextColor | undefined;
         "decoration": TextDecoration | undefined;
         "italic": boolean;
@@ -3376,6 +3395,7 @@ declare namespace LocalJSX {
         "fontFeature": TextFontFeature;
         "as": TextElement;
         "for": string | undefined;
+        "textId": string | undefined;
     }
     interface DsToggleAttributes {
         "checked": boolean;

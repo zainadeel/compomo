@@ -65,7 +65,8 @@
   z-index: 2;
   flex: 1 1 auto;
   min-width: 0;
-  /* Don't use line-height: 0 here — overflow:hidden would clip the glyphs. */
+  /* Match nested ds-text variant leading — don't use line-height: 0 (clips glyphs). */
+  line-height: var(--ds-control-line-height, var(--typography-lineheight-md));
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   overflow: hidden;
   text-overflow: ellipsis;

@@ -23,3 +23,5 @@ export { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from './token-defaults';
 export type { TokenDefaultKey } from './token-defaults';
 export { controlWidthClass } from './control-width';
 export type { ControlWidth } from './control-width';
+export { CONTROL_TEXT_VARIANT } from './control-text';
+export type { ControlDensitySize } from './control-text';

@@ -323,9 +323,10 @@ export class TabGroupNav {
                 <span class={{
                   tab__label: true,
                   'tab__label--dot': !!tab.dot,
-                  [isSelected ? 'text-body-medium-emphasis' : 'text-body-medium']: true,
                 }}>
-                  {tab.label}
+                  <ds-text as="span" variant="text-body-medium" emphasis={isSelected} color="inherit">
+                    {tab.label}
+                  </ds-text>
                   {tab.dot && (
                     <ds-badge
                       class="tab__dot"
