@@ -19,17 +19,41 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.1"
+          "@ds-mo/tokens ^2.14.0",
+          "@ds-mo/icons ^6.1.2"
         ],
         "optional": [],
-        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
     },
     "props": {
+      "name": {
+        "type": "string",
+        "description": "Native form field name."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Standard disabled state; Angular forms set this automatically."
+      },
+      "required": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Participates in native constraint validation."
+      },
+      "requiredMessage": {
+        "type": "string",
+        "default": "'This field is required.'",
+        "description": "Localizable required validation message."
+      },
       "checked": {
         "type": "boolean",
         "default": "false"
+      },
+      "value": {
+        "type": "string",
+        "default": "'on'",
+        "description": "Submitted value when checked."
       },
       "onChange": {
         "type": "(checked: boolean) => void"
@@ -63,7 +87,7 @@
     },
     {
       "path": "src/wc/components/Toggle/Toggle.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\n@Component({\n  tag: 'ds-toggle',\n  styleUrl: 'Toggle.css',\n  shadow: true,\n})\nexport class Toggle {\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private handleClick = () => {\n    if (this.isInactive) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.isInactive) return;\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  render() {\n    return (\n      <Host\n        role=\"switch\"\n        aria-checked={String(this.checked)}\n        aria-disabled={this.isInactive || undefined}\n        tabIndex={this.isInactive ? -1 : 0}\n        class={{ toggle: true, checked: this.checked, 'ds-control-inactive': this.isInactive }}\n        onClick={this.handleClick}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class=\"thumb\" />\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\n@Component({\n  tag: 'ds-toggle',\n  styleUrl: 'Toggle.css',\n  shadow: true,\n  formAssociated: true,\n})\nexport class Toggle {\n  @AttachInternals() internals!: ElementInternals;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.disabled = disabled;\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleClick = () => {\n    if (this.isInactive || this.disabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.isInactive || this.disabled) return;\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled;\n    return (\n      <Host\n        role=\"switch\"\n        aria-checked={String(this.checked)}\n        aria-disabled={inactive || undefined}\n        tabIndex={inactive ? -1 : 0}\n        class={{ toggle: true, checked: this.checked, 'ds-control-inactive': inactive }}\n        onClick={this.handleClick}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class=\"thumb\" />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

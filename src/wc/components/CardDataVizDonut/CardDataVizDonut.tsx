@@ -26,6 +26,7 @@ export class CardDataVizDonut {
 
   /** Card width token — also sets matching min-height. */
   @Prop() cardWidth: CardDataVizDonutWidth = 'md';
+  @Prop() filterLabel: string = 'Filter';
 
   /** Emits when the header filter control is activated. */
   @Event() dsFilterClick!: EventEmitter<void>;
@@ -86,7 +87,7 @@ export class CardDataVizDonut {
             variant="icon"
             type="button"
             icon="Filters"
-            aria-label="Filter"
+            aria-label={this.filterLabel}
             onDsClick={this.handleFilterClick}
           />
           <div class="card-data-viz-donut__layout">

@@ -1,0 +1,77 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-app-shell",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-app-shell",
+  "audience": "specialized",
+  "status": "stable",
+  "summary": "Workspace layout primitive coordinating panel navigation, top navigation, tools, content, shared chrome, and shell shortcuts.",
+  "useWhen": [
+    "Building a dashboard-style workspace with coordinated left navigation, top navigation, tools, and content.",
+    "Navigation chrome needs shared styling, gradient alignment, collapse behavior, and keyboard shortcuts."
+  ],
+  "avoidWhen": [
+    "The page is a standalone marketing, authentication, or single-purpose layout.",
+    "The interface does not use the coordinated CompoMo navigation surfaces."
+  ],
+  "alternatives": [
+    {
+      "when": "Only a top-level section tab row is needed.",
+      "component": "component:ds-bar-nav",
+      "reason": "BarNav can be used without the complete workspace shell."
+    },
+    {
+      "when": "Only persistent left-side destination navigation is needed.",
+      "component": "component:ds-panel-nav",
+      "reason": "PanelNav owns left navigation without requiring the full shell composition."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-panel-nav",
+    "component:ds-bar-nav",
+    "component:ds-panel-tools"
+  ],
+  "patterns": [
+    "pattern:application-shell"
+  ],
+  "accessibility": [
+    "Keep destination navigation in PanelNav and section navigation in BarNav.",
+    "Do not override browser keyboard chords when enabling shell shortcuts.",
+    "Ensure the default slot contains the page main-content landmark."
+  ],
+  "states": [
+    "The shell coordinates chrome but the host application owns active destinations, active tools, and route state.",
+    "Use one AppShell as the workspace root rather than nesting shells."
+  ],
+  "responsiveBehavior": [
+    "The host and shell must fill the viewport for chrome clipping and synchronized gradient sizing.",
+    "Panel collapse and tool-drawer behavior should preserve the main content region rather than introducing a second page shell."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign complex navigation item collections as element properties."
+    ],
+    "react": [
+      "Use generated wrappers but preserve native slot names on slotted navigation children."
+    ],
+    "angular": [
+      "Bind complex inputs after the generated custom elements are registered and preserve slot attributes in templates."
+    ]
+  },
+  "references": [
+    {
+      "label": "Component guide",
+      "path": "src/wc/components/AppShell/AppShell.mdx"
+    },
+    {
+      "label": "Executable Storybook composition",
+      "path": "src/wc/components/AppShell/AppShell.stories.ts"
+    },
+    {
+      "label": "Framework integration",
+      "path": "docs/framework-integration.md"
+    }
+  ]
+}

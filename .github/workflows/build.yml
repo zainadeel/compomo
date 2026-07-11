@@ -13,7 +13,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24.15.0'
           cache: 'npm'
 
       - name: Install dependencies
@@ -21,6 +21,9 @@ jobs:
 
       - name: Type-check
         run: npm run typecheck
+
+      - name: Validate agent contract
+        run: npm run agent:validate
 
       - name: Build
         run: npm run build
@@ -61,7 +64,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24.15.0'
           cache: 'npm'
 
       - name: Install dependencies
@@ -79,7 +82,7 @@ jobs:
         run: npm run build
 
       - name: Install Playwright browsers
-        run: npx playwright install chromium firefox --with-deps
+        run: npx playwright install chromium firefox webkit --with-deps
 
       - name: E2E tests
         run: npx playwright test

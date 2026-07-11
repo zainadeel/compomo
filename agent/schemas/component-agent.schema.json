@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ds-mo.dev/schemas/component-agent.schema.json",
+  "title": "CompoMo component agent metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "kind",
+    "package",
+    "tag",
+    "audience",
+    "status",
+    "summary",
+    "useWhen",
+    "avoidWhen",
+    "accessibility"
+  ],
+  "properties": {
+    "$schema": { "const": "../../../../agent/schemas/component-agent.schema.json" },
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
+    "kind": { "const": "component" },
+    "package": { "const": "@ds-mo/ui" },
+    "tag": { "type": "string", "pattern": "^ds-[a-z0-9-]+$" },
+    "audience": { "enum": ["general", "specialized", "internal"] },
+    "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
+    "replacedBy": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
+    "replacementReason": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "useWhen": { "$ref": "#/$defs/guidance" },
+    "avoidWhen": { "$ref": "#/$defs/guidance" },
+    "alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["when", "component", "reason"],
+        "properties": {
+          "when": { "type": "string", "minLength": 1 },
+          "component": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "commonlyComposedWith": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" }
+    },
+    "patterns": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^pattern:[a-z0-9-]+$" }
+    },
+    "accessibility": { "$ref": "#/$defs/guidance" },
+    "states": { "$ref": "#/$defs/guidance" },
+    "responsiveBehavior": { "$ref": "#/$defs/guidance" },
+    "frameworkCaveats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "customElements": { "$ref": "#/$defs/guidanceOptional" },
+        "react": { "$ref": "#/$defs/guidanceOptional" },
+        "angular": { "$ref": "#/$defs/guidanceOptional" }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "path"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "enum": ["deprecated", "removed"] } } },
+      "then": {
+        "properties": {
+          "replacementReason": { "type": "string", "minLength": 1 }
+        },
+        "required": ["replacementReason"]
+      }
+    }
+  ],
+  "$defs": {
+    "guidance": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "guidanceOptional": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

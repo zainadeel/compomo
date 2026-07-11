@@ -1,0 +1,54 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-button-filled",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-button-filled",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Emphasized command button for primary, confirming, or semantically important actions.",
+  "useWhen": [
+    "The user initiates a primary or emphasized command.",
+    "An action needs a semantic intent such as positive, negative, warning, or AI."
+  ],
+  "avoidWhen": [
+    "The action is unfilled icon-only shell or navigation chrome.",
+    "The element represents navigation rather than a command.",
+    "The content is a persistent selected state rather than an action."
+  ],
+  "alternatives": [
+    {
+      "when": "The action is icon-only shell, navigation, overflow, or tool-rail chrome.",
+      "component": "component:ds-button-unfilled",
+      "reason": "Unfilled buttons provide the correct active, border, and surface-aware interaction states for chrome."
+    },
+    {
+      "when": "The user is choosing a destination in application navigation.",
+      "component": "component:ds-panel-nav",
+      "reason": "Navigation components own destination selection, active state, and navigation semantics."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-modal",
+    "component:ds-field"
+  ],
+  "accessibility": [
+    "Provide an explicit accessible name for icon-only buttons.",
+    "Use inactive state only when the action must remain visible but unavailable.",
+    "Do not encode the action meaning through color alone."
+  ],
+  "states": [
+    "Choose one primary filled action per local decision area when possible.",
+    "Use semantic intent for meaning and contrast for emphasis; do not use contrast as a substitute for state."
+  ],
+  "responsiveBehavior": [
+    "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ButtonFilled/ButtonFilled.stories.ts"
+    }
+  ]
+}

@@ -25,14 +25,33 @@
       ],
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.1"
+          "@ds-mo/tokens ^2.14.0",
+          "@ds-mo/icons ^6.1.2"
         ],
         "optional": [],
-        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
     },
     "props": {
+      "name": {
+        "type": "string",
+        "description": "Native form field name."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Standard disabled state; Angular forms set this automatically."
+      },
+      "required": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Participates in native constraint validation."
+      },
+      "requiredMessage": {
+        "type": "string",
+        "default": "'This field is required.'",
+        "description": "Localizable required validation message."
+      },
       "label": {
         "type": "string",
         "required": true
@@ -40,6 +59,11 @@
       "checked": {
         "type": "boolean",
         "default": "false"
+      },
+      "value": {
+        "type": "string",
+        "default": "'on'",
+        "description": "Submitted value when checked."
       },
       "indeterminate": {
         "type": "boolean",
@@ -86,7 +110,7 @@
     },
     {
       "path": "src/wc/components/Checkbox/Checkbox.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n})\nexport class Checkbox {\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  @Prop() label!: string;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() indeterminate: boolean = false;\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private handleActivate = () => {\n    if (this.isInactive) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const isMarked = this.checked || this.indeterminate;\n\n    return (\n      <Host\n        role=\"checkbox\"\n        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={this.isInactive || undefined}\n        aria-labelledby={this.labelId}\n        tabIndex={this.isInactive ? -1 : 0}\n        class={{ checkbox: true, 'ds-control-inactive': this.isInactive }}\n        onClick={this.handleActivate}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class={{ box: true, 'box--marked': isMarked }}>\n          {isMarked && (\n            <span class=\"checkmark\" aria-hidden=\"true\">\n              {this.indeterminate ? '−' : '✓'}\n            </span>\n          )}\n        </span>\n        <ds-text class=\"checkbox__label\" as=\"span\" variant=\"text-body-medium\" textId={this.labelId}>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Checkbox {\n  @AttachInternals() internals!: ElementInternals;\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  @Prop() label!: string;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() indeterminate: boolean = false;\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.disabled = disabled;\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleActivate = () => {\n    if (this.isInactive || this.disabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled;\n    const isMarked = this.checked || this.indeterminate;\n\n    return (\n      <Host\n        role=\"checkbox\"\n        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={inactive || undefined}\n        aria-labelledby={this.labelId}\n        tabIndex={inactive ? -1 : 0}\n        class={{ checkbox: true, 'ds-control-inactive': inactive }}\n        onClick={this.handleActivate}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class={{ box: true, 'box--marked': isMarked }}>\n          {isMarked && (\n            <span class=\"checkmark\" aria-hidden=\"true\">\n              {this.indeterminate ? '−' : '✓'}\n            </span>\n          )}\n        </span>\n        <ds-text class=\"checkbox__label\" as=\"span\" variant=\"text-body-medium\" textId={this.labelId}>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

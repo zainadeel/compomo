@@ -25,11 +25,11 @@
       ],
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.1"
+          "@ds-mo/tokens ^2.14.0",
+          "@ds-mo/icons ^6.1.2"
         ],
         "optional": [],
-        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
     },
     "props": {
@@ -81,6 +81,11 @@
     {
       "path": "src/wc/components/Badge/Badge.css",
       "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  pointer-events: none;\n  vertical-align: middle;\n\n  --_badge-bg: var(--color-background-bold-brand);\n  --_badge-fg: var(--color-foreground-on-bold-background-primary);\n  --_badge-ring: var(--color-background-secondary);\n  --_badge-ring-width: var(--dimension-stroke-width-018);\n}\n\n.badge__mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  box-sizing: border-box;\n  color: var(--_badge-fg);\n  background: var(--_badge-bg);\n  box-shadow: 0 0 0 var(--_badge-ring-width) var(--_badge-ring);\n  white-space: nowrap;\n}\n\n:host(.badge--dot) .badge__mark {\n  width: var(--dimension-size-075);\n  height: var(--dimension-size-075);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.badge--counter) .badge__mark {\n  width: var(--dimension-size-150);\n  height: var(--dimension-size-150);\n  padding: 0;\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.badge--selected) {\n  --_badge-bg: var(--color-foreground-primary);\n}\n\n/* Shell gradient ring — base fill + wash donut (option 3). */\n:host(.badge--on-gradient-background) .badge__mark {\n  position: relative;\n  z-index: 0;\n  box-shadow: none;\n  isolation: isolate;\n}\n\n:host(.badge--on-gradient-background) .badge__mark::before,\n:host(.badge--on-gradient-background) .badge__mark::after {\n  content: '';\n  position: absolute;\n  inset: calc(-1 * var(--_badge-ring-width));\n  border-radius: inherit;\n  box-sizing: border-box;\n  padding: var(--_badge-ring-width);\n  pointer-events: none;\n  /* stylelint-disable color-no-hex -- mask luminance stops for ring cutout, not theme colors */\n  -webkit-mask:\n    linear-gradient(#fff 0 0) content-box,\n    linear-gradient(#fff 0 0);\n  -webkit-mask-composite: xor;\n  mask:\n    linear-gradient(#fff 0 0) content-box,\n    linear-gradient(#fff 0 0);\n  /* stylelint-enable color-no-hex */\n  mask-composite: exclude;\n}\n\n:host(.badge--on-gradient-background) .badge__mark::before {\n  z-index: -2;\n  background-color: var(--_badge-ring);\n}\n\n:host(.badge--on-gradient-background) .badge__mark::after {\n  z-index: -1;\n  background-image: var(--ds-shell-gradient-image, none);\n  background-size: var(--ds-shell-gradient-size, auto);\n  background-position: 0 0;\n  background-repeat: no-repeat;\n  background-attachment: fixed;\n  opacity: var(--ds-shell-gradient-opacity, 1);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Badge/Badge.d.ts",
+      "content": "export type BadgeVariant = 'counter' | 'dot';\nexport type BadgeSurface = 'default' | 'primary' | 'secondary' | 'medium' | 'bold' | 'strong' | 'navigation' | 'always-dark';\nexport declare class Badge {\n    el: HTMLElement;\n    /** Render as a compact counter or notification dot. */\n    variant: BadgeVariant;\n    /** Count shown for counter badges. Count 0 hides the badge. */\n    count: number;\n    /** Highest count shown before compacting to \"+\". */\n    max: number;\n    /** Surface context for the ring around dots. */\n    surface: BadgeSurface;\n    /** Direct ring background override for component-local surfaces. */\n    background: string | undefined;\n    /**\n     * Ring samples the shell gradient stack (base fill + wash) instead of a flat\n     * `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`;\n     * set `gradient-background` to opt in/out explicitly.\n     *\n     * The attribute must NOT start with `on` — Stencil's setAccessor routes any\n     * unknown `on*` member down the event-listener path during attribute\n     * reflection, calling addEventListener with a non-listener and throwing.\n     */\n    gradientBackground: boolean;\n    /** Deprecated alias for selected counter styling. Prefer context-specific color in the parent. */\n    isSelected: boolean;\n    /** Accessible label. Defaults to the count as a string. */\n    label: string | undefined;\n    /** Bumps on resize/layout so render recomputes gradient ring position. */\n    private gradientLayoutVersion;\n    private gradientObserver;\n    private gradientWindowListener;\n    componentDidLoad(): void;\n    disconnectedCallback(): void;\n    gradientBackgroundChanged(): void;\n    /** Imperative opt-in avoids Stencil aborting parent render for nested badges. */\n    private enableShellGradientRingIfNeeded;\n    private bindGradientRingSync;\n    private unbindGradientRingSync;\n    private ringHostStyle;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

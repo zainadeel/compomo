@@ -20,6 +20,7 @@ const DIMMED_OPACITY = 0.25;
   scoped: true,
 })
 export class ChartLegend {
+  @Prop() locale: string | undefined;
   /** Legend entries. Set as a JS property (not an HTML attribute). */
   @Prop() items: ChartLegendItem[] = [];
   @Prop() direction: ChartLegendDirection = 'vertical';
@@ -106,7 +107,7 @@ export class ChartLegend {
                       lineTruncation={1}
                       title={String(item.value)}
                     >
-                      {formatCompactNumber(item.value)}
+                      {formatCompactNumber(item.value, this.locale)}
                     </ds-text>
                   )}
                   {item.value != null && this.showPercentage && (

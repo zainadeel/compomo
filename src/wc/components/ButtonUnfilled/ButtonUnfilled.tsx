@@ -79,7 +79,7 @@ export class ButtonUnfilled {
   /** Parent surface context for navigation and always-dark chrome. */
   @Prop() background: ButtonUnfilledBackground | undefined;
 
-  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
+  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop() controls: string | undefined;
   @Prop() expanded: boolean | undefined;
   @Prop() haspopup: string | undefined;

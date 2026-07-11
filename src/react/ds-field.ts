@@ -16,7 +16,7 @@ import { DsField as DsFieldElement, defineCustomElement as defineDsField } from 
 
 export type DsFieldEvents = NonNullable<unknown>;
 
-export const DsField: StencilReactComponent<DsFieldElement, DsFieldEvents, Components.DsField> = /*@__PURE__*/ createComponent<DsFieldElement, DsFieldEvents, Components.DsField>({
+export const DsField: StencilReactComponent<DsFieldElement, DsFieldEvents, Components.DsField, 'label'> = /*@__PURE__*/ createComponent<DsFieldElement, DsFieldEvents, Components.DsField, 'label'>({
     tagName: 'ds-field',
     elementClass: DsFieldElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

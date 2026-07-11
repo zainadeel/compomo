@@ -19,7 +19,7 @@ export class TabGroupNav {
   @Prop({ mutable: true }) value: string = '';
   @Prop() tabs: TabItem[] = [];
   @Prop() background: TabGroupNavBackground | undefined;
-  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
+  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
   @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';
 
@@ -309,7 +309,7 @@ export class TabGroupNav {
                   [bgClass]: !!bgClass,
                 }}
                 aria-selected={isSelected}
-                aria-disabled={tab.isInactive || undefined}
+                aria-disabled={tab.isInactive ? 'true' : undefined}
                 aria-controls={tab.panelId ?? undefined}
                 disabled={tab.isInactive}
                 tabIndex={this.tabIndexForTab(tab)}

@@ -17,7 +17,7 @@ import { DsModal as DsModalElement, defineCustomElement as defineDsModal } from 
 
 export type DsModalEvents = { onDsClose: EventName<DsModalCustomEvent<void>> };
 
-export const DsModal: StencilReactComponent<DsModalElement, DsModalEvents, Components.DsModal> = /*@__PURE__*/ createComponent<DsModalElement, DsModalEvents, Components.DsModal>({
+export const DsModal: StencilReactComponent<DsModalElement, DsModalEvents, Components.DsModal, 'heading'> = /*@__PURE__*/ createComponent<DsModalElement, DsModalEvents, Components.DsModal, 'heading'>({
     tagName: 'ds-modal',
     elementClass: DsModalElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

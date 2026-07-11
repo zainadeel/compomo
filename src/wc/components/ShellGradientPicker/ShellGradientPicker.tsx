@@ -14,6 +14,7 @@ export class ShellGradientPicker {
   /** Active shell wash preset. */
   @Prop({ mutable: true, reflect: true }) value: ShellGradientPreset =
     DEFAULT_SHELL_GRADIENT_PRESET;
+  @Prop() groupLabel: string = 'Shell gradient theme';
 
   @Event() dsChange!: EventEmitter<ShellGradientPreset>;
 
@@ -43,7 +44,7 @@ export class ShellGradientPicker {
         <div
           class="shell-gradient-picker"
           role="radiogroup"
-          aria-label="Shell gradient theme"
+          aria-label={this.groupLabel}
         >
           {this.renderSwatch('none')}
           <div class="shell-gradient-picker__divider" aria-hidden="true" />

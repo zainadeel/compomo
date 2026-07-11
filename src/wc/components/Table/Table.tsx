@@ -25,13 +25,13 @@ function getCellValue<T>(col: TableColumn<T>, row: T): unknown {
   return undefined;
 }
 
-function compareValues(a: unknown, b: unknown, dir: SortDirection): number {
+function compareValues(a: unknown, b: unknown, dir: SortDirection, collator: Intl.Collator): number {
   const m = dir === 'asc' ? 1 : -1;
   if (a == null && b == null) return 0;
   if (a == null) return m;
   if (b == null) return -m;
   if (typeof a === 'number' && typeof b === 'number') return (a - b) * m;
-  return String(a).localeCompare(String(b)) * m;
+  return collator.compare(String(a), String(b)) * m;
 }
 
 @Component({
@@ -45,6 +45,12 @@ export class Table {
   @Prop() sortState: SortState | undefined;
   @Prop() loading: boolean = false;
   @Prop() emptyMessage: string = 'No results found.';
+  @Prop() loadingLabel: string = 'Loading';
+  @Prop() previousPageLabel: string = 'Previous';
+  @Prop() nextPageLabel: string = 'Next';
+  /** Use `{page}` and `{total}` placeholders. */
+  @Prop() pageStatusLabel: string = 'Page {page} of {total}';
+  @Prop() locale: string | undefined;
   /** Comma-separated zero-based row indices that are selected. */
   @Prop() selectedRows: string = '';
   /** Page index (0-based). Enables built-in pagination when set alongside pageSize. */
@@ -78,7 +84,7 @@ export class Table {
     const col = this.columns.find(c => c.id === sort.columnId);
     if (!col) return this.data;
     return [...this.data].sort((a, b) =>
-      compareValues(getCellValue(col, a), getCellValue(col, b), sort.direction)
+      compareValues(getCellValue(col, a), getCellValue(col, b), sort.direction, new Intl.Collator(this.locale))
     );
   }
 
@@ -169,7 +175,7 @@ export class Table {
                   key={`sk-${i}`}
                   class="row"
                   role={i === 0 ? 'status' : 'row'}
-                  aria-label={i === 0 ? 'Loading' : undefined}
+                  aria-label={i === 0 ? this.loadingLabel : undefined}
                 >
                   {visibleCols.map(col => (
                     <div key={col.id} class="cell" role="cell">
@@ -248,10 +254,12 @@ export class Table {
                   this.dsPageChange.emit({ pageIndex: this.pageIndex });
                 }}
               >
-                <ds-text as="span" variant="text-body-small">Previous</ds-text>
+                <ds-text as="span" variant="text-body-small">{this.previousPageLabel}</ds-text>
               </button>
               <ds-text as="span" variant="text-body-small" color="secondary">
-                Page {this.pageIndex! + 1} of {totalPages}
+                {this.pageStatusLabel
+                  .replace('{page}', String(this.pageIndex! + 1))
+                  .replace('{total}', String(totalPages))}
               </ds-text>
               <button
                 type="button"
@@ -262,7 +270,7 @@ export class Table {
                   this.dsPageChange.emit({ pageIndex: this.pageIndex });
                 }}
               >
-                <ds-text as="span" variant="text-body-small">Next</ds-text>
+                <ds-text as="span" variant="text-body-small">{this.nextPageLabel}</ds-text>
               </button>
             </div>
           )}

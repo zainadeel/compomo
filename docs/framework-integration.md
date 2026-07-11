@@ -3,16 +3,16 @@
 CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` emits:
 
 - **`dist/components/`** — `<ds-*>` custom elements (canonical; auto-define on import)
-- **`src/angular/`** — auto-generated Angular proxy directives (`angularOutputTarget`)
-- **`src/react/`** — auto-generated React wrappers (`reactOutputTarget`)
+- **`src/angular/`** — auto-generated Angular standalone adapters, published as compiled per-component subpaths
+- **`src/react/`** — auto-generated React wrappers, published as compiled JavaScript
 
 **Consumption options:**
 
 | Host | Package subpath | Notes |
 | --- | --- | --- |
-| Any | `@ds-mo/ui/dist/components/ds-*.js` | Tree-shake per tag; motive-webapp-lab uses this |
-| Angular | `@ds-mo/ui/angular` | Template property/event bindings |
-| React | `@ds-mo/ui/react` | `DsButton`, `DsBarNav`, … |
+| Any | `@ds-mo/ui/components/ds-*.js` | Canonical custom elements; tree-shake per tag |
+| Angular | `@ds-mo/ui/angular/ds-*` | Standalone adapter per component; preferred for tree shaking |
+| React | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … |
 
 There is no published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` export. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle.
 
@@ -121,6 +121,20 @@ Stencil runs `componentWillLoad` before framework property bindings land. Follow
 ```
 
 ## Angular
+
+Import only the standalone adapters used by the Angular component. Import a generated value accessor from the Angular barrel when connecting a form control to Angular Forms.
+
+```ts
+import { DsPanelNav } from '@ds-mo/ui/angular/ds-panel-nav';
+import { DsInput } from '@ds-mo/ui/angular/ds-input';
+import { TextValueAccessor } from '@ds-mo/ui/angular';
+
+@Component({
+  imports: [DsPanelNav, DsInput, TextValueAccessor],
+})
+```
+
+Do not add `CUSTOM_ELEMENTS_SCHEMA` when using adapters; Angular should validate the component properties and events.
 
 ```html
 <ds-panel-nav

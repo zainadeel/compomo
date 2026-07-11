@@ -71,7 +71,7 @@ export class ButtonFilled {
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
-  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
+  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
 
   @Event() dsClick!: EventEmitter<MouseEvent>;
 

@@ -17,12 +17,14 @@ const DEFAULT_MESSAGES: Record<EmptyStateType, string> = {
 export class EmptyState {
   @Prop() type: EmptyStateType = 'no-content';
   @Prop() message: string | undefined;
+  /** Localized defaults keyed by empty-state type. Set as a JS property. */
+  @Prop() messages: Partial<Record<EmptyStateType, string>> = {};
 
   render() {
     return (
       <Host>
         <ds-text class="empty-state" as="p" variant="text-body-medium" color="secondary">
-          {this.message || DEFAULT_MESSAGES[this.type]}
+          {this.message || this.messages[this.type] || DEFAULT_MESSAGES[this.type]}
         </ds-text>
       </Host>
     );

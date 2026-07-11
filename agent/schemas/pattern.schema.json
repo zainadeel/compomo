@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ds-mo.dev/schemas/pattern.schema.json",
+  "title": "ds-mo composition pattern",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "kind",
+    "status",
+    "summary",
+    "useWhen",
+    "avoidWhen",
+    "components",
+    "stateOwnership",
+    "accessibility",
+    "responsiveBehavior",
+    "implementations"
+  ],
+  "properties": {
+    "$schema": { "const": "../../schemas/pattern.schema.json" },
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "pattern": "^pattern:[a-z0-9-]+$" },
+    "kind": { "const": "pattern" },
+    "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "useWhen": { "$ref": "#/$defs/guidance" },
+    "avoidWhen": { "$ref": "#/$defs/guidance" },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component", "role", "required"],
+        "properties": {
+          "component": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
+          "role": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "stateOwnership": { "$ref": "#/$defs/guidance" },
+    "accessibility": { "$ref": "#/$defs/guidance" },
+    "responsiveBehavior": { "$ref": "#/$defs/guidance" },
+    "implementations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["customElements", "react", "angular"],
+      "properties": {
+        "customElements": { "$ref": "#/$defs/implementation" },
+        "react": { "$ref": "#/$defs/implementation" },
+        "angular": { "$ref": "#/$defs/implementation" }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "guidance": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "references"],
+      "properties": {
+        "status": { "enum": ["planned", "verified"] },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

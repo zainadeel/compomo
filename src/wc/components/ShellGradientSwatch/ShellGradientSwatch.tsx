@@ -21,7 +21,7 @@ export class ShellGradientSwatch {
 
   @Prop() isInactive = false;
 
-  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
+  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
 
   @Event() dsSelect!: EventEmitter<ShellGradientPreset>;
 

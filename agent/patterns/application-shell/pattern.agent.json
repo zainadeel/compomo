@@ -1,0 +1,79 @@
+{
+  "$schema": "../../schemas/pattern.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "pattern:application-shell",
+  "kind": "pattern",
+  "status": "experimental",
+  "summary": "Dashboard workspace composition with persistent destination navigation, section navigation, optional tools, and one main content surface.",
+  "useWhen": [
+    "The product has multiple persistent destinations and route-level sections.",
+    "The workspace needs coordinated panel, bar, and tool chrome around changing page content."
+  ],
+  "avoidWhen": [
+    "The experience is a focused single-page flow without persistent application navigation.",
+    "A marketing or editorial layout needs independent page composition."
+  ],
+  "components": [
+    {
+      "component": "component:ds-app-shell",
+      "role": "Coordinates workspace layout and shared chrome.",
+      "required": true
+    },
+    {
+      "component": "component:ds-panel-nav",
+      "role": "Provides persistent destination navigation.",
+      "required": true
+    },
+    {
+      "component": "component:ds-bar-nav",
+      "role": "Provides route-section tabs or the current section heading.",
+      "required": true
+    },
+    {
+      "component": "component:ds-panel-tools",
+      "role": "Provides optional workspace tools and their drawer content.",
+      "required": false
+    }
+  ],
+  "stateOwnership": [
+    "The host router owns the active destination and section.",
+    "The host owns tool drawer open state and active tool content.",
+    "AppShell coordinates layout metrics, chrome style, gradient alignment, and shell shortcuts."
+  ],
+  "accessibility": [
+    "Render one main landmark in the default content slot.",
+    "Use navigation components for destinations and sections rather than repurposing command buttons.",
+    "Provide accessible labels for icon-only tool actions."
+  ],
+  "responsiveBehavior": [
+    "Allow PanelNav to collapse while preserving the content region.",
+    "Keep BarNav section access available through its overflow behavior.",
+    "Treat PanelTools as optional chrome and avoid shrinking main content below its usable minimum."
+  ],
+  "implementations": {
+    "customElements": {
+      "status": "verified",
+      "references": [
+        "src/wc/components/AppShell/AppShell.stories.ts",
+        "docs/framework-integration.md"
+      ]
+    },
+    "react": {
+      "status": "planned",
+      "references": [
+        "scripts/verify-package-imports.mjs",
+        "docs/framework-integration.md"
+      ]
+    },
+    "angular": {
+      "status": "verified",
+      "references": [
+        "scripts/verify-package-imports.mjs",
+        "docs/framework-integration.md"
+      ]
+    }
+  },
+  "references": [
+    "src/wc/components/AppShell/AppShell.mdx"
+  ]
+}

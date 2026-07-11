@@ -17,7 +17,7 @@ import { DsCardSetting as DsCardSettingElement, defineCustomElement as defineDsC
 
 export type DsCardSettingEvents = { onDsEditingChange: EventName<DsCardSettingCustomEvent<boolean>> };
 
-export const DsCardSetting: StencilReactComponent<DsCardSettingElement, DsCardSettingEvents, Components.DsCardSetting> = /*@__PURE__*/ createComponent<DsCardSettingElement, DsCardSettingEvents, Components.DsCardSetting>({
+export const DsCardSetting: StencilReactComponent<DsCardSettingElement, DsCardSettingEvents, Components.DsCardSetting, 'heading'> = /*@__PURE__*/ createComponent<DsCardSettingElement, DsCardSettingEvents, Components.DsCardSetting, 'heading'>({
     tagName: 'ds-card-setting',
     elementClass: DsCardSettingElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

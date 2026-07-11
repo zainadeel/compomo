@@ -18,6 +18,8 @@ const FILL_FALLBACK_PX = 128;
   scoped: true,
 })
 export class ChartDonut {
+  @Prop() locale: string | undefined;
+  @Prop() noDataLabel: string = 'No data';
   @Element() el!: HTMLElement;
 
   /** Slices to render. Set as a JS property (not an HTML attribute). */
@@ -152,7 +154,7 @@ export class ChartDonut {
     const maxWidth = innerRadius * 2 * CENTER_TEXT_SAFE_WIDTH_RATIO;
     const total = this.data.reduce((sum, d) => sum + d.value, 0);
 
-    const fullValueText = this.centerValue ?? formatCompactNumber(total);
+    const fullValueText = this.centerValue ?? formatCompactNumber(total, this.locale);
     if (this.valueTextEl) {
       const truncated = truncateSvgTextToWidth(this.valueTextEl, fullValueText, maxWidth);
       if (truncated !== this.displayedValueText) this.displayedValueText = truncated;
@@ -207,7 +209,7 @@ export class ChartDonut {
     const centerCaptionY = radius + (valueLineHeight + CENTER_GAP_PX) / 2;
 
     // Show the full text before the post-render truncation pass has measured it (avoids a blank first paint).
-    const fullValueText = this.centerValue ?? formatCompactNumber(total);
+    const fullValueText = this.centerValue ?? formatCompactNumber(total, this.locale);
     const fullCaptionText = this.centerCaption ?? '';
     const fill = this.isFillMode;
 
@@ -232,7 +234,7 @@ export class ChartDonut {
           >
             <g transform={`translate(${radius}, ${radius})`}>
               {isEmpty ? (
-                <path d={emptyRingPath ?? undefined} fill="var(--color-background-faint-neutral)" aria-label="No data" />
+                <path d={emptyRingPath ?? undefined} fill="var(--color-background-faint-neutral)" aria-label={this.noDataLabel} />
               ) : (
                 slices.map((slice, i) => {
                   const datum = this.data[i];

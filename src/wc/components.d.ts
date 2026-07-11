@@ -84,7 +84,7 @@ export namespace Components {
         "gradient": boolean;
         /**
           * Built-in shell wash preset when `gradient` is true. `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
-          * @default DEFAULT_SHELL_GRADIENT_PRESET
+          * @default 'neutral'
          */
         "gradientPreset": ShellGradientPreset;
         /**
@@ -191,6 +191,10 @@ export namespace Components {
          */
         "heading": string | undefined;
         /**
+          * @default 'More tabs'
+         */
+        "moreTabsLabel": string;
+        /**
           * Style slot: `dashboard` or `settings`. Colors match for now.
           * @default 'dashboard'
          */
@@ -212,7 +216,10 @@ export namespace Components {
         "value": string;
     }
     interface DsButtonFilled {
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
@@ -266,7 +273,10 @@ export namespace Components {
           * @default true
          */
         "activeFill": boolean;
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         /**
           * Parent surface context for navigation and always-dark chrome.
          */
@@ -366,16 +376,28 @@ export namespace Components {
          */
         "cardWidth": CardDataVizDonutWidth;
         /**
+          * @default 'Filter'
+         */
+        "filterLabel": string;
+        /**
           * Widget heading shown in the card header.
          */
         "heading": string;
     }
     interface DsCardSetting {
         /**
+          * @default 'Cancel'
+         */
+        "cancelLabel": string;
+        /**
           * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
           * @default 'md'
          */
         "cardWidth": CardSettingWidth;
+        /**
+          * @default 'Edit'
+         */
+        "editLabel": string;
         /**
           * Controlled edit state — parent owns single-edit orchestration.
           * @default false
@@ -385,6 +407,10 @@ export namespace Components {
           * Section heading shown in the card header.
          */
         "heading": string;
+        /**
+          * @default 'Save'
+         */
+        "saveLabel": string;
     }
     interface DsChartBar {
         /**
@@ -430,6 +456,11 @@ export namespace Components {
           * @default 1
          */
         "gap": number;
+        "locale": string | undefined;
+        /**
+          * @default 'No data'
+         */
+        "noDataLabel": string;
         /**
           * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
@@ -462,6 +493,7 @@ export namespace Components {
           * @default []
          */
         "items": ChartLegendItem[];
+        "locale": string | undefined;
         /**
           * Show each item's share of the total (of items with a `value`) alongside its count.
           * @default true
@@ -500,12 +532,29 @@ export namespace Components {
         /**
           * @default false
          */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
         "indeterminate": boolean;
         /**
           * @default false
          */
         "isInactive": boolean;
         "label": string;
+        "name": string | undefined;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        /**
+          * @default 'on'
+         */
+        "value": string;
     }
     /**
      * Removable chip — same density recipe as Tag, but colored by semantic `state`
@@ -528,6 +577,11 @@ export namespace Components {
           * @default true
          */
         "removable": boolean;
+        /**
+          * Accessible remove action. Use `{label}` as the chip-label placeholder.
+          * @default 'Remove {label}'
+         */
+        "removeLabel": string;
         /**
           * @default false
          */
@@ -572,6 +626,11 @@ export namespace Components {
     interface DsEmptyState {
         "message": string | undefined;
         /**
+          * Localized defaults keyed by empty-state type. Set as a JS property.
+          * @default {}
+         */
+        "messages": Partial<Record<EmptyStateType, string>>;
+        /**
           * @default 'no-content'
          */
         "type": EmptyStateType;
@@ -610,12 +669,23 @@ export namespace Components {
     }
     interface DsInput {
         "ariaDescribedby": string | undefined;
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         /**
           * @default false
          */
         "autoFocus": boolean;
+        /**
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
         /**
           * @default false
          */
@@ -629,7 +699,16 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        "name": string | undefined;
         "placeholder": string | undefined;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
         "setFocus": () => Promise<void>;
         /**
           * @default 'text'
@@ -682,6 +761,11 @@ export namespace Components {
           * @default []
          */
         "items": MenuItemData[];
+        /**
+          * Accessible name for the popup menu.
+          * @default 'Menu'
+         */
+        "menuLabel": string;
         "menuWidth": string | undefined;
         "minWidth": string | undefined;
         /**
@@ -720,9 +804,21 @@ export namespace Components {
          */
         "isInactive": boolean;
         /**
+          * @default 'Next page'
+         */
+        "nextPageLabel": string;
+        /**
           * @default 1
          */
         "page": number;
+        /**
+          * @default 'Pagination'
+         */
+        "paginationLabel": string;
+        /**
+          * @default 'Previous page'
+         */
+        "previousPageLabel": string;
         /**
           * @default 1
          */
@@ -734,6 +830,10 @@ export namespace Components {
     }
     interface DsPanelNav {
         /**
+          * @default 'Account'
+         */
+        "accountLabel": string;
+        /**
           * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
          */
@@ -743,6 +843,10 @@ export namespace Components {
           * @default 0
          */
         "breakpoint": number;
+        /**
+          * @default 'Collapse navigation'
+         */
+        "collapseNavigationLabel": string;
         /**
           * Whether the nav is in collapsed (icon-only) state. Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change.
           * @default false
@@ -754,10 +858,22 @@ export namespace Components {
          */
         "currentUrl": string;
         /**
+          * @default 'Dashboard'
+         */
+        "dashboardLabel": string;
+        /**
+          * @default 'Dashboard navigation'
+         */
+        "dashboardNavigationLabel": string;
+        /**
           * When `true`, style changes apply synchronously — host app owns view transitions.
           * @default false
          */
         "disableViewTransition": boolean;
+        /**
+          * @default 'Expand navigation'
+         */
+        "expandNavigationLabel": string;
         /**
           * Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute.
           * @default '[]'
@@ -773,6 +889,14 @@ export namespace Components {
           * @default 'anchor'
          */
         "routerMode": PanelNavRouterMode;
+        /**
+          * @default 'Settings'
+         */
+        "settingsLabel": string;
+        /**
+          * @default 'Settings navigation'
+         */
+        "settingsNavigationLabel": string;
         /**
           * `localStorage` key used to persist the collapsed state across page loads. When set, collapsed state is restored on mount and written on each toggle.
           * @default ''
@@ -822,9 +946,20 @@ export namespace Components {
           * @default false
          */
         "open": boolean;
+        /**
+          * @default 'Tool shortcuts'
+         */
+        "toolShortcutsLabel": string;
+        /**
+          * @default 'Tools'
+         */
+        "toolsLabel": string;
     }
     interface DsRadioGroup {
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         /**
           * @default 'vertical'
@@ -833,11 +968,24 @@ export namespace Components {
         /**
           * @default false
          */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
         "isInactive": boolean;
+        "name": string | undefined;
         /**
           * @default []
          */
         "options": RadioOption[];
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
         /**
           * @default ''
          */
@@ -853,8 +1001,15 @@ export namespace Components {
           * @default true
          */
         "activeFill": boolean;
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
         /**
           * Show a 1px secondary inset border. Default on (matches unfilled button).
           * @default true
@@ -865,6 +1020,7 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        "name": string | undefined;
         /**
           * Array of options. Set via JS property.
           * @example el.options = [{ label: 'Apple', value: 'apple' }];
@@ -876,6 +1032,14 @@ export namespace Components {
           * @default 'Select'
          */
         "placeholder": string;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
         /**
           * Control density (height, padding, icon, type).
           * @default 'md'
@@ -894,20 +1058,27 @@ export namespace Components {
     }
     interface DsShellGradientPicker {
         /**
+          * @default 'Shell gradient theme'
+         */
+        "groupLabel": string;
+        /**
           * Active shell wash preset.
-          * @default DEFAULT_SHELL_GRADIENT_PRESET
+          * @default 'neutral'
          */
         "value": ShellGradientPreset1;
     }
     interface DsShellGradientSwatch {
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         /**
           * @default false
          */
         "isInactive": boolean;
         /**
           * Wash preset this orb previews.
-          * @default DEFAULT_SHELL_GRADIENT_PRESET
+          * @default 'neutral'
          */
         "preset": ShellGradientPreset1;
         /**
@@ -969,7 +1140,10 @@ export namespace Components {
         "valueText": string | undefined;
     }
     interface DsTabGroup {
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "background": TabBackground | undefined;
         /**
@@ -986,7 +1160,10 @@ export namespace Components {
         "value": string;
     }
     interface DsTabGroupNav {
-        "ariaLabel": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "background": TabGroupNavBackground | undefined;
         "focusFirstTab": () => Promise<void>;
@@ -1033,6 +1210,15 @@ export namespace Components {
          */
         "loading": boolean;
         /**
+          * @default 'Loading'
+         */
+        "loadingLabel": string;
+        "locale": string | undefined;
+        /**
+          * @default 'Next'
+         */
+        "nextPageLabel": string;
+        /**
           * Page index (0-based). Enables built-in pagination when set alongside pageSize.
          */
         "pageIndex": number | undefined;
@@ -1040,6 +1226,15 @@ export namespace Components {
           * @default 20
          */
         "pageSize": number;
+        /**
+          * Use `{page}` and `{total}` placeholders.
+          * @default 'Page {page} of {total}'
+         */
+        "pageStatusLabel": string;
+        /**
+          * @default 'Previous'
+         */
+        "previousPageLabel": string;
         /**
           * Comma-separated zero-based row indices that are selected.
           * @default ''
@@ -1114,7 +1309,24 @@ export namespace Components {
         /**
           * @default false
          */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
         "isInactive": boolean;
+        "name": string | undefined;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        /**
+          * @default 'on'
+         */
+        "value": string;
     }
     /**
      * Imperative body portal for the popup.
@@ -1930,7 +2142,7 @@ declare namespace LocalJSX {
         "gradient"?: boolean;
         /**
           * Built-in shell wash preset when `gradient` is true. `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
-          * @default DEFAULT_SHELL_GRADIENT_PRESET
+          * @default 'neutral'
          */
         "gradientPreset"?: ShellGradientPreset;
         /**
@@ -2038,6 +2250,10 @@ declare namespace LocalJSX {
          */
         "heading"?: string | undefined;
         /**
+          * @default 'More tabs'
+         */
+        "moreTabsLabel"?: string;
+        /**
           * Style slot: `dashboard` or `settings`. Colors match for now.
           * @default 'dashboard'
          */
@@ -2063,7 +2279,10 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     interface DsButtonFilled {
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
@@ -2117,7 +2336,10 @@ declare namespace LocalJSX {
           * @default true
          */
         "activeFill"?: boolean;
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         /**
           * Parent surface context for navigation and always-dark chrome.
          */
@@ -2218,6 +2440,10 @@ declare namespace LocalJSX {
          */
         "cardWidth"?: CardDataVizDonutWidth;
         /**
+          * @default 'Filter'
+         */
+        "filterLabel"?: string;
+        /**
           * Widget heading shown in the card header.
          */
         "heading": string;
@@ -2228,10 +2454,18 @@ declare namespace LocalJSX {
     }
     interface DsCardSetting {
         /**
+          * @default 'Cancel'
+         */
+        "cancelLabel"?: string;
+        /**
           * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
           * @default 'md'
          */
         "cardWidth"?: CardSettingWidth;
+        /**
+          * @default 'Edit'
+         */
+        "editLabel"?: string;
         /**
           * Controlled edit state — parent owns single-edit orchestration.
           * @default false
@@ -2245,6 +2479,10 @@ declare namespace LocalJSX {
           * Emits when the user enters or exits edit mode.
          */
         "onDsEditingChange"?: (event: DsCardSettingCustomEvent<boolean>) => void;
+        /**
+          * @default 'Save'
+         */
+        "saveLabel"?: string;
     }
     interface DsChartBar {
         /**
@@ -2290,6 +2528,11 @@ declare namespace LocalJSX {
           * @default 1
          */
         "gap"?: number;
+        "locale"?: string | undefined;
+        /**
+          * @default 'No data'
+         */
+        "noDataLabel"?: string;
         /**
           * Fires with the hovered/focused slice's datum, or `null` on leave/blur.
          */
@@ -2326,6 +2569,7 @@ declare namespace LocalJSX {
           * @default []
          */
         "items"?: ChartLegendItem[];
+        "locale"?: string | undefined;
         /**
           * Fires when a deep-linkable row (`item.href` set) is activated.
          */
@@ -2372,13 +2616,34 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * @default false
+         */
         "indeterminate"?: boolean;
         /**
           * @default false
          */
         "isInactive"?: boolean;
         "label": string;
+        "name"?: string | undefined;
         "onDsChange"?: (event: DsCheckboxCustomEvent<boolean>) => void;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default 'on'
+         */
+        "value"?: string;
     }
     /**
      * Removable chip — same density recipe as Tag, but colored by semantic `state`
@@ -2405,6 +2670,11 @@ declare namespace LocalJSX {
           * @default true
          */
         "removable"?: boolean;
+        /**
+          * Accessible remove action. Use `{label}` as the chip-label placeholder.
+          * @default 'Remove {label}'
+         */
+        "removeLabel"?: string;
         /**
           * @default false
          */
@@ -2449,6 +2719,11 @@ declare namespace LocalJSX {
     interface DsEmptyState {
         "message"?: string | undefined;
         /**
+          * Localized defaults keyed by empty-state type. Set as a JS property.
+          * @default {}
+         */
+        "messages"?: Partial<Record<EmptyStateType, string>>;
+        /**
           * @default 'no-content'
          */
         "type"?: EmptyStateType;
@@ -2487,17 +2762,32 @@ declare namespace LocalJSX {
     }
     interface DsInput {
         "ariaDescribedby"?: string | undefined;
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         "ariaLabelledby"?: string | undefined;
         /**
           * @default false
          */
         "autoFocus"?: boolean;
         /**
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
           * @default false
          */
         "error"?: boolean;
         "errorMessage"?: string | undefined;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
         /**
           * Associates the internal input with an external <label>.
          */
@@ -2506,9 +2796,18 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        "name"?: string | undefined;
         "onDsChange"?: (event: DsInputCustomEvent<string>) => void;
         "onDsClear"?: (event: DsInputCustomEvent<void>) => void;
         "placeholder"?: string | undefined;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
         /**
           * @default 'text'
          */
@@ -2560,6 +2859,11 @@ declare namespace LocalJSX {
           * @default []
          */
         "items"?: MenuItemData[];
+        /**
+          * Accessible name for the popup menu.
+          * @default 'Menu'
+         */
+        "menuLabel"?: string;
         "menuWidth"?: string | undefined;
         "minWidth"?: string | undefined;
         "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
@@ -2604,11 +2908,23 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * @default 'Next page'
+         */
+        "nextPageLabel"?: string;
         "onDsPageChange"?: (event: DsPaginationCustomEvent<number>) => void;
         /**
           * @default 1
          */
         "page"?: number;
+        /**
+          * @default 'Pagination'
+         */
+        "paginationLabel"?: string;
+        /**
+          * @default 'Previous page'
+         */
+        "previousPageLabel"?: string;
         /**
           * @default 1
          */
@@ -2620,6 +2936,10 @@ declare namespace LocalJSX {
     }
     interface DsPanelNav {
         /**
+          * @default 'Account'
+         */
+        "accountLabel"?: string;
+        /**
           * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
          */
@@ -2629,6 +2949,10 @@ declare namespace LocalJSX {
           * @default 0
          */
         "breakpoint"?: number;
+        /**
+          * @default 'Collapse navigation'
+         */
+        "collapseNavigationLabel"?: string;
         /**
           * Whether the nav is in collapsed (icon-only) state. Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change.
           * @default false
@@ -2640,10 +2964,22 @@ declare namespace LocalJSX {
          */
         "currentUrl"?: string;
         /**
+          * @default 'Dashboard'
+         */
+        "dashboardLabel"?: string;
+        /**
+          * @default 'Dashboard navigation'
+         */
+        "dashboardNavigationLabel"?: string;
+        /**
           * When `true`, style changes apply synchronously — host app owns view transitions.
           * @default false
          */
         "disableViewTransition"?: boolean;
+        /**
+          * @default 'Expand navigation'
+         */
+        "expandNavigationLabel"?: string;
         /**
           * Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute.
           * @default '[]'
@@ -2680,6 +3016,14 @@ declare namespace LocalJSX {
           * @default 'anchor'
          */
         "routerMode"?: PanelNavRouterMode;
+        /**
+          * @default 'Settings'
+         */
+        "settingsLabel"?: string;
+        /**
+          * @default 'Settings navigation'
+         */
+        "settingsNavigationLabel"?: string;
         /**
           * `localStorage` key used to persist the collapsed state across page loads. When set, collapsed state is restored on mount and written on each toggle.
           * @default ''
@@ -2729,9 +3073,20 @@ declare namespace LocalJSX {
           * @default false
          */
         "open"?: boolean;
+        /**
+          * @default 'Tool shortcuts'
+         */
+        "toolShortcutsLabel"?: string;
+        /**
+          * @default 'Tools'
+         */
+        "toolsLabel"?: string;
     }
     interface DsRadioGroup {
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         "ariaLabelledby"?: string | undefined;
         /**
           * @default 'vertical'
@@ -2740,12 +3095,29 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * @default false
+         */
         "isInactive"?: boolean;
+        "name"?: string | undefined;
         "onDsChange"?: (event: DsRadioGroupCustomEvent<string>) => void;
         /**
           * @default []
          */
         "options"?: RadioOption[];
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
         /**
           * @default ''
          */
@@ -2761,8 +3133,19 @@ declare namespace LocalJSX {
           * @default true
          */
         "activeFill"?: boolean;
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
         /**
           * Show a 1px secondary inset border. Default on (matches unfilled button).
           * @default true
@@ -2773,6 +3156,7 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        "name"?: string | undefined;
         /**
           * Emits the selected value string.
          */
@@ -2788,6 +3172,14 @@ declare namespace LocalJSX {
           * @default 'Select'
          */
         "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
         /**
           * Control density (height, padding, icon, type).
           * @default 'md'
@@ -2805,15 +3197,22 @@ declare namespace LocalJSX {
         "width"?: SelectWidth;
     }
     interface DsShellGradientPicker {
+        /**
+          * @default 'Shell gradient theme'
+         */
+        "groupLabel"?: string;
         "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
         /**
           * Active shell wash preset.
-          * @default DEFAULT_SHELL_GRADIENT_PRESET
+          * @default 'neutral'
          */
         "value"?: ShellGradientPreset1;
     }
     interface DsShellGradientSwatch {
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         /**
           * @default false
          */
@@ -2821,7 +3220,7 @@ declare namespace LocalJSX {
         "onDsSelect"?: (event: DsShellGradientSwatchCustomEvent<ShellGradientPreset1>) => void;
         /**
           * Wash preset this orb previews.
-          * @default DEFAULT_SHELL_GRADIENT_PRESET
+          * @default 'neutral'
          */
         "preset"?: ShellGradientPreset1;
         /**
@@ -2884,7 +3283,10 @@ declare namespace LocalJSX {
         "valueText"?: string | undefined;
     }
     interface DsTabGroup {
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         "ariaLabelledby"?: string | undefined;
         "background"?: TabBackground | undefined;
         "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
@@ -2902,7 +3304,10 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     interface DsTabGroupNav {
-        "ariaLabel"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
         "ariaLabelledby"?: string | undefined;
         "background"?: TabGroupNavBackground | undefined;
         "onDsChange"?: (event: DsTabGroupNavCustomEvent<string>) => void;
@@ -2950,6 +3355,15 @@ declare namespace LocalJSX {
           * @default false
          */
         "loading"?: boolean;
+        /**
+          * @default 'Loading'
+         */
+        "loadingLabel"?: string;
+        "locale"?: string | undefined;
+        /**
+          * @default 'Next'
+         */
+        "nextPageLabel"?: string;
         "onDsPageChange"?: (event: DsTableCustomEvent<{ pageIndex: number }>) => void;
         "onDsRowClick"?: (event: DsTableCustomEvent<{ row: unknown; rowIndex: number }>) => void;
         "onDsSort"?: (event: DsTableCustomEvent<{ columnId: string }>) => void;
@@ -2961,6 +3375,15 @@ declare namespace LocalJSX {
           * @default 20
          */
         "pageSize"?: number;
+        /**
+          * Use `{page}` and `{total}` placeholders.
+          * @default 'Page {page} of {total}'
+         */
+        "pageStatusLabel"?: string;
+        /**
+          * @default 'Previous'
+         */
+        "previousPageLabel"?: string;
         /**
           * Comma-separated zero-based row indices that are selected.
           * @default ''
@@ -3035,8 +3458,29 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * @default false
+         */
         "isInactive"?: boolean;
+        "name"?: string | undefined;
         "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default 'on'
+         */
+        "value"?: string;
     }
     /**
      * Imperative body portal for the popup.
@@ -3154,6 +3598,7 @@ declare namespace LocalJSX {
         "heading": string | undefined;
         "basePath": string;
         "currentUrl": string;
+        "moreTabsLabel": string;
     }
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
@@ -3165,7 +3610,7 @@ declare namespace LocalJSX {
         "contrast": ButtonFilledContrast;
         "isInactive": boolean;
         "type": 'button' | 'submit' | 'reset';
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
     }
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
@@ -3181,7 +3626,7 @@ declare namespace LocalJSX {
         "type": 'button' | 'submit' | 'reset';
         "backgroundContrast": ButtonUnfilledOnBackgroundContrast;
         "background": ButtonUnfilledBackground | undefined;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
         "controls": string | undefined;
         "expanded": boolean | undefined;
         "haspopup": string | undefined;
@@ -3196,17 +3641,23 @@ declare namespace LocalJSX {
     interface DsCardDataVizDonutAttributes {
         "heading": string;
         "cardWidth": CardDataVizDonutWidth;
+        "filterLabel": string;
     }
     interface DsCardSettingAttributes {
         "heading": string;
         "cardWidth": CardSettingWidth;
         "editing": boolean;
+        "editLabel": string;
+        "cancelLabel": string;
+        "saveLabel": string;
     }
     interface DsChartBarAttributes {
         "width": number;
         "height": number;
     }
     interface DsChartDonutAttributes {
+        "locale": string | undefined;
+        "noDataLabel": string;
         "size": number | undefined;
         "thickness": string;
         "cornerRadius": string;
@@ -3216,6 +3667,7 @@ declare namespace LocalJSX {
         "activeLabel": string | null;
     }
     interface DsChartLegendAttributes {
+        "locale": string | undefined;
         "direction": ChartLegendDirection;
         "showPercentage": boolean;
         "activeLabel": string | null;
@@ -3228,6 +3680,11 @@ declare namespace LocalJSX {
     interface DsCheckboxAttributes {
         "label": string;
         "checked": boolean;
+        "name": string | undefined;
+        "value": string;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
         "indeterminate": boolean;
         "isInactive": boolean;
     }
@@ -3240,6 +3697,7 @@ declare namespace LocalJSX {
         "maxWidth": string;
         "isInactive": boolean;
         "background": ChipBackground | undefined;
+        "removeLabel": string;
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
@@ -3265,6 +3723,11 @@ declare namespace LocalJSX {
     }
     interface DsInputAttributes {
         "value": string;
+        "name": string | undefined;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "clearLabel": string;
         "placeholder": string | undefined;
         "type": InputType;
         "isInactive": boolean;
@@ -3272,7 +3735,7 @@ declare namespace LocalJSX {
         "error": boolean;
         "errorMessage": string | undefined;
         "inputId": string | undefined;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
@@ -3291,6 +3754,7 @@ declare namespace LocalJSX {
         "minWidth": string | undefined;
         "anchorId": string | undefined;
         "initialFocusVisible": boolean;
+        "menuLabel": string;
     }
     interface DsModalAttributes {
         "open": boolean;
@@ -3303,6 +3767,9 @@ declare namespace LocalJSX {
         "totalPages": number;
         "siblingCount": number;
         "isInactive": boolean;
+        "paginationLabel": string;
+        "previousPageLabel": string;
+        "nextPageLabel": string;
     }
     interface DsPanelNavAttributes {
         "navStyle": NavChromeStyle;
@@ -3316,38 +3783,56 @@ declare namespace LocalJSX {
         "currentUrl": string;
         "userName": string;
         "userInitial": string;
+        "dashboardLabel": string;
+        "settingsLabel": string;
+        "accountLabel": string;
+        "dashboardNavigationLabel": string;
+        "settingsNavigationLabel": string;
+        "expandNavigationLabel": string;
+        "collapseNavigationLabel": string;
     }
     interface DsPanelToolsAttributes {
         "open": boolean;
         "activeTool": PanelToolsToolId | '';
         "itemsJson": string;
+        "toolsLabel": string;
+        "toolShortcutsLabel": string;
     }
     interface DsRadioGroupAttributes {
         "value": string;
+        "name": string | undefined;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
         "direction": 'vertical' | 'horizontal';
         "isInactive": boolean;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
     interface DsSelectAttributes {
         "value": string;
+        "name": string | undefined;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
         "placeholder": string;
         "size": SelectSize;
         "width": SelectWidth;
         "isInactive": boolean;
         "activeFill": boolean;
         "hasBorder": boolean;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
     interface DsShellGradientPickerAttributes {
         "value": ShellGradientPreset;
+        "groupLabel": string;
     }
     interface DsShellGradientSwatchAttributes {
         "preset": ShellGradientPreset;
         "selected": boolean;
         "isInactive": boolean;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
     }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
@@ -3369,14 +3854,14 @@ declare namespace LocalJSX {
     interface DsTabGroupAttributes {
         "value": string;
         "background": TabBackground | undefined;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "orientation": 'horizontal' | 'vertical';
     }
     interface DsTabGroupNavAttributes {
         "value": string;
         "background": TabGroupNavBackground | undefined;
-        "ariaLabel": string | undefined;
+        "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "orientation": 'horizontal' | 'vertical';
         "selectionFollowsFocus": boolean;
@@ -3385,6 +3870,11 @@ declare namespace LocalJSX {
     interface DsTableAttributes {
         "loading": boolean;
         "emptyMessage": string;
+        "loadingLabel": string;
+        "previousPageLabel": string;
+        "nextPageLabel": string;
+        "pageStatusLabel": string;
+        "locale": string | undefined;
         "selectedRows": string;
         "pageIndex": number | undefined;
         "pageSize": number;
@@ -3413,6 +3903,11 @@ declare namespace LocalJSX {
     }
     interface DsToggleAttributes {
         "checked": boolean;
+        "name": string | undefined;
+        "value": string;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
         "isInactive": boolean;
     }
     interface DsTooltipAttributes {

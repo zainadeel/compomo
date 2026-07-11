@@ -41,6 +41,8 @@ export class Chip {
   @Prop() isInactive: boolean = false;
   /** Surface context for interaction-fill tokens when the chip sits on a non-default surface. */
   @Prop() background: ChipBackground | undefined;
+  /** Accessible remove action. Use `{label}` as the chip-label placeholder. */
+  @Prop() removeLabel: string = 'Remove {label}';
 
   /** Fired when the remove button is clicked. */
   @Event() dsRemove!: EventEmitter<void>;
@@ -80,7 +82,7 @@ export class Chip {
           'ds-control-inactive': this.isInactive,
         }}
         style={maxWidthStyle}
-        aria-disabled={this.isInactive || undefined}
+        aria-disabled={this.isInactive ? 'true' : undefined}
       >
         <ds-text class="tag__label" as="span" variant={textVariant} color="inherit">
           {this.label}
@@ -90,7 +92,7 @@ export class Chip {
             type="button"
             class="tag__remove ds-focus-ring-inset"
             onClick={this.handleRemove}
-            aria-label={`Remove ${this.label}`}
+            aria-label={this.removeLabel.replace('{label}', this.label)}
             disabled={this.isInactive || undefined}
           >
             <slot name="remove-icon">

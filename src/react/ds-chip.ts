@@ -17,7 +17,7 @@ import { DsChip as DsChipElement, defineCustomElement as defineDsChip } from "@d
 
 export type DsChipEvents = { onDsRemove: EventName<DsChipCustomEvent<void>> };
 
-export const DsChip: StencilReactComponent<DsChipElement, DsChipEvents, Components.DsChip> = /*@__PURE__*/ createComponent<DsChipElement, DsChipEvents, Components.DsChip>({
+export const DsChip: StencilReactComponent<DsChipElement, DsChipEvents, Components.DsChip, 'label'> = /*@__PURE__*/ createComponent<DsChipElement, DsChipEvents, Components.DsChip, 'label'>({
     tagName: 'ds-chip',
     elementClass: DsChipElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
