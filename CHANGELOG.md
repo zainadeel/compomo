@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.1](https://github.com/zainadeel/compomo/compare/v3.1.0...v3.1.1) (2026-07-11)
+
+
+### Fixed
+
+* **BarNav:** recover tabs after overlapping chrome transitions ([3cab979](https://github.com/zainadeel/compomo/commit/3cab9797fb20a727859341f71212e4d1c28575d1))
+* **BarNav:** recover tabs after overlapping chrome transitions ([d21ce30](https://github.com/zainadeel/compomo/commit/d21ce30091eebbff002ed58b975a7fd24260d633))
+
 ## [3.1.0](https://github.com/zainadeel/compomo/compare/v3.0.1...v3.1.0) (2026-07-11)
 
 
