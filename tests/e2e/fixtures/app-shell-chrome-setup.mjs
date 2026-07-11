@@ -1,4 +1,5 @@
 import '/dist/components/ds-app-shell.js';
+import '/dist/components/ds-bar-nav.js';
 import '/dist/components/ds-panel-nav.js';
 import '/dist/components/ds-panel-tools.js';
 import '/dist/components/ds-text.js';
@@ -23,6 +24,7 @@ const toolsItems = [
 
 await Promise.all([
   customElements.whenDefined('ds-app-shell'),
+  customElements.whenDefined('ds-bar-nav'),
   customElements.whenDefined('ds-panel-nav'),
   customElements.whenDefined('ds-panel-tools'),
 ]);
@@ -31,6 +33,14 @@ const panel = document.getElementById('panel');
 panel.groups = groups;
 panel.currentUrl = '/fleet';
 panel.breakpoint = 0;
+
+const bar = document.getElementById('bar');
+bar.basePath = '/dashboard/tracking';
+bar.currentUrl = '/dashboard/tracking/live-map';
+bar.tabs = [
+  { id: 'live-map', label: 'Live Map' },
+  { id: 'trips', label: 'Trips' },
+];
 
 const tools = document.getElementById('tools');
 tools.items = toolsItems;

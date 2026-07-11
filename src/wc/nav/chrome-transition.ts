@@ -28,6 +28,24 @@ export class ChromeTransitionDepth {
   }
 }
 
+/** Idempotent gate for one physical chrome surface.
+ * Duplicate start notifications still require only one matching end. */
+export class ChromeTransitionGate {
+  private active = false;
+
+  enter(): void {
+    this.active = true;
+  }
+
+  exit(): void {
+    this.active = false;
+  }
+
+  get isActive(): boolean {
+    return this.active;
+  }
+}
+
 export interface RafCoalescer {
   schedule(): void;
   cancel(): void;

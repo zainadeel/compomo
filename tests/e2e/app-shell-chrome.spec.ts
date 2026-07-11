@@ -16,6 +16,37 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('rapid collapse reversal emits one balanced chrome transition', async ({ page }) => {
+    const transitionCounts = await page.evaluate(async () => {
+      const shell = document.querySelector('ds-app-shell')!;
+      const panel = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
+      let starts = 0;
+      let ends = 0;
+      shell.addEventListener('dsChromeTransitionStart', () => starts++);
+      shell.addEventListener('dsChromeTransitionEnd', () => ends++);
+
+      panel.collapsed = true;
+      panel.collapsed = false;
+      const bar = document.getElementById('bar') as HTMLElement & {
+        basePath: string;
+        currentUrl: string;
+        tabs: Array<{ id: string; label: string }>;
+      };
+      bar.basePath = '/dashboard/maintenance';
+      bar.currentUrl = '/dashboard/maintenance/health';
+      bar.tabs = [
+        { id: 'health', label: 'Health' },
+        { id: 'inspections', label: 'Inspections' },
+      ];
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      return { starts, ends };
+    });
+
+    expect(transitionCounts).toEqual({ starts: 1, ends: 1 });
+    await expect(page.getByRole('tab', { name: 'Health' })).toBeVisible();
+  });
+
   test('tools drawer sets inert and aria-hidden when resting closed', async ({ page }) => {
     const drawer = page.locator('.panel-tools__drawer');
     const host = page.locator('ds-panel-tools');

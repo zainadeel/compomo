@@ -202,6 +202,7 @@ export class PanelNav {
   }
 
   private startCollapseAnimation() {
+    if (this.isAnimating) return;
     this.isAnimating = true;
     this.dsChromeTransitionStart.emit({ source: 'panel-nav' });
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
