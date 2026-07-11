@@ -32,7 +32,7 @@ import {
 import {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
-  ChromeTransitionDepth,
+  ChromeTransitionGate,
   createRafCoalescer,
   readChromeTransitionSource,
   readChromeTransitionPhase,
@@ -102,8 +102,8 @@ export class BarNav {
   private resizeObserver: ResizeObserver | null = null;
   private intrinsicWidthRetryCount = 0;
   private tabLayoutPendingFrames = 0;
-  private readonly panelNavTransition = new ChromeTransitionDepth();
-  private readonly panelToolsTransition = new ChromeTransitionDepth();
+  private readonly panelNavTransition = new ChromeTransitionGate();
+  private readonly panelToolsTransition = new ChromeTransitionGate();
   private readonly overflowCoalescer = createRafCoalescer(() => {
     this.updateTabsCollapsed();
   });

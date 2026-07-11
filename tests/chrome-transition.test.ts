@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ChromeTransitionDepth,
+  ChromeTransitionGate,
   createRafCoalescer,
   readChromeTransitionSource,
   readChromeTransitionPhase,
@@ -18,6 +19,17 @@ describe('ChromeTransitionDepth', () => {
     assert.equal(gate.isActive, true);
     gate.exit();
     assert.equal(gate.isActive, false);
+    gate.exit();
+    assert.equal(gate.isActive, false);
+  });
+});
+
+describe('ChromeTransitionGate', () => {
+  it('a duplicate start is released by one matching end', () => {
+    const gate = new ChromeTransitionGate();
+    gate.enter();
+    gate.enter();
+    assert.equal(gate.isActive, true);
     gate.exit();
     assert.equal(gate.isActive, false);
   });
