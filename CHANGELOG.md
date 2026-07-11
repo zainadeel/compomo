@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.1.0](https://github.com/zainadeel/compomo/compare/v3.0.1...v3.1.0) (2026-07-11)
+
+
+### Added
+
+* harden agent and framework contracts ([aabc742](https://github.com/zainadeel/compomo/commit/aabc74201ffbb4794eb9011b19c598052e94b751))
+* harden agent and framework contracts ([b5fae0e](https://github.com/zainadeel/compomo/commit/b5fae0e23fbe180b04e78a33ef36ba6d29c11260))
+
+
+### Fixed
+
+* preserve consumer node compatibility ([79c19f7](https://github.com/zainadeel/compomo/commit/79c19f71c7e150a8b31e3abe1457aaa237a7713e))
+
 ## [3.0.1](https://github.com/zainadeel/compomo/compare/v3.0.0...v3.0.1) (2026-07-10)
 
 
