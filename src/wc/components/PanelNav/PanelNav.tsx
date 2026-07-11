@@ -66,6 +66,14 @@ export class PanelNav {
   /** Single character shown in the collapsed avatar */
   @Prop() userInitial: string = '';
 
+  @Prop() dashboardLabel: string = 'Dashboard';
+  @Prop() settingsLabel: string = 'Settings';
+  @Prop() accountLabel: string = 'Account';
+  @Prop() dashboardNavigationLabel: string = 'Dashboard navigation';
+  @Prop() settingsNavigationLabel: string = 'Settings navigation';
+  @Prop() expandNavigationLabel: string = 'Expand navigation';
+  @Prop() collapseNavigationLabel: string = 'Collapse navigation';
+
   /** Emitted when a nav item is clicked. Detail = the item's `id`. */
   @Event() dsNavSelect!: EventEmitter<string>;
 
@@ -482,7 +490,7 @@ export class PanelNav {
 
   private renderFooterAction(isDashboardChrome: boolean) {
     // Short chrome labels — same string for tip + aria (not "Open/Go to …").
-    const footerLabel = isDashboardChrome ? 'Settings' : 'Dashboard';
+    const footerLabel = isDashboardChrome ? this.settingsLabel : this.dashboardLabel;
     return (
       <ds-tooltip label={footerLabel} side="right" size="sm">
         <ds-button-unfilled variant="icon"
@@ -503,14 +511,14 @@ export class PanelNav {
   private renderFooterUser(collapsed: boolean, userName: string, userInitial: string) {
     // Always wrap so collapse morph CSS can transition on a stable button node.
     // Tip only when collapsed (empty label → ds-tooltip skips show).
-    const tipLabel = collapsed ? 'Account' : '';
+    const tipLabel = collapsed ? this.accountLabel : '';
     const userButton = (
       <button
         type="button"
         id={PANEL_NAV_USER_MENU_ANCHOR_ID}
         class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset ds-interaction-fill"
         tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
-        aria-label="Account"
+        aria-label={this.accountLabel}
         onClick={(e) => this.handleUserAction(e)}
         onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
         onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
@@ -627,7 +635,7 @@ export class PanelNav {
       <Host style={{ display: 'block', position: 'relative' }}>
         <nav
           class={navCls}
-          aria-label={isDashboardChrome ? 'Dashboard navigation' : 'Settings navigation'}
+          aria-label={isDashboardChrome ? this.dashboardNavigationLabel : this.settingsNavigationLabel}
         >
 
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
@@ -639,7 +647,7 @@ export class PanelNav {
               onClick={() => this.handleToggle()}
               onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, 0)}
               onFocus={() => { this.rovingIndex = 0; }}
-              aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+              aria-label={collapsed ? this.expandNavigationLabel : this.collapseNavigationLabel}
               aria-expanded={collapsed ? 'false' : 'true'}
             >
               {/* Motive M mark — fades out on hover to reveal collapse toggle */}

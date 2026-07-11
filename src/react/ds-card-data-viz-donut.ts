@@ -17,7 +17,7 @@ import { DsCardDataVizDonut as DsCardDataVizDonutElement, defineCustomElement as
 
 export type DsCardDataVizDonutEvents = { onDsFilterClick: EventName<DsCardDataVizDonutCustomEvent<void>> };
 
-export const DsCardDataVizDonut: StencilReactComponent<DsCardDataVizDonutElement, DsCardDataVizDonutEvents, Components.DsCardDataVizDonut> = /*@__PURE__*/ createComponent<DsCardDataVizDonutElement, DsCardDataVizDonutEvents, Components.DsCardDataVizDonut>({
+export const DsCardDataVizDonut: StencilReactComponent<DsCardDataVizDonutElement, DsCardDataVizDonutEvents, Components.DsCardDataVizDonut, 'heading'> = /*@__PURE__*/ createComponent<DsCardDataVizDonutElement, DsCardDataVizDonutEvents, Components.DsCardDataVizDonut, 'heading'>({
     tagName: 'ds-card-data-viz-donut',
     elementClass: DsCardDataVizDonutElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

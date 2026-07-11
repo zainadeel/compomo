@@ -17,7 +17,7 @@ import { DsCheckbox as DsCheckboxElement, defineCustomElement as defineDsCheckbo
 
 export type DsCheckboxEvents = { onDsChange: EventName<DsCheckboxCustomEvent<boolean>> };
 
-export const DsCheckbox: StencilReactComponent<DsCheckboxElement, DsCheckboxEvents, Components.DsCheckbox> = /*@__PURE__*/ createComponent<DsCheckboxElement, DsCheckboxEvents, Components.DsCheckbox>({
+export const DsCheckbox: StencilReactComponent<DsCheckboxElement, DsCheckboxEvents, Components.DsCheckbox, 'label'> = /*@__PURE__*/ createComponent<DsCheckboxElement, DsCheckboxEvents, Components.DsCheckbox, 'label'>({
     tagName: 'ds-checkbox',
     elementClass: DsCheckboxElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

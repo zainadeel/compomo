@@ -72,6 +72,7 @@ export class BarNav {
 
   /** Current route URL. When set with `basePath`, the active tab is derived automatically. */
   @Prop() currentUrl: string = '';
+  @Prop() moreTabsLabel: string = 'More tabs';
 
   /** Emitted when the active tab changes. Detail = tab id. */
   @Event() dsTabChange!: EventEmitter<string>;
@@ -713,7 +714,7 @@ export class BarNav {
                 }}
                 haspopup="menu"
                 expanded={this.menuOpen}
-                aria-label="More tabs"
+                aria-label={this.moreTabsLabel}
                 onDsClick={() => this.toggleTabMenu({ focusVisible: false })}
                 onFocusin={this.handleOverflowFocus}
                 onFocusout={this.handleOverflowBlur}

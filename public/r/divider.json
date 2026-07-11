@@ -19,11 +19,11 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.1"
+          "@ds-mo/tokens ^2.14.0",
+          "@ds-mo/icons ^6.1.2"
         ],
         "optional": [],
-        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
     },
     "props": {
@@ -72,6 +72,11 @@
     {
       "path": "src/wc/components/Divider/Divider.css",
       "content": ":host {\n  --_divider-color: var(--color-divider-divider);\n  --_divider-inset: 0;\n  --_divider-length: 100%;\n\n  display: block;\n  flex-shrink: 0;\n  width: var(--_divider-length);\n  height: var(--dimension-stroke-width-012);\n  margin: 0 var(--_divider-inset);\n  border: none;\n  background-color: var(--_divider-color);\n}\n\n:host(.divider--vertical) {\n  width: var(--dimension-stroke-width-012);\n  height: var(--_divider-length);\n  min-height: var(--dimension-stroke-width-012);\n  margin: var(--_divider-inset) 0;\n  align-self: stretch;\n}\n\n:host(.divider--vertical.divider--custom-length) {\n  align-self: center;\n}\n\n:host([surface='on-bold-background']),\n:host(.divider--surface-on-bold-background) {\n  --_divider-color: var(--color-divider-on-bold-background);\n}\n\n:host([surface='on-strong-background']),\n:host(.divider--surface-on-strong-background) {\n  --_divider-color: var(--color-divider-on-strong-background);\n}\n\n:host([surface='on-medium-background']),\n:host(.divider--surface-on-medium-background) {\n  --_divider-color: var(--color-divider-on-medium-background);\n}\n\n:host([surface='on-translucent-background']),\n:host(.divider--surface-on-translucent-background) {\n  --_divider-color: var(--color-divider-on-translucent-background);\n}\n\n:host([surface='navigation']),\n:host(.divider--surface-navigation) {\n  --_divider-color: var(--color-navigation-divider);\n}\n\n:host([surface='media']),\n:host(.divider--surface-media) {\n  --_divider-color: var(--color-media-divider);\n}\n\n:host([surface='always-dark']),\n:host(.divider--surface-always-dark) {\n  --_divider-color: var(--color-always-dark-divider);\n}\n\n:host([surface='inverted']),\n:host(.divider--surface-inverted) {\n  --_divider-color: var(--color-inverted-divider);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Divider/Divider.d.ts",
+      "content": "export type DividerOrientation = 'horizontal' | 'vertical';\nexport type DividerSurface = 'default' | 'on-bold-background' | 'on-strong-background' | 'on-medium-background' | 'on-translucent-background' | 'navigation' | 'media' | 'always-dark' | 'inverted';\nexport type DividerInsetToken = 'space-000' | 'space-012' | 'space-025' | 'space-050' | 'space-075' | 'space-100' | 'space-125' | 'space-150' | 'space-175' | 'space-200' | 'space-250' | 'space-300' | 'space-400' | 'space-600' | 'space-800';\nexport type DividerInset = 'none' | DividerInsetToken | (string & {});\nexport type DividerLength = 'auto' | 'full' | (string & {});\nexport declare class Divider {\n    /** Direction of the divider line. Defaults to 'horizontal'. */\n    orientation: DividerOrientation;\n    /** Surface context so the divider uses the right TokoMo divider token. */\n    surface: DividerSurface;\n    /** Insets the divider from its start/end edges. Accepts spacing token names or any CSS length. */\n    inset: DividerInset;\n    /** Visual line length. Defaults to filling the available axis. Accepts any CSS length. */\n    length: DividerLength;\n    /** Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default. */\n    semantic: boolean;\n    private resolveInset;\n    private resolveLength;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

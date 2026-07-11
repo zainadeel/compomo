@@ -30,12 +30,20 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const WC_SRC = path.join(ROOT, 'src', 'wc', 'components');
 const OUT = path.join(ROOT, 'public', 'r');
+const PACKAGE_JSON = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 
-const PKG = '@ds-mo/ui';
+const PKG = PACKAGE_JSON.name;
 const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
-const TOKENS_PEER = '>=2.9.0';
-const ICONS_PEER = '^5.0.1';
+const TOKENS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/tokens'];
+const ICONS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/icons'];
 const TRILOGY_INSTALL = `npm install ${PKG} @ds-mo/tokens @ds-mo/icons`;
+const FRAMEWORK_SUPPORT = 'Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters.';
+const FORM_CONTROL_PROPS = {
+  name: { type: 'string', description: 'Native form field name.' },
+  disabled: { type: 'boolean', default: 'false', description: 'Standard disabled state; Angular forms set this automatically.' },
+  required: { type: 'boolean', default: 'false', description: 'Participates in native constraint validation.' },
+  requiredMessage: { type: 'string', default: "'This field is required.'", description: 'Localizable required validation message.' },
+};
 
 // ─── Component catalog ─────────────────────────────────────────────────────────
 
@@ -260,7 +268,9 @@ const COMPONENTS = [
     exports: ['Toggle'],
     types: ['ToggleProps'],
     props: {
+      ...FORM_CONTROL_PROPS,
       checked: { type: 'boolean', default: 'false' },
+      value: { type: 'string', default: "'on'", description: 'Submitted value when checked.' },
       onChange: { type: '(checked: boolean) => void' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
       'aria-label': { type: 'string' },
@@ -275,8 +285,10 @@ const COMPONENTS = [
     exports: ['Checkbox'],
     types: ['CheckboxProps'],
     props: {
+      ...FORM_CONTROL_PROPS,
       label: { type: 'string', required: true },
       checked: { type: 'boolean', default: 'false' },
+      value: { type: 'string', default: "'on'", description: 'Submitted value when checked.' },
       indeterminate: { type: 'boolean', default: 'false' },
       onChange: { type: '(checked: boolean) => void' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
@@ -294,6 +306,7 @@ const COMPONENTS = [
     exports: ['Input'],
     types: ['InputProps'],
     props: {
+      ...FORM_CONTROL_PROPS,
       value: { type: 'string', required: true },
       onChange: { type: '(e: React.ChangeEvent<HTMLInputElement>) => void', required: true },
       type: { type: "'text' | 'email' | 'tel' | 'url' | 'search' | 'password'", default: "'text'" },
@@ -301,6 +314,7 @@ const COMPONENTS = [
       suffix: { type: 'React.ReactNode' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
       clearIcon: { type: 'IconComponent', description: 'Custom clear icon for search type.' },
+      clearLabel: { type: 'string', default: "'Clear'", description: 'Localizable accessible label for the search clear action.' },
     },
     usesTokens: true,
     usesIcons: false,
@@ -345,6 +359,7 @@ const COMPONENTS = [
     exports: ['Select'],
     types: ['SelectOption', 'SelectSize', 'SelectWidth'],
     props: {
+      ...FORM_CONTROL_PROPS,
       options: {
         type: 'SelectOption[]',
         required: true,
@@ -492,6 +507,7 @@ const COMPONENTS = [
     exports: ['ds-radio-group'],
     types: ['RadioOption'],
     props: {
+      ...FORM_CONTROL_PROPS,
       value: { type: 'string', required: true },
       onChange: { type: '(value: string) => void', required: true },
       options: { type: 'RadioOption[]', required: true },
@@ -540,6 +556,9 @@ const COMPONENTS = [
       onPageChange: { type: '(page: number) => void', required: true },
       siblingCount: { type: 'number', default: '1' },
       isInactive: { type: 'boolean', default: 'false', description: 'Disables interaction (25% opacity via ds-control-inactive).' },
+      paginationLabel: { type: 'string', default: "'Pagination'" },
+      previousPageLabel: { type: 'string', default: "'Previous page'" },
+      nextPageLabel: { type: 'string', default: "'Next page'" },
     },
     usesTokens: true,
     usesIcons: false,
@@ -678,7 +697,7 @@ function buildConsumptionGuide(config) {
   guide.peerDependencies = {
     required: [`@ds-mo/tokens ${TOKENS_PEER}`, `@ds-mo/icons ${ICONS_PEER}`],
     optional: [],
-    frameworks: 'None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support.',
+    frameworks: FRAMEWORK_SUPPORT,
   };
 
   // 9. Usage notes
@@ -771,7 +790,7 @@ const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
   name: 'compomo',
   homepage: STORYBOOK_URL,
-  description: `CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Works with React 17+, Angular 12+, and plain HTML. Distributed as an npm package; not copy-paste.`,
+  description: `CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. ${FRAMEWORK_SUPPORT} Distributed as an npm package; not copy-paste.`,
   meta: {
     distribution: 'npm',
     install: TRILOGY_INSTALL,

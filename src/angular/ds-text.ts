@@ -1,0 +1,33 @@
+/* tslint:disable */
+/* auto-generated angular directive proxies */
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone } from '@angular/core';
+
+import { ProxyCmp } from './angular-component-lib/utils';
+
+import type { Components } from '@ds-mo/ui/components';
+
+import { defineCustomElement as defineDsText } from '@ds-mo/ui/components/ds-text.js';
+
+@ProxyCmp({
+  defineCustomElementFn: defineDsText,
+  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'textId', 'variant', 'wrap']
+})
+@Component({
+  selector: 'ds-text',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<ng-content></ng-content>',
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'textId', 'variant', 'wrap'],
+})
+export class DsText {
+  protected el: HTMLDsTextElement;
+  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+    c.detach();
+    this.el = r.nativeElement;
+  }
+}
+
+
+export declare interface DsText extends Components.DsText {}
+
+

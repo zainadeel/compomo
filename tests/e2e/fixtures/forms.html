@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><title>Form-associated components</title></head>
+  <body>
+    <form id="profile">
+      <ds-input id="email" name="email" required aria-label="Email"></ds-input>
+      <ds-checkbox id="terms" name="terms" value="accepted" label="Terms" required></ds-checkbox>
+      <ds-select id="region" required aria-label="Region"></ds-select>
+      <ds-radio-group id="tier" name="tier" required aria-label="Tier"></ds-radio-group>
+      <fieldset id="alert-fieldset">
+        <ds-toggle id="alerts" name="alerts" value="enabled" aria-label="Alerts"></ds-toggle>
+      </fieldset>
+      <button id="submit" type="submit">Submit</button>
+      <button id="reset" type="reset">Reset</button>
+    </form>
+    <ds-pagination id="pagination" page="2" total-pages="3"></ds-pagination>
+    <script type="module" src="/forms-setup.mjs"></script>
+  </body>
+</html>

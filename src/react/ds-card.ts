@@ -16,7 +16,7 @@ import { DsCard as DsCardElement, defineCustomElement as defineDsCard } from "@d
 
 export type DsCardEvents = NonNullable<unknown>;
 
-export const DsCard: StencilReactComponent<DsCardElement, DsCardEvents, Components.DsCard> = /*@__PURE__*/ createComponent<DsCardElement, DsCardEvents, Components.DsCard>({
+export const DsCard: StencilReactComponent<DsCardElement, DsCardEvents, Components.DsCard, 'heading'> = /*@__PURE__*/ createComponent<DsCardElement, DsCardEvents, Components.DsCard, 'heading'>({
     tagName: 'ds-card',
     elementClass: DsCardElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

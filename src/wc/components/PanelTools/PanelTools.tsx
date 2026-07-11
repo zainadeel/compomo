@@ -32,6 +32,8 @@ export class PanelTools {
 
   /** JSON fallback for `items` — useful when framework bindings don't propagate arrays. */
   @Prop({ attribute: 'items-json' }) itemsJson: string = '';
+  @Prop() toolsLabel: string = 'Tools';
+  @Prop() toolShortcutsLabel: string = 'Tool shortcuts';
 
   /** Emitted when a rail button is toggled. Detail = { id, selected }. */
   @Event({ bubbles: true, composed: true }) dsToolChange!: EventEmitter<{
@@ -259,10 +261,10 @@ export class PanelTools {
           'panel-tools--drawer-resting': drawerResting,
         }}
         role="complementary"
-        aria-label="Tools"
+        aria-label={this.toolsLabel}
       >
         <div class="panel-tools__layout">
-          <nav class="panel-tools__rail" aria-label="Tool shortcuts">
+          <nav class="panel-tools__rail" aria-label={this.toolShortcutsLabel}>
             {headerItem ? (
               <div class="panel-tools__rail-header">
                 {this.renderRailAction(headerItem, 0)}

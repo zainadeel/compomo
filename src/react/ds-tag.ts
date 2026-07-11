@@ -16,7 +16,7 @@ import { DsTag as DsTagElement, defineCustomElement as defineDsTag } from "@ds-m
 
 export type DsTagEvents = NonNullable<unknown>;
 
-export const DsTag: StencilReactComponent<DsTagElement, DsTagEvents, Components.DsTag> = /*@__PURE__*/ createComponent<DsTagElement, DsTagEvents, Components.DsTag>({
+export const DsTag: StencilReactComponent<DsTagElement, DsTagEvents, Components.DsTag, 'label'> = /*@__PURE__*/ createComponent<DsTagElement, DsTagEvents, Components.DsTag, 'label'>({
     tagName: 'ds-tag',
     elementClass: DsTagElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "compomo",
   "homepage": "https://zainadeel.github.io/compomo/",
-  "description": "CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Works with React 17+, Angular 12+, and plain HTML. Distributed as an npm package; not copy-paste.",
+  "description": "CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters. Distributed as an npm package; not copy-paste.",
   "meta": {
     "distribution": "npm",
     "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
@@ -11,8 +11,8 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens >=2.9.0",
-        "@ds-mo/icons ^5.0.1"
+        "@ds-mo/tokens ^2.14.0",
+        "@ds-mo/icons ^6.1.2"
       ],
       "optional": [],
       "frameworks": "None required — works with any framework that supports Custom Elements."
@@ -544,8 +544,28 @@
           "Toggle"
         ],
         "props": {
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
           "checked": {
             "type": "boolean",
+            "required": false
+          },
+          "value": {
+            "type": "string",
             "required": false
           },
           "onChange": {
@@ -581,12 +601,32 @@
           "Checkbox"
         ],
         "props": {
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
           "label": {
             "type": "string",
             "required": true
           },
           "checked": {
             "type": "boolean",
+            "required": false
+          },
+          "value": {
+            "type": "string",
             "required": false
           },
           "indeterminate": {
@@ -637,6 +677,22 @@
           "Input"
         ],
         "props": {
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
           "value": {
             "type": "string",
             "required": true
@@ -663,6 +719,10 @@
           },
           "clearIcon": {
             "type": "IconComponent",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
             "required": false
           }
         }
@@ -772,6 +832,22 @@
           "Select"
         ],
         "props": {
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
           "options": {
             "type": "SelectOption[]",
             "required": true
@@ -1122,6 +1198,22 @@
           "ds-radio-group"
         ],
         "props": {
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
           "value": {
             "type": "string",
             "required": true
@@ -1245,6 +1337,18 @@
           },
           "isInactive": {
             "type": "boolean",
+            "required": false
+          },
+          "paginationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "previousPageLabel": {
+            "type": "string",
+            "required": false
+          },
+          "nextPageLabel": {
+            "type": "string",
             "required": false
           }
         }

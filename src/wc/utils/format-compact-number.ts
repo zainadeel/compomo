@@ -5,7 +5,14 @@ const COMPACT_UNITS: { threshold: number; suffix: string }[] = [
 ];
 
 /** Compact large numbers for display: 1000 -> "1k", 1500 -> "1.5k", 110100 -> "110.1k", 1000000 -> "1m". */
-export function formatCompactNumber(value: number): string {
+export function formatCompactNumber(value: number, locale?: string): string {
+  if (locale) {
+    return new Intl.NumberFormat(locale, {
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 1,
+    }).format(value);
+  }
   const sign = value < 0 ? '-' : '';
   const abs = Math.abs(value);
   if (abs < 1000) return String(value);

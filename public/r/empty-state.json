@@ -25,11 +25,11 @@
       ],
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.1"
+          "@ds-mo/tokens ^2.14.0",
+          "@ds-mo/icons ^6.1.2"
         ],
         "optional": [],
-        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
     },
     "props": {
@@ -64,8 +64,13 @@
       "type": "registry:ui"
     },
     {
+      "path": "src/wc/components/EmptyState/EmptyState.d.ts",
+      "content": "export type EmptyStateType = 'no-content' | 'no-results' | 'no-results-filter' | 'no-access';\nexport declare class EmptyState {\n    type: EmptyStateType;\n    message: string | undefined;\n    render(): any;\n}\n",
+      "type": "registry:ui"
+    },
+    {
       "path": "src/wc/components/EmptyState/EmptyState.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type EmptyStateType = 'no-content' | 'no-results' | 'no-results-filter' | 'no-access';\n\nconst DEFAULT_MESSAGES: Record<EmptyStateType, string> = {\n  'no-content': 'No page contents to display.',\n  'no-results': 'No results found.',\n  'no-results-filter': 'No results found. Please update search criteria.',\n  'no-access': \"You don't have access to this page.\",\n};\n\n@Component({\n  tag: 'ds-empty-state',\n  styleUrl: 'EmptyState.css',\n  scoped: true,\n})\nexport class EmptyState {\n  @Prop() type: EmptyStateType = 'no-content';\n  @Prop() message: string | undefined;\n\n  render() {\n    return (\n      <Host>\n        <ds-text class=\"empty-state\" as=\"p\" variant=\"text-body-medium\" color=\"secondary\">\n          {this.message || DEFAULT_MESSAGES[this.type]}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type EmptyStateType = 'no-content' | 'no-results' | 'no-results-filter' | 'no-access';\n\nconst DEFAULT_MESSAGES: Record<EmptyStateType, string> = {\n  'no-content': 'No page contents to display.',\n  'no-results': 'No results found.',\n  'no-results-filter': 'No results found. Please update search criteria.',\n  'no-access': \"You don't have access to this page.\",\n};\n\n@Component({\n  tag: 'ds-empty-state',\n  styleUrl: 'EmptyState.css',\n  scoped: true,\n})\nexport class EmptyState {\n  @Prop() type: EmptyStateType = 'no-content';\n  @Prop() message: string | undefined;\n  /** Localized defaults keyed by empty-state type. Set as a JS property. */\n  @Prop() messages: Partial<Record<EmptyStateType, string>> = {};\n\n  render() {\n    return (\n      <Host>\n        <ds-text class=\"empty-state\" as=\"p\" variant=\"text-body-medium\" color=\"secondary\">\n          {this.message || this.messages[this.type] || DEFAULT_MESSAGES[this.type]}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

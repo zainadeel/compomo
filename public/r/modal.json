@@ -25,11 +25,11 @@
       ],
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens >=2.9.0",
-          "@ds-mo/icons ^5.0.1"
+          "@ds-mo/tokens ^2.14.0",
+          "@ds-mo/icons ^6.1.2"
         ],
         "optional": [],
-        "frameworks": "None — works with React 17+, Angular 12+, plain HTML, and any framework with Custom Element support."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
     },
     "props": {
@@ -80,6 +80,11 @@
     {
       "path": "src/wc/components/Modal/Modal.css",
       "content": ".modal-backdrop {\n  background-color: var(--color-background-shade);\n  backdrop-filter: blur(var(--effect-blur-sm));\n  -webkit-backdrop-filter: blur(var(--effect-blur-sm));\n  animation: modalBackdropIn var(--effect-motion-short-2) forwards;\n  box-sizing: border-box;\n}\n\n.modal-backdrop--closing {\n  animation: modalBackdropOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalBackdropIn {\n  from { opacity: 0; }\n  to   { opacity: 1; }\n}\n\n@keyframes modalBackdropOut {\n  from { opacity: 1; }\n  to   { opacity: 0; }\n}\n\n.modal-dialog {\n  display: flex;\n  flex-direction: column;\n  max-height: calc(100vh - 2 * var(--dimension-space-200));\n  overflow: hidden;\n  background-color: var(--color-background-primary);\n  border-radius: var(--dimension-radius-300);\n  box-shadow: var(--effect-elevation-elevated-floating);\n  animation: modalDialogIn var(--effect-motion-short-2) forwards;\n  outline: none;\n  box-sizing: border-box;\n}\n\n.modal-backdrop--closing .modal-dialog {\n  animation: modalDialogOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalDialogIn {\n  from { opacity: 0; transform: scale(0.97) translateY(4px); }\n  to   { opacity: 1; transform: scale(1) translateY(0); }\n}\n\n@keyframes modalDialogOut {\n  from { opacity: 1; transform: scale(1) translateY(0); }\n  to   { opacity: 0; transform: scale(0.97) translateY(4px); }\n}\n\n.modal-header {\n  padding: var(--dimension-space-200) var(--dimension-space-200) var(--dimension-space-100);\n  flex-shrink: 0;\n}\n\n.modal-subtitle {\n  margin-top: var(--dimension-space-100);\n}\n\n.modal-body {\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  overflow-y: auto;\n  flex: 1;\n}\n\n.modal-footer {\n  padding: var(--dimension-space-100) var(--dimension-space-200) var(--dimension-space-200);\n  flex-shrink: 0;\n}\n\n.modal-footer:empty { display: none; }\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Modal/Modal.d.ts",
+      "content": "import { EventEmitter } from '@stencil/core';\nexport type ModalWidth = 'sm' | 'md' | 'lg';\nexport declare class Modal {\n    el: HTMLElement;\n    open: boolean;\n    heading: string;\n    subtitle: string | undefined;\n    modalWidth: ModalWidth | string;\n    private shouldRender;\n    private closing;\n    dsClose: EventEmitter<void>;\n    private instanceId;\n    private titleId;\n    private subtitleId;\n    private previousFocus;\n    private escapeHandler;\n    private tabHandler;\n    private closeTimer;\n    componentDidLoad(): void;\n    disconnectedCallback(): void;\n    onOpenChange(isOpen: boolean): void;\n    private focusFirst;\n    private getFocusables;\n    private setupListeners;\n    private teardownListeners;\n    private close;\n    private handleBackdropMouseDown;\n    private get resolvedWidth();\n    private get closeAnimationMs();\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

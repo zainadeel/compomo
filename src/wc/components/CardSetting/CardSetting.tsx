@@ -21,6 +21,9 @@ export class CardSetting {
 
   /** Controlled edit state — parent owns single-edit orchestration. */
   @Prop() editing = false;
+  @Prop() editLabel: string = 'Edit';
+  @Prop() cancelLabel: string = 'Cancel';
+  @Prop() saveLabel: string = 'Save';
 
   /** Emits when the user enters or exits edit mode. */
   @Event() dsEditingChange!: EventEmitter<boolean>;
@@ -49,7 +52,7 @@ export class CardSetting {
               variant="icon"
               type="button"
               icon="Pencil"
-              aria-label="Edit"
+              aria-label={this.editLabel}
               onDsClick={this.enterEdit}
             />
           ) : (
@@ -59,7 +62,7 @@ export class CardSetting {
                 type="button"
                 icon="Cross"
                 backgroundContrast="bold"
-                aria-label="Cancel"
+                aria-label={this.cancelLabel}
                 onDsClick={this.exitEdit}
               />
               <ds-button-filled
@@ -68,7 +71,7 @@ export class CardSetting {
                 icon="Check"
                 intent="brand"
                 contrast="faint"
-                aria-label="Save"
+                aria-label={this.saveLabel}
                 onDsClick={this.exitEdit}
               />
             </div>

@@ -16,7 +16,7 @@ import { DsTooltip as DsTooltipElement, defineCustomElement as defineDsTooltip }
 
 export type DsTooltipEvents = NonNullable<unknown>;
 
-export const DsTooltip: StencilReactComponent<DsTooltipElement, DsTooltipEvents, Components.DsTooltip> = /*@__PURE__*/ createComponent<DsTooltipElement, DsTooltipEvents, Components.DsTooltip>({
+export const DsTooltip: StencilReactComponent<DsTooltipElement, DsTooltipEvents, Components.DsTooltip, 'label'> = /*@__PURE__*/ createComponent<DsTooltipElement, DsTooltipEvents, Components.DsTooltip, 'label'>({
     tagName: 'ds-tooltip',
     elementClass: DsTooltipElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

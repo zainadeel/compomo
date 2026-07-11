@@ -1,0 +1,72 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-menu",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-menu",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Anchored action or option menu with flat items, grouped sections, selection, toggles, and destructive actions.",
+  "useWhen": [
+    "A trigger reveals a short contextual list of commands or options.",
+    "Options need grouping, selected state, toggle rows, or destructive treatment."
+  ],
+  "avoidWhen": [
+    "The user is selecting a value for a form field.",
+    "The content requires rich dialog interaction or a multi-step workflow.",
+    "The actions should remain persistently visible."
+  ],
+  "alternatives": [
+    {
+      "when": "The choice is a form value with a label, validation, and submitted value.",
+      "component": "component:ds-select",
+      "reason": "Select provides form-control semantics and value ownership."
+    },
+    {
+      "when": "The interaction needs substantial content, confirmation, or a form.",
+      "component": "component:ds-modal",
+      "reason": "Modal owns focus containment and dialog-level interaction."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-unfilled",
+    "component:ds-panel-nav",
+    "component:ds-shell-gradient-picker"
+  ],
+  "accessibility": [
+    "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
+    "Open with visible initial focus only when the trigger was activated from the keyboard.",
+    "Keep disabled items discoverable only when their unavailable state is meaningful."
+  ],
+  "states": [
+    "The host owns open state and responds to selection and close events.",
+    "Use either flat items or sections, not both.",
+    "Arrays, objects, and element anchors must be assigned as JavaScript properties."
+  ],
+  "responsiveBehavior": [
+    "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
+    "Avoid fixed widths that exceed narrow viewports."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign items, sections, and HTMLElement anchors as properties after the element is defined."
+    ],
+    "react": [
+      "Pass arrays and objects as wrapper props and handle generated onDsSelect and onDsClose event props."
+    ],
+    "angular": [
+      "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect and dsClose."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Menu/Menu.stories.ts"
+    },
+    {
+      "label": "Framework integration",
+      "path": "docs/framework-integration.md"
+    }
+  ]
+}

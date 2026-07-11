@@ -1,36 +1,50 @@
 #!/usr/bin/env node
-/**
- * Ensures npm pack includes every source tree reachable from package exports
- * (e.g. @ds-mo/ui/nav → src/wc/utils). Run after `npm run build`.
- */
-import { execSync } from 'node:child_process';
+/** Verify the publish artifact is compiled, complete, and free of stale component trees. */
+import { execFileSync } from 'node:child_process';
+import { readdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 const REQUIRED_PATHS = [
-  'src/wc/utils/index.ts',
-  'src/wc/utils/resolve-css-length-px.ts',
-  'src/wc/utils/resolve-css-time-ms.ts',
-  'src/wc/utils/token-defaults.ts',
-  'src/wc/nav/index.ts',
-  'src/wc/nav/shell-view-transition.ts',
-  'src/wc/nav/nav-chrome.ts',
-  'src/wc/nav/shell-gradient.ts',
-  'src/wc/nav/shell-gradient-presets.ts',
+  'dist/components/index.js',
+  'dist/types/components.d.ts',
+  'dist/lib/nav/index.js',
+  'dist/lib/nav/index.d.ts',
+  'dist/lib/utils/index.js',
+  'dist/lib/utils/index.d.ts',
+  'dist/react/components.js',
+  'dist/react/components.d.ts',
+  'dist/framework/angular.js',
+  'dist/framework/angular.d.ts',
 ];
 
-const output = execSync('npm pack --dry-run 2>&1', { encoding: 'utf8' });
-
-const packed = new Set();
-for (const line of output.split('\n')) {
-  const match = line.match(/\ssrc\/wc\/\S+/);
-  if (match) packed.add(match[0].trim());
-}
-
+const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
+const pack = JSON.parse(execFileSync('npm', ['pack', '--dry-run', '--json'], {
+  encoding: 'utf8',
+  env: npmEnv,
+}));
+const packed = new Set(pack[0].files.map(file => file.path));
 const missing = REQUIRED_PATHS.filter(path => !packed.has(path));
-if (missing.length > 0) {
-  console.error('❌ npm pack is missing paths required by @ds-mo/ui/nav and @ds-mo/ui/utils:\n');
-  for (const path of missing) console.error(`  - ${path}`);
-  console.error('\nAdd missing trees to package.json "files" and re-run.');
-  process.exit(1);
+if (missing.length) {
+  throw new Error(`npm pack is missing required compiled files:\n${missing.map(path => `  - ${path}`).join('\n')}`);
 }
 
-console.log('✅ npm pack includes nav + utils source trees.');
+const sourceFiles = [...packed].filter(path => path.startsWith('src/') && /\.(?:ts|tsx)$/.test(path));
+if (sourceFiles.length) {
+  throw new Error(`npm pack contains source TypeScript:\n${sourceFiles.map(path => `  - ${path}`).join('\n')}`);
+}
+
+const sourceComponents = new Set(
+  readdirSync('src/wc/components', { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name),
+);
+const emittedComponents = readdirSync('dist/types/components', { withFileTypes: true })
+  .filter(entry => entry.isDirectory())
+  .map(entry => entry.name);
+const staleComponents = emittedComponents.filter(name => !sourceComponents.has(name));
+if (staleComponents.length) {
+  throw new Error(`dist contains stale component declarations: ${staleComponents.join(', ')}`);
+}
+
+console.log('✅ npm pack contains compiled public surfaces with no source TypeScript or stale components.');

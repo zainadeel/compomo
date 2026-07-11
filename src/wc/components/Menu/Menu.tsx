@@ -33,6 +33,8 @@ export class Menu {
   @Prop() anchorId: string | undefined;
   /** Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven. */
   @Prop() initialFocusVisible: boolean = false;
+  /** Accessible name for the popup menu. */
+  @Prop() menuLabel: string = 'Menu';
 
   @State() private shouldRender: boolean = false;
   @State() private closing: boolean = false;
@@ -342,7 +344,7 @@ export class Menu {
           class={{ 'menu-popup': true, 'menu-popup--closing': this.closing }}
           style={popupStyle}
           role="menu"
-          aria-label="Menu"
+          aria-label={this.menuLabel}
           aria-orientation="vertical"
         >
           {sections.map((section, si) => (

@@ -10,11 +10,12 @@ Keep this file as the single source of truth for project conventions. Update it 
 
 CompoMo is an npm package (`@ds-mo/ui`) that ships a **framework-agnostic web component library** authored with [Stencil.js](https://stenciljs.com/). It provides:
 
-- Custom elements (`<ds-*>`) consumable from React 18+, Angular 12+, or plain HTML
+- Custom elements (`<ds-*>`) consumable from React 18+, Angular 19-22, or plain HTML
 - Per-component ESM files in `dist/components/` (tree-shakeable; auto-define on import)
 - Auto-generated Angular proxy directives via `@stencil/angular-output-target` in `src/angular/`
 - Auto-generated React wrappers via `@stencil/react-output-target` in `src/react/`
-- TypeScript declarations at `src/wc/components.d.ts` (package `"types"` entry)
+- Compiled Angular and React adapters in `dist/angular/`, `dist/framework/`, and `dist/react/`
+- TypeScript declarations in `dist/types/` (package `"types"` entry)
 - A component registry (`public/r/`) consumed by the in-repo MCP server for AI-assisted component discovery
 
 It's the **top layer** of the ds-mo design-system trilogy: `@ds-mo/tokens` → `@ds-mo/icons` → `@ds-mo/ui` (CompoMo). TokoMo and IcoMo ship the foundation; CompoMo composes them into reusable UI primitives.
@@ -44,6 +45,10 @@ scripts/
   mcp-server.mjs        # MCP server serving the registry to AI clients
 public/
   r/                    # Generated registry (committed, rebuilt on dev/build)
+agent/
+  schemas/              # Versioned platform-neutral agent metadata contracts
+  patterns/             # Cross-component workflow guidance
+  baseline/             # Compatibility snapshots and known registry drift
 docs/                   # Framework integration + optical-sizing reference (not Storybook source)
 dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + patched index.d.ts
@@ -71,7 +76,7 @@ release-please-config.json      # Release Please config (node, changelog section
 npm run build            # Stencil compiler build → dist/
 npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, etc.)
 npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
-npm run test:e2e:install # One-time Chromium for Playwright
+npm run test:e2e:install # One-time Chromium, Firefox, and WebKit for Playwright
 npm run dev              # Stencil watch using normal dist output (updates dist/ on source changes)
 npm run storybook        # Stencil watch + Storybook on :6006 (auto-reloads when dist/ rebuilds)
 npm run storybook:build  # Build static Storybook
@@ -79,6 +84,8 @@ npm run typecheck        # tsc --noEmit (Stencil source in src/wc)
 npm run lint             # eslint src/ + stylelint component/utils CSS (warnings)
 npm run lint:css         # stylelint TokoMo token category + disallow rules (warnings)
 npm run registry:build   # Regenerate public/r/ (component registry)
+npm run agent:validate   # Validate agent schemas, component intent, patterns, and references
+npm run agent:validate:trilogy -- <tokens-agent.json> <icons-agent.json> # Validate assembled package manifests
 npm run mcp              # Run the in-repo MCP server
 npm run figma:connect:publish:dry-run # Figma Code Connect — dry-run publish (set FIGMA_ACCESS_TOKEN or --token)
 npm run figma:connect:publish         # Publish Code Connect mappings to Figma
@@ -95,8 +102,9 @@ The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 1. Transpiles every `@Component()` class in `src/wc/components/**/*.tsx` to native Custom Elements
 2. Emits per-component ESM files to `dist/components/` (`dist-custom-elements` — auto-define on import)
 3. Generates TypeScript declarations → `src/wc/components.d.ts` (+ `scripts/patch-index-types.mjs` augments `dist/components/index.d.ts` only — never patch `components.d.ts`; Stencil rewrites it on every build/watch)
-4. Runs Angular output target → regenerates `src/angular/` (commit if CI reports dirty `src/`)
-5. Runs React output target → regenerates `src/react/` (commit if CI reports dirty `src/`)
+4. Runs Angular output target → regenerates `src/angular/` and compiles it to `dist/angular/`
+5. Runs React output target → regenerates `src/react/` and compiles it to `dist/react/`
+6. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
 
 There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
@@ -104,10 +112,11 @@ Package `exports`:
 
 ```jsonc
 {
-  ".":               { "import": "./dist/components/index.js", "types": "./src/wc/components.d.ts" },
-  "./angular":       { "import": "./src/angular/index.ts", "types": "./src/angular/index.ts" },
-  "./react":         { "import": "./src/react/components.ts", "types": "./src/react/components.ts" },
-  "./dist/components": { "import": "./dist/components/index.js", "types": "./src/wc/components.d.ts" },
+  ".":               { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
+  "./angular":       { "import": "./dist/framework/angular.js", "types": "./dist/framework/angular.d.ts" },
+  "./angular/*":     { "import": "./dist/angular/*.js", "types": "./dist/angular/*.d.ts" },
+  "./react":         { "import": "./dist/react/components.js", "types": "./dist/react/components.d.ts" },
+  "./dist/components": { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
   "./nav":           { "import": "./dist/lib/nav/index.js", "types": "./dist/lib/nav/index.d.ts" },
   "./utils":         { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
@@ -128,8 +137,8 @@ import '@ds-mo/ui/dist/components/ds-button-filled.js';
 import '@ds-mo/ui/dist/components/ds-button-unfilled.js';
 import '@ds-mo/tokens';
 
-// Angular — Stencil-generated proxy directives
-import { DsButtonFilled } from '@ds-mo/ui/angular';
+// Angular — Stencil-generated standalone adapter (per-component for tree shaking)
+import { DsButtonFilled } from '@ds-mo/ui/angular/ds-button-filled';
 
 // React — Stencil-generated wrappers
 import { DsButtonFilled, DsBarNav } from '@ds-mo/ui/react';
@@ -143,7 +152,9 @@ import { DsButtonFilled, DsBarNav } from '@ds-mo/ui/react';
 
 **Icon resolution + injection hardening:** `ds-icon` resolves names by **exact own-key match** against canonical IcoMo export names — meta.json aliases and inherited prototype keys never resolve. Every glyph is validated at the render boundary (`icon-svg.ts`: `<svg>` root, no executable/foreign-content elements, no `on*` attributes, fragment-only `href`s) and injected as parsed DOM nodes — never `innerHTML` — so ds-icon works under a strict CSP with `require-trusted-types-for`. Invalid markup renders an empty fixed-size box.
 
-**Framework wrappers:** Stencil emits **Angular proxy directives** (`angularOutputTarget` in `stencil.config.ts`) and **React wrappers** (`reactOutputTarget` in `stencil.config.ts`). Do not hand-maintain a parallel React component tree; generated wrappers live in `src/react/` and are recreated by `npm run build`.
+**Framework wrappers:** Stencil emits **Angular standalone adapters** and **React wrappers**. They are compiled before publishing, so consumers never transpile package TypeScript. Angular apps should prefer per-component imports such as `@ds-mo/ui/angular/ds-button-filled`. Do not hand-maintain parallel framework implementations.
+
+Angular forms import the matching generated value accessor from `@ds-mo/ui/angular` alongside the per-component adapter (for example `DsInput` plus `TextValueAccessor`). Native form submission/reset/required behavior lives in the web component itself; the value accessor connects that contract to Angular Forms.
 
 ---
 
@@ -155,9 +166,17 @@ import { DsButtonFilled, DsBarNav } from '@ds-mo/ui/react';
    - `<PascalName>.tsx` — Stencil component class (see pattern below)
    - `<PascalName>.css` — scoped styles using TokoMo CSS custom properties only
    - `<PascalName>.stories.ts` — lit-html stories (see Storybook section below)
+   - `<PascalName>.agent.json` — selection/composition intent validated by `agent/schemas/component-agent.schema.json`
 2. Run `npm run build` — Stencil auto-discovers the new component by `@Component()` tag.
 3. Verify in Storybook: `npm run storybook`.
 4. Regenerate registry: `npm run registry:build` (commit `public/r/` changes).
+5. Validate agent metadata: `npm run agent:validate`.
+
+Agent metadata contains design intent only: when to use or avoid a component,
+alternatives, compositions, accessibility, state ownership, responsive behavior,
+and irreducible framework caveats. Do not duplicate tags, props, defaults, events,
+methods, slots, package versions, token values, or framework bindings; those are
+generated from Stencil and package sources.
 
 **Stencil component skeleton**
 
@@ -472,7 +491,7 @@ Release-please will open a release PR at that exact version. Useful when only `c
 ## Things not to do
 
 - **Do not edit `dist/`** — it's generated by `stencil build`. Edit `src/wc/`, then run `npm run build`.
-- **Do not edit `src/angular/proxies.ts` or `src/angular/index.ts`** — auto-generated by the Angular output target on every build.
+- **Do not edit `src/angular/`** — auto-generated by the Angular output target. The hand-owned public barrel is `src/framework/angular.ts`.
 - **Do not edit `src/react/`** — auto-generated by the React output target on every build.
 - **Do not edit `src/wc/components.d.ts`** — auto-generated by Stencil. Do not append hand exports there (watch/dev rebuilds wipe them and CI fails “src/ mutated”). Ship non-component APIs from `@ds-mo/ui/nav` or `@ds-mo/ui/utils` instead (e.g. `PANEL_NAV_USER_MENU_PLACEMENT` from `/nav`).
 - **Do not hand-add React wrapper components** — new UI goes in `src/wc/components/`; React wrappers are generated automatically.
@@ -486,7 +505,7 @@ Release-please will open a release PR at that exact version. Useful when only `c
 - **Do not commit `NPM_TOKEN` or any npm auth** — publishing uses OIDC, no secrets required.
 - **Do not skip `npm install -g npm@latest`** in the publish job — Trusted Publisher requires npm ≥ 11.5.1.
 - **Do not set `NODE_AUTH_TOKEN`** in the publish step — OIDC handles auth; a stray token can conflict.
-- **Do not add `src/wc/*` trees consumed by package `exports`** (e.g. `./nav` importing `../utils`) without listing them in `package.json` `files` — run `npm run verify:pack` before merging.
+- **Do not publish raw TypeScript through package exports.** Compile public subpaths into `dist/` and run `npm run verify:pack` before merging.
 
 ---
 
@@ -525,7 +544,7 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | A component's styling | `src/wc/components/<Name>/<Name>.css` (tokens only — no hardcoded values) |
 | A component's Storybook stories | `src/wc/components/<Name>/<Name>.stories.ts` |
 | Shared CSS util demos (Storybook) | `src/wc/stories/Utility/*.stories.ts` |
-| Angular proxy output | Auto-generated: `src/angular/proxies.ts`, `src/angular/index.ts` — do not hand-edit |
+| Angular adapter output | Auto-generated: `src/angular/`; public barrel: `src/framework/angular.ts` |
 | React wrapper output | Auto-generated: `src/react/` — do not hand-edit |
 | Token-showcase stories | `src/stories/*.stories.tsx` |
 | Usage docs (MDX) | `src/docs/*.mdx` |

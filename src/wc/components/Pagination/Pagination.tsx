@@ -30,6 +30,9 @@ export class Pagination {
   @Prop() totalPages: number = 1;
   @Prop() siblingCount: number = 1;
   @Prop() isInactive: boolean = false;
+  @Prop() paginationLabel: string = 'Pagination';
+  @Prop() previousPageLabel: string = 'Previous page';
+  @Prop() nextPageLabel: string = 'Next page';
 
   @Event() dsPageChange!: EventEmitter<number>;
 
@@ -48,14 +51,14 @@ export class Pagination {
       <Host>
         <nav
           class={{ pagination: true, 'ds-control-inactive': this.isInactive }}
-          aria-label="Pagination"
+          aria-label={this.paginationLabel}
         >
           <button
             type="button"
             class="button button--nav"
             disabled={this.page <= 1 || this.isInactive}
             onClick={() => this.go(this.page - 1)}
-            aria-label="Previous page"
+            aria-label={this.previousPageLabel}
           >
             &#x2039;
           </button>
@@ -86,7 +89,7 @@ export class Pagination {
             class="button button--nav"
             disabled={this.page >= this.totalPages || this.isInactive}
             onClick={() => this.go(this.page + 1)}
-            aria-label="Next page"
+            aria-label={this.nextPageLabel}
           >
             &#x203A;
           </button>

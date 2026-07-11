@@ -17,7 +17,7 @@ import { DsSlider as DsSliderElement, defineCustomElement as defineDsSlider } fr
 
 export type DsSliderEvents = { onDsChange: EventName<DsSliderCustomEvent<number>> };
 
-export const DsSlider: StencilReactComponent<DsSliderElement, DsSliderEvents, Components.DsSlider> = /*@__PURE__*/ createComponent<DsSliderElement, DsSliderEvents, Components.DsSlider>({
+export const DsSlider: StencilReactComponent<DsSliderElement, DsSliderEvents, Components.DsSlider, 'label'> = /*@__PURE__*/ createComponent<DsSliderElement, DsSliderEvents, Components.DsSlider, 'label'>({
     tagName: 'ds-slider',
     elementClass: DsSliderElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.

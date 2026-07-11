@@ -1,4 +1,4 @@
-import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
+import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
 import {
   controlWidthClass,
   CONTROL_TEXT_VARIANT,
@@ -32,9 +32,11 @@ const ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
   tag: 'ds-select',
   styleUrl: 'Select.css',
   scoped: true,
+  formAssociated: true,
 })
 export class Select {
   @Element() el!: HTMLElement;
+  @AttachInternals() internals!: ElementInternals;
 
   /**
    * Array of options. Set via JS property.
@@ -44,6 +46,14 @@ export class Select {
 
   /** Currently selected value. */
   @Prop({ mutable: true }) value: string = '';
+
+  @Prop({ reflect: true }) name: string | undefined;
+
+  @Prop({ reflect: true }) disabled: boolean = false;
+
+  @Prop({ reflect: true }) required: boolean = false;
+
+  @Prop() requiredMessage: string = 'This field is required.';
 
   /** Placeholder shown when no value is selected. */
   @Prop() placeholder: string = 'Select';
@@ -68,7 +78,7 @@ export class Select {
   /** Show a 1px secondary inset border. Default on (matches unfilled button). */
   @Prop() hasBorder: boolean = true;
 
-  @Prop({ attribute: 'aria-label' }) ariaLabel: string | undefined;
+  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
 
   /** Emits the selected value string. */
@@ -80,6 +90,13 @@ export class Select {
   private menuEl: HTMLDsMenuElement | null = null;
   /** True when the open was keyboard-driven — menu shows initial focus ring. */
   private openWithFocusVisible = false;
+  private initialValue = '';
+  @State() private formDisabled = false;
+
+  componentWillLoad() {
+    this.initialValue = this.value;
+    this.syncFormValue();
+  }
 
   componentDidLoad() {
     if (this.menuEl && this.triggerEl) {
@@ -110,6 +127,30 @@ export class Select {
   @Watch('value')
   onValueChange() {
     this.syncMenuItems();
+  }
+
+  @Watch('value')
+  @Watch('disabled')
+  @Watch('isInactive')
+  @Watch('required')
+  syncFormValue() {
+    const inactive = this.isInactive || this.disabled || this.formDisabled;
+    this.internals.setFormValue(inactive ? null : this.value);
+    const missing = this.required && !inactive && this.value.length === 0;
+    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
+  }
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+    this.syncFormValue();
+  }
+
+  formResetCallback() {
+    this.value = this.initialValue;
+  }
+
+  formStateRestoreCallback(state: string | File | FormData | null) {
+    this.value = typeof state === 'string' ? state : '';
   }
 
   private handleMenuSelect = (e: Event) => {
@@ -152,7 +193,7 @@ export class Select {
   }
 
   private open(opts: { focusVisible: boolean } = { focusVisible: false }) {
-    if (this.isInactive || !this.options.length) return;
+    if (this.isInactive || this.disabled || this.formDisabled || !this.options.length) return;
     this.openWithFocusVisible = opts.focusVisible;
     this.syncMenuLayout();
     this.syncMenuItems();
@@ -202,6 +243,7 @@ export class Select {
   }
 
   render() {
+    const inactive = this.isInactive || this.disabled || this.formDisabled;
     const showPlaceholder = !this.hasSelection;
     const hasValue = !showPlaceholder;
     const label = showPlaceholder ? this.placeholder : this.selectedLabel;
@@ -210,13 +252,13 @@ export class Select {
     const density = `ds-control--${this.size}`;
     // Selected fill when a value is set (or while open), gated by `activeFill`.
     const showSelectedFill =
-      !this.isInactive && this.activeFill && (hasValue || this.isOpen);
+      !inactive && this.activeFill && (hasValue || this.isOpen);
 
     return (
       <Host
         class={{
           'select-host': true,
-          'ds-control-inactive': this.isInactive,
+          'ds-control-inactive': inactive,
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
@@ -239,7 +281,7 @@ export class Select {
             'trigger--has-value': hasValue,
             [density]: true,
           }}
-          disabled={this.isInactive}
+          disabled={inactive}
           role="combobox"
           aria-haspopup="menu"
           aria-expanded={String(this.isOpen)}

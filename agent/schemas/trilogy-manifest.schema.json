@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ds-mo.dev/schemas/trilogy-manifest.schema.json",
+  "title": "ds-mo package agent manifest envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "package", "packageVersion", "kind", "entries"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "package": { "enum": ["@ds-mo/tokens", "@ds-mo/icons", "@ds-mo/ui"] },
+    "packageVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$" },
+    "kind": { "enum": ["tokens", "icons", "components", "patterns"] },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object" }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "package": { "const": "@ds-mo/tokens" } }, "required": ["package"] },
+      "then": { "properties": { "kind": { "const": "tokens" } } }
+    },
+    {
+      "if": { "properties": { "package": { "const": "@ds-mo/icons" } }, "required": ["package"] },
+      "then": { "properties": { "kind": { "const": "icons" } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "tokens" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/tokenFamily" }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "icons" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/iconIntent" }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "guidance": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "tokenFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "summary", "tokenPatterns", "useWhen", "avoidWhen", "constraints"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^token-family:[a-z0-9.-]+$" },
+        "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
+        "summary": { "type": "string", "minLength": 1 },
+        "tokenPatterns": { "$ref": "#/$defs/guidance" },
+        "useWhen": { "$ref": "#/$defs/guidance" },
+        "avoidWhen": { "$ref": "#/$defs/guidance" },
+        "constraints": { "$ref": "#/$defs/guidance" }
+      }
+    },
+    "iconIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "category", "kebab", "aliases", "concepts", "roles", "useWhen", "avoidWhen", "status"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]+$" },
+        "category": { "type": "string", "minLength": 1 },
+        "kebab": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "aliases": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "concepts": { "$ref": "#/$defs/guidance" },
+        "roles": { "$ref": "#/$defs/guidance" },
+        "useWhen": { "$ref": "#/$defs/guidance" },
+        "avoidWhen": { "$ref": "#/$defs/guidance" },
+        "related": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]+$" } },
+        "variantOf": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]+$" },
+        "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
+        "replacedBy": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]+$" }
+      }
+    }
+  }
+}
