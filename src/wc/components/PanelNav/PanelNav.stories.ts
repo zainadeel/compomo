@@ -104,7 +104,7 @@ function switchFooterStyle(id: string) {
   el.activeId = STYLE_ACTIVE[next];
 }
 
-function interactiveDashboard(activeId = 'area-a', collapsed = false): TemplateResult {
+function interactiveDashboard(activeId = 'area-a', collapsed = false, breakpoint = 0): TemplateResult {
   return html`
     <div id="dash-nav-wrap" style="
       display: flex;
@@ -119,6 +119,7 @@ function interactiveDashboard(activeId = 'area-a', collapsed = false): TemplateR
         active-id=${activeId}
         user-name="User Name"
         user-initial="U"
+        .breakpoint=${breakpoint}
         ?collapsed=${collapsed}
         @dsNavSelect=${(e: CustomEvent<string>) => {
           const el = document.getElementById('dash-nav') as any;
@@ -301,6 +302,11 @@ export const Dashboard: Story = {
 export const Settings: Story = {
   name: 'Settings Variant',
   render: () => interactiveSettings(),
+};
+
+export const BreakpointLocked: Story = {
+  name: 'Breakpoint locked',
+  render: () => interactiveDashboard('area-a', false, 1200),
 };
 
 export const SideBySide: Story = {

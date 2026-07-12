@@ -829,7 +829,7 @@ export namespace Components {
          */
         "activeId": string;
         /**
-          * Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled.
+          * Viewport width (px) below which the nav locks in icon-only mode. 0 = disabled.
           * @default 0
          */
         "breakpoint": number;
@@ -893,7 +893,7 @@ export namespace Components {
          */
         "storageKey": string;
         /**
-          * Toggle expanded/collapsed panel nav — used by shell keyboard shortcuts.
+          * Toggle the desktop preference. No-op while the breakpoint locks the panel collapsed.
          */
         "toggleCollapsed": () => Promise<void>;
         /**
@@ -2930,7 +2930,7 @@ declare namespace LocalJSX {
          */
         "activeId"?: string;
         /**
-          * Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled.
+          * Viewport width (px) below which the nav locks in icon-only mode. 0 = disabled.
           * @default 0
          */
         "breakpoint"?: number;

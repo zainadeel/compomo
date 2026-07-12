@@ -130,6 +130,10 @@
   /* Hover/press: `.ds-interaction-fill` (tokens from --_nav-* via --ds-interaction-*). */
 }
 
+.panel-nav--breakpoint-locked .panel-nav__header-btn {
+  cursor: default;
+}
+
 /* Logo — visible by default; instant swap to toggle on hover (no crossfade overlap) */
 .panel-nav__header-logo {
   display: flex;
@@ -158,8 +162,8 @@
   pointer-events: none;
 }
 
-.panel-nav__header-btn:hover .panel-nav__header-logo { opacity: 0; }
-.panel-nav__header-btn:hover .panel-nav__header-toggle { opacity: 1; }
+.panel-nav:not(.panel-nav--breakpoint-locked) .panel-nav__header-btn:hover .panel-nav__header-logo { opacity: 0; }
+.panel-nav:not(.panel-nav--breakpoint-locked) .panel-nav__header-btn:hover .panel-nav__header-toggle { opacity: 1; }
 
 /* ── Scrollable body ─────────────────────────────────────────────────────── */
 

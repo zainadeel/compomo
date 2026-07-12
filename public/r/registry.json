@@ -1859,7 +1859,7 @@
             "From 768px through 1199px, present PanelNav permanently collapsed and do not allow user expansion.",
             "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
             "AppShell permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
-            "The current breakpoint prop can auto-collapse PanelNav but does not enforce the complete tablet lock; AppShell or the consuming application must currently enforce that lock.",
+            "When the viewport is below breakpoint, PanelNav locks collapsed, disables its header toggle affordance, and preserves the persisted desktop collapse preference.",
             "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
           ],
           "frameworkCaveats": {
@@ -1869,12 +1869,12 @@
             ],
             "react": [
               "Pass groups as an array through the generated React wrapper and synchronize currentUrl with the host router.",
-              "AppShell owns mobile replacement and currently enforces the tablet expansion lock."
+              "AppShell owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
             ],
             "angular": [
               "Import DsPanelNav from @ds-mo/ui/angular/ds-panel-nav and bind groups as a property.",
               "Bind both the nav-style attribute and navStyle property when first-paint route styling must be deterministic.",
-              "AppShell owns mobile replacement and currently enforces the tablet expansion lock."
+              "AppShell owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
             ]
           },
           "references": [
