@@ -6,6 +6,7 @@ import {
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
   resolvePanelNavStyle,
+  resolvePanelNavToggle,
   shouldResyncPanelNavGroups,
   shouldResyncPanelNavStyle,
 } from './panel-nav-utils';
@@ -48,7 +49,7 @@ export class PanelNav {
    *  Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change. */
   @Prop({ mutable: true }) collapsed: boolean = false;
 
-  /** Viewport width (px) below which the nav auto-collapses to icon-only mode. 0 = disabled. */
+  /** Viewport width (px) below which the nav locks in icon-only mode. 0 = disabled. */
   @Prop() breakpoint: number = 0;
 
   /** `localStorage` key used to persist the collapsed state across page loads.
@@ -138,8 +139,11 @@ export class PanelNav {
   }
 
   @Watch('viewportNarrow')
-  onViewportNarrowChange(_next: boolean, prev: boolean | undefined) {
+  onViewportNarrowChange(next: boolean, prev: boolean | undefined) {
     if (prev === undefined) return;
+    if (next && this.rovingIndex === 0) {
+      this.rovingIndex = this.getFirstRovingIndex();
+    }
     this.startCollapseAnimation();
   }
 
@@ -284,8 +288,9 @@ export class PanelNav {
     queueMicrotask(tick);
   }
 
-  /** Centralised toggle: updates `collapsed`, emits `dsNavToggle`, optionally persists. */
+  /** Centralised toggle: updates the desktop preference unless breakpoint-locked. */
   private applyToggle(next: boolean) {
+    if (this.viewportNarrow) return;
     this.collapsed = next;
     if (this.storageKey) {
       try { localStorage.setItem(this.storageKey, String(next)); } catch { /* unavailable */ }
@@ -295,6 +300,10 @@ export class PanelNav {
 
   private getAllItems(): PanelNavItem[] {
     return this.parsedGroups.flatMap(g => g.items);
+  }
+
+  private getFirstRovingIndex(): number {
+    return this.viewportNarrow ? 1 : 0;
   }
 
   private getFooterRovingIndex(): number {
@@ -308,7 +317,7 @@ export class PanelNav {
   private getRovingElement(index: number): HTMLElement | null {
     const itemCount = this.getAllItems().length;
     if (index === 0) {
-      return this.el.querySelector('.panel-nav__header-btn');
+      return this.viewportNarrow ? null : this.el.querySelector('.panel-nav__header-btn');
     }
     if (index >= 1 && index <= itemCount) {
       const items = this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item');
@@ -358,6 +367,7 @@ export class PanelNav {
 
     const footerIdx = this.getFooterRovingIndex();
     const userIdx = this.getUserRovingIndex();
+    const firstIdx = this.getFirstRovingIndex();
     let next: number | undefined;
 
     switch (e.key) {
@@ -367,7 +377,7 @@ export class PanelNav {
         else next = index + 1;
         break;
       case 'ArrowUp':
-        if (index === 0) return;
+        if (index === firstIdx) return;
         if (index === userIdx) next = footerIdx;
         else if (index === footerIdx) next = footerIdx - 1;
         else next = index - 1;
@@ -382,7 +392,7 @@ export class PanelNav {
         break;
       case 'Home':
         e.preventDefault();
-        next = 0;
+        next = firstIdx;
         break;
       case 'End':
         e.preventDefault();
@@ -402,10 +412,11 @@ export class PanelNav {
   }
 
   private handleToggle() {
-    this.applyToggle(!this.collapsed);
+    const next = resolvePanelNavToggle(this.collapsed, this.viewportNarrow);
+    if (next !== null) this.applyToggle(next);
   }
 
-  /** Toggle expanded/collapsed panel nav — used by shell keyboard shortcuts. */
+  /** Toggle the desktop preference. No-op while the breakpoint locks the panel collapsed. */
   @Method()
   async toggleCollapsed() {
     this.handleToggle();
@@ -629,6 +640,7 @@ export class PanelNav {
       'panel-nav--dashboard': isDashboard,
       'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,
+      'panel-nav--breakpoint-locked': this.viewportNarrow,
       'panel-nav--animating': this.isAnimating,
     };
 
@@ -644,7 +656,8 @@ export class PanelNav {
             <button
               type="button"
               class="panel-nav__header-btn ds-focus-ring-inset ds-interaction-fill"
-              tabIndex={this.rovingIndex === 0 ? 0 : -1}
+              disabled={this.viewportNarrow}
+              tabIndex={!this.viewportNarrow && this.rovingIndex === 0 ? 0 : -1}
               onClick={() => this.handleToggle()}
               onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, 0)}
               onFocus={() => { this.rovingIndex = 0; }}

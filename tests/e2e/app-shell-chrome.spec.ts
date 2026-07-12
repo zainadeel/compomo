@@ -16,6 +16,80 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('breakpoint lock suppresses toggle affordance and preserves desktop preference', async ({
+    page,
+  }) => {
+    const storageKey = 'e2e.panel-nav.desktop-collapsed';
+    await page.setViewportSize({ width: 1000, height: 720 });
+    await page.evaluate(key => {
+      localStorage.setItem(key, 'false');
+      const panel = document.getElementById('panel') as HTMLElement & {
+        breakpoint: number;
+        collapsed: boolean;
+        storageKey: string;
+      };
+      panel.storageKey = key;
+      panel.collapsed = false;
+      panel.breakpoint = 1200;
+      panel.dataset.toggleCount = '0';
+      panel.addEventListener('dsNavToggle', () => {
+        panel.dataset.toggleCount = String(Number(panel.dataset.toggleCount) + 1);
+      });
+    }, storageKey);
+
+    const panel = page.locator('#panel');
+    const nav = page.locator('.panel-nav');
+    const toggle = page.getByRole('button', { name: 'Expand navigation' });
+    const logo = page.locator('.panel-nav__header-logo');
+    const toggleIcon = page.locator('.panel-nav__header-toggle');
+
+    await expect(nav).toHaveClass(/panel-nav--breakpoint-locked/);
+    await expect(nav).toHaveClass(/panel-nav--collapsed/);
+    await expect(toggle).toBeDisabled();
+    await expect(toggle).toHaveAttribute('tabindex', '-1');
+    await expect(page.getByRole('button', { name: 'Fleet View' })).toHaveAttribute('tabindex', '0');
+
+    await toggle.hover({ force: true });
+    await expect(logo).toHaveCSS('opacity', '1');
+    await expect(toggleIcon).toHaveCSS('opacity', '0');
+
+    await toggle.evaluate(button => {
+      button.focus();
+      button.click();
+      button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    });
+    await page.evaluate(async () => {
+      const panel = document.getElementById('panel') as HTMLElement & {
+        toggleCollapsed: () => Promise<void>;
+      };
+      await panel.toggleCollapsed();
+    });
+    await page.keyboard.press('[');
+
+    await expect.poll(() => panel.evaluate(element => (
+      element as HTMLElement & { collapsed: boolean }
+    ).collapsed)).toBe(false);
+    await expect(panel).toHaveAttribute('data-toggle-count', '0');
+    await expect.poll(() => page.evaluate(key => localStorage.getItem(key), storageKey)).toBe('false');
+
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await expect(nav).not.toHaveClass(/panel-nav--breakpoint-locked/);
+    await expect(nav).not.toHaveClass(/panel-nav--collapsed/);
+    const desktopToggle = page.getByRole('button', { name: 'Collapse navigation' });
+    await expect(desktopToggle).toBeEnabled();
+
+    await desktopToggle.hover();
+    await expect(logo).toHaveCSS('opacity', '0');
+    await expect(toggleIcon).toHaveCSS('opacity', '1');
+
+    await page.keyboard.press('[');
+    await expect.poll(() => panel.evaluate(element => (
+      element as HTMLElement & { collapsed: boolean }
+    ).collapsed)).toBe(true);
+    await expect(panel).toHaveAttribute('data-toggle-count', '1');
+    await expect.poll(() => page.evaluate(key => localStorage.getItem(key), storageKey)).toBe('true');
+  });
+
   test('collapsed user initial keeps caption metrics and optical centering', async ({ page }) => {
     await page.getByRole('button', { name: 'Collapse navigation' }).click();
 

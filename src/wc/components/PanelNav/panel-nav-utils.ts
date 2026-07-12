@@ -46,6 +46,14 @@ export function countPanelNavItems(groups: PanelNavGroup[]): number {
   return groups.reduce((sum, g) => sum + g.items.length, 0);
 }
 
+/** Resolve a user toggle without mutating the persisted desktop preference while breakpoint-locked. */
+export function resolvePanelNavToggle(
+  collapsed: boolean,
+  viewportNarrow: boolean,
+): boolean | null {
+  return viewportNarrow ? null : !collapsed;
+}
+
 /** Parse `groups` from either a JSON attribute string or a JS property array. */
 export function parsePanelNavGroups(groups: string | unknown): PanelNavGroup[] {
   if (Array.isArray(groups)) return groups;

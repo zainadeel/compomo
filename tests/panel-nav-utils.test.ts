@@ -8,6 +8,7 @@ import {
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
   resolvePanelNavStyle,
+  resolvePanelNavToggle,
   shouldResyncPanelNavGroups,
   shouldResyncPanelNavStyle,
 } from '../src/wc/components/PanelNav/panel-nav-utils';
@@ -88,6 +89,18 @@ describe('countPanelNavItems', () => {
       { items: [{ id: 'c', icon: 'MapPage', label: 'C' }] },
     ]);
     assert.equal(countPanelNavItems(groups), 3);
+  });
+});
+
+describe('resolvePanelNavToggle', () => {
+  it('toggles the persisted desktop preference when unlocked', () => {
+    assert.equal(resolvePanelNavToggle(false, false), true);
+    assert.equal(resolvePanelNavToggle(true, false), false);
+  });
+
+  it('returns no mutation while breakpoint-locked', () => {
+    assert.equal(resolvePanelNavToggle(false, true), null);
+    assert.equal(resolvePanelNavToggle(true, true), null);
   });
 });
 
