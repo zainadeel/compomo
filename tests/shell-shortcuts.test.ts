@@ -26,10 +26,11 @@ describe('shortcutKeyLabels', () => {
     assert.deepEqual(shortcutKeyLabels('?'), ['?']);
   });
 
-  it('splits symbol and textual chords into individual keycaps', () => {
+  it('splits chords and canonicalizes modifier names to symbols', () => {
     assert.deepEqual(shortcutKeyLabels('⌘S'), ['⌘', 'S']);
     assert.deepEqual(shortcutKeyLabels('⌘⇧S'), ['⌘', '⇧', 'S']);
-    assert.deepEqual(shortcutKeyLabels('Ctrl+Shift+K'), ['Ctrl', 'Shift', 'K']);
+    assert.deepEqual(shortcutKeyLabels('Ctrl+Shift+K'), ['⌃', '⇧', 'K']);
+    assert.deepEqual(shortcutKeyLabels('Command Option K'), ['⌘', '⌥', 'K']);
   });
 });
 

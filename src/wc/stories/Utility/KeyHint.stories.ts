@@ -31,7 +31,7 @@ export const Sizes: Story = {
           ${keyHint('K', size)}
           ${keyHint('⌘S', size)}
           ${keyHint('⌘⇧S', size)}
-          ${keyHint('Ctrl+Shift+K', size)}
+          ${keyHint('⌃⇧K', size)}
         </div>
       `)}
     </div>

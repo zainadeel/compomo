@@ -27,8 +27,7 @@
 }
 
 .key-hint--wide {
-  width: max-content;
-  padding-inline: calc(var(--ds-control-icon, var(--dimension-iconography-md)) * 0.25);
+  width: calc(var(--ds-control-icon, var(--dimension-iconography-md)) * 1.5);
 }
 
 .key-hint__label {
