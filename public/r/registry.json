@@ -23,7 +23,7 @@
     {
       "name": "app-shell",
       "title": "AppShell",
-      "description": "Workspace layout primitive coordinating panel navigation, top navigation, tools, content, shared chrome, and shell shortcuts.",
+      "description": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -34,26 +34,16 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "Workspace layout primitive coordinating panel navigation, top navigation, tools, content, shared chrome, and shell shortcuts.",
+          "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
           "useWhen": [
-            "Building a dashboard-style workspace with coordinated left navigation, top navigation, tools, and content.",
-            "Navigation chrome needs shared styling, gradient alignment, collapse behavior, and keyboard shortcuts."
+            "Building any standard authenticated product or workspace page with CompoMo.",
+            "PanelNav, BarNav, PanelTools, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
+            "Future application templates need the supported base-page composition boundary."
           ],
           "avoidWhen": [
-            "The page is a standalone marketing, authentication, or single-purpose layout.",
-            "The interface does not use the coordinated CompoMo navigation surfaces."
-          ],
-          "alternatives": [
-            {
-              "when": "Only a top-level section tab row is needed.",
-              "component": "component:ds-bar-nav",
-              "reason": "BarNav can be used without the complete workspace shell."
-            },
-            {
-              "when": "Only persistent left-side destination navigation is needed.",
-              "component": "component:ds-panel-nav",
-              "reason": "PanelNav owns left navigation without requiring the full shell composition."
-            }
+            "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences that require a different layout.",
+            "Another AppShell already exists in the page; applications must render exactly one and must never nest AppShells.",
+            "Building content inside an existing AppShell; render the page content rather than another shell."
           ],
           "commonlyComposedWith": [
             "component:ds-panel-nav",
@@ -64,27 +54,44 @@
             "pattern:application-shell"
           ],
           "accessibility": [
-            "Keep destination navigation in PanelNav and section navigation in BarNav.",
+            "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
+            "Ensure the default content region contains the page's single main landmark.",
+            "Keep PanelNav, BarNav, and PanelTools chrome available in the shell's supported desktop and tablet compositions.",
             "Do not override browser keyboard chords when enabling shell shortcuts.",
-            "Ensure the default slot contains the page main-content landmark."
+            "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
+            "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
           ],
           "states": [
-            "The shell coordinates chrome but the host application owns active destinations, active tools, and route state.",
-            "Use one AppShell as the workspace root rather than nesting shells."
+            "Render exactly one AppShell as the workspace root and never nest it.",
+            "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
+            "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
+            "AppShell propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
+            "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
+            "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
+            "BarNav remains present: it shows route-section tabs when available and the active PanelNav destination label as heading otherwise.",
+            "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
           ],
           "responsiveBehavior": [
-            "The host and shell must fill the viewport for chrome clipping and synchronized gradient sizing.",
-            "Panel collapse and tool-drawer behavior should preserve the main content region rather than introducing a second page shell."
+            "AppShell owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
+            "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
+            "On tablet, AppShell keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
+            "On mobile, AppShell remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
+            "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
+            "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until AppShell provides it."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign complex navigation item collections as element properties."
+              "Assign complex navigation and tool collections as JavaScript properties on the slotted components.",
+              "Stamp route-derived nav-style before components connect when deterministic first paint is required."
             ],
             "react": [
-              "Use generated wrappers but preserve native slot names on slotted navigation children."
+              "Use generated wrappers and preserve native slot names for PanelNav, BarNav, PanelTools, and main content.",
+              "Resolve all shell inputs from one router state before rendering the composition."
             ],
             "angular": [
-              "Bind complex inputs after the generated custom elements are registered and preserve slot attributes in templates."
+              "Use generated standalone adapters and preserve slot attributes in templates.",
+              "Bind complex inputs as properties and update navigation inputs atomically from one resolved router state.",
+              "Bind both nav-style attributes and properties when deterministic first paint is required."
             ]
           },
           "references": [
@@ -99,6 +106,10 @@
             {
               "label": "Framework integration",
               "path": "docs/framework-integration.md"
+            },
+            {
+              "label": "Application shell contract",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
             }
           ]
         },
@@ -266,15 +277,107 @@
     {
       "name": "bar-nav",
       "title": "BarNav",
-      "description": "BarNav component from @ds-mo/ui.",
+      "description": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-nav",
         "source": "src/wc/components/BarNav/BarNav.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
+          "useWhen": [
+            "Rendering the required secondary navigation region inside AppShell.",
+            "The active primary destination has peer route sections that users can navigate between.",
+            "The active primary destination has no route sections or is showing a detail route and its destination label must preserve the BarNav region."
+          ],
+          "avoidWhen": [
+            "Primary application destinations are being rendered; use PanelNav instead.",
+            "A third navigation level is needed; BarNav is never tertiary navigation.",
+            "The choices switch local content without navigating routes; use TabGroup instead.",
+            "Document-style tabs need reordering, pinning, closing, or user customization.",
+            "BarNav would be mounted outside the application's single AppShell."
+          ],
+          "alternatives": [
+            {
+              "when": "The choices are the application's top-level destinations.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav exclusively owns primary application navigation."
+            },
+            {
+              "when": "The choices switch local content without changing routes.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup owns local view selection and tab semantics."
+            },
+            {
+              "when": "The choices are temporary commands or contextual options.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns transient action and option collections."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-app-shell",
+            "component:ds-panel-nav",
+            "component:ds-panel-tools"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Use concise localized labels for every route section.",
+            "Keep section navigation keyboard accessible through the generated TabGroupNav behavior and overflow menu.",
+            "Preserve the selected route state when sections move between the visible row and overflow menu.",
+            "Use notification dots only as supplemental status and not as the sole indication of important information.",
+            "Pass the active PanelNav destination label through heading whenever section tabs are absent or hidden."
+          ],
+          "states": [
+            "BarNav is the second and final application navigation level; it never replaces PanelNav and never becomes tertiary navigation.",
+            "The host router owns the current route; prefer currentUrl with basePath so BarNav derives the selected section.",
+            "Use value only when URL-derived selection is unavailable.",
+            "The consuming application supplies heading from the active PanelNav destination; BarNav does not inspect PanelNav to derive it.",
+            "When no sections apply, retain the BarNav region and show heading rather than shifting the main content upward.",
+            "On non-tab detail routes, show the parent PanelNav destination label in BarNav while the detail-page title remains in page content.",
+            "Dividers and groups visually organize peer route sections only and do not create hierarchy.",
+            "The application filters unauthorized sections before passing tabs to BarNav.",
+            "Dashboard and Settings route state updates PanelNav groups, BarNav tabs, heading, basePath, currentUrl, and navStyle as one coordinated change."
+          ],
+          "responsiveBehavior": [
+            "Keep the BarNav region present so shell height and main-content origin remain stable across routes.",
+            "Allow the built-in overflow behavior to move trailing sections into Menu when the available width is insufficient.",
+            "The active section does not need to remain visible in the tab row when it moves into overflow because page content supplies the page title.",
+            "Do not infer mobile navigation behavior from desktop BarNav; future AppShell mobile composition may use a different navigation design."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign tabs as a JavaScript property for structured data; tabs-json is the string fallback.",
+              "Update tabs, heading, basePath, currentUrl, and navStyle from the same resolved route state."
+            ],
+            "react": [
+              "Pass tabs as an array through the generated React wrapper and synchronize currentUrl and basePath with the host router."
+            ],
+            "angular": [
+              "Import DsBarNav from @ds-mo/ui/angular/ds-bar-nav and bind tabs as a property.",
+              "Bind heading to the active PanelNav destination label and update route inputs atomically."
+            ]
+          },
+          "references": [
+            {
+              "label": "Executable Storybook examples",
+              "path": "src/wc/components/BarNav/BarNav.stories.ts"
+            },
+            {
+              "label": "Framework and routing integration",
+              "path": "docs/framework-integration.md"
+            },
+            {
+              "label": "Application shell composition",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
         "props": {
           "basePath": {
             "type": "string",
@@ -1688,15 +1791,111 @@
     {
       "name": "panel-nav",
       "title": "PanelNav",
-      "description": "PanelNav component from @ds-mo/ui.",
+      "description": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-nav",
         "source": "src/wc/components/PanelNav/PanelNav.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
+          "useWhen": [
+            "Building the one primary navigation surface for an application that uses the CompoMo system.",
+            "Top-level destinations must remain consistently available while the application's page content changes.",
+            "Primary destinations need visual grouping, icons, notification indicators, active-route state, and expanded or collapsed presentation."
+          ],
+          "avoidWhen": [
+            "A second navigation surface is needed within the same application; an application must have only one PanelNav.",
+            "The choices represent sections within the active primary destination; use BarNav instead.",
+            "The choices switch local content without changing the application's primary destination; use TabGroup instead.",
+            "The interaction performs a command or presents temporary contextual choices; use a button or Menu instead.",
+            "Building navigation below the mobile breakpoint; use the application's dedicated mobile navigation component instead."
+          ],
+          "alternatives": [
+            {
+              "when": "The choices represent route sections within the active primary destination.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav owns secondary section navigation within the destination selected by PanelNav."
+            },
+            {
+              "when": "The choices switch local content without changing the application's primary destination.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup owns local view selection and tab semantics."
+            },
+            {
+              "when": "The choices are commands or temporary contextual actions.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns transient action and option collections rather than persistent destinations."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-app-shell",
+            "component:ds-bar-nav",
+            "component:ds-panel-tools",
+            "component:ds-menu"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Give every primary destination a concise visible label and an icon that supports rather than replaces that label.",
+            "Provide localized dashboard, settings, account, navigation, collapse, and expand labels.",
+            "Preserve accessible destination names when the panel is collapsed to icon-only presentation.",
+            "Use notification dots as supplemental status and never as the only indication of important information.",
+            "Keep the standard dashboard/settings switch and user/account entry available in the footer."
+          ],
+          "states": [
+            "Render exactly one PanelNav per application; it owns primary application destinations and no other navigation role.",
+            "The host router owns the current route; prefer currentUrl for active destination matching and use activeId only when route matching is unavailable.",
+            "Use anchor mode for native links or routers that intercept anchors; use event mode when the host performs navigation from dsNavSelect.",
+            "Groups visually organize top-level destinations only and must not be interpreted as nested or expandable navigation.",
+            "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
+            "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
+            "The host owns the external user menu opened from dsNavUserAction.",
+            "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate."
+          ],
+          "responsiveBehavior": [
+            "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
+            "From 768px through 1199px, present PanelNav permanently collapsed and do not allow user expansion.",
+            "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
+            "AppShell permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
+            "The current breakpoint prop can auto-collapse PanelNav but does not enforce the complete tablet lock; AppShell or the consuming application must currently enforce that lock.",
+            "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign groups as a JavaScript property for structured data; a JSON string attribute is also supported.",
+              "Set nav-style before the element connects when first-paint style must match the current route."
+            ],
+            "react": [
+              "Pass groups as an array through the generated React wrapper and synchronize currentUrl with the host router.",
+              "AppShell owns mobile replacement and currently enforces the tablet expansion lock."
+            ],
+            "angular": [
+              "Import DsPanelNav from @ds-mo/ui/angular/ds-panel-nav and bind groups as a property.",
+              "Bind both the nav-style attribute and navStyle property when first-paint route styling must be deterministic.",
+              "AppShell owns mobile replacement and currently enforces the tablet expansion lock."
+            ]
+          },
+          "references": [
+            {
+              "label": "Executable Storybook examples",
+              "path": "src/wc/components/PanelNav/PanelNav.stories.ts"
+            },
+            {
+              "label": "Framework and routing integration",
+              "path": "docs/framework-integration.md"
+            },
+            {
+              "label": "Application shell composition",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
         "props": {
           "accountLabel": {
             "type": "string",

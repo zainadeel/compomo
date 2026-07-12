@@ -34,7 +34,6 @@
   "missingAgentMetadata": [
     "component:ds-badge",
     "component:ds-banner",
-    "component:ds-bar-nav",
     "component:ds-button-unfilled",
     "component:ds-card",
     "component:ds-card-data-viz-donut",
@@ -53,7 +52,6 @@
     "component:ds-loader",
     "component:ds-modal",
     "component:ds-pagination",
-    "component:ds-panel-nav",
     "component:ds-panel-tools",
     "component:ds-radio-group",
     "component:ds-select",

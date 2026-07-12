@@ -2,15 +2,107 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "bar-nav",
   "title": "BarNav",
-  "description": "BarNav component from @ds-mo/ui.",
+  "description": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-nav",
     "source": "src/wc/components/BarNav/BarNav.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "stable",
+      "summary": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
+      "useWhen": [
+        "Rendering the required secondary navigation region inside AppShell.",
+        "The active primary destination has peer route sections that users can navigate between.",
+        "The active primary destination has no route sections or is showing a detail route and its destination label must preserve the BarNav region."
+      ],
+      "avoidWhen": [
+        "Primary application destinations are being rendered; use PanelNav instead.",
+        "A third navigation level is needed; BarNav is never tertiary navigation.",
+        "The choices switch local content without navigating routes; use TabGroup instead.",
+        "Document-style tabs need reordering, pinning, closing, or user customization.",
+        "BarNav would be mounted outside the application's single AppShell."
+      ],
+      "alternatives": [
+        {
+          "when": "The choices are the application's top-level destinations.",
+          "component": "component:ds-panel-nav",
+          "reason": "PanelNav exclusively owns primary application navigation."
+        },
+        {
+          "when": "The choices switch local content without changing routes.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup owns local view selection and tab semantics."
+        },
+        {
+          "when": "The choices are temporary commands or contextual options.",
+          "component": "component:ds-menu",
+          "reason": "Menu owns transient action and option collections."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-app-shell",
+        "component:ds-panel-nav",
+        "component:ds-panel-tools"
+      ],
+      "patterns": [
+        "pattern:application-shell"
+      ],
+      "accessibility": [
+        "Use concise localized labels for every route section.",
+        "Keep section navigation keyboard accessible through the generated TabGroupNav behavior and overflow menu.",
+        "Preserve the selected route state when sections move between the visible row and overflow menu.",
+        "Use notification dots only as supplemental status and not as the sole indication of important information.",
+        "Pass the active PanelNav destination label through heading whenever section tabs are absent or hidden."
+      ],
+      "states": [
+        "BarNav is the second and final application navigation level; it never replaces PanelNav and never becomes tertiary navigation.",
+        "The host router owns the current route; prefer currentUrl with basePath so BarNav derives the selected section.",
+        "Use value only when URL-derived selection is unavailable.",
+        "The consuming application supplies heading from the active PanelNav destination; BarNav does not inspect PanelNav to derive it.",
+        "When no sections apply, retain the BarNav region and show heading rather than shifting the main content upward.",
+        "On non-tab detail routes, show the parent PanelNav destination label in BarNav while the detail-page title remains in page content.",
+        "Dividers and groups visually organize peer route sections only and do not create hierarchy.",
+        "The application filters unauthorized sections before passing tabs to BarNav.",
+        "Dashboard and Settings route state updates PanelNav groups, BarNav tabs, heading, basePath, currentUrl, and navStyle as one coordinated change."
+      ],
+      "responsiveBehavior": [
+        "Keep the BarNav region present so shell height and main-content origin remain stable across routes.",
+        "Allow the built-in overflow behavior to move trailing sections into Menu when the available width is insufficient.",
+        "The active section does not need to remain visible in the tab row when it moves into overflow because page content supplies the page title.",
+        "Do not infer mobile navigation behavior from desktop BarNav; future AppShell mobile composition may use a different navigation design."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign tabs as a JavaScript property for structured data; tabs-json is the string fallback.",
+          "Update tabs, heading, basePath, currentUrl, and navStyle from the same resolved route state."
+        ],
+        "react": [
+          "Pass tabs as an array through the generated React wrapper and synchronize currentUrl and basePath with the host router."
+        ],
+        "angular": [
+          "Import DsBarNav from @ds-mo/ui/angular/ds-bar-nav and bind tabs as a property.",
+          "Bind heading to the active PanelNav destination label and update route inputs atomically."
+        ]
+      },
+      "references": [
+        {
+          "label": "Executable Storybook examples",
+          "path": "src/wc/components/BarNav/BarNav.stories.ts"
+        },
+        {
+          "label": "Framework and routing integration",
+          "path": "docs/framework-integration.md"
+        },
+        {
+          "label": "Application shell composition",
+          "path": "agent/patterns/application-shell/pattern.agent.json"
+        }
+      ]
+    },
     "api": {
       "props": {
         "basePath": {
