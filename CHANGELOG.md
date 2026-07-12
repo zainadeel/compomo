@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.2](https://github.com/zainadeel/compomo/compare/v4.1.1...v4.1.2) (2026-07-12)
+
+
+### Fixed
+
+* **panel-nav:** guarantee chrome transition completion ([#312](https://github.com/zainadeel/compomo/issues/312)) ([221dbfb](https://github.com/zainadeel/compomo/commit/221dbfb89ff00c80b2b357647bb965803d79074d))
+
 ## [4.1.1](https://github.com/zainadeel/compomo/compare/v4.1.0...v4.1.1) (2026-07-12)
 
 
