@@ -2,88 +2,134 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "compomo",
   "homepage": "https://zainadeel.github.io/compomo/",
-  "description": "CompoMo (@ds-mo/ui) — framework-agnostic web component library built with Stencil.js. Styled with TokoMo design tokens. Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters. Distributed as an npm package; not copy-paste.",
+  "description": "CompoMo (@ds-mo/ui) — framework-agnostic Stencil web components. Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters.",
   "meta": {
     "distribution": "npm",
+    "generatedFrom": "dist/docs/components.json",
     "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-    "register": "import '@ds-mo/ui/dist/components/ds-button-filled.js'; // import each <ds-*> tag you use",
+    "register": "import '@ds-mo/ui/dist/components/ds-button-filled.js';",
     "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^2.14.0",
-        "@ds-mo/icons ^6.1.2"
+        "@ds-mo/tokens ^2.15.0",
+        "@ds-mo/icons ^6.2.0"
       ],
       "optional": [],
-      "frameworks": "None required — works with any framework that supports Custom Elements."
+      "frameworks": "None required for Custom Elements; generated React and Angular adapters are included."
     }
   },
   "items": [
     {
-      "name": "text",
-      "title": "Text",
-      "description": "Typography primitive supporting all design-system text variants, colors, truncation, and wrapping.",
+      "name": "app-shell",
+      "title": "AppShell",
+      "description": "Workspace layout primitive coordinating panel navigation, top navigation, tools, content, shared chrome, and shell shortcuts.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/text",
-        "exports": [
-          "Text"
-        ],
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/app-shell",
+        "source": "src/wc/components/AppShell/AppShell.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "Workspace layout primitive coordinating panel navigation, top navigation, tools, content, shared chrome, and shell shortcuts.",
+          "useWhen": [
+            "Building a dashboard-style workspace with coordinated left navigation, top navigation, tools, and content.",
+            "Navigation chrome needs shared styling, gradient alignment, collapse behavior, and keyboard shortcuts."
+          ],
+          "avoidWhen": [
+            "The page is a standalone marketing, authentication, or single-purpose layout.",
+            "The interface does not use the coordinated CompoMo navigation surfaces."
+          ],
+          "alternatives": [
+            {
+              "when": "Only a top-level section tab row is needed.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav can be used without the complete workspace shell."
+            },
+            {
+              "when": "Only persistent left-side destination navigation is needed.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav owns left navigation without requiring the full shell composition."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-panel-nav",
+            "component:ds-bar-nav",
+            "component:ds-panel-tools"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Keep destination navigation in PanelNav and section navigation in BarNav.",
+            "Do not override browser keyboard chords when enabling shell shortcuts.",
+            "Ensure the default slot contains the page main-content landmark."
+          ],
+          "states": [
+            "The shell coordinates chrome but the host application owns active destinations, active tools, and route state.",
+            "Use one AppShell as the workspace root rather than nesting shells."
+          ],
+          "responsiveBehavior": [
+            "The host and shell must fill the viewport for chrome clipping and synchronized gradient sizing.",
+            "Panel collapse and tool-drawer behavior should preserve the main content region rather than introducing a second page shell."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign complex navigation item collections as element properties."
+            ],
+            "react": [
+              "Use generated wrappers but preserve native slot names on slotted navigation children."
+            ],
+            "angular": [
+              "Bind complex inputs after the generated custom elements are registered and preserve slot attributes in templates."
+            ]
+          },
+          "references": [
+            {
+              "label": "Component guide",
+              "path": "src/wc/components/AppShell/AppShell.mdx"
+            },
+            {
+              "label": "Executable Storybook composition",
+              "path": "src/wc/components/AppShell/AppShell.stories.ts"
+            },
+            {
+              "label": "Framework integration",
+              "path": "docs/framework-integration.md"
+            }
+          ]
+        },
         "props": {
-          "variant": {
-            "type": "TextVariant",
-            "required": false
-          },
-          "emphasis": {
+          "gradient": {
             "type": "boolean",
             "required": false
           },
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          },
-          "color": {
-            "type": "TextColor",
+          "gradientPreset": {
+            "type": "ShellGradientPreset",
             "required": false
           },
-          "as": {
-            "type": "'p' | 'span' | 'div' | 'label' | 'h1'-'h6'",
-            "required": false
-          },
-          "for": {
+          "gradientSrc": {
             "type": "string",
             "required": false
           },
-          "textId": {
-            "type": "string",
+          "navStyle": {
+            "type": "NavChromeStyle",
             "required": false
           },
-          "lineTruncation": {
-            "type": "1 | 2 | 3 | 4 | 5 | \"none\"",
-            "required": false
-          },
-          "decoration": {
-            "type": "'none' | 'underline' | 'dotted-underline'",
-            "required": false
-          },
-          "italic": {
+          "shortcutsEnabled": {
             "type": "boolean",
-            "required": false
-          },
-          "align": {
-            "type": "'left' | 'center' | 'right'",
-            "required": false
-          },
-          "wrap": {
-            "type": "'wrap' | 'nowrap' | 'balance' | 'pretty'",
-            "required": false
-          },
-          "fontFeature": {
-            "type": "'normal' | 'tabular-nums'",
             "required": false
           }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-app-shell",
+          "react": "DsAppShell",
+          "angular": "DsAppShell"
         }
       },
       "dependencies": [
@@ -91,365 +137,6 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
-    },
-    {
-      "name": "card",
-      "title": "Card",
-      "description": "Shared card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space. Compose from settings and data-viz cards.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
-        "exports": [
-          "Card"
-        ],
-        "props": {
-          "heading": {
-            "type": "string",
-            "required": true
-          },
-          "cardWidth": {
-            "type": "'sm' | 'md' | 'lg'",
-            "required": false
-          },
-          "appearance": {
-            "type": "'default' | 'editing'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "card-setting",
-      "title": "CardSetting",
-      "description": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
-        "exports": [
-          "CardSetting"
-        ],
-        "props": {
-          "heading": {
-            "type": "string",
-            "required": true
-          },
-          "cardWidth": {
-            "type": "'sm' | 'md' | 'lg'",
-            "required": false
-          },
-          "editing": {
-            "type": "boolean",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "card",
-        "text",
-        "button-unfilled",
-        "button-filled"
-      ]
-    },
-    {
-      "name": "card-data-viz-donut",
-      "title": "CardDataVizDonut",
-      "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
-        "exports": [
-          "CardDataVizDonut"
-        ],
-        "props": {
-          "heading": {
-            "type": "string",
-            "required": true
-          },
-          "cardWidth": {
-            "type": "'sm' | 'md' | 'lg'",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "card",
-        "button-unfilled",
-        "chart-donut",
-        "chart-legend"
-      ]
-    },
-    {
-      "name": "button-filled",
-      "title": "ButtonFilled",
-      "description": "Filled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, and intent×contrast fills.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-filled",
-        "exports": [
-          "ButtonFilled"
-        ],
-        "props": {
-          "variant": {
-            "type": "'icon' | 'label' | 'icon-label'",
-            "required": false
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "width": {
-            "type": "'hug' | 'fill'",
-            "required": false
-          },
-          "label": {
-            "type": "string",
-            "required": false
-          },
-          "icon": {
-            "type": "string",
-            "required": false
-          },
-          "intent": {
-            "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'",
-            "required": false
-          },
-          "contrast": {
-            "type": "'bold' | 'strong' | 'medium' | 'faint'",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "ariaLabel": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "icon"
-      ]
-    },
-    {
-      "name": "button-unfilled",
-      "title": "ButtonUnfilled",
-      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, active/border/dot, and surface-aware interaction states.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
-        "exports": [
-          "ButtonUnfilled"
-        ],
-        "props": {
-          "variant": {
-            "type": "'icon' | 'label' | 'icon-label'",
-            "required": false
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "width": {
-            "type": "'hug' | 'fill'",
-            "required": false
-          },
-          "label": {
-            "type": "string",
-            "required": false
-          },
-          "icon": {
-            "type": "string",
-            "required": false
-          },
-          "isActive": {
-            "type": "boolean",
-            "required": false
-          },
-          "activeFill": {
-            "type": "boolean",
-            "required": false
-          },
-          "hasBorder": {
-            "type": "boolean",
-            "required": false
-          },
-          "dot": {
-            "type": "boolean",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "backgroundContrast": {
-            "type": "'default' | 'medium' | 'bold' | 'strong'",
-            "required": false
-          },
-          "background": {
-            "type": "'always-dark' | 'navigation'",
-            "required": false
-          },
-          "ariaLabel": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "icon",
-        "badge"
-      ]
-    },
-    {
-      "name": "tag",
-      "title": "Tag",
-      "description": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tag",
-        "exports": [
-          "Tag"
-        ],
-        "props": {
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "intent": {
-            "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive'",
-            "required": false
-          },
-          "contrast": {
-            "type": "'strong' | 'bold' | 'medium' | 'faint'",
-            "required": false
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "rounded": {
-            "type": "boolean",
-            "required": false
-          },
-          "icon": {
-            "type": "IconComponent",
-            "required": false
-          },
-          "maxWidth": {
-            "type": "string | number",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "chip",
-      "title": "Chip",
-      "description": "Removable metadata chip — same control-density recipe as Tag, colored by semantic state (default / active / error / caution). Not a toggle/select control.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chip",
-        "exports": [
-          "Chip"
-        ],
-        "props": {
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "state": {
-            "type": "'default' | 'active' | 'error' | 'caution'",
-            "required": false
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "rounded": {
-            "type": "boolean",
-            "required": false
-          },
-          "removable": {
-            "type": "boolean",
-            "required": false
-          },
-          "onRemove": {
-            "type": "() => void",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "background": {
-            "type": "'faint' | 'medium' | 'bold' | 'strong' | 'always-dark'",
-            "required": false
-          },
-          "maxWidth": {
-            "type": "string | number",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "text",
-        "icon"
-      ]
     },
     {
       "name": "badge",
@@ -460,16 +147,28 @@
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/badge",
-        "exports": [
-          "Badge"
-        ],
+        "source": "src/wc/components/Badge/Badge.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
         "props": {
-          "variant": {
-            "type": "'counter' | 'dot'",
+          "background": {
+            "type": "string | undefined",
             "required": false
           },
           "count": {
             "type": "number",
+            "required": false
+          },
+          "gradientBackground": {
+            "type": "boolean",
+            "required": false
+          },
+          "isSelected": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string | undefined",
             "required": false
           },
           "max": {
@@ -477,562 +176,20 @@
             "required": false
           },
           "surface": {
-            "type": "'default' | 'primary' | 'secondary' | 'medium' | 'bold' | 'strong' | 'navigation' | 'always-dark'",
+            "type": "BadgeSurface",
             "required": false
           },
-          "background": {
-            "type": "string",
-            "required": false
-          },
-          "label": {
-            "type": "string",
+          "variant": {
+            "type": "BadgeVariant",
             "required": false
           }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "loader",
-      "title": "Loader",
-      "description": "Anti-clockwise SVG spinner matching ds-icon size/color tokens. Spins in 1s via --effect-animation-duration-long-2.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
-        "exports": [
-          "Loader"
-        ],
-        "props": {
-          "size": {
-            "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'",
-            "required": false
-          },
-          "color": {
-            "type": "IconColor",
-            "required": false
-          },
-          "label": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "toggle",
-      "title": "Toggle",
-      "description": "Switch control with on/off state and accessible role=\"switch\".",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle",
-        "exports": [
-          "Toggle"
-        ],
-        "props": {
-          "name": {
-            "type": "string",
-            "required": false
-          },
-          "disabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "required": {
-            "type": "boolean",
-            "required": false
-          },
-          "requiredMessage": {
-            "type": "string",
-            "required": false
-          },
-          "checked": {
-            "type": "boolean",
-            "required": false
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          },
-          "onChange": {
-            "type": "(checked: boolean) => void",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "aria-label": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "checkbox",
-      "title": "Checkbox",
-      "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
-        "exports": [
-          "Checkbox"
-        ],
-        "props": {
-          "name": {
-            "type": "string",
-            "required": false
-          },
-          "disabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "required": {
-            "type": "boolean",
-            "required": false
-          },
-          "requiredMessage": {
-            "type": "string",
-            "required": false
-          },
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "checked": {
-            "type": "boolean",
-            "required": false
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          },
-          "indeterminate": {
-            "type": "boolean",
-            "required": false
-          },
-          "onChange": {
-            "type": "(checked: boolean) => void",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "checkedIcon": {
-            "type": "IconComponent",
-            "required": false
-          },
-          "uncheckedIcon": {
-            "type": "IconComponent",
-            "required": false
-          },
-          "indeterminateIcon": {
-            "type": "IconComponent",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "input",
-      "title": "Input",
-      "description": "Text input supporting text, email, tel, url, search, and password types. Search type includes auto clear button.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/input",
-        "exports": [
-          "Input"
-        ],
-        "props": {
-          "name": {
-            "type": "string",
-            "required": false
-          },
-          "disabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "required": {
-            "type": "boolean",
-            "required": false
-          },
-          "requiredMessage": {
-            "type": "string",
-            "required": false
-          },
-          "value": {
-            "type": "string",
-            "required": true
-          },
-          "onChange": {
-            "type": "(e: React.ChangeEvent<HTMLInputElement>) => void",
-            "required": true
-          },
-          "type": {
-            "type": "'text' | 'email' | 'tel' | 'url' | 'search' | 'password'",
-            "required": false
-          },
-          "placeholder": {
-            "type": "string",
-            "required": false
-          },
-          "suffix": {
-            "type": "React.ReactNode",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "clearIcon": {
-            "type": "IconComponent",
-            "required": false
-          },
-          "clearLabel": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "slider",
-      "title": "Slider",
-      "description": "Range input with visual fill track, label, and current value display.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/slider",
-        "exports": [
-          "Slider"
-        ],
-        "props": {
-          "value": {
-            "type": "number",
-            "required": true
-          },
-          "onChange": {
-            "type": "(value: number) => void",
-            "required": true
-          },
-          "min": {
-            "type": "number",
-            "required": false
-          },
-          "max": {
-            "type": "number",
-            "required": false
-          },
-          "step": {
-            "type": "number",
-            "required": false
-          },
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "field",
-      "title": "Field",
-      "description": "Simple label wrapper that links to child input via htmlFor.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/field",
-        "exports": [
-          "Field"
-        ],
-        "props": {
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          },
-          "id": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "select",
-      "title": "Select",
-      "description": "Dropdown select with unfilled-button chrome (label + trailing ChevronDown) in control-density sizes and width hug/fill. Uses ds-menu for the option list.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select",
-        "exports": [
-          "Select"
-        ],
-        "props": {
-          "name": {
-            "type": "string",
-            "required": false
-          },
-          "disabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "required": {
-            "type": "boolean",
-            "required": false
-          },
-          "requiredMessage": {
-            "type": "string",
-            "required": false
-          },
-          "options": {
-            "type": "SelectOption[]",
-            "required": true
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          },
-          "placeholder": {
-            "type": "string",
-            "required": false
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "width": {
-            "type": "'hug' | 'fill'",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "activeFill": {
-            "type": "boolean",
-            "required": false
-          },
-          "hasBorder": {
-            "type": "boolean",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "menu",
-        "icon"
-      ]
-    },
-    {
-      "name": "modal",
-      "title": "Modal",
-      "description": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/modal",
-        "exports": [
-          "Modal"
-        ],
-        "props": {
-          "isOpen": {
-            "type": "boolean",
-            "required": true
-          },
-          "onClose": {
-            "type": "() => void",
-            "required": true
-          },
-          "title": {
-            "type": "string",
-            "required": true
-          },
-          "children": {
-            "type": "React.ReactNode",
-            "required": true
-          },
-          "subtitle": {
-            "type": "React.ReactNode",
-            "required": false
-          },
-          "footer": {
-            "type": "React.ReactNode",
-            "required": false
-          },
-          "width": {
-            "type": "'sm' | 'md' | 'lg' | string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "menu",
-      "title": "Menu",
-      "description": "Positioned dropdown menu (`ds-menu`) with sections, selection, toggle items, and destructive items.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/menu",
-        "exports": [
-          "ds-menu"
-        ],
-        "props": {
-          "open": {
-            "type": "boolean",
-            "required": false
-          },
-          "items": {
-            "type": "MenuItemData[]",
-            "required": false
-          },
-          "sections": {
-            "type": "MenuSection[]",
-            "required": false
-          },
-          "side": {
-            "type": "'top' | 'right' | 'bottom' | 'left'",
-            "required": false
-          },
-          "align": {
-            "type": "'start' | 'center' | 'end'",
-            "required": false
-          },
-          "anchor": {
-            "type": "HTMLElement",
-            "required": false
-          },
-          "menuWidth": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "tooltip",
-      "title": "Tooltip",
-      "description": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip",
-        "exports": [
-          "Tooltip"
-        ],
-        "props": {
-          "label": {
-            "type": "string",
-            "required": true
-          },
-          "size": {
-            "type": "'md' | 'sm' | 'xs'",
-            "required": false
-          },
-          "children": {
-            "type": "React.ReactElement",
-            "required": true
-          },
-          "side": {
-            "type": "'top' | 'right' | 'bottom' | 'left'",
-            "required": false
-          },
-          "align": {
-            "type": "'start' | 'center' | 'end'",
-            "required": false
-          },
-          "delay": {
-            "type": "number | string",
-            "required": false
-          },
-          "shortcutKey": {
-            "type": "string",
-            "required": false
-          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-badge",
+          "react": "DsBadge",
+          "angular": "DsBadge"
         }
       },
       "dependencies": [
@@ -1052,129 +209,50 @@
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/banner",
-        "exports": [
-          "Banner"
-        ],
+        "source": "src/wc/components/Banner/Banner.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
         "props": {
-          "intent": {
-            "type": "'brand' | 'positive' | 'negative' | 'warning' | 'caution' | 'ai' | 'neutral' | 'walkthrough' | 'guide'",
-            "required": true
-          },
           "contrast": {
-            "type": "'faint' | 'medium' | 'bold' | 'strong'",
-            "required": true
+            "type": "BannerContrast",
+            "required": false
           },
-          "message": {
+          "dismissLabel": {
             "type": "string",
-            "required": true
+            "required": false
           },
           "floating": {
             "type": "boolean",
             "required": false
           },
-          "onDismiss": {
-            "type": "() => void",
-            "required": false
-          },
           "header": {
             "type": "boolean",
             "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
-      "name": "table",
-      "title": "Table",
-      "description": "Data table with CSS grid layout, sorting, pagination, loading skeleton, row selection, and custom cell rendering.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
-        "exports": [
-          "Table"
-        ],
-        "props": {
-          "columns": {
-            "type": "TableColumn<T>[]",
-            "required": true
           },
-          "data": {
-            "type": "T[]",
-            "required": true
-          },
-          "sortState": {
-            "type": "SortState",
-            "required": false
-          },
-          "onSort": {
-            "type": "(columnId: string) => void",
-            "required": false
-          },
-          "onRowClick": {
-            "type": "(row: T, rowIndex: number) => void",
-            "required": false
-          },
-          "selectedRows": {
-            "type": "Set<number>",
-            "required": false
-          },
-          "loading": {
-            "type": "boolean",
-            "required": false
-          },
-          "pagination": {
-            "type": "PaginationState",
-            "required": false
-          },
-          "onPaginationChange": {
-            "type": "(pageIndex: number, pageSize: number) => void",
-            "required": false
-          },
-          "emptyMessage": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text",
-        "skeleton"
-      ]
-    },
-    {
-      "name": "empty-state",
-      "title": "EmptyState",
-      "description": "Centered placeholder for empty content, no results, or no access states.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/empty-state",
-        "exports": [
-          "EmptyState"
-        ],
-        "props": {
-          "type": {
-            "type": "'no-content' | 'no-results' | 'no-results-filter' | 'no-access'",
+          "intent": {
+            "type": "BannerIntent",
             "required": false
           },
           "message": {
             "type": "string",
             "required": false
+          },
+          "showDismiss": {
+            "type": "boolean",
+            "required": false
           }
+        },
+        "events": [
+          {
+            "name": "dsDismiss",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-banner",
+          "react": "DsBanner",
+          "angular": "DsBanner"
         }
       },
       "dependencies": [
@@ -1186,24 +264,723 @@
       ]
     },
     {
-      "name": "radio-group",
-      "title": "RadioGroup",
-      "description": "Radio selection group (`ds-radio-group`) with vertical/horizontal layout, per-option isInactive, and keyboard navigation.",
+      "name": "bar-nav",
+      "title": "BarNav",
+      "description": "BarNav component from @ds-mo/ui.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-group",
-        "exports": [
-          "ds-radio-group"
-        ],
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-nav",
+        "source": "src/wc/components/BarNav/BarNav.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
         "props": {
-          "name": {
+          "basePath": {
             "type": "string",
+            "required": false
+          },
+          "currentUrl": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "moreTabsLabel": {
+            "type": "string",
+            "required": false
+          },
+          "navStyle": {
+            "type": "NavChromeStyle",
+            "required": false
+          },
+          "tabs": {
+            "type": "BarNavTab[]",
+            "required": false
+          },
+          "tabsJson": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsTabChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-bar-nav",
+          "react": "DsBarNav",
+          "angular": "DsBarNav"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "menu",
+        "tab-group-nav",
+        "text"
+      ]
+    },
+    {
+      "name": "button-filled",
+      "title": "ButtonFilled",
+      "description": "Emphasized command button for primary, confirming, or semantically important actions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-filled",
+        "source": "src/wc/components/ButtonFilled/ButtonFilled.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Emphasized command button for primary, confirming, or semantically important actions.",
+          "useWhen": [
+            "The user initiates a primary or emphasized command.",
+            "An action needs a semantic intent such as positive, negative, warning, or AI."
+          ],
+          "avoidWhen": [
+            "The action is unfilled icon-only shell or navigation chrome.",
+            "The element represents navigation rather than a command.",
+            "The content is a persistent selected state rather than an action."
+          ],
+          "alternatives": [
+            {
+              "when": "The action is icon-only shell, navigation, overflow, or tool-rail chrome.",
+              "component": "component:ds-button-unfilled",
+              "reason": "Unfilled buttons provide the correct active, border, and surface-aware interaction states for chrome."
+            },
+            {
+              "when": "The user is choosing a destination in application navigation.",
+              "component": "component:ds-panel-nav",
+              "reason": "Navigation components own destination selection, active state, and navigation semantics."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-modal",
+            "component:ds-field"
+          ],
+          "accessibility": [
+            "Provide an explicit accessible name for icon-only buttons.",
+            "Use inactive state only when the action must remain visible but unavailable.",
+            "Do not encode the action meaning through color alone."
+          ],
+          "states": [
+            "Choose one primary filled action per local decision area when possible.",
+            "Use semantic intent for meaning and contrast for emphasis; do not use contrast as a substitute for state."
+          ],
+          "responsiveBehavior": [
+            "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ButtonFilled/ButtonFilled.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "contrast": {
+            "type": "ButtonFilledContrast",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "intent": {
+            "type": "ButtonFilledIntent",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "ButtonFilledSize",
+            "required": false
+          },
+          "type": {
+            "type": "'button' | 'submit' | 'reset'",
+            "required": false
+          },
+          "variant": {
+            "type": "ButtonFilledVariant",
+            "required": false
+          },
+          "width": {
+            "type": "ButtonFilledWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-button-filled",
+          "react": "DsButtonFilled",
+          "angular": "DsButtonFilled"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "button-unfilled",
+      "title": "ButtonUnfilled",
+      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, active/border/dot, and surface-aware interaction states.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
+        "source": "src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "background": {
+            "type": "ButtonUnfilledBackground | undefined",
+            "required": false
+          },
+          "backgroundContrast": {
+            "type": "ButtonUnfilledOnBackgroundContrast",
+            "required": false
+          },
+          "controls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "dot": {
+            "type": "boolean",
+            "required": false
+          },
+          "expanded": {
+            "type": "boolean | undefined",
+            "required": false
+          },
+          "focusTabIndex": {
+            "type": "number",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "haspopup": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "isActive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "pressed": {
+            "type": "boolean | undefined",
+            "required": false
+          },
+          "size": {
+            "type": "ButtonUnfilledSize",
+            "required": false
+          },
+          "type": {
+            "type": "'button' | 'submit' | 'reset'",
+            "required": false
+          },
+          "variant": {
+            "type": "ButtonUnfilledVariant",
+            "required": false
+          },
+          "width": {
+            "type": "ButtonUnfilledWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "boolean"
+          },
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-button-unfilled",
+          "react": "DsButtonUnfilled",
+          "angular": "DsButtonUnfilled"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "badge",
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "card",
+      "title": "Card",
+      "description": "Shared card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space. Compose from settings and data-viz cards.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
+        "source": "src/wc/components/Card/Card.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "appearance": {
+            "type": "CardAppearance",
+            "required": false
+          },
+          "cardWidth": {
+            "type": "CardWidth",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card",
+          "react": "DsCard",
+          "angular": "DsCard"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "card-data-viz-donut",
+      "title": "CardDataVizDonut",
+      "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
+        "source": "src/wc/components/CardDataVizDonut/CardDataVizDonut.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "cardWidth": {
+            "type": "CardDataVizDonutWidth",
+            "required": false
+          },
+          "filterLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsFilterClick",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-data-viz-donut",
+          "react": "DsCardDataVizDonut",
+          "angular": "DsCardDataVizDonut"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "card"
+      ]
+    },
+    {
+      "name": "card-setting",
+      "title": "CardSetting",
+      "description": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
+        "source": "src/wc/components/CardSetting/CardSetting.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "cancelLabel": {
+            "type": "string",
+            "required": false
+          },
+          "cardWidth": {
+            "type": "CardSettingWidth",
+            "required": false
+          },
+          "editLabel": {
+            "type": "string",
+            "required": false
+          },
+          "editing": {
+            "type": "boolean",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "saveLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsEditingChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-setting",
+          "react": "DsCardSetting",
+          "angular": "DsCardSetting"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-filled",
+        "button-unfilled",
+        "card"
+      ]
+    },
+    {
+      "name": "chart-bar",
+      "title": "ChartBar",
+      "description": "ChartBar component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-bar",
+        "source": "src/wc/components/ChartBar/ChartBar.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "data": {
+            "type": "ChartDatum[]",
+            "required": false
+          },
+          "height": {
+            "type": "number",
+            "required": false
+          },
+          "width": {
+            "type": "number",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-chart-bar",
+          "react": "DsChartBar",
+          "angular": "DsChartBar"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "chart-donut",
+      "title": "ChartDonut",
+      "description": "ChartDonut component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-donut",
+        "source": "src/wc/components/ChartDonut/ChartDonut.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "activeLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "centerCaption": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "centerValue": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "cornerRadius": {
+            "type": "number | string",
+            "required": false
+          },
+          "data": {
+            "type": "ChartDatum[]",
+            "required": false
+          },
+          "gap": {
+            "type": "number",
+            "required": false
+          },
+          "locale": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "noDataLabel": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "thickness": {
+            "type": "number | string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsSliceHover",
+            "detail": "ChartDatum | null"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-chart-donut",
+          "react": "DsChartDonut",
+          "angular": "DsChartDonut"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "chart-legend",
+      "title": "ChartLegend",
+      "description": "Base legend for `ds-chart-*` components. Webapp's Overview widgets each style\nlegends differently (list w/ values, compact chips, bare swatches, external\nstat callouts) — this covers the common \"swatch + label + optional value\" case.\nConsumers who need a different treatment skip this component entirely and\nrender their own markup against the same `ChartDatum[]` data.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-legend",
+        "source": "src/wc/components/ChartLegend/ChartLegend.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "activeLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "direction": {
+            "type": "ChartLegendDirection",
+            "required": false
+          },
+          "items": {
+            "type": "ChartLegendItem[]",
+            "required": false
+          },
+          "locale": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "showPercentage": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsItemClick",
+            "detail": "{ item: ChartLegendItem; originalEvent: MouseEvent }"
+          },
+          {
+            "name": "dsItemHover",
+            "detail": "ChartLegendItem | null"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-chart-legend",
+          "react": "DsChartLegend",
+          "angular": "DsChartLegend"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "chart-line",
+      "title": "ChartLine",
+      "description": "ChartLine component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-line",
+        "source": "src/wc/components/ChartLine/ChartLine.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "categories": {
+            "type": "string[]",
+            "required": false
+          },
+          "height": {
+            "type": "number",
+            "required": false
+          },
+          "series": {
+            "type": "ChartSeries[]",
+            "required": false
+          },
+          "showPoints": {
+            "type": "boolean",
+            "required": false
+          },
+          "width": {
+            "type": "number",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-chart-line",
+          "react": "DsChartLine",
+          "angular": "DsChartLine"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "checkbox",
+      "title": "Checkbox",
+      "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
+        "source": "src/wc/components/Checkbox/Checkbox.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "checked": {
+            "type": "boolean",
             "required": false
           },
           "disabled": {
             "type": "boolean",
+            "required": false
+          },
+          "indeterminate": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "name": {
+            "type": "string | undefined",
             "required": false
           },
           "required": {
@@ -1216,28 +993,20 @@
           },
           "value": {
             "type": "string",
-            "required": true
-          },
-          "onChange": {
-            "type": "(value: string) => void",
-            "required": true
-          },
-          "options": {
-            "type": "RadioOption[]",
-            "required": true
-          },
-          "direction": {
-            "type": "'vertical' | 'horizontal'",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "aria-label": {
-            "type": "string",
             "required": false
           }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-checkbox",
+          "react": "DsCheckbox",
+          "angular": "DsCheckbox"
         }
       },
       "dependencies": [
@@ -1249,115 +1018,75 @@
       ]
     },
     {
-      "name": "tab-group",
-      "title": "TabGroup",
-      "description": "Horizontal or vertical tab list (`ds-tab-group`) with roving keyboard focus and optional dividers between tab groups.",
+      "name": "chip",
+      "title": "Chip",
+      "description": "Removable metadata chip — same control-density recipe as Tag, colored by semantic state (default / active / error / caution). Not a toggle/select control.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group",
-        "exports": [
-          "ds-tab-group"
-        ],
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chip",
+        "source": "src/wc/components/Chip/Chip.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
         "props": {
-          "tabs": {
-            "type": "TabItem[]",
-            "required": true
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "tab-group-nav",
-      "title": "TabGroupNav",
-      "description": "Navigation-style tab list (`ds-tab-group-nav`) copied from the original TabGroup behavior for primary/secondary navigation surfaces.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group-nav",
-        "exports": [
-          "ds-tab-group-nav"
-        ],
-        "props": {
-          "tabs": {
-            "type": "TabItem[]",
-            "required": true
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          }
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "pagination",
-      "title": "Pagination",
-      "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
-        "exports": [
-          "Pagination"
-        ],
-        "props": {
-          "page": {
-            "type": "number",
-            "required": true
-          },
-          "totalPages": {
-            "type": "number",
-            "required": true
-          },
-          "onPageChange": {
-            "type": "(page: number) => void",
-            "required": true
-          },
-          "siblingCount": {
-            "type": "number",
+          "background": {
+            "type": "ChipBackground | undefined",
             "required": false
           },
           "isInactive": {
             "type": "boolean",
             "required": false
           },
-          "paginationLabel": {
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "maxWidth": {
+            "type": "string | number | undefined",
+            "required": false
+          },
+          "removable": {
+            "type": "boolean",
+            "required": false
+          },
+          "removeLabel": {
             "type": "string",
             "required": false
           },
-          "previousPageLabel": {
-            "type": "string",
+          "rounded": {
+            "type": "boolean",
             "required": false
           },
-          "nextPageLabel": {
-            "type": "string",
+          "size": {
+            "type": "ChipSize",
+            "required": false
+          },
+          "state": {
+            "type": "ChipState",
             "required": false
           }
+        },
+        "events": [
+          {
+            "name": "dsRemove",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-chip",
+          "react": "DsChip",
+          "angular": "DsChip"
         }
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "icon",
         "text"
       ]
     },
@@ -1370,30 +1099,1046 @@
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/divider",
-        "exports": [
-          "Divider"
-        ],
+        "source": "src/wc/components/Divider/Divider.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
         "props": {
-          "orientation": {
-            "type": "'horizontal' | 'vertical'",
-            "required": false
-          },
-          "surface": {
-            "type": "'default' | 'on-bold-background' | 'on-strong-background' | 'on-medium-background' | 'on-translucent-background' | 'navigation' | 'media' | 'always-dark' | 'inverted'",
-            "required": false
-          },
           "inset": {
-            "type": "'none' | 'space-000' | 'space-012' | 'space-025' | 'space-050' | 'space-075' | 'space-100' | 'space-125' | 'space-150' | 'space-175' | 'space-200' | 'space-250' | 'space-300' | 'space-400' | 'space-600' | 'space-800' | string",
+            "type": "DividerInset",
             "required": false
           },
           "length": {
-            "type": "'auto' | 'full' | string",
+            "type": "DividerLength",
+            "required": false
+          },
+          "orientation": {
+            "type": "DividerOrientation",
             "required": false
           },
           "semantic": {
             "type": "boolean",
             "required": false
+          },
+          "surface": {
+            "type": "DividerSurface",
+            "required": false
           }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-divider",
+          "react": "DsDivider",
+          "angular": "DsDivider"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "empty-state",
+      "title": "EmptyState",
+      "description": "Centered placeholder for empty content, no results, or no access states.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/empty-state",
+        "source": "src/wc/components/EmptyState/EmptyState.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "message": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "messages": {
+            "type": "Partial<Record<EmptyStateType, string>>",
+            "required": false
+          },
+          "type": {
+            "type": "EmptyStateType",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-empty-state",
+          "react": "DsEmptyState",
+          "angular": "DsEmptyState"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "field",
+      "title": "Field",
+      "description": "Simple label wrapper that links to child input via htmlFor.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/field",
+        "source": "src/wc/components/Field/Field.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "fieldId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-field",
+          "react": "DsField",
+          "angular": "DsField"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "icon",
+      "title": "Icon",
+      "description": "Icon component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/icon",
+        "source": "src/wc/components/Icon/Icon.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "color": {
+            "type": "IconColor | undefined",
+            "required": false
+          },
+          "flag": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "IconSize",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-icon",
+          "react": "DsIcon",
+          "angular": "DsIcon"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "input",
+      "title": "Input",
+      "description": "Text input supporting text, email, tel, url, search, and password types. Search type includes auto clear button.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/input",
+        "source": "src/wc/components/Input/Input.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "autoFocus": {
+            "type": "boolean",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "type": {
+            "type": "InputType",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-input",
+          "react": "DsInput",
+          "angular": "DsInput"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "loader",
+      "title": "Loader",
+      "description": "Anti-clockwise SVG spinner matching ds-icon size/color tokens.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
+        "source": "src/wc/components/Loader/Loader.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "color": {
+            "type": "LoaderColor | undefined",
+            "required": false
+          },
+          "label": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "size": {
+            "type": "LoaderSize",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-loader",
+          "react": "DsLoader",
+          "angular": "DsLoader"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "menu",
+      "title": "Menu",
+      "description": "Anchored action or option menu with flat items, grouped sections, selection, toggles, and destructive actions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/menu",
+        "source": "src/wc/components/Menu/Menu.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Anchored action or option menu with flat items, grouped sections, selection, toggles, and destructive actions.",
+          "useWhen": [
+            "A trigger reveals a short contextual list of commands or options.",
+            "Options need grouping, selected state, toggle rows, or destructive treatment."
+          ],
+          "avoidWhen": [
+            "The user is selecting a value for a form field.",
+            "The content requires rich dialog interaction or a multi-step workflow.",
+            "The actions should remain persistently visible."
+          ],
+          "alternatives": [
+            {
+              "when": "The choice is a form value with a label, validation, and submitted value.",
+              "component": "component:ds-select",
+              "reason": "Select provides form-control semantics and value ownership."
+            },
+            {
+              "when": "The interaction needs substantial content, confirmation, or a form.",
+              "component": "component:ds-modal",
+              "reason": "Modal owns focus containment and dialog-level interaction."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-unfilled",
+            "component:ds-panel-nav",
+            "component:ds-shell-gradient-picker"
+          ],
+          "accessibility": [
+            "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
+            "Open with visible initial focus only when the trigger was activated from the keyboard.",
+            "Keep disabled items discoverable only when their unavailable state is meaningful."
+          ],
+          "states": [
+            "The host owns open state and responds to selection and close events.",
+            "Use either flat items or sections, not both.",
+            "Arrays, objects, and element anchors must be assigned as JavaScript properties."
+          ],
+          "responsiveBehavior": [
+            "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
+            "Avoid fixed widths that exceed narrow viewports."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign items, sections, and HTMLElement anchors as properties after the element is defined."
+            ],
+            "react": [
+              "Pass arrays and objects as wrapper props and handle generated onDsSelect and onDsClose event props."
+            ],
+            "angular": [
+              "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect and dsClose."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Menu/Menu.stories.ts"
+            },
+            {
+              "label": "Framework integration",
+              "path": "docs/framework-integration.md"
+            }
+          ]
+        },
+        "props": {
+          "align": {
+            "type": "MenuAlign",
+            "required": false
+          },
+          "alignOffset": {
+            "type": "number | string",
+            "required": false
+          },
+          "anchor": {
+            "type": "HTMLElement | undefined",
+            "required": false
+          },
+          "anchorId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "initialFocusVisible": {
+            "type": "boolean",
+            "required": false
+          },
+          "items": {
+            "type": "MenuItemData[]",
+            "required": false
+          },
+          "menuLabel": {
+            "type": "string",
+            "required": false
+          },
+          "menuWidth": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "minWidth": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "sections": {
+            "type": "MenuSection[]",
+            "required": false
+          },
+          "side": {
+            "type": "MenuSide",
+            "required": false
+          },
+          "sideOffset": {
+            "type": "number | string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsGradientSelect",
+            "detail": "ShellGradientPreset"
+          },
+          {
+            "name": "dsSelect",
+            "detail": "MenuItemData"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-menu",
+          "react": "DsMenu",
+          "angular": "DsMenu"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "shell-gradient-picker",
+        "text"
+      ]
+    },
+    {
+      "name": "modal",
+      "title": "Modal",
+      "description": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/modal",
+        "source": "src/wc/components/Modal/Modal.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "modalWidth": {
+            "type": "ModalWidth | string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "subtitle": {
+            "type": "string | undefined",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClose",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-modal",
+          "react": "DsModal",
+          "angular": "DsModal"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "pagination",
+      "title": "Pagination",
+      "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
+        "source": "src/wc/components/Pagination/Pagination.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "nextPageLabel": {
+            "type": "string",
+            "required": false
+          },
+          "page": {
+            "type": "number",
+            "required": false
+          },
+          "paginationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "previousPageLabel": {
+            "type": "string",
+            "required": false
+          },
+          "siblingCount": {
+            "type": "number",
+            "required": false
+          },
+          "totalPages": {
+            "type": "number",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsPageChange",
+            "detail": "number"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-pagination",
+          "react": "DsPagination",
+          "angular": "DsPagination"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "panel-nav",
+      "title": "PanelNav",
+      "description": "PanelNav component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-nav",
+        "source": "src/wc/components/PanelNav/PanelNav.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "accountLabel": {
+            "type": "string",
+            "required": false
+          },
+          "activeId": {
+            "type": "string",
+            "required": false
+          },
+          "breakpoint": {
+            "type": "number",
+            "required": false
+          },
+          "collapseNavigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "collapsed": {
+            "type": "boolean",
+            "required": false
+          },
+          "currentUrl": {
+            "type": "string",
+            "required": false
+          },
+          "dashboardLabel": {
+            "type": "string",
+            "required": false
+          },
+          "dashboardNavigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "disableViewTransition": {
+            "type": "boolean",
+            "required": false
+          },
+          "expandNavigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "groups": {
+            "type": "string | PanelNavGroup[]",
+            "required": false
+          },
+          "navStyle": {
+            "type": "NavChromeStyle",
+            "required": false
+          },
+          "routerMode": {
+            "type": "PanelNavRouterMode",
+            "required": false
+          },
+          "settingsLabel": {
+            "type": "string",
+            "required": false
+          },
+          "settingsNavigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "storageKey": {
+            "type": "string",
+            "required": false
+          },
+          "userInitial": {
+            "type": "string",
+            "required": false
+          },
+          "userName": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChromeTransitionEnd",
+            "detail": "ChromeTransitionDetail"
+          },
+          {
+            "name": "dsChromeTransitionStart",
+            "detail": "ChromeTransitionDetail"
+          },
+          {
+            "name": "dsNavFooterAction",
+            "detail": "void"
+          },
+          {
+            "name": "dsNavSelect",
+            "detail": "string"
+          },
+          {
+            "name": "dsNavToggle",
+            "detail": "boolean"
+          },
+          {
+            "name": "dsNavUserAction",
+            "detail": "PanelNavUserActionDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-panel-nav",
+          "react": "DsPanelNav",
+          "angular": "DsPanelNav"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button-unfilled",
+        "icon",
+        "text",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "panel-tools",
+      "title": "PanelTools",
+      "description": "PanelTools component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-tools",
+        "source": "src/wc/components/PanelTools/PanelTools.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "activeTool": {
+            "type": "PanelToolsToolId | ''",
+            "required": false
+          },
+          "items": {
+            "type": "PanelToolsItem[]",
+            "required": false
+          },
+          "itemsJson": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "toolShortcutsLabel": {
+            "type": "string",
+            "required": false
+          },
+          "toolsLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChromeTransitionEnd",
+            "detail": "ChromeTransitionDetail"
+          },
+          {
+            "name": "dsChromeTransitionStart",
+            "detail": "ChromeTransitionDetail"
+          },
+          {
+            "name": "dsToolChange",
+            "detail": "{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-panel-tools",
+          "react": "DsPanelTools",
+          "angular": "DsPanelTools"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "radio-group",
+      "title": "RadioGroup",
+      "description": "Radio selection group with vertical/horizontal layout, per-option inactive state, and keyboard navigation.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-group",
+        "source": "src/wc/components/RadioGroup/RadioGroup.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "direction": {
+            "type": "'vertical' | 'horizontal'",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "options": {
+            "type": "RadioOption[]",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-radio-group",
+          "react": "DsRadioGroup",
+          "angular": "DsRadioGroup"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "select",
+      "title": "Select",
+      "description": "Dropdown select with unfilled-button chrome in control-density sizes and width hug/fill. Uses ds-menu for the option list.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select",
+        "source": "src/wc/components/Select/Select.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "options": {
+            "type": "SelectOption[]",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "SelectSize",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          },
+          "width": {
+            "type": "SelectWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-select",
+          "react": "DsSelect",
+          "angular": "DsSelect"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "menu",
+        "text"
+      ]
+    },
+    {
+      "name": "shell-gradient-picker",
+      "title": "ShellGradientPicker",
+      "description": "ShellGradientPicker component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-picker",
+        "source": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "groupLabel": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "ShellGradientPreset",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "ShellGradientPreset"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-gradient-picker",
+          "react": "DsShellGradientPicker",
+          "angular": "DsShellGradientPicker"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "shell-gradient-swatch"
+      ]
+    },
+    {
+      "name": "shell-gradient-swatch",
+      "title": "ShellGradientSwatch",
+      "description": "ShellGradientSwatch component from @ds-mo/ui.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-swatch",
+        "source": "src/wc/components/ShellGradientSwatch/ShellGradientSwatch.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "preset": {
+            "type": "ShellGradientPreset",
+            "required": false
+          },
+          "selected": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsSelect",
+            "detail": "ShellGradientPreset"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-gradient-swatch",
+          "react": "DsShellGradientSwatch",
+          "angular": "DsShellGradientSwatch"
         }
       },
       "dependencies": [
@@ -1411,30 +2156,37 @@
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/skeleton",
-        "exports": [
-          "Skeleton"
-        ],
+        "source": "src/wc/components/Skeleton/Skeleton.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
         "props": {
-          "variant": {
-            "type": "'text' | 'circular' | 'rectangular'",
-            "required": false
-          },
-          "width": {
-            "type": "string | number",
-            "required": false
-          },
           "height": {
-            "type": "string | number",
+            "type": "string | number | undefined",
             "required": false
           },
           "lines": {
             "type": "number",
             "required": false
           },
-          "animate": {
+          "shimmer": {
             "type": "boolean",
             "required": false
+          },
+          "variant": {
+            "type": "SkeletonVariant",
+            "required": false
+          },
+          "width": {
+            "type": "string | number | undefined",
+            "required": false
           }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-skeleton",
+          "react": "DsSkeleton",
+          "angular": "DsSkeleton"
         }
       },
       "dependencies": [
@@ -1442,6 +2194,607 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
+    },
+    {
+      "name": "slider",
+      "title": "Slider",
+      "description": "Range input with visual fill track, label, and current value display.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/slider",
+        "source": "src/wc/components/Slider/Slider.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "max": {
+            "type": "number",
+            "required": false
+          },
+          "min": {
+            "type": "number",
+            "required": false
+          },
+          "step": {
+            "type": "number",
+            "required": false
+          },
+          "value": {
+            "type": "number",
+            "required": false
+          },
+          "valueText": {
+            "type": "string | undefined",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "number"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-slider",
+          "react": "DsSlider",
+          "angular": "DsSlider"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "tab-group",
+      "title": "TabGroup",
+      "description": "Horizontal or vertical tab list with roving keyboard focus and optional dividers between tab groups.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group",
+        "source": "src/wc/components/TabGroup/TabGroup.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "background": {
+            "type": "TabBackground | undefined",
+            "required": false
+          },
+          "orientation": {
+            "type": "'horizontal' | 'vertical'",
+            "required": false
+          },
+          "tabs": {
+            "type": "TabItem[]",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-tab-group",
+          "react": "DsTabGroup",
+          "angular": "DsTabGroup"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "badge",
+        "text"
+      ]
+    },
+    {
+      "name": "tab-group-nav",
+      "title": "TabGroupNav",
+      "description": "Navigation-style tab list for primary and secondary navigation surfaces.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group-nav",
+        "source": "src/wc/components/TabGroupNav/TabGroupNav.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "background": {
+            "type": "TabGroupNavBackground | undefined",
+            "required": false
+          },
+          "orientation": {
+            "type": "'horizontal' | 'vertical'",
+            "required": false
+          },
+          "rovingEnabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "selectionFollowsFocus": {
+            "type": "boolean",
+            "required": false
+          },
+          "tabs": {
+            "type": "TabItem[]",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsRovingExit",
+            "detail": "'start' | 'end'"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-tab-group-nav",
+          "react": "DsTabGroupNav",
+          "angular": "DsTabGroupNav"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "badge",
+        "text"
+      ]
+    },
+    {
+      "name": "table",
+      "title": "Table",
+      "description": "Data table with CSS grid layout, sorting, pagination, loading skeleton, row selection, and custom cell rendering.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
+        "source": "src/wc/components/Table/Table.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "columns": {
+            "type": "TableColumn[]",
+            "required": false
+          },
+          "data": {
+            "type": "unknown[]",
+            "required": false
+          },
+          "emptyMessage": {
+            "type": "string",
+            "required": false
+          },
+          "loading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingLabel": {
+            "type": "string",
+            "required": false
+          },
+          "locale": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "nextPageLabel": {
+            "type": "string",
+            "required": false
+          },
+          "pageIndex": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "pageSize": {
+            "type": "number",
+            "required": false
+          },
+          "pageStatusLabel": {
+            "type": "string",
+            "required": false
+          },
+          "previousPageLabel": {
+            "type": "string",
+            "required": false
+          },
+          "selectedRows": {
+            "type": "string",
+            "required": false
+          },
+          "sortState": {
+            "type": "SortState | undefined",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsPageChange",
+            "detail": "{ pageIndex: number }"
+          },
+          {
+            "name": "dsRowClick",
+            "detail": "{ row: unknown; rowIndex: number }"
+          },
+          {
+            "name": "dsSort",
+            "detail": "{ columnId: string }"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-table",
+          "react": "DsTable",
+          "angular": "DsTable"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "tag",
+      "title": "Tag",
+      "description": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tag",
+        "source": "src/wc/components/Tag/Tag.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "contrast": {
+            "type": "TagContrast",
+            "required": false
+          },
+          "intent": {
+            "type": "TagIntent",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "maxWidth": {
+            "type": "string | number | undefined",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
+            "required": false
+          },
+          "size": {
+            "type": "TagSize",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-tag",
+          "react": "DsTag",
+          "angular": "DsTag"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "text",
+      "title": "Text",
+      "description": "Typography primitive supporting all design-system text variants, colors, truncation, and wrapping.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/text",
+        "source": "src/wc/components/Text/Text.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "align": {
+            "type": "TextAlign | undefined",
+            "required": false
+          },
+          "as": {
+            "type": "TextElement",
+            "required": false
+          },
+          "color": {
+            "type": "TextColor | undefined",
+            "required": false
+          },
+          "decoration": {
+            "type": "TextDecoration | undefined",
+            "required": false
+          },
+          "emphasis": {
+            "type": "boolean",
+            "required": false
+          },
+          "fontFeature": {
+            "type": "TextFontFeature",
+            "required": false
+          },
+          "for": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "italic": {
+            "type": "boolean",
+            "required": false
+          },
+          "lineTruncation": {
+            "type": "LineTruncation",
+            "required": false
+          },
+          "textId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "variant": {
+            "type": "TextVariant",
+            "required": false
+          },
+          "wrap": {
+            "type": "TextWrap | undefined",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-text",
+          "react": "DsText",
+          "angular": "DsText"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "toggle",
+      "title": "Toggle",
+      "description": "Switch control with on/off state and accessible switch semantics.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle",
+        "source": "src/wc/components/Toggle/Toggle.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-toggle",
+          "react": "DsToggle",
+          "angular": "DsToggle"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "tooltip",
+      "title": "Tooltip",
+      "description": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip",
+        "source": "src/wc/components/Tooltip/Tooltip.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "align": {
+            "type": "TooltipAlign",
+            "required": false
+          },
+          "alignOffset": {
+            "type": "number | string",
+            "required": false
+          },
+          "delay": {
+            "type": "number | string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "shortcutKey": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "shortcutKeyPosition": {
+            "type": "'start' | 'end'",
+            "required": false
+          },
+          "side": {
+            "type": "TooltipSide",
+            "required": false
+          },
+          "sideOffset": {
+            "type": "number | string",
+            "required": false
+          },
+          "size": {
+            "type": "TooltipSize",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-tooltip",
+          "react": "DsTooltip",
+          "angular": "DsTooltip"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "tooltip-data-viz",
+      "title": "TooltipDataViz",
+      "description": "Positioned value/label callout for chart hover interactions (bar, line point, …).\nDonut charts skip this — legend sync already surfaces the hovered slice.\nUnlike `ds-tooltip`, this doesn't bind to a slotted anchor element —\ncharts hover-highlight data that lives inside an SVG, so the chart itself computes\nthe anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.\n\nRenders `position: absolute` — place inside a `position: relative` chart wrapper,\nwith `x`/`y` as pixel coordinates within that wrapper. Defaults to sitting below-right\nof the anchor (matching cursor-following tooltips), flipping to whichever side/edge\nkeeps it on-screen.\n\nMount (or remount) when a hover session starts so `delay` applies once per hover;\nkeep the instance mounted while the cursor moves so tracking stays instant.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip-data-viz",
+        "source": "src/wc/components/TooltipDataViz/TooltipDataViz.tsx",
+        "intentStatus": "migration-pending",
+        "intent": null,
+        "props": {
+          "delay": {
+            "type": "number | string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string | number",
+            "required": false
+          },
+          "x": {
+            "type": "number",
+            "required": false
+          },
+          "y": {
+            "type": "number",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-tooltip-data-viz",
+          "react": "DsTooltipDataViz",
+          "angular": "DsTooltipDataViz"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
     }
   ]
 }

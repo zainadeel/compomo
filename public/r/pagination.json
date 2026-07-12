@@ -8,72 +8,177 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-pagination.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-pagination></ds-pagination>",
-        "react": "<ds-pagination></ds-pagination>",
-        "angular": "<ds-pagination></ds-pagination>"
+    "source": "src/wc/components/Pagination/Pagination.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "nextPageLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "next-page-label",
+          "default": "'Next page'",
+          "required": false,
+          "mutable": false
+        },
+        "page": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "page",
+          "default": "1",
+          "required": false,
+          "mutable": true
+        },
+        "paginationLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "pagination-label",
+          "default": "'Pagination'",
+          "required": false,
+          "mutable": false
+        },
+        "previousPageLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "previous-page-label",
+          "default": "'Previous page'",
+          "required": false,
+          "mutable": false
+        },
+        "siblingCount": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "sibling-count",
+          "default": "1",
+          "required": false,
+          "mutable": false
+        },
+        "totalPages": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "total-pages",
+          "default": "1",
+          "required": false,
+          "mutable": false
+        }
       },
-      "internalDependencies": [
+      "events": [
         {
-          "component": "Text",
-          "note": "Used internally by Pagination. Bundled in @ds-mo/ui."
+          "name": "dsPageChange",
+          "detail": "number",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "page": {
-        "type": "number",
-        "required": true,
-        "description": "1-based current page."
-      },
-      "totalPages": {
-        "type": "number",
-        "required": true
-      },
-      "onPageChange": {
-        "type": "(page: number) => void",
-        "required": true
-      },
-      "siblingCount": {
-        "type": "number",
-        "default": "1"
-      },
       "isInactive": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
         "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
-      },
-      "paginationLabel": {
-        "type": "string",
-        "default": "'Pagination'"
-      },
-      "previousPageLabel": {
-        "type": "string",
-        "default": "'Previous page'"
+        "required": false,
+        "mutable": false
       },
       "nextPageLabel": {
         "type": "string",
-        "default": "'Next page'"
+        "resolvedType": "string",
+        "attribute": "next-page-label",
+        "default": "'Next page'",
+        "required": false,
+        "mutable": false
+      },
+      "page": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "page",
+        "default": "1",
+        "required": false,
+        "mutable": true
+      },
+      "paginationLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "pagination-label",
+        "default": "'Pagination'",
+        "required": false,
+        "mutable": false
+      },
+      "previousPageLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "previous-page-label",
+        "default": "'Previous page'",
+        "required": false,
+        "mutable": false
+      },
+      "siblingCount": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "sibling-count",
+        "default": "1",
+        "required": false,
+        "mutable": false
+      },
+      "totalPages": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "total-pages",
+        "default": "1",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Pagination"
+    "events": [
+      {
+        "name": "dsPageChange",
+        "detail": "number",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "PaginationProps"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-pagination",
+      "react": "DsPagination",
+      "angular": "DsPagination"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-pagination.js';",
+        "example": "<ds-pagination></ds-pagination>"
+      },
+      "react": {
+        "import": "import { DsPagination } from '@ds-mo/ui/react';",
+        "example": "<DsPagination />"
+      },
+      "angular": {
+        "import": "import { DsPagination } from '@ds-mo/ui/angular/ds-pagination';",
+        "example": "<ds-pagination></ds-pagination>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",

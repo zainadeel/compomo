@@ -14,6 +14,10 @@ export const config: Config = {
   },
   outputTargets: [
     {
+      type: 'docs-json',
+      file: 'dist/docs/components.json',
+    },
+    {
       type: 'dist-custom-elements',
       customElementsExportBehavior: 'auto-define-custom-elements',
       externalRuntime: false,

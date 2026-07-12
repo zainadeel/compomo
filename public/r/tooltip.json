@@ -8,71 +8,199 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-tooltip.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-tooltip></ds-tooltip>",
-        "react": "<ds-tooltip></ds-tooltip>",
-        "angular": "<ds-tooltip></ds-tooltip>"
-      },
-      "internalDependencies": [
-        {
-          "component": "Text",
-          "note": "Used internally by Tooltip. Bundled in @ds-mo/ui."
+    "source": "src/wc/components/Tooltip/Tooltip.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "align": {
+          "type": "TooltipAlign",
+          "resolvedType": "\"center\" | \"end\" | \"start\"",
+          "attribute": "align",
+          "default": "'center'",
+          "required": false,
+          "mutable": false
+        },
+        "alignOffset": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "align-offset",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Cross-axis offset — number (px) or TokoMo length."
+        },
+        "delay": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "delay",
+          "default": "TOKEN_DEFAULTS.animationDelayMedium3",
+          "required": false,
+          "mutable": false,
+          "description": "Hover show delay before the tooltip appears.\nDefault: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms)\nor a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the\ninitial hover/focus show only — after a recent dismiss, reopen is instant.\nPrefer the default; override only for denser chrome or rare/destructive actions."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false,
+          "description": "Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay\nmounted for layout/animation stability (e.g. PanelNav expand/collapse)."
+        },
+        "shortcutKey": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "shortcut-key",
+          "required": false,
+          "mutable": false
+        },
+        "shortcutKeyPosition": {
+          "type": "'start' | 'end'",
+          "resolvedType": "\"end\" | \"start\"",
+          "attribute": "shortcut-key-position",
+          "default": "'end'",
+          "required": false,
+          "mutable": false
+        },
+        "side": {
+          "type": "TooltipSide",
+          "resolvedType": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+          "attribute": "side",
+          "default": "'top'",
+          "required": false,
+          "mutable": false
+        },
+        "sideOffset": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "side-offset",
+          "default": "TOKEN_CSS_LENGTHS.space050",
+          "required": false,
+          "mutable": false,
+          "description": "Gap between anchor and tooltip — number (px) or TokoMo length."
+        },
+        "size": {
+          "type": "TooltipSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density (height, padding, type)."
         }
-      ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "label": {
-        "type": "string",
-        "required": true
-      },
-      "size": {
-        "type": "'md' | 'sm' | 'xs'",
-        "default": "'md'",
-        "description": "Control-density height/padding/type."
-      },
-      "children": {
-        "type": "React.ReactElement",
-        "required": true
-      },
-      "side": {
-        "type": "'top' | 'right' | 'bottom' | 'left'",
-        "default": "'top'"
-      },
       "align": {
-        "type": "'start' | 'center' | 'end'",
-        "default": "'center'"
+        "type": "TooltipAlign",
+        "resolvedType": "\"center\" | \"end\" | \"start\"",
+        "attribute": "align",
+        "default": "'center'",
+        "required": false,
+        "mutable": false
+      },
+      "alignOffset": {
+        "type": "number | string",
+        "resolvedType": "number | string",
+        "attribute": "align-offset",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Cross-axis offset — number (px) or TokoMo length."
       },
       "delay": {
         "type": "number | string",
-        "default": "'var(--effect-animation-delay-medium-3)' /* 1000ms */",
-        "description": "Hover/focus show delay. Default medium-3 (1000ms). Number (ms) or TokoMo time token. Instant reopen after a recent dismiss. Prefer default; override only for denser chrome or rare actions."
+        "resolvedType": "number | string",
+        "attribute": "delay",
+        "default": "TOKEN_DEFAULTS.animationDelayMedium3",
+        "required": false,
+        "mutable": false,
+        "description": "Hover show delay before the tooltip appears.\nDefault: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms)\nor a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the\ninitial hover/focus show only — after a recent dismiss, reopen is instant.\nPrefer the default; override only for denser chrome or rare/destructive actions."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false,
+        "description": "Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay\nmounted for layout/animation stability (e.g. PanelNav expand/collapse)."
       },
       "shortcutKey": {
-        "type": "string",
-        "description": "Displays keyboard shortcut hint."
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "shortcut-key",
+        "required": false,
+        "mutable": false
+      },
+      "shortcutKeyPosition": {
+        "type": "'start' | 'end'",
+        "resolvedType": "\"end\" | \"start\"",
+        "attribute": "shortcut-key-position",
+        "default": "'end'",
+        "required": false,
+        "mutable": false
+      },
+      "side": {
+        "type": "TooltipSide",
+        "resolvedType": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "attribute": "side",
+        "default": "'top'",
+        "required": false,
+        "mutable": false
+      },
+      "sideOffset": {
+        "type": "number | string",
+        "resolvedType": "number | string",
+        "attribute": "side-offset",
+        "default": "TOKEN_CSS_LENGTHS.space050",
+        "required": false,
+        "mutable": false,
+        "description": "Gap between anchor and tooltip — number (px) or TokoMo length."
+      },
+      "size": {
+        "type": "TooltipSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density (height, padding, type)."
       }
     },
-    "exports": [
-      "Tooltip"
-    ],
-    "types": [
-      "TooltipProps",
-      "TooltipSide",
-      "TooltipAlign",
-      "TooltipSize"
-    ]
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-tooltip",
+      "react": "DsTooltip",
+      "angular": "DsTooltip"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-tooltip.js';",
+        "example": "<ds-tooltip></ds-tooltip>"
+      },
+      "react": {
+        "import": "import { DsTooltip } from '@ds-mo/ui/react';",
+        "example": "<DsTooltip />"
+      },
+      "angular": {
+        "import": "import { DsTooltip } from '@ds-mo/ui/angular/ds-tooltip';",
+        "example": "<ds-tooltip></ds-tooltip>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -85,11 +213,6 @@
     {
       "path": "src/wc/components/Tooltip/Tooltip.css",
       "content": "@import '../../utils/control-density.css';\n\n.tooltip-popup {\n  box-sizing: border-box;\n  background-color: var(--color-background-primary);\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  box-shadow: var(--effect-elevation-elevated-floating);\n  white-space: nowrap;\n  pointer-events: none;\n  animation: tooltipFadeIn var(--effect-motion-short-2) forwards;\n  will-change: transform;\n  backface-visibility: hidden;\n}\n\n/* Warm handoff between nearby triggers — no enter fade (avoids 20–100ms lag). */\n.tooltip-popup--instant {\n  animation: none;\n  opacity: 1;\n}\n\n.tooltip-popup--closing {\n  animation: tooltipFadeOut var(--effect-motion-short-3) forwards;\n}\n\n/* Density: md / sm / xs via `.ds-control--*` on `.tooltip-inner`. */\n.tooltip-inner {\n  box-sizing: border-box;\n  height: var(--ds-control-height, var(--dimension-size-400));\n  display: flex;\n  align-items: center;\n  gap: var(--ds-control-gap, var(--dimension-space-050));\n  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));\n}\n\n/*\n * Label layout lives on ds-text (metric-box + control label-inset).\n * NOTE: Stencil scopes this to `ds-text.sc-ds-tooltip`, but portaled\n * createElement ds-text loses that class when Text's <Host class> renders.\n * `renderPopupContent` therefore also sets these as inline styles.\n */\n.tooltip-inner > ds-text {\n  flex-shrink: 0;\n  min-width: max-content;\n  max-width: none;\n  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));\n  color: var(--color-foreground-primary);\n}\n\n.key-hint {\n  width: var(--ds-control-icon, var(--dimension-size-200));\n  height: var(--ds-control-icon, var(--dimension-size-200));\n  flex-shrink: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);\n  border-bottom-width: var(--dimension-stroke-width-025);\n  border-radius: var(--dimension-radius-025);\n  color: var(--color-foreground-primary);\n}\n\n@keyframes tooltipFadeIn {\n  from { opacity: 0; }\n  to   { opacity: 1; }\n}\n\n@keyframes tooltipFadeOut {\n  from { opacity: 1; }\n  to   { opacity: 0; }\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Tooltip/Tooltip.d.ts",
-      "content": "import '../Text/Text';\nexport type TooltipSide = 'top' | 'right' | 'bottom' | 'left';\nexport type TooltipAlign = 'start' | 'center' | 'end';\nexport type TooltipSize = 'md' | 'sm' | 'xs';\n/**\n * Imperative body portal for the popup.\n * Stencil must not own the portaled node — moving a VDOM child to `document.body`\n * causes recreate → re-portal → @State loops that freeze the page.\n */\nexport declare class Tooltip {\n    el: HTMLElement;\n    /**\n     * Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay\n     * mounted for layout/animation stability (e.g. PanelNav expand/collapse).\n     */\n    label: string;\n    /** Control density (height, padding, type). */\n    size: TooltipSize;\n    side: TooltipSide;\n    align: TooltipAlign;\n    /** Gap between anchor and tooltip — number (px) or TokoMo length. */\n    sideOffset: number | string;\n    /** Cross-axis offset — number (px) or TokoMo length. */\n    alignOffset: number | string;\n    /**\n     * Hover show delay before the tooltip appears.\n     * Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms)\n     * or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the\n     * initial hover/focus show only — after a recent dismiss, reopen is instant.\n     * Prefer the default; override only for denser chrome or rare/destructive actions.\n     */\n    delay: number | string;\n    shortcutKey: string | undefined;\n    shortcutKeyPosition: 'start' | 'end';\n    private tooltipId;\n    private delayTimer;\n    private closeTimer;\n    private anchor;\n    private popupEl;\n    private positionObserver;\n    private skipEnterAnimation;\n    private isOpen;\n    private mouseEnterHandler;\n    private mouseLeaveHandler;\n    /** focusin/focusout so nested focus targets (e.g. ds-button-* inner button) still open the tip. */\n    private focusHandler;\n    private blurHandler;\n    componentDidLoad(): void;\n    disconnectedCallback(): void;\n    onContentOrPositionChange(): void;\n    private get viewportPadPx();\n    private get sideOffsetPx();\n    private get alignOffsetPx();\n    private get hoverDelayMs();\n    private get instantReopenMs();\n    private get fadeOutMs();\n    private get tooltipFallbackWidthPx();\n    private get tooltipFallbackHeightPx();\n    private bindAnchor;\n    private unbindAnchor;\n    private clearTimers;\n    private destroyPopup;\n    /**\n     * Position after `ds-text` upgrades and lays out. Measuring synchronously in\n     * `mountPopup` reads a collapsed/fallback width and places left/right tips wrong.\n     */\n    private schedulePosition;\n    /** Drop the open tip immediately (warm handoff to another tooltip). */\n    private hideInstant;\n    private show;\n    private hide;\n    private mountPopup;\n    private renderPopupContent;\n    private calculatePosition;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

@@ -22,11 +22,17 @@ jobs:
       - name: Type-check
         run: npm run typecheck
 
+      - name: Build
+        run: npm run build
+
+      - name: Regenerate component registry
+        run: npm run registry:build
+
       - name: Validate agent contract
         run: npm run agent:validate
 
-      - name: Build
-        run: npm run build
+      - name: Verify component registry is current
+        run: git diff --exit-code public/r
 
       - name: Unit tests
         run: npm test
@@ -38,7 +44,8 @@ jobs:
         run: |
           for f in \
             dist/components/index.js \
-            dist/components/index.d.ts; do
+            dist/components/index.d.ts \
+            dist/docs/components.json; do
             if [ ! -f "$f" ]; then
               echo "❌ Missing expected output: $f"
               exit 1

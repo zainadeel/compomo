@@ -1,0 +1,121 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chart-bar",
+  "title": "ChartBar",
+  "description": "ChartBar component from @ds-mo/ui.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-bar",
+    "source": "src/wc/components/ChartBar/ChartBar.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "data": {
+          "type": "ChartDatum[]",
+          "resolvedType": "ChartDatum[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Bars to render. Set as a JS property (not an HTML attribute)."
+        },
+        "height": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "height",
+          "default": "240",
+          "required": false,
+          "mutable": false
+        },
+        "width": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "width",
+          "default": "480",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "data": {
+        "type": "ChartDatum[]",
+        "resolvedType": "ChartDatum[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Bars to render. Set as a JS property (not an HTML attribute)."
+      },
+      "height": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "height",
+        "default": "240",
+        "required": false,
+        "mutable": false
+      },
+      "width": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "width",
+        "default": "480",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-chart-bar",
+      "react": "DsChartBar",
+      "angular": "DsChartBar"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-chart-bar.js';",
+        "example": "<ds-chart-bar></ds-chart-bar>"
+      },
+      "react": {
+        "import": "import { DsChartBar } from '@ds-mo/ui/react';",
+        "example": "<DsChartBar />"
+      },
+      "angular": {
+        "import": "import { DsChartBar } from '@ds-mo/ui/angular/ds-chart-bar';",
+        "example": "<ds-chart-bar></ds-chart-bar>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: data.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/ChartBar/ChartBar.css",
+      "content": ":host {\n  display: inline-flex;\n  font-family: var(--typography-font-family);\n}\n\n.chart-bar__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-bar__axis-label {\n  fill: var(--color-foreground-tertiary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-bar__bar {\n  rx: var(--dimension-radius-050);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ChartBar/ChartBar.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport { scaleBand, scaleLinear } from 'd3-scale';\nimport { max } from 'd3-array';\nimport { categoryColor } from '../../utils/chart-colors';\nimport type { ChartDatum } from '../../utils/chart-types';\n\nconst MARGIN = { top: 16, right: 16, bottom: 24, left: 32 };\n\n@Component({\n  tag: 'ds-chart-bar',\n  styleUrl: 'ChartBar.css',\n  scoped: true,\n})\nexport class ChartBar {\n  /** Bars to render. Set as a JS property (not an HTML attribute). */\n  @Prop() data: ChartDatum[] = [];\n  @Prop() width: number = 480;\n  @Prop() height: number = 240;\n\n  render() {\n    const innerWidth = this.width - MARGIN.left - MARGIN.right;\n    const innerHeight = this.height - MARGIN.top - MARGIN.bottom;\n\n    const yMax = max(this.data, d => d.value) ?? 0;\n\n    const xScale = scaleBand()\n      .domain(this.data.map(d => d.label))\n      .range([0, innerWidth])\n      .padding(0.35);\n\n    const yScale = scaleLinear()\n      .domain([0, yMax || 1])\n      .range([innerHeight, 0])\n      .nice();\n\n    const yTicks = yScale.ticks(4);\n\n    return (\n      <Host class=\"chart-bar\">\n        <svg\n          class=\"chart-bar__svg\"\n          viewBox={`0 0 ${this.width} ${this.height}`}\n          width={this.width}\n          height={this.height}\n          role=\"img\"\n          aria-label={this.data.map(d => `${d.label}: ${d.value}`).join(', ')}\n        >\n          <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>\n            {yTicks.map(tick => (\n              <g key={`grid-${tick}`} transform={`translate(0, ${yScale(tick)})`}>\n                <line class=\"chart-bar__gridline\" x1={0} x2={innerWidth} />\n                <text class=\"chart-bar__axis-label\" x={-8} text-anchor=\"end\" dominant-baseline=\"middle\">\n                  {tick}\n                </text>\n              </g>\n            ))}\n\n            {this.data.map((d, i) => {\n              const barWidth = xScale.bandwidth();\n              const barX = xScale(d.label) ?? 0;\n              const barY = yScale(d.value);\n              return (\n                <g key={d.label}>\n                  <rect\n                    class=\"chart-bar__bar\"\n                    x={barX}\n                    y={barY}\n                    width={barWidth}\n                    height={innerHeight - barY}\n                    fill={d.color ?? categoryColor(i)}\n                  />\n                  <text\n                    class=\"chart-bar__axis-label\"\n                    x={barX + barWidth / 2}\n                    y={innerHeight + 16}\n                    text-anchor=\"middle\"\n                  >\n                    {d.label}\n                  </text>\n                </g>\n              );\n            })}\n          </g>\n        </svg>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

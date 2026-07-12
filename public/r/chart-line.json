@@ -1,0 +1,153 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chart-line",
+  "title": "ChartLine",
+  "description": "ChartLine component from @ds-mo/ui.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-line",
+    "source": "src/wc/components/ChartLine/ChartLine.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "categories": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "X-axis labels — must match each series' `data` length. Set as a JS property."
+        },
+        "height": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "height",
+          "default": "240",
+          "required": false,
+          "mutable": false
+        },
+        "series": {
+          "type": "ChartSeries[]",
+          "resolvedType": "ChartSeries[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "One or more series to plot. Set as a JS property (not an HTML attribute)."
+        },
+        "showPoints": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-points",
+          "default": "true",
+          "required": false,
+          "mutable": false
+        },
+        "width": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "width",
+          "default": "480",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "categories": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "X-axis labels — must match each series' `data` length. Set as a JS property."
+      },
+      "height": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "height",
+        "default": "240",
+        "required": false,
+        "mutable": false
+      },
+      "series": {
+        "type": "ChartSeries[]",
+        "resolvedType": "ChartSeries[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "One or more series to plot. Set as a JS property (not an HTML attribute)."
+      },
+      "showPoints": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-points",
+        "default": "true",
+        "required": false,
+        "mutable": false
+      },
+      "width": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "width",
+        "default": "480",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-chart-line",
+      "react": "DsChartLine",
+      "angular": "DsChartLine"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-chart-line.js';",
+        "example": "<ds-chart-line></ds-chart-line>"
+      },
+      "react": {
+        "import": "import { DsChartLine } from '@ds-mo/ui/react';",
+        "example": "<DsChartLine />"
+      },
+      "angular": {
+        "import": "import { DsChartLine } from '@ds-mo/ui/angular/ds-chart-line';",
+        "example": "<ds-chart-line></ds-chart-line>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: categories, series.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/ChartLine/ChartLine.css",
+      "content": ":host {\n  display: inline-block;\n  font-family: var(--typography-font-family);\n}\n\n.chart-line__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-line__axis-label {\n  fill: var(--color-foreground-tertiary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-line__path {\n  fill: none;\n  stroke-width: 2;\n}\n\n.chart-line__point {\n  stroke: var(--color-background-primary);\n  stroke-width: 1.5;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ChartLine/ChartLine.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport { line as lineShape } from 'd3-shape';\nimport { scaleLinear, scalePoint } from 'd3-scale';\nimport { max } from 'd3-array';\nimport { categoryColor } from '../../utils/chart-colors';\nimport type { ChartSeries } from '../../utils/chart-types';\n\nconst MARGIN = { top: 16, right: 16, bottom: 24, left: 32 };\n\n@Component({\n  tag: 'ds-chart-line',\n  styleUrl: 'ChartLine.css',\n  scoped: true,\n})\nexport class ChartLine {\n  /** One or more series to plot. Set as a JS property (not an HTML attribute). */\n  @Prop() series: ChartSeries[] = [];\n  /** X-axis labels — must match each series' `data` length. Set as a JS property. */\n  @Prop() categories: string[] = [];\n  @Prop() width: number = 480;\n  @Prop() height: number = 240;\n  @Prop() showPoints: boolean = true;\n\n  render() {\n    const innerWidth = this.width - MARGIN.left - MARGIN.right;\n    const innerHeight = this.height - MARGIN.top - MARGIN.bottom;\n\n    const allValues = this.series.flatMap(s => s.data);\n    const yMax = max(allValues) ?? 0;\n\n    const xScale = scalePoint<number>()\n      .domain(this.categories.map((_, i) => i))\n      .range([0, innerWidth]);\n\n    const yScale = scaleLinear()\n      .domain([0, yMax || 1])\n      .range([innerHeight, 0])\n      .nice();\n\n    const lineGenerator = lineShape<number>()\n      .x((_, i) => xScale(i) ?? 0)\n      .y(d => yScale(d));\n\n    const yTicks = yScale.ticks(4);\n\n    return (\n      <Host class=\"chart-line\">\n        <svg\n          class=\"chart-line__svg\"\n          viewBox={`0 0 ${this.width} ${this.height}`}\n          width={this.width}\n          height={this.height}\n          role=\"img\"\n          aria-label={this.series.map(s => s.name).join(', ')}\n        >\n          <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>\n            {yTicks.map(tick => (\n              <g key={`grid-${tick}`} transform={`translate(0, ${yScale(tick)})`}>\n                <line class=\"chart-line__gridline\" x1={0} x2={innerWidth} />\n                <text class=\"chart-line__axis-label\" x={-8} text-anchor=\"end\" dominant-baseline=\"middle\">\n                  {tick}\n                </text>\n              </g>\n            ))}\n\n            {this.categories.map((label, i) => (\n              <text\n                key={`x-${label}`}\n                class=\"chart-line__axis-label\"\n                x={xScale(i) ?? 0}\n                y={innerHeight + 16}\n                text-anchor=\"middle\"\n              >\n                {label}\n              </text>\n            ))}\n\n            {this.series.map((s, si) => {\n              const color = s.color ?? categoryColor(si);\n              return (\n                <g key={s.name}>\n                  <path class=\"chart-line__path\" d={lineGenerator(s.data) ?? undefined} stroke={color} />\n                  {this.showPoints &&\n                    s.data.map((d, i) => (\n                      <circle\n                        key={`${s.name}-${i}`}\n                        class=\"chart-line__point\"\n                        cx={xScale(i) ?? 0}\n                        cy={yScale(d)}\n                        r={3}\n                        fill={color}\n                      />\n                    ))}\n                </g>\n              );\n            })}\n          </g>\n        </svg>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

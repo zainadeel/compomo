@@ -8,89 +8,130 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-card-data-viz-donut.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-card-data-viz-donut></ds-card-data-viz-donut>",
-        "react": "<ds-card-data-viz-donut></ds-card-data-viz-donut>",
-        "angular": "<ds-card-data-viz-donut></ds-card-data-viz-donut>"
+    "source": "src/wc/components/CardDataVizDonut/CardDataVizDonut.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "cardWidth": {
+          "type": "CardDataVizDonutWidth",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "card-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Card width token — also sets matching min-height."
+        },
+        "filterLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "filter-label",
+          "default": "'Filter'",
+          "required": false,
+          "mutable": false
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "Widget heading shown in the card header."
+        }
       },
       "events": [
         {
           "name": "dsFilterClick",
-          "listen": "element.addEventListener('dsFilterClick', handler)",
-          "reactProp": "onDsFilterClick={handler}",
-          "angularBinding": "(dsFilterClick)=\"handler($event)\""
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emits when the header filter control is activated."
         }
       ],
-      "internalDependencies": [
-        {
-          "component": "Card",
-          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "ButtonUnfilled",
-          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "ChartDonut",
-          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "ChartLegend",
-          "note": "Used internally by CardDataVizDonut. Bundled in @ds-mo/ui."
-        }
-      ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
+      "cardWidth": {
+        "type": "CardDataVizDonutWidth",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "card-width",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Card width token — also sets matching min-height."
+      },
+      "filterLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "filter-label",
+        "default": "'Filter'",
+        "required": false,
+        "mutable": false
+      },
       "heading": {
         "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
         "required": true,
-        "description": "Widget title in the card header."
-      },
-      "cardWidth": {
-        "type": "'sm' | 'md' | 'lg'",
-        "default": "'md'",
-        "description": "Width token; also sets matching min-height."
+        "mutable": false,
+        "description": "Widget heading shown in the card header."
       }
     },
-    "exports": [
-      "CardDataVizDonut"
+    "events": [
+      {
+        "name": "dsFilterClick",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emits when the header filter control is activated."
+      }
     ],
-    "types": [
-      "CardDataVizDonutWidth"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-data-viz-donut",
+      "react": "DsCardDataVizDonut",
+      "angular": "DsCardDataVizDonut"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-data-viz-donut.js';",
+        "example": "<ds-card-data-viz-donut></ds-card-data-viz-donut>"
+      },
+      "react": {
+        "import": "import { DsCardDataVizDonut } from '@ds-mo/ui/react';",
+        "example": "<DsCardDataVizDonut />"
+      },
+      "angular": {
+        "import": "import { DsCardDataVizDonut } from '@ds-mo/ui/angular/ds-card-data-viz-donut';",
+        "example": "<ds-card-data-viz-donut></ds-card-data-viz-donut>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens",
-    "@ds-mo/icons"
+    "@ds-mo/tokens"
   ],
   "registryDependencies": [
-    "card",
     "button-unfilled",
-    "chart-donut",
-    "chart-legend"
+    "card"
   ],
   "files": [
     {
       "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.css",
       "content": ":host {\n  display: contents;\n}\n\n.card-data-viz-donut__layout {\n  display: flex;\n  flex-direction: column;\n  flex: 1 1 auto;\n  min-height: 0;\n  height: 100%;\n  gap: var(--dimension-space-200);\n  box-sizing: border-box;\n}\n\n/*\n * Chart region fills leftover space; legend stays content-sized.\n * Padding is per-region so the body gap isn't doubled at the shared edge.\n */\n.card-data-viz-donut__chart-region {\n  flex: 1 1 auto;\n  min-height: 0;\n  /* Stretch the slotted donut to the full region; the donut centers its own SVG. */\n  display: grid;\n  padding: var(--dimension-space-400) var(--dimension-space-400) 0 var(--dimension-space-400);\n  box-sizing: border-box;\n}\n\n/* Make the slotted donut stretch to the region so ResizeObserver can measure fill size. */\n.card-data-viz-donut__chart-region > * {\n  width: 100%;\n  height: 100%;\n  min-width: 0;\n  min-height: 0;\n  max-width: 100%;\n  max-height: 100%;\n}\n\n.card-data-viz-donut__legend-region {\n  flex: 0 0 auto;\n  padding: 0 var(--dimension-space-100) var(--dimension-space-100) var(--dimension-space-100);\n  box-sizing: border-box;\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nimport type { CardWidth } from '../Card/Card';\nexport type CardDataVizDonutWidth = CardWidth;\n/**\n * Donut data-viz card — shared `ds-card` chrome with a fill chart region and\n * content-sized legend. Hover sync between chart and legend stays here.\n */\nexport declare class CardDataVizDonut {\n    el: HTMLElement;\n    /** Widget heading shown in the card header. */\n    heading: string;\n    /** Card width token — also sets matching min-height. */\n    cardWidth: CardDataVizDonutWidth;\n    /** Emits when the header filter control is activated. */\n    dsFilterClick: EventEmitter<void>;\n    private hasChartSlot;\n    private hasLegendSlot;\n    componentWillRender(): void;\n    componentDidLoad(): void;\n    disconnectedCallback(): void;\n    private handleChartHover;\n    private handleLegendHover;\n    private handleFilterClick;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

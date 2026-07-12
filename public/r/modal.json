@@ -8,66 +8,125 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/modal",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-modal.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-modal></ds-modal>",
-        "react": "<ds-modal></ds-modal>",
-        "angular": "<ds-modal></ds-modal>"
+    "source": "src/wc/components/Modal/Modal.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false
+        },
+        "modalWidth": {
+          "type": "ModalWidth | string",
+          "resolvedType": "string",
+          "attribute": "modal-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": true
+        },
+        "subtitle": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "subtitle",
+          "required": false,
+          "mutable": false
+        }
       },
-      "internalDependencies": [
+      "events": [
         {
-          "component": "Text",
-          "note": "Used internally by Modal. Bundled in @ds-mo/ui."
+          "name": "dsClose",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "isOpen": {
-        "type": "boolean",
-        "required": true
-      },
-      "onClose": {
-        "type": "() => void",
-        "required": true
-      },
-      "title": {
+      "heading": {
         "type": "string",
-        "required": true
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false
       },
-      "children": {
-        "type": "React.ReactNode",
-        "required": true
+      "modalWidth": {
+        "type": "ModalWidth | string",
+        "resolvedType": "string",
+        "attribute": "modal-width",
+        "default": "'md'",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": true
       },
       "subtitle": {
-        "type": "React.ReactNode"
-      },
-      "footer": {
-        "type": "React.ReactNode"
-      },
-      "width": {
-        "type": "'sm' | 'md' | 'lg' | string",
-        "default": "'md'",
-        "description": "sm=400px, md=560px, lg=720px, or custom CSS value."
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "subtitle",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Modal"
+    "events": [
+      {
+        "name": "dsClose",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "ModalProps",
-      "ModalWidth"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-modal",
+      "react": "DsModal",
+      "angular": "DsModal"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-modal.js';",
+        "example": "<ds-modal></ds-modal>"
+      },
+      "react": {
+        "import": "import { DsModal } from '@ds-mo/ui/react';",
+        "example": "<DsModal />"
+      },
+      "angular": {
+        "import": "import { DsModal } from '@ds-mo/ui/angular/ds-modal';",
+        "example": "<ds-modal></ds-modal>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -80,11 +139,6 @@
     {
       "path": "src/wc/components/Modal/Modal.css",
       "content": ".modal-backdrop {\n  background-color: var(--color-background-shade);\n  backdrop-filter: blur(var(--effect-blur-sm));\n  -webkit-backdrop-filter: blur(var(--effect-blur-sm));\n  animation: modalBackdropIn var(--effect-motion-short-2) forwards;\n  box-sizing: border-box;\n}\n\n.modal-backdrop--closing {\n  animation: modalBackdropOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalBackdropIn {\n  from { opacity: 0; }\n  to   { opacity: 1; }\n}\n\n@keyframes modalBackdropOut {\n  from { opacity: 1; }\n  to   { opacity: 0; }\n}\n\n.modal-dialog {\n  display: flex;\n  flex-direction: column;\n  max-height: calc(100vh - 2 * var(--dimension-space-200));\n  overflow: hidden;\n  background-color: var(--color-background-primary);\n  border-radius: var(--dimension-radius-300);\n  box-shadow: var(--effect-elevation-elevated-floating);\n  animation: modalDialogIn var(--effect-motion-short-2) forwards;\n  outline: none;\n  box-sizing: border-box;\n}\n\n.modal-backdrop--closing .modal-dialog {\n  animation: modalDialogOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalDialogIn {\n  from { opacity: 0; transform: scale(0.97) translateY(4px); }\n  to   { opacity: 1; transform: scale(1) translateY(0); }\n}\n\n@keyframes modalDialogOut {\n  from { opacity: 1; transform: scale(1) translateY(0); }\n  to   { opacity: 0; transform: scale(0.97) translateY(4px); }\n}\n\n.modal-header {\n  padding: var(--dimension-space-200) var(--dimension-space-200) var(--dimension-space-100);\n  flex-shrink: 0;\n}\n\n.modal-subtitle {\n  margin-top: var(--dimension-space-100);\n}\n\n.modal-body {\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  overflow-y: auto;\n  flex: 1;\n}\n\n.modal-footer {\n  padding: var(--dimension-space-100) var(--dimension-space-200) var(--dimension-space-200);\n  flex-shrink: 0;\n}\n\n.modal-footer:empty { display: none; }\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Modal/Modal.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nexport type ModalWidth = 'sm' | 'md' | 'lg';\nexport declare class Modal {\n    el: HTMLElement;\n    open: boolean;\n    heading: string;\n    subtitle: string | undefined;\n    modalWidth: ModalWidth | string;\n    private shouldRender;\n    private closing;\n    dsClose: EventEmitter<void>;\n    private instanceId;\n    private titleId;\n    private subtitleId;\n    private previousFocus;\n    private escapeHandler;\n    private tabHandler;\n    private closeTimer;\n    componentDidLoad(): void;\n    disconnectedCallback(): void;\n    onOpenChange(isOpen: boolean): void;\n    private focusFirst;\n    private getFocusables;\n    private setupListeners;\n    private teardownListeners;\n    private close;\n    private handleBackdropMouseDown;\n    private get resolvedWidth();\n    private get closeAnimationMs();\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

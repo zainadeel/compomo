@@ -1,0 +1,124 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shell-gradient-picker",
+  "title": "ShellGradientPicker",
+  "description": "ShellGradientPicker component from @ds-mo/ui.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-picker",
+    "source": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "groupLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "group-label",
+          "default": "'Shell gradient theme'",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "ShellGradientPreset",
+          "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+          "attribute": "value",
+          "default": "'neutral'",
+          "required": false,
+          "mutable": true,
+          "description": "Active shell wash preset."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "ShellGradientPreset",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "groupLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "group-label",
+        "default": "'Shell gradient theme'",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "ShellGradientPreset",
+        "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+        "attribute": "value",
+        "default": "'neutral'",
+        "required": false,
+        "mutable": true,
+        "description": "Active shell wash preset."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "ShellGradientPreset",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-shell-gradient-picker",
+      "react": "DsShellGradientPicker",
+      "angular": "DsShellGradientPicker"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-shell-gradient-picker.js';",
+        "example": "<ds-shell-gradient-picker></ds-shell-gradient-picker>"
+      },
+      "react": {
+        "import": "import { DsShellGradientPicker } from '@ds-mo/ui/react';",
+        "example": "<DsShellGradientPicker />"
+      },
+      "angular": {
+        "import": "import { DsShellGradientPicker } from '@ds-mo/ui/angular/ds-shell-gradient-picker';",
+        "example": "<ds-shell-gradient-picker></ds-shell-gradient-picker>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "shell-gradient-swatch"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n}\n\n/* One row — same width footprint as menu items; 24px orbs + divider inside. */\n.shell-gradient-picker {\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  min-height: var(--dimension-size-400);\n  gap: var(--dimension-space-100);\n  padding: var(--dimension-space-100);\n}\n\n.shell-gradient-picker__divider {\n  flex: 0 0 auto;\n  align-self: center;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-size-300);\n  background-color: var(--color-border-tertiary);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport {\n  SHELL_GRADIENT_WASH_PRESETS,\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  type ShellGradientPreset,\n} from '../ShellGradientSwatch/shell-gradient-swatch-types';\n\n@Component({\n  tag: 'ds-shell-gradient-picker',\n  styleUrl: 'ShellGradientPicker.css',\n  scoped: true,\n})\nexport class ShellGradientPicker {\n  /** Active shell wash preset. */\n  @Prop({ mutable: true, reflect: true }) value: ShellGradientPreset =\n    DEFAULT_SHELL_GRADIENT_PRESET;\n  @Prop() groupLabel: string = 'Shell gradient theme';\n\n  @Event() dsChange!: EventEmitter<ShellGradientPreset>;\n\n  private handleSwatchSelect = (preset: ShellGradientPreset) => {\n    if (preset === this.value) return;\n    this.value = preset;\n    this.dsChange.emit(preset);\n  };\n\n  private renderSwatch(preset: ShellGradientPreset) {\n    return (\n      <ds-shell-gradient-swatch\n        key={preset}\n        preset={preset}\n        selected={this.value === preset}\n        onDsSelect={(e: CustomEvent<ShellGradientPreset>) => {\n          e.stopPropagation();\n          this.handleSwatchSelect(e.detail);\n        }}\n      />\n    );\n  }\n\n  render() {\n    return (\n      <Host>\n        <div\n          class=\"shell-gradient-picker\"\n          role=\"radiogroup\"\n          aria-label={this.groupLabel}\n        >\n          {this.renderSwatch('none')}\n          <div class=\"shell-gradient-picker__divider\" aria-hidden=\"true\" />\n          {SHELL_GRADIENT_WASH_PRESETS.map(preset => this.renderSwatch(preset))}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

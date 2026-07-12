@@ -16,6 +16,7 @@ const REQUIRED_PATHS = [
   'dist/react/components.d.ts',
   'dist/framework/angular.js',
   'dist/framework/angular.d.ts',
+  'dist/agent.json',
 ];
 
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };

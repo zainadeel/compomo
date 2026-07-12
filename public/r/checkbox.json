@@ -8,96 +8,209 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-checkbox.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-checkbox></ds-checkbox>",
-        "react": "<ds-checkbox></ds-checkbox>",
-        "angular": "<ds-checkbox></ds-checkbox>"
+    "source": "src/wc/components/Checkbox/Checkbox.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "checked",
+          "default": "false",
+          "required": false,
+          "mutable": true
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "indeterminate": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "indeterminate",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "'on'",
+          "required": false,
+          "mutable": false
+        }
       },
-      "internalDependencies": [
+      "events": [
         {
-          "component": "Text",
-          "note": "Used internally by Checkbox. Bundled in @ds-mo/ui."
+          "name": "dsChange",
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "name": {
-        "type": "string",
-        "description": "Native form field name."
+      "checked": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "checked",
+        "default": "false",
+        "required": false,
+        "mutable": true
       },
       "disabled": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
         "default": "false",
-        "description": "Standard disabled state; Angular forms set this automatically."
-      },
-      "required": {
-        "type": "boolean",
-        "default": "false",
-        "description": "Participates in native constraint validation."
-      },
-      "requiredMessage": {
-        "type": "string",
-        "default": "'This field is required.'",
-        "description": "Localizable required validation message."
-      },
-      "label": {
-        "type": "string",
-        "required": true
-      },
-      "checked": {
-        "type": "boolean",
-        "default": "false"
-      },
-      "value": {
-        "type": "string",
-        "default": "'on'",
-        "description": "Submitted value when checked."
+        "required": false,
+        "mutable": false
       },
       "indeterminate": {
         "type": "boolean",
-        "default": "false"
-      },
-      "onChange": {
-        "type": "(checked: boolean) => void"
+        "resolvedType": "boolean",
+        "attribute": "indeterminate",
+        "default": "false",
+        "required": false,
+        "mutable": false
       },
       "isInactive": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
         "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
+        "required": false,
+        "mutable": false
       },
-      "checkedIcon": {
-        "type": "IconComponent"
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false
       },
-      "uncheckedIcon": {
-        "type": "IconComponent"
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false
       },
-      "indeterminateIcon": {
-        "type": "IconComponent"
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "'on'",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Checkbox"
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "CheckboxProps"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-checkbox",
+      "react": "DsCheckbox",
+      "angular": "DsCheckbox"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-checkbox.js';",
+        "example": "<ds-checkbox></ds-checkbox>"
+      },
+      "react": {
+        "import": "import { DsCheckbox } from '@ds-mo/ui/react';",
+        "example": "<DsCheckbox />"
+      },
+      "angular": {
+        "import": "import { DsCheckbox } from '@ds-mo/ui/angular/ds-checkbox';",
+        "example": "<ds-checkbox></ds-checkbox>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens",
-    "@ds-mo/icons"
+    "@ds-mo/tokens"
   ],
   "registryDependencies": [
     "text"
@@ -110,7 +223,7 @@
     },
     {
       "path": "src/wc/components/Checkbox/Checkbox.tsx",
-      "content": "import { AttachInternals, Component, Prop, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Checkbox {\n  @AttachInternals() internals!: ElementInternals;\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  @Prop() label!: string;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() indeterminate: boolean = false;\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.disabled = disabled;\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleActivate = () => {\n    if (this.isInactive || this.disabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled;\n    const isMarked = this.checked || this.indeterminate;\n\n    return (\n      <Host\n        role=\"checkbox\"\n        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={inactive || undefined}\n        aria-labelledby={this.labelId}\n        tabIndex={inactive ? -1 : 0}\n        class={{ checkbox: true, 'ds-control-inactive': inactive }}\n        onClick={this.handleActivate}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class={{ box: true, 'box--marked': isMarked }}>\n          {isMarked && (\n            <span class=\"checkmark\" aria-hidden=\"true\">\n              {this.indeterminate ? '−' : '✓'}\n            </span>\n          )}\n        </span>\n        <ds-text class=\"checkbox__label\" as=\"span\" variant=\"text-body-medium\" textId={this.labelId}>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Checkbox {\n  @AttachInternals() internals!: ElementInternals;\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  @Prop() label!: string;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() indeterminate: boolean = false;\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleActivate = () => {\n    if (this.isInactive || this.disabled || this.formDisabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const isMarked = this.checked || this.indeterminate;\n\n    return (\n      <Host\n        role=\"checkbox\"\n        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={inactive ? 'true' : undefined}\n        aria-labelledby={this.labelId}\n        tabIndex={inactive ? -1 : 0}\n        class={{ checkbox: true, 'ds-control-inactive': inactive }}\n        onClick={this.handleActivate}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class={{ box: true, 'box--marked': isMarked }}>\n          {isMarked && (\n            <span class=\"checkmark\" aria-hidden=\"true\">\n              {this.indeterminate ? '−' : '✓'}\n            </span>\n          )}\n        </span>\n        <ds-text class=\"checkbox__label\" as=\"span\" variant=\"text-body-medium\" textId={this.labelId}>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

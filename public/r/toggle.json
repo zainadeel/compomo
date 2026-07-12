@@ -2,77 +2,181 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "toggle",
   "title": "Toggle",
-  "description": "Switch control with on/off state and accessible role=\"switch\".",
+  "description": "Switch control with on/off state and accessible switch semantics.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-toggle.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-toggle></ds-toggle>",
-        "react": "<ds-toggle></ds-toggle>",
-        "angular": "<ds-toggle></ds-toggle>"
+    "source": "src/wc/components/Toggle/Toggle.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "checked",
+          "default": "false",
+          "required": false,
+          "mutable": true
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "'on'",
+          "required": false,
+          "mutable": false
+        }
       },
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "name": {
-        "type": "string",
-        "description": "Native form field name."
+      "checked": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "checked",
+        "default": "false",
+        "required": false,
+        "mutable": true
       },
       "disabled": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
         "default": "false",
-        "description": "Standard disabled state; Angular forms set this automatically."
-      },
-      "required": {
-        "type": "boolean",
-        "default": "false",
-        "description": "Participates in native constraint validation."
-      },
-      "requiredMessage": {
-        "type": "string",
-        "default": "'This field is required.'",
-        "description": "Localizable required validation message."
-      },
-      "checked": {
-        "type": "boolean",
-        "default": "false"
-      },
-      "value": {
-        "type": "string",
-        "default": "'on'",
-        "description": "Submitted value when checked."
-      },
-      "onChange": {
-        "type": "(checked: boolean) => void"
+        "required": false,
+        "mutable": false
       },
       "isInactive": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
         "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
+        "required": false,
+        "mutable": false
       },
-      "aria-label": {
-        "type": "string"
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "'on'",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Toggle"
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "ToggleProps"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-toggle",
+      "react": "DsToggle",
+      "angular": "DsToggle"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-toggle.js';",
+        "example": "<ds-toggle></ds-toggle>"
+      },
+      "react": {
+        "import": "import { DsToggle } from '@ds-mo/ui/react';",
+        "example": "<DsToggle />"
+      },
+      "angular": {
+        "import": "import { DsToggle } from '@ds-mo/ui/angular/ds-toggle';",
+        "example": "<ds-toggle></ds-toggle>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -87,7 +191,7 @@
     },
     {
       "path": "src/wc/components/Toggle/Toggle.tsx",
-      "content": "import { AttachInternals, Component, Prop, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\n@Component({\n  tag: 'ds-toggle',\n  styleUrl: 'Toggle.css',\n  shadow: true,\n  formAssociated: true,\n})\nexport class Toggle {\n  @AttachInternals() internals!: ElementInternals;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop() name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.disabled = disabled;\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleClick = () => {\n    if (this.isInactive || this.disabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.isInactive || this.disabled) return;\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled;\n    return (\n      <Host\n        role=\"switch\"\n        aria-checked={String(this.checked)}\n        aria-disabled={inactive || undefined}\n        tabIndex={inactive ? -1 : 0}\n        class={{ toggle: true, checked: this.checked, 'ds-control-inactive': inactive }}\n        onClick={this.handleClick}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class=\"thumb\" />\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\n@Component({\n  tag: 'ds-toggle',\n  styleUrl: 'Toggle.css',\n  shadow: true,\n  formAssociated: true,\n})\nexport class Toggle {\n  @AttachInternals() internals!: ElementInternals;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleClick = () => {\n    if (this.isInactive || this.disabled || this.formDisabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (this.isInactive || this.disabled || this.formDisabled) return;\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleClick();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    return (\n      <Host\n        role=\"switch\"\n        aria-checked={String(this.checked)}\n        aria-disabled={inactive ? 'true' : undefined}\n        tabIndex={inactive ? -1 : 0}\n        class={{ toggle: true, checked: this.checked, 'ds-control-inactive': inactive }}\n        onClick={this.handleClick}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class=\"thumb\" />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

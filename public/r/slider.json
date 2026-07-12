@@ -8,67 +8,189 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/slider",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-slider.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-slider></ds-slider>",
-        "react": "<ds-slider></ds-slider>",
-        "angular": "<ds-slider></ds-slider>"
+    "source": "src/wc/components/Slider/Slider.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "inputId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "input-id",
+          "required": false,
+          "mutable": false,
+          "description": "Associates with an external <label>. Defaults to an auto-generated ID."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false
+        },
+        "max": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "max",
+          "default": "100",
+          "required": false,
+          "mutable": false
+        },
+        "min": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "min",
+          "default": "0",
+          "required": false,
+          "mutable": false
+        },
+        "step": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "step",
+          "default": "1",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "value",
+          "default": "0",
+          "required": false,
+          "mutable": false
+        },
+        "valueText": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "value-text",
+          "required": false,
+          "mutable": false
+        }
       },
-      "internalDependencies": [
+      "events": [
         {
-          "component": "Text",
-          "note": "Used internally by Slider. Bundled in @ds-mo/ui."
+          "name": "dsChange",
+          "detail": "number",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "value": {
-        "type": "number",
-        "required": true
-      },
-      "onChange": {
-        "type": "(value: number) => void",
-        "required": true
-      },
-      "min": {
-        "type": "number",
-        "default": "0"
-      },
-      "max": {
-        "type": "number",
-        "default": "100"
-      },
-      "step": {
-        "type": "number",
-        "default": "1"
-      },
-      "label": {
-        "type": "string",
-        "required": true
+      "inputId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "input-id",
+        "required": false,
+        "mutable": false,
+        "description": "Associates with an external <label>. Defaults to an auto-generated ID."
       },
       "isInactive": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
         "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
+        "required": false,
+        "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false
+      },
+      "max": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "max",
+        "default": "100",
+        "required": false,
+        "mutable": false
+      },
+      "min": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "min",
+        "default": "0",
+        "required": false,
+        "mutable": false
+      },
+      "step": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "step",
+        "default": "1",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "value",
+        "default": "0",
+        "required": false,
+        "mutable": false
+      },
+      "valueText": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "value-text",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Slider"
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "number",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "SliderProps"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-slider",
+      "react": "DsSlider",
+      "angular": "DsSlider"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-slider.js';",
+        "example": "<ds-slider></ds-slider>"
+      },
+      "react": {
+        "import": "import { DsSlider } from '@ds-mo/ui/react';",
+        "example": "<DsSlider />"
+      },
+      "angular": {
+        "import": "import { DsSlider } from '@ds-mo/ui/angular/ds-slider';",
+        "example": "<ds-slider></ds-slider>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",

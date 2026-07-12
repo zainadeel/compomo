@@ -4,11 +4,19 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
+import {
+  COMPILER_DOCS_PATH,
+  discoverComponents,
+  loadCompilerDocs,
+  validateAuthoredArtifacts,
+  validateRegistryCoverage,
+} from './component-inventory.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const COMPONENT_SCHEMA_PATH = 'agent/schemas/component-agent.schema.json';
 const PATTERN_SCHEMA_PATH = 'agent/schemas/pattern.schema.json';
 const TRILOGY_SCHEMA_PATH = 'agent/schemas/trilogy-manifest.schema.json';
+const MIGRATION_SCHEMA_PATH = 'agent/schemas/component-metadata-migration.schema.json';
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, relativePath), 'utf8'));
@@ -24,16 +32,6 @@ function walk(directory, suffix) {
   }).sort();
 }
 
-function sourceComponents() {
-  const components = new Map();
-  for (const sourcePath of walk('src/wc/components', '.tsx')) {
-    const source = fs.readFileSync(path.join(ROOT, sourcePath), 'utf8');
-    const match = source.match(/@Component\(\{[\s\S]*?\btag:\s*['"](ds-[a-z0-9-]+)['"]/);
-    if (match) components.set(`component:${match[1]}`, { tag: match[1], sourcePath });
-  }
-  return components;
-}
-
 function formatErrors(relativePath, errors = []) {
   return errors.map(error => `${relativePath}${error.instancePath || '/'} ${error.message}`).join('\n');
 }
@@ -43,12 +41,28 @@ export function validateAgentContract() {
   const validateComponent = ajv.compile(readJson(COMPONENT_SCHEMA_PATH));
   const validatePattern = ajv.compile(readJson(PATTERN_SCHEMA_PATH));
   ajv.compile(readJson(TRILOGY_SCHEMA_PATH));
-  const knownComponents = sourceComponents();
+  const validateMigration = ajv.compile(readJson(MIGRATION_SCHEMA_PATH));
+  const inventory = discoverComponents(ROOT);
+  const knownComponents = new Map(inventory.map(component => [component.id, component]));
   const errors = [];
   const ids = new Set();
   const componentDocuments = walk('src/wc/components', '.agent.json');
   const patternDocuments = walk('agent/patterns', '.agent.json');
   const patterns = new Map();
+
+  const migrationPath = 'agent/baseline/component-metadata-migration.json';
+  const migration = readJson(migrationPath);
+  if (!validateMigration(migration)) errors.push(formatErrors(migrationPath, validateMigration.errors));
+  const migrationIds = new Set(migration.missingAgentMetadata ?? []);
+  for (const id of Object.keys(migration.legacySummaries ?? {})) {
+    if (!migrationIds.has(id)) errors.push(`${migrationPath}: remove legacy summary for completed ${id}`);
+  }
+  errors.push(...validateAuthoredArtifacts({
+    root: ROOT,
+    components: inventory,
+    migrationIds,
+    artifactExceptions: migration.artifactExceptions,
+  }).map(error => `${migrationPath}: ${error}`));
 
   for (const relativePath of componentDocuments) {
     const document = readJson(relativePath);
@@ -103,21 +117,36 @@ export function validateAgentContract() {
     }
   }
 
-  const baseline = readJson('agent/baseline/2026-07-11.json');
-  const registry = readJson(baseline.registryCompatibility.masterPath);
-  if (knownComponents.size !== baseline.stencilComponents) {
-    errors.push(`baseline drift: expected ${baseline.stencilComponents} source components, found ${knownComponents.size}`);
-  }
-  if (registry.items.length !== baseline.registryItems) {
-    errors.push(`baseline drift: expected ${baseline.registryItems} registry items, found ${registry.items.length}`);
-  }
-  for (const key of baseline.registryCompatibility.requiredTopLevelKeys) {
+  const compatibility = readJson('agent/baseline/2026-07-11.json').registryCompatibility;
+  const registry = readJson(compatibility.masterPath);
+  errors.push(...validateRegistryCoverage(
+    inventory,
+    registry,
+    fs.readdirSync(path.join(ROOT, 'public/r')),
+  ));
+  for (const key of compatibility.requiredTopLevelKeys) {
     if (!(key in registry)) errors.push(`registry compatibility: missing top-level key ${key}`);
+  }
+
+  const compilerDocs = loadCompilerDocs(ROOT);
+  if (compilerDocs) {
+    for (const component of inventory) {
+      const docs = compilerDocs.get(component.tag);
+      if (!docs) errors.push(`${COMPILER_DOCS_PATH}: missing ${component.tag}`);
+      else if (docs.filePath !== component.sourcePath) {
+        errors.push(`${COMPILER_DOCS_PATH}: ${component.tag} points to ${docs.filePath}, expected ${component.sourcePath}`);
+      }
+    }
+    for (const tag of compilerDocs.keys()) {
+      if (![...inventory].some(component => component.tag === tag)) {
+        errors.push(`${COMPILER_DOCS_PATH}: stale component ${tag}`);
+      }
+    }
   }
 
   if (errors.length) throw new Error(`Agent contract validation failed:\n${errors.filter(Boolean).join('\n')}`);
   return {
-    sourceComponents: knownComponents.size,
+    sourceComponents: inventory.length,
     componentDocuments: componentDocuments.length,
     patternDocuments: patternDocuments.length,
   };

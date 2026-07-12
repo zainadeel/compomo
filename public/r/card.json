@@ -8,54 +8,101 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-card.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-card></ds-card>",
-        "react": "<ds-card></ds-card>",
-        "angular": "<ds-card></ds-card>"
-      },
-      "internalDependencies": [
-        {
-          "component": "Text",
-          "note": "Used internally by Card. Bundled in @ds-mo/ui."
+    "source": "src/wc/components/Card/Card.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "appearance": {
+          "type": "CardAppearance",
+          "resolvedType": "\"default\" | \"editing\"",
+          "attribute": "appearance",
+          "default": "'default'",
+          "required": false,
+          "mutable": false,
+          "description": "Chrome recipe — `editing` applies the settings edit wash."
+        },
+        "cardWidth": {
+          "type": "CardWidth",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "card-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\nmatching `--dimension-card-height-*` so empty bodies still fill the card."
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "Section heading shown in the card header."
         }
-      ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "heading": {
-        "type": "string",
-        "required": true,
-        "description": "Section title in the card header."
+      "appearance": {
+        "type": "CardAppearance",
+        "resolvedType": "\"default\" | \"editing\"",
+        "attribute": "appearance",
+        "default": "'default'",
+        "required": false,
+        "mutable": false,
+        "description": "Chrome recipe — `editing` applies the settings edit wash."
       },
       "cardWidth": {
-        "type": "'sm' | 'md' | 'lg'",
+        "type": "CardWidth",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "card-width",
         "default": "'md'",
-        "description": "Width token; also sets host min-height to the matching --dimension-card-height-*."
+        "required": false,
+        "mutable": false,
+        "description": "Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\nmatching `--dimension-card-height-*` so empty bodies still fill the card."
       },
-      "appearance": {
-        "type": "'default' | 'editing'",
-        "default": "'default'",
-        "description": "Chrome recipe — editing applies the settings edit wash."
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "Section heading shown in the card header."
       }
     },
-    "exports": [
-      "Card"
-    ],
-    "types": [
-      "CardWidth",
-      "CardAppearance"
-    ]
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card",
+      "react": "DsCard",
+      "angular": "DsCard"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card.js';",
+        "example": "<ds-card></ds-card>"
+      },
+      "react": {
+        "import": "import { DsCard } from '@ds-mo/ui/react';",
+        "example": "<DsCard />"
+      },
+      "angular": {
+        "import": "import { DsCard } from '@ds-mo/ui/angular/ds-card';",
+        "example": "<ds-card></ds-card>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -68,11 +115,6 @@
     {
       "path": "src/wc/components/Card/Card.css",
       "content": ":host {\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n  width: var(--_card-width);\n  min-height: var(--_card-min-height);\n  max-width: 100%;\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n  overflow: hidden;\n}\n\n:host(.card--editing) {\n  background-color: var(--color-background-bold-brand);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);\n}\n\n.card__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  height: var(--dimension-size-600);\n  flex-shrink: 0;\n  padding: var(--dimension-space-100);\n  background-color: var(--color-background-secondary);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  box-sizing: border-box;\n}\n\n:host(.card--editing) .card__header {\n  background-color: transparent;\n  border-bottom-color: transparent;\n}\n\n/* Title owns wrap + label inset (was nested wrap 075 + title 025 before metric-box).\n   Beat Text’s block/inline-box display so flex centering still applies. */\nds-text.card__title {\n  flex: 1 1 auto;\n  min-width: 0;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  padding: calc(\n    var(--dimension-space-075) + var(--dimension-space-025)\n  );\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.card__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n\n.card__actions:empty {\n  display: none;\n}\n\n.card__body {\n  flex: 1 1 auto;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n  box-sizing: border-box;\n}\n\n:host(.card--editing) .card__body {\n  border-radius: var(--dimension-radius-025);\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Card/Card.d.ts",
-      "content": "export type CardWidth = 'sm' | 'md' | 'lg';\n/** Visual chrome recipe — default app surface, or settings edit wash. */\nexport type CardAppearance = 'default' | 'editing';\n/**\n * Shared card chrome — width + matching min-height tokens, header (title + actions),\n * and a flex body that fills leftover space. Compose this from settings / data-viz cards.\n */\nexport declare class Card {\n    /** Section heading shown in the card header. */\n    heading: string;\n    /**\n     * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\n     * matching `--dimension-card-height-*` so empty bodies still fill the card.\n     */\n    cardWidth: CardWidth;\n    /** Chrome recipe — `editing` applies the settings edit wash. */\n    appearance: CardAppearance;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

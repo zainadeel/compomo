@@ -8,100 +8,308 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-table.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-table></ds-table>",
-        "react": "<ds-table></ds-table>",
-        "angular": "<ds-table></ds-table>"
+    "source": "src/wc/components/Table/Table.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "columns": {
+          "type": "TableColumn[]",
+          "resolvedType": "TableColumn<unknown>[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "data": {
+          "type": "unknown[]",
+          "resolvedType": "unknown[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "emptyMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "empty-message",
+          "default": "'No results found.'",
+          "required": false,
+          "mutable": false
+        },
+        "loading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "loading",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "loadingLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "loading-label",
+          "default": "'Loading'",
+          "required": false,
+          "mutable": false
+        },
+        "locale": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "locale",
+          "required": false,
+          "mutable": false
+        },
+        "nextPageLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "next-page-label",
+          "default": "'Next'",
+          "required": false,
+          "mutable": false
+        },
+        "pageIndex": {
+          "type": "number | undefined",
+          "resolvedType": "number | undefined",
+          "attribute": "page-index",
+          "required": false,
+          "mutable": true,
+          "description": "Page index (0-based). Enables built-in pagination when set alongside pageSize."
+        },
+        "pageSize": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "page-size",
+          "default": "20",
+          "required": false,
+          "mutable": false
+        },
+        "pageStatusLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "page-status-label",
+          "default": "'Page {page} of {total}'",
+          "required": false,
+          "mutable": false,
+          "description": "Use `{page}` and `{total}` placeholders."
+        },
+        "previousPageLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "previous-page-label",
+          "default": "'Previous'",
+          "required": false,
+          "mutable": false
+        },
+        "selectedRows": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "selected-rows",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Comma-separated zero-based row indices that are selected."
+        },
+        "sortState": {
+          "type": "SortState | undefined",
+          "resolvedType": "SortState | undefined",
+          "required": false,
+          "mutable": false
+        }
       },
-      "internalDependencies": [
+      "events": [
         {
-          "component": "Text",
-          "note": "Used internally by Table. Bundled in @ds-mo/ui."
+          "name": "dsPageChange",
+          "detail": "{ pageIndex: number }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         },
         {
-          "component": "Skeleton",
-          "note": "Used internally by Table. Bundled in @ds-mo/ui."
+          "name": "dsRowClick",
+          "detail": "{ row: unknown; rowIndex: number }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsSort",
+          "detail": "{ columnId: string }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
       "columns": {
-        "type": "TableColumn<T>[]",
-        "required": true
+        "type": "TableColumn[]",
+        "resolvedType": "TableColumn<unknown>[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
       },
       "data": {
-        "type": "T[]",
-        "required": true
-      },
-      "sortState": {
-        "type": "SortState"
-      },
-      "onSort": {
-        "type": "(columnId: string) => void"
-      },
-      "onRowClick": {
-        "type": "(row: T, rowIndex: number) => void"
-      },
-      "selectedRows": {
-        "type": "Set<number>"
-      },
-      "loading": {
-        "type": "boolean"
-      },
-      "pagination": {
-        "type": "PaginationState"
-      },
-      "onPaginationChange": {
-        "type": "(pageIndex: number, pageSize: number) => void"
+        "type": "unknown[]",
+        "resolvedType": "unknown[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
       },
       "emptyMessage": {
         "type": "string",
-        "default": "'No results found.'"
+        "resolvedType": "string",
+        "attribute": "empty-message",
+        "default": "'No results found.'",
+        "required": false,
+        "mutable": false
+      },
+      "loading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "loading",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "loadingLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "loading-label",
+        "default": "'Loading'",
+        "required": false,
+        "mutable": false
+      },
+      "locale": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "locale",
+        "required": false,
+        "mutable": false
+      },
+      "nextPageLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "next-page-label",
+        "default": "'Next'",
+        "required": false,
+        "mutable": false
+      },
+      "pageIndex": {
+        "type": "number | undefined",
+        "resolvedType": "number | undefined",
+        "attribute": "page-index",
+        "required": false,
+        "mutable": true,
+        "description": "Page index (0-based). Enables built-in pagination when set alongside pageSize."
+      },
+      "pageSize": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "page-size",
+        "default": "20",
+        "required": false,
+        "mutable": false
+      },
+      "pageStatusLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "page-status-label",
+        "default": "'Page {page} of {total}'",
+        "required": false,
+        "mutable": false,
+        "description": "Use `{page}` and `{total}` placeholders."
+      },
+      "previousPageLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "previous-page-label",
+        "default": "'Previous'",
+        "required": false,
+        "mutable": false
+      },
+      "selectedRows": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "selected-rows",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Comma-separated zero-based row indices that are selected."
+      },
+      "sortState": {
+        "type": "SortState | undefined",
+        "resolvedType": "SortState | undefined",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Table"
+    "events": [
+      {
+        "name": "dsPageChange",
+        "detail": "{ pageIndex: number }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsRowClick",
+        "detail": "{ row: unknown; rowIndex: number }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsSort",
+        "detail": "{ columnId: string }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "TableProps",
-      "TableColumn",
-      "SortState",
-      "SortDirection",
-      "CellType",
-      "FilterValue",
-      "FilterState",
-      "PaginationState"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-table",
+      "react": "DsTable",
+      "angular": "DsTable"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-table.js';",
+        "example": "<ds-table></ds-table>"
+      },
+      "react": {
+        "import": "import { DsTable } from '@ds-mo/ui/react';",
+        "example": "<DsTable />"
+      },
+      "angular": {
+        "import": "import { DsTable } from '@ds-mo/ui/angular/ds-table';",
+        "example": "<ds-table></ds-table>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: columns, data, sortState.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
-    "text",
-    "skeleton"
+    "text"
   ],
   "files": [
     {
       "path": "src/wc/components/Table/Table.css",
       "content": ":host {\n  display: block;\n  width: 100%;\n}\n\n.table-wrapper {\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  overflow: hidden;\n  border-radius: var(--dimension-radius-075);\n}\n\n.table-scroll {\n  overflow-x: auto;\n  width: 100%;\n}\n\n.table {\n  display: grid;\n  width: 100%;\n  min-width: max-content;\n}\n\n/* ─── Header ────────────────────────────────────────────────────────────────── */\n\n.header-row {\n  display: contents;\n}\n\n.header-cell {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-075) var(--dimension-space-100);\n  background-color: var(--color-background-secondary);\n  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-primary);\n  -webkit-user-select: none;\n  user-select: none;\n  position: sticky;\n  top: 0;\n  z-index: 2;\n}\n\n.header-cell--sortable {\n  cursor: pointer;\n}\n\n.header-cell--sortable:hover {\n  background-color: var(--color-background-translucent);\n}\n\n.header-cell--sortable:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: calc(var(--dimension-space-025) * -1);\n}\n\n.sort-indicator {\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  color: var(--color-foreground-secondary);\n}\n\n/* ─── Rows ──────────────────────────────────────────────────────────────────── */\n\n.row {\n  display: contents;\n}\n\n.row--clickable {\n  cursor: pointer;\n}\n\n.row:hover .cell {\n  background-color: var(--color-interaction-hover);\n}\n\n.row--selected .cell {\n  background-color: var(--color-background-faint-brand);\n}\n\n.row--clickable:focus-visible .cell {\n  background-color: var(--color-interaction-hover);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-interaction-focus);\n}\n\n/* ─── Cells ─────────────────────────────────────────────────────────────────── */\n\n.cell {\n  display: flex;\n  align-items: center;\n  padding: var(--dimension-space-075) var(--dimension-space-100);\n  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-primary);\n  min-height: var(--dimension-size-500);\n  background-color: var(--color-background-primary);\n  transition: background-color var(--effect-motion-short-2);\n}\n\n.align-right {\n  justify-content: flex-end;\n  text-align: right;\n}\n\n.align-center {\n  justify-content: center;\n  text-align: center;\n}\n\n/* ─── Empty state ───────────────────────────────────────────────────────────── */\n\n.empty-row {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: var(--dimension-space-400);\n  background-color: var(--color-background-primary);\n}\n\n/* ─── Loading skeleton ──────────────────────────────────────────────────────── */\n\n.skeleton {\n  height: var(--typography-fontsize-md);\n  width: 60%;\n  background-color: var(--color-background-translucent);\n  border-radius: var(--dimension-radius-050);\n  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;\n}\n\n@keyframes shimmer {\n  0%   { opacity: 0.5; }\n  50%  { opacity: 1; }\n  100% { opacity: 0.5; }\n}\n\n/* ─── Pagination ────────────────────────────────────────────────────────────── */\n\n.table-pagination {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-100);\n  padding: var(--dimension-space-100);\n  border-top: var(--dimension-stroke-width-015) solid var(--color-border-primary);\n  background-color: var(--color-background-primary);\n}\n\n.page-button {\n  display: flex;\n  align-items: center;\n  padding: var(--dimension-space-050) var(--dimension-space-100);\n  background-color: transparent;\n  border: none;\n  border-radius: var(--dimension-radius-075);\n  cursor: pointer;\n  transition: background-color var(--effect-motion-short-2);\n}\n\n.page-button:hover:not(:disabled) {\n  background-color: var(--color-interaction-hover);\n}\n\n.page-button:disabled {\n  opacity: 0.4;\n  cursor: not-allowed;\n}\n\n.page-button:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-stroke-width-015);\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Table/Table.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nexport type SortDirection = 'asc' | 'desc';\nexport interface SortState {\n    columnId: string;\n    direction: SortDirection;\n}\nexport interface TableColumn<T = unknown> {\n    id: string;\n    header: string;\n    accessorKey?: string;\n    accessor?: (row: T) => unknown;\n    sortable?: boolean;\n    align?: 'left' | 'right' | 'center';\n    width?: string | number;\n    minWidth?: string | number;\n    hide?: boolean;\n}\nexport declare class Table {\n    columns: TableColumn[];\n    data: unknown[];\n    sortState: SortState | undefined;\n    loading: boolean;\n    emptyMessage: string;\n    /** Comma-separated zero-based row indices that are selected. */\n    selectedRows: string;\n    /** Page index (0-based). Enables built-in pagination when set alongside pageSize. */\n    pageIndex: number | undefined;\n    pageSize: number;\n    private internalSort;\n    dsSort: EventEmitter<{\n        columnId: string;\n    }>;\n    dsRowClick: EventEmitter<{\n        row: unknown;\n        rowIndex: number;\n    }>;\n    dsPageChange: EventEmitter<{\n        pageIndex: number;\n    }>;\n    private get activeSort();\n    private get visibleCols();\n    private get gridTemplate();\n    private get sortedData();\n    private get pagedData();\n    private get totalPages();\n    private get selectedSet();\n    private handleSort;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

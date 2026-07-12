@@ -93,6 +93,8 @@ npm run typecheck:figma               # tsc for code-connect published + example
 npm run clean            # Remove dist/
 ```
 
+`registry:build` requires compiler metadata from `npm run build`. The registry is generated from the source-derived component inventory plus `dist/docs/components.json`; never add a handwritten component catalog entry. `agent:validate` rejects missing artifacts, missing new-component intent, stale adapters, compiler drift, and stale registry output. Legacy components still awaiting intent are listed only in `agent/baseline/component-metadata-migration.json`; remove an ID when its agent file is added, and never add new components to that baseline.
+
 ---
 
 ## Build pipeline (what `npm run build` does)
@@ -105,6 +107,7 @@ The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 4. Runs Angular output target → regenerates `src/angular/` and compiles it to `dist/angular/`
 5. Runs React output target → regenerates `src/react/` and compiles it to `dist/react/`
 6. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
+7. Regenerates `public/r/` from compiler facts + component intent and emits the package manifest at `dist/agent.json`
 
 There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
@@ -116,6 +119,7 @@ Package `exports`:
   "./angular":       { "import": "./dist/framework/angular.js", "types": "./dist/framework/angular.d.ts" },
   "./angular/*":     { "import": "./dist/angular/*.js", "types": "./dist/angular/*.d.ts" },
   "./react":         { "import": "./dist/react/components.js", "types": "./dist/react/components.d.ts" },
+  "./agent":         "./dist/agent.json",
   "./dist/components": { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
   "./nav":           { "import": "./dist/lib/nav/index.js", "types": "./dist/lib/nav/index.d.ts" },
   "./utils":         { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },

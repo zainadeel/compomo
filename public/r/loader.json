@@ -2,52 +2,105 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "loader",
   "title": "Loader",
-  "description": "Anti-clockwise SVG spinner matching ds-icon size/color tokens. Spins in 1s via --effect-animation-duration-long-2.",
+  "description": "Anti-clockwise SVG spinner matching ds-icon size/color tokens.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
+    "source": "src/wc/components/Loader/Loader.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "color": {
+          "type": "LoaderColor | undefined",
+          "resolvedType": "\"ai\" | \"bold-ai\" | \"bold-brand\" | \"bold-caution\" | \"bold-negative\" | \"bold-neutral\" | \"bold-positive\" | \"bold-warning\" | \"brand\" | \"caution\" | \"faint-ai\" | \"faint-brand\" | \"faint-caution\" | \"faint-negative\" | \"faint-neutral\" | \"faint-positive\" | \"faint-warning\" | \"guide\" | \"inherit\" | \"medium-ai\" | \"medium-brand\" | \"medium-caution\" | \"medium-negative\" | \"medium-neutral\" | \"medium-positive\" | \"medium-warning\" | \"negative\" | \"neutral\" | \"on-bold\" | \"on-strong\" | \"positive\" | \"primary\" | \"quaternary\" | \"secondary\" | \"strong-ai\" | \"strong-brand\" | \"strong-caution\" | \"strong-negative\" | \"strong-neutral\" | \"strong-positive\" | \"strong-warning\" | \"tertiary\" | \"warning\" | `var(--${string})` | undefined",
+          "attribute": "color",
+          "required": false,
+          "mutable": false,
+          "description": "Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`."
+        },
+        "label": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "label",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible label for standalone usage. Wraps the spinner in a live region\nand renders the label visually-hidden. Omit when the host element already\nconveys busy state via aria-busy."
+        },
+        "size": {
+          "type": "LoaderSize",
+          "resolvedType": "\"2xl\" | \"3xl\" | \"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "color": {
+        "type": "LoaderColor | undefined",
+        "resolvedType": "\"ai\" | \"bold-ai\" | \"bold-brand\" | \"bold-caution\" | \"bold-negative\" | \"bold-neutral\" | \"bold-positive\" | \"bold-warning\" | \"brand\" | \"caution\" | \"faint-ai\" | \"faint-brand\" | \"faint-caution\" | \"faint-negative\" | \"faint-neutral\" | \"faint-positive\" | \"faint-warning\" | \"guide\" | \"inherit\" | \"medium-ai\" | \"medium-brand\" | \"medium-caution\" | \"medium-negative\" | \"medium-neutral\" | \"medium-positive\" | \"medium-warning\" | \"negative\" | \"neutral\" | \"on-bold\" | \"on-strong\" | \"positive\" | \"primary\" | \"quaternary\" | \"secondary\" | \"strong-ai\" | \"strong-brand\" | \"strong-caution\" | \"strong-negative\" | \"strong-neutral\" | \"strong-positive\" | \"strong-warning\" | \"tertiary\" | \"warning\" | `var(--${string})` | undefined",
+        "attribute": "color",
+        "required": false,
+        "mutable": false,
+        "description": "Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`."
+      },
+      "label": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "label",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible label for standalone usage. Wraps the spinner in a live region\nand renders the label visually-hidden. Omit when the host element already\nconveys busy state via aria-busy."
+      },
+      "size": {
+        "type": "LoaderSize",
+        "resolvedType": "\"2xl\" | \"3xl\" | \"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-loader",
+      "react": "DsLoader",
+      "angular": "DsLoader"
+    },
     "consumption": {
       "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-loader.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-loader></ds-loader>",
-        "react": "<ds-loader></ds-loader>",
-        "angular": "<ds-loader></ds-loader>"
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-loader.js';",
+        "example": "<ds-loader></ds-loader>"
+      },
+      "react": {
+        "import": "import { DsLoader } from '@ds-mo/ui/react';",
+        "example": "<DsLoader />"
+      },
+      "angular": {
+        "import": "import { DsLoader } from '@ds-mo/ui/angular/ds-loader';",
+        "example": "<ds-loader></ds-loader>"
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
         ],
-        "optional": [],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
-    },
-    "props": {
-      "size": {
-        "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'",
-        "default": "'md'",
-        "description": "Iconography size token — same scale as ds-icon."
-      },
-      "color": {
-        "type": "IconColor",
-        "description": "Semantic foreground color token, or a raw CSS var reference. Same tokens as ds-icon."
-      },
-      "label": {
-        "type": "string",
-        "description": "Accessible label for standalone usage (live region). Omit when the host already conveys busy state."
-      }
-    },
-    "exports": [
-      "Loader"
-    ],
-    "types": [
-      "LoaderSize",
-      "LoaderColor"
-    ]
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -58,11 +111,6 @@
     {
       "path": "src/wc/components/Loader/Loader.css",
       "content": "/* ── Base loader (mirrors ds-icon box metrics) ───────────────────────────── */\n\n.loader {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  line-height: 0;\n  color: var(--color-foreground-primary);\n  width: var(--_loader-sz, var(--dimension-iconography-md));\n  height: var(--_loader-sz, var(--dimension-iconography-md));\n  animation: loader-spin var(--effect-animation-duration-long-2) var(--effect-animation-easing-linear) infinite;\n}\n\n.loader__svg {\n  display: block;\n  flex-shrink: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.status {\n  display: inline-flex;\n  align-items: center;\n}\n\n.visually-hidden {\n  position: absolute;\n  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n  /* stylelint-enable declaration-property-value-disallowed-list */\n}\n\n/* Anti-clockwise continuous spin — 1000ms via long-2. */\n@keyframes loader-spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(-360deg); }\n}\n\n/* ── Sizes (same tokens as ds-icon) ──────────────────────────────────────── */\n\n.loader--size-xs  { --_loader-sz: var(--dimension-iconography-xs);  }\n.loader--size-sm  { --_loader-sz: var(--dimension-iconography-sm);  }\n.loader--size-md  { --_loader-sz: var(--dimension-iconography-md);  }\n.loader--size-lg  { --_loader-sz: var(--dimension-iconography-lg);  }\n.loader--size-xl  { --_loader-sz: var(--dimension-iconography-xl);  }\n.loader--size-2xl { --_loader-sz: var(--dimension-iconography-2xl); }\n.loader--size-3xl { --_loader-sz: var(--dimension-iconography-3xl); }\n\n/* ── Colors — hierarchy ──────────────────────────────────────────────────── */\n\n.loader--color-primary    { color: var(--color-foreground-primary);    }\n.loader--color-secondary  { color: var(--color-foreground-secondary);  }\n.loader--color-tertiary   { color: var(--color-foreground-tertiary);   }\n.loader--color-quaternary { color: var(--color-foreground-quaternary); }\n.loader--color-inherit    { color: inherit; }\n\n/* ── Colors — intent (bold contrast default) ─────────────────────────────── */\n\n.loader--color-brand    { color: var(--color-foreground-bold-brand);    }\n.loader--color-negative { color: var(--color-foreground-bold-negative); }\n.loader--color-positive { color: var(--color-foreground-bold-positive); }\n.loader--color-warning  { color: var(--color-foreground-bold-warning);  }\n.loader--color-caution  { color: var(--color-foreground-bold-caution);  }\n.loader--color-ai       { color: var(--color-foreground-bold-ai);       }\n.loader--color-guide    { color: var(--color-foreground-bold-guide);    }\n.loader--color-neutral  { color: var(--color-foreground-bold-neutral);  }\n\n/* ── Colors — intent faint ───────────────────────────────────────────────── */\n\n.loader--color-faint-brand    { color: var(--color-foreground-faint-brand);    }\n.loader--color-faint-negative { color: var(--color-foreground-faint-negative); }\n.loader--color-faint-positive { color: var(--color-foreground-faint-positive); }\n.loader--color-faint-warning  { color: var(--color-foreground-faint-warning);  }\n.loader--color-faint-caution  { color: var(--color-foreground-faint-caution);  }\n.loader--color-faint-ai       { color: var(--color-foreground-faint-ai);       }\n.loader--color-faint-neutral  { color: var(--color-foreground-faint-neutral);  }\n\n/* ── Colors — intent medium ─────────────────────────────────────────────── */\n\n.loader--color-medium-brand    { color: var(--color-foreground-medium-brand);    }\n.loader--color-medium-negative { color: var(--color-foreground-medium-negative); }\n.loader--color-medium-positive { color: var(--color-foreground-medium-positive); }\n.loader--color-medium-warning  { color: var(--color-foreground-medium-warning);  }\n.loader--color-medium-caution  { color: var(--color-foreground-medium-caution);  }\n.loader--color-medium-ai       { color: var(--color-foreground-medium-ai);       }\n.loader--color-medium-neutral  { color: var(--color-foreground-medium-neutral);  }\n\n/* ── Colors — intent bold (explicit) ────────────────────────────────────── */\n\n.loader--color-bold-brand    { color: var(--color-foreground-bold-brand);    }\n.loader--color-bold-negative { color: var(--color-foreground-bold-negative); }\n.loader--color-bold-positive { color: var(--color-foreground-bold-positive); }\n.loader--color-bold-warning  { color: var(--color-foreground-bold-warning);  }\n.loader--color-bold-caution  { color: var(--color-foreground-bold-caution);  }\n.loader--color-bold-ai       { color: var(--color-foreground-bold-ai);       }\n.loader--color-bold-neutral  { color: var(--color-foreground-bold-neutral);  }\n\n/* ── Colors — intent strong ──────────────────────────────────────────────── */\n\n.loader--color-strong-brand    { color: var(--color-foreground-strong-brand);    }\n.loader--color-strong-negative { color: var(--color-foreground-strong-negative); }\n.loader--color-strong-positive { color: var(--color-foreground-strong-positive); }\n.loader--color-strong-warning  { color: var(--color-foreground-strong-warning);  }\n.loader--color-strong-caution  { color: var(--color-foreground-strong-caution);  }\n.loader--color-strong-ai       { color: var(--color-foreground-strong-ai);       }\n.loader--color-strong-neutral  { color: var(--color-foreground-strong-neutral);  }\n\n/* ── Colors — contextual ────────────────────────────────────────────────── */\n\n.loader--color-on-strong { color: var(--color-foreground-on-strong-background-primary); }\n.loader--color-on-bold   { color: var(--color-foreground-on-bold-background-primary);   }\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Loader/Loader.d.ts",
-      "content": "import type { IconColor, IconSize } from '../Icon/Icon';\nexport type LoaderSize = IconSize;\nexport type LoaderColor = IconColor;\nexport declare class Loader {\n    /** Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px. */\n    size: LoaderSize;\n    /** Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. */\n    color: LoaderColor | undefined;\n    /**\n     * Accessible label for standalone usage. Wraps the spinner in a live region\n     * and renders the label visually-hidden. Omit when the host element already\n     * conveys busy state via aria-busy.\n     */\n    label: string | undefined;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {
