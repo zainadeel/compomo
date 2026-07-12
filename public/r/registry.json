@@ -1688,15 +1688,110 @@
     {
       "name": "panel-nav",
       "title": "PanelNav",
-      "description": "PanelNav component from @ds-mo/ui.",
+      "description": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-nav",
         "source": "src/wc/components/PanelNav/PanelNav.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
+          "useWhen": [
+            "Building the one primary navigation surface for an application that uses the CompoMo system.",
+            "Top-level destinations must remain consistently available while the application's page content changes.",
+            "Primary destinations need visual grouping, icons, notification indicators, active-route state, and expanded or collapsed presentation."
+          ],
+          "avoidWhen": [
+            "A second navigation surface is needed within the same application; an application must have only one PanelNav.",
+            "The choices represent sections within the active primary destination; use BarNav instead.",
+            "The choices switch local content without changing the application's primary destination; use TabGroup instead.",
+            "The interaction performs a command or presents temporary contextual choices; use a button or Menu instead.",
+            "Building navigation below the mobile breakpoint; use the application's dedicated mobile navigation component instead."
+          ],
+          "alternatives": [
+            {
+              "when": "The choices represent route sections within the active primary destination.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav owns secondary section navigation within the destination selected by PanelNav."
+            },
+            {
+              "when": "The choices switch local content without changing the application's primary destination.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup owns local view selection and tab semantics."
+            },
+            {
+              "when": "The choices are commands or temporary contextual actions.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns transient action and option collections rather than persistent destinations."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-app-shell",
+            "component:ds-bar-nav",
+            "component:ds-panel-tools",
+            "component:ds-menu"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Give every primary destination a concise visible label and an icon that supports rather than replaces that label.",
+            "Provide localized dashboard, settings, account, navigation, collapse, and expand labels.",
+            "Preserve accessible destination names when the panel is collapsed to icon-only presentation.",
+            "Use notification dots as supplemental status and never as the only indication of important information.",
+            "Keep the standard dashboard/settings switch and user/account entry available in the footer."
+          ],
+          "states": [
+            "Render exactly one PanelNav per application; it owns primary application destinations and no other navigation role.",
+            "The host router owns the current route; prefer currentUrl for active destination matching and use activeId only when route matching is unavailable.",
+            "Use anchor mode for native links or routers that intercept anchors; use event mode when the host performs navigation from dsNavSelect.",
+            "Groups visually organize top-level destinations only and must not be interpreted as nested or expandable navigation.",
+            "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
+            "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
+            "The host owns the external user menu opened from dsNavUserAction.",
+            "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate."
+          ],
+          "responsiveBehavior": [
+            "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
+            "From 768px through 1199px, present PanelNav permanently collapsed and do not allow user expansion.",
+            "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
+            "The current breakpoint prop can auto-collapse PanelNav but does not enforce the complete tablet lock or mobile replacement policy; the consuming application must enforce those parts until the component supports them directly.",
+            "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign groups as a JavaScript property for structured data; a JSON string attribute is also supported.",
+              "Set nav-style before the element connects when first-paint style must match the current route."
+            ],
+            "react": [
+              "Pass groups as an array through the generated React wrapper and synchronize currentUrl with the host router.",
+              "The host currently owns the 768px mobile replacement and tablet expansion lock."
+            ],
+            "angular": [
+              "Import DsPanelNav from @ds-mo/ui/angular/ds-panel-nav and bind groups as a property.",
+              "Bind both the nav-style attribute and navStyle property when first-paint route styling must be deterministic.",
+              "The host currently owns the 768px mobile replacement and tablet expansion lock."
+            ]
+          },
+          "references": [
+            {
+              "label": "Executable Storybook examples",
+              "path": "src/wc/components/PanelNav/PanelNav.stories.ts"
+            },
+            {
+              "label": "Framework and routing integration",
+              "path": "docs/framework-integration.md"
+            },
+            {
+              "label": "Application shell composition",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
         "props": {
           "accountLabel": {
             "type": "string",
