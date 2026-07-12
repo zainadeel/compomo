@@ -133,6 +133,17 @@ ds-text.menu-item__subtext {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
+/* Standard md icon zone keeps the dot aligned with other control suffixes. */
+.menu-item__dot-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  pointer-events: none;
+}
+
 /* ── Toggle suffix ───────────────────────────────────────────────────────── */
 
 .menu-item__toggle {

@@ -13,15 +13,15 @@ describe('tabsToMenuSections', () => {
   it('maps tabs to a single section', () => {
     const sections = tabsToMenuSections(
       [
-        { id: 'a', label: 'Alpha' },
+        { id: 'a', label: 'Alpha', dot: true },
         { id: 'b', label: 'Beta' },
       ],
       'b',
     );
     assert.equal(sections.length, 1);
     assert.deepEqual(sections[0].items, [
-      { label: 'Alpha', value: 'a', isSelected: false, isInactive: undefined },
-      { label: 'Beta', value: 'b', isSelected: true, isInactive: undefined },
+      { label: 'Alpha', value: 'a', dot: true, isSelected: false, isInactive: undefined },
+      { label: 'Beta', value: 'b', dot: undefined, isSelected: true, isInactive: undefined },
     ]);
   });
 

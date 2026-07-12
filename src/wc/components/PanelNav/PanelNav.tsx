@@ -590,13 +590,14 @@ export class PanelNav {
         {item.label}
       </ds-text>,
       item.dot && (
-        <ds-badge
-          class="panel-nav__item-dot"
-          variant="dot"
-          background="var(--_nav-bg)"
-          label=""
-          aria-hidden="true"
-        />
+        <span class="panel-nav__item-dot-box" aria-hidden="true">
+          <ds-badge
+            class="panel-nav__item-dot"
+            variant="dot"
+            background="var(--_nav-bg)"
+            label=""
+          />
+        </span>
       ),
     ];
 

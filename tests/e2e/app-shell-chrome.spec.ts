@@ -16,6 +16,40 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts', async ({
+    page,
+  }) => {
+    const readDotGeometry = () => page.evaluate(() => {
+      const dot = document.querySelector('.panel-nav__item-dot') as HTMLElement;
+      const box = document.querySelector('.panel-nav__item-dot-box') as HTMLElement;
+      const row = dot.closest('.panel-nav__item') as HTMLElement;
+      const dotRect = dot.getBoundingClientRect();
+      const boxRect = box.getBoundingClientRect();
+      const rowRect = row.getBoundingClientRect();
+      return {
+        boxWidth: boxRect.width,
+        boxHeight: boxRect.height,
+        rightInset: rowRect.right - dotRect.right,
+        topInset: dotRect.top - rowRect.top,
+      };
+    });
+
+    await expect.poll(readDotGeometry).toEqual({
+      boxWidth: 20,
+      boxHeight: 20,
+      rightInset: 13,
+      topInset: 13,
+    });
+
+    await page.getByRole('button', { name: 'Collapse navigation' }).click();
+    await expect.poll(readDotGeometry).toEqual({
+      boxWidth: 20,
+      boxHeight: 20,
+      rightInset: 6,
+      topInset: 6,
+    });
+  });
+
   test('breakpoint lock suppresses toggle affordance and preserves desktop preference', async ({
     page,
   }) => {
