@@ -8,6 +8,33 @@ import {
 } from '../../nav/shell-gradient-presets';
 
 const WORKSHOP_STOP_INDEXES = [1, 2, 3, 4, 5] as const;
+const INTENT_HUES = [
+  'blue',
+  'cyan',
+  'green',
+  'grey',
+  'magenta',
+  'olive',
+  'orange',
+  'pink',
+  'purple',
+  'red',
+  'teal',
+  'yellow',
+] as const;
+const INTENT_STRENGTHS = ['faint', 'medium', 'bold', 'strong'] as const;
+const WORKSHOP_COLOR_TOKENS = [
+  '--color-background-transparent',
+  ...INTENT_HUES.flatMap(hue =>
+    INTENT_STRENGTHS.map(strength => `--color-color-intent-${hue}-${strength}-background`),
+  ),
+];
+
+const colorTokenControl = (category: string) => ({
+  control: { type: 'select' as const },
+  options: WORKSHOP_COLOR_TOKENS,
+  table: { category },
+});
 
 const meta: Meta = {
   title: 'Navigation/ShellGradientPicker',
@@ -59,40 +86,40 @@ export const Interactive: Story = {
 export const RecipeWorkshop: Story = {
   name: 'Recipe workshop',
   args: {
-    color1: 'transparent',
+    color1: '--color-background-transparent',
     position1: 0,
-    color2: '#6f8cff',
+    color2: '--color-color-intent-blue-strong-background',
     position2: 35,
-    color3: '#d8b4fe',
+    color3: '--color-color-intent-purple-strong-background',
     position3: 60,
-    color4: '#f0abfc',
+    color4: '--color-color-intent-magenta-strong-background',
     position4: 80,
-    color5: '#fcd34d',
+    color5: '--color-color-intent-yellow-strong-background',
     position5: 100,
     opacity: 1,
   },
   argTypes: {
-    color1: { control: 'color', table: { category: 'Stop 1' } },
+    color1: colorTokenControl('Stop 1'),
     position1: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       table: { category: 'Stop 1' },
     },
-    color2: { control: 'color', table: { category: 'Stop 2' } },
+    color2: colorTokenControl('Stop 2'),
     position2: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       table: { category: 'Stop 2' },
     },
-    color3: { control: 'color', table: { category: 'Stop 3' } },
+    color3: colorTokenControl('Stop 3'),
     position3: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       table: { category: 'Stop 3' },
     },
-    color4: { control: 'color', table: { category: 'Stop 4' } },
+    color4: colorTokenControl('Stop 4'),
     position4: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       table: { category: 'Stop 4' },
     },
-    color5: { control: 'color', table: { category: 'Stop 5' } },
+    color5: colorTokenControl('Stop 5'),
     position5: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       table: { category: 'Stop 5' },
@@ -104,7 +131,7 @@ export const RecipeWorkshop: Story = {
   },
   render: args => {
     const stops: ShellGradientStop[] = WORKSHOP_STOP_INDEXES.map(index => ({
-      color: String(args[`color${index}`]),
+      color: `var(${String(args[`color${index}`])})`,
       position: Number(args[`position${index}`]),
     }));
     const gradient = buildShellRadialGradientFromStops(stops);
