@@ -83,7 +83,7 @@
         },
         "preset": {
           "type": "ShellGradientPreset",
-          "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+          "resolvedType": "\"cool\" | \"fresh\" | \"neutral\" | \"none\" | \"warm\"",
           "attribute": "preset",
           "default": "'neutral'",
           "required": false,
@@ -131,7 +131,7 @@
       },
       "preset": {
         "type": "ShellGradientPreset",
-        "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+        "resolvedType": "\"cool\" | \"fresh\" | \"neutral\" | \"none\" | \"warm\"",
         "attribute": "preset",
         "default": "'neutral'",
         "required": false,

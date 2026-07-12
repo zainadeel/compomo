@@ -67,7 +67,7 @@
             "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
             "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
             "AppShell propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
-            "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, and warm for token-based washes.",
+            "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; AppShell owns rendering the resolved preset across authenticated routes.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
@@ -2368,7 +2368,7 @@
           "summary": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
           "useWhen": [
             "Adding the Appearance or Theme section to the application's user or account menu.",
-            "Users must choose the global AppShell chrome treatment from none, cool, neutral, or warm."
+            "Users must choose the global AppShell chrome treatment from none, cool, neutral, warm, or fresh."
           ],
           "avoidWhen": [
             "Choosing semantic intent, page background, chart, content, or brand colors.",
@@ -2397,7 +2397,7 @@
           ],
           "states": [
             "Neutral is the default preset; none renders solid shell chrome without a wash.",
-            "Cool, neutral, and warm use design tokens and automatically adapt to the active light or dark color theme.",
+            "Cool, neutral, warm, and fresh use design tokens and automatically adapt to the active light or dark color theme.",
             "Apply dsChange immediately to AppShell.gradientPreset and keep the containing account menu open.",
             "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
             "Treat the fixed preset union as the only supported values and do not construct custom gradients."

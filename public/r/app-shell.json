@@ -46,7 +46,7 @@
         "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
         "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
         "AppShell propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
-        "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, and warm for token-based washes.",
+        "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
         "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; AppShell owns rendering the resolved preset across authenticated routes.",
         "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
         "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
@@ -99,7 +99,7 @@
       "props": {
         "gradientPreset": {
           "type": "ShellGradientPreset",
-          "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+          "resolvedType": "\"cool\" | \"fresh\" | \"neutral\" | \"none\" | \"warm\"",
           "attribute": "gradient-preset",
           "default": "'neutral'",
           "required": false,
@@ -132,7 +132,7 @@
     "props": {
       "gradientPreset": {
         "type": "ShellGradientPreset",
-        "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+        "resolvedType": "\"cool\" | \"fresh\" | \"neutral\" | \"none\" | \"warm\"",
         "attribute": "gradient-preset",
         "default": "'neutral'",
         "required": false,

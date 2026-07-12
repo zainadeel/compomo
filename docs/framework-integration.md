@@ -73,7 +73,7 @@ Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages
 | --- | --- | --- |
 | `navStyle` | `dashboard` | Shell propagates to slotted `ds-panel-nav` and `ds-bar-nav` |
 | `gradient` | `false` | Radial wash on the shared chrome layer + JS sync of `--ds-shell-gradient-*` vars to shell, panel, and bar |
-| `gradientPreset` | `neutral` | Built-in wash when `gradient` is true: `none` (solid secondary), `cool`, `neutral`, or `warm` |
+| `gradientPreset` | `neutral` | Built-in wash when `gradient` is true: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh` |
 | `gradientSrc` | `''` | Optional `url(...)` image override for the wash |
 
 The chrome layer mounts when **`gradient`** is true. Panel, bar, and tools drawer surfaces are **transparent** under gradient so the chrome shows through. Page content (`default` slot) stays on an opaque `--color-background-primary` surface.

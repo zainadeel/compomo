@@ -41,7 +41,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   args: { value: 'neutral' },
   argTypes: {
-    value: { control: 'select', options: ['none', 'cool', 'neutral', 'warm'] },
+    value: { control: 'select', options: ['none', 'cool', 'neutral', 'warm', 'fresh'] },
   },
 };
 

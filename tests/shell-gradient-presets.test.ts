@@ -49,12 +49,13 @@ describe('shell gradient recipes', () => {
   it('resolves opacity per preset', () => {
     assert.equal(shellGradientPresetOpacity('none'), '0');
     assert.equal(shellGradientPresetOpacity('cool'), '0.1');
+    assert.equal(shellGradientPresetOpacity('fresh'), '0.4');
   });
 });
 
 describe('SHELL_GRADIENT_PRESETS', () => {
-  it('lists none, cool, neutral, and warm', () => {
-    assert.deepEqual(SHELL_GRADIENT_PRESETS, ['none', 'cool', 'neutral', 'warm']);
+  it('lists every available preset', () => {
+    assert.deepEqual(SHELL_GRADIENT_PRESETS, ['none', 'cool', 'neutral', 'warm', 'fresh']);
   });
 
   it('defaults to neutral', () => {
@@ -80,6 +81,10 @@ describe('buildShellRadialGradientForPreset', () => {
       buildShellRadialGradientForPreset('warm'),
       /var\(--color-color-intent-yellow-strong-background\) 100%/,
     );
+    assert.equal(
+      buildShellRadialGradientForPreset('fresh'),
+      'radial-gradient(100% 100% at 0% 0%, var(--color-color-intent-cyan-faint-background) 0%, var(--color-background-transparent) 47%, var(--color-background-transparent) 58%, var(--color-color-intent-red-faint-background) 83%, var(--color-color-intent-pink-faint-background) 100%)',
+    );
   });
 
   it('shares top-left radial geometry for wash presets', () => {
@@ -95,6 +100,7 @@ describe('isShellGradientPreset', () => {
     assert.equal(isShellGradientPreset('cool'), true);
     assert.equal(isShellGradientPreset('neutral'), true);
     assert.equal(isShellGradientPreset('warm'), true);
+    assert.equal(isShellGradientPreset('fresh'), true);
     assert.equal(isShellGradientPreset('blue'), false);
   });
 });
@@ -105,6 +111,7 @@ describe('SHELL_GRADIENT_PRESET_LABELS', () => {
     assert.equal(SHELL_GRADIENT_PRESET_LABELS.cool, 'Cool');
     assert.equal(SHELL_GRADIENT_PRESET_LABELS.neutral, 'Neutral');
     assert.equal(SHELL_GRADIENT_PRESET_LABELS.warm, 'Warm');
+    assert.equal(SHELL_GRADIENT_PRESET_LABELS.fresh, 'Fresh');
     assert.equal(shellGradientPresetStopToken('none'), null);
     assert.equal(shellGradientPresetStopToken('cool'), 'var(--color-color-intent-blue-strong-background)');
   });

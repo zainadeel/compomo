@@ -1,13 +1,20 @@
-/** Built-in shell chrome wash presets — none (solid secondary), cool, neutral, warm. */
-export type ShellGradientPreset = 'none' | 'cool' | 'neutral' | 'warm';
+/** Built-in shell chrome wash presets. */
+export type ShellGradientPreset = 'none' | 'cool' | 'neutral' | 'warm' | 'fresh';
 
-export const SHELL_GRADIENT_PRESETS: ShellGradientPreset[] = ['none', 'cool', 'neutral', 'warm'];
+export const SHELL_GRADIENT_PRESETS: ShellGradientPreset[] = [
+  'none',
+  'cool',
+  'neutral',
+  'warm',
+  'fresh',
+];
 
 /** Wash presets shown after the `none` option in pickers. */
 export const SHELL_GRADIENT_WASH_PRESETS: Exclude<ShellGradientPreset, 'none'>[] = [
   'cool',
   'neutral',
   'warm',
+  'fresh',
 ];
 
 /** Default wash when `gradient-preset` is omitted. */
@@ -18,6 +25,7 @@ export const SHELL_GRADIENT_PRESET_LABELS: Record<ShellGradientPreset, string> =
   cool: 'Cool',
   neutral: 'Neutral',
   warm: 'Warm',
+  fresh: 'Fresh',
 };
 
 export interface ShellGradientStop {
@@ -50,6 +58,16 @@ const SHELL_GRADIENT_RECIPES: Record<Exclude<ShellGradientPreset, 'none'>, Shell
     stops: [
       { color: 'var(--color-background-transparent)', position: 0 },
       { color: 'var(--color-color-intent-yellow-strong-background)', position: 100 },
+    ],
+  },
+  fresh: {
+    opacity: 0.4,
+    stops: [
+      { color: 'var(--color-color-intent-cyan-faint-background)', position: 0 },
+      { color: 'var(--color-background-transparent)', position: 47 },
+      { color: 'var(--color-background-transparent)', position: 58 },
+      { color: 'var(--color-color-intent-red-faint-background)', position: 83 },
+      { color: 'var(--color-color-intent-pink-faint-background)', position: 100 },
     ],
   },
 };
