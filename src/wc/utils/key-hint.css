@@ -1,0 +1,48 @@
+@import './control-density.css';
+
+/** Compact keyboard-shortcut keycap used by tooltips and shortcut references. */
+.key-hint-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dimension-stroke-width-012);
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.key-hint {
+  box-sizing: border-box;
+  min-width: var(--ds-control-icon, var(--dimension-iconography-md));
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  padding-inline: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-secondary);
+  border: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+  border-bottom-width: var(--dimension-stroke-width-025);
+  border-radius: var(--dimension-radius-025);
+  color: var(--color-foreground-primary);
+}
+
+.key-hint--wide {
+  width: calc(var(--ds-control-icon, var(--dimension-iconography-md)) * 1.5);
+}
+
+.key-hint__label {
+  display: inline-flex;
+  width: max-content;
+  min-width: max-content;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-xs);
+  line-height: 1;
+  font-weight: var(--typography-weight-bold);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.ds-control--xs .key-hint__label {
+  font-size: calc(var(--typography-fontsize-xs) * 0.78);
+}

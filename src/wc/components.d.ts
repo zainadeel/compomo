@@ -78,20 +78,10 @@ export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Too
 export namespace Components {
     interface DsAppShell {
         /**
-          * When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout).
-          * @default false
-         */
-        "gradient": boolean;
-        /**
-          * Built-in shell wash preset when `gradient` is true. `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+          * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
           * @default 'neutral'
          */
         "gradientPreset": ShellGradientPreset;
-        /**
-          * Optional custom gradient for `background-image` (e.g. SVG URL). When set, overrides the built-in radial wash.
-          * @default ''
-         */
-        "gradientSrc": string;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
@@ -114,7 +104,7 @@ export namespace Components {
          */
         "count": number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an AppShell with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
           * @default false
          */
         "gradientBackground": boolean;
@@ -2141,20 +2131,10 @@ declare namespace LocalJSX {
 
     interface DsAppShell {
         /**
-          * When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout).
-          * @default false
-         */
-        "gradient"?: boolean;
-        /**
-          * Built-in shell wash preset when `gradient` is true. `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+          * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
           * @default 'neutral'
          */
         "gradientPreset"?: ShellGradientPreset;
-        /**
-          * Optional custom gradient for `background-image` (e.g. SVG URL). When set, overrides the built-in radial wash.
-          * @default ''
-         */
-        "gradientSrc"?: string;
         /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
@@ -2177,7 +2157,7 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an AppShell with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
           * @default false
          */
         "gradientBackground"?: boolean;
@@ -3577,8 +3557,6 @@ declare namespace LocalJSX {
 
     interface DsAppShellAttributes {
         "navStyle": NavChromeStyle;
-        "gradient": boolean;
-        "gradientSrc": string;
         "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
     }

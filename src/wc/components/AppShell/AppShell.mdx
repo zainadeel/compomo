@@ -5,7 +5,7 @@ import * as AppShellStories from './AppShell.stories';
 
 # App Shell
 
-`ds-app-shell` is the workspace layout primitive for Motive dashboard shells. It slots **panel nav**, **bar nav**, **panel tools**, and page content, and optionally paints a shared chrome layer behind the nav surfaces.
+`ds-app-shell` is the workspace layout primitive for Motive dashboard shells. It slots **panel nav**, **bar nav**, **panel tools**, and page content, and paints the selected shared chrome treatment behind the nav surfaces.
 
 ## Slots
 
@@ -21,13 +21,13 @@ import * as AppShellStories from './AppShell.stories';
 | Prop | Default | Behavior |
 | --- | --- | --- |
 | `navStyle` | `dashboard` | Propagated to slotted `ds-panel-nav` and `ds-bar-nav` |
-| `gradient` | `false` | When `true`, mounts the shared chrome layer and syncs `--ds-shell-gradient-*` vars to shell, panel, and bar |
-| `gradientPreset` | `neutral` | Built-in wash: `none` (solid secondary), `cool`, `neutral`, or `warm`. `gradientSrc` overrides when set |
-| `gradientSrc` | `''` | Optional `url(...)` image override for the wash |
+| `gradientPreset` | `neutral` | Chrome treatment: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh`. Color tokens adapt each wash to light and dark themes |
 | `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers) |
 
 ## Gradient presets
 
 Use `ds-shell-gradient-picker` (or menu gradient-picker sections) to let users pick a wash. **`none`** matches `--color-background-secondary` with no intent wash — useful when you want chrome framing without color tint.
+
+Applications own preference persistence, cross-tab synchronization, and account/server preference precedence. Pass the resolved value to `gradientPreset`; keep the picker in the user/account menu and apply changes immediately without closing the menu.
 
 See [framework integration](/?path=/docs/docs-introduction--docs) for host-app wiring, viewport sizing, and Angular timing notes.

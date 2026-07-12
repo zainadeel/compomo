@@ -186,7 +186,7 @@ export const InGradientShell: Story = {
     docs: {
       description: {
         story:
-          'Drawer and rail surfaces are transparent under `ds-app-shell[gradient]` — chrome paints behind them.',
+          'Drawer and rail surfaces are transparent when AppShell uses a wash preset — chrome paints behind them.',
       },
     },
   },

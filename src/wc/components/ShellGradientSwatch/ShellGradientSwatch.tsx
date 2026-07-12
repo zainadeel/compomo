@@ -5,7 +5,7 @@ import {
   DEFAULT_SHELL_GRADIENT_PRESET,
   type ShellGradientPreset,
 } from './shell-gradient-swatch-types';
-import { SHELL_GRADIENT_OPACITY } from '../../nav/shell-gradient';
+import { shellGradientPresetOpacity } from '../../nav/shell-gradient-presets';
 
 @Component({
   tag: 'ds-shell-gradient-swatch',
@@ -49,11 +49,13 @@ export class ShellGradientSwatch {
               ? undefined
               : {
                   '--_swatch-gradient-image': buildShellRadialGradientForPreset(this.preset),
-                  '--ds-shell-gradient-opacity': SHELL_GRADIENT_OPACITY,
+                  '--ds-shell-gradient-opacity': shellGradientPresetOpacity(this.preset),
                 }
           }
           aria-label={label}
-          aria-pressed={this.selected ? 'true' : 'false'}
+          role="radio"
+          aria-checked={this.selected ? 'true' : 'false'}
+          tabIndex={this.selected ? 0 : -1}
           disabled={this.isInactive}
           onClick={this.handleClick}
         >

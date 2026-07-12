@@ -61,12 +61,20 @@ describe('isShellGradientActive', () => {
     assert.equal(isShellGradientActive(el), false);
   });
 
-  it('returns true when ancestor shell has gradient', () => {
-    const shell = { hasAttribute: (name: string) => name === 'gradient' };
+  it('returns true when ancestor shell has a wash preset', () => {
+    const shell = { getAttribute: (name: string) => name === 'gradient-preset' ? 'neutral' : null };
     const el = {
       closest: (tag: string) => (tag === 'ds-app-shell' ? shell : null),
     } as unknown as HTMLElement;
     assert.equal(isShellGradientActive(el), true);
+  });
+
+  it('returns false when ancestor shell uses solid chrome', () => {
+    const shell = { getAttribute: () => 'none' };
+    const el = {
+      closest: (tag: string) => (tag === 'ds-app-shell' ? shell : null),
+    } as unknown as HTMLElement;
+    assert.equal(isShellGradientActive(el), false);
   });
 });
 
@@ -95,7 +103,7 @@ describe('syncBadgeGradientPosition', () => {
     const badgeHost = {
       style: { getPropertyValue: () => '', setProperty: () => {}, removeProperty: () => {} },
       closest: (tag: string) =>
-        tag === 'ds-app-shell' ? { hasAttribute: (name: string) => name === 'gradient' } : null,
+        tag === 'ds-app-shell' ? { getAttribute: () => 'neutral' } : null,
     } as unknown as HTMLElement;
 
     const setCalls: string[] = [];

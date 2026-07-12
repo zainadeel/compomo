@@ -48,7 +48,8 @@
           "commonlyComposedWith": [
             "component:ds-panel-nav",
             "component:ds-bar-nav",
-            "component:ds-panel-tools"
+            "component:ds-panel-tools",
+            "component:ds-shell-gradient-picker"
           ],
           "patterns": [
             "pattern:application-shell"
@@ -66,6 +67,8 @@
             "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
             "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
             "AppShell propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
+            "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
+            "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; AppShell owns rendering the resolved preset across authenticated routes.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
             "BarNav remains present: it shows route-section tabs when available and the active PanelNav destination label as heading otherwise.",
@@ -114,16 +117,8 @@
           ]
         },
         "props": {
-          "gradient": {
-            "type": "boolean",
-            "required": false
-          },
           "gradientPreset": {
             "type": "ShellGradientPreset",
-            "required": false
-          },
-          "gradientSrc": {
-            "type": "string",
             "required": false
           },
           "navStyle": {
@@ -1562,7 +1557,8 @@
           "states": [
             "The host owns open state and responds to selection and close events.",
             "Use either flat items or sections, not both.",
-            "Arrays, objects, and element anchors must be assigned as JavaScript properties."
+            "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
+            "Use one gradient-picker section in the user or account Appearance or Theme menu for the global AppShell wash preference; apply dsGradientSelect immediately without closing the menu."
           ],
           "responsiveBehavior": [
             "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
@@ -2358,15 +2354,84 @@
     {
       "name": "shell-gradient-picker",
       "title": "ShellGradientPicker",
-      "description": "ShellGradientPicker component from @ds-mo/ui.",
+      "description": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-picker",
         "source": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
+          "useWhen": [
+            "Adding the Appearance or Theme section to the application's user or account menu.",
+            "Users must choose the global AppShell chrome treatment from none, cool, neutral, warm, or fresh."
+          ],
+          "avoidWhen": [
+            "Choosing semantic intent, page background, chart, content, or brand colors.",
+            "Building an arbitrary gradient editor or allowing custom gradient values.",
+            "A picker already exists for the application; provide exactly one canonical preference location.",
+            "Rendering an individual swatch outside the complete picker."
+          ],
+          "alternatives": [
+            {
+              "when": "The user is selecting the application light, dark, or system color mode.",
+              "component": "component:ds-menu",
+              "reason": "Color mode is a separate appearance preference and should use ordinary menu selection rows."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-app-shell",
+            "component:ds-menu"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Provide a localized groupLabel that describes the shell appearance choice.",
+            "Treat the presets as one radio group with one Tab stop; Arrow keys, Home, and End move and select within the group.",
+            "Keep the visible compact swatches and their accessible preset names; do not rely on color alone for assistive technology."
+          ],
+          "states": [
+            "Neutral is the default preset; none renders solid shell chrome without a wash.",
+            "Cool, neutral, warm, and fresh use design tokens and automatically adapt to the active light or dark color theme.",
+            "Apply dsChange immediately to AppShell.gradientPreset and keep the containing account menu open.",
+            "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
+            "Treat the fixed preset union as the only supported values and do not construct custom gradients."
+          ],
+          "responsiveBehavior": [
+            "Keep the compact picker in the user or account appearance menu on supported desktop and tablet shell compositions.",
+            "The future mobile account surface may present the same preference differently."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange, resolve application preference precedence, and assign the result to the single AppShell gradientPreset property."
+            ],
+            "react": [
+              "Use the generated wrapper and handle onDsChange without closing the containing account menu."
+            ],
+            "angular": [
+              "Bind value to the resolved preference and handle dsChange to update application state."
+            ]
+          },
+          "references": [
+            {
+              "label": "Executable stories",
+              "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.stories.ts"
+            },
+            {
+              "label": "AppShell gradient contract",
+              "path": "src/wc/components/AppShell/AppShell.mdx"
+            },
+            {
+              "label": "Application shell composition",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
         "props": {
           "groupLabel": {
             "type": "string",
@@ -2401,15 +2466,67 @@
     {
       "name": "shell-gradient-swatch",
       "title": "ShellGradientSwatch",
-      "description": "ShellGradientSwatch component from @ds-mo/ui.",
+      "description": "Internal radio swatch used by ShellGradientPicker to preview one fixed AppShell chrome preset.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-swatch",
         "source": "src/wc/components/ShellGradientSwatch/ShellGradientSwatch.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "internal",
+          "status": "stable",
+          "summary": "Internal radio swatch used by ShellGradientPicker to preview one fixed AppShell chrome preset.",
+          "useWhen": [
+            "Maintaining or extending ShellGradientPicker inside CompoMo."
+          ],
+          "avoidWhen": [
+            "Building application UI directly; use ShellGradientPicker instead.",
+            "Selecting semantic, brand, chart, page, or arbitrary gradient colors.",
+            "Creating a partial or custom set of shell gradient choices."
+          ],
+          "alternatives": [
+            {
+              "when": "An application needs the supported global shell appearance control.",
+              "component": "component:ds-shell-gradient-picker",
+              "reason": "The picker provides the complete preset set, radio semantics, keyboard behavior, and selection event."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-gradient-picker"
+          ],
+          "accessibility": [
+            "Keep radio semantics, aria-checked state, and a preset-specific accessible name on the internal button.",
+            "Let ShellGradientPicker manage the roving tab stop and group keyboard navigation.",
+            "Do not expose an unlabeled color-only choice."
+          ],
+          "states": [
+            "Preset determines the token-based preview; selected determines radio state and selected visuals.",
+            "The selected swatch owns the radio group's single tab stop while ShellGradientPicker coordinates selection and focus movement.",
+            "isInactive disables interaction but does not remove the accessible name."
+          ],
+          "responsiveBehavior": [
+            "Preserve the fixed compact swatch geometry and let ShellGradientPicker own layout."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Do not instantiate this internal primitive in consuming applications."
+            ],
+            "react": [
+              "Use DsShellGradientPicker rather than the generated swatch wrapper."
+            ],
+            "angular": [
+              "Use DsShellGradientPicker rather than importing DsShellGradientSwatch."
+            ]
+          },
+          "references": [
+            {
+              "label": "Parent picker",
+              "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx"
+            }
+          ]
+        },
         "props": {
           "ariaLabel": {
             "type": "string | null",

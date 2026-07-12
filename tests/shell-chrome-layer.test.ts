@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { shellChromeLayerActive } from '../src/wc/nav/shell-gradient';
 
 describe('shellChromeLayerActive', () => {
-  it('is false when gradient is off', () => {
-    assert.equal(shellChromeLayerActive(false), false);
+  it('is false for the solid chrome preset', () => {
+    assert.equal(shellChromeLayerActive('none'), false);
   });
 
-  it('is true when gradient is on', () => {
-    assert.equal(shellChromeLayerActive(true), true);
+  it('is true for a wash preset', () => {
+    assert.equal(shellChromeLayerActive('neutral'), true);
   });
 });

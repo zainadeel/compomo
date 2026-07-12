@@ -2,15 +2,67 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "shell-gradient-swatch",
   "title": "ShellGradientSwatch",
-  "description": "ShellGradientSwatch component from @ds-mo/ui.",
+  "description": "Internal radio swatch used by ShellGradientPicker to preview one fixed AppShell chrome preset.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-swatch",
     "source": "src/wc/components/ShellGradientSwatch/ShellGradientSwatch.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "internal",
+      "status": "stable",
+      "summary": "Internal radio swatch used by ShellGradientPicker to preview one fixed AppShell chrome preset.",
+      "useWhen": [
+        "Maintaining or extending ShellGradientPicker inside CompoMo."
+      ],
+      "avoidWhen": [
+        "Building application UI directly; use ShellGradientPicker instead.",
+        "Selecting semantic, brand, chart, page, or arbitrary gradient colors.",
+        "Creating a partial or custom set of shell gradient choices."
+      ],
+      "alternatives": [
+        {
+          "when": "An application needs the supported global shell appearance control.",
+          "component": "component:ds-shell-gradient-picker",
+          "reason": "The picker provides the complete preset set, radio semantics, keyboard behavior, and selection event."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-gradient-picker"
+      ],
+      "accessibility": [
+        "Keep radio semantics, aria-checked state, and a preset-specific accessible name on the internal button.",
+        "Let ShellGradientPicker manage the roving tab stop and group keyboard navigation.",
+        "Do not expose an unlabeled color-only choice."
+      ],
+      "states": [
+        "Preset determines the token-based preview; selected determines radio state and selected visuals.",
+        "The selected swatch owns the radio group's single tab stop while ShellGradientPicker coordinates selection and focus movement.",
+        "isInactive disables interaction but does not remove the accessible name."
+      ],
+      "responsiveBehavior": [
+        "Preserve the fixed compact swatch geometry and let ShellGradientPicker own layout."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Do not instantiate this internal primitive in consuming applications."
+        ],
+        "react": [
+          "Use DsShellGradientPicker rather than the generated swatch wrapper."
+        ],
+        "angular": [
+          "Use DsShellGradientPicker rather than importing DsShellGradientSwatch."
+        ]
+      },
+      "references": [
+        {
+          "label": "Parent picker",
+          "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx"
+        }
+      ]
+    },
     "api": {
       "props": {
         "ariaLabel": {
@@ -31,7 +83,7 @@
         },
         "preset": {
           "type": "ShellGradientPreset",
-          "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+          "resolvedType": "\"cool\" | \"fresh\" | \"neutral\" | \"none\" | \"warm\"",
           "attribute": "preset",
           "default": "'neutral'",
           "required": false,
@@ -79,7 +131,7 @@
       },
       "preset": {
         "type": "ShellGradientPreset",
-        "resolvedType": "\"cool\" | \"neutral\" | \"none\" | \"warm\"",
+        "resolvedType": "\"cool\" | \"fresh\" | \"neutral\" | \"none\" | \"warm\"",
         "attribute": "preset",
         "default": "'neutral'",
         "required": false,
@@ -149,12 +201,12 @@
     },
     {
       "path": "src/wc/components/ShellGradientSwatch/ShellGradientSwatch.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport {\n  SHELL_GRADIENT_PRESET_LABELS,\n  buildShellRadialGradientForPreset,\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  type ShellGradientPreset,\n} from './shell-gradient-swatch-types';\nimport { SHELL_GRADIENT_OPACITY } from '../../nav/shell-gradient';\n\n@Component({\n  tag: 'ds-shell-gradient-swatch',\n  styleUrl: 'ShellGradientSwatch.css',\n  scoped: true,\n})\nexport class ShellGradientSwatch {\n  /** Wash preset this orb previews. */\n  @Prop({ reflect: true }) preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET;\n\n  /** Selected — brand stroke + halo over inner fill/border/interaction stack. */\n  @Prop({ reflect: true }) selected = false;\n\n  @Prop() isInactive = false;\n\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n\n  @Event() dsSelect!: EventEmitter<ShellGradientPreset>;\n\n  private handleClick = () => {\n    if (this.isInactive) return;\n    this.dsSelect.emit(this.preset);\n  };\n\n  render() {\n    const label = this.ariaLabel ?? SHELL_GRADIENT_PRESET_LABELS[this.preset];\n\n    return (\n      <Host>\n        <button\n          type=\"button\"\n          class={{\n            'shell-gradient-swatch': true,\n            'ds-focus-ring-inset': true,\n            'ds-control-inactive': this.isInactive,\n            'shell-gradient-swatch--selected': this.selected,\n            'shell-gradient-swatch--none': this.preset === 'none',\n          }}\n          style={\n            this.preset === 'none'\n              ? undefined\n              : {\n                  '--_swatch-gradient-image': buildShellRadialGradientForPreset(this.preset),\n                  '--ds-shell-gradient-opacity': SHELL_GRADIENT_OPACITY,\n                }\n          }\n          aria-label={label}\n          aria-pressed={this.selected ? 'true' : 'false'}\n          disabled={this.isInactive}\n          onClick={this.handleClick}\n        >\n          <span class=\"shell-gradient-swatch__fill\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__border\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__interaction\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__halo\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__stroke\" aria-hidden=\"true\" />\n        </button>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport {\n  SHELL_GRADIENT_PRESET_LABELS,\n  buildShellRadialGradientForPreset,\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  type ShellGradientPreset,\n} from './shell-gradient-swatch-types';\nimport { shellGradientPresetOpacity } from '../../nav/shell-gradient-presets';\n\n@Component({\n  tag: 'ds-shell-gradient-swatch',\n  styleUrl: 'ShellGradientSwatch.css',\n  scoped: true,\n})\nexport class ShellGradientSwatch {\n  /** Wash preset this orb previews. */\n  @Prop({ reflect: true }) preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET;\n\n  /** Selected — brand stroke + halo over inner fill/border/interaction stack. */\n  @Prop({ reflect: true }) selected = false;\n\n  @Prop() isInactive = false;\n\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n\n  @Event() dsSelect!: EventEmitter<ShellGradientPreset>;\n\n  private handleClick = () => {\n    if (this.isInactive) return;\n    this.dsSelect.emit(this.preset);\n  };\n\n  render() {\n    const label = this.ariaLabel ?? SHELL_GRADIENT_PRESET_LABELS[this.preset];\n\n    return (\n      <Host>\n        <button\n          type=\"button\"\n          class={{\n            'shell-gradient-swatch': true,\n            'ds-focus-ring-inset': true,\n            'ds-control-inactive': this.isInactive,\n            'shell-gradient-swatch--selected': this.selected,\n            'shell-gradient-swatch--none': this.preset === 'none',\n          }}\n          style={\n            this.preset === 'none'\n              ? undefined\n              : {\n                  '--_swatch-gradient-image': buildShellRadialGradientForPreset(this.preset),\n                  '--ds-shell-gradient-opacity': shellGradientPresetOpacity(this.preset),\n                }\n          }\n          aria-label={label}\n          role=\"radio\"\n          aria-checked={this.selected ? 'true' : 'false'}\n          tabIndex={this.selected ? 0 : -1}\n          disabled={this.isInactive}\n          onClick={this.handleClick}\n        >\n          <span class=\"shell-gradient-swatch__fill\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__border\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__interaction\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__halo\" aria-hidden=\"true\" />\n          <span class=\"shell-gradient-swatch__stroke\" aria-hidden=\"true\" />\n        </button>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/ShellGradientSwatch/shell-gradient-swatch-types.ts",
-      "content": "import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';\nimport {\n  SHELL_GRADIENT_PRESET_LABELS,\n  buildShellRadialGradientForPreset,\n} from '../../nav/shell-gradient-presets';\n\nexport type { ShellGradientPreset };\n\nexport {\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  SHELL_GRADIENT_PRESETS,\n  SHELL_GRADIENT_WASH_PRESETS,\n  SHELL_GRADIENT_PRESET_LABELS,\n  buildShellRadialGradientForPreset,\n  isShellGradientPreset,\n  shellGradientPresetStopToken,\n} from '../../nav/shell-gradient-presets';\n",
+      "content": "import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';\nexport type { ShellGradientPreset };\n\nexport {\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  SHELL_GRADIENT_PRESETS,\n  SHELL_GRADIENT_WASH_PRESETS,\n  SHELL_GRADIENT_PRESET_LABELS,\n  buildShellRadialGradientForPreset,\n  buildShellRadialGradientFromStops,\n  isShellGradientPreset,\n  normalizeShellGradientPreset,\n  shellGradientPresetOpacity,\n  shellGradientPresetRecipe,\n  shellGradientPresetStopToken,\n} from '../../nav/shell-gradient-presets';\n",
       "type": "registry:ui"
     }
   ]

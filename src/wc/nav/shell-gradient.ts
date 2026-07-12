@@ -3,6 +3,7 @@ import type { ShellGradientPreset } from './shell-gradient-presets';
 import {
   DEFAULT_SHELL_GRADIENT_PRESET,
   buildShellRadialGradientForPreset,
+  normalizeShellGradientPreset,
 } from './shell-gradient-presets';
 
 export type { ShellGradientPreset } from './shell-gradient-presets';
@@ -11,7 +12,10 @@ export {
   SHELL_GRADIENT_PRESETS,
   SHELL_GRADIENT_PRESET_LABELS,
   buildShellRadialGradientForPreset,
+  buildShellRadialGradientFromStops,
   isShellGradientPreset,
+  shellGradientPresetOpacity,
+  shellGradientPresetRecipe,
   shellGradientPresetStopToken,
 } from './shell-gradient-presets';
 
@@ -23,12 +27,9 @@ export const SHELL_GRADIENT_OPACITY_VAR = '--ds-shell-gradient-opacity';
 /** Per chrome-surface background-position — offsets wash + grid to shell row origin. */
 export const SHELL_CHROME_SURFACE_POSITION_VAR = '--ds-shell-chrome-surface-position';
 
-/** Layer opacity for the nav gradient wash. */
-export const SHELL_GRADIENT_OPACITY = '0.1';
-
 /** Whether the shared chrome layer (secondary bg + optional wash) should mount. */
-export function shellChromeLayerActive(gradient: boolean): boolean {
-  return gradient;
+export function shellChromeLayerActive(preset: ShellGradientPreset): boolean {
+  return normalizeShellGradientPreset(preset) !== 'none';
 }
 
 /**
@@ -41,7 +42,7 @@ export function buildShellRadialGradient(
   return buildShellRadialGradientForPreset(preset);
 }
 
-/** Built-in radial image (`gradientSrc` on shell overrides). */
+/** Built-in radial image for the selected shell preset. */
 export function shellGradientImage(
   preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET,
 ): string {

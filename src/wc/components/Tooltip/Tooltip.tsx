@@ -7,6 +7,7 @@ import {
   TOKEN_DEFAULTS,
 } from '../../utils';
 import type { TextVariant } from '../Text/text-types';
+import { shortcutKeyLabels } from '../../utils/shortcut-key';
 // Side-effect: register `ds-text` — the portal builds it via createElement, not JSX.
 import '../Text/Text';
 
@@ -338,13 +339,21 @@ export class Tooltip {
 
     const appendShortcut = (position: 'start' | 'end') => {
       if (!this.shortcutKey || this.shortcutKeyPosition !== position) return;
-      const hint = document.createElement('div');
-      hint.className = `key-hint ${sc}`;
-      hint.setAttribute('aria-hidden', 'true');
-      hint.appendChild(
-        createDsText({ variant: 'text-caption', emphasis: true, text: this.shortcutKey }),
-      );
-      inner.appendChild(hint);
+      const group = document.createElement('span');
+      group.className = `key-hint-group ${sc}`;
+      group.setAttribute('aria-hidden', 'true');
+
+      for (const label of shortcutKeyLabels(this.shortcutKey)) {
+        const hint = document.createElement('span');
+        const wide = Array.from(label).length > 1 ? ' key-hint--wide' : '';
+        hint.className = `key-hint${wide} ${sc}`;
+        const text = document.createElement('span');
+        text.className = `key-hint__label ${sc}`;
+        text.textContent = label;
+        hint.appendChild(text);
+        group.appendChild(hint);
+      }
+      inner.appendChild(group);
     };
 
     appendShortcut('start');

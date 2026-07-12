@@ -112,6 +112,9 @@ export const WithShortcut: Story = {
       <ds-tooltip label="Save file" size="sm" shortcut-key="⌘S">
         <ds-button-filled variant="icon" size="sm" icon="Check" intent="brand" aria-label="Save sm"></ds-button-filled>
       </ds-tooltip>
+      <ds-tooltip label="Save file" size="xs" shortcut-key="⌘S">
+        <ds-button-filled variant="icon" size="xs" icon="Check" intent="brand" aria-label="Save xs"></ds-button-filled>
+      </ds-tooltip>
     </div>
   `,
 };

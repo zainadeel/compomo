@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-shell-gradient-swatch",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-shell-gradient-swatch",
+  "audience": "internal",
+  "status": "stable",
+  "summary": "Internal radio swatch used by ShellGradientPicker to preview one fixed AppShell chrome preset.",
+  "useWhen": ["Maintaining or extending ShellGradientPicker inside CompoMo."],
+  "avoidWhen": [
+    "Building application UI directly; use ShellGradientPicker instead.",
+    "Selecting semantic, brand, chart, page, or arbitrary gradient colors.",
+    "Creating a partial or custom set of shell gradient choices."
+  ],
+  "alternatives": [{
+    "when": "An application needs the supported global shell appearance control.",
+    "component": "component:ds-shell-gradient-picker",
+    "reason": "The picker provides the complete preset set, radio semantics, keyboard behavior, and selection event."
+  }],
+  "commonlyComposedWith": ["component:ds-shell-gradient-picker"],
+  "accessibility": [
+    "Keep radio semantics, aria-checked state, and a preset-specific accessible name on the internal button.",
+    "Let ShellGradientPicker manage the roving tab stop and group keyboard navigation.",
+    "Do not expose an unlabeled color-only choice."
+  ],
+  "states": [
+    "Preset determines the token-based preview; selected determines radio state and selected visuals.",
+    "The selected swatch owns the radio group's single tab stop while ShellGradientPicker coordinates selection and focus movement.",
+    "isInactive disables interaction but does not remove the accessible name."
+  ],
+  "responsiveBehavior": ["Preserve the fixed compact swatch geometry and let ShellGradientPicker own layout."],
+  "frameworkCaveats": {
+    "customElements": ["Do not instantiate this internal primitive in consuming applications."],
+    "react": ["Use DsShellGradientPicker rather than the generated swatch wrapper."],
+    "angular": ["Use DsShellGradientPicker rather than importing DsShellGradientSwatch."]
+  },
+  "references": [{"label": "Parent picker", "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx"}]
+}

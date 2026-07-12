@@ -8,6 +8,7 @@ import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
 import type { PanelToolsItem } from '../PanelTools/panel-tools-types';
+import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
 
 const PANEL_GROUPS: PanelNavGroup[] = [
   {
@@ -65,7 +66,7 @@ function wirePanelTools(el: Element | null) {
   });
 }
 
-function shellLayout(gradient: boolean): TemplateResult {
+function shellLayout(gradientPreset: ShellGradientPreset): TemplateResult {
   return html`
     <div
       style="
@@ -74,7 +75,7 @@ function shellLayout(gradient: boolean): TemplateResult {
         font-family: var(--typography-font-family, system-ui);
       "
     >
-      <ds-app-shell nav-style="dashboard" ?gradient=${gradient} style="height: 100%;">
+      <ds-app-shell nav-style="dashboard" gradient-preset=${gradientPreset} style="height: 100%;">
         <ds-panel-nav
           slot="panel"
           nav-style="dashboard"
@@ -110,10 +111,10 @@ type Story = StoryObj;
 
 export const WithGradient: Story = {
   name: 'With gradient',
-  render: () => shellLayout(true),
+  render: () => shellLayout('neutral'),
 };
 
 export const WithoutGradient: Story = {
   name: 'Without gradient',
-  render: () => shellLayout(false),
+  render: () => shellLayout('none'),
 };

@@ -49,7 +49,7 @@
 }
 
 /* Shell-owned chrome (bg + wash) — bar is a transparent frame. */
-:host-context(ds-app-shell[gradient]) .bar-nav {
+:host-context(ds-app-shell:not([gradient-preset='none'])) .bar-nav {
   background-color: transparent;
 }
 

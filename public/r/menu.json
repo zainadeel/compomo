@@ -48,7 +48,8 @@
       "states": [
         "The host owns open state and responds to selection and close events.",
         "Use either flat items or sections, not both.",
-        "Arrays, objects, and element anchors must be assigned as JavaScript properties."
+        "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
+        "Use one gradient-picker section in the user or account Appearance or Theme menu for the global AppShell wash preference; apply dsGradientSelect immediately without closing the menu."
       ],
       "responsiveBehavior": [
         "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
