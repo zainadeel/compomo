@@ -7,6 +7,7 @@ import {
 import type { PanelToolsToolId } from '../PanelTools/panel-tools-types';
 import {
   DEFAULT_SHELL_GRADIENT_PRESET,
+  normalizeShellGradientPreset,
   type ShellGradientPreset,
 } from '../../nav/shell-gradient-presets';
 import {
@@ -45,18 +46,9 @@ export class AppShell {
   /** Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`. */
   @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'dashboard';
 
-  /** When `true`, paints the radial wash behind panel, bar, and tools (synced to shell layout). */
-  @Prop({ reflect: true }) gradient: boolean = false;
-
   /**
-   * Optional custom gradient for `background-image` (e.g. SVG URL).
-   * When set, overrides the built-in radial wash.
-   */
-  @Prop() gradientSrc: string = '';
-
-  /**
-   * Built-in shell wash preset when `gradient` is true.
-   * `none` (solid secondary), `cool` (blue), `neutral` (grey), `warm` (yellow). `gradientSrc` overrides when set.
+   * Shell chrome wash preset. `none` renders solid chrome; the remaining
+   * presets use token-based washes that adapt to the active color theme.
    */
   @Prop({ attribute: 'gradient-preset', reflect: true }) gradientPreset: ShellGradientPreset =
     DEFAULT_SHELL_GRADIENT_PRESET;
@@ -103,8 +95,6 @@ export class AppShell {
   }
 
   @Watch('navStyle')
-  @Watch('gradient')
-  @Watch('gradientSrc')
   @Watch('gradientPreset')
   onShellPropsChange() {
     this.syncSlottedNavStyle();
@@ -255,7 +245,7 @@ export class AppShell {
   }
 
   private chromeLayerActive(): boolean {
-    return this.gradient;
+    return normalizeShellGradientPreset(this.gradientPreset) !== 'none';
   }
 
   @Listen('keydown', { target: 'window', capture: true })
@@ -297,7 +287,8 @@ export class AppShell {
       if (bar) bar.style.removeProperty(SHELL_GRADIENT_POSITION_BAR_VAR);
     };
 
-    if (!this.gradient) {
+    const preset = normalizeShellGradientPreset(this.gradientPreset);
+    if (preset === 'none') {
       this.clearGradientPaintVars(targets);
       clearLayoutVars();
       return;
@@ -311,9 +302,7 @@ export class AppShell {
 
     this.syncChromeLayoutVars(panelNav, bar, panelPosition, barPosition);
 
-    const image = this.gradientSrc.trim()
-      ? `url(${this.gradientSrc.trim()})`
-      : buildShellRadialGradient(this.gradientPreset);
+    const image = buildShellRadialGradient(preset);
 
     const size = shellGradientSize({
       width: viewport.width,
@@ -348,7 +337,7 @@ export class AppShell {
     const chromeActive = this.chromeLayerActive();
     const shellCls: Record<string, boolean> = {
       'app-shell': true,
-      'app-shell--gradient': this.gradient,
+      'app-shell--gradient': chromeActive,
       [`app-shell--${this.navStyle}`]: true,
     };
 

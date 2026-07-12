@@ -2,15 +2,84 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "shell-gradient-picker",
   "title": "ShellGradientPicker",
-  "description": "ShellGradientPicker component from @ds-mo/ui.",
+  "description": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-picker",
     "source": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "stable",
+      "summary": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
+      "useWhen": [
+        "Adding the Appearance or Theme section to the application's user or account menu.",
+        "Users must choose the global AppShell chrome treatment from none, cool, neutral, or warm."
+      ],
+      "avoidWhen": [
+        "Choosing semantic intent, page background, chart, content, or brand colors.",
+        "Building an arbitrary gradient editor or allowing custom gradient values.",
+        "A picker already exists for the application; provide exactly one canonical preference location.",
+        "Rendering an individual swatch outside the complete picker."
+      ],
+      "alternatives": [
+        {
+          "when": "The user is selecting the application light, dark, or system color mode.",
+          "component": "component:ds-menu",
+          "reason": "Color mode is a separate appearance preference and should use ordinary menu selection rows."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-app-shell",
+        "component:ds-menu"
+      ],
+      "patterns": [
+        "pattern:application-shell"
+      ],
+      "accessibility": [
+        "Provide a localized groupLabel that describes the shell appearance choice.",
+        "Treat the presets as one radio group with one Tab stop; Arrow keys, Home, and End move and select within the group.",
+        "Keep the visible compact swatches and their accessible preset names; do not rely on color alone for assistive technology."
+      ],
+      "states": [
+        "Neutral is the default preset; none renders solid shell chrome without a wash.",
+        "Cool, neutral, and warm use design tokens and automatically adapt to the active light or dark color theme.",
+        "Apply dsChange immediately to AppShell.gradientPreset and keep the containing account menu open.",
+        "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
+        "Treat the fixed preset union as the only supported values and do not construct custom gradients."
+      ],
+      "responsiveBehavior": [
+        "Keep the compact picker in the user or account appearance menu on supported desktop and tablet shell compositions.",
+        "The future mobile account surface may present the same preference differently."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange, resolve application preference precedence, and assign the result to the single AppShell gradientPreset property."
+        ],
+        "react": [
+          "Use the generated wrapper and handle onDsChange without closing the containing account menu."
+        ],
+        "angular": [
+          "Bind value to the resolved preference and handle dsChange to update application state."
+        ]
+      },
+      "references": [
+        {
+          "label": "Executable stories",
+          "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.stories.ts"
+        },
+        {
+          "label": "AppShell gradient contract",
+          "path": "src/wc/components/AppShell/AppShell.mdx"
+        },
+        {
+          "label": "Application shell composition",
+          "path": "agent/patterns/application-shell/pattern.agent.json"
+        }
+      ]
+    },
     "api": {
       "props": {
         "groupLabel": {
@@ -117,7 +186,7 @@
     },
     {
       "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport {\n  SHELL_GRADIENT_WASH_PRESETS,\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  type ShellGradientPreset,\n} from '../ShellGradientSwatch/shell-gradient-swatch-types';\n\n@Component({\n  tag: 'ds-shell-gradient-picker',\n  styleUrl: 'ShellGradientPicker.css',\n  scoped: true,\n})\nexport class ShellGradientPicker {\n  /** Active shell wash preset. */\n  @Prop({ mutable: true, reflect: true }) value: ShellGradientPreset =\n    DEFAULT_SHELL_GRADIENT_PRESET;\n  @Prop() groupLabel: string = 'Shell gradient theme';\n\n  @Event() dsChange!: EventEmitter<ShellGradientPreset>;\n\n  private handleSwatchSelect = (preset: ShellGradientPreset) => {\n    if (preset === this.value) return;\n    this.value = preset;\n    this.dsChange.emit(preset);\n  };\n\n  private renderSwatch(preset: ShellGradientPreset) {\n    return (\n      <ds-shell-gradient-swatch\n        key={preset}\n        preset={preset}\n        selected={this.value === preset}\n        onDsSelect={(e: CustomEvent<ShellGradientPreset>) => {\n          e.stopPropagation();\n          this.handleSwatchSelect(e.detail);\n        }}\n      />\n    );\n  }\n\n  render() {\n    return (\n      <Host>\n        <div\n          class=\"shell-gradient-picker\"\n          role=\"radiogroup\"\n          aria-label={this.groupLabel}\n        >\n          {this.renderSwatch('none')}\n          <div class=\"shell-gradient-picker__divider\" aria-hidden=\"true\" />\n          {SHELL_GRADIENT_WASH_PRESETS.map(preset => this.renderSwatch(preset))}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, Event, EventEmitter, Element, h, Host } from '@stencil/core';\nimport {\n  SHELL_GRADIENT_PRESETS,\n  SHELL_GRADIENT_WASH_PRESETS,\n  DEFAULT_SHELL_GRADIENT_PRESET,\n  normalizeShellGradientPreset,\n  type ShellGradientPreset,\n} from '../ShellGradientSwatch/shell-gradient-swatch-types';\n\n@Component({\n  tag: 'ds-shell-gradient-picker',\n  styleUrl: 'ShellGradientPicker.css',\n  scoped: true,\n})\nexport class ShellGradientPicker {\n  /** Active shell wash preset. */\n  @Prop({ mutable: true, reflect: true }) value: ShellGradientPreset =\n    DEFAULT_SHELL_GRADIENT_PRESET;\n  @Prop() groupLabel: string = 'Shell gradient theme';\n\n  @Event() dsChange!: EventEmitter<ShellGradientPreset>;\n\n  @Element() el!: HTMLElement;\n\n  private handleSwatchSelect = (preset: ShellGradientPreset) => {\n    const normalized = normalizeShellGradientPreset(preset);\n    if (normalized === normalizeShellGradientPreset(this.value)) return;\n    this.value = normalized;\n    this.dsChange.emit(normalized);\n  };\n\n  private focusSwatch(preset: ShellGradientPreset) {\n    requestAnimationFrame(() => {\n      const swatch = this.el.querySelector<HTMLElement>(\n        `ds-shell-gradient-swatch[preset=\"${preset}\"]`,\n      );\n      swatch?.querySelector<HTMLButtonElement>('button')?.focus();\n    });\n  }\n\n  private handleSwatchKeyDown = (event: KeyboardEvent, preset: ShellGradientPreset) => {\n    const currentIndex = SHELL_GRADIENT_PRESETS.indexOf(preset);\n    let nextIndex: number | null = null;\n\n    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {\n      nextIndex = (currentIndex + 1) % SHELL_GRADIENT_PRESETS.length;\n    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {\n      nextIndex = (currentIndex - 1 + SHELL_GRADIENT_PRESETS.length) % SHELL_GRADIENT_PRESETS.length;\n    } else if (event.key === 'Home') {\n      nextIndex = 0;\n    } else if (event.key === 'End') {\n      nextIndex = SHELL_GRADIENT_PRESETS.length - 1;\n    }\n\n    if (nextIndex === null) return;\n    event.preventDefault();\n    const nextPreset = SHELL_GRADIENT_PRESETS[nextIndex];\n    this.handleSwatchSelect(nextPreset);\n    this.focusSwatch(nextPreset);\n  };\n\n  private renderSwatch(preset: ShellGradientPreset) {\n    const selected = normalizeShellGradientPreset(this.value) === preset;\n    return (\n      <ds-shell-gradient-swatch\n        key={preset}\n        preset={preset}\n        selected={selected}\n        onKeyDown={(event: KeyboardEvent) => this.handleSwatchKeyDown(event, preset)}\n        onDsSelect={(e: CustomEvent<ShellGradientPreset>) => {\n          e.stopPropagation();\n          this.handleSwatchSelect(e.detail);\n        }}\n      />\n    );\n  }\n\n  render() {\n    return (\n      <Host>\n        <div\n          class=\"shell-gradient-picker\"\n          role=\"radiogroup\"\n          aria-label={this.groupLabel}\n        >\n          {this.renderSwatch('none')}\n          <div class=\"shell-gradient-picker__divider\" aria-hidden=\"true\" />\n          {SHELL_GRADIENT_WASH_PRESETS.map(preset => this.renderSwatch(preset))}\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

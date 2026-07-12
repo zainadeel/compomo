@@ -1,0 +1,54 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-shell-gradient-picker",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-shell-gradient-picker",
+  "audience": "specialized",
+  "status": "stable",
+  "summary": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
+  "useWhen": [
+    "Adding the Appearance or Theme section to the application's user or account menu.",
+    "Users must choose the global AppShell chrome treatment from none, cool, neutral, or warm."
+  ],
+  "avoidWhen": [
+    "Choosing semantic intent, page background, chart, content, or brand colors.",
+    "Building an arbitrary gradient editor or allowing custom gradient values.",
+    "A picker already exists for the application; provide exactly one canonical preference location.",
+    "Rendering an individual swatch outside the complete picker."
+  ],
+  "alternatives": [{
+    "when": "The user is selecting the application light, dark, or system color mode.",
+    "component": "component:ds-menu",
+    "reason": "Color mode is a separate appearance preference and should use ordinary menu selection rows."
+  }],
+  "commonlyComposedWith": ["component:ds-app-shell", "component:ds-menu"],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "Provide a localized groupLabel that describes the shell appearance choice.",
+    "Treat the presets as one radio group with one Tab stop; Arrow keys, Home, and End move and select within the group.",
+    "Keep the visible compact swatches and their accessible preset names; do not rely on color alone for assistive technology."
+  ],
+  "states": [
+    "Neutral is the default preset; none renders solid shell chrome without a wash.",
+    "Cool, neutral, and warm use design tokens and automatically adapt to the active light or dark color theme.",
+    "Apply dsChange immediately to AppShell.gradientPreset and keep the containing account menu open.",
+    "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
+    "Treat the fixed preset union as the only supported values and do not construct custom gradients."
+  ],
+  "responsiveBehavior": [
+    "Keep the compact picker in the user or account appearance menu on supported desktop and tablet shell compositions.",
+    "The future mobile account surface may present the same preference differently."
+  ],
+  "frameworkCaveats": {
+    "customElements": ["Listen for dsChange, resolve application preference precedence, and assign the result to the single AppShell gradientPreset property."],
+    "react": ["Use the generated wrapper and handle onDsChange without closing the containing account menu."],
+    "angular": ["Bind value to the resolved preference and handle dsChange to update application state."]
+  },
+  "references": [
+    {"label": "Executable stories", "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.stories.ts"},
+    {"label": "AppShell gradient contract", "path": "src/wc/components/AppShell/AppShell.mdx"},
+    {"label": "Application shell composition", "path": "agent/patterns/application-shell/pattern.agent.json"}
+  ]
+}

@@ -67,8 +67,8 @@
 }
 
 /* Shell-owned chrome (bg + wash) — drawer + rail are transparent frames. */
-:host-context(ds-app-shell[gradient]) .panel-tools__drawer-surface,
-:host-context(ds-app-shell[gradient]) .panel-tools__rail {
+:host-context(ds-app-shell:not([gradient-preset='none'])) .panel-tools__drawer-surface,
+:host-context(ds-app-shell:not([gradient-preset='none'])) .panel-tools__rail {
   background-color: transparent;
 }
 

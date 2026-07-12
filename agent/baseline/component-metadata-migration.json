@@ -54,8 +54,6 @@
     "component:ds-pagination",
     "component:ds-radio-group",
     "component:ds-select",
-    "component:ds-shell-gradient-picker",
-    "component:ds-shell-gradient-swatch",
     "component:ds-skeleton",
     "component:ds-slider",
     "component:ds-tab-group",

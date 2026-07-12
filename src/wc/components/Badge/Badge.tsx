@@ -51,7 +51,7 @@ export class Badge {
 
   /**
    * Ring samples the shell gradient stack (base fill + wash) instead of a flat
-   * `box-shadow`. Auto-enabled in `componentDidLoad` under `ds-app-shell[gradient]`;
+   * `box-shadow`. Auto-enabled under an AppShell with an active gradient preset;
    * set `gradient-background` to opt in/out explicitly.
    *
    * The attribute must NOT start with `on` — Stencil's setAccessor routes any

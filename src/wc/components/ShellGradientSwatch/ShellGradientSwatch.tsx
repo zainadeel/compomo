@@ -53,7 +53,9 @@ export class ShellGradientSwatch {
                 }
           }
           aria-label={label}
-          aria-pressed={this.selected ? 'true' : 'false'}
+          role="radio"
+          aria-checked={this.selected ? 'true' : 'false'}
+          tabIndex={this.selected ? 0 : -1}
           disabled={this.isInactive}
           onClick={this.handleClick}
         >

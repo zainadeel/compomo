@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsAppShell } from '@ds-mo/ui/components/ds
 
 @ProxyCmp({
   defineCustomElementFn: defineDsAppShell,
-  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'navStyle', 'shortcutsEnabled']
+  inputs: ['gradientPreset', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
   selector: 'ds-app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['gradient', 'gradientPreset', 'gradientSrc', 'navStyle', 'shortcutsEnabled'],
+  inputs: ['gradientPreset', 'navStyle', 'shortcutsEnabled'],
 })
 export class DsAppShell {
   protected el: HTMLDsAppShellElement;
