@@ -124,6 +124,32 @@ test.describe('App shell chrome', () => {
     await expect.poll(() => page.evaluate(key => localStorage.getItem(key), storageKey)).toBe('true');
   });
 
+  test('cancelled breakpoint collapse still commits bar tabs', async ({ page }) => {
+    await page.waitForLoadState('networkidle');
+    const nav = page.locator('.panel-nav');
+    const cancelledAnimations = await page.evaluate(async () => {
+      const panel = document.getElementById('panel') as HTMLElement & { breakpoint: number };
+      const nav = panel.querySelector('.panel-nav') as HTMLElement;
+      panel.breakpoint = 2000;
+
+      for (let frame = 0; frame < 10; frame++) {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        const animations = nav.getAnimations();
+        if (nav.classList.contains('panel-nav--animating') && animations.length > 0) {
+          animations.forEach(animation => animation.cancel());
+          return animations.length;
+        }
+      }
+      return 0;
+    });
+
+    expect(cancelledAnimations).toBeGreaterThan(0);
+    await expect(nav).toHaveClass(/panel-nav--breakpoint-locked/);
+    await expect(nav).toHaveClass(/panel-nav--collapsed/);
+    await expect(nav).not.toHaveClass(/panel-nav--animating/, { timeout: 2000 });
+    await expect(page.getByRole('tab', { name: 'Live Map' })).toBeVisible();
+  });
+
   test('collapsed user initial keeps caption metrics and optical centering', async ({ page }) => {
     await page.getByRole('button', { name: 'Collapse navigation' }).click();
 

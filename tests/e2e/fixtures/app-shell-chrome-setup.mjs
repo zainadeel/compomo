@@ -33,7 +33,7 @@ await Promise.all([
 const panel = document.getElementById('panel');
 panel.groups = groups;
 panel.currentUrl = '/fleet';
-panel.breakpoint = 0;
+panel.breakpoint = 1200;
 panel.userName = 'Zain Adeel';
 panel.userInitial = 'Z';
 
