@@ -98,7 +98,7 @@ export namespace Components {
          */
         "navStyle": NavChromeStyle;
         /**
-          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
+          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N/? toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
         "shortcutsEnabled": boolean;
@@ -946,6 +946,11 @@ export namespace Components {
           * @default false
          */
         "open": boolean;
+        /**
+          * Optional localStorage key for the last active tool. The drawer always starts closed; only the tool identity is restored for continuity within this browser.
+          * @default ''
+         */
+        "storageKey": string;
         /**
           * @default 'Tool shortcuts'
          */
@@ -2156,7 +2161,7 @@ declare namespace LocalJSX {
          */
         "navStyle"?: NavChromeStyle;
         /**
-          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
+          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N/? toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
         "shortcutsEnabled"?: boolean;
@@ -3074,6 +3079,11 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
+          * Optional localStorage key for the last active tool. The drawer always starts closed; only the tool identity is restored for continuity within this browser.
+          * @default ''
+         */
+        "storageKey"?: string;
+        /**
           * @default 'Tool shortcuts'
          */
         "toolShortcutsLabel"?: string;
@@ -3797,6 +3807,7 @@ declare namespace LocalJSX {
         "itemsJson": string;
         "toolsLabel": string;
         "toolShortcutsLabel": string;
+        "storageKey": string;
     }
     interface DsRadioGroupAttributes {
         "value": string;

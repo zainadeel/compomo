@@ -3,6 +3,13 @@
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
+  --ds-shell-panel-tools-width: var(--dimension-panel-width-sm);
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  :host {
+    --ds-shell-panel-tools-width: var(--dimension-panel-width-xs);
+  }
 }
 
 .app-shell {

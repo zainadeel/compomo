@@ -2019,15 +2019,112 @@
     {
       "name": "panel-tools",
       "title": "PanelTools",
-      "description": "PanelTools component from @ds-mo/ui.",
+      "description": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-tools",
         "source": "src/wc/components/PanelTools/PanelTools.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+          "useWhen": [
+            "Composing the required global tools region inside the application's single AppShell.",
+            "Users need to move between application-wide utilities without losing each tool's in-progress state.",
+            "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
+          ],
+          "avoidWhen": [
+            "The action is specific to the current page or selected content rather than globally available across the application.",
+            "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
+            "A consumer wants to add arbitrary tools, reorder fixed tools, or repurpose a semantic tool id.",
+            "Building the mobile tools experience; future mobile AppShell composition uses a different bottom-bar and panel pattern.",
+            "PanelTools would be mounted outside the application's single AppShell."
+          ],
+          "alternatives": [
+            {
+              "when": "The action navigates to a top-level application destination.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav exclusively owns primary application navigation."
+            },
+            {
+              "when": "The action navigates between route sections of the active destination.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav exclusively owns secondary route navigation."
+            },
+            {
+              "when": "Temporary contextual actions or options are needed.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns transient contextual choices rather than persistent global products."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-app-shell",
+            "component:ds-panel-nav",
+            "component:ds-bar-nav"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
+            "Keep Search first in the rail header and Help last in the rail footer so keyboard and visual order remain predictable.",
+            "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
+            "Do not trigger global shortcuts while focus is in an editable control.",
+            "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
+            "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."
+          ],
+          "states": [
+            "Search and Help are required; optional Agents, Messages, Stacks, and Activity tools are filtered by the application for authorization and entitlement.",
+            "Use only the fixed semantic tool ids and canonical order: Search, Agents, Messages, Stacks, Activity, Help; do not reorder, duplicate, or repurpose them.",
+            "Search is application-wide; Agents is user-to-AI chat; Messages is user-to-user chat; Stacks is a specialized inbox of grouped application events for review; Activity is the notification center; Help is drawer content that may link to external resources.",
+            "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
+            "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
+            "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
+            "The application owns unread state; opening Messages, Agents, Stacks, or Activity does not automatically clear its notification dot.",
+            "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
+            "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
+            "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events."
+          ],
+          "responsiveBehavior": [
+            "On desktop at 1200px and wider, the open drawer reduces main-content width and uses --dimension-panel-width-sm (400px).",
+            "On tablet from 768px through 1199px, the open drawer also reduces main-content width and uses --dimension-panel-width-xs (300px).",
+            "AppShell owns the responsive drawer-width variable and fixed breakpoint policy; consumers must not hardcode alternate drawer widths.",
+            "Below 768px, do not reuse desktop PanelTools: future AppShell mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
+            "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
+            "Use fixed drawer widths for now; do not add user resizing or width persistence."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign items as a JavaScript property for structured data; items-json is the string fallback.",
+              "Keep PanelTools mounted at AppShell scope across route changes and provide each product through its matching named slot."
+            ],
+            "react": [
+              "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at AppShell scope.",
+              "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
+            ],
+            "angular": [
+              "Import DsPanelTools from @ds-mo/ui/angular/ds-panel-tools and bind items as a property.",
+              "Keep the component in the persistent shell layout rather than recreating it in routed page components."
+            ]
+          },
+          "references": [
+            {
+              "label": "Executable Storybook examples",
+              "path": "src/wc/components/PanelTools/PanelTools.stories.ts"
+            },
+            {
+              "label": "Framework and shell integration",
+              "path": "docs/framework-integration.md"
+            },
+            {
+              "label": "Application shell composition",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
         "props": {
           "activeTool": {
             "type": "PanelToolsToolId | ''",
@@ -2043,6 +2140,10 @@
           },
           "open": {
             "type": "boolean",
+            "required": false
+          },
+          "storageKey": {
+            "type": "string",
             "required": false
           },
           "toolShortcutsLabel": {

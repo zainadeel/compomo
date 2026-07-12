@@ -6,7 +6,10 @@
   min-height: 0;
   overflow: hidden;
   --_panel-tools-rail-width: var(--dimension-size-600);
-  --_panel-tools-drawer-width: var(--dimension-panel-width-sm);
+  --_panel-tools-drawer-width: var(
+    --ds-shell-panel-tools-width,
+    var(--dimension-panel-width-sm)
+  );
   --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
   --_panel-tools-surface-bg: var(--color-background-secondary);
   /* Match panel-nav expand timing (medium-1); easing differs by direction. */
@@ -52,7 +55,7 @@
   border-left: var(--_panel-tools-border);
 }
 
-/* Fixed-width surface — stays 400px while the clip frame opens/closes. */
+/* Fixed-width surface — AppShell supplies 400px desktop / 300px tablet tokens. */
 .panel-tools__drawer-surface {
   display: flex;
   flex-direction: column;

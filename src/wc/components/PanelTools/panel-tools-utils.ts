@@ -1,5 +1,9 @@
 import { parseJsonArrayProp } from '../BarNav/bar-nav-utils';
-import type { PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
+import {
+  PANEL_TOOLS_TOOL_IDS,
+  type PanelToolsItem,
+  type PanelToolsToolId,
+} from './panel-tools-types';
 
 export function parsePanelToolsItems(
   items: PanelToolsItem[],
@@ -9,6 +13,32 @@ export function parsePanelToolsItems(
     return parseJsonArrayProp<PanelToolsItem>(itemsJson, []);
   }
   return items ?? [];
+}
+
+export function orderPanelToolsItems(items: PanelToolsItem[]): PanelToolsItem[] {
+  const firstById = new Map<PanelToolsToolId, PanelToolsItem>();
+  for (const item of items) {
+    if (!firstById.has(item.id)) firstById.set(item.id, item);
+  }
+  return PANEL_TOOLS_TOOL_IDS.flatMap(id => {
+    const item = firstById.get(id);
+    return item ? [item] : [];
+  });
+}
+
+export function isPanelToolsToolId(value: string | null): value is PanelToolsToolId {
+  return value !== null && PANEL_TOOLS_TOOL_IDS.includes(value as PanelToolsToolId);
+}
+
+export function reconcilePanelToolsAvailability(
+  items: PanelToolsItem[],
+  open: boolean,
+  activeTool: PanelToolsToolId | '',
+): { open: boolean; activeTool: PanelToolsToolId | ''; removedTool: PanelToolsToolId | '' } {
+  if (!activeTool || items.some(item => item.id === activeTool)) {
+    return { open, activeTool, removedTool: '' };
+  }
+  return { open: false, activeTool: '', removedTool: activeTool };
 }
 
 export function shouldResyncPanelToolsItems(

@@ -13,7 +13,7 @@ const TOOL_SHORTCUT_KEYS: Record<string, PanelToolsToolId> = {
   n: 'activity',
 };
 
-/** Tool shortcut keys (K/A/S/M/N) toggle open/closed via `ds-panel-tools.activateTool`. */
+/** Tool shortcut keys (K/A/S/M/N/?) toggle open/closed via `ds-panel-tools.activateTool`. */
 
 /** True when no modifier keys are held — avoids browser/app chords like ⌘N. */
 export function isBareShellShortcutKey(
@@ -50,6 +50,12 @@ function normalizedShortcutKey(e: Pick<KeyboardEvent, 'key' | 'code'>): string {
 export function resolveShellShortcut(
   e: Pick<KeyboardEvent, 'key' | 'code' | 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>,
 ): ShellShortcutAction | null {
+  if (
+    (e.key === '?' || (e.code === 'Slash' && e.shiftKey)) &&
+    !e.metaKey && !e.ctrlKey && !e.altKey
+  ) {
+    return 'open-tool:help';
+  }
   if (!isBareShellShortcutKey(e)) return null;
 
   const key = normalizedShortcutKey(e);

@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsPanelTools } from '@ds-mo/ui/components/
 
 @ProxyCmp({
   defineCustomElementFn: defineDsPanelTools,
-  inputs: ['activeTool', 'items', 'itemsJson', 'open', 'toolShortcutsLabel', 'toolsLabel'],
+  inputs: ['activeTool', 'items', 'itemsJson', 'open', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
   methods: ['activateTool', 'closeDrawer']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsPanelTools } from '@ds-mo/ui/components/
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeTool', 'items', 'itemsJson', 'open', 'toolShortcutsLabel', 'toolsLabel'],
+  inputs: ['activeTool', 'items', 'itemsJson', 'open', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
   outputs: ['dsToolChange', 'dsChromeTransitionStart', 'dsChromeTransitionEnd'],
 })
 export class DsPanelTools {
