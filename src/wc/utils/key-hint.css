@@ -1,0 +1,26 @@
+@import './control-density.css';
+
+/** Compact keyboard-shortcut keycap used by tooltips and shortcut references. */
+.key-hint {
+  box-sizing: border-box;
+  min-width: var(--ds-control-icon, var(--dimension-iconography-md));
+  width: max-content;
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  padding-inline: var(--dimension-space-050);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-secondary);
+  border: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+  border-bottom-width: var(--dimension-stroke-width-025);
+  border-radius: var(--dimension-radius-025);
+  color: var(--color-foreground-primary);
+}
+
+.key-hint > ds-text {
+  display: inline-flex;
+  width: max-content;
+  min-width: max-content;
+  color: inherit;
+}
