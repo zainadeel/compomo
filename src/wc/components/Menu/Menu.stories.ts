@@ -81,6 +81,23 @@ export const WithToggle: Story = {
   `,
 };
 
+export const WithNotificationDot: Story = {
+  name: 'With notification dot',
+  render: () => html`
+    <div style="padding: 16px; height: 240px">
+      <span id="menu-anchor-dot" style="display: inline-block; width: 1px; height: 1px"></span>
+      <ds-menu
+        ?open=${true}
+        .items=${[
+          { label: 'Updates', value: 'updates', dot: true, isSelected: true },
+          { label: 'Archive', value: 'archive' },
+        ]}
+        anchor-id="menu-anchor-dot"
+      ></ds-menu>
+    </div>
+  `,
+};
+
 /** Panel-nav footer row case: right-aligned menu with token side offset. */
 export const TokenSideOffsetRight: Story = {
   name: 'Token side offset (right)',

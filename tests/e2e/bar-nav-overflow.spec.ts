@@ -139,6 +139,13 @@ test.describe('BarNav responsive overflow', () => {
     await page.keyboard.press('Enter');
     await expect(page.locator('.menu-popup')).toBeVisible();
 
+    const dottedItem = page.locator('.menu-item').filter({ hasText: 'Events' });
+    const dottedBadge = dottedItem.locator('ds-badge');
+    await expect(dottedBadge).toBeVisible();
+    await expect.poll(() => dottedBadge.evaluate(element => (
+      element as HTMLElement & { variant?: string }
+    ).variant)).toBe('dot');
+
     const iconName = await page.evaluate(() => {
       const icon = document.querySelector('.bar-nav__overflow-trigger ds-icon') as
         | (HTMLElement & { name?: string })

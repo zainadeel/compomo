@@ -10,6 +10,8 @@ export interface MenuItemData {
   label: string;
   value?: string;
   subtext?: string;
+  /** Show a supplemental brand notification dot. */
+  dot?: boolean;
   isSelected?: boolean;
   isInactive?: boolean;
   isDestructive?: boolean;

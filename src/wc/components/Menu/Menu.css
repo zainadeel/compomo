@@ -133,6 +133,12 @@ ds-text.menu-item__subtext {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
+/* Supplemental status — aligned with PanelNav's expanded item suffix. */
+.menu-item__dot {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
 /* ── Toggle suffix ───────────────────────────────────────────────────────── */
 
 .menu-item__toggle {

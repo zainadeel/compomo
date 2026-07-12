@@ -422,6 +422,17 @@ export class Menu {
                         </ds-text>
                       )}
                     </div>
+                    {item.dot && (
+                      <ds-badge
+                        class="menu-item__dot ds-interaction-fill__content"
+                        variant="dot"
+                        background={item.isSelected && !item.isInactive
+                          ? 'var(--ds-interaction-active)'
+                          : 'var(--color-background-primary)'}
+                        label=""
+                        aria-hidden="true"
+                      />
+                    )}
                     {item.showToggle && (
                       <div class={{ 'menu-item__toggle': true, 'menu-item__toggle--on': !!item.toggleValue, 'ds-interaction-fill__content': true }} aria-hidden="true">
                         <div class="menu-item__toggle-thumb" />

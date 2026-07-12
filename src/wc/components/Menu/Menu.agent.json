@@ -7,10 +7,10 @@
   "tag": "ds-menu",
   "audience": "general",
   "status": "stable",
-  "summary": "Anchored action or option menu with flat items, grouped sections, selection, toggles, and destructive actions.",
+  "summary": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, toggles, and destructive actions.",
   "useWhen": [
     "A trigger reveals a short contextual list of commands or options.",
-    "Options need grouping, selected state, toggle rows, or destructive treatment."
+    "Options need grouping, selected state, supplemental notification dots, toggle rows, or destructive treatment."
   ],
   "avoidWhen": [
     "The user is selecting a value for a form field.",
@@ -37,7 +37,8 @@
   "accessibility": [
     "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
     "Open with visible initial focus only when the trigger was activated from the keyboard.",
-    "Keep disabled items discoverable only when their unavailable state is meaningful."
+    "Keep disabled items discoverable only when their unavailable state is meaningful.",
+    "Use notification dots only as supplemental status and not as the sole indication of important information."
   ],
   "states": [
     "The host owns open state and responds to selection and close events.",

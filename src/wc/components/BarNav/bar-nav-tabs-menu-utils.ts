@@ -23,6 +23,7 @@ export function tabsToMenuSections(tabs: TabItem[], selectedId: string): MenuSec
     batch.push({
       label: item.label,
       value: item.id,
+      dot: item.dot,
       isSelected: item.id === selectedId,
       isInactive: item.isInactive,
     });
