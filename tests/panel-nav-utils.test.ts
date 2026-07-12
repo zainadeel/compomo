@@ -6,6 +6,7 @@ import {
   deriveActiveIdFromUrl,
   hrefMatchesPath,
   parsePanelNavGroups,
+  panelNavWidthTransitionMs,
   resolvePanelNavDisableVt,
   resolvePanelNavStyle,
   resolvePanelNavToggle,
@@ -101,6 +102,41 @@ describe('resolvePanelNavToggle', () => {
   it('returns no mutation while breakpoint-locked', () => {
     assert.equal(resolvePanelNavToggle(false, true), null);
     assert.equal(resolvePanelNavToggle(true, true), null);
+  });
+});
+
+describe('panelNavWidthTransitionMs', () => {
+  it('resolves the longest width transition including delay', () => {
+    assert.equal(
+      panelNavWidthTransitionMs({
+        transitionProperty: 'width, min-width, color',
+        transitionDuration: '0.3s, 200ms, 50ms',
+        transitionDelay: '25ms, 0s, 0s',
+      }),
+      325,
+    );
+  });
+
+  it('repeats shorter timing lists and supports all', () => {
+    assert.equal(
+      panelNavWidthTransitionMs({
+        transitionProperty: 'opacity, all',
+        transitionDuration: '100ms',
+        transitionDelay: '0ms, 50ms',
+      }),
+      150,
+    );
+  });
+
+  it('returns zero when width is not transitioned', () => {
+    assert.equal(
+      panelNavWidthTransitionMs({
+        transitionProperty: 'opacity, color',
+        transitionDuration: '100ms, 200ms',
+        transitionDelay: '0s',
+      }),
+      0,
+    );
   });
 });
 

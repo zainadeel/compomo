@@ -3,6 +3,7 @@ import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import {
   deriveActiveIdFromUrl,
+  panelNavWidthTransitionMs,
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
   resolvePanelNavStyle,
@@ -103,7 +104,8 @@ export class PanelNav {
   @State() private viewportNarrow: boolean = false;
   @State() private urlDerivedActiveId: string = '';
 
-  private transitionEndHandler?: (e: TransitionEvent) => void;
+  private transitionCompletionHandler?: (e: TransitionEvent) => void;
+  private transitionFallbackTimer: number | null = null;
   private resizeObserver?: ResizeObserver;
 
   // Drag-to-resize state (not @State — no re-render needed)
@@ -196,6 +198,9 @@ export class PanelNav {
 
   disconnectedCallback() {
     this.disconnectResizeObserver();
+    this.clearCollapseAnimationCompletion(
+      this.el.querySelector('.panel-nav') as HTMLElement | null,
+    );
     this.clearEdgeOverlayTimer();
     if (this.globalMouseMoveHandler) {
       window.removeEventListener('mousemove', this.globalMouseMoveHandler);
@@ -211,32 +216,56 @@ export class PanelNav {
     this.dsChromeTransitionStart.emit({ source: 'panel-nav' });
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
     const widthBefore = panel?.getBoundingClientRect().width ?? 0;
-    if (this.transitionEndHandler) {
-      panel?.removeEventListener('transitionend', this.transitionEndHandler);
-    }
-    this.transitionEndHandler = (e: TransitionEvent) => {
-      if (e.propertyName === 'width') {
+    this.clearCollapseAnimationCompletion(panel);
+    this.transitionCompletionHandler = (e: TransitionEvent) => {
+      if (e.propertyName === 'width' || e.propertyName === 'min-width') {
         this.finishCollapseAnimation(panel);
       }
     };
-    panel?.addEventListener('transitionend', this.transitionEndHandler);
+    panel?.addEventListener('transitionend', this.transitionCompletionHandler);
+    panel?.addEventListener('transitioncancel', this.transitionCompletionHandler);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (!this.isAnimating) return;
         const widthAfter = panel?.getBoundingClientRect().width ?? 0;
         if (Math.abs(widthAfter - widthBefore) < 1) {
           this.finishCollapseAnimation(panel);
+          return;
         }
+        if (!panel) {
+          this.finishCollapseAnimation(panel);
+          return;
+        }
+
+        const fallbackMs = panelNavWidthTransitionMs(getComputedStyle(panel));
+        if (fallbackMs <= 0) {
+          this.finishCollapseAnimation(panel);
+          return;
+        }
+        this.transitionFallbackTimer = window.setTimeout(() => {
+          this.finishCollapseAnimation(panel);
+        }, fallbackMs);
       });
     });
   }
 
   private finishCollapseAnimation(panel: HTMLElement | null) {
-    if (!this.isAnimating) return;
+    const wasAnimating = this.isAnimating;
+    this.clearCollapseAnimationCompletion(panel);
+    if (!wasAnimating) return;
     this.isAnimating = false;
     this.dsChromeTransitionEnd.emit({ source: 'panel-nav' });
-    if (this.transitionEndHandler) {
-      panel?.removeEventListener('transitionend', this.transitionEndHandler);
+  }
+
+  private clearCollapseAnimationCompletion(panel: HTMLElement | null) {
+    if (this.transitionCompletionHandler) {
+      panel?.removeEventListener('transitionend', this.transitionCompletionHandler);
+      panel?.removeEventListener('transitioncancel', this.transitionCompletionHandler);
+      this.transitionCompletionHandler = undefined;
+    }
+    if (this.transitionFallbackTimer !== null) {
+      window.clearTimeout(this.transitionFallbackTimer);
+      this.transitionFallbackTimer = null;
     }
   }
 

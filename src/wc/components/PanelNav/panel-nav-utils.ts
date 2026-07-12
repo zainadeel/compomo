@@ -1,4 +1,5 @@
 import type { PanelNavGroup, PanelNavItem } from './panel-nav-types';
+import { parseCssTimeMs } from '../../utils/resolve-css-time-ms';
 import {
   NAV_STYLE_HINT_ATTR,
   clearNavStyleHint,
@@ -52,6 +53,33 @@ export function resolvePanelNavToggle(
   viewportNarrow: boolean,
 ): boolean | null {
   return viewportNarrow ? null : !collapsed;
+}
+
+export interface PanelNavTransitionStyle {
+  transitionProperty: string;
+  transitionDuration: string;
+  transitionDelay: string;
+}
+
+function parseCssTimeList(value: string): number[] {
+  return value.split(',').map(item => parseCssTimeMs(item.trim(), 0));
+}
+
+/**
+ * Maximum computed time for PanelNav's width transition. CSS repeats shorter
+ * duration/delay lists to match the property list, so mirror that behavior.
+ */
+export function panelNavWidthTransitionMs(style: PanelNavTransitionStyle): number {
+  const properties = style.transitionProperty.split(',').map(item => item.trim());
+  const durations = parseCssTimeList(style.transitionDuration);
+  const delays = parseCssTimeList(style.transitionDelay);
+
+  return properties.reduce((max, property, index) => {
+    if (property !== 'all' && property !== 'width' && property !== 'min-width') return max;
+    const duration = durations[index % durations.length] ?? 0;
+    const delay = delays[index % delays.length] ?? 0;
+    return Math.max(max, duration + delay, 0);
+  }, 0);
 }
 
 /** Parse `groups` from either a JSON attribute string or a JS property array. */
