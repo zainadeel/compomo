@@ -237,6 +237,7 @@ export class MyComponent {
 **CSS lint (`npm run lint:css`)**
 
 - Stylelint warns (does not fail CI) when component/utils CSS uses raw lengths/times/colors where TokoMo tokens belong, or uses a `*-width` component token as `height` / `min-height` / `max-height`.
+- `local/no-ds-text-metric-overrides` warns when consuming component CSS targets `ds-text` and sets `font`, `font-size`, `font-weight`, `letter-spacing`, or `line-height`. Select the complete `variant` / `emphasis` recipe instead; consumers may still control layout, spacing, truncation, positioning, and contextual color on the `ds-text` host.
 - Token families by property category: `--color-*` (color/fill/stroke), `--dimension-space-*` (margin/padding/gap/inset), `--dimension-size-*` / `--dimension-iconography-*` / component width tokens (width/height), `--dimension-radius-*`, `--dimension-stroke-width-*`, `--typography-*`, `--effect-*` / `--dimension-z-index-*`.
 - Justify unavoidable exceptions with `/* stylelint-disable-next-line <rule> -- reason */`.
 

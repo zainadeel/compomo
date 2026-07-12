@@ -27,6 +27,11 @@
         text-overflow: ellipsis;
       }
 
+      .layout-override {
+        display: inline-flex;
+        align-items: center;
+      }
+
       .control-row {
         display: flex;
         align-items: center;
@@ -43,6 +48,11 @@
     <section>
       <ds-text id="truncate-host" as="span" variant="text-body-medium">
         Truncation must reach the inner text node
+      </ds-text>
+    </section>
+    <section>
+      <ds-text id="layout-override" class="layout-override" as="span" variant="text-body-medium">
+        Consumer layout override
       </ds-text>
     </section>
 

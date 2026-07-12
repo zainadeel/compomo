@@ -10,11 +10,11 @@
   font-family: var(--typography-font-family);
 }
 
-:host(.ds-text--inline-box) {
+:host(:where(.ds-text--inline-box)) {
   display: inline-block;
 }
 
-:host(.ds-text--block-box) {
+:host(:where(.ds-text--block-box)) {
   display: block;
   width: 100%;
 }
