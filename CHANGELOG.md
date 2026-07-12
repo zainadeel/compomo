@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/zainadeel/compomo/compare/v4.1.0...v4.1.1) (2026-07-12)
+
+
+### Fixed
+
+* refine control density and scroll fades ([#310](https://github.com/zainadeel/compomo/issues/310)) ([996fd0e](https://github.com/zainadeel/compomo/commit/996fd0e81086c73ec22d424e9a1f728e6bed45a4))
+
 ## [4.1.0](https://github.com/zainadeel/compomo/compare/v4.0.0...v4.1.0) (2026-07-12)
 
 
