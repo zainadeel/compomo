@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.0.0](https://github.com/zainadeel/compomo/compare/v3.3.0...v4.0.0) (2026-07-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove AppShell gradient and gradientSrc; use gradientPreset alone.
+
+### Added
+
+* add fresh shell gradient preset ([c25fa18](https://github.com/zainadeel/compomo/commit/c25fa188a10edbe7f35e308f53f9181270f5ea7e))
+* add shared shortcut key hint utility ([33babb8](https://github.com/zainadeel/compomo/commit/33babb850ce379ed1b9977c7bb4fd14045c1edb3))
+* add shell gradient recipe workshop ([6f9514b](https://github.com/zainadeel/compomo/commit/6f9514be4f2cda46e2388e854027f1dfbb5e8202))
+* expand gradient recipe workshop ([c5ccb04](https://github.com/zainadeel/compomo/commit/c5ccb04226869a9d253029a4efa09d8bd71b844c))
+* harden shell gradient preferences ([bd54376](https://github.com/zainadeel/compomo/commit/bd54376c53a1e660af490649f648bbebe6e0c529))
+* render shortcut chords as key sequences ([c7ad795](https://github.com/zainadeel/compomo/commit/c7ad7959349b43777b05e88a82fb6cdf6114dfac))
+* use tokens in gradient workshop ([5fa468f](https://github.com/zainadeel/compomo/commit/5fa468fd2594a3397f2c7ef9a50ee7d4ae1530d1))
+
+
+### Fixed
+
+* render shortcut modifiers as symbols ([4c2be22](https://github.com/zainadeel/compomo/commit/4c2be2213fc46ea382d5adb4cb512263276179f3))
+
 ## [3.3.0](https://github.com/zainadeel/compomo/compare/v3.2.1...v3.3.0) (2026-07-12)
 
 
