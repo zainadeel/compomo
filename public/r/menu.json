@@ -2,90 +2,382 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "menu",
   "title": "Menu",
-  "description": "Positioned dropdown menu (`ds-menu`) with sections, selection, toggle items, and destructive items.",
+  "description": "Anchored action or option menu with flat items, grouped sections, selection, toggles, and destructive actions.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/menu",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-menu.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<menu></menu>",
-        "react": "<menu></menu>",
-        "angular": "<menu></menu>"
+    "source": "src/wc/components/Menu/Menu.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Anchored action or option menu with flat items, grouped sections, selection, toggles, and destructive actions.",
+      "useWhen": [
+        "A trigger reveals a short contextual list of commands or options.",
+        "Options need grouping, selected state, toggle rows, or destructive treatment."
+      ],
+      "avoidWhen": [
+        "The user is selecting a value for a form field.",
+        "The content requires rich dialog interaction or a multi-step workflow.",
+        "The actions should remain persistently visible."
+      ],
+      "alternatives": [
+        {
+          "when": "The choice is a form value with a label, validation, and submitted value.",
+          "component": "component:ds-select",
+          "reason": "Select provides form-control semantics and value ownership."
+        },
+        {
+          "when": "The interaction needs substantial content, confirmation, or a form.",
+          "component": "component:ds-modal",
+          "reason": "Modal owns focus containment and dialog-level interaction."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-button-unfilled",
+        "component:ds-panel-nav",
+        "component:ds-shell-gradient-picker"
+      ],
+      "accessibility": [
+        "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
+        "Open with visible initial focus only when the trigger was activated from the keyboard.",
+        "Keep disabled items discoverable only when their unavailable state is meaningful."
+      ],
+      "states": [
+        "The host owns open state and responds to selection and close events.",
+        "Use either flat items or sections, not both.",
+        "Arrays, objects, and element anchors must be assigned as JavaScript properties."
+      ],
+      "responsiveBehavior": [
+        "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
+        "Avoid fixed widths that exceed narrow viewports."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign items, sections, and HTMLElement anchors as properties after the element is defined."
+        ],
+        "react": [
+          "Pass arrays and objects as wrapper props and handle generated onDsSelect and onDsClose event props."
+        ],
+        "angular": [
+          "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect and dsClose."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Menu/Menu.stories.ts"
+        },
+        {
+          "label": "Framework integration",
+          "path": "docs/framework-integration.md"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "align": {
+          "type": "MenuAlign",
+          "resolvedType": "\"center\" | \"end\" | \"start\"",
+          "attribute": "align",
+          "default": "'start'",
+          "required": false,
+          "mutable": false
+        },
+        "alignOffset": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "align-offset",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Cross-axis offset — number (px) or TokoMo length."
+        },
+        "anchor": {
+          "type": "HTMLElement | undefined",
+          "resolvedType": "HTMLElement | undefined",
+          "required": false,
+          "mutable": false,
+          "description": "External trigger element to position against. Set via JS: menuEl.anchor = buttonEl"
+        },
+        "anchorId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "anchor-id",
+          "required": false,
+          "mutable": false,
+          "description": "ID of the external trigger element for positioning"
+        },
+        "initialFocusVisible": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "initial-focus-visible",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven."
+        },
+        "items": {
+          "type": "MenuItemData[]",
+          "resolvedType": "MenuItemData[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "menuLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "menu-label",
+          "default": "'Menu'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the popup menu."
+        },
+        "menuWidth": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "menu-width",
+          "required": false,
+          "mutable": false
+        },
+        "minWidth": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "min-width",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": true
+        },
+        "sections": {
+          "type": "MenuSection[]",
+          "resolvedType": "MenuSection[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "side": {
+          "type": "MenuSide",
+          "resolvedType": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+          "attribute": "side",
+          "default": "'bottom'",
+          "required": false,
+          "mutable": false
+        },
+        "sideOffset": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "side-offset",
+          "default": "TOKEN_CSS_LENGTHS.space050",
+          "required": false,
+          "mutable": false,
+          "description": "Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.)."
+        }
       },
       "events": [
         {
-          "name": "dsSelect",
-          "listen": "element.addEventListener('dsSelect', handler)",
-          "reactProp": "onDsSelect={handler}",
-          "angularBinding": "(dsSelect)=\"handler($event)\""
+          "name": "dsClose",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         },
         {
-          "name": "dsClose",
-          "listen": "element.addEventListener('dsClose', handler)",
-          "reactProp": "onDsClose={handler}",
-          "angularBinding": "(dsClose)=\"handler($event)\""
+          "name": "dsGradientSelect",
+          "detail": "ShellGradientPreset",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when a `gradient-picker` section swatch is chosen."
+        },
+        {
+          "name": "dsSelect",
+          "detail": "MenuItemData",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "jsPropNote": "Assign items, sections, anchor, and open via JS properties after customElements.whenDefined(\"ds-menu\").",
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "open": {
+      "align": {
+        "type": "MenuAlign",
+        "resolvedType": "\"center\" | \"end\" | \"start\"",
+        "attribute": "align",
+        "default": "'start'",
+        "required": false,
+        "mutable": false
+      },
+      "alignOffset": {
+        "type": "number | string",
+        "resolvedType": "number | string",
+        "attribute": "align-offset",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Cross-axis offset — number (px) or TokoMo length."
+      },
+      "anchor": {
+        "type": "HTMLElement | undefined",
+        "resolvedType": "HTMLElement | undefined",
+        "required": false,
+        "mutable": false,
+        "description": "External trigger element to position against. Set via JS: menuEl.anchor = buttonEl"
+      },
+      "anchorId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "anchor-id",
+        "required": false,
+        "mutable": false,
+        "description": "ID of the external trigger element for positioning"
+      },
+      "initialFocusVisible": {
         "type": "boolean",
-        "description": "Controls visibility. Set via JS property."
+        "resolvedType": "boolean",
+        "attribute": "initial-focus-visible",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven."
       },
       "items": {
         "type": "MenuItemData[]",
-        "description": "Flat item list (use items or sections, not both)."
+        "resolvedType": "MenuItemData[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "menuLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "menu-label",
+        "default": "'Menu'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the popup menu."
+      },
+      "menuWidth": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "menu-width",
+        "required": false,
+        "mutable": false
+      },
+      "minWidth": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "min-width",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": true
       },
       "sections": {
         "type": "MenuSection[]",
-        "description": "Grouped items with optional headers."
+        "resolvedType": "MenuSection[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
       },
       "side": {
-        "type": "'top' | 'right' | 'bottom' | 'left'",
-        "default": "'bottom'"
+        "type": "MenuSide",
+        "resolvedType": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "attribute": "side",
+        "default": "'bottom'",
+        "required": false,
+        "mutable": false
       },
-      "align": {
-        "type": "'start' | 'center' | 'end'",
-        "default": "'start'"
-      },
-      "anchor": {
-        "type": "HTMLElement",
-        "description": "Positioning trigger. Set via JS: menuEl.anchor = triggerEl"
-      },
-      "menuWidth": {
-        "type": "string",
-        "description": "Optional fixed menu width (e.g. match trigger)."
+      "sideOffset": {
+        "type": "number | string",
+        "resolvedType": "number | string",
+        "attribute": "side-offset",
+        "default": "TOKEN_CSS_LENGTHS.space050",
+        "required": false,
+        "mutable": false,
+        "description": "Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.)."
       }
     },
-    "exports": [
-      "ds-menu"
+    "events": [
+      {
+        "name": "dsClose",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsGradientSelect",
+        "detail": "ShellGradientPreset",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when a `gradient-picker` section swatch is chosen."
+      },
+      {
+        "name": "dsSelect",
+        "detail": "MenuItemData",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "MenuItemData",
-      "MenuSection",
-      "MenuSide",
-      "MenuAlign"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-menu",
+      "react": "DsMenu",
+      "angular": "DsMenu"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-menu.js';",
+        "example": "<ds-menu></ds-menu>"
+      },
+      "react": {
+        "import": "import { DsMenu } from '@ds-mo/ui/react';",
+        "example": "<DsMenu />"
+      },
+      "angular": {
+        "import": "import { DsMenu } from '@ds-mo/ui/angular/ds-menu';",
+        "example": "<ds-menu></ds-menu>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: anchor, items, sections.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
-  "registryDependencies": [],
+  "registryDependencies": [
+    "shell-gradient-picker",
+    "text"
+  ],
   "files": [
     {
       "path": "src/wc/components/Menu/Menu.css",
@@ -98,28 +390,13 @@
       "type": "registry:ui"
     },
     {
-      "path": "src/wc/components/Menu/menu-placement.d.ts",
-      "content": "import type { MenuAlign, MenuSide } from './menu-position';\n/** Placement props bindable on `ds-menu` (side, align, offsets). */\nexport interface MenuPlacement {\n    side: MenuSide;\n    align: MenuAlign;\n    sideOffset: number | string;\n    alignOffset: number | string;\n}\n/**\n * Canonical `ds-menu` placement for the **panel-nav footer user menu**.\n * Anchor from `dsNavUserAction` detail `{ anchor }` (id `ds-panel-nav-user-menu-anchor`).\n *\n * Not for BarNav overflow menus — those use `side=\"bottom\"` / `align=\"end\"` internally.\n * `align: 'end'` bottom-aligns on the anchor; offsets nudge into the content area:\n * - `sideOffset` space-100 + space-050 (12px): 4px past the panel-nav outer edge (anchor is ~8px inset).\n * - `alignOffset` space-050 (4px): 4px below the footer user row.\n */\nexport declare const PANEL_NAV_USER_MENU_PLACEMENT: {\n    readonly side: \"right\";\n    readonly align: \"end\";\n    readonly sideOffset: \"calc(var(--dimension-space-100) + var(--dimension-space-050))\";\n    readonly alignOffset: \"var(--dimension-space-050)\";\n};\n",
-      "type": "registry:ui"
-    },
-    {
       "path": "src/wc/components/Menu/menu-placement.ts",
       "content": "import { TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';\nimport type { MenuAlign, MenuSide } from './menu-position';\n\n/** Placement props bindable on `ds-menu` (side, align, offsets). */\nexport interface MenuPlacement {\n  side: MenuSide;\n  align: MenuAlign;\n  sideOffset: number | string;\n  alignOffset: number | string;\n}\n\n/**\n * Canonical `ds-menu` placement for the **panel-nav footer user menu**.\n * Anchor from `dsNavUserAction` detail `{ anchor }` (id `ds-panel-nav-user-menu-anchor`).\n *\n * Not for BarNav overflow menus — those use `side=\"bottom\"` / `align=\"end\"` internally.\n * `align: 'end'` bottom-aligns on the anchor; offsets nudge into the content area:\n * - `sideOffset` space-100 + space-050 (12px): 4px past the panel-nav outer edge (anchor is ~8px inset).\n * - `alignOffset` space-050 (4px): 4px below the footer user row.\n */\nexport const PANEL_NAV_USER_MENU_PLACEMENT = {\n  side: 'right',\n  align: 'end',\n  sideOffset: 'calc(var(--dimension-space-100) + var(--dimension-space-050))',\n  alignOffset: TOKEN_CSS_LENGTHS.space050,\n} as const satisfies MenuPlacement;\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/wc/components/Menu/menu-position.d.ts",
-      "content": "export type MenuSide = 'top' | 'right' | 'bottom' | 'left';\nexport type MenuAlign = 'start' | 'center' | 'end';\nexport interface MenuPositionInput {\n    anchorRect: Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom' | 'width' | 'height'>;\n    popupWidth: number;\n    popupHeight: number;\n    side: MenuSide;\n    align: MenuAlign;\n    sideOffsetPx: number;\n    alignOffsetPx: number;\n    viewportPadPx: number;\n    viewportWidth: number;\n    viewportHeight: number;\n}\n/** Pure layout math for ds-menu — anchor rect + placement props → viewport-fixed x/y. */\nexport declare function computeMenuPosition(input: MenuPositionInput): {\n    x: number;\n    y: number;\n};\n",
-      "type": "registry:ui"
-    },
-    {
       "path": "src/wc/components/Menu/menu-position.ts",
       "content": "export type MenuSide = 'top' | 'right' | 'bottom' | 'left';\nexport type MenuAlign = 'start' | 'center' | 'end';\n\nexport interface MenuPositionInput {\n  anchorRect: Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom' | 'width' | 'height'>;\n  popupWidth: number;\n  popupHeight: number;\n  side: MenuSide;\n  align: MenuAlign;\n  sideOffsetPx: number;\n  alignOffsetPx: number;\n  viewportPadPx: number;\n  viewportWidth: number;\n  viewportHeight: number;\n}\n\n/** Pure layout math for ds-menu — anchor rect + placement props → viewport-fixed x/y. */\nexport function computeMenuPosition(input: MenuPositionInput): { x: number; y: number } {\n  const {\n    anchorRect: a,\n    popupWidth: pw,\n    popupHeight: ph,\n    side,\n    align,\n    sideOffsetPx,\n    alignOffsetPx,\n    viewportPadPx: vpPad,\n    viewportWidth,\n    viewportHeight,\n  } = input;\n\n  let x = 0;\n  let y = 0;\n\n  switch (side) {\n    case 'top':\n      y = a.top - ph - sideOffsetPx;\n      x =\n        align === 'start'\n          ? a.left + alignOffsetPx\n          : align === 'end'\n            ? a.right - pw + alignOffsetPx\n            : a.left + a.width / 2 - pw / 2 + alignOffsetPx;\n      break;\n    case 'bottom':\n      y = a.bottom + sideOffsetPx;\n      x =\n        align === 'start'\n          ? a.left + alignOffsetPx\n          : align === 'end'\n            ? a.right - pw + alignOffsetPx\n            : a.left + a.width / 2 - pw / 2 + alignOffsetPx;\n      break;\n    case 'left':\n      x = a.left - pw - sideOffsetPx;\n      y =\n        align === 'start'\n          ? a.top + alignOffsetPx\n          : align === 'end'\n            ? a.bottom - ph + alignOffsetPx\n            : a.top + a.height / 2 - ph / 2 + alignOffsetPx;\n      break;\n    case 'right':\n      x = a.right + sideOffsetPx;\n      y =\n        align === 'start'\n          ? a.top + alignOffsetPx\n          : align === 'end'\n            ? a.bottom - ph + alignOffsetPx\n            : a.top + a.height / 2 - ph / 2 + alignOffsetPx;\n      break;\n  }\n\n  return {\n    x: Math.min(Math.max(x, vpPad), viewportWidth - pw - vpPad),\n    y: Math.min(Math.max(y, vpPad), viewportHeight - ph - vpPad),\n  };\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Menu/menu-types.d.ts",
-      "content": "import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';\nexport type { MenuAlign, MenuSide } from './menu-position';\nexport { PANEL_NAV_USER_MENU_PLACEMENT, type MenuPlacement, } from './menu-placement';\nexport interface MenuItemData {\n    label: string;\n    value?: string;\n    subtext?: string;\n    isSelected?: boolean;\n    isInactive?: boolean;\n    isDestructive?: boolean;\n    showToggle?: boolean;\n    toggleValue?: boolean;\n}\nexport interface MenuItemsSection {\n    header?: string;\n    items: MenuItemData[];\n}\nexport interface MenuGradientPickerSection {\n    header?: string;\n    variant: 'gradient-picker';\n    value: ShellGradientPreset;\n}\nexport type MenuSection = MenuItemsSection | MenuGradientPickerSection;\nexport declare function isMenuGradientPickerSection(section: MenuSection): section is MenuGradientPickerSection;\nexport type { ShellGradientPreset };\n",
       "type": "registry:ui"
     },
     {

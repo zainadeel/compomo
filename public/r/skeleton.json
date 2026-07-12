@@ -8,52 +8,133 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/skeleton",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-skeleton.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-skeleton></ds-skeleton>",
-        "react": "<ds-skeleton></ds-skeleton>",
-        "angular": "<ds-skeleton></ds-skeleton>"
+    "source": "src/wc/components/Skeleton/Skeleton.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "height": {
+          "type": "string | number | undefined",
+          "resolvedType": "number | string | undefined",
+          "attribute": "height",
+          "required": false,
+          "mutable": false,
+          "description": "Height as a CSS value string or number (px)."
+        },
+        "lines": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "lines",
+          "default": "1",
+          "required": false,
+          "mutable": false,
+          "description": "Number of text lines. Only used when variant is 'text'."
+        },
+        "shimmer": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "shimmer",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Whether to show the shimmer animation."
+        },
+        "variant": {
+          "type": "SkeletonVariant",
+          "resolvedType": "\"circular\" | \"rectangular\" | \"text\"",
+          "attribute": "variant",
+          "default": "'text'",
+          "required": false,
+          "mutable": false
+        },
+        "width": {
+          "type": "string | number | undefined",
+          "resolvedType": "number | string | undefined",
+          "attribute": "width",
+          "required": false,
+          "mutable": false,
+          "description": "Width as a CSS value string (e.g. '200px', '100%') or number (px)."
+        }
       },
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "events": [],
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "variant": {
-        "type": "'text' | 'circular' | 'rectangular'",
-        "default": "'text'"
-      },
-      "width": {
-        "type": "string | number"
-      },
       "height": {
-        "type": "string | number"
+        "type": "string | number | undefined",
+        "resolvedType": "number | string | undefined",
+        "attribute": "height",
+        "required": false,
+        "mutable": false,
+        "description": "Height as a CSS value string or number (px)."
       },
       "lines": {
         "type": "number",
+        "resolvedType": "number",
+        "attribute": "lines",
         "default": "1",
-        "description": "Text variant only. Last line renders at 60% width."
+        "required": false,
+        "mutable": false,
+        "description": "Number of text lines. Only used when variant is 'text'."
       },
-      "animate": {
+      "shimmer": {
         "type": "boolean",
-        "default": "true"
+        "resolvedType": "boolean",
+        "attribute": "shimmer",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Whether to show the shimmer animation."
+      },
+      "variant": {
+        "type": "SkeletonVariant",
+        "resolvedType": "\"circular\" | \"rectangular\" | \"text\"",
+        "attribute": "variant",
+        "default": "'text'",
+        "required": false,
+        "mutable": false
+      },
+      "width": {
+        "type": "string | number | undefined",
+        "resolvedType": "number | string | undefined",
+        "attribute": "width",
+        "required": false,
+        "mutable": false,
+        "description": "Width as a CSS value string (e.g. '200px', '100%') or number (px)."
       }
     },
-    "exports": [
-      "Skeleton"
-    ],
-    "types": [
-      "SkeletonProps",
-      "SkeletonVariant"
-    ]
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-skeleton",
+      "react": "DsSkeleton",
+      "angular": "DsSkeleton"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-skeleton.js';",
+        "example": "<ds-skeleton></ds-skeleton>"
+      },
+      "react": {
+        "import": "import { DsSkeleton } from '@ds-mo/ui/react';",
+        "example": "<DsSkeleton />"
+      },
+      "angular": {
+        "import": "import { DsSkeleton } from '@ds-mo/ui/angular/ds-skeleton';",
+        "example": "<ds-skeleton></ds-skeleton>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -64,11 +145,6 @@
     {
       "path": "src/wc/components/Skeleton/Skeleton.css",
       "content": ":host {\n  display: block;\n}\n\n:host(.skeleton),\n.skeleton {\n  background-color: var(--color-background-secondary);\n  position: relative;\n  overflow: hidden;\n}\n\n/* ── Variants ───────────────────────────────────────────────────────────── */\n\n:host(.text),\n.text {\n  height: var(--typography-fontsize-md);\n  border-radius: var(--dimension-radius-050);\n  width: 100%;\n}\n\n:host(.circular) {\n  width: var(--dimension-size-500);\n  height: var(--dimension-size-500);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.rectangular),\n.rectangular {\n  width: 100%;\n  height: var(--dimension-size-800, 80px);\n  border-radius: var(--dimension-radius-075);\n}\n\n/* ── Text group ─────────────────────────────────────────────────────────── */\n\n.text-group {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-075);\n}\n\n/* ── Shimmer ────────────────────────────────────────────────────────────── */\n\n:host(.animate),\n.animate {\n  overflow: hidden;\n  position: relative;\n}\n\n:host(.animate)::after,\n.animate::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(\n    90deg,\n    transparent 0%,\n    var(--color-interaction-hover) 50%,\n    transparent 100%\n  );\n  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;\n}\n\n@keyframes shimmer {\n  0%   { transform: translateX(-100%); }\n  100% { transform: translateX(100%); }\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Skeleton/Skeleton.d.ts",
-      "content": "export type SkeletonVariant = 'text' | 'circular' | 'rectangular';\nexport declare class Skeleton {\n    variant: SkeletonVariant;\n    /** Width as a CSS value string (e.g. '200px', '100%') or number (px). */\n    width: string | number | undefined;\n    /** Height as a CSS value string or number (px). */\n    height: string | number | undefined;\n    /** Number of text lines. Only used when variant is 'text'. */\n    lines: number;\n    /** Whether to show the shimmer animation. */\n    shimmer: boolean;\n    private get widthCss();\n    private get heightCss();\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

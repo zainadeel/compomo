@@ -8,63 +8,181 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/banner",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-banner.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-banner></ds-banner>",
-        "react": "<ds-banner></ds-banner>",
-        "angular": "<ds-banner></ds-banner>"
+    "source": "src/wc/components/Banner/Banner.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "contrast": {
+          "type": "BannerContrast",
+          "resolvedType": "\"bold\" | \"faint\" | \"medium\" | \"strong\"",
+          "attribute": "contrast",
+          "default": "'medium'",
+          "required": false,
+          "mutable": false
+        },
+        "dismissLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "dismiss-label",
+          "default": "'Dismiss'",
+          "required": false,
+          "mutable": false
+        },
+        "floating": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "floating",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Renders at a fixed position (centered top) and auto-dismisses after 4 s."
+        },
+        "header": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "header",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Renders the diagonal-stripe accent bar above the body."
+        },
+        "intent": {
+          "type": "BannerIntent",
+          "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"guide\" | \"negative\" | \"neutral\" | \"positive\" | \"walkthrough\" | \"warning\"",
+          "attribute": "intent",
+          "default": "'neutral'",
+          "required": false,
+          "mutable": false
+        },
+        "message": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "message",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "showDismiss": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-dismiss",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
       },
-      "internalDependencies": [
+      "events": [
         {
-          "component": "Text",
-          "note": "Used internally by Banner. Bundled in @ds-mo/ui."
+          "name": "dsDismiss",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "intent": {
-        "type": "'brand' | 'positive' | 'negative' | 'warning' | 'caution' | 'ai' | 'neutral' | 'walkthrough' | 'guide'",
-        "required": true
-      },
       "contrast": {
-        "type": "'faint' | 'medium' | 'bold' | 'strong'",
-        "required": true
+        "type": "BannerContrast",
+        "resolvedType": "\"bold\" | \"faint\" | \"medium\" | \"strong\"",
+        "attribute": "contrast",
+        "default": "'medium'",
+        "required": false,
+        "mutable": false
       },
-      "message": {
+      "dismissLabel": {
         "type": "string",
-        "required": true
+        "resolvedType": "string",
+        "attribute": "dismiss-label",
+        "default": "'Dismiss'",
+        "required": false,
+        "mutable": false
       },
       "floating": {
         "type": "boolean",
-        "description": "Renders as portal toast with auto-dismiss."
-      },
-      "onDismiss": {
-        "type": "() => void"
+        "resolvedType": "boolean",
+        "attribute": "floating",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Renders at a fixed position (centered top) and auto-dismisses after 4 s."
       },
       "header": {
         "type": "boolean",
-        "description": "Shows decorative header."
+        "resolvedType": "boolean",
+        "attribute": "header",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Renders the diagonal-stripe accent bar above the body."
+      },
+      "intent": {
+        "type": "BannerIntent",
+        "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"guide\" | \"negative\" | \"neutral\" | \"positive\" | \"walkthrough\" | \"warning\"",
+        "attribute": "intent",
+        "default": "'neutral'",
+        "required": false,
+        "mutable": false
+      },
+      "message": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "message",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "showDismiss": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-dismiss",
+        "default": "false",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "Banner"
+    "events": [
+      {
+        "name": "dsDismiss",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "BannerProps",
-      "BannerIntent",
-      "BannerContrast"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-banner",
+      "react": "DsBanner",
+      "angular": "DsBanner"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-banner.js';",
+        "example": "<ds-banner></ds-banner>"
+      },
+      "react": {
+        "import": "import { DsBanner } from '@ds-mo/ui/react';",
+        "example": "<DsBanner />"
+      },
+      "angular": {
+        "import": "import { DsBanner } from '@ds-mo/ui/angular/ds-banner';",
+        "example": "<ds-banner></ds-banner>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -77,11 +195,6 @@
     {
       "path": "src/wc/components/Banner/Banner.css",
       "content": ".banner-surface {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  border-radius: var(--dimension-radius-075);\n}\n\n.banner-header-surface {\n  width: 100%;\n  height: var(--dimension-space-100);\n  flex-shrink: 0;\n  overflow: hidden;\n  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-primary);\n}\n\n.banner-header {\n  width: 100%;\n  height: 100%;\n  background: repeating-linear-gradient(\n    -45deg,\n    var(--banner-content),\n    var(--banner-content) var(--dimension-size-100),\n    transparent var(--dimension-size-100),\n    transparent var(--dimension-size-200)\n  );\n}\n\n.banner-body {\n  padding: var(--dimension-space-075);\n  min-height: var(--dimension-size-400);\n  display: flex;\n  align-items: flex-start;\n  gap: var(--dimension-space-075);\n}\n\n.banner-message {\n  color: var(--banner-content);\n  flex: 1;\n  min-width: 0;\n}\n\n.banner-dismiss {\n  background: none;\n  border: none;\n  margin: 0;\n  padding: var(--dimension-space-025);\n  color: var(--banner-content);\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  border-radius: var(--dimension-radius-050);\n  position: relative;\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n}\n\n.banner-dismiss::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  background-color: transparent;\n  transition: var(--effect-transition-interaction-background-short-2, background-color var(--effect-motion-short-2));\n  pointer-events: none;\n}\n\n.banner-dismiss:hover::before  { background-color: var(--color-interaction-hover); }\n.banner-dismiss:active::before { background-color: var(--color-interaction-pressed); }\n\n.banner-dismiss:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-stroke-width-015);\n}\n\n/* ─── Floating ──────────────────────────────────────────────────────────────── */\n\n.floating-position {\n  position: fixed;\n  top: var(--dimension-space-200);\n  left: 50%;\n  transform: translateX(-50%);\n  pointer-events: none;\n}\n\n.floating-toast {\n  pointer-events: auto;\n  animation: bannerFadeIn var(--effect-motion-short-2, 150ms) forwards;\n}\n\n.floating-toast--closing {\n  animation: bannerFadeOut var(--effect-motion-short-3, 200ms) forwards;\n}\n\n@keyframes bannerFadeIn {\n  from { opacity: 0; transform: translateY(-8px); }\n  to   { opacity: 1; transform: translateY(0); }\n}\n\n@keyframes bannerFadeOut {\n  from { opacity: 1; transform: translateY(0); }\n  to   { opacity: 0; transform: translateY(-4px); }\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/Banner/Banner.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nexport type BannerIntent = 'brand' | 'positive' | 'negative' | 'warning' | 'caution' | 'ai' | 'neutral' | 'walkthrough' | 'guide';\nexport type BannerContrast = 'faint' | 'medium' | 'bold' | 'strong';\nexport declare class Banner {\n    intent: BannerIntent;\n    contrast: BannerContrast;\n    message: string;\n    /** Renders the diagonal-stripe accent bar above the body. */\n    header: boolean;\n    /** Renders at a fixed position (centered top) and auto-dismisses after 4 s. */\n    floating: boolean;\n    showDismiss: boolean;\n    dismissLabel: string;\n    private closing;\n    dsDismiss: EventEmitter<void>;\n    private dismissTimer;\n    private closeTimer;\n    private get fadeOutMs();\n    private get autoDismissMs();\n    componentDidLoad(): void;\n    onMessageChange(newVal: string): void;\n    disconnectedCallback(): void;\n    private clearTimers;\n    private scheduleDismiss;\n    private beginClose;\n    private getContentColor;\n    private getBg;\n    private getElevation;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

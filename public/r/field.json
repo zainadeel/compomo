@@ -8,49 +8,79 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/field",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-field.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-field></ds-field>",
-        "react": "<ds-field></ds-field>",
-        "angular": "<ds-field></ds-field>"
-      },
-      "internalDependencies": [
-        {
-          "component": "Text",
-          "note": "Used internally by Field. Bundled in @ds-mo/ui."
+    "source": "src/wc/components/Field/Field.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "fieldId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "field-id",
+          "required": false,
+          "mutable": false,
+          "description": "ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false
         }
-      ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
     },
     "props": {
+      "fieldId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "field-id",
+        "required": false,
+        "mutable": false,
+        "description": "ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted."
+      },
       "label": {
         "type": "string",
-        "required": true
-      },
-      "children": {
-        "type": "React.ReactNode",
-        "required": true
-      },
-      "id": {
-        "type": "string"
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false
       }
     },
-    "exports": [
-      "Field"
-    ],
-    "types": [
-      "FieldProps"
-    ]
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-field",
+      "react": "DsField",
+      "angular": "DsField"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-field.js';",
+        "example": "<ds-field></ds-field>"
+      },
+      "react": {
+        "import": "import { DsField } from '@ds-mo/ui/react';",
+        "example": "<DsField />"
+      },
+      "angular": {
+        "import": "import { DsField } from '@ds-mo/ui/angular/ds-field';",
+        "example": "<ds-field></ds-field>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",

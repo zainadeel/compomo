@@ -8,94 +8,181 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-card-setting.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-card-setting></ds-card-setting>",
-        "react": "<ds-card-setting></ds-card-setting>",
-        "angular": "<ds-card-setting></ds-card-setting>"
+    "source": "src/wc/components/CardSetting/CardSetting.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "cancelLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "cancel-label",
+          "default": "'Cancel'",
+          "required": false,
+          "mutable": false
+        },
+        "cardWidth": {
+          "type": "CardSettingWidth",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "card-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\nmatching `--dimension-card-height-*` so the body fills available space\neven when the slot is empty."
+        },
+        "editLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "edit-label",
+          "default": "'Edit'",
+          "required": false,
+          "mutable": false
+        },
+        "editing": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "editing",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled edit state — parent owns single-edit orchestration."
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "Section heading shown in the card header."
+        },
+        "saveLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "save-label",
+          "default": "'Save'",
+          "required": false,
+          "mutable": false
+        }
       },
       "events": [
         {
           "name": "dsEditingChange",
-          "listen": "element.addEventListener('dsEditingChange', handler)",
-          "reactProp": "onDsEditingChange={handler}",
-          "angularBinding": "(dsEditingChange)=\"handler($event)\""
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emits when the user enters or exits edit mode."
         }
       ],
-      "internalDependencies": [
-        {
-          "component": "Card",
-          "note": "Used internally by CardSetting. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "Text",
-          "note": "Used internally by CardSetting. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "ButtonUnfilled",
-          "note": "Used internally by CardSetting. Bundled in @ds-mo/ui."
-        },
-        {
-          "component": "ButtonFilled",
-          "note": "Used internally by CardSetting. Bundled in @ds-mo/ui."
-        }
-      ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [],
+      "slots": []
     },
     "props": {
-      "heading": {
+      "cancelLabel": {
         "type": "string",
-        "required": true,
-        "description": "Section title in the card header."
+        "resolvedType": "string",
+        "attribute": "cancel-label",
+        "default": "'Cancel'",
+        "required": false,
+        "mutable": false
       },
       "cardWidth": {
-        "type": "'sm' | 'md' | 'lg'",
+        "type": "CardSettingWidth",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "card-width",
         "default": "'md'",
-        "description": "Width token; also sets host min-height to the matching --dimension-card-height-* so empty bodies still fill the card."
+        "required": false,
+        "mutable": false,
+        "description": "Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\nmatching `--dimension-card-height-*` so the body fills available space\neven when the slot is empty."
+      },
+      "editLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "edit-label",
+        "default": "'Edit'",
+        "required": false,
+        "mutable": false
       },
       "editing": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "editing",
         "default": "false",
-        "description": "Controlled edit state."
+        "required": false,
+        "mutable": false,
+        "description": "Controlled edit state — parent owns single-edit orchestration."
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "Section heading shown in the card header."
+      },
+      "saveLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "save-label",
+        "default": "'Save'",
+        "required": false,
+        "mutable": false
       }
     },
-    "exports": [
-      "CardSetting"
+    "events": [
+      {
+        "name": "dsEditingChange",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emits when the user enters or exits edit mode."
+      }
     ],
-    "types": [
-      "CardSettingWidth"
-    ]
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-setting",
+      "react": "DsCardSetting",
+      "angular": "DsCardSetting"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-setting.js';",
+        "example": "<ds-card-setting></ds-card-setting>"
+      },
+      "react": {
+        "import": "import { DsCardSetting } from '@ds-mo/ui/react';",
+        "example": "<DsCardSetting />"
+      },
+      "angular": {
+        "import": "import { DsCardSetting } from '@ds-mo/ui/angular/ds-card-setting';",
+        "example": "<ds-card-setting></ds-card-setting>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens",
-    "@ds-mo/icons"
+    "@ds-mo/tokens"
   ],
   "registryDependencies": [
-    "card",
-    "text",
+    "button-filled",
     "button-unfilled",
-    "button-filled"
+    "card"
   ],
   "files": [
     {
       "path": "src/wc/components/CardSetting/CardSetting.css",
       "content": ":host {\n  display: contents;\n}\n\n.card-setting__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/CardSetting/CardSetting.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nimport type { CardWidth } from '../Card/Card';\nexport type CardSettingWidth = CardWidth;\nexport declare class CardSetting {\n    /** Section heading shown in the card header. */\n    heading: string;\n    /**\n     * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\n     * matching `--dimension-card-height-*` so the body fills available space\n     * even when the slot is empty.\n     */\n    cardWidth: CardSettingWidth;\n    /** Controlled edit state — parent owns single-edit orchestration. */\n    editing: boolean;\n    /** Emits when the user enters or exits edit mode. */\n    dsEditingChange: EventEmitter<boolean>;\n    private enterEdit;\n    private exitEdit;\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

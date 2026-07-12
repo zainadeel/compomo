@@ -8,120 +8,407 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-button-unfilled.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-button-unfilled></ds-button-unfilled>",
-        "react": "<ds-button-unfilled></ds-button-unfilled>",
-        "angular": "<ds-button-unfilled></ds-button-unfilled>"
+    "source": "src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "activeFill": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "active-fill",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "When active, render the selected interaction fill.\nDefault `true` for general UI. Shell chrome (nav / tool rails) should pass\n`false` so selection is foreground-only (primary color, no fill)."
+        },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "background": {
+          "type": "ButtonUnfilledBackground | undefined",
+          "resolvedType": "\"always-dark\" | \"navigation\" | undefined",
+          "attribute": "background",
+          "required": false,
+          "mutable": false,
+          "description": "Parent surface context for navigation and always-dark chrome."
+        },
+        "backgroundContrast": {
+          "type": "ButtonUnfilledOnBackgroundContrast",
+          "resolvedType": "\"bold\" | \"default\" | \"medium\" | \"strong\" | undefined",
+          "attribute": "on-background-contrast",
+          "required": false,
+          "mutable": false,
+          "description": "Foreground and interaction tokens when the button sits on a contrasting parent\nbackground (default, medium, bold, or strong)."
+        },
+        "controls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "controls",
+          "required": false,
+          "mutable": false
+        },
+        "dot": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "dot",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show a notification dot at the top-right of the icon zone (icon variant only)."
+        },
+        "expanded": {
+          "type": "boolean | undefined",
+          "resolvedType": "boolean | undefined",
+          "attribute": "expanded",
+          "required": false,
+          "mutable": false
+        },
+        "focusTabIndex": {
+          "type": "number",
+          "resolvedType": "number | undefined",
+          "attribute": "tab-index",
+          "required": false,
+          "mutable": false,
+          "description": "Native `tabindex` for roving keyboard groups in shell chrome.\nOmit for the default button tab stop (`0`)."
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show a 1px secondary inset border. Default on; shell chrome can pass `false`."
+        },
+        "haspopup": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "haspopup",
+          "required": false,
+          "mutable": false
+        },
+        "icon": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "icon",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Icon name passed to <ds-icon> for `icon` / `icon-label` variants."
+        },
+        "isActive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-active",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Active/selected visual state. Always promotes foreground to primary."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Disables interaction."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Visible text for `label` / `icon-label` variants."
+        },
+        "pressed": {
+          "type": "boolean | undefined",
+          "resolvedType": "boolean | undefined",
+          "attribute": "pressed",
+          "required": false,
+          "mutable": false
+        },
+        "size": {
+          "type": "ButtonUnfilledSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density (height, padding, icon, type)."
+        },
+        "type": {
+          "type": "'button' | 'submit' | 'reset'",
+          "resolvedType": "\"button\" | \"reset\" | \"submit\"",
+          "attribute": "type",
+          "default": "'button'",
+          "required": false,
+          "mutable": false,
+          "description": "Native button type."
+        },
+        "variant": {
+          "type": "ButtonUnfilledVariant",
+          "resolvedType": "\"icon\" | \"icon-label\" | \"label\"",
+          "attribute": "variant",
+          "default": "'label'",
+          "required": false,
+          "mutable": false,
+          "description": "Content layout. Default is label-only; pass `icon` for icon-only chrome\n(nav / tool rails) or `icon-label` for leading icon + text."
+        },
+        "width": {
+          "type": "ButtonUnfilledWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'hug'",
+          "required": false,
+          "mutable": false,
+          "description": "Width fit — hug content (default) or fill the parent."
+        }
       },
       "events": [
         {
-          "name": "dsClick",
-          "listen": "element.addEventListener('dsClick', handler)",
-          "reactProp": "onDsClick={handler}",
-          "angularBinding": "(dsClick)=\"handler($event)\""
-        },
-        {
           "name": "dsChange",
-          "listen": "element.addEventListener('dsChange', handler)",
-          "reactProp": "onDsChange={handler}",
-          "angularBinding": "(dsChange)=\"handler($event)\""
-        }
-      ],
-      "internalDependencies": [
-        {
-          "component": "Icon",
-          "note": "Used internally by ButtonUnfilled. Bundled in @ds-mo/ui."
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         },
         {
-          "component": "Badge",
-          "note": "Used internally by ButtonUnfilled. Bundled in @ds-mo/ui."
+          "name": "dsClick",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
     },
     "props": {
-      "variant": {
-        "type": "'icon' | 'label' | 'icon-label'",
-        "default": "'label'",
-        "description": "Content layout. Icon-only chrome must pass variant=\"icon\"."
-      },
-      "size": {
-        "type": "'md' | 'sm' | 'xs'",
-        "default": "'md'",
-        "description": "Control-density height/padding/icon/type."
-      },
-      "width": {
-        "type": "'hug' | 'fill'",
-        "default": "'hug'",
-        "description": "Width fit — hug content or fill the parent."
-      },
-      "label": {
-        "type": "string",
-        "description": "Visible text for label / icon-label variants."
-      },
-      "icon": {
-        "type": "string",
-        "description": "Canonical IcoMo icon export name for icon / icon-label variants."
-      },
-      "isActive": {
-        "type": "boolean",
-        "default": "false",
-        "description": "Active/selected state. Always promotes icon/label to primary foreground."
-      },
       "activeFill": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "active-fill",
         "default": "true",
-        "description": "When active, render selected interaction fill. Set false for shell chrome (primary fg, no fill)."
+        "required": false,
+        "mutable": false,
+        "description": "When active, render the selected interaction fill.\nDefault `true` for general UI. Shell chrome (nav / tool rails) should pass\n`false` so selection is foreground-only (primary color, no fill)."
       },
-      "hasBorder": {
-        "type": "boolean",
-        "default": "true",
-        "description": "Secondary 1px inset border. Default on; shell chrome should pass false."
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "background": {
+        "type": "ButtonUnfilledBackground | undefined",
+        "resolvedType": "\"always-dark\" | \"navigation\" | undefined",
+        "attribute": "background",
+        "required": false,
+        "mutable": false,
+        "description": "Parent surface context for navigation and always-dark chrome."
+      },
+      "backgroundContrast": {
+        "type": "ButtonUnfilledOnBackgroundContrast",
+        "resolvedType": "\"bold\" | \"default\" | \"medium\" | \"strong\" | undefined",
+        "attribute": "on-background-contrast",
+        "required": false,
+        "mutable": false,
+        "description": "Foreground and interaction tokens when the button sits on a contrasting parent\nbackground (default, medium, bold, or strong)."
+      },
+      "controls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "controls",
+        "required": false,
+        "mutable": false
       },
       "dot": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "dot",
         "default": "false",
-        "description": "Notification dot (icon variant only)."
+        "required": false,
+        "mutable": false,
+        "description": "Show a notification dot at the top-right of the icon zone (icon variant only)."
+      },
+      "expanded": {
+        "type": "boolean | undefined",
+        "resolvedType": "boolean | undefined",
+        "attribute": "expanded",
+        "required": false,
+        "mutable": false
+      },
+      "focusTabIndex": {
+        "type": "number",
+        "resolvedType": "number | undefined",
+        "attribute": "tab-index",
+        "required": false,
+        "mutable": false,
+        "description": "Native `tabindex` for roving keyboard groups in shell chrome.\nOmit for the default button tab stop (`0`)."
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show a 1px secondary inset border. Default on; shell chrome can pass `false`."
+      },
+      "haspopup": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "haspopup",
+        "required": false,
+        "mutable": false
+      },
+      "icon": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "icon",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Icon name passed to <ds-icon> for `icon` / `icon-label` variants."
+      },
+      "isActive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-active",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Active/selected visual state. Always promotes foreground to primary."
       },
       "isInactive": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
         "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
+        "required": false,
+        "mutable": false,
+        "description": "Disables interaction."
       },
-      "backgroundContrast": {
-        "type": "'default' | 'medium' | 'bold' | 'strong'",
-        "description": "Parent surface contrast for interaction and focus tokens."
-      },
-      "background": {
-        "type": "'always-dark' | 'navigation'",
-        "description": "Navigation and always-dark chrome surfaces."
-      },
-      "ariaLabel": {
+      "label": {
         "type": "string",
-        "description": "Accessible name (required for icon-only when label is empty)."
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Visible text for `label` / `icon-label` variants."
+      },
+      "pressed": {
+        "type": "boolean | undefined",
+        "resolvedType": "boolean | undefined",
+        "attribute": "pressed",
+        "required": false,
+        "mutable": false
+      },
+      "size": {
+        "type": "ButtonUnfilledSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density (height, padding, icon, type)."
+      },
+      "type": {
+        "type": "'button' | 'submit' | 'reset'",
+        "resolvedType": "\"button\" | \"reset\" | \"submit\"",
+        "attribute": "type",
+        "default": "'button'",
+        "required": false,
+        "mutable": false,
+        "description": "Native button type."
+      },
+      "variant": {
+        "type": "ButtonUnfilledVariant",
+        "resolvedType": "\"icon\" | \"icon-label\" | \"label\"",
+        "attribute": "variant",
+        "default": "'label'",
+        "required": false,
+        "mutable": false,
+        "description": "Content layout. Default is label-only; pass `icon` for icon-only chrome\n(nav / tool rails) or `icon-label` for leading icon + text."
+      },
+      "width": {
+        "type": "ButtonUnfilledWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'hug'",
+        "required": false,
+        "mutable": false,
+        "description": "Width fit — hug content (default) or fill the parent."
       }
     },
-    "exports": [
-      "ButtonUnfilled"
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsClick",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "ButtonUnfilledBackground",
-      "ButtonUnfilledOnBackgroundContrast",
-      "ButtonUnfilledVariant",
-      "ButtonUnfilledSize",
-      "ButtonUnfilledWidth"
-    ]
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-button-unfilled",
+      "react": "DsButtonUnfilled",
+      "angular": "DsButtonUnfilled"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-button-unfilled.js';",
+        "example": "<ds-button-unfilled></ds-button-unfilled>"
+      },
+      "react": {
+        "import": "import { DsButtonUnfilled } from '@ds-mo/ui/react';",
+        "example": "<DsButtonUnfilled />"
+      },
+      "angular": {
+        "import": "import { DsButtonUnfilled } from '@ds-mo/ui/angular/ds-button-unfilled';",
+        "example": "<ds-button-unfilled></ds-button-unfilled>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -129,18 +416,14 @@
     "@ds-mo/icons"
   ],
   "registryDependencies": [
+    "badge",
     "icon",
-    "badge"
+    "text"
   ],
   "files": [
     {
       "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.css",
       "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-width.css';\n\n:host {\n  display: inline-flex;\n  outline: none;\n  --ds-button-unfilled-fg: var(--color-foreground-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-secondary);\n  --ds-button-unfilled-border: var(--color-border-secondary);\n}\n\n/* Icon-only: fixed square from density height (hug). Fill stretches the hit target. */\n:host(.button-unfilled-host--icon.ds-control-width--hug) {\n  width: var(--ds-control-height, var(--dimension-size-400));\n  height: var(--ds-control-height, var(--dimension-size-400));\n  min-width: var(--ds-control-height, var(--dimension-size-400));\n  min-height: var(--ds-control-height, var(--dimension-size-400));\n}\n\n:host(.button-unfilled-host--icon.ds-control-width--fill) {\n  height: var(--ds-control-height, var(--dimension-size-400));\n  min-height: var(--ds-control-height, var(--dimension-size-400));\n}\n\n:host(.ds-control-width--fill) .button-unfilled {\n  width: 100%;\n}\n\n.button-unfilled {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  height: var(--ds-control-height, var(--dimension-size-400));\n  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));\n  gap: var(--ds-control-gap, var(--dimension-space-050));\n  background: transparent;\n  border: none;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  color: var(--ds-button-unfilled-fg);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  overflow: hidden;\n  transition: color var(--effect-motion-short-2);\n  /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected` / `--on-*`).\n     Active always promotes foreground to primary (toggle mode). */\n}\n\n.button-unfilled--icon {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n}\n\n.button-unfilled--active {\n  color: var(--ds-button-unfilled-fg-active);\n}\n\n/* Inset stroke via interaction-fill ::after (above selected / hover washes). */\n.button-unfilled--bordered {\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--ds-button-unfilled-border);\n}\n\n/* Fallback if interaction-fill is omitted (should be rare — prefer keep the util class). */\n.button-unfilled--bordered:not(.ds-interaction-fill) {\n  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n/* Foreground / chrome tokens per surface — interaction tokens come from util `--on-*`. */\n.button-unfilled--contrast-medium {\n  --ds-button-unfilled-fg: var(--color-foreground-on-medium-background-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-on-medium-background-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-medium-neutral);\n  --ds-button-unfilled-border: var(--color-border-on-medium-background-secondary);\n}\n\n.button-unfilled--contrast-bold {\n  --ds-button-unfilled-fg: var(--color-foreground-on-bold-background-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-on-bold-background-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-bold-neutral);\n  --ds-button-unfilled-border: var(--color-border-on-bold-background-secondary);\n}\n\n.button-unfilled--contrast-strong {\n  --ds-button-unfilled-fg: var(--color-foreground-on-strong-background-secondary);\n  --ds-button-unfilled-fg-active: var(--color-foreground-on-strong-background-primary);\n  --ds-button-unfilled-dot-ring: var(--color-background-strong-neutral);\n  --ds-button-unfilled-border: var(--color-border-on-strong-background-secondary);\n}\n\n.button-unfilled--on-always-dark {\n  --ds-button-unfilled-fg: var(--color-always-dark-foreground-secondary);\n  --ds-button-unfilled-fg-active: var(--color-always-dark-foreground-primary);\n  --ds-button-unfilled-dot-ring: var(--color-always-dark-background);\n  --ds-button-unfilled-border: var(--color-always-dark-border-secondary);\n}\n\n.button-unfilled--on-navigation {\n  --ds-button-unfilled-fg: var(--color-navigation-foreground-secondary);\n  --ds-button-unfilled-fg-active: var(--color-navigation-foreground-primary);\n  --ds-button-unfilled-dot-ring: var(--color-navigation-background);\n  --ds-button-unfilled-border: var(--color-navigation-border-secondary);\n}\n\n/*\n * After surface ring defaults: selected fill remaps the knock-out to the active\n * wash so the badge halo matches the selected background.\n */\n.button-unfilled.ds-interaction-fill--selected {\n  --ds-button-unfilled-dot-ring: var(--ds-interaction-active);\n}\n\n.button-unfilled__icon-wrap {\n  position: relative;\n  width: var(--ds-control-icon, var(--dimension-iconography-md));\n  height: var(--ds-control-icon, var(--dimension-iconography-md));\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  z-index: 2;\n}\n\n.button-unfilled__label {\n  position: relative;\n  z-index: 2;\n  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));\n  white-space: nowrap;\n  flex-shrink: 0;\n  min-width: 0;\n}\n\n.button-unfilled__dot {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  pointer-events: none;\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nimport { type ControlWidth } from '../../utils';\nexport type ButtonUnfilledOnBackgroundContrast = 'default' | 'medium' | 'bold' | 'strong';\nexport type ButtonUnfilledBackground = 'always-dark' | 'navigation';\nexport type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';\nexport type ButtonUnfilledSize = 'md' | 'sm' | 'xs';\nexport type ButtonUnfilledWidth = ControlWidth;\nexport declare class ButtonUnfilled {\n    el: HTMLElement;\n    /**\n     * Content layout. Default is label-only; pass `icon` for icon-only chrome\n     * (nav / tool rails) or `icon-label` for leading icon + text.\n     */\n    variant: ButtonUnfilledVariant;\n    /** Control density (height, padding, icon, type). */\n    size: ButtonUnfilledSize;\n    /** Width fit — hug content (default) or fill the parent. */\n    width: ButtonUnfilledWidth;\n    /** Visible text for `label` / `icon-label` variants. */\n    label: string;\n    /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */\n    icon: string;\n    /** Active/selected visual state. Always promotes foreground to primary. */\n    isActive: boolean;\n    /**\n     * When active, render the selected interaction fill.\n     * Default `true` for general UI. Shell chrome (nav / tool rails) should pass\n     * `false` so selection is foreground-only (primary color, no fill).\n     */\n    activeFill: boolean;\n    /** Show a 1px secondary inset border. Default on; shell chrome can pass `false`. */\n    hasBorder: boolean;\n    /** Show a notification dot at the top-right of the icon zone (icon variant only). */\n    dot: boolean;\n    /** Disables interaction. */\n    isInactive: boolean;\n    /** Native button type. */\n    type: 'button' | 'submit' | 'reset';\n    /**\n     * Foreground and interaction tokens when the button sits on a contrasting parent\n     * background (default, medium, bold, or strong).\n     */\n    backgroundContrast?: ButtonUnfilledOnBackgroundContrast;\n    /** Parent surface context for navigation and always-dark chrome. */\n    background: ButtonUnfilledBackground | undefined;\n    ariaLabel: string | undefined;\n    controls: string | undefined;\n    expanded: boolean | undefined;\n    haspopup: string | undefined;\n    pressed: boolean | undefined;\n    /**\n     * Native `tabindex` for roving keyboard groups in shell chrome.\n     * Omit for the default button tab stop (`0`).\n     */\n    focusTabIndex?: number;\n    dsClick: EventEmitter<MouseEvent>;\n    dsChange: EventEmitter<boolean>;\n    private buttonEl;\n    setFocus(): Promise<void>;\n    private handleClick;\n    private effectiveContrast;\n    private get showIcon();\n    private get showLabel();\n    private get showDot();\n    /** Knock-out ring: selected fill → active wash; otherwise surface token. */\n    private get dotRing();\n    private get accessibleName();\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

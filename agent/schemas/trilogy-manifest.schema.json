@@ -26,6 +26,18 @@
       "then": { "properties": { "kind": { "const": "icons" } } }
     },
     {
+      "if": { "properties": { "package": { "const": "@ds-mo/ui" } }, "required": ["package"] },
+      "then": {
+        "properties": {
+          "kind": { "const": "components" },
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/componentIntent" }
+          }
+        }
+      }
+    },
+    {
       "if": { "properties": { "kind": { "const": "tokens" } }, "required": ["kind"] },
       "then": {
         "properties": {
@@ -86,6 +98,42 @@
         "variantOf": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]+$" },
         "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
         "replacedBy": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]+$" }
+      }
+    },
+    "componentIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "tag", "name", "title", "summary", "intentStatus", "intent", "api", "exports", "dependencies", "componentDependencies"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
+        "tag": { "type": "string", "pattern": "^ds-[a-z0-9-]+$" },
+        "name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "intentStatus": { "enum": ["complete", "migration-pending"] },
+        "intent": { "type": ["object", "null"] },
+        "api": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["props", "events", "slots"],
+          "properties": {
+            "props": { "type": "object" },
+            "events": { "type": "array" },
+            "slots": { "type": "array" }
+          }
+        },
+        "exports": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["customElement", "react", "angular"],
+          "properties": {
+            "customElement": { "type": "string", "pattern": "^ds-[a-z0-9-]+$" },
+            "react": { "type": "string", "pattern": "^Ds[A-Z][A-Za-z0-9]+$" },
+            "angular": { "type": "string", "pattern": "^Ds[A-Z][A-Za-z0-9]+$" }
+          }
+        },
+        "dependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "componentDependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } }
       }
     }
   }

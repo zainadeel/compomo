@@ -29,6 +29,11 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  formatComponentDetail,
+  formatComponentList,
+  formatComponentSourceHeader,
+} from './registry-formatters.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -60,67 +65,6 @@ function loadComponent(name) {
   const filePath = path.join(REGISTRY_DIR, `${name}.json`);
   if (!fs.existsSync(filePath)) return null;
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-}
-
-// ─── Formatting helpers ─────────────────────────────────────────────────────────
-
-function formatComponentList(items) {
-  const lines = items.map(item => {
-    const deps = item.dependencies?.filter(d => d !== '@ds-mo/ui') ?? [];
-    const depsNote = deps.length ? ` (also needs ${deps.join(', ')})` : '';
-    return `- **${item.title}** (\`${item.name}\`)${depsNote}\n  ${item.description}`;
-  });
-  return lines.join('\n\n');
-}
-
-function formatComponentDetail(comp) {
-  const m = comp.meta;
-  const c = m.consumption;
-  const sections = [];
-
-  // Header
-  sections.push(`# ${m.exports.join(', ')}\n\n${comp.description}`);
-
-  // Quick start
-  sections.push(`## Setup\n\n\`\`\`bash\n${c.install}\n\`\`\``);
-
-  sections.push(`## Imports\n\n\`\`\`tsx\n// CSS (once at app entry point)\n${c.cssImport}\n${c.cssSetup ? `\n// Design tokens\n${c.cssSetup.split('\n')[0]}` : ''}\n\n// Component\n${c.import}\n${c.typeImport ? `\n// Types (optional)\n${c.typeImport}` : ''}${c.iconImport ? `\n\n// Icons (if using icon props)\n${c.iconImport}` : ''}\n\`\`\``);
-
-  // Props
-  if (m.props && Object.keys(m.props).length > 0) {
-    const propLines = Object.entries(m.props).map(([name, def]) => {
-      const req = def.required ? ' **(required)**' : '';
-      const dflt = def.default ? ` — default: \`${def.default}\`` : '';
-      const desc = def.description ? ` — ${def.description}` : '';
-      return `| \`${name}\` | \`${def.type}\` | ${req}${dflt}${desc} |`;
-    });
-    sections.push(`## Props\n\n| Prop | Type | Notes |\n|------|------|-------|\n${propLines.join('\n')}`);
-  }
-
-  // Internal deps
-  if (c.internalDependencies?.length) {
-    const depList = c.internalDependencies.map(d => `- ${d.component}: ${d.note}`).join('\n');
-    sections.push(`## Internal Dependencies\n\n${depList}`);
-  }
-
-  // Peer deps
-  if (c.peerDependencies) {
-    const reqs = c.peerDependencies.required.map(d => `- ${d} (required)`).join('\n');
-    const opts = (c.peerDependencies.optional ?? []).map(d => `- ${d} (optional)`).join('\n');
-    sections.push(`## Peer Dependencies\n\n${reqs}${opts ? `\n${opts}` : ''}`);
-  }
-
-  // Usage notes
-  if (c.notes) {
-    sections.push(`## Notes\n\n${c.notes}`);
-  }
-
-  // Storybook link
-  if (m.storybook) {
-    sections.push(`## Storybook\n\n${m.storybook}`);
-  }
-
-  return sections.join('\n\n---\n\n');
 }
 
 function formatSetupGuide() {
@@ -160,11 +104,11 @@ document.documentElement.setAttribute('data-theme', 'dark');
 **React wrappers** (Stencil-generated):
 
 \`\`\`tsx
-import { DsButton, DsText } from '@ds-mo/ui/react';
+import { DsButtonFilled, DsText } from '@ds-mo/ui/react';
 import '@ds-mo/tokens';
 
 function MyPage() {
-  return <DsButton>Continue</DsButton>;
+  return <DsButtonFilled label="Continue" />;
 }
 \`\`\`
 
@@ -319,7 +263,7 @@ server.registerTool(
       return `### ${f.path}\n\n\`\`\`${lang}\n${f.content}\n\`\`\``;
     });
 
-    const header = `# ${comp.meta.exports.join(', ')} — Source Reference\n\n> This is reference code. Import from \`@ds-mo/ui\` instead of copying.\n> \`${comp.meta.consumption.import}\``;
+    const header = formatComponentSourceHeader(comp);
 
     return { content: [{ type: 'text', text: `${header}\n\n${sections.join('\n\n')}` }] };
   }

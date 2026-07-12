@@ -54,6 +54,7 @@ try {
     const react = await import('@ds-mo/ui/react');
     const nav = await import('@ds-mo/ui/nav');
     const utils = await import('@ds-mo/ui/utils');
+    const agent = await import('@ds-mo/ui/agent', { with: { type: 'json' } });
     for (const [surface, value] of [
       ['native', native.DsButtonFilled],
       ['angular', angular.DsButtonFilled],
@@ -62,6 +63,7 @@ try {
       ['react', react.DsButtonFilled],
       ['nav', nav.normalizeShellGradientPreset],
       ['utils', utils.resolveCssLengthPx],
+      ['agent manifest', agent.default?.entries?.length],
     ]) {
       if (value == null) throw new Error('Missing ' + surface + ' export');
     }
@@ -70,7 +72,7 @@ try {
     cwd: smokeDir,
     stdio: 'inherit',
   });
-  console.log('✅ Packed native, Angular, React, nav, and utils entry points load successfully.');
+  console.log('✅ Packed native, Angular, React, nav, utils, and agent entry points load successfully.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

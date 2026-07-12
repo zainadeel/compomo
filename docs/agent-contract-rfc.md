@@ -1,6 +1,6 @@
 # ds-mo Agent Contract RFC
 
-Status: prototype  
+Status: implemented foundation; catalog intent migration in progress
 Schema version: 1.0.0  
 Owners: TokoMo, IcoMo, and CompoMo maintainers
 
@@ -66,14 +66,16 @@ Component intent is written once. Framework examples are generated from the cano
 
 Framework caveats may be handwritten only when behavior cannot be derived mechanically.
 
-## Registry Migration
+## Registry Pipeline
 
-Registry v2 will merge compiler facts with adjacent agent metadata. During migration:
+The registry merges compiler facts with adjacent agent metadata:
 
-1. Existing `public/r/registry.json` and component endpoints remain available.
-2. New intent fields are additive.
-3. A compatibility fixture protects the existing top-level shape.
-4. Full source bodies are omitted from compact committed output and served from source-aware tooling when requested.
+1. `scripts/component-inventory.mjs` discovers component existence from source.
+2. Stencil `docs-json` owns generated API facts.
+3. Co-located agent files own semantic intent only.
+4. Existing `public/r/registry.json` and component endpoints remain available.
+5. The output directory is cleared before regeneration to prevent rename/delete drift.
+6. Full source bodies are omitted from the compact master output and retained in component detail endpoints.
 
 ## Validation
 
@@ -89,11 +91,11 @@ CI must eventually reject:
 - Non-deterministic generated output
 - Package or peer-version drift
 
-The prototype validators cover schema validity, stable IDs, source tag agreement, component references, pattern files, baseline compatibility, token-family patterns, icon relationships, and assembled trilogy manifests. Compiler API extraction remains a follow-up phase.
+The validators cover schema validity, stable IDs, source tag agreement, required artifacts, framework adapters, compiler metadata coverage, exact registry coverage, lifecycle drift, pattern files, token-family patterns, icon relationships, and assembled trilogy manifests.
 
-## Prototype Scope
+## Intent Migration Scope
 
-The first contract is exercised by:
+The first curated intent records are:
 
 - `ds-button-filled`: selection and alternatives
 - `ds-menu`: complex state, properties, events, and anchoring
@@ -102,7 +104,7 @@ The first contract is exercised by:
 - TokoMo: background color, spacing, typography, and motion token families
 - IcoMo: notification, directional, and success icon families
 
-The schema is reviewed against these cases before metadata is expanded to every component or implemented in TokoMo and IcoMo.
+All other existing components are explicitly tracked in the shrinking migration baseline. New components require metadata immediately.
 
 ## Non-goals
 

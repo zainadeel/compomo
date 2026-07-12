@@ -2,96 +2,306 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "button-filled",
   "title": "ButtonFilled",
-  "description": "Filled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, and intent×contrast fills.",
+  "description": "Emphasized command button for primary, confirming, or semantically important actions.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-filled",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-button-filled.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-button-filled></ds-button-filled>",
-        "react": "<ds-button-filled></ds-button-filled>",
-        "angular": "<ds-button-filled></ds-button-filled>"
+    "source": "src/wc/components/ButtonFilled/ButtonFilled.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Emphasized command button for primary, confirming, or semantically important actions.",
+      "useWhen": [
+        "The user initiates a primary or emphasized command.",
+        "An action needs a semantic intent such as positive, negative, warning, or AI."
+      ],
+      "avoidWhen": [
+        "The action is unfilled icon-only shell or navigation chrome.",
+        "The element represents navigation rather than a command.",
+        "The content is a persistent selected state rather than an action."
+      ],
+      "alternatives": [
+        {
+          "when": "The action is icon-only shell, navigation, overflow, or tool-rail chrome.",
+          "component": "component:ds-button-unfilled",
+          "reason": "Unfilled buttons provide the correct active, border, and surface-aware interaction states for chrome."
+        },
+        {
+          "when": "The user is choosing a destination in application navigation.",
+          "component": "component:ds-panel-nav",
+          "reason": "Navigation components own destination selection, active state, and navigation semantics."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-modal",
+        "component:ds-field"
+      ],
+      "accessibility": [
+        "Provide an explicit accessible name for icon-only buttons.",
+        "Use inactive state only when the action must remain visible but unavailable.",
+        "Do not encode the action meaning through color alone."
+      ],
+      "states": [
+        "Choose one primary filled action per local decision area when possible.",
+        "Use semantic intent for meaning and contrast for emphasis; do not use contrast as a substitute for state."
+      ],
+      "responsiveBehavior": [
+        "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/ButtonFilled/ButtonFilled.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "contrast": {
+          "type": "ButtonFilledContrast",
+          "resolvedType": "\"bold\" | \"faint\" | \"medium\" | \"strong\"",
+          "attribute": "contrast",
+          "default": "'bold'",
+          "required": false,
+          "mutable": false,
+          "description": "Background fill weight. Foreground uses the paired contrast token:\nbold → faint, strong → medium, medium → strong, faint → bold."
+        },
+        "icon": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "icon",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Icon name passed to <ds-icon> for `icon` / `icon-label` variants."
+        },
+        "intent": {
+          "type": "ButtonFilledIntent",
+          "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"guide\" | \"negative\" | \"neutral\" | \"positive\" | \"walkthrough\" | \"warning\"",
+          "attribute": "intent",
+          "default": "'brand'",
+          "required": false,
+          "mutable": false,
+          "description": "Semantic colour intent."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Disables interaction."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Visible text for `label` / `icon-label` variants."
+        },
+        "size": {
+          "type": "ButtonFilledSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density (height, padding, icon, type)."
+        },
+        "type": {
+          "type": "'button' | 'submit' | 'reset'",
+          "resolvedType": "\"button\" | \"reset\" | \"submit\"",
+          "attribute": "type",
+          "default": "'button'",
+          "required": false,
+          "mutable": false,
+          "description": "Native button type."
+        },
+        "variant": {
+          "type": "ButtonFilledVariant",
+          "resolvedType": "\"icon\" | \"icon-label\" | \"label\"",
+          "attribute": "variant",
+          "default": "'label'",
+          "required": false,
+          "mutable": false,
+          "description": "Content layout. Default is label-only; pass `icon` for icon-only chrome\n(nav / tool rails) or `icon-label` for leading icon + text."
+        },
+        "width": {
+          "type": "ButtonFilledWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'hug'",
+          "required": false,
+          "mutable": false,
+          "description": "Width fit — hug content (default) or fill the parent."
+        }
       },
       "events": [
         {
           "name": "dsClick",
-          "listen": "element.addEventListener('dsClick', handler)",
-          "reactProp": "onDsClick={handler}",
-          "angularBinding": "(dsClick)=\"handler($event)\""
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
         }
       ],
-      "internalDependencies": [
+      "methods": [
         {
-          "component": "Icon",
-          "note": "Used internally by ButtonFilled. Bundled in @ds-mo/ui."
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
         }
       ],
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "slots": []
     },
     "props": {
-      "variant": {
-        "type": "'icon' | 'label' | 'icon-label'",
-        "default": "'label'",
-        "description": "Content layout. Icon-only chrome must pass variant=\"icon\"."
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
       },
-      "size": {
-        "type": "'md' | 'sm' | 'xs'",
-        "default": "'md'",
-        "description": "Control-density height/padding/icon/type."
-      },
-      "width": {
-        "type": "'hug' | 'fill'",
-        "default": "'hug'",
-        "description": "Width fit — hug content or fill the parent."
-      },
-      "label": {
-        "type": "string",
-        "description": "Visible text for label / icon-label variants."
+      "contrast": {
+        "type": "ButtonFilledContrast",
+        "resolvedType": "\"bold\" | \"faint\" | \"medium\" | \"strong\"",
+        "attribute": "contrast",
+        "default": "'bold'",
+        "required": false,
+        "mutable": false,
+        "description": "Background fill weight. Foreground uses the paired contrast token:\nbold → faint, strong → medium, medium → strong, faint → bold."
       },
       "icon": {
         "type": "string",
-        "description": "Canonical IcoMo icon export name for icon / icon-label variants."
+        "resolvedType": "string",
+        "attribute": "icon",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Icon name passed to <ds-icon> for `icon` / `icon-label` variants."
       },
       "intent": {
-        "type": "'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough'",
-        "default": "'brand'"
-      },
-      "contrast": {
-        "type": "'bold' | 'strong' | 'medium' | 'faint'",
-        "default": "'bold'"
+        "type": "ButtonFilledIntent",
+        "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"guide\" | \"negative\" | \"neutral\" | \"positive\" | \"walkthrough\" | \"warning\"",
+        "attribute": "intent",
+        "default": "'brand'",
+        "required": false,
+        "mutable": false,
+        "description": "Semantic colour intent."
       },
       "isInactive": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
         "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
+        "required": false,
+        "mutable": false,
+        "description": "Disables interaction."
       },
-      "ariaLabel": {
+      "label": {
         "type": "string",
-        "description": "Accessible name (required for icon-only when label is empty)."
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Visible text for `label` / `icon-label` variants."
+      },
+      "size": {
+        "type": "ButtonFilledSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density (height, padding, icon, type)."
+      },
+      "type": {
+        "type": "'button' | 'submit' | 'reset'",
+        "resolvedType": "\"button\" | \"reset\" | \"submit\"",
+        "attribute": "type",
+        "default": "'button'",
+        "required": false,
+        "mutable": false,
+        "description": "Native button type."
+      },
+      "variant": {
+        "type": "ButtonFilledVariant",
+        "resolvedType": "\"icon\" | \"icon-label\" | \"label\"",
+        "attribute": "variant",
+        "default": "'label'",
+        "required": false,
+        "mutable": false,
+        "description": "Content layout. Default is label-only; pass `icon` for icon-only chrome\n(nav / tool rails) or `icon-label` for leading icon + text."
+      },
+      "width": {
+        "type": "ButtonFilledWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'hug'",
+        "required": false,
+        "mutable": false,
+        "description": "Width fit — hug content (default) or fill the parent."
       }
     },
-    "exports": [
-      "ButtonFilled"
+    "events": [
+      {
+        "name": "dsClick",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "ButtonFilledIntent",
-      "ButtonFilledContrast",
-      "ButtonFilledVariant",
-      "ButtonFilledSize",
-      "ButtonFilledWidth"
-    ]
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-button-filled",
+      "react": "DsButtonFilled",
+      "angular": "DsButtonFilled"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-button-filled.js';",
+        "example": "<ds-button-filled></ds-button-filled>"
+      },
+      "react": {
+        "import": "import { DsButtonFilled } from '@ds-mo/ui/react';",
+        "example": "<DsButtonFilled />"
+      },
+      "angular": {
+        "import": "import { DsButtonFilled } from '@ds-mo/ui/angular/ds-button-filled';",
+        "example": "<ds-button-filled></ds-button-filled>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
@@ -99,17 +309,13 @@
     "@ds-mo/icons"
   ],
   "registryDependencies": [
-    "icon"
+    "icon",
+    "text"
   ],
   "files": [
     {
       "path": "src/wc/components/ButtonFilled/ButtonFilled.css",
       "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-width.css';\n\n:host {\n  display: inline-flex;\n  outline: none;\n  --ds-button-filled-bg: var(--color-background-bold-brand);\n  --ds-button-filled-fg: var(--color-foreground-faint-brand);\n}\n\n/* Icon-only: fixed square from density height (hug). Fill stretches the hit target. */\n:host(.button-filled-host--icon.ds-control-width--hug) {\n  width: var(--ds-control-height, var(--dimension-size-400));\n  height: var(--ds-control-height, var(--dimension-size-400));\n  min-width: var(--ds-control-height, var(--dimension-size-400));\n  min-height: var(--ds-control-height, var(--dimension-size-400));\n}\n\n:host(.button-filled-host--icon.ds-control-width--fill) {\n  height: var(--ds-control-height, var(--dimension-size-400));\n  min-height: var(--ds-control-height, var(--dimension-size-400));\n}\n\n:host(.ds-control-width--fill) .button-filled {\n  width: 100%;\n}\n\n.button-filled {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  height: var(--ds-control-height, var(--dimension-size-400));\n  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));\n  gap: var(--ds-control-gap, var(--dimension-space-050));\n  border: none;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  background-color: var(--ds-button-filled-bg);\n  color: var(--ds-button-filled-fg);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  overflow: hidden;\n  transition:\n    background-color var(--effect-motion-short-2),\n    color var(--effect-motion-short-2),\n    transform var(--effect-motion-short-2);\n  /* Hover/press: `.ds-interaction-fill` + contrast → `--on-*` (token overlay, not color-mix). */\n}\n\n.button-filled--icon {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n}\n\n.button-filled:active:not(:disabled):not(.ds-control-inactive) {\n  transform: scale(var(--dimension-scale-subtle));\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n.button-filled__icon-wrap {\n  position: relative;\n  width: var(--ds-control-icon, var(--dimension-iconography-md));\n  height: var(--ds-control-icon, var(--dimension-iconography-md));\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  z-index: 2;\n}\n\n.button-filled__label {\n  position: relative;\n  z-index: 2;\n  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));\n  white-space: nowrap;\n  flex-shrink: 0;\n  min-width: 0;\n}\n\n/* ── Intent + contrast (bold default) ─────────────────────────────────────── */\n\n.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-bold-neutral);\n  --ds-button-filled-fg: var(--color-foreground-faint-neutral);\n}\n\n.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-bold-brand);\n  --ds-button-filled-fg: var(--color-foreground-faint-brand);\n}\n\n.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-bold-ai);\n  --ds-button-filled-fg: var(--color-foreground-faint-ai);\n}\n\n.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-bold-negative);\n  --ds-button-filled-fg: var(--color-foreground-faint-negative);\n}\n\n.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-bold-warning);\n  --ds-button-filled-fg: var(--color-foreground-faint-warning);\n}\n\n.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-bold-caution);\n  --ds-button-filled-fg: var(--color-foreground-faint-caution);\n}\n\n.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-bold-positive);\n  --ds-button-filled-fg: var(--color-foreground-faint-positive);\n}\n\n.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-bold-guide);\n  --ds-button-filled-fg: var(--color-foreground-faint-guide);\n}\n\n.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-bold-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-faint-walkthrough);\n}\n\n/* strong → medium fg */\n.button-filled--contrast-strong.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-strong-neutral);\n  --ds-button-filled-fg: var(--color-foreground-medium-neutral);\n}\n\n.button-filled--contrast-strong.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-strong-brand);\n  --ds-button-filled-fg: var(--color-foreground-medium-brand);\n}\n\n.button-filled--contrast-strong.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-strong-ai);\n  --ds-button-filled-fg: var(--color-foreground-medium-ai);\n}\n\n.button-filled--contrast-strong.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-strong-negative);\n  --ds-button-filled-fg: var(--color-foreground-medium-negative);\n}\n\n.button-filled--contrast-strong.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-strong-warning);\n  --ds-button-filled-fg: var(--color-foreground-medium-warning);\n}\n\n.button-filled--contrast-strong.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-strong-caution);\n  --ds-button-filled-fg: var(--color-foreground-medium-caution);\n}\n\n.button-filled--contrast-strong.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-strong-positive);\n  --ds-button-filled-fg: var(--color-foreground-medium-positive);\n}\n\n.button-filled--contrast-strong.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-strong-guide);\n  --ds-button-filled-fg: var(--color-foreground-medium-guide);\n}\n\n.button-filled--contrast-strong.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-strong-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-medium-walkthrough);\n}\n\n/* medium → strong fg */\n.button-filled--contrast-medium.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-medium-neutral);\n  --ds-button-filled-fg: var(--color-foreground-strong-neutral);\n}\n\n.button-filled--contrast-medium.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-medium-brand);\n  --ds-button-filled-fg: var(--color-foreground-strong-brand);\n}\n\n.button-filled--contrast-medium.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-medium-ai);\n  --ds-button-filled-fg: var(--color-foreground-strong-ai);\n}\n\n.button-filled--contrast-medium.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-medium-negative);\n  --ds-button-filled-fg: var(--color-foreground-strong-negative);\n}\n\n.button-filled--contrast-medium.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-medium-warning);\n  --ds-button-filled-fg: var(--color-foreground-strong-warning);\n}\n\n.button-filled--contrast-medium.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-medium-caution);\n  --ds-button-filled-fg: var(--color-foreground-strong-caution);\n}\n\n.button-filled--contrast-medium.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-medium-positive);\n  --ds-button-filled-fg: var(--color-foreground-strong-positive);\n}\n\n.button-filled--contrast-medium.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-medium-guide);\n  --ds-button-filled-fg: var(--color-foreground-strong-guide);\n}\n\n.button-filled--contrast-medium.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-medium-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-strong-walkthrough);\n}\n\n/* faint → bold fg */\n.button-filled--contrast-faint.button-filled--intent-neutral {\n  --ds-button-filled-bg: var(--color-background-faint-neutral);\n  --ds-button-filled-fg: var(--color-foreground-bold-neutral);\n}\n\n.button-filled--contrast-faint.button-filled--intent-brand {\n  --ds-button-filled-bg: var(--color-background-faint-brand);\n  --ds-button-filled-fg: var(--color-foreground-bold-brand);\n}\n\n.button-filled--contrast-faint.button-filled--intent-ai {\n  --ds-button-filled-bg: var(--color-background-faint-ai);\n  --ds-button-filled-fg: var(--color-foreground-bold-ai);\n}\n\n.button-filled--contrast-faint.button-filled--intent-negative {\n  --ds-button-filled-bg: var(--color-background-faint-negative);\n  --ds-button-filled-fg: var(--color-foreground-bold-negative);\n}\n\n.button-filled--contrast-faint.button-filled--intent-warning {\n  --ds-button-filled-bg: var(--color-background-faint-warning);\n  --ds-button-filled-fg: var(--color-foreground-bold-warning);\n}\n\n.button-filled--contrast-faint.button-filled--intent-caution {\n  --ds-button-filled-bg: var(--color-background-faint-caution);\n  --ds-button-filled-fg: var(--color-foreground-bold-caution);\n}\n\n.button-filled--contrast-faint.button-filled--intent-positive {\n  --ds-button-filled-bg: var(--color-background-faint-positive);\n  --ds-button-filled-fg: var(--color-foreground-bold-positive);\n}\n\n.button-filled--contrast-faint.button-filled--intent-guide {\n  --ds-button-filled-bg: var(--color-background-faint-guide);\n  --ds-button-filled-fg: var(--color-foreground-bold-guide);\n}\n\n.button-filled--contrast-faint.button-filled--intent-walkthrough {\n  --ds-button-filled-bg: var(--color-background-faint-walkthrough);\n  --ds-button-filled-fg: var(--color-foreground-bold-walkthrough);\n}\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "src/wc/components/ButtonFilled/ButtonFilled.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nimport { type ControlWidth } from '../../utils';\nexport type ButtonFilledIntent = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive' | 'guide' | 'walkthrough';\nexport type ButtonFilledContrast = 'bold' | 'strong' | 'medium' | 'faint';\nexport type ButtonFilledVariant = 'icon' | 'label' | 'icon-label';\nexport type ButtonFilledSize = 'md' | 'sm' | 'xs';\nexport type ButtonFilledWidth = ControlWidth;\nexport declare class ButtonFilled {\n    el: HTMLElement;\n    /**\n     * Content layout. Default is label-only; pass `icon` for icon-only chrome\n     * (nav / tool rails) or `icon-label` for leading icon + text.\n     */\n    variant: ButtonFilledVariant;\n    /** Control density (height, padding, icon, type). */\n    size: ButtonFilledSize;\n    /** Width fit — hug content (default) or fill the parent. */\n    width: ButtonFilledWidth;\n    /** Visible text for `label` / `icon-label` variants. */\n    label: string;\n    /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */\n    icon: string;\n    /** Semantic colour intent. */\n    intent: ButtonFilledIntent;\n    /**\n     * Background fill weight. Foreground uses the paired contrast token:\n     * bold → faint, strong → medium, medium → strong, faint → bold.\n     */\n    contrast: ButtonFilledContrast;\n    /** Disables interaction. */\n    isInactive: boolean;\n    /** Native button type. */\n    type: 'button' | 'submit' | 'reset';\n    ariaLabel: string | undefined;\n    dsClick: EventEmitter<MouseEvent>;\n    private buttonEl;\n    setFocus(): Promise<void>;\n    private handleClick;\n    private get showIcon();\n    private get showLabel();\n    private get accessibleName();\n    render(): any;\n}\n",
       "type": "registry:ui"
     },
     {

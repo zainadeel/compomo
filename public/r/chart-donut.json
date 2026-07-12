@@ -1,0 +1,257 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chart-donut",
+  "title": "ChartDonut",
+  "description": "ChartDonut component from @ds-mo/ui.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-donut",
+    "source": "src/wc/components/ChartDonut/ChartDonut.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "activeLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "active-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Externally controlled highlight, matched by `label` — e.g. drive this from a sibling\n`ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync.\nFalls back to this component's own pointer/focus hover when unset.\nSlice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz\ntooltip (the legend already surfaces label/value)."
+        },
+        "centerCaption": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "center-caption",
+          "required": false,
+          "mutable": false,
+          "description": "Secondary caption below the center value (e.g. \"Total\", \"Normal\"). Rendered uppercase."
+        },
+        "centerValue": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "center-value",
+          "required": false,
+          "mutable": false,
+          "description": "Primary center value; defaults to the sum of `data` values (e.g. \"187\", \"40.9%\")."
+        },
+        "cornerRadius": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "corner-radius",
+          "default": "TOKEN_DEFAULTS.radius025",
+          "required": false,
+          "mutable": false,
+          "description": "Corner radius on each slice — number (px) or TokoMo length. Defaults to `--dimension-radius-025` (2px)."
+        },
+        "data": {
+          "type": "ChartDatum[]",
+          "resolvedType": "ChartDatum[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Slices to render. Set as a JS property (not an HTML attribute)."
+        },
+        "gap": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "gap",
+          "default": "1",
+          "required": false,
+          "mutable": false,
+          "description": "Gap between slices, in degrees."
+        },
+        "locale": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "locale",
+          "required": false,
+          "mutable": false
+        },
+        "noDataLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "no-data-label",
+          "default": "'No data'",
+          "required": false,
+          "mutable": false
+        },
+        "size": {
+          "type": "number | undefined",
+          "resolvedType": "number | undefined",
+          "attribute": "size",
+          "required": false,
+          "mutable": false,
+          "description": "Explicit diameter in px. When unset, the donut sizes to its container\n(ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and\n`* 24` (192px), and stays centered in the leftover space. Prefer unset\ninside card layouts."
+        },
+        "thickness": {
+          "type": "number | string",
+          "resolvedType": "number | string",
+          "attribute": "thickness",
+          "default": "TOKEN_DEFAULTS.size200",
+          "required": false,
+          "mutable": false,
+          "description": "Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px)."
+        }
+      },
+      "events": [
+        {
+          "name": "dsSliceHover",
+          "detail": "ChartDatum | null",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Fires with the hovered/focused slice's datum, or `null` on leave/blur."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "activeLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "active-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Externally controlled highlight, matched by `label` — e.g. drive this from a sibling\n`ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync.\nFalls back to this component's own pointer/focus hover when unset.\nSlice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz\ntooltip (the legend already surfaces label/value)."
+      },
+      "centerCaption": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "center-caption",
+        "required": false,
+        "mutable": false,
+        "description": "Secondary caption below the center value (e.g. \"Total\", \"Normal\"). Rendered uppercase."
+      },
+      "centerValue": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "center-value",
+        "required": false,
+        "mutable": false,
+        "description": "Primary center value; defaults to the sum of `data` values (e.g. \"187\", \"40.9%\")."
+      },
+      "cornerRadius": {
+        "type": "number | string",
+        "resolvedType": "number | string",
+        "attribute": "corner-radius",
+        "default": "TOKEN_DEFAULTS.radius025",
+        "required": false,
+        "mutable": false,
+        "description": "Corner radius on each slice — number (px) or TokoMo length. Defaults to `--dimension-radius-025` (2px)."
+      },
+      "data": {
+        "type": "ChartDatum[]",
+        "resolvedType": "ChartDatum[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Slices to render. Set as a JS property (not an HTML attribute)."
+      },
+      "gap": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "gap",
+        "default": "1",
+        "required": false,
+        "mutable": false,
+        "description": "Gap between slices, in degrees."
+      },
+      "locale": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "locale",
+        "required": false,
+        "mutable": false
+      },
+      "noDataLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "no-data-label",
+        "default": "'No data'",
+        "required": false,
+        "mutable": false
+      },
+      "size": {
+        "type": "number | undefined",
+        "resolvedType": "number | undefined",
+        "attribute": "size",
+        "required": false,
+        "mutable": false,
+        "description": "Explicit diameter in px. When unset, the donut sizes to its container\n(ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and\n`* 24` (192px), and stays centered in the leftover space. Prefer unset\ninside card layouts."
+      },
+      "thickness": {
+        "type": "number | string",
+        "resolvedType": "number | string",
+        "attribute": "thickness",
+        "default": "TOKEN_DEFAULTS.size200",
+        "required": false,
+        "mutable": false,
+        "description": "Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px)."
+      }
+    },
+    "events": [
+      {
+        "name": "dsSliceHover",
+        "detail": "ChartDatum | null",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Fires with the hovered/focused slice's datum, or `null` on leave/blur."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-chart-donut",
+      "react": "DsChartDonut",
+      "angular": "DsChartDonut"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-chart-donut.js';",
+        "example": "<ds-chart-donut></ds-chart-donut>"
+      },
+      "react": {
+        "import": "import { DsChartDonut } from '@ds-mo/ui/react';",
+        "example": "<DsChartDonut />"
+      },
+      "angular": {
+        "import": "import { DsChartDonut } from '@ds-mo/ui/angular/ds-chart-donut';",
+        "example": "<ds-chart-donut></ds-chart-donut>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: data.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/ChartDonut/ChartDonut.css",
+      "content": ":host {\n  display: inline-block;\n  font-family: var(--typography-font-family);\n  user-select: none;\n}\n\n:host(.chart-donut--fill) {\n  display: block;\n  width: 100%;\n  height: 100%;\n  min-width: 0;\n  min-height: 0;\n}\n\n.chart-donut__wrapper {\n  position: relative;\n}\n\n:host(.chart-donut--fill) .chart-donut__wrapper {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.chart-donut__svg path {\n  cursor: default;\n  transition: opacity var(--effect-motion-short-2);\n}\n\n.chart-donut__svg path:focus-visible {\n  outline: none;\n  stroke: var(--color-interaction-focus);\n  stroke-width: 2;\n}\n\n/* Matches ds-text text-title-large + emphasis (SVG cannot host ds-text). */\n.chart-donut__center-value {\n  fill: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xl);\n  line-height: var(--typography-lineheight-xl);\n  font-weight: var(--typography-weight-semibold);\n  letter-spacing: var(--typography-letterspacing-negative-double);\n  cursor: default;\n}\n\n/* Matches ds-text text-body-medium regular. */\n.chart-donut__center-caption {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  cursor: default;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ChartDonut/ChartDonut.tsx",
+      "content": "import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';\nimport { arc, pie } from 'd3-shape';\nimport { categoryColor } from '../../utils/chart-colors';\nimport { formatCompactNumber, resolveCssLengthPx, truncateSvgTextToWidth, TOKEN_DEFAULTS } from '../../utils';\nimport type { ChartDatum } from '../../utils/chart-types';\n\nconst DIMMED_OPACITY = 0.25;\n/** Gap between the center value and caption line boxes. */\nconst CENTER_GAP_PX = 0;\n/** Fraction of the inner-circle diameter center text is allowed to use before truncating. */\nconst CENTER_TEXT_SAFE_WIDTH_RATIO = 0.82;\n/** Fallback when filling before the first ResizeObserver measurement (matches fill min). */\nconst FILL_FALLBACK_PX = 128;\n\n@Component({\n  tag: 'ds-chart-donut',\n  styleUrl: 'ChartDonut.css',\n  scoped: true,\n})\nexport class ChartDonut {\n  @Prop() locale: string | undefined;\n  @Prop() noDataLabel: string = 'No data';\n  @Element() el!: HTMLElement;\n\n  /** Slices to render. Set as a JS property (not an HTML attribute). */\n  @Prop() data: ChartDatum[] = [];\n  /**\n   * Explicit diameter in px. When unset, the donut sizes to its container\n   * (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and\n   * `* 24` (192px), and stays centered in the leftover space. Prefer unset\n   * inside card layouts.\n   */\n  @Prop() size: number | undefined;\n  /** Ring thickness — number (px) or TokoMo length. Defaults to `--dimension-size-200` (16px). */\n  @Prop() thickness: number | string = TOKEN_DEFAULTS.size200;\n  /** Corner radius on each slice — number (px) or TokoMo length. Defaults to `--dimension-radius-025` (2px). */\n  @Prop() cornerRadius: number | string = TOKEN_DEFAULTS.radius025;\n  /** Gap between slices, in degrees. */\n  @Prop() gap: number = 1;\n  /** Primary center value; defaults to the sum of `data` values (e.g. \"187\", \"40.9%\"). */\n  @Prop() centerValue: string | undefined;\n  /** Secondary caption below the center value (e.g. \"Total\", \"Normal\"). Rendered uppercase. */\n  @Prop() centerCaption: string | undefined;\n  /**\n   * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling\n   * `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync.\n   * Falls back to this component's own pointer/focus hover when unset.\n   * Slice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz\n   * tooltip (the legend already surfaces label/value).\n   */\n  @Prop() activeLabel: string | null = null;\n\n  @State() private hoveredLabel: string | null = null;\n  /** Center text, truncated with an ellipsis if it doesn't fit inside the inner circle. */\n  @State() private displayedValueText: string = '';\n  @State() private displayedCaptionText: string = '';\n  /** Measured fill diameter when `size` is unset. */\n  @State() private measuredSize: number = FILL_FALLBACK_PX;\n\n  /** Fires with the hovered/focused slice's datum, or `null` on leave/blur. */\n  @Event() dsSliceHover!: EventEmitter<ChartDatum | null>;\n\n  private valueTextEl?: SVGTextElement;\n  private captionTextEl?: SVGTextElement;\n  private resizeObserver: ResizeObserver | null = null;\n\n  private get isFillMode(): boolean {\n    return this.size == null || !Number.isFinite(this.size) || this.size <= 0;\n  }\n\n  private get fillMinPx(): number {\n    return resolveCssLengthPx(TOKEN_DEFAULTS.donutFillMin, FILL_FALLBACK_PX);\n  }\n\n  private get fillMaxPx(): number {\n    return resolveCssLengthPx(TOKEN_DEFAULTS.donutFillMax, 192);\n  }\n\n  /** Clamp available square side into the fill min/max band. */\n  private clampFillSize(availablePx: number): number {\n    const minPx = this.fillMinPx;\n    const maxPx = this.fillMaxPx;\n    if (!(availablePx > 0)) return minPx;\n    return Math.round(Math.min(maxPx, Math.max(minPx, availablePx)));\n  }\n\n  private get resolvedSize(): number {\n    if (!this.isFillMode) return this.size as number;\n    return this.clampFillSize(this.measuredSize);\n  }\n\n  componentDidLoad() {\n    this.syncResizeObserver();\n  }\n\n  @Watch('size')\n  onSizePropChange() {\n    this.syncResizeObserver();\n  }\n\n  disconnectedCallback() {\n    this.teardownResizeObserver();\n  }\n\n  private syncResizeObserver() {\n    this.teardownResizeObserver();\n    if (!this.isFillMode) return;\n    // Observe the host (which fills its parent), not the wrapper — the wrapper\n    // only wraps the SVG and would collapse to the clamped size, locking fill at min.\n    const target = this.el;\n    if (!target || typeof ResizeObserver === 'undefined') return;\n\n    this.resizeObserver = new ResizeObserver(entries => {\n      const entry = entries[0];\n      if (!entry) return;\n      this.applyAvailableSize(entry.contentRect.width, entry.contentRect.height);\n    });\n    this.resizeObserver.observe(target);\n    this.measureHost();\n  }\n\n  private measureHost() {\n    const rect = this.el.getBoundingClientRect();\n    this.applyAvailableSize(rect.width, rect.height);\n  }\n\n  private applyAvailableSize(width: number, height: number) {\n    const available = Math.floor(Math.min(width, height));\n    if (available > 0 && available !== this.measuredSize) {\n      this.measuredSize = available;\n    }\n  }\n\n  private teardownResizeObserver() {\n    this.resizeObserver?.disconnect();\n    this.resizeObserver = null;\n  }\n\n  private handleHover(datum: ChartDatum | null) {\n    this.hoveredLabel = datum?.label ?? null;\n    this.dsSliceHover.emit(datum);\n  }\n\n  componentDidRender() {\n    // Re-bind after HMR when DidLoad's observer was dropped.\n    if (this.isFillMode && !this.resizeObserver) {\n      this.syncResizeObserver();\n    }\n\n    const size = this.resolvedSize;\n    const radius = size / 2;\n    const thicknessPx = resolveCssLengthPx(this.thickness, TOKEN_DEFAULTS.size200);\n    const innerRadius = radius - thicknessPx;\n    const maxWidth = innerRadius * 2 * CENTER_TEXT_SAFE_WIDTH_RATIO;\n    const total = this.data.reduce((sum, d) => sum + d.value, 0);\n\n    const fullValueText = this.centerValue ?? formatCompactNumber(total, this.locale);\n    if (this.valueTextEl) {\n      const truncated = truncateSvgTextToWidth(this.valueTextEl, fullValueText, maxWidth);\n      if (truncated !== this.displayedValueText) this.displayedValueText = truncated;\n      else this.valueTextEl.textContent = truncated;\n    }\n\n    const fullCaptionText = this.centerCaption ?? '';\n    if (this.captionTextEl && fullCaptionText) {\n      const truncated = truncateSvgTextToWidth(this.captionTextEl, fullCaptionText, maxWidth);\n      if (truncated !== this.displayedCaptionText) this.displayedCaptionText = truncated;\n      else this.captionTextEl.textContent = truncated;\n    }\n  }\n\n  render() {\n    const size = this.resolvedSize;\n    const radius = size / 2;\n    const thicknessPx = resolveCssLengthPx(this.thickness, TOKEN_DEFAULTS.size200);\n    const cornerRadiusPx = resolveCssLengthPx(this.cornerRadius, TOKEN_DEFAULTS.radius025);\n    const innerRadius = radius - thicknessPx;\n    const total = this.data.reduce((sum, d) => sum + d.value, 0);\n    // d3's pie() divides each value by the total to get an angle — with an all-zero total\n    // that's 0/0, producing NaN angles and broken paths. Render a flat neutral ring instead.\n    const isEmpty = total <= 0;\n    // Highlight/dim from either this component's own hover or an externally-synced label\n    // (e.g. a sibling ds-chart-legend row).\n    const highlightLabel = this.activeLabel ?? this.hoveredLabel;\n\n    const arcGenerator = arc<{ startAngle: number; endAngle: number }>()\n      .innerRadius(innerRadius)\n      .outerRadius(radius)\n      .cornerRadius(cornerRadiusPx)\n      .padAngle((this.gap * Math.PI) / 180);\n\n    const slices = isEmpty\n      ? []\n      : pie<ChartDatum>()\n          .value(d => d.value)\n          .sort(null)(this.data);\n\n    const emptyRingPath = isEmpty\n      ? arc<{ startAngle: number; endAngle: number }>()\n          .innerRadius(innerRadius)\n          .outerRadius(radius)({ startAngle: 0, endAngle: Math.PI * 2 })\n      : null;\n\n    // Precise vertical centering for the two-line center text, using the real line-height of\n    // text-title-large (value) and text-body-medium (caption) rather than eyeballed em offsets.\n    const valueLineHeight = resolveCssLengthPx(TOKEN_DEFAULTS.lineheightXl, 32);\n    const captionLineHeight = resolveCssLengthPx(TOKEN_DEFAULTS.lineheightMd, 20);\n    const centerValueY = this.centerCaption ? radius - (CENTER_GAP_PX + captionLineHeight) / 2 : radius;\n    const centerCaptionY = radius + (valueLineHeight + CENTER_GAP_PX) / 2;\n\n    // Show the full text before the post-render truncation pass has measured it (avoids a blank first paint).\n    const fullValueText = this.centerValue ?? formatCompactNumber(total, this.locale);\n    const fullCaptionText = this.centerCaption ?? '';\n    const fill = this.isFillMode;\n\n    return (\n      <Host\n        class={{\n          'chart-donut': true,\n          'chart-donut--fill': fill,\n          'chart-donut--fixed': !fill,\n        }}\n        style={!fill ? { width: `${size}px`, height: `${size}px` } : undefined}\n      >\n        <div\n          class=\"chart-donut__wrapper\"\n          style={!fill ? { width: `${size}px`, height: `${size}px` } : undefined}\n        >\n          <svg\n            class=\"chart-donut__svg\"\n            viewBox={`0 0 ${size} ${size}`}\n            width={size}\n            height={size}\n          >\n            <g transform={`translate(${radius}, ${radius})`}>\n              {isEmpty ? (\n                <path d={emptyRingPath ?? undefined} fill=\"var(--color-background-faint-neutral)\" aria-label={this.noDataLabel} />\n              ) : (\n                slices.map((slice, i) => {\n                  const datum = this.data[i];\n                  const isDimmed = highlightLabel != null && datum.label !== highlightLabel;\n                  return (\n                    <path\n                      key={datum.label}\n                      d={arcGenerator(slice) ?? undefined}\n                      fill={datum.color ?? categoryColor(i)}\n                      opacity={isDimmed ? DIMMED_OPACITY : 1}\n                      tabindex={0}\n                      role=\"img\"\n                      aria-label={`${datum.label}: ${datum.value}`}\n                      onMouseEnter={() => this.handleHover(datum)}\n                      onMouseLeave={() => this.handleHover(null)}\n                      onFocus={() => this.handleHover(datum)}\n                      onBlur={() => this.handleHover(null)}\n                    />\n                  );\n                })\n              )}\n            </g>\n            <text\n              class=\"chart-donut__center-value\"\n              x={radius}\n              y={centerValueY}\n              text-anchor=\"middle\"\n              dominant-baseline=\"central\"\n              ref={el => {\n                this.valueTextEl = (el as SVGTextElement) ?? undefined;\n              }}\n            >\n              {this.displayedValueText || fullValueText}\n            </text>\n            {fullCaptionText && (\n              <text\n                class=\"chart-donut__center-caption\"\n                x={radius}\n                y={centerCaptionY}\n                text-anchor=\"middle\"\n                dominant-baseline=\"central\"\n                ref={el => {\n                  this.captionTextEl = (el as SVGTextElement) ?? undefined;\n                }}\n              >\n                {this.displayedCaptionText || fullCaptionText}\n              </text>\n            )}\n          </svg>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

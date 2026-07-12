@@ -8,89 +8,343 @@
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/input",
-    "consumption": {
-      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
-      "cssSetup": "Import at your app entry point:\n  import '@ds-mo/tokens';        // or @ds-mo/tokens/css\n  import '@ds-mo/tokens/reset';\n  import '@ds-mo/tokens/globals';\nFor dark mode: set data-theme=\"dark\" on <html>.\nComponent CSS ships scoped inside each @ds-mo/ui custom-element import — no global @ds-mo/ui/css.",
-      "register": "// Import only the <ds-*> tags your app uses:\nimport '@ds-mo/ui/dist/components/ds-input.js';\n\n// Angular: import proxies from '@ds-mo/ui/angular'\n// React: import { DsButton, … } from '@ds-mo/ui/react'",
-      "usage": {
-        "html": "<ds-input></ds-input>",
-        "react": "<ds-input></ds-input>",
-        "angular": "<ds-input></ds-input>"
+    "source": "src/wc/components/Input/Input.tsx",
+    "intentStatus": "migration-pending",
+    "intent": null,
+    "api": {
+      "props": {
+        "ariaDescribedby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-describedby",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false
+        },
+        "autoFocus": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "auto-focus",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "clearLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "clear-label",
+          "default": "'Clear'",
+          "required": false,
+          "mutable": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "error": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "error",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "errorMessage": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "error-message",
+          "required": false,
+          "mutable": false
+        },
+        "inputId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "input-id",
+          "required": false,
+          "mutable": false,
+          "description": "Associates the internal input with an external <label>."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false
+        },
+        "placeholder": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "placeholder",
+          "required": false,
+          "mutable": false
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false
+        },
+        "type": {
+          "type": "InputType",
+          "resolvedType": "\"email\" | \"password\" | \"search\" | \"tel\" | \"text\" | \"url\"",
+          "attribute": "type",
+          "default": "'text'",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true
+        }
       },
-      "peerDependencies": {
-        "required": [
-          "@ds-mo/tokens ^2.14.0",
-          "@ds-mo/icons ^6.1.2"
-        ],
-        "optional": [],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
-      }
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsClear",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
     },
     "props": {
-      "name": {
-        "type": "string",
-        "description": "Native form field name."
+      "ariaDescribedby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-describedby",
+        "required": false,
+        "mutable": false
       },
-      "disabled": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false
+      },
+      "autoFocus": {
         "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "auto-focus",
         "default": "false",
-        "description": "Standard disabled state; Angular forms set this automatically."
-      },
-      "required": {
-        "type": "boolean",
-        "default": "false",
-        "description": "Participates in native constraint validation."
-      },
-      "requiredMessage": {
-        "type": "string",
-        "default": "'This field is required.'",
-        "description": "Localizable required validation message."
-      },
-      "value": {
-        "type": "string",
-        "required": true
-      },
-      "onChange": {
-        "type": "(e: React.ChangeEvent<HTMLInputElement>) => void",
-        "required": true
-      },
-      "type": {
-        "type": "'text' | 'email' | 'tel' | 'url' | 'search' | 'password'",
-        "default": "'text'"
-      },
-      "placeholder": {
-        "type": "string"
-      },
-      "suffix": {
-        "type": "React.ReactNode"
-      },
-      "isInactive": {
-        "type": "boolean",
-        "default": "false",
-        "description": "Disables interaction (25% opacity via ds-control-inactive)."
-      },
-      "clearIcon": {
-        "type": "IconComponent",
-        "description": "Custom clear icon for search type."
+        "required": false,
+        "mutable": false
       },
       "clearLabel": {
         "type": "string",
+        "resolvedType": "string",
+        "attribute": "clear-label",
         "default": "'Clear'",
-        "description": "Localizable accessible label for the search clear action."
+        "required": false,
+        "mutable": false
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "error": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "error",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "errorMessage": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "error-message",
+        "required": false,
+        "mutable": false
+      },
+      "inputId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "input-id",
+        "required": false,
+        "mutable": false,
+        "description": "Associates the internal input with an external <label>."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false
+      },
+      "placeholder": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "placeholder",
+        "required": false,
+        "mutable": false
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false
+      },
+      "type": {
+        "type": "InputType",
+        "resolvedType": "\"email\" | \"password\" | \"search\" | \"tel\" | \"text\" | \"url\"",
+        "attribute": "type",
+        "default": "'text'",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true
       }
     },
-    "exports": [
-      "Input"
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsClear",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
     ],
-    "types": [
-      "InputProps"
-    ]
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-input",
+      "react": "DsInput",
+      "angular": "DsInput"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-input.js';",
+        "example": "<ds-input></ds-input>"
+      },
+      "react": {
+        "import": "import { DsInput } from '@ds-mo/ui/react';",
+        "example": "<DsInput />"
+      },
+      "angular": {
+        "import": "import { DsInput } from '@ds-mo/ui/angular/ds-input';",
+        "example": "<ds-input></ds-input>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^2.15.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
   },
   "dependencies": [
     "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
-  "registryDependencies": [],
+  "registryDependencies": [
+    "text"
+  ],
   "files": [
     {
       "path": "src/wc/components/Input/Input.css",
@@ -98,13 +352,8 @@
       "type": "registry:ui"
     },
     {
-      "path": "src/wc/components/Input/Input.d.ts",
-      "content": "import { EventEmitter } from '@stencil/core';\nexport type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';\nexport declare class Input {\n    el: HTMLElement;\n    private generatedId;\n    private errorId;\n    value: string;\n    placeholder: string | undefined;\n    type: InputType;\n    isInactive: boolean;\n    autoFocus: boolean;\n    error: boolean;\n    errorMessage: string | undefined;\n    /** Associates the internal input with an external <label>. */\n    inputId: string | undefined;\n    ariaLabel: string | undefined;\n    ariaLabelledby: string | undefined;\n    ariaDescribedby: string | undefined;\n    dsChange: EventEmitter<string>;\n    dsClear: EventEmitter<void>;\n    setFocus(): Promise<void>;\n    private handleInput;\n    private handleClear;\n    render(): any;\n}\n",
-      "type": "registry:ui"
-    },
-    {
       "path": "src/wc/components/Input/Input.tsx",
-      "content": "import { AttachInternals, Component, Prop, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';\n\nexport type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-input',\n  styleUrl: 'Input.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Input {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  private generatedId = `ds-input-${++idCounter}`;\n  private errorId = `${this.generatedId}-error`;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop() name: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() clearLabel: string = 'Clear';\n  @Prop() placeholder: string | undefined;\n  @Prop() type: InputType = 'text';\n  @Prop() isInactive: boolean = false;\n  @Prop() autoFocus: boolean = false;\n  @Prop() error: boolean = false;\n  @Prop() errorMessage: string | undefined;\n  /** Associates the internal input with an external <label>. */\n  @Prop() inputId: string | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n  @Event() dsClear!: EventEmitter<void>;\n\n  private initialValue = '';\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled;\n    this.internals.setFormValue(inactive ? null : this.value);\n    const missing = this.required && !inactive && this.value.length === 0;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.disabled = disabled;\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = typeof state === 'string' ? state : '';\n  }\n\n  @Method()\n  async setFocus() {\n    this.el.querySelector('input')?.focus();\n  }\n\n  private handleInput = (e: Event) => {\n    this.value = (e.target as HTMLInputElement).value;\n    this.dsChange.emit(this.value);\n  };\n\n  private handleClear = () => {\n    this.value = '';\n    this.dsChange.emit('');\n    this.dsClear.emit();\n    this.el.querySelector('input')?.focus();\n  };\n\n  render() {\n    const inputId = this.inputId ?? this.generatedId;\n    const inactive = this.isInactive || this.disabled;\n    const showClear = this.type === 'search' && this.value.length > 0 && !inactive;\n    const showError = this.error && Boolean(this.errorMessage);\n\n    const describedBy = [\n      this.ariaDescribedby,\n      showError ? this.errorId : undefined,\n    ].filter(Boolean).join(' ') || undefined;\n\n    return (\n      <Host class={{ 'input-container': true, 'ds-control-inactive': inactive }}>\n        <div class={{ wrapper: true, 'wrapper--error': this.error }}>\n          <div class=\"row\">\n            <input\n              type={this.type}\n              id={inputId}\n              value={this.value}\n              placeholder={this.placeholder}\n              disabled={inactive}\n              required={this.required}\n              autoFocus={this.autoFocus}\n              class=\"native-input ds-text--body-medium ds-text--regular\"\n              aria-label={this.ariaLabel}\n              aria-labelledby={this.ariaLabelledby}\n              aria-describedby={describedBy}\n              aria-invalid={this.error || undefined}\n              onInput={this.handleInput}\n            />\n            {showClear && (\n              <button\n                type=\"button\"\n                class=\"clear-btn\"\n                onClick={this.handleClear}\n                aria-label={this.clearLabel}\n              >\n                <span aria-hidden=\"true\">&times;</span>\n              </button>\n            )}\n            <span class=\"suffix\">\n              <slot name=\"suffix\" />\n            </span>\n          </div>\n        </div>\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';\n\nexport type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-input',\n  styleUrl: 'Input.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Input {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  private generatedId = `ds-input-${++idCounter}`;\n  private errorId = `${this.generatedId}-error`;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() clearLabel: string = 'Clear';\n  @Prop() placeholder: string | undefined;\n  @Prop() type: InputType = 'text';\n  @Prop() isInactive: boolean = false;\n  @Prop() autoFocus: boolean = false;\n  @Prop() error: boolean = false;\n  @Prop() errorMessage: string | undefined;\n  /** Associates the internal input with an external <label>. */\n  @Prop() inputId: string | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n  @Event() dsClear!: EventEmitter<void>;\n\n  private initialValue = '';\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(inactive ? null : this.value);\n    const missing = this.required && !inactive && this.value.length === 0;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = typeof state === 'string' ? state : '';\n  }\n\n  @Method()\n  async setFocus() {\n    this.el.querySelector('input')?.focus();\n  }\n\n  private handleInput = (e: Event) => {\n    this.value = (e.target as HTMLInputElement).value;\n    this.dsChange.emit(this.value);\n  };\n\n  private handleClear = () => {\n    this.value = '';\n    this.dsChange.emit('');\n    this.dsClear.emit();\n    this.el.querySelector('input')?.focus();\n  };\n\n  render() {\n    const inputId = this.inputId ?? this.generatedId;\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const showClear = this.type === 'search' && this.value.length > 0 && !inactive;\n    const showError = this.error && Boolean(this.errorMessage);\n\n    const describedBy = [\n      this.ariaDescribedby,\n      showError ? this.errorId : undefined,\n    ].filter(Boolean).join(' ') || undefined;\n\n    return (\n      <Host class={{ 'input-container': true, 'ds-control-inactive': inactive }}>\n        <div class={{ wrapper: true, 'wrapper--error': this.error }}>\n          <div class=\"row\">\n            <input\n              type={this.type}\n              id={inputId}\n              value={this.value}\n              placeholder={this.placeholder}\n              disabled={inactive}\n              required={this.required}\n              autoFocus={this.autoFocus}\n              class=\"native-input ds-text--body-medium ds-text--regular\"\n              aria-label={this.ariaLabel}\n              aria-labelledby={this.ariaLabelledby}\n              aria-describedby={describedBy}\n              aria-invalid={this.error || undefined}\n              onInput={this.handleInput}\n            />\n            {showClear && (\n              <button\n                type=\"button\"\n                class=\"clear-btn\"\n                onClick={this.handleClear}\n                aria-label={this.clearLabel}\n              >\n                <span aria-hidden=\"true\">&times;</span>\n              </button>\n            )}\n            <span class=\"suffix\">\n              <slot name=\"suffix\" />\n            </span>\n          </div>\n        </div>\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]
