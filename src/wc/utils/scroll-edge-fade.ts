@@ -42,8 +42,13 @@ export interface ScrollEdgeFadeOptions {
   /** One or more edges to fade. */
   edges: ScrollEdgeFadeEdge | ScrollEdgeFadeEdge[];
   /**
-   * When true, or when every listed edge is at its scroll limit, removes the mask.
-   * Pass a per-edge map to hide only the edges that are flush (panel-nav bottom fade).
+   * Reveal and hide configured fades from the container's own scroll position.
+   * Uses CSS scroll-driven animations with a static-fade fallback; no listener required.
+   */
+  scrollAware?: boolean;
+  /**
+   * When true, removes the complete mask. Pass a map to remove only configured
+   * edges that are flush when scroll state already lives in JavaScript.
    */
   atEnd?: boolean | Partial<Record<ScrollEdgeFadeEdge, boolean>>;
   /** Force the mask off regardless of scroll position (`ds-fade` `visible={false}`). */
@@ -78,13 +83,13 @@ export function scrollEdgeFadeSizeStyle(
 export function scrollEdgeFadeMaskImage(edge: ScrollEdgeFadeEdge): string {
   switch (edge) {
     case 'top':
-      return `linear-gradient(to bottom, #000 0, #000 50%, transparent 100%)`;
+      return `linear-gradient(to bottom, transparent 0, #000 ${SIZE_REF}, #000 100%)`;
     case 'bottom':
       return `linear-gradient(to bottom, #000 0, #000 calc(100% - ${SIZE_REF}), transparent 100%)`;
     case 'left':
-      return `linear-gradient(to right, #000 0, #000 calc(100% - ${SIZE_REF}), transparent 100%)`;
+      return `linear-gradient(to right, transparent 0, #000 ${SIZE_REF}, #000 100%)`;
     case 'right':
-      return `linear-gradient(to left, #000 0, #000 calc(100% - ${SIZE_REF}), transparent 100%)`;
+      return `linear-gradient(to right, #000 0, #000 calc(100% - ${SIZE_REF}), transparent 100%)`;
   }
 }
 
@@ -109,6 +114,7 @@ export function scrollEdgeFadeClassMap(opts: ScrollEdgeFadeOptions): Record<stri
   const edges = Array.isArray(opts.edges) ? opts.edges : [opts.edges];
   const classes: Record<string, boolean> = {
     'scroll-edge-fade': true,
+    'scroll-edge-fade--scroll-aware': opts.scrollAware === true,
     'scroll-edge-fade--hidden': opts.hidden === true,
   };
 
@@ -120,9 +126,10 @@ export function scrollEdgeFadeClassMap(opts: ScrollEdgeFadeOptions): Record<stri
   if (atEnd === true) {
     classes['scroll-edge-fade--at-end'] = true;
   } else if (atEnd && typeof atEnd === 'object') {
-    const allAtEnd = edges.every(edge => atEnd[edge]);
-    if (allAtEnd) {
-      classes['scroll-edge-fade--at-end'] = true;
+    for (const edge of edges) {
+      if (atEnd[edge]) {
+        classes[`scroll-edge-fade--${edge}-at-edge`] = true;
+      }
     }
   }
 
