@@ -8,7 +8,7 @@ const groups = [
   {
     label: 'Fleet',
     items: [
-      { id: 'fleet-view', label: 'Fleet View', icon: 'Map', href: '/fleet' },
+      { id: 'fleet-view', label: 'Fleet View', icon: 'Map', href: '/fleet', dot: true },
       { id: 'safety', label: 'Safety', icon: 'ShieldCircle', href: '/safety' },
     ],
   },

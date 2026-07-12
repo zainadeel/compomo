@@ -288,22 +288,31 @@ ds-text.panel-nav__group-label {
   padding: 0 var(--dimension-space-025, 2px);
 }
 
-/* ── Item notification dot — single element, moves between positions ──────── */
+/* ── Item notification dot — 20px suffix zone matches the icon geometry ──── */
 
-.panel-nav__item-dot {
+.panel-nav__item-dot-box {
   position: absolute;
   z-index: 2;
-  right: calc(var(--dimension-space-100, 8px) + var(--dimension-space-050, 4px) + var(--dimension-stroke-width-012, 1px));
-  top: calc(var(--dimension-space-100, 8px) + var(--dimension-space-050, 4px) + var(--dimension-stroke-width-012, 1px));
+  right: var(--dimension-space-075, 6px);
+  top: var(--dimension-space-075, 6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dimension-iconography-md, 20px);
+  height: var(--dimension-iconography-md, 20px);
   pointer-events: none;
+}
+
+.panel-nav__item-dot {
   transition:
-    right var(--_nav-expand-motion),
-    top var(--_nav-expand-motion);
+    transform var(--_nav-expand-motion);
 }
 
 .panel-nav--collapsed .panel-nav__item-dot {
-  right: var(--dimension-space-075);
-  top: var(--dimension-space-075);
+  transform: translate(
+    calc(var(--dimension-space-075, 6px) + var(--dimension-stroke-width-012, 1px)),
+    calc(0px - var(--dimension-space-075, 6px) - var(--dimension-stroke-width-012, 1px))
+  );
 }
 
 .panel-nav--animating .panel-nav__item-label {

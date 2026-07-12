@@ -423,15 +423,16 @@ export class Menu {
                       )}
                     </div>
                     {item.dot && (
-                      <ds-badge
-                        class="menu-item__dot ds-interaction-fill__content"
-                        variant="dot"
-                        background={item.isSelected && !item.isInactive
-                          ? 'var(--ds-interaction-active)'
-                          : 'var(--color-background-primary)'}
-                        label=""
-                        aria-hidden="true"
-                      />
+                      <span class="menu-item__dot-box ds-interaction-fill__content" aria-hidden="true">
+                        <ds-badge
+                          class="menu-item__dot"
+                          variant="dot"
+                          background={item.isSelected && !item.isInactive
+                            ? 'var(--ds-interaction-active)'
+                            : 'var(--color-background-primary)'}
+                          label=""
+                        />
+                      </span>
                     )}
                     {item.showToggle && (
                       <div class={{ 'menu-item__toggle': true, 'menu-item__toggle--on': !!item.toggleValue, 'ds-interaction-fill__content': true }} aria-hidden="true">

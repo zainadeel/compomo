@@ -145,6 +145,25 @@ test.describe('BarNav responsive overflow', () => {
     await expect.poll(() => dottedBadge.evaluate(element => (
       element as HTMLElement & { variant?: string }
     ).variant)).toBe('dot');
+    const dotGeometry = await dottedItem.evaluate(row => {
+      const box = row.querySelector('.menu-item__dot-box') as HTMLElement;
+      const dot = row.querySelector('.menu-item__dot') as HTMLElement;
+      const rowRect = row.getBoundingClientRect();
+      const boxRect = box.getBoundingClientRect();
+      const dotRect = dot.getBoundingClientRect();
+      return {
+        boxWidth: boxRect.width,
+        boxHeight: boxRect.height,
+        rightInset: rowRect.right - dotRect.right,
+        centerY: dotRect.y + dotRect.height / 2 - rowRect.y,
+      };
+    });
+    expect(dotGeometry).toEqual({
+      boxWidth: 20,
+      boxHeight: 20,
+      rightInset: 13,
+      centerY: 16,
+    });
 
     const iconName = await page.evaluate(() => {
       const icon = document.querySelector('.bar-nav__overflow-trigger ds-icon') as
