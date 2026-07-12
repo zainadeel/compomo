@@ -2,7 +2,12 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-shell-gradient-picker.js';
-import { buildShellRadialGradientFromStops } from '../../nav/shell-gradient-presets';
+import {
+  buildShellRadialGradientFromStops,
+  type ShellGradientStop,
+} from '../../nav/shell-gradient-presets';
+
+const WORKSHOP_STOP_INDEXES = [1, 2, 3, 4, 5] as const;
 
 const meta: Meta = {
   title: 'Navigation/ShellGradientPicker',
@@ -57,26 +62,52 @@ export const RecipeWorkshop: Story = {
     color1: 'transparent',
     position1: 0,
     color2: '#6f8cff',
-    position2: 55,
+    position2: 35,
     color3: '#d8b4fe',
-    position3: 100,
-    opacity: 0.1,
+    position3: 60,
+    color4: '#f0abfc',
+    position4: 80,
+    color5: '#fcd34d',
+    position5: 100,
+    opacity: 1,
   },
   argTypes: {
-    color1: { control: 'color' },
-    position1: { control: { type: 'range', min: 0, max: 100, step: 1 } },
-    color2: { control: 'color' },
-    position2: { control: { type: 'range', min: 0, max: 100, step: 1 } },
-    color3: { control: 'color' },
-    position3: { control: { type: 'range', min: 0, max: 100, step: 1 } },
-    opacity: { control: { type: 'range', min: 0, max: 1, step: 0.01 } },
+    color1: { control: 'color', table: { category: 'Stop 1' } },
+    position1: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      table: { category: 'Stop 1' },
+    },
+    color2: { control: 'color', table: { category: 'Stop 2' } },
+    position2: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      table: { category: 'Stop 2' },
+    },
+    color3: { control: 'color', table: { category: 'Stop 3' } },
+    position3: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      table: { category: 'Stop 3' },
+    },
+    color4: { control: 'color', table: { category: 'Stop 4' } },
+    position4: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      table: { category: 'Stop 4' },
+    },
+    color5: { control: 'color', table: { category: 'Stop 5' } },
+    position5: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      table: { category: 'Stop 5' },
+    },
+    opacity: {
+      control: { type: 'range', min: 0, max: 1, step: 0.01 },
+      table: { category: 'Layer' },
+    },
   },
   render: args => {
-    const gradient = buildShellRadialGradientFromStops([
-      { color: String(args['color1']), position: Number(args['position1']) },
-      { color: String(args['color2']), position: Number(args['position2']) },
-      { color: String(args['color3']), position: Number(args['position3']) },
-    ]);
+    const stops: ShellGradientStop[] = WORKSHOP_STOP_INDEXES.map(index => ({
+      color: String(args[`color${index}`]),
+      position: Number(args[`position${index}`]),
+    }));
+    const gradient = buildShellRadialGradientFromStops(stops);
     const opacity = Number(args['opacity']);
 
     return html`
