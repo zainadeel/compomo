@@ -279,7 +279,7 @@ Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNa
 | Text | `text-body-medium` (14/20) | `text-body-small` (12/16) | `text-caption` (9/12) |
 | Row padding-inline | `--dimension-space-075` (6) | `--dimension-space-050` (4) | `--dimension-space-025` (2) |
 | Label inset | `--dimension-space-025` (2) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
-| Icon↔label gap | `--dimension-space-050` (4) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
+| Icon↔label gap | `--dimension-space-050` (4) | `--dimension-space-025` (2) | `0` |
 | Default radius | `--dimension-radius-025` (2) | same | same |
 | Rounded | `--dimension-radius-half` | same | same |
 
@@ -337,6 +337,14 @@ Rules:
 - Use `ds-focus-ring--visible` only when component-managed roving focus has confirmed keyboard modality, such as a menu opened with Enter/Space/Arrow keys or navigated with arrow keys. Do not apply it after pointer/mouse opens.
 - Focus is a ring state, not hover. Keyboard/programmatic focus must not use hover or pressed fills unless the item is actually hovered or pressed.
 - Set `--ds-focus-ring-color` from the surface context instead of hardcoding colors: default app surfaces use `--color-interaction-focus`, navigation chrome uses `--color-navigation-interaction-focus`, and medium/bold/strong/always-dark surfaces use their matching `*-interaction-*-focus` token.
+
+**Scroll edge fades**
+
+- Import `src/wc/utils/scroll-edge-fade.css` and build classes with `scrollEdgeFadeClassMap` from `src/wc/utils/scroll-edge-fade.ts`.
+- Fades are static by default. PanelNav intentionally uses a permanently visible bottom fade as chrome treatment; do not make it scroll-aware.
+- For scroll affordances that should reflect available content, pass `scrollAware: true`. CSS scroll-driven animations reveal/hide configured edges from the container's own scroll position without JavaScript; unsupported browsers retain the configured static fades.
+- Multiple physical edges (`top`, `bottom`, `left`, `right`) compose into one mask. When scroll state already exists in JavaScript, an `atEnd` edge map suppresses only the flush edges; boolean `true` removes the complete mask.
+- Keep overflow on the same element that receives the fade classes. Make standalone scroll regions keyboard-reachable when their off-screen content would otherwise be inaccessible.
 
 **TypeScript**
 

@@ -1,74 +1,159 @@
 /**
  * Scroll-edge alpha fade — the single edge-fade utility for overflow containers.
  * Masks scrolling content to transparent so flat surfaces, shell gradients, and
- * images show through. Pair with `.scroll-edge-fade--at-end` when flush.
+ * images show through.
+ *
+ * Static fades are the default (PanelNav intentionally keeps its bottom fade).
+ * Add `.scroll-edge-fade--scroll-aware` to reveal/hide each configured edge from
+ * the container's own scroll position without JavaScript. Browsers without CSS
+ * scroll-driven animations retain the configured static fades.
  *
  * @see scroll-edge-fade.ts — `scrollEdgeFadeClassMap`, `isScrollAtEdge`, size helpers.
  */
 
-.scroll-edge-fade {
-  --ds-scroll-edge-fade-size: var(--dimension-size-600);
+@property --ds-scroll-edge-fade-top {
+  syntax: '<length-percentage>';
+  inherits: false;
+  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  initial-value: 0px;
 }
 
-/* Mask gradients use #000 / transparent as luminance stops — not theme colors. */
+@property --ds-scroll-edge-fade-bottom {
+  syntax: '<length-percentage>';
+  inherits: false;
+  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  initial-value: 0px;
+}
+
+@property --ds-scroll-edge-fade-left {
+  syntax: '<length-percentage>';
+  inherits: false;
+  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  initial-value: 0px;
+}
+
+@property --ds-scroll-edge-fade-right {
+  syntax: '<length-percentage>';
+  inherits: false;
+  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  initial-value: 0px;
+}
+
+@keyframes ds-scroll-edge-fade-reveal-top {
+  from { --ds-scroll-edge-fade-top: 0px; }
+  to { --ds-scroll-edge-fade-top: var(--ds-scroll-edge-fade-target-top); }
+}
+
+@keyframes ds-scroll-edge-fade-reveal-bottom {
+  from { --ds-scroll-edge-fade-bottom: var(--ds-scroll-edge-fade-target-bottom); }
+  to { --ds-scroll-edge-fade-bottom: 0px; }
+}
+
+@keyframes ds-scroll-edge-fade-reveal-left {
+  from { --ds-scroll-edge-fade-left: 0px; }
+  to { --ds-scroll-edge-fade-left: var(--ds-scroll-edge-fade-target-left); }
+}
+
+@keyframes ds-scroll-edge-fade-reveal-right {
+  from { --ds-scroll-edge-fade-right: var(--ds-scroll-edge-fade-target-right); }
+  to { --ds-scroll-edge-fade-right: 0px; }
+}
+
+/* Mask gradients use #000 / transparent as alpha stops — not theme colors. */
 /* stylelint-disable color-no-hex */
 
-.scroll-edge-fade--top {
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0, #000 50%, transparent 100%);
+.scroll-edge-fade {
+  --ds-scroll-edge-fade-size: var(--dimension-size-600);
+  --ds-scroll-edge-fade-reveal-distance: var(--dimension-size-800);
+  --ds-scroll-edge-fade-target-top: 0px;
+  --ds-scroll-edge-fade-target-bottom: 0px;
+  --ds-scroll-edge-fade-target-left: 0px;
+  --ds-scroll-edge-fade-target-right: 0px;
+  --ds-scroll-edge-fade-top: var(--ds-scroll-edge-fade-target-top);
+  --ds-scroll-edge-fade-bottom: var(--ds-scroll-edge-fade-target-bottom);
+  --ds-scroll-edge-fade-left: var(--ds-scroll-edge-fade-target-left);
+  --ds-scroll-edge-fade-right: var(--ds-scroll-edge-fade-target-right);
+  --ds-scroll-edge-fade-block-mask: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--ds-scroll-edge-fade-top),
+    #000 calc(100% - var(--ds-scroll-edge-fade-bottom)),
+    transparent 100%
+  );
+  --ds-scroll-edge-fade-inline-mask: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--ds-scroll-edge-fade-left),
+    #000 calc(100% - var(--ds-scroll-edge-fade-right)),
+    transparent 100%
+  );
+
+  /* Intersecting the block and inline masks lets every edge compose correctly. */
+  -webkit-mask-image:
+    var(--ds-scroll-edge-fade-block-mask),
+    var(--ds-scroll-edge-fade-inline-mask);
+  mask-image:
+    var(--ds-scroll-edge-fade-block-mask),
+    var(--ds-scroll-edge-fade-inline-mask);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
+}
+
+.scroll-edge-fade--top {
+  --ds-scroll-edge-fade-target-top: var(--ds-scroll-edge-fade-size);
 }
 
 .scroll-edge-fade--bottom {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0,
-    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    #000 0,
-    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
-    transparent 100%
-  );
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
+  --ds-scroll-edge-fade-target-bottom: var(--ds-scroll-edge-fade-size);
 }
 
 .scroll-edge-fade--left {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    #000 0,
-    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    #000 0,
-    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
-    transparent 100%
-  );
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
+  --ds-scroll-edge-fade-target-left: var(--ds-scroll-edge-fade-size);
 }
 
 .scroll-edge-fade--right {
-  -webkit-mask-image: linear-gradient(
-    to left,
-    #000 0,
-    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to left,
-    #000 0,
-    #000 calc(100% - var(--ds-scroll-edge-fade-size)),
-    transparent 100%
-  );
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
+  --ds-scroll-edge-fade-target-right: var(--ds-scroll-edge-fade-size);
+}
+
+/* Manual per-edge state remains available when scroll state already lives in JS. */
+.scroll-edge-fade--top-at-edge {
+  --ds-scroll-edge-fade-target-top: 0px;
+}
+
+.scroll-edge-fade--bottom-at-edge {
+  --ds-scroll-edge-fade-target-bottom: 0px;
+}
+
+.scroll-edge-fade--left-at-edge {
+  --ds-scroll-edge-fade-target-left: 0px;
+}
+
+.scroll-edge-fade--right-at-edge {
+  --ds-scroll-edge-fade-target-right: 0px;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-edge-fade--scroll-aware {
+    animation-name:
+      ds-scroll-edge-fade-reveal-top,
+      ds-scroll-edge-fade-reveal-bottom,
+      ds-scroll-edge-fade-reveal-left,
+      ds-scroll-edge-fade-reveal-right;
+    /* stylelint-disable-next-line declaration-property-value-disallowed-list -- scroll timelines require a nonzero sentinel duration; elapsed time is ignored. */
+    animation-duration: 1ms;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+    animation-timeline: scroll(self y), scroll(self y), scroll(self x), scroll(self x);
+    animation-range:
+      0 var(--ds-scroll-edge-fade-reveal-distance),
+      calc(100% - var(--ds-scroll-edge-fade-reveal-distance)) 100%,
+      0 var(--ds-scroll-edge-fade-reveal-distance),
+      calc(100% - var(--ds-scroll-edge-fade-reveal-distance)) 100%;
+  }
 }
 
 .scroll-edge-fade--at-end,

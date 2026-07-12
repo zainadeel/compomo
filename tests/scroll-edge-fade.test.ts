@@ -16,9 +16,20 @@ describe('scrollEdgeFadeMaskImage', () => {
     assert.match(mask, new RegExp(`calc\\(100% - var\\(${SCROLL_EDGE_FADE_SIZE_VAR}`));
   });
 
-  it('builds top fade with a solid midpoint', () => {
+  it('builds top fade from transparent to the configured size', () => {
     const mask = scrollEdgeFadeMaskImage('top');
-    assert.match(mask, /#000 0, #000 50%, transparent 100%/);
+    assert.match(mask, /to bottom, transparent 0, #000 var\(--ds-scroll-edge-fade-size/);
+  });
+
+  it('points horizontal fades at their requested physical edges', () => {
+    assert.match(
+      scrollEdgeFadeMaskImage('left'),
+      /to right, transparent 0, #000 var\(--ds-scroll-edge-fade-size/,
+    );
+    assert.match(
+      scrollEdgeFadeMaskImage('right'),
+      /to right, #000 0, #000 calc\(100% - var\(--ds-scroll-edge-fade-size/,
+    );
   });
 });
 
@@ -53,7 +64,8 @@ describe('scrollEdgeFadeClassMap', () => {
     });
     assert.equal(classes['scroll-edge-fade'], true);
     assert.equal(classes['scroll-edge-fade--bottom'], true);
-    assert.equal(classes['scroll-edge-fade--at-end'], true);
+    assert.equal(classes['scroll-edge-fade--bottom-at-edge'], true);
+    assert.equal(classes['scroll-edge-fade--at-end'], undefined);
   });
 
   it('keeps the mask when not at end', () => {
@@ -67,6 +79,26 @@ describe('scrollEdgeFadeClassMap', () => {
   it('supports hidden to force the mask off', () => {
     const classes = scrollEdgeFadeClassMap({ edges: 'top', hidden: true });
     assert.equal(classes['scroll-edge-fade--hidden'], true);
+  });
+
+  it('opts into CSS scroll-aware behavior', () => {
+    const classes = scrollEdgeFadeClassMap({
+      edges: ['top', 'bottom'],
+      scrollAware: true,
+    });
+    assert.equal(classes['scroll-edge-fade--top'], true);
+    assert.equal(classes['scroll-edge-fade--bottom'], true);
+    assert.equal(classes['scroll-edge-fade--scroll-aware'], true);
+  });
+
+  it('can remove one configured edge without removing the others', () => {
+    const classes = scrollEdgeFadeClassMap({
+      edges: ['top', 'bottom'],
+      atEnd: { top: true, bottom: false },
+    });
+    assert.equal(classes['scroll-edge-fade--top-at-edge'], true);
+    assert.equal(classes['scroll-edge-fade--bottom-at-edge'], undefined);
+    assert.equal(classes['scroll-edge-fade--at-end'], undefined);
   });
 });
 

@@ -38,6 +38,6 @@
   --ds-control-icon: var(--dimension-iconography-xs);
   --ds-control-padding-inline: var(--dimension-space-025);
   --ds-control-label-inset: var(--dimension-space-025);
-  --ds-control-gap: var(--dimension-space-025);
+  --ds-control-gap: 0;
   --ds-control-radius: var(--dimension-radius-025);
 }

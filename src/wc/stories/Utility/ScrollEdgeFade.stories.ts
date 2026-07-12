@@ -10,8 +10,9 @@ const meta: Meta = {
         component:
           'Scroll-edge alpha mask (`src/wc/utils/scroll-edge-fade.css` + `scroll-edge-fade.ts`). ' +
           'Apply `.scroll-edge-fade` + `.scroll-edge-fade--top|bottom|left|right` on the overflow container. ' +
-          'Add `.scroll-edge-fade--at-end` when flush with the edge. No component wrapper — same pattern as ' +
-          'interaction-fill / focus-ring. Used by PanelNav directly.',
+          'Static fades remain visible by design. Add `.scroll-edge-fade--scroll-aware` to reveal and hide ' +
+          'configured edges from native scroll position without JavaScript. No component wrapper — same pattern ' +
+          'as interaction-fill / focus-ring. PanelNav intentionally uses the static bottom mode.',
       },
     },
   },
@@ -26,19 +27,38 @@ export const Overview: Story = {
   render: () => html`
     <div class="util-demo-page">
       <div class="util-demo-section">
-        <h2 class="util-demo-h2">Bottom edge fade</h2>
+        <h2 class="util-demo-h2">Static bottom edge</h2>
         <p class="util-demo-sub">
-          Mask fades content to transparent so the parent surface (or shell gradient) shows through.
+          PanelNav pattern: the bottom fade intentionally remains present while scrolling.
           Import the util CSS and use <code class="util-demo-code">scrollEdgeFadeClassMap</code> from
           <code class="util-demo-code">@ds-mo/ui/utils</code>.
         </p>
         <div class="util-demo-row">
-          <div class="util-demo-scroll scroll-edge-fade scroll-edge-fade--bottom">
+          <div
+            class="util-demo-scroll scroll-edge-fade scroll-edge-fade--bottom"
+            role="region"
+            aria-label="Static bottom fade example"
+            tabindex="0"
+          >
             ${LINES.map(line => html`<div>${line}</div>`)}
           </div>
-          <div class="util-demo-scroll">
+        </div>
+      </div>
+
+      <div class="util-demo-section">
+        <h2 class="util-demo-h2">Scroll-aware edges</h2>
+        <p class="util-demo-sub">
+          The bottom fade disappears near the end; after scrolling down, the top fade appears. This is driven
+          by the scroll container's CSS timeline, with the configured static fades as the browser fallback.
+        </p>
+        <div class="util-demo-row">
+          <div
+            class="util-demo-scroll scroll-edge-fade scroll-edge-fade--top scroll-edge-fade--bottom scroll-edge-fade--scroll-aware"
+            role="region"
+            aria-label="Scroll-aware fade example"
+            tabindex="0"
+          >
             ${LINES.map(line => html`<div>${line}</div>`)}
-            <p class="util-demo-code" style="margin-top: var(--dimension-space-100)">no fade</p>
           </div>
         </div>
       </div>
