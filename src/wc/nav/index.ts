@@ -26,7 +26,6 @@ export {
   SHELL_GRADIENT_POSITION_BAR_VAR,
   SHELL_GRADIENT_OPACITY_VAR,
   SHELL_CHROME_SURFACE_POSITION_VAR,
-  SHELL_GRADIENT_OPACITY,
   buildShellRadialGradient,
   shellGradientImage,
   shellGradientSize,

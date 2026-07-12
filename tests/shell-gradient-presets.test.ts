@@ -7,6 +7,8 @@ import {
   DEFAULT_SHELL_GRADIENT_PRESET,
   isShellGradientPreset,
   normalizeShellGradientPreset,
+  buildShellRadialGradientFromStops,
+  shellGradientPresetOpacity,
   shellGradientPresetStopToken,
 } from '../src/wc/nav/shell-gradient-presets';
 
@@ -29,6 +31,24 @@ describe('normalizeShellGradientPreset', () => {
     const image = buildShellRadialGradientForPreset(null as never);
     assert.ok(!image.includes('undefined'), image);
     assert.equal(image, buildShellRadialGradientForPreset(DEFAULT_SHELL_GRADIENT_PRESET));
+  });
+});
+
+describe('shell gradient recipes', () => {
+  it('supports ordered multi-stop gradients', () => {
+    assert.equal(
+      buildShellRadialGradientFromStops([
+        { color: 'transparent', position: 0 },
+        { color: 'red', position: 40 },
+        { color: 'blue', position: 100 },
+      ]),
+      'radial-gradient(100% 100% at 0% 0%, transparent 0%, red 40%, blue 100%)',
+    );
+  });
+
+  it('resolves opacity per preset', () => {
+    assert.equal(shellGradientPresetOpacity('none'), '0');
+    assert.equal(shellGradientPresetOpacity('cool'), '0.1');
   });
 });
 

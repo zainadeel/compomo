@@ -7,7 +7,6 @@ import {
   shellChromeSurfacePosition,
   shellGradientSize,
   readShellViewportDimensions,
-  SHELL_GRADIENT_OPACITY,
 } from '../src/wc/nav/shell-gradient';
 
 describe('buildShellRadialGradient', () => {
@@ -28,12 +27,6 @@ describe('buildShellRadialGradient', () => {
 describe('shellGradientImage', () => {
   it('returns the built-in radial wash', () => {
     assert.equal(shellGradientImage(), buildShellRadialGradient());
-  });
-});
-
-describe('SHELL_GRADIENT_OPACITY', () => {
-  it('is 10% layer opacity', () => {
-    assert.equal(SHELL_GRADIENT_OPACITY, '0.1');
   });
 });
 

@@ -25,7 +25,6 @@ import {
 } from '../../nav/shell-chrome-metrics';
 import {
   SHELL_GRADIENT_IMAGE_VAR,
-  SHELL_GRADIENT_OPACITY,
   SHELL_GRADIENT_OPACITY_VAR,
   SHELL_GRADIENT_POSITION_BAR_VAR,
   SHELL_GRADIENT_POSITION_PANEL_VAR,
@@ -34,6 +33,7 @@ import {
   readShellViewportDimensions,
   shellGradientPositionBar,
   shellGradientPositionPanel,
+  shellGradientPresetOpacity,
   shellGradientSize,
 } from '../../nav/shell-gradient';
 
@@ -308,7 +308,7 @@ export class AppShell {
       width: viewport.width,
       height: viewport.height,
     });
-    const opacity = SHELL_GRADIENT_OPACITY;
+    const opacity = shellGradientPresetOpacity(preset);
 
     for (const target of targets) {
       if (target === this.el) {

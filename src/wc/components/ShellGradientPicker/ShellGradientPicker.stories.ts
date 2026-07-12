@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-shell-gradient-picker.js';
+import { buildShellRadialGradientFromStops } from '../../nav/shell-gradient-presets';
 
 const meta: Meta = {
   title: 'Navigation/ShellGradientPicker',
@@ -48,4 +49,57 @@ export const Interactive: Story = {
       </p>
     </div>
   `,
+};
+
+export const RecipeWorkshop: Story = {
+  name: 'Recipe workshop',
+  args: {
+    color1: 'transparent',
+    position1: 0,
+    color2: '#6f8cff',
+    position2: 55,
+    color3: '#d8b4fe',
+    position3: 100,
+    opacity: 0.1,
+  },
+  argTypes: {
+    color1: { control: 'color' },
+    position1: { control: { type: 'range', min: 0, max: 100, step: 1 } },
+    color2: { control: 'color' },
+    position2: { control: { type: 'range', min: 0, max: 100, step: 1 } },
+    color3: { control: 'color' },
+    position3: { control: { type: 'range', min: 0, max: 100, step: 1 } },
+    opacity: { control: { type: 'range', min: 0, max: 1, step: 0.01 } },
+  },
+  render: args => {
+    const gradient = buildShellRadialGradientFromStops([
+      { color: String(args['color1']), position: Number(args['position1']) },
+      { color: String(args['color2']), position: Number(args['position2']) },
+      { color: String(args['color3']), position: Number(args['position3']) },
+    ]);
+    const opacity = Number(args['opacity']);
+
+    return html`
+      <div
+        style="position: relative; display: grid; grid-template-columns: 180px 1fr 48px; grid-template-rows: 48px 360px; overflow: hidden; background: var(--color-background-secondary); color: var(--color-foreground-primary);"
+      >
+        <div
+          aria-hidden="true"
+          style=${`position: absolute; inset: 0; background-image: ${gradient}; background-size: 100% 100%; opacity: ${opacity};`}
+        ></div>
+        <div style="position: relative; grid-row: 1 / 3; border-right: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); padding: var(--dimension-space-200);">
+          Panel navigation
+        </div>
+        <div style="position: relative; grid-column: 2; border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); padding: var(--dimension-space-150);">
+          Bar navigation
+        </div>
+        <div style="position: relative; grid-column: 3; grid-row: 1 / 3; border-left: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); padding: var(--dimension-space-100); writing-mode: vertical-rl;">
+          Tools
+        </div>
+        <div style="position: relative; grid-column: 2; grid-row: 2; margin: 0; padding: var(--dimension-space-300); background: var(--color-background-primary);">
+          Page content
+        </div>
+      </div>
+    `;
+  },
 };

@@ -12,7 +12,10 @@ export {
   SHELL_GRADIENT_PRESETS,
   SHELL_GRADIENT_PRESET_LABELS,
   buildShellRadialGradientForPreset,
+  buildShellRadialGradientFromStops,
   isShellGradientPreset,
+  shellGradientPresetOpacity,
+  shellGradientPresetRecipe,
   shellGradientPresetStopToken,
 } from './shell-gradient-presets';
 
@@ -23,9 +26,6 @@ export const SHELL_GRADIENT_POSITION_BAR_VAR = '--ds-shell-gradient-position-bar
 export const SHELL_GRADIENT_OPACITY_VAR = '--ds-shell-gradient-opacity';
 /** Per chrome-surface background-position — offsets wash + grid to shell row origin. */
 export const SHELL_CHROME_SURFACE_POSITION_VAR = '--ds-shell-chrome-surface-position';
-
-/** Layer opacity for the nav gradient wash. */
-export const SHELL_GRADIENT_OPACITY = '0.1';
 
 /** Whether the shared chrome layer (secondary bg + optional wash) should mount. */
 export function shellChromeLayerActive(preset: ShellGradientPreset): boolean {

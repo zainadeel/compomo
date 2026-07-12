@@ -20,17 +20,55 @@ export const SHELL_GRADIENT_PRESET_LABELS: Record<ShellGradientPreset, string> =
   warm: 'Warm',
 };
 
-const SHELL_GRADIENT_PRESET_STOP: Record<Exclude<ShellGradientPreset, 'none'>, string> = {
-  cool: 'var(--color-color-intent-blue-strong-background)',
-  neutral: 'var(--color-color-intent-grey-strong-background)',
-  warm: 'var(--color-color-intent-yellow-strong-background)',
+export interface ShellGradientStop {
+  color: string;
+  position: number;
+}
+
+export interface ShellGradientRecipe {
+  opacity: number;
+  stops: readonly ShellGradientStop[];
+}
+
+const SHELL_GRADIENT_RECIPES: Record<Exclude<ShellGradientPreset, 'none'>, ShellGradientRecipe> = {
+  cool: {
+    opacity: 0.1,
+    stops: [
+      { color: 'var(--color-background-transparent)', position: 0 },
+      { color: 'var(--color-color-intent-blue-strong-background)', position: 100 },
+    ],
+  },
+  neutral: {
+    opacity: 0.1,
+    stops: [
+      { color: 'var(--color-background-transparent)', position: 0 },
+      { color: 'var(--color-color-intent-grey-strong-background)', position: 100 },
+    ],
+  },
+  warm: {
+    opacity: 0.1,
+    stops: [
+      { color: 'var(--color-background-transparent)', position: 0 },
+      { color: 'var(--color-color-intent-yellow-strong-background)', position: 100 },
+    ],
+  },
 };
 
 const GRADIENT_GEOMETRY = '100% 100% at 0% 0%';
 
 export function shellGradientPresetStopToken(preset: ShellGradientPreset): string | null {
   if (preset === 'none') return null;
-  return SHELL_GRADIENT_PRESET_STOP[preset];
+  const stops = SHELL_GRADIENT_RECIPES[preset].stops;
+  return stops[stops.length - 1]?.color ?? null;
+}
+
+export function shellGradientPresetRecipe(preset: ShellGradientPreset): ShellGradientRecipe | null {
+  const normalized = normalizeShellGradientPreset(preset);
+  return normalized === 'none' ? null : SHELL_GRADIENT_RECIPES[normalized];
+}
+
+export function shellGradientPresetOpacity(preset: ShellGradientPreset): string {
+  return String(shellGradientPresetRecipe(preset)?.opacity ?? 0);
 }
 
 export function isShellGradientPreset(value: string): value is ShellGradientPreset {
@@ -55,6 +93,11 @@ export function buildShellRadialGradientForPreset(preset: ShellGradientPreset): 
   const normalized = normalizeShellGradientPreset(preset);
   if (normalized === 'none') return 'none';
 
-  const stop = shellGradientPresetStopToken(normalized);
-  return `radial-gradient(${GRADIENT_GEOMETRY}, var(--color-background-transparent) 0%, ${stop} 100%)`;
+  return buildShellRadialGradientFromStops(SHELL_GRADIENT_RECIPES[normalized].stops);
+}
+
+/** Build the production shell geometry from an ordered set of design-time stops. */
+export function buildShellRadialGradientFromStops(stops: readonly ShellGradientStop[]): string {
+  const serialized = stops.map(stop => `${stop.color} ${stop.position}%`).join(', ');
+  return `radial-gradient(${GRADIENT_GEOMETRY}, ${serialized})`;
 }

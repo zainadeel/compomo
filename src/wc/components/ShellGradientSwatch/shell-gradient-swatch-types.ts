@@ -7,7 +7,10 @@ export {
   SHELL_GRADIENT_WASH_PRESETS,
   SHELL_GRADIENT_PRESET_LABELS,
   buildShellRadialGradientForPreset,
+  buildShellRadialGradientFromStops,
   isShellGradientPreset,
   normalizeShellGradientPreset,
+  shellGradientPresetOpacity,
+  shellGradientPresetRecipe,
   shellGradientPresetStopToken,
 } from '../../nav/shell-gradient-presets';
