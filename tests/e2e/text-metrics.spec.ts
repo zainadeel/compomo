@@ -103,6 +103,10 @@ test.describe('ds-text metric box', () => {
     expect(truncation.innerWhiteSpace).toBe('nowrap');
   });
 
+  test('consumer layout classes override low-specificity text defaults', async ({ page }) => {
+    await expect(page.locator('#layout-override')).toHaveCSS('display', 'inline-flex');
+  });
+
   test('representative controls keep exact outer heights and center text boxes', async ({
     page,
   }) => {

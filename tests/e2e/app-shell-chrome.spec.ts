@@ -16,6 +16,45 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('collapsed user initial keeps caption metrics and optical centering', async ({ page }) => {
+    await page.getByRole('button', { name: 'Collapse navigation' }).click();
+
+    const geometry = await page.locator('.panel-nav__user-initial').evaluate(element => {
+      const text = element as HTMLElement;
+      const circle = document.querySelector(
+        '.panel-nav__footer-icon-collapsed ds-icon',
+      ) as HTMLElement;
+      const inner = text.querySelector('.ds-text__element') as HTMLElement;
+      const textRect = text.getBoundingClientRect();
+      const circleRect = circle.getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(inner);
+      const inkRect = range.getBoundingClientRect();
+      const rootStyle = getComputedStyle(document.documentElement);
+
+      return {
+        textHeight: textRect.height,
+        tokenLineHeight: Number.parseFloat(
+          rootStyle.getPropertyValue('--typography-lineheight-xs'),
+        ),
+        boxCenterDeltaX:
+          textRect.left + textRect.width / 2 - (circleRect.left + circleRect.width / 2),
+        boxCenterDeltaY:
+          textRect.top + textRect.height / 2 - (circleRect.top + circleRect.height / 2),
+        inkCenterDeltaX:
+          inkRect.left + inkRect.width / 2 - (circleRect.left + circleRect.width / 2),
+        inkCenterDeltaY:
+          inkRect.top + inkRect.height / 2 - (circleRect.top + circleRect.height / 2),
+      };
+    });
+
+    expect(geometry.textHeight).toBeCloseTo(geometry.tokenLineHeight, 5);
+    expect(Math.abs(geometry.boxCenterDeltaX)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(geometry.boxCenterDeltaY)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(geometry.inkCenterDeltaX)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(geometry.inkCenterDeltaY)).toBeLessThanOrEqual(0.5);
+  });
+
   test('rapid collapse reversal emits one balanced chrome transition', async ({ page }) => {
     const transitionCounts = await page.evaluate(async () => {
       const shell = document.querySelector('ds-app-shell')!;

@@ -34,6 +34,8 @@ const panel = document.getElementById('panel');
 panel.groups = groups;
 panel.currentUrl = '/fleet';
 panel.breakpoint = 0;
+panel.userName = 'Zain Adeel';
+panel.userInitial = 'Z';
 
 const bar = document.getElementById('bar');
 bar.basePath = '/dashboard/tracking';

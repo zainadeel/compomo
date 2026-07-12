@@ -456,7 +456,8 @@ ds-text.panel-nav__group-label {
 /*
  * Center the caption glyph on the Circle icon. Don't use inset:0 + flex — the
  * inner `.ds-text__element { width: 100% }` stretches and left-aligns the letter.
- * Translate-centering + line-height:1 matches pre-migration optical position.
+ * Translate-centering keeps the complete caption metric box on the icon center;
+ * the caption variant remains the sole owner of its line-height.
  * (Do not set `inset: auto` after top/left — it resets them.)
  */
 ds-text.panel-nav__user-initial,
@@ -471,7 +472,6 @@ ds-text.panel-nav__user-initial.ds-text--caption {
   width: max-content;
   max-width: none;
   min-width: 0;
-  line-height: 1;
   text-align: center;
   color: var(--_nav-fg-secondary);
   pointer-events: none;
