@@ -31,6 +31,9 @@
     "component:ds-toggle": "Switch control with on/off state and accessible switch semantics.",
     "component:ds-tooltip": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping."
   },
+  "metadataRefactors": {
+    "component:ds-button-filled": "Expand selection guidance for variants, density, intent versus contrast, loading or submission behavior, and framework-specific composition."
+  },
   "missingAgentMetadata": [
     "component:ds-badge",
     "component:ds-banner",

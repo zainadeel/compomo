@@ -10,7 +10,8 @@
     "description",
     "artifactExceptions",
     "legacySummaries",
-    "missingAgentMetadata"
+    "missingAgentMetadata",
+    "metadataRefactors"
   ],
   "properties": {
     "$schema": { "const": "../schemas/component-metadata-migration.schema.json" },
@@ -38,6 +39,11 @@
       "type": "array",
       "uniqueItems": true,
       "items": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" }
+    },
+    "metadataRefactors": {
+      "type": "object",
+      "propertyNames": { "pattern": "^component:ds-[a-z0-9-]+$" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
     }
   }
 }

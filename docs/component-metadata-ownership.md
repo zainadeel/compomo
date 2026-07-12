@@ -25,4 +25,6 @@ CompoMo has one source-derived component inventory and two deliberately separate
 
 `agent/baseline/component-metadata-migration.json` contains only components that existed before agent intent became mandatory. New components cannot be added without metadata because they are absent from this baseline. Temporary `legacySummaries` preserve useful discovery prose without carrying any API facts. When a legacy component receives valid metadata, remove its ID and any legacy summary in the same change.
 
+`metadataRefactors` is a separate quality backlog for components that already have valid intent but need a later guidance review. These entries do not weaken metadata requirements or mark the component as migration-pending.
+
 Artifact exceptions require a non-empty reason and are limited to styles or stories. Component source and agent metadata are never silently exempted.

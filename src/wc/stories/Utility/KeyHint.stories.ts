@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-text.js';
 import '../../utils/key-hint.css';
+import { shortcutKeyLabels } from '../../utils/shortcut-key';
 
 const SIZES = ['md', 'sm', 'xs'] as const;
 
@@ -13,9 +14,13 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const keyHint = (label: string, size: (typeof SIZES)[number]) => html`
-  <span class=${`key-hint ds-control--${size}`} aria-label=${`${label} key`}>
-    <ds-text as="span" variant="text-caption" emphasis color="inherit">${label}</ds-text>
+const keyHint = (shortcut: string, size: (typeof SIZES)[number]) => html`
+  <span class=${`key-hint-group ds-control--${size}`} aria-label=${`${shortcut} shortcut`}>
+    ${shortcutKeyLabels(shortcut).map(label => html`
+      <span class="key-hint" aria-hidden="true">
+        <ds-text as="span" variant="text-caption" emphasis color="inherit">${label}</ds-text>
+      </span>
+    `)}
   </span>
 `;
 
@@ -25,8 +30,8 @@ export const Sizes: Story = {
       ${SIZES.map(size => html`
         <div style="display: flex; align-items: center; gap: var(--dimension-space-100);">
           ${keyHint('K', size)}
-          ${keyHint('?', size)}
           ${keyHint('⌘S', size)}
+          ${keyHint('⌘⇧S', size)}
         </div>
       `)}
     </div>

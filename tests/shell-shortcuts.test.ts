@@ -5,6 +5,7 @@ import {
   isEditableShortcutTarget,
   resolveShellShortcut,
 } from '../src/wc/nav/shell-shortcuts';
+import { shortcutKeyLabels } from '../src/wc/utils/shortcut-key';
 
 function keyEvent(
   init: Partial<KeyboardEvent> & Pick<KeyboardEvent, 'key'>,
@@ -18,6 +19,19 @@ function keyEvent(
     ...init,
   };
 }
+
+describe('shortcutKeyLabels', () => {
+  it('keeps a single key in one keycap', () => {
+    assert.deepEqual(shortcutKeyLabels('K'), ['K']);
+    assert.deepEqual(shortcutKeyLabels('?'), ['?']);
+  });
+
+  it('splits symbol and textual chords into individual keycaps', () => {
+    assert.deepEqual(shortcutKeyLabels('⌘S'), ['⌘', 'S']);
+    assert.deepEqual(shortcutKeyLabels('⌘⇧S'), ['⌘', '⇧', 'S']);
+    assert.deepEqual(shortcutKeyLabels('Ctrl+Shift+K'), ['Ctrl', 'Shift', 'K']);
+  });
+});
 
 describe('isBareShellShortcutKey', () => {
   it('accepts unmodified keys only', () => {
