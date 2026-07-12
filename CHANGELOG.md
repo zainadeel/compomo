@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.1](https://github.com/zainadeel/compomo/compare/v3.2.0...v3.2.1) (2026-07-12)
+
+
+### Documentation
+
+* **nav:** define application shell agent contract ([1ee2caf](https://github.com/zainadeel/compomo/commit/1ee2caf5edace2ebbac160ab29812b1de2cb07dc))
+* **nav:** define application shell agent contract ([20bb9d3](https://github.com/zainadeel/compomo/commit/20bb9d3c643c54d122352684c7d36a4045b48803))
+* **PanelNav:** define agent usage intent ([e49d4db](https://github.com/zainadeel/compomo/commit/e49d4dbad628ccad0c780b6591a8e2ea69890cea))
+
 ## [3.2.0](https://github.com/zainadeel/compomo/compare/v3.1.1...v3.2.0) (2026-07-12)
 
 
