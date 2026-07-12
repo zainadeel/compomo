@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.3.0](https://github.com/zainadeel/compomo/compare/v3.2.1...v3.3.0) (2026-07-12)
+
+
+### Added
+
+* **PanelTools:** harden global tool drawer ([c8c9cb5](https://github.com/zainadeel/compomo/commit/c8c9cb5695ceff01b531744e275fd009fb987268))
+* **PanelTools:** harden global tool drawer ([58dd55d](https://github.com/zainadeel/compomo/commit/58dd55df188b1c650e42d1b7b473a024382cee1a))
+
 ## [3.2.1](https://github.com/zainadeel/compomo/compare/v3.2.0...v3.2.1) (2026-07-12)
 
 
