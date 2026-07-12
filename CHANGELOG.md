@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.1.0](https://github.com/zainadeel/compomo/compare/v4.0.0...v4.1.0) (2026-07-12)
+
+
+### Added
+
+* **Menu:** show notification dots ([#309](https://github.com/zainadeel/compomo/issues/309)) ([ccf49d7](https://github.com/zainadeel/compomo/commit/ccf49d7c6248051199700580f719d6b4726eb2d6))
+
+
+### Fixed
+
+* **PanelNav:** enforce breakpoint toggle lock ([#308](https://github.com/zainadeel/compomo/issues/308)) ([02c959a](https://github.com/zainadeel/compomo/commit/02c959abbdcb2af573ff7c82431bb8943efaa35e)), closes [#304](https://github.com/zainadeel/compomo/issues/304)
+* **Text:** preserve atomic text metrics ([7d742fb](https://github.com/zainadeel/compomo/commit/7d742fbff2ab3588b40be0462a13c674389f37c3))
+* **Text:** preserve atomic text metrics ([a7b03db](https://github.com/zainadeel/compomo/commit/a7b03dbbe8b3d8509e7918a10eff9500d6c7db86))
+
 ## [4.0.0](https://github.com/zainadeel/compomo/compare/v3.3.0...v4.0.0) (2026-07-12)
 
 
