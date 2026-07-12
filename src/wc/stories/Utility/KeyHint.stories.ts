@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../../../dist/components/ds-text.js';
 import '../../utils/key-hint.css';
 import { shortcutKeyLabels } from '../../utils/shortcut-key';
 
@@ -17,8 +16,8 @@ type Story = StoryObj;
 const keyHint = (shortcut: string, size: (typeof SIZES)[number]) => html`
   <span class=${`key-hint-group ds-control--${size}`} aria-label=${`${shortcut} shortcut`}>
     ${shortcutKeyLabels(shortcut).map(label => html`
-      <span class="key-hint" aria-hidden="true">
-        <ds-text as="span" variant="text-caption" emphasis color="inherit">${label}</ds-text>
+      <span class=${`key-hint${Array.from(label).length > 1 ? ' key-hint--wide' : ''}`} aria-hidden="true">
+        <span class="key-hint__label">${label}</span>
       </span>
     `)}
   </span>
@@ -26,12 +25,13 @@ const keyHint = (shortcut: string, size: (typeof SIZES)[number]) => html`
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: auto auto auto; align-items: center; gap: var(--dimension-space-200);">
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--dimension-space-200);">
       ${SIZES.map(size => html`
-        <div style="display: flex; align-items: center; gap: var(--dimension-space-100);">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--dimension-space-100);">
           ${keyHint('K', size)}
           ${keyHint('⌘S', size)}
           ${keyHint('⌘⇧S', size)}
+          ${keyHint('Ctrl+Shift+K', size)}
         </div>
       `)}
     </div>

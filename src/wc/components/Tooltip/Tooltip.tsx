@@ -345,8 +345,12 @@ export class Tooltip {
 
       for (const label of shortcutKeyLabels(this.shortcutKey)) {
         const hint = document.createElement('span');
-        hint.className = `key-hint ${sc}`;
-        hint.appendChild(createDsText({ variant: 'text-caption', emphasis: true, text: label }));
+        const wide = Array.from(label).length > 1 ? ' key-hint--wide' : '';
+        hint.className = `key-hint${wide} ${sc}`;
+        const text = document.createElement('span');
+        text.className = `key-hint__label ${sc}`;
+        text.textContent = label;
+        hint.appendChild(text);
         group.appendChild(hint);
       }
       inner.appendChild(group);
