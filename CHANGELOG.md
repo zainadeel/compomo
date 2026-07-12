@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.0](https://github.com/zainadeel/compomo/compare/v3.1.1...v3.2.0) (2026-07-12)
+
+
+### Added
+
+* **agent:** derive component inventory from source ([c88b091](https://github.com/zainadeel/compomo/commit/c88b09196076318838972f69d818d725deb42300))
+* **agent:** derive component inventory from source ([fd32915](https://github.com/zainadeel/compomo/commit/fd32915dbd2da99616960e9e18eb24beb27f3180))
+
 ## [3.1.1](https://github.com/zainadeel/compomo/compare/v3.1.0...v3.1.1) (2026-07-11)
 
 
