@@ -31,6 +31,15 @@ export const PANEL_TOOLS_LABELS: Record<PanelToolsToolId, string> = {
   help: 'Help & Support',
 };
 
+export const PANEL_TOOLS_SHORTCUTS: Partial<Record<PanelToolsToolId, string>> = {
+  search: 'K',
+  agents: 'A',
+  messages: 'M',
+  stacks: 'S',
+  activity: 'N',
+  help: '?',
+};
+
 export interface PanelToolsItem {
   id: PanelToolsToolId;
   /** Icon name for <ds-icon>. */

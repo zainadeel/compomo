@@ -4,10 +4,18 @@ import {
   PANEL_TOOLS_FOOTER_TOOL_ID,
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_PRIMARY_TOOL_ID,
+  PANEL_TOOLS_SHORTCUTS,
   type PanelToolsItem,
   type PanelToolsToolId,
 } from './panel-tools-types';
-import { parsePanelToolsItems, panelToolsDrawerResting, resolvePanelToolActivation } from './panel-tools-utils';
+import {
+  isPanelToolsToolId,
+  orderPanelToolsItems,
+  parsePanelToolsItems,
+  panelToolsDrawerResting,
+  reconcilePanelToolsAvailability,
+  resolvePanelToolActivation,
+} from './panel-tools-utils';
 
 @Component({
   tag: 'ds-panel-tools',
@@ -34,6 +42,12 @@ export class PanelTools {
   @Prop({ attribute: 'items-json' }) itemsJson: string = '';
   @Prop() toolsLabel: string = 'Tools';
   @Prop() toolShortcutsLabel: string = 'Tool shortcuts';
+
+  /**
+   * Optional localStorage key for the last active tool. The drawer always starts
+   * closed; only the tool identity is restored for continuity within this browser.
+   */
+  @Prop({ attribute: 'storage-key' }) storageKey: string = '';
 
   /** Emitted when a rail button is toggled. Detail = { id, selected }. */
   @Event({ bubbles: true, composed: true }) dsToolChange!: EventEmitter<{
@@ -63,7 +77,7 @@ export class PanelTools {
   }
 
   private get orderedRailItems(): PanelToolsItem[] {
-    const railItems = this.railItems;
+    const railItems = orderPanelToolsItems(this.railItems);
     const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
     const footerItem = railItems.find(item => item.id === PANEL_TOOLS_FOOTER_TOOL_ID);
     const bodyItems = railItems.filter(
@@ -97,6 +111,10 @@ export class PanelTools {
     this.el.addEventListener('transitionend', this.handleTransitionEnd);
   }
 
+  componentWillLoad() {
+    this.restoreLastActiveTool();
+  }
+
   @Watch('open')
   openChanged(isOpen: boolean, wasOpen?: boolean) {
     if (this.readyForMotion && wasOpen !== undefined && wasOpen !== isOpen) {
@@ -111,7 +129,13 @@ export class PanelTools {
 
   @Watch('activeTool')
   activeToolChanged() {
+    this.persistLastActiveTool();
     this.deferMotionEnable();
+  }
+
+  @Watch('storageKey')
+  storageKeyChanged() {
+    this.restoreLastActiveTool();
   }
 
   componentDidLoad() {
@@ -122,7 +146,35 @@ export class PanelTools {
   @Watch('itemsJson')
   itemsChanged() {
     this.rovingIndex = 0;
+    this.reconcileActiveTool();
     this.deferMotionEnable();
+  }
+
+  private restoreLastActiveTool() {
+    if (!this.storageKey || this.activeTool) return;
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (isPanelToolsToolId(stored)) this.activeTool = stored;
+    } catch { /* localStorage unavailable */ }
+  }
+
+  private persistLastActiveTool() {
+    if (!this.storageKey || !this.activeTool) return;
+    try { localStorage.setItem(this.storageKey, this.activeTool); } catch { /* unavailable */ }
+  }
+
+  private clearPersistedTool() {
+    if (!this.storageKey) return;
+    try { localStorage.removeItem(this.storageKey); } catch { /* unavailable */ }
+  }
+
+  private reconcileActiveTool() {
+    const next = reconcilePanelToolsAvailability(this.railItems, this.open, this.activeTool);
+    if (!next.removedTool) return;
+    this.clearPersistedTool();
+    this.open = next.open;
+    this.activeTool = next.activeTool;
+    this.dsToolChange.emit({ id: next.removedTool, selected: false });
   }
 
   private handleTransitionEnd = (event: TransitionEvent) => {
@@ -216,7 +268,13 @@ export class PanelTools {
   private renderRailAction(item: PanelToolsItem, index: number) {
     const label = item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id];
     return (
-      <ds-tooltip key={item.id} label={label} side="left" size="sm">
+      <ds-tooltip
+        key={item.id}
+        label={label}
+        shortcutKey={PANEL_TOOLS_SHORTCUTS[item.id]}
+        side="left"
+        size="sm"
+      >
         <ds-button-unfilled variant="icon"
           class="panel-tools__rail-action"
           icon={item.icon}

@@ -61,7 +61,7 @@ export class AppShell {
   @Prop({ attribute: 'gradient-preset', reflect: true }) gradientPreset: ShellGradientPreset =
     DEFAULT_SHELL_GRADIENT_PRESET;
 
-  /** When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native. */
+  /** When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N/? toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native. */
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
   @Element() el!: HTMLElement;

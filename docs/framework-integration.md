@@ -41,7 +41,7 @@ Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). To
 
 ### `ds-panel-tools` — one named slot per tool
 
-Each rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a **named slot** for its own composed UI. Mount all tool panels in the host; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open (and keeps it visible during the close slide). Search is pinned to the rail header; **Help & Support** (`help`) is flush to the rail footer when included in `items`.
+Each fixed rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a **named slot** for its own composed UI. Mount all available tool panels once at AppShell scope; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open and keeps every slot mounted so independent tool state survives route and tool changes. Search is required and pinned to the rail header; **Help & Support** is required and pinned to the rail footer. Optional tools retain canonical order when authorization or entitlement filters them out.
 
 ```html
 <ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>
@@ -50,12 +50,15 @@ Each rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) ha
   <app-messages-panel slot="messages" />
   <app-stacks-panel slot="stacks" />
   <app-activity-panel slot="activity" />
+  <app-help-panel slot="help" />
 </ds-panel-tools>
 ```
 
-The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open.
+The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open. Set `storage-key` to remember only the last active tool in the current browser; the drawer still restores closed after reload. AppShell supplies the fixed drawer width: `--dimension-panel-width-sm` (400px) on desktop and `--dimension-panel-width-xs` (300px) from 768–1199px.
 
-## `ds-app-shell` (optional workspace layout)
+Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages (`M`), Activity (`N`), and Help (`?`); `]` closes the drawer. They are skipped while the user is typing in an editable control.
+
+## `ds-app-shell` (required workspace layout)
 
 ```html
 <ds-app-shell nav-style="dashboard" gradient>
@@ -98,7 +101,7 @@ Stencil runs `componentWillLoad` before framework property bindings land. Follow
 | Stamp `data-nav-style` / `nav-style` before `ds-panel-nav` connects on hard reload | Rely on bindings alone for first-paint `navStyle` |
 | Verify shell chrome perf on a **production build** (`ng build` + static serve), not only `ng serve` | Assume dev-server HMR reflects custom-element upgrade timing |
 
-**motive-webapp-lab** reference: property bindings on `ds-bar-nav` / `ds-panel-tools`, `PanelNavHostDirective`, document `data-nav-style` hint, tools state persisted to `localStorage` only (no redundant flush on `dsToolChange`).
+**motive-webapp-lab** reference: property bindings on `ds-bar-nav` / `ds-panel-tools`, `PanelNavHostDirective`, and document `data-nav-style` hint. Prefer PanelTools `storageKey` for last-tool continuity; the host may separately own open state when product requirements call for it, without redundantly flushing bindings on `dsToolChange`.
 
 ---
 
@@ -157,6 +160,7 @@ Do not add `CUSTOM_ELEMENTS_SCHEMA` when using adapters; Angular should validate
   [open]="toolsOpen"
   [activeTool]="activeTool"
   [items]="panelToolsItems"
+  storageKey="product.panel-tools.last-tool"
   (dsToolChange)="onToolChange($event)"
 ></ds-panel-tools>
 ```

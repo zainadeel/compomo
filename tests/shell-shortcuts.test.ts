@@ -46,6 +46,10 @@ describe('resolveShellShortcut', () => {
     assert.equal(resolveShellShortcut(keyEvent({ key: 's' })), 'open-tool:stacks');
     assert.equal(resolveShellShortcut(keyEvent({ key: 'm' })), 'open-tool:messages');
     assert.equal(resolveShellShortcut(keyEvent({ key: 'n' })), 'open-tool:activity');
+    assert.equal(
+      resolveShellShortcut(keyEvent({ key: '?', code: 'Slash', shiftKey: true })),
+      'open-tool:help',
+    );
   });
 
   it('maps every tool shortcut key', () => {
@@ -55,6 +59,7 @@ describe('resolveShellShortcut', () => {
       ['s', 'stacks'],
       ['m', 'messages'],
       ['n', 'activity'],
+      ['?', 'help'],
     ];
     for (const [key, tool] of keys) {
       assert.equal(resolveShellShortcut(keyEvent({ key })), `open-tool:${tool}`);

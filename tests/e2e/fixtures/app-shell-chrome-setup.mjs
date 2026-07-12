@@ -20,6 +20,7 @@ const toolsItems = [
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
+  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
 ];
 
 await Promise.all([

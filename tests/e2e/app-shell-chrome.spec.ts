@@ -65,4 +65,47 @@ test.describe('App shell chrome', () => {
     await expect(drawer).toHaveAttribute('aria-hidden', 'true');
     await expect(drawer).toHaveAttribute('inert', '');
   });
+
+  test('uses fixed desktop and tablet drawer width tokens', async ({ page }) => {
+    const surface = page.locator('.panel-tools__drawer-surface');
+    await page.getByRole('button', { name: 'Agents' }).click();
+    await expect(surface).toHaveCSS('width', '400px');
+
+    await page.setViewportSize({ width: 1000, height: 720 });
+    await expect(surface).toHaveCSS('width', '300px');
+  });
+
+  test('question mark toggles Help outside editable controls', async ({ page }) => {
+    await page.keyboard.press('?');
+    await expect(page.locator('ds-panel-tools')).toHaveAttribute('active-tool', 'help');
+    await expect(page.getByText('Help panel')).toBeVisible();
+  });
+
+  test('restores the last tool closed after reload', async ({ page }) => {
+    await page.getByRole('button', { name: 'Agents' }).click();
+    await expect(page.locator('ds-panel-tools')).toHaveClass(/panel-tools--open/);
+
+    await page.reload();
+    await page.waitForSelector('ds-panel-tools.panel-tools--drawer-resting');
+    await expect(page.locator('ds-panel-tools')).toHaveAttribute('active-tool', 'agents');
+    await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--open/);
+  });
+
+  test('closes and clears an active tool removed from the item set', async ({ page }) => {
+    await page.getByRole('button', { name: 'Agents' }).click();
+    await page.evaluate(() => {
+      const tools = document.getElementById('tools') as HTMLElement & {
+        items: Array<{ id: string; icon: string; ariaLabel: string }>;
+      };
+      tools.items = [
+        { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
+        { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+      ];
+    });
+
+    await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--open/);
+    await expect.poll(() => page.locator('ds-panel-tools').evaluate(
+      element => (element as HTMLElement & { activeTool: string }).activeTool,
+    )).toBe('');
+  });
 });

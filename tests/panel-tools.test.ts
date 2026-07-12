@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { PANEL_TOOLS_FOOTER_TOOL_ID, PANEL_TOOLS_LABELS, PANEL_TOOLS_PRIMARY_TOOL_ID, PANEL_TOOLS_TOOL_IDS } from '../src/wc/components/PanelTools/panel-tools-types';
-import { panelToolsDrawerResting, resolvePanelToolActivation } from '../src/wc/components/PanelTools/panel-tools-utils';
+import { PANEL_TOOLS_FOOTER_TOOL_ID, PANEL_TOOLS_LABELS, PANEL_TOOLS_PRIMARY_TOOL_ID, PANEL_TOOLS_SHORTCUTS, PANEL_TOOLS_TOOL_IDS } from '../src/wc/components/PanelTools/panel-tools-types';
+import { isPanelToolsToolId, orderPanelToolsItems, panelToolsDrawerResting, reconcilePanelToolsAvailability, resolvePanelToolActivation } from '../src/wc/components/PanelTools/panel-tools-utils';
 
 describe('PANEL_TOOLS_TOOL_IDS', () => {
   it('lists search, agents, messages, stacks, activity, and help', () => {
@@ -36,6 +36,63 @@ describe('PANEL_TOOLS_LABELS', () => {
     assert.equal(PANEL_TOOLS_LABELS.activity, 'Activity');
     assert.equal(PANEL_TOOLS_LABELS.agents, 'Agents');
     assert.equal(PANEL_TOOLS_LABELS.help, 'Help & Support');
+  });
+});
+
+describe('PANEL_TOOLS_SHORTCUTS', () => {
+  it('maps the fixed tool set to its public shell shortcuts', () => {
+    assert.deepEqual(PANEL_TOOLS_SHORTCUTS, {
+      search: 'K',
+      agents: 'A',
+      messages: 'M',
+      stacks: 'S',
+      activity: 'N',
+      help: '?',
+    });
+  });
+});
+
+describe('orderPanelToolsItems', () => {
+  it('enforces canonical order and removes duplicate semantic tools', () => {
+    const help = { id: 'help' as const, icon: 'CircleQuestion' };
+    const search = { id: 'search' as const, icon: 'MagnifyingGlass' };
+    const messages = { id: 'messages' as const, icon: 'Messages' };
+    assert.deepEqual(
+      orderPanelToolsItems([help, messages, search, { ...messages, icon: 'Duplicate' }]),
+      [search, messages, help],
+    );
+  });
+});
+
+describe('isPanelToolsToolId', () => {
+  it('accepts only fixed tool ids for persisted state', () => {
+    assert.equal(isPanelToolsToolId('agents'), true);
+    assert.equal(isPanelToolsToolId('custom'), false);
+    assert.equal(isPanelToolsToolId(null), false);
+  });
+});
+
+describe('reconcilePanelToolsAvailability', () => {
+  it('closes and clears a tool removed by authorization or entitlement changes', () => {
+    assert.deepEqual(
+      reconcilePanelToolsAvailability(
+        [{ id: 'search', icon: 'MagnifyingGlass' }],
+        true,
+        'agents',
+      ),
+      { open: false, activeTool: '', removedTool: 'agents' },
+    );
+  });
+
+  it('preserves an available active tool and its open state', () => {
+    assert.deepEqual(
+      reconcilePanelToolsAvailability(
+        [{ id: 'agents', icon: 'AI' }],
+        true,
+        'agents',
+      ),
+      { open: true, activeTool: 'agents', removedTool: '' },
+    );
   });
 });
 
