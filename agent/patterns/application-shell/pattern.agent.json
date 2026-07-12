@@ -4,51 +4,61 @@
   "id": "pattern:application-shell",
   "kind": "pattern",
   "status": "experimental",
-  "summary": "Dashboard workspace composition with persistent destination navigation, section navigation, optional tools, and one main content surface.",
+  "summary": "Required base-page composition for standard authenticated applications, with one AppShell coordinating primary destinations, secondary route sections, tools chrome, responsive modes, and stable main content geometry.",
   "useWhen": [
-    "The product has multiple persistent destinations and route-level sections.",
-    "The workspace needs coordinated panel, bar, and tool chrome around changing page content."
+    "Building any standard authenticated product or workspace page with CompoMo.",
+    "Application navigation and tools must remain consistent around changing route content.",
+    "Creating a reusable base-page template for CompoMo applications."
   ],
   "avoidWhen": [
-    "The experience is a focused single-page flow without persistent application navigation.",
-    "A marketing or editorial layout needs independent page composition."
+    "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences.",
+    "The page is already rendered inside an AppShell.",
+    "A nested or second application shell is being considered."
   ],
   "components": [
     {
       "component": "component:ds-app-shell",
-      "role": "Coordinates workspace layout and shared chrome.",
+      "role": "Provides the single workspace root and coordinates shell composition, shared chrome, responsive modes, and stable content geometry.",
       "required": true
     },
     {
       "component": "component:ds-panel-nav",
-      "role": "Provides persistent destination navigation.",
+      "role": "Provides the application's one primary navigation with top-level destinations and standard Dashboard/Settings and account footer controls.",
       "required": true
     },
     {
       "component": "component:ds-bar-nav",
-      "role": "Provides route-section tabs or the current section heading.",
+      "role": "Provides secondary route-section navigation or the active primary destination label while preserving shell height.",
       "required": true
     },
     {
       "component": "component:ds-panel-tools",
-      "role": "Provides optional workspace tools and their drawer content.",
-      "required": false
+      "role": "Provides required tools chrome with Search and Help as the minimum standard tools and optional additional product tools.",
+      "required": true
     }
   ],
   "stateOwnership": [
-    "The host router owns the active destination and section.",
-    "The host owns tool drawer open state and active tool content.",
-    "AppShell coordinates layout metrics, chrome style, gradient alignment, and shell shortcuts."
+    "The application router owns the current route, Dashboard or Settings context, authorization filtering, destination and section collections, localized labels, and navigation execution.",
+    "AppShell owns desktop, tablet, and mobile composition, shell geometry, navStyle propagation, gradient alignment, chrome transitions, metrics, and shell shortcuts.",
+    "PanelNav owns primary-destination presentation and the user-controlled desktop collapse preference.",
+    "BarNav derives the active secondary route from currentUrl and basePath and receives the active PanelNav destination label as heading.",
+    "PanelTools owns tool-rail and drawer interaction while the application owns available tool content and active-tool state.",
+    "PanelNav groups and BarNav dividers visually organize peers and never introduce nested navigation hierarchy."
   ],
   "accessibility": [
-    "Render one main landmark in the default content slot.",
-    "Use navigation components for destinations and sections rather than repurposing command buttons.",
-    "Provide accessible labels for icon-only tool actions."
+    "Render one main landmark in the default content region.",
+    "Use PanelNav exclusively for primary destinations and BarNav exclusively for secondary route sections.",
+    "Keep localized visible labels and accessible names available when navigation is collapsed or moved into overflow.",
+    "Provide Search and Help as the minimum accessible PanelTools actions.",
+    "Preserve keyboard focus and route state across responsive and Dashboard/Settings context changes."
   ],
   "responsiveBehavior": [
-    "Allow PanelNav to collapse while preserving the content region.",
-    "Keep BarNav section access available through its overflow behavior.",
-    "Treat PanelTools as optional chrome and avoid shrinking main content below its usable minimum."
+    "Use fixed system breakpoints: desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
+    "Desktop permits PanelNav expansion and collapse and restores the persisted user preference.",
+    "Tablet keeps PanelNav permanently collapsed and does not overwrite the desktop preference.",
+    "Mobile keeps AppShell as the root while replacing desktop navigation with a future dedicated mobile navigation design.",
+    "Keep BarNav height, PanelTools chrome, and main-content origin stable across route changes.",
+    "Treat the complete responsive composition as an intended contract that is not yet fully implemented by the current AppShell runtime."
   ],
   "implementations": {
     "customElements": {
@@ -74,6 +84,7 @@
     }
   },
   "references": [
-    "src/wc/components/AppShell/AppShell.mdx"
+    "src/wc/components/AppShell/AppShell.mdx",
+    "docs/framework-integration.md"
   ]
 }

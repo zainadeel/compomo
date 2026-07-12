@@ -34,7 +34,6 @@
   "missingAgentMetadata": [
     "component:ds-badge",
     "component:ds-banner",
-    "component:ds-bar-nav",
     "component:ds-button-unfilled",
     "component:ds-card",
     "component:ds-card-data-viz-donut",
