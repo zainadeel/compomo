@@ -59,6 +59,7 @@
   flex-direction: column;
   gap: var(--dimension-space-100);
   align-items: flex-start;
+  width: 100%;
 }
 
 .util-demo-label {
@@ -73,8 +74,32 @@
   flex-wrap: wrap;
   gap: var(--dimension-space-100);
   align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--dimension-panel-width-lg);
   padding: var(--dimension-space-150);
   border-radius: var(--dimension-radius-100);
+}
+
+.util-demo-surface__description {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+}
+
+.util-demo-surface__description .util-demo-label {
+  min-width: 0;
+}
+
+.util-demo-surface__token {
+  font-family: var(--typography-fontfamily-mono);
+  font-size: var(--typography-fontsize-xs);
+  line-height: var(--typography-lineheight-xs);
+  color: var(--color-foreground-on-medium-background-secondary);
+  overflow-wrap: anywhere;
 }
 
 .util-demo-surface--medium {
@@ -89,12 +114,65 @@
   background: var(--color-background-strong-neutral);
 }
 
+.util-demo-surface--translucent {
+  background:
+    linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)),
+    var(--color-background-bold-brand);
+}
+
+.util-demo-surface--inverted {
+  background: var(--color-inverted-background);
+}
+
+.util-demo-surface--media {
+  background: var(--color-media-background);
+}
+
 .util-demo-surface--always-dark {
-  background: var(--color-always-dark-background-primary);
+  background: var(--color-always-dark-background);
 }
 
 .util-demo-surface--navigation {
-  background: var(--color-navigation-background-primary);
+  background: var(--color-navigation-background);
+}
+
+.util-demo-surface--medium .util-demo-label {
+  color: var(--color-foreground-on-medium-background-secondary);
+}
+
+.util-demo-surface--bold .util-demo-label,
+.util-demo-surface--bold .util-demo-surface__token {
+  color: var(--color-foreground-on-bold-background-secondary);
+}
+
+.util-demo-surface--strong .util-demo-label,
+.util-demo-surface--strong .util-demo-surface__token {
+  color: var(--color-foreground-on-strong-background-secondary);
+}
+
+.util-demo-surface--translucent .util-demo-label,
+.util-demo-surface--translucent .util-demo-surface__token {
+  color: var(--color-translucent-foreground-secondary);
+}
+
+.util-demo-surface--inverted .util-demo-label,
+.util-demo-surface--inverted .util-demo-surface__token {
+  color: var(--color-inverted-foreground-secondary);
+}
+
+.util-demo-surface--media .util-demo-label,
+.util-demo-surface--media .util-demo-surface__token {
+  color: var(--color-media-foreground-secondary);
+}
+
+.util-demo-surface--always-dark .util-demo-label,
+.util-demo-surface--always-dark .util-demo-surface__token {
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+.util-demo-surface--navigation .util-demo-label,
+.util-demo-surface--navigation .util-demo-surface__token {
+  color: var(--color-navigation-foreground-secondary);
 }
 
 /* Demo control — transparent chrome so selected/hover washes composite over
@@ -128,6 +206,18 @@
 
 .util-demo-surface--strong .util-demo-control {
   color: var(--color-foreground-on-strong-background-primary);
+}
+
+.util-demo-surface--translucent .util-demo-control {
+  color: var(--color-translucent-foreground-primary);
+}
+
+.util-demo-surface--inverted .util-demo-control {
+  color: var(--color-inverted-foreground-primary);
+}
+
+.util-demo-surface--media .util-demo-control {
+  color: var(--color-media-foreground-primary);
 }
 
 .util-demo-surface--always-dark .util-demo-control {

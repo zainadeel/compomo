@@ -29,7 +29,7 @@
  * after the unset so this util’s stacking context still applies.
  *
  * Surface helpers remap tokens + `--ds-focus-ring-color`:
- *   `.ds-interaction-fill--on-medium|bold|strong|always-dark|navigation`
+ *   `.ds-interaction-fill--on-medium|bold|strong|translucent|inverted|media|always-dark|navigation`
  *
  * Override hooks: `--ds-interaction-hover`, `--ds-interaction-pressed`,
  * `--ds-interaction-active`, `--ds-interaction-border-color`,
@@ -143,6 +143,30 @@
   --ds-interaction-pressed: var(--color-interaction-on-strong-background-pressed);
   --ds-interaction-active: var(--color-interaction-on-strong-background-active);
   --ds-focus-ring-color: var(--color-interaction-on-strong-background-focus);
+}
+
+:host(.ds-interaction-fill--on-translucent),
+.ds-interaction-fill--on-translucent {
+  --ds-interaction-hover: var(--color-translucent-interaction-hover);
+  --ds-interaction-pressed: var(--color-translucent-interaction-pressed);
+  --ds-interaction-active: var(--color-translucent-interaction-active);
+  --ds-focus-ring-color: var(--color-translucent-interaction-focus);
+}
+
+:host(.ds-interaction-fill--on-inverted),
+.ds-interaction-fill--on-inverted {
+  --ds-interaction-hover: var(--color-inverted-interaction-hover);
+  --ds-interaction-pressed: var(--color-inverted-interaction-pressed);
+  --ds-interaction-active: var(--color-inverted-interaction-active);
+  --ds-focus-ring-color: var(--color-inverted-interaction-focus);
+}
+
+:host(.ds-interaction-fill--on-media),
+.ds-interaction-fill--on-media {
+  --ds-interaction-hover: var(--color-media-interaction-hover);
+  --ds-interaction-pressed: var(--color-media-interaction-pressed);
+  --ds-interaction-active: var(--color-media-interaction-active);
+  --ds-focus-ring-color: var(--color-media-interaction-focus);
 }
 
 :host(.ds-interaction-fill--on-always-dark),
