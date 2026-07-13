@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/zainadeel/compomo/compare/v4.2.0...v5.0.0) (2026-07-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to TokoMo v3 tokens ([#316](https://github.com/zainadeel/compomo/issues/316))
+
+### Added
+
+* migrate to TokoMo v3 tokens ([#316](https://github.com/zainadeel/compomo/issues/316)) ([a291800](https://github.com/zainadeel/compomo/commit/a291800146c3b965facac4a4281344c5dc699b6a))
+
 ## [4.2.0](https://github.com/zainadeel/compomo/compare/v4.1.2...v4.2.0) (2026-07-13)
 
 
