@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^2.15.0",
+        "@ds-mo/tokens ^3.0.0",
         "@ds-mo/icons ^6.2.0"
       ],
       "optional": [],
@@ -2593,6 +2593,10 @@
           },
           "shimmer": {
             "type": "boolean",
+            "required": false
+          },
+          "surface": {
+            "type": "SkeletonSurface",
             "required": false
           },
           "textVariant": {

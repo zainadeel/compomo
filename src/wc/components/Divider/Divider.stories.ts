@@ -144,7 +144,7 @@ export const Surfaces: Story = {
           surface === 'on-bold-background' ? 'var(--color-background-bold-brand)' :
           surface === 'on-strong-background' ? 'var(--color-background-strong-brand)' :
           surface === 'on-medium-background' ? 'var(--color-background-medium-brand)' :
-          surface === 'on-translucent-background' ? 'var(--color-background-translucent)' :
+          surface === 'on-translucent-background' ? 'var(--color-translucent-translucent)' :
           surface === 'navigation' ? 'var(--color-navigation-background)' :
           surface === 'media' ? 'var(--color-media-background)' :
           surface === 'always-dark' ? 'var(--color-always-dark-background)' :
@@ -154,7 +154,7 @@ export const Surfaces: Story = {
           surface === 'on-bold-background' ? 'var(--color-foreground-on-bold-background-primary)' :
           surface === 'on-strong-background' ? 'var(--color-foreground-on-strong-background-primary)' :
           surface === 'on-medium-background' ? 'var(--color-foreground-on-medium-background-primary)' :
-          surface === 'on-translucent-background' ? 'var(--color-foreground-on-translucent-background-primary)' :
+          surface === 'on-translucent-background' ? 'var(--color-translucent-foreground-primary)' :
           surface === 'navigation' ? 'var(--color-navigation-foreground-primary)' :
           surface === 'media' ? 'var(--color-media-foreground-primary)' :
           surface === 'always-dark' ? 'var(--color-always-dark-foreground-primary)' :

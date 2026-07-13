@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsSkeleton } from '@ds-mo/ui/components/ds
 
 @ProxyCmp({
   defineCustomElementFn: defineDsSkeleton,
-  inputs: ['controlSize', 'iconSize', 'rounded', 'shimmer', 'textVariant', 'variant', 'width']
+  inputs: ['controlSize', 'iconSize', 'rounded', 'shimmer', 'surface', 'textVariant', 'variant', 'width']
 })
 @Component({
   selector: 'ds-skeleton',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['controlSize', 'iconSize', 'rounded', 'shimmer', 'textVariant', 'variant', 'width'],
+  inputs: ['controlSize', 'iconSize', 'rounded', 'shimmer', 'surface', 'textVariant', 'variant', 'width'],
 })
 export class DsSkeleton {
   protected el: HTMLDsSkeletonElement;

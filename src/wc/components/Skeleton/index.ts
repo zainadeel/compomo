@@ -1,1 +1,1 @@
-export type { SkeletonVariant } from './Skeleton';
+export type { SkeletonSurface, SkeletonVariant } from './Skeleton';

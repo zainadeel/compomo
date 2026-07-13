@@ -115,7 +115,7 @@ function ForegroundColors(): TemplateResult {
           const bg = ctx === 'on-bold-background'        ? 'var(--color-background-bold-brand)'
                    : ctx === 'on-strong-background'      ? 'var(--color-background-strong-brand)'
                    : ctx === 'on-medium-background'      ? 'var(--color-background-medium-brand)'
-                   :                                        'var(--color-background-translucent)';
+                   :                                        'var(--color-translucent-translucent)';
           return html`
             <div style="margin-bottom: 16px;">
               <p style="${SUB} margin-bottom: 8px;">${ctx}</p>
@@ -150,7 +150,7 @@ function BorderColors(): TemplateResult {
           const bg = ctx === 'on-bold-background'   ? 'var(--color-background-bold-neutral)'
                    : ctx === 'on-strong-background' ? 'var(--color-background-strong-neutral)'
                    : ctx === 'on-medium-background' ? 'var(--color-background-medium-neutral)'
-                   :                                   'var(--color-background-translucent)';
+                   :                                   'var(--color-translucent-translucent)';
           return html`
             <div style="margin-bottom: 16px;">
               <p style="${SUB} margin-bottom: 8px;">${ctx}</p>
@@ -174,7 +174,7 @@ function BorderColors(): TemplateResult {
             const bg = ctx === 'on-bold-background'   ? 'var(--color-background-bold-neutral)'
                      : ctx === 'on-strong-background' ? 'var(--color-background-strong-neutral)'
                      : ctx === 'on-medium-background' ? 'var(--color-background-medium-neutral)'
-                     :                                   'var(--color-background-translucent)';
+                     :                                   'var(--color-translucent-translucent)';
             const labelColor = ctx.includes('bold') || ctx.includes('strong')
               ? 'var(--color-foreground-on-strong-background-secondary)' : 'var(--color-foreground-secondary)';
             return html`
@@ -205,7 +205,7 @@ function InteractionColors(): TemplateResult {
         const bg = ctx === 'on-bold-background'   ? 'var(--color-background-bold-brand)'
                  : ctx === 'on-strong-background' ? 'var(--color-background-strong-brand)'
                  : ctx === 'on-medium-background' ? 'var(--color-background-medium-brand)'
-                 :                                   'var(--color-background-translucent)';
+                 :                                   'var(--color-translucent-translucent)';
         return section(`Interaction — ${ctx}`, undefined, html`
           <div style="${GRID}">
             ${STATES.map(state => html`
@@ -685,15 +685,17 @@ function UtilityColors(): TemplateResult {
           ${swatch('color-elevation-highlight', 'highlight')}
         </div>`)}
 
-      ${section('Shimmer', 'Loading skeleton animation colors', html`
-        <div style="display: flex; gap: 0; width: 200px; height: 48px; border-radius: 6px; overflow: hidden;">
-          <div style="flex: 1; background-color: var(--color-shimmer-fade);"></div>
-          <div style="flex: 1; background-color: var(--color-shimmer-highlight);"></div>
-          <div style="flex: 1; background-color: var(--color-shimmer-fade);"></div>
-        </div>
-        <div style="${GRID} max-width: 320px; margin-top: 8px;">
-          ${swatch('color-shimmer-fade', 'shimmer-fade')}
-          ${swatch('color-shimmer-highlight', 'shimmer-highlight')}
+      ${section('Shimmer', 'Surface-aware loading animation colors', html`
+        <div style="${GRID}">
+          ${swatch('color-shimmer-shimmer', 'default')}
+          ${swatch('color-shimmer-shimmer-on-medium-background', 'on-medium-background')}
+          ${swatch('color-shimmer-shimmer-on-bold-background', 'on-bold-background')}
+          ${swatch('color-shimmer-shimmer-on-strong-background', 'on-strong-background')}
+          ${swatch('color-translucent-shimmer', 'on-translucent-background')}
+          ${swatch('color-inverted-shimmer', 'inverted')}
+          ${swatch('color-media-shimmer', 'media')}
+          ${swatch('color-always-dark-shimmer', 'always-dark')}
+          ${swatch('color-navigation-shimmer', 'navigation')}
         </div>`)}
 
       ${section('Settings Profile', 'Avatar / profile-page accent surface', html`

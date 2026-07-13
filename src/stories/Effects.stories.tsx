@@ -213,7 +213,7 @@ function Motion() {
                   inset: 0,
                   backdropFilter: `blur(var(--effect-blur-${size}))`,
                   WebkitBackdropFilter: `blur(var(--effect-blur-${size}))`,
-                  backgroundColor: 'var(--color-background-translucent)',
+                  backgroundColor: 'var(--color-translucent-translucent)',
                 }} />
               </div>
               <span style={{ fontSize: 11, color: 'var(--color-foreground-secondary)', fontFamily: 'monospace' }}>
