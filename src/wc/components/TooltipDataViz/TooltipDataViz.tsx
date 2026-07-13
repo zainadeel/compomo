@@ -125,7 +125,7 @@ export class TooltipDataViz {
             class="tooltip-data-viz__label"
             as="span"
             variant="text-body-medium"
-            color="var(--color-foreground-on-translucent-background-secondary)"
+            color="var(--color-translucent-foreground-secondary)"
           >
             {this.label}
           </ds-text>
@@ -134,7 +134,7 @@ export class TooltipDataViz {
             as="span"
             variant="text-body-medium"
             emphasis
-            color="var(--color-foreground-on-translucent-background-primary)"
+            color="var(--color-translucent-foreground-primary)"
           >
             {this.value}
           </ds-text>

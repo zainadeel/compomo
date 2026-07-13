@@ -32,7 +32,7 @@ import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
-import { SkeletonVariant } from "./components/Skeleton/Skeleton";
+import { SkeletonSurface, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
@@ -69,7 +69,7 @@ export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
-export { SkeletonVariant } from "./components/Skeleton/Skeleton";
+export { SkeletonSurface, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
@@ -1107,6 +1107,11 @@ export namespace Components {
           * @default true
          */
         "shimmer": boolean;
+        /**
+          * Surface context used to select the matching foreground base and shimmer tokens.
+          * @default 'default'
+         */
+        "surface": SkeletonSurface;
         /**
           * Text metric recipe whose line-height defines the text canvas.
           * @default 'text-body-medium'
@@ -3261,6 +3266,11 @@ declare namespace LocalJSX {
          */
         "shimmer"?: boolean;
         /**
+          * Surface context used to select the matching foreground base and shimmer tokens.
+          * @default 'default'
+         */
+        "surface"?: SkeletonSurface;
+        /**
           * Text metric recipe whose line-height defines the text canvas.
           * @default 'text-body-medium'
          */
@@ -3867,6 +3877,7 @@ declare namespace LocalJSX {
         "width": string;
         "rounded": boolean;
         "shimmer": boolean;
+        "surface": SkeletonSurface;
     }
     interface DsSliderAttributes {
         "value": number;

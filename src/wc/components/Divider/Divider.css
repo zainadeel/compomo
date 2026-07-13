@@ -26,22 +26,22 @@
 
 :host([surface='on-bold-background']),
 :host(.divider--surface-on-bold-background) {
-  --_divider-color: var(--color-divider-on-bold-background);
+  --_divider-color: var(--color-divider-divider-on-bold-background);
 }
 
 :host([surface='on-strong-background']),
 :host(.divider--surface-on-strong-background) {
-  --_divider-color: var(--color-divider-on-strong-background);
+  --_divider-color: var(--color-divider-divider-on-strong-background);
 }
 
 :host([surface='on-medium-background']),
 :host(.divider--surface-on-medium-background) {
-  --_divider-color: var(--color-divider-on-medium-background);
+  --_divider-color: var(--color-divider-divider-on-medium-background);
 }
 
 :host([surface='on-translucent-background']),
 :host(.divider--surface-on-translucent-background) {
-  --_divider-color: var(--color-divider-on-translucent-background);
+  --_divider-color: var(--color-translucent-divider);
 }
 
 :host([surface='navigation']),

@@ -7,7 +7,7 @@
   z-index: var(--dimension-z-index-tooltip);
   display: block;
   box-sizing: border-box;
-  background-color: var(--color-background-translucent);
+  background-color: var(--color-translucent-translucent);
   backdrop-filter: blur(var(--effect-blur-md));
   -webkit-backdrop-filter: blur(var(--effect-blur-md));
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));

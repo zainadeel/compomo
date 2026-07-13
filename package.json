@@ -97,7 +97,7 @@
     "@angular/core": ">=19 <23",
     "@angular/forms": ">=19 <23",
     "@ds-mo/icons": "^6.2.0",
-    "@ds-mo/tokens": "^2.15.0",
+    "@ds-mo/tokens": "^3.0.0",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19"
   },
@@ -122,7 +122,7 @@
     "@angular/forms": "^22.0.4",
     "@axe-core/playwright": "^4.12.1",
     "@ds-mo/icons": "^6.2.0",
-    "@ds-mo/tokens": "^2.15.0",
+    "@ds-mo/tokens": "^3.0.0",
     "@eslint/js": "^10.0.1",
     "@figma/code-connect": "^1.4.9",
     "@modelcontextprotocol/sdk": "^1.29.0",

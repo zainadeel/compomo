@@ -152,7 +152,7 @@ ds-text.menu-item__subtext {
   width: calc(var(--dimension-size-400) + var(--dimension-size-050));
   height: var(--dimension-size-250);
   border-radius: var(--dimension-radius-125);
-  background-color: var(--color-background-translucent);
+  background-color: var(--color-translucent-translucent);
   transition: background-color var(--effect-motion-short-2);
 }
 

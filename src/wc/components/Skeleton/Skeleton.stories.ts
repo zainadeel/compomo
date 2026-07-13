@@ -20,6 +20,17 @@ const TEXT_VARIANTS = [
 
 const ICON_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;
 const CONTROL_SIZES = ['xs', 'sm', 'md'] as const;
+const SURFACES = [
+  { value: 'default', background: 'var(--color-background-primary)' },
+  { value: 'on-medium-background', background: 'var(--color-background-medium-brand)' },
+  { value: 'on-bold-background', background: 'var(--color-background-bold-brand)' },
+  { value: 'on-strong-background', background: 'var(--color-background-strong-brand)' },
+  { value: 'on-translucent-background', background: 'var(--color-translucent-translucent)' },
+  { value: 'inverted', background: 'var(--color-inverted-background)' },
+  { value: 'media', background: 'var(--color-media-background)' },
+  { value: 'always-dark', background: 'var(--color-always-dark-background)' },
+  { value: 'navigation', background: 'var(--color-navigation-background)' },
+] as const;
 
 const REVIEW_STACK = 'display:flex;flex-direction:column;gap:var(--dimension-space-200);';
 const REVIEW_LABEL = 'display:block;width:auto;color:var(--color-foreground-secondary);';
@@ -33,7 +44,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Atomic loading placeholder whose outer canvas matches ds-text line heights, ds-icon canvases, or shared control-density heights. Text and icon shapes are inset by 2px per edge; controls fill their canvas. Surface shimmer uses --color-shimmer-fade as the base and --color-shimmer-highlight directly as the moving highlight.',
+          'Atomic loading placeholder whose outer canvas matches ds-text line heights, ds-icon canvases, or shared control-density heights. Text and icon shapes are inset by 2px per edge; controls fill their canvas. Its surface context selects a quaternary foreground token for the base and the matching semantic shimmer token for the moving band.',
       },
     },
   },
@@ -73,6 +84,11 @@ const meta: Meta = {
       control: 'boolean',
       description: 'Enables the shared tokenized shimmer animation.',
     },
+    surface: {
+      control: 'select',
+      options: SURFACES.map(surface => surface.value),
+      description: 'Surface context used to select the matching foreground base and shimmer tokens.',
+    },
   },
   args: {
     variant: 'text',
@@ -82,6 +98,7 @@ const meta: Meta = {
     width: '240px',
     rounded: false,
     shimmer: true,
+    surface: 'default',
   },
 };
 
@@ -101,6 +118,7 @@ export const Playground: Story = {
       width=${args['width']}
       ?rounded=${args['rounded']}
       ?shimmer=${args['shimmer']}
+      surface=${args['surface']}
     ></ds-skeleton>
   `,
 };
@@ -234,7 +252,7 @@ export const ShimmerStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Shimmer defaults on. The shape base is exactly --color-shimmer-fade; the moving band uses --color-shimmer-highlight directly with no added opacity or color underneath. A stationary paint layer animates an oversized background with a tokenized fixed spread and off-screen travel buffer, keeping the highlight consistent across sizes without exposing a moving layer boundary or beginning inside the shape. The 1000ms linear sweep holds off-screen for 300ms before repeating. Set shimmer=false for a static placeholder; reduced-motion preferences also remove animation automatically.',
+        story: 'Shimmer defaults on. The shape base uses the faintest foreground token for its surface context, while the moving band uses the corresponding semantic shimmer token with no added opacity or color underneath. A stationary paint layer animates an oversized background with a tokenized fixed spread and off-screen travel buffer. Set shimmer=false for a static placeholder; reduced-motion preferences also remove animation automatically.',
       },
     },
   },
@@ -248,6 +266,44 @@ export const ShimmerStates: Story = {
       <ds-skeleton variant="control" control-size="md" width="160px" rounded></ds-skeleton>
       <ds-text as="span" variant="text-body-small" color="secondary" style=${REVIEW_LABEL}>Static</ds-text>
       <ds-skeleton variant="control" control-size="md" width="160px" rounded ?shimmer=${false}></ds-skeleton>
+    </div>
+  `,
+};
+
+export const SurfaceContexts: Story = {
+  name: 'Surface contexts',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Every supported surface maps to its quaternary foreground token and matching shimmer token. Default covers primary, secondary, transparent, and all faint intent backgrounds.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--dimension-space-150);">
+      ${SURFACES.map(surface => html`
+        <div style="display:flex;flex-direction:column;gap:var(--dimension-space-050);">
+          <ds-text as="span" variant="text-caption" color="secondary">${surface.value}</ds-text>
+          <div
+            style="display:flex;flex-direction:column;gap:var(--dimension-space-100);padding:var(--dimension-space-200);background:${surface.background};border-radius:var(--dimension-radius-100);"
+          >
+            <ds-skeleton
+              variant="text"
+              text-variant="text-body-medium"
+              width="100%"
+              surface=${surface.value}
+            ></ds-skeleton>
+            <ds-skeleton
+              variant="control"
+              control-size="md"
+              width="60%"
+              rounded
+              surface=${surface.value}
+            ></ds-skeleton>
+          </div>
+        </div>
+      `)}
     </div>
   `,
 };
