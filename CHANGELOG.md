@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.0](https://github.com/zainadeel/compomo/compare/v4.1.2...v4.2.0) (2026-07-13)
+
+
+### Added
+
+* refactor skeleton and add shared shimmer ([f031634](https://github.com/zainadeel/compomo/commit/f0316349a871fbaf233dfeaea0a26bd199040e95))
+
 ## [4.1.2](https://github.com/zainadeel/compomo/compare/v4.1.1...v4.1.2) (2026-07-12)
 
 
