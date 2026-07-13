@@ -1,4 +1,5 @@
 @import '../../utils/typography.css';
+@import '../../utils/shimmer.css';
 
 :host {
   box-sizing: border-box;

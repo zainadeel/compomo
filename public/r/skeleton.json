@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "skeleton",
   "title": "Skeleton",
-  "description": "Loading placeholder with text, circular, and rectangular variants. Supports multi-line text and shimmer animation.",
+  "description": "Atomic loading placeholder with token-aligned text, icon, and control canvases. Supports optional shimmer, circular icons, and rounded controls.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,22 +13,32 @@
     "intent": null,
     "api": {
       "props": {
-        "height": {
-          "type": "string | number | undefined",
-          "resolvedType": "number | string | undefined",
-          "attribute": "height",
+        "controlSize": {
+          "type": "ControlSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "control-size",
+          "default": "'md'",
           "required": false,
           "mutable": false,
-          "description": "Height as a CSS value string or number (px)."
+          "description": "Shared control-density size whose height defines the control canvas."
         },
-        "lines": {
-          "type": "number",
-          "resolvedType": "number",
-          "attribute": "lines",
-          "default": "1",
+        "iconSize": {
+          "type": "IconSize",
+          "resolvedType": "\"2xl\" | \"3xl\" | \"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+          "attribute": "icon-size",
+          "default": "'md'",
           "required": false,
           "mutable": false,
-          "description": "Number of text lines. Only used when variant is 'text'."
+          "description": "Iconography token whose square canvas defines the icon canvas."
+        },
+        "rounded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "rounded",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Round icon skeletons into circles and control skeletons into pills. Ignored for text."
         },
         "shimmer": {
           "type": "boolean",
@@ -39,9 +49,18 @@
           "mutable": false,
           "description": "Whether to show the shimmer animation."
         },
+        "textVariant": {
+          "type": "TextVariant",
+          "resolvedType": "\"text-body-large\" | \"text-body-medium\" | \"text-body-small\" | \"text-caption\" | \"text-display-medium\" | \"text-display-small\" | \"text-title-large\" | \"text-title-medium\" | \"text-title-small\"",
+          "attribute": "text-variant",
+          "default": "'text-body-medium'",
+          "required": false,
+          "mutable": false,
+          "description": "Text metric recipe whose line-height defines the text canvas."
+        },
         "variant": {
           "type": "SkeletonVariant",
-          "resolvedType": "\"circular\" | \"rectangular\" | \"text\"",
+          "resolvedType": "\"control\" | \"icon\" | \"text\"",
           "attribute": "variant",
           "default": "'text'",
           "required": false,
@@ -53,7 +72,7 @@
           "attribute": "width",
           "required": false,
           "mutable": false,
-          "description": "Width as a CSS value string (e.g. '200px', '100%') or number (px)."
+          "description": "Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons."
         }
       },
       "events": [],
@@ -61,22 +80,32 @@
       "slots": []
     },
     "props": {
-      "height": {
-        "type": "string | number | undefined",
-        "resolvedType": "number | string | undefined",
-        "attribute": "height",
+      "controlSize": {
+        "type": "ControlSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "control-size",
+        "default": "'md'",
         "required": false,
         "mutable": false,
-        "description": "Height as a CSS value string or number (px)."
+        "description": "Shared control-density size whose height defines the control canvas."
       },
-      "lines": {
-        "type": "number",
-        "resolvedType": "number",
-        "attribute": "lines",
-        "default": "1",
+      "iconSize": {
+        "type": "IconSize",
+        "resolvedType": "\"2xl\" | \"3xl\" | \"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+        "attribute": "icon-size",
+        "default": "'md'",
         "required": false,
         "mutable": false,
-        "description": "Number of text lines. Only used when variant is 'text'."
+        "description": "Iconography token whose square canvas defines the icon canvas."
+      },
+      "rounded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "rounded",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Round icon skeletons into circles and control skeletons into pills. Ignored for text."
       },
       "shimmer": {
         "type": "boolean",
@@ -87,9 +116,18 @@
         "mutable": false,
         "description": "Whether to show the shimmer animation."
       },
+      "textVariant": {
+        "type": "TextVariant",
+        "resolvedType": "\"text-body-large\" | \"text-body-medium\" | \"text-body-small\" | \"text-caption\" | \"text-display-medium\" | \"text-display-small\" | \"text-title-large\" | \"text-title-medium\" | \"text-title-small\"",
+        "attribute": "text-variant",
+        "default": "'text-body-medium'",
+        "required": false,
+        "mutable": false,
+        "description": "Text metric recipe whose line-height defines the text canvas."
+      },
       "variant": {
         "type": "SkeletonVariant",
-        "resolvedType": "\"circular\" | \"rectangular\" | \"text\"",
+        "resolvedType": "\"control\" | \"icon\" | \"text\"",
         "attribute": "variant",
         "default": "'text'",
         "required": false,
@@ -101,7 +139,7 @@
         "attribute": "width",
         "required": false,
         "mutable": false,
-        "description": "Width as a CSS value string (e.g. '200px', '100%') or number (px)."
+        "description": "Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons."
       }
     },
     "events": [],
@@ -144,12 +182,17 @@
   "files": [
     {
       "path": "src/wc/components/Skeleton/Skeleton.css",
-      "content": ":host {\n  display: block;\n}\n\n:host(.skeleton),\n.skeleton {\n  background-color: var(--color-background-secondary);\n  position: relative;\n  overflow: hidden;\n}\n\n/* ── Variants ───────────────────────────────────────────────────────────── */\n\n:host(.text),\n.text {\n  height: var(--typography-fontsize-md);\n  border-radius: var(--dimension-radius-050);\n  width: 100%;\n}\n\n:host(.circular) {\n  width: var(--dimension-size-500);\n  height: var(--dimension-size-500);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.rectangular),\n.rectangular {\n  width: 100%;\n  height: var(--dimension-size-800, 80px);\n  border-radius: var(--dimension-radius-075);\n}\n\n/* ── Text group ─────────────────────────────────────────────────────────── */\n\n.text-group {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-075);\n}\n\n/* ── Shimmer ────────────────────────────────────────────────────────────── */\n\n:host(.animate),\n.animate {\n  overflow: hidden;\n  position: relative;\n}\n\n:host(.animate)::after,\n.animate::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(\n    90deg,\n    transparent 0%,\n    var(--color-interaction-hover) 50%,\n    transparent 100%\n  );\n  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;\n}\n\n@keyframes shimmer {\n  0%   { transform: translateX(-100%); }\n  100% { transform: translateX(100%); }\n}\n",
+      "content": "@import '../../utils/control-density.css';\n@import '../../utils/shimmer.css';\n\n:host {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  min-width: 0;\n  vertical-align: middle;\n}\n\n.skeleton__shape {\n  display: block;\n  width: 100%;\n  height: 100%;\n  flex: 0 0 auto;\n  background-color: var(--ds-shimmer-surface-base, var(--color-shimmer-fade));\n  border-radius: var(--dimension-radius-025);\n}\n\n/* ── Text ──────────────────────────────────────────────────────────────── */\n\n:host(.skeleton--text) {\n  width: 100%;\n  height: var(--ds-skeleton-canvas-size);\n  padding-block: var(--dimension-space-025);\n}\n\n:host(.skeleton--text) .skeleton__shape {\n  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n}\n\n:host(.skeleton--text-text-display-medium) { --ds-skeleton-canvas-size: var(--typography-lineheight-3xl); }\n:host(.skeleton--text-text-display-small)  { --ds-skeleton-canvas-size: var(--typography-lineheight-2xl); }\n:host(.skeleton--text-text-title-large)    { --ds-skeleton-canvas-size: var(--typography-lineheight-xl); }\n:host(.skeleton--text-text-title-medium),\n:host(.skeleton--text-text-body-large)     { --ds-skeleton-canvas-size: var(--typography-lineheight-lg); }\n:host(.skeleton--text-text-title-small),\n:host(.skeleton--text-text-body-medium)    { --ds-skeleton-canvas-size: var(--typography-lineheight-md); }\n:host(.skeleton--text-text-body-small)     { --ds-skeleton-canvas-size: var(--typography-lineheight-sm); }\n:host(.skeleton--text-text-caption)        { --ds-skeleton-canvas-size: var(--typography-lineheight-xs); }\n\n/* ── Icon ──────────────────────────────────────────────────────────────── */\n\n:host(.skeleton--icon) {\n  width: var(--ds-skeleton-canvas-size);\n  height: var(--ds-skeleton-canvas-size);\n  padding: var(--dimension-space-025);\n}\n\n:host(.skeleton--icon) .skeleton__shape {\n  width: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n}\n\n:host(.skeleton--icon.skeleton--rounded) .skeleton__shape {\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.skeleton--icon-xs)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xs); }\n:host(.skeleton--icon-sm)  { --ds-skeleton-canvas-size: var(--dimension-iconography-sm); }\n:host(.skeleton--icon-md)  { --ds-skeleton-canvas-size: var(--dimension-iconography-md); }\n:host(.skeleton--icon-lg)  { --ds-skeleton-canvas-size: var(--dimension-iconography-lg); }\n:host(.skeleton--icon-xl)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xl); }\n:host(.skeleton--icon-2xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-2xl); }\n:host(.skeleton--icon-3xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-3xl); }\n\n/* ── Control ───────────────────────────────────────────────────────────── */\n\n:host(.skeleton--control) {\n  width: 100%;\n  height: var(--ds-control-height);\n}\n\n:host(.skeleton--control.skeleton--rounded) .skeleton__shape {\n  border-radius: var(--dimension-radius-half);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Skeleton/Skeleton.stories 2.ts",
+      "content": "import type { Meta, StoryObj } from '@storybook/web-components';\nimport { html } from 'lit';\nimport '../../../../dist/components/ds-skeleton.js';\nimport '../../../../dist/components/ds-text.js';\n\nconst TEXT_VARIANTS = [\n  'text-display-medium',\n  'text-display-small',\n  'text-title-large',\n  'text-title-medium',\n  'text-title-small',\n  'text-body-large',\n  'text-body-medium',\n  'text-body-small',\n  'text-caption',\n] as const;\n\nconst ICON_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;\nconst CONTROL_SIZES = ['xs', 'sm', 'md'] as const;\n\nconst meta: Meta = {\n  title: 'Primitives/Skeleton',\n  tags: ['autodocs'],\n  argTypes: {\n    variant: { control: 'select', options: ['text', 'icon', 'control'] },\n    textVariant: { control: 'select', options: TEXT_VARIANTS },\n    iconSize: { control: 'select', options: ICON_SIZES },\n    controlSize: { control: 'select', options: CONTROL_SIZES },\n    width: { control: 'text' },\n    rounded: { control: 'boolean' },\n    shimmer: { control: 'boolean' },\n  },\n  args: {\n    variant: 'text',\n    textVariant: 'text-body-medium',\n    iconSize: 'md',\n    controlSize: 'md',\n    width: '240px',\n    rounded: false,\n    shimmer: true,\n  },\n};\n\nexport default meta;\ntype Story = StoryObj;\n\nexport const Playground: Story = {\n  render: args => html`\n    <ds-skeleton\n      variant=${args['variant']}\n      text-variant=${args['textVariant']}\n      icon-size=${args['iconSize']}\n      control-size=${args['controlSize']}\n      width=${args['width']}\n      ?rounded=${args['rounded']}\n      ?shimmer=${args['shimmer']}\n    ></ds-skeleton>\n  `,\n};\n\nexport const TextCanvases: Story = {\n  name: 'Text canvases',\n  render: () => html`\n    <div style=\"display: flex; flex-direction: column; gap: var(--dimension-space-100); width: 420px;\">\n      ${TEXT_VARIANTS.map(variant => html`\n        <div style=\"display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: var(--dimension-space-200);\">\n          <ds-text variant=\"text-body-small\" color=\"secondary\">${variant}</ds-text>\n          <ds-skeleton variant=\"text\" text-variant=${variant} width=\"100%\"></ds-skeleton>\n        </div>\n      `)}\n    </div>\n  `,\n};\n\nexport const ComposedTextLines: Story = {\n  name: 'Composed text lines',\n  render: () => html`\n    <div style=\"display: flex; flex-direction: column; width: 320px;\">\n      <ds-skeleton variant=\"text\" text-variant=\"text-body-medium\" width=\"100%\"></ds-skeleton>\n      <ds-skeleton variant=\"text\" text-variant=\"text-body-medium\" width=\"88%\"></ds-skeleton>\n      <ds-skeleton variant=\"text\" text-variant=\"text-body-medium\" width=\"60%\"></ds-skeleton>\n    </div>\n  `,\n};\n\nexport const IconCanvases: Story = {\n  name: 'Icon canvases',\n  render: () => html`\n    <div style=\"display: flex; align-items: flex-end; gap: var(--dimension-space-200);\">\n      ${ICON_SIZES.map(size => html`\n        <div style=\"display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075);\">\n          <ds-skeleton variant=\"icon\" icon-size=${size}></ds-skeleton>\n          <ds-text variant=\"text-body-small\" color=\"secondary\">${size}</ds-text>\n        </div>\n      `)}\n    </div>\n  `,\n};\n\nexport const ControlCanvases: Story = {\n  name: 'Control canvases',\n  render: () => html`\n    <div style=\"display: flex; flex-direction: column; align-items: flex-start; gap: var(--dimension-space-150);\">\n      ${CONTROL_SIZES.map(size => html`\n        <div style=\"display: flex; align-items: center; gap: var(--dimension-space-200);\">\n          <ds-text variant=\"text-body-small\" color=\"secondary\" style=\"width: 24px;\">${size}</ds-text>\n          <ds-skeleton variant=\"control\" control-size=${size} width=\"160px\"></ds-skeleton>\n          <ds-skeleton variant=\"control\" control-size=${size} width=\"96px\" rounded></ds-skeleton>\n        </div>\n      `)}\n    </div>\n  `,\n};\n\nexport const Composition: Story = {\n  render: () => html`\n    <div style=\"display: flex; align-items: flex-start; gap: var(--dimension-space-150); width: 360px; padding: var(--dimension-space-200); border: var(--dimension-stroke-width-015) solid var(--color-border-secondary); border-radius: var(--dimension-radius-150);\">\n      <ds-skeleton variant=\"icon\" icon-size=\"md\"></ds-skeleton>\n      <div style=\"display: flex; flex: 1; flex-direction: column; gap: var(--dimension-space-100);\">\n        <div style=\"display: flex; flex-direction: column;\">\n          <ds-skeleton variant=\"text\" text-variant=\"text-body-medium\" width=\"72%\"></ds-skeleton>\n          <ds-skeleton variant=\"text\" text-variant=\"text-body-small\" width=\"48%\"></ds-skeleton>\n        </div>\n        <ds-skeleton variant=\"control\" control-size=\"sm\" width=\"96px\" rounded></ds-skeleton>\n      </div>\n    </div>\n  `,\n};\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Skeleton/Skeleton.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type SkeletonVariant = 'text' | 'circular' | 'rectangular';\n\n@Component({\n  tag: 'ds-skeleton',\n  styleUrl: 'Skeleton.css',\n  shadow: true,\n})\nexport class Skeleton {\n  @Prop() variant: SkeletonVariant = 'text';\n  /** Width as a CSS value string (e.g. '200px', '100%') or number (px). */\n  @Prop() width: string | number | undefined;\n  /** Height as a CSS value string or number (px). */\n  @Prop() height: string | number | undefined;\n  /** Number of text lines. Only used when variant is 'text'. */\n  @Prop() lines: number = 1;\n  /** Whether to show the shimmer animation. */\n  @Prop() shimmer: boolean = true;\n\n  private get widthCss() {\n    const v = this.width;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  private get heightCss() {\n    const v = this.height;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  render() {\n    if (this.variant === 'text' && this.lines > 1) {\n      return (\n        <Host aria-hidden=\"true\" style={{ width: this.widthCss }}>\n          <div class=\"text-group\">\n            {Array.from({ length: this.lines }, (_, lineIdx) => (\n              <div\n                class={{ skeleton: true, text: true, animate: this.shimmer }}\n                style={{\n                  width: lineIdx === this.lines - 1 ? '60%' : '100%',\n                  height: this.heightCss,\n                }}\n              />\n            ))}\n          </div>\n        </Host>\n      );\n    }\n\n    return (\n      <Host\n        aria-hidden=\"true\"\n        class={{\n          skeleton: true,\n          [this.variant]: true,\n          animate: this.shimmer,\n        }}\n        style={{ width: this.widthCss, height: this.heightCss }}\n      />\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { IconSize } from '../Icon/Icon';\nimport type { TextVariant } from '../Text/text-types';\nimport type { ControlSize } from '../../utils/control-text';\n\nexport type SkeletonVariant = 'text' | 'icon' | 'control';\n\n@Component({\n  tag: 'ds-skeleton',\n  styleUrl: 'Skeleton.css',\n  shadow: true,\n})\nexport class Skeleton {\n  @Prop() variant: SkeletonVariant = 'text';\n  /** Text metric recipe whose line-height defines the text canvas. */\n  @Prop() textVariant: TextVariant = 'text-body-medium';\n  /** Iconography token whose square canvas defines the icon canvas. */\n  @Prop() iconSize: IconSize = 'md';\n  /** Shared control-density size whose height defines the control canvas. */\n  @Prop() controlSize: ControlSize = 'md';\n  /** Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons. */\n  @Prop() width: string | number | undefined;\n  /** Round icon skeletons into circles and control skeletons into pills. Ignored for text. */\n  @Prop() rounded: boolean = false;\n  /** Whether to show the shimmer animation. */\n  @Prop() shimmer: boolean = true;\n\n  private get widthCss() {\n    const v = this.width;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  render() {\n    return (\n      <Host\n        aria-hidden=\"true\"\n        class={{\n          'skeleton': true,\n          [`skeleton--${this.variant}`]: true,\n          [`skeleton--text-${this.textVariant}`]: this.variant === 'text',\n          [`skeleton--icon-${this.iconSize}`]: this.variant === 'icon',\n          [`ds-control--${this.controlSize}`]: this.variant === 'control',\n          'skeleton--rounded': this.variant !== 'text' && this.rounded,\n        }}\n        style={this.variant === 'icon' ? undefined : { width: this.widthCss }}\n      >\n        <span\n          class={{\n            'skeleton__shape': true,\n            'ds-shimmer-surface': this.shimmer,\n          }}\n        />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

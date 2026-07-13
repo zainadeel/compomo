@@ -1,0 +1,112 @@
+/*
+ * Shared shimmer paint recipes.
+ *
+ * Text animates a clipped background because the real glyphs are the mask.
+ * Surfaces animate an oversized background inside a stationary pseudo-element,
+ * so no moving layer boundary can cross a skeleton shape.
+ */
+
+@keyframes ds-shimmer-text-motion {
+  0% { background-position: 100% 0; }
+  76.923% { background-position: 0 0; }
+  100% { background-position: 0 0; }
+}
+
+@keyframes ds-shimmer-surface-motion {
+  0% { background-position: 100% 0; }
+  76.923% { background-position: 0 0; }
+  100% { background-position: 0 0; }
+}
+
+.ds-shimmer-text {
+  --ds-shimmer-base: currentColor;
+  --ds-shimmer-highlight: var(--color-shimmer-highlight);
+  --ds-shimmer-duration: var(--effect-animation-duration-long-2);
+  --ds-shimmer-repeat-delay: var(--effect-animation-delay-short-2);
+  --ds-shimmer-cycle-duration: calc(
+    var(--ds-shimmer-duration) + var(--ds-shimmer-repeat-delay)
+  );
+  --ds-shimmer-easing: var(--effect-animation-easing-linear);
+  --ds-shimmer-spread: var(--dimension-size-500);
+  --ds-shimmer-travel: calc(
+    var(--dimension-size-800) + var(--dimension-size-500) + var(--dimension-size-200)
+  );
+
+  background-color: var(--ds-shimmer-base);
+  background-image: linear-gradient(
+    330deg,
+    transparent calc(50% - var(--ds-shimmer-spread)),
+    var(--ds-shimmer-highlight) 50%,
+    transparent calc(50% + var(--ds-shimmer-spread))
+  );
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-size: calc(
+    200% + var(--ds-shimmer-spread) * 2 + var(--ds-shimmer-travel) * 2
+  ) 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ds-shimmer-text-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing) infinite;
+}
+
+.ds-shimmer-surface {
+  --ds-shimmer-surface-base: var(--color-shimmer-fade);
+  --ds-shimmer-highlight: var(--color-shimmer-highlight);
+  --ds-shimmer-duration: var(--effect-animation-duration-long-2);
+  --ds-shimmer-repeat-delay: var(--effect-animation-delay-short-2);
+  --ds-shimmer-cycle-duration: calc(
+    var(--ds-shimmer-duration) + var(--ds-shimmer-repeat-delay)
+  );
+  --ds-shimmer-easing: var(--effect-animation-easing-linear);
+  --ds-shimmer-spread: var(--dimension-size-500);
+  --ds-shimmer-travel: calc(
+    var(--dimension-size-800) + var(--dimension-size-500) + var(--dimension-size-200)
+  );
+
+  position: relative;
+  overflow: hidden;
+  background-color: var(--ds-shimmer-surface-base);
+}
+
+.ds-shimmer-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    330deg,
+    transparent calc(50% - var(--ds-shimmer-spread)),
+    var(--ds-shimmer-highlight) 50%,
+    transparent calc(50% + var(--ds-shimmer-spread))
+  );
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-size: calc(
+    200% + var(--ds-shimmer-spread) * 2 + var(--ds-shimmer-travel) * 2
+  ) 100%;
+  animation: ds-shimmer-surface-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing) infinite;
+}
+
+:where([dir='rtl'], [dir='rtl'] *) .ds-shimmer-text,
+:where([dir='rtl'], [dir='rtl'] *) .ds-shimmer-surface::after {
+  animation-direction: reverse;
+}
+
+:host-context([dir='rtl']) .ds-shimmer-text,
+:host-context([dir='rtl']) .ds-shimmer-surface::after {
+  animation-direction: reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-shimmer-text {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  .ds-shimmer-surface::after {
+    display: none;
+    animation: none;
+  }
+}

@@ -116,22 +116,6 @@
   background-color: var(--color-background-primary);
 }
 
-/* ─── Loading skeleton ──────────────────────────────────────────────────────── */
-
-.skeleton {
-  height: var(--typography-fontsize-md);
-  width: 60%;
-  background-color: var(--color-background-translucent);
-  border-radius: var(--dimension-radius-050);
-  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;
-}
-
-@keyframes shimmer {
-  0%   { opacity: 0.5; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.5; }
-}
-
 /* ─── Pagination ────────────────────────────────────────────────────────────── */
 
 .table-pagination {

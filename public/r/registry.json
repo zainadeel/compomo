@@ -2569,7 +2569,7 @@
     {
       "name": "skeleton",
       "title": "Skeleton",
-      "description": "Loading placeholder with text, circular, and rectangular variants. Supports multi-line text and shimmer animation.",
+      "description": "Atomic loading placeholder with token-aligned text, icon, and control canvases. Supports optional shimmer, circular icons, and rounded controls.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2579,16 +2579,24 @@
         "intentStatus": "migration-pending",
         "intent": null,
         "props": {
-          "height": {
-            "type": "string | number | undefined",
+          "controlSize": {
+            "type": "ControlSize",
             "required": false
           },
-          "lines": {
-            "type": "number",
+          "iconSize": {
+            "type": "IconSize",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
             "required": false
           },
           "shimmer": {
             "type": "boolean",
+            "required": false
+          },
+          "textVariant": {
+            "type": "TextVariant",
             "required": false
           },
           "variant": {
@@ -2905,6 +2913,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },
@@ -2965,7 +2974,7 @@
     {
       "name": "text",
       "title": "Text",
-      "description": "Typography primitive supporting all design-system text variants, colors, truncation, and wrapping.",
+      "description": "Typography primitive supporting all design-system text variants, colors, truncation, wrapping, and optional loading shimmer.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3009,6 +3018,10 @@
           },
           "lineTruncation": {
             "type": "LineTruncation",
+            "required": false
+          },
+          "shimmer": {
+            "type": "boolean",
             "required": false
           },
           "textId": {

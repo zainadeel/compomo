@@ -1,6 +1,9 @@
 import { Component, Prop, h, Host } from '@stencil/core';
+import type { IconSize } from '../Icon/Icon';
+import type { TextVariant } from '../Text/text-types';
+import type { ControlSize } from '../../utils/control-text';
 
-export type SkeletonVariant = 'text' | 'circular' | 'rectangular';
+export type SkeletonVariant = 'text' | 'icon' | 'control';
 
 @Component({
   tag: 'ds-skeleton',
@@ -9,12 +12,16 @@ export type SkeletonVariant = 'text' | 'circular' | 'rectangular';
 })
 export class Skeleton {
   @Prop() variant: SkeletonVariant = 'text';
-  /** Width as a CSS value string (e.g. '200px', '100%') or number (px). */
+  /** Text metric recipe whose line-height defines the text canvas. */
+  @Prop() textVariant: TextVariant = 'text-body-medium';
+  /** Iconography token whose square canvas defines the icon canvas. */
+  @Prop() iconSize: IconSize = 'md';
+  /** Shared control-density size whose height defines the control canvas. */
+  @Prop() controlSize: ControlSize = 'md';
+  /** Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons. */
   @Prop() width: string | number | undefined;
-  /** Height as a CSS value string or number (px). */
-  @Prop() height: string | number | undefined;
-  /** Number of text lines. Only used when variant is 'text'. */
-  @Prop() lines: number = 1;
+  /** Round icon skeletons into circles and control skeletons into pills. Ignored for text. */
+  @Prop() rounded: boolean = false;
   /** Whether to show the shimmer animation. */
   @Prop() shimmer: boolean = true;
 
@@ -24,41 +31,27 @@ export class Skeleton {
     return typeof v === 'number' ? `${v}px` : v;
   }
 
-  private get heightCss() {
-    const v = this.height;
-    if (v == null) return undefined;
-    return typeof v === 'number' ? `${v}px` : v;
-  }
-
   render() {
-    if (this.variant === 'text' && this.lines > 1) {
-      return (
-        <Host aria-hidden="true" style={{ width: this.widthCss }}>
-          <div class="text-group">
-            {Array.from({ length: this.lines }, (_, lineIdx) => (
-              <div
-                class={{ skeleton: true, text: true, animate: this.shimmer }}
-                style={{
-                  width: lineIdx === this.lines - 1 ? '60%' : '100%',
-                  height: this.heightCss,
-                }}
-              />
-            ))}
-          </div>
-        </Host>
-      );
-    }
-
     return (
       <Host
         aria-hidden="true"
         class={{
-          skeleton: true,
-          [this.variant]: true,
-          animate: this.shimmer,
+          'skeleton': true,
+          [`skeleton--${this.variant}`]: true,
+          [`skeleton--text-${this.textVariant}`]: this.variant === 'text',
+          [`skeleton--icon-${this.iconSize}`]: this.variant === 'icon',
+          [`ds-control--${this.controlSize}`]: this.variant === 'control',
+          'skeleton--rounded': this.variant !== 'text' && this.rounded,
         }}
-        style={{ width: this.widthCss, height: this.heightCss }}
-      />
+        style={this.variant === 'icon' ? undefined : { width: this.widthCss }}
+      >
+        <span
+          class={{
+            'skeleton__shape': true,
+            'ds-shimmer-surface': this.shimmer,
+          }}
+        />
+      </Host>
     );
   }
 }

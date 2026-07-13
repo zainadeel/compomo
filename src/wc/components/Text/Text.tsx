@@ -28,6 +28,8 @@ export class Text {
   @Prop() color: TextColor | undefined;
   @Prop() decoration: TextDecoration | undefined;
   @Prop() italic: boolean = false;
+  /** Animate the visible glyphs with the shared loading shimmer treatment. */
+  @Prop() shimmer: boolean = false;
   @Prop() align: TextAlign | undefined;
   @Prop() lineTruncation: LineTruncation = 'none';
   @Prop() wrap: TextWrap | undefined;
@@ -90,7 +92,13 @@ export class Text {
 
     return (
       <Host class={cls} style={style}>
-        <Tag class="ds-text__element" {...extraProps}>
+        <Tag
+          class={{
+            'ds-text__element': true,
+            'ds-shimmer-text': this.shimmer,
+          }}
+          {...extraProps}
+        >
           <slot />
         </Tag>
       </Host>
