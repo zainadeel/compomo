@@ -82,6 +82,9 @@ export function componentSourceFiles(component, root = ROOT) {
   return fs.readdirSync(absoluteDirectory)
     .filter(filename =>
       (filename.endsWith('.tsx') || filename.endsWith('.ts') || filename.endsWith('.css')) &&
+      // Apple File Provider/iCloud collision copies use names such as
+      // `Component.stories 2.ts`. They are not authored component artifacts.
+      !/ \d+\.(?:tsx?|css)$/.test(filename) &&
       !filename.endsWith('.stories.ts') &&
       !filename.endsWith('.stories.tsx') &&
       filename !== 'index.ts'

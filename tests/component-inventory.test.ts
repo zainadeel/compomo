@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {
+  componentSourceFiles,
   discoverComponents,
   validateAuthoredArtifacts,
   validateRegistryCoverage,
@@ -54,6 +55,22 @@ describe('source-derived component inventory', () => {
     const errors = validateAuthoredArtifacts({ root, components: discoverComponents(root), checkAdapters: false });
     assert.ok(errors.some(error => error.includes('NewWidget.stories.ts')));
     assert.ok(errors.some(error => error.includes('NewWidget.agent.json')));
+  });
+
+  it('excludes numbered File Provider collision copies from registry source files', () => {
+    const root = fixtureRoot();
+    writeComponent(root, 'NewWidget', 'ds-new-widget');
+    const componentDirectory = path.join(root, 'src/wc/components/NewWidget');
+    fs.writeFileSync(path.join(componentDirectory, 'NewWidget.helper.ts'), 'export const helper = true;');
+    fs.writeFileSync(path.join(componentDirectory, 'NewWidget.helper 2.ts'), 'export const stale = true;');
+    fs.writeFileSync(path.join(componentDirectory, 'NewWidget.stories 2.ts'), 'export const staleStory = true;');
+
+    const [component] = discoverComponents(root);
+    assert.deepEqual(componentSourceFiles(component, root), [
+      'src/wc/components/NewWidget/NewWidget.css',
+      'src/wc/components/NewWidget/NewWidget.helper.ts',
+      'src/wc/components/NewWidget/NewWidget.tsx',
+    ]);
   });
 
   it('allows only explicit migration and artifact exceptions', () => {

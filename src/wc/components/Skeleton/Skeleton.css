@@ -1,67 +1,78 @@
+@import '../../utils/control-density.css';
+@import '../../utils/shimmer.css';
+
 :host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.skeleton__shape {
   display: block;
-}
-
-:host(.skeleton),
-.skeleton {
-  background-color: var(--color-background-secondary);
-  position: relative;
-  overflow: hidden;
-}
-
-/* ── Variants ───────────────────────────────────────────────────────────── */
-
-:host(.text),
-.text {
-  height: var(--typography-fontsize-md);
-  border-radius: var(--dimension-radius-050);
   width: 100%;
+  height: 100%;
+  flex: 0 0 auto;
+  background-color: var(--ds-shimmer-surface-base, var(--color-shimmer-fade));
+  border-radius: var(--dimension-radius-025);
 }
 
-:host(.circular) {
-  width: var(--dimension-size-500);
-  height: var(--dimension-size-500);
+/* ── Text ──────────────────────────────────────────────────────────────── */
+
+:host(.skeleton--text) {
+  width: 100%;
+  height: var(--ds-skeleton-canvas-size);
+  padding-block: var(--dimension-space-025);
+}
+
+:host(.skeleton--text) .skeleton__shape {
+  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));
+}
+
+:host(.skeleton--text-text-display-medium) { --ds-skeleton-canvas-size: var(--typography-lineheight-3xl); }
+:host(.skeleton--text-text-display-small)  { --ds-skeleton-canvas-size: var(--typography-lineheight-2xl); }
+:host(.skeleton--text-text-title-large)    { --ds-skeleton-canvas-size: var(--typography-lineheight-xl); }
+:host(.skeleton--text-text-title-medium),
+:host(.skeleton--text-text-body-large)     { --ds-skeleton-canvas-size: var(--typography-lineheight-lg); }
+:host(.skeleton--text-text-title-small),
+:host(.skeleton--text-text-body-medium)    { --ds-skeleton-canvas-size: var(--typography-lineheight-md); }
+:host(.skeleton--text-text-body-small)     { --ds-skeleton-canvas-size: var(--typography-lineheight-sm); }
+:host(.skeleton--text-text-caption)        { --ds-skeleton-canvas-size: var(--typography-lineheight-xs); }
+
+/* ── Icon ──────────────────────────────────────────────────────────────── */
+
+:host(.skeleton--icon) {
+  width: var(--ds-skeleton-canvas-size);
+  height: var(--ds-skeleton-canvas-size);
+  padding: var(--dimension-space-025);
+}
+
+:host(.skeleton--icon) .skeleton__shape {
+  width: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));
+  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));
+}
+
+:host(.skeleton--icon.skeleton--rounded) .skeleton__shape {
   border-radius: var(--dimension-radius-half);
 }
 
-:host(.rectangular),
-.rectangular {
+:host(.skeleton--icon-xs)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xs); }
+:host(.skeleton--icon-sm)  { --ds-skeleton-canvas-size: var(--dimension-iconography-sm); }
+:host(.skeleton--icon-md)  { --ds-skeleton-canvas-size: var(--dimension-iconography-md); }
+:host(.skeleton--icon-lg)  { --ds-skeleton-canvas-size: var(--dimension-iconography-lg); }
+:host(.skeleton--icon-xl)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xl); }
+:host(.skeleton--icon-2xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-2xl); }
+:host(.skeleton--icon-3xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-3xl); }
+
+/* ── Control ───────────────────────────────────────────────────────────── */
+
+:host(.skeleton--control) {
   width: 100%;
-  height: var(--dimension-size-800, 80px);
-  border-radius: var(--dimension-radius-075);
+  height: var(--ds-control-height);
 }
 
-/* ── Text group ─────────────────────────────────────────────────────────── */
-
-.text-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--dimension-space-075);
-}
-
-/* ── Shimmer ────────────────────────────────────────────────────────────── */
-
-:host(.animate),
-.animate {
-  overflow: hidden;
-  position: relative;
-}
-
-:host(.animate)::after,
-.animate::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--color-interaction-hover) 50%,
-    transparent 100%
-  );
-  animation: shimmer var(--effect-animation-duration-long-2) var(--effect-animation-easing-ease-in-out) infinite;
-}
-
-@keyframes shimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+:host(.skeleton--control.skeleton--rounded) .skeleton__shape {
+  border-radius: var(--dimension-radius-half);
 }

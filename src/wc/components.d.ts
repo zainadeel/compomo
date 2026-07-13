@@ -33,12 +33,14 @@ import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonVariant } from "./components/Skeleton/Skeleton";
+import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
+import { IconSize as IconSize1 } from "./components/Icon/Icon";
+import { ControlSize } from "./utils/control-text";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
-import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { NavChromeStyle } from "./nav/nav-chrome";
 export { ShellGradientPreset } from "./nav/shell-gradient-presets";
@@ -68,12 +70,14 @@ export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonVariant } from "./components/Skeleton/Skeleton";
+export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
+export { IconSize as IconSize1 } from "./components/Icon/Icon";
+export { ControlSize } from "./utils/control-text";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
-export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAppShell {
@@ -1084,25 +1088,36 @@ export namespace Components {
     }
     interface DsSkeleton {
         /**
-          * Height as a CSS value string or number (px).
+          * Shared control-density size whose height defines the control canvas.
+          * @default 'md'
          */
-        "height": string | number | undefined;
+        "controlSize": ControlSize;
         /**
-          * Number of text lines. Only used when variant is 'text'.
-          * @default 1
+          * Iconography token whose square canvas defines the icon canvas.
+          * @default 'md'
          */
-        "lines": number;
+        "iconSize": IconSize1;
+        /**
+          * Round icon skeletons into circles and control skeletons into pills. Ignored for text.
+          * @default false
+         */
+        "rounded": boolean;
         /**
           * Whether to show the shimmer animation.
           * @default true
          */
         "shimmer": boolean;
         /**
+          * Text metric recipe whose line-height defines the text canvas.
+          * @default 'text-body-medium'
+         */
+        "textVariant": TextVariant;
+        /**
           * @default 'text'
          */
         "variant": SkeletonVariant;
         /**
-          * Width as a CSS value string (e.g. '200px', '100%') or number (px).
+          * Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons.
          */
         "width": string | number | undefined;
     }
@@ -1286,6 +1301,11 @@ export namespace Components {
           * @default 'none'
          */
         "lineTruncation": LineTruncation;
+        /**
+          * Animate the visible glyphs with the shared loading shimmer treatment.
+          * @default false
+         */
+        "shimmer": boolean;
         /**
           * Forwarded to the inner element (e.g. aria-labelledby targets).
          */
@@ -3221,25 +3241,36 @@ declare namespace LocalJSX {
     }
     interface DsSkeleton {
         /**
-          * Height as a CSS value string or number (px).
+          * Shared control-density size whose height defines the control canvas.
+          * @default 'md'
          */
-        "height"?: string | number | undefined;
+        "controlSize"?: ControlSize;
         /**
-          * Number of text lines. Only used when variant is 'text'.
-          * @default 1
+          * Iconography token whose square canvas defines the icon canvas.
+          * @default 'md'
          */
-        "lines"?: number;
+        "iconSize"?: IconSize1;
+        /**
+          * Round icon skeletons into circles and control skeletons into pills. Ignored for text.
+          * @default false
+         */
+        "rounded"?: boolean;
         /**
           * Whether to show the shimmer animation.
           * @default true
          */
         "shimmer"?: boolean;
         /**
+          * Text metric recipe whose line-height defines the text canvas.
+          * @default 'text-body-medium'
+         */
+        "textVariant"?: TextVariant;
+        /**
           * @default 'text'
          */
         "variant"?: SkeletonVariant;
         /**
-          * Width as a CSS value string (e.g. '200px', '100%') or number (px).
+          * Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons.
          */
         "width"?: string | number | undefined;
     }
@@ -3430,6 +3461,11 @@ declare namespace LocalJSX {
           * @default 'none'
          */
         "lineTruncation"?: LineTruncation;
+        /**
+          * Animate the visible glyphs with the shared loading shimmer treatment.
+          * @default false
+         */
+        "shimmer"?: boolean;
         /**
           * Forwarded to the inner element (e.g. aria-labelledby targets).
          */
@@ -3825,9 +3861,11 @@ declare namespace LocalJSX {
     }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
+        "textVariant": TextVariant;
+        "iconSize": IconSize;
+        "controlSize": ControlSize;
         "width": string;
-        "height": string;
-        "lines": number;
+        "rounded": boolean;
         "shimmer": boolean;
     }
     interface DsSliderAttributes {
@@ -3882,6 +3920,7 @@ declare namespace LocalJSX {
         "color": TextColor | undefined;
         "decoration": TextDecoration | undefined;
         "italic": boolean;
+        "shimmer": boolean;
         "align": TextAlign | undefined;
         "lineTruncation": string;
         "wrap": TextWrap | undefined;

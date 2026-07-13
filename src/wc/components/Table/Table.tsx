@@ -179,7 +179,7 @@ export class Table {
                 >
                   {visibleCols.map(col => (
                     <div key={col.id} class="cell" role="cell">
-                      <div class="skeleton" />
+                      <ds-skeleton variant="text" width="60%" />
                     </div>
                   ))}
                 </div>

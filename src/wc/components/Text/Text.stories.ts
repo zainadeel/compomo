@@ -34,6 +34,7 @@ const meta: Meta = {
     decoration:    { control: 'select', options: ['none', 'underline', 'dotted-underline'] },
     fontFeature:   { control: 'select', options: ['normal', 'tabular-nums'] },
     italic:        { control: 'boolean' },
+    shimmer:       { control: 'boolean' },
     lineTruncation:{ control: 'select', options: [1, 2, 3, 4, 5, 'none'] },
     wrap:          { control: 'select', options: ['wrap', 'nowrap', 'balance', 'pretty'] },
     for:           { control: 'text' },
@@ -48,6 +49,7 @@ const meta: Meta = {
     decoration: 'none',
     fontFeature: 'normal',
     italic: false,
+    shimmer: false,
     lineTruncation: 'none',
     wrap: 'wrap',
     for: '',
@@ -73,8 +75,19 @@ export const Playground: Story = {
         wrap=${args['wrap']}
         for=${args['for'] || undefined}
         ?italic=${args['italic']}
+        ?shimmer=${args['shimmer']}
       >
         ${args['content']}
+      </ds-text>
+    </div>
+  `,
+};
+
+export const Shimmer: Story = {
+  render: () => html`
+    <div role="status">
+      <ds-text variant="text-body-medium" color="secondary" shimmer>
+        Generating response…
       </ds-text>
     </div>
   `,

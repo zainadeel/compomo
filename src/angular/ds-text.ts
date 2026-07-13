@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsText } from '@ds-mo/ui/components/ds-tex
 
 @ProxyCmp({
   defineCustomElementFn: defineDsText,
-  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'textId', 'variant', 'wrap']
+  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'shimmer', 'textId', 'variant', 'wrap']
 })
 @Component({
   selector: 'ds-text',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'textId', 'variant', 'wrap'],
+  inputs: ['align', 'as', 'color', 'decoration', 'emphasis', 'fontFeature', 'for', 'italic', 'lineTruncation', 'shimmer', 'textId', 'variant', 'wrap'],
 })
 export class DsText {
   protected el: HTMLDsTextElement;
