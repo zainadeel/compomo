@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/zainadeel/compomo/compare/v5.0.0...v6.0.0) (2026-07-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* replace toggle and harden overlays ([#318](https://github.com/zainadeel/compomo/issues/318))
+
+### Added
+
+* replace toggle and harden overlays ([#318](https://github.com/zainadeel/compomo/issues/318)) ([7cc6fdd](https://github.com/zainadeel/compomo/commit/7cc6fdd4cded39e7f6510515d7423e9fe61b409d))
+
 ## [5.0.0](https://github.com/zainadeel/compomo/compare/v4.2.0...v5.0.0) (2026-07-13)
 
 
