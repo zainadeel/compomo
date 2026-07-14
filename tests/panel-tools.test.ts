@@ -1,7 +1,14 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { PANEL_TOOLS_FOOTER_TOOL_ID, PANEL_TOOLS_LABELS, PANEL_TOOLS_PRIMARY_TOOL_ID, PANEL_TOOLS_SHORTCUTS, PANEL_TOOLS_TOOL_IDS } from '../src/wc/components/PanelTools/panel-tools-types';
-import { isPanelToolsToolId, orderPanelToolsItems, panelToolsDrawerResting, reconcilePanelToolsAvailability, resolvePanelToolActivation } from '../src/wc/components/PanelTools/panel-tools-utils';
+import {
+  isPanelToolsToolId,
+  orderPanelToolsItems,
+  panelToolsDrawerResting,
+  panelToolsDrawerTransitionMs,
+  reconcilePanelToolsAvailability,
+  resolvePanelToolActivation,
+} from '../src/wc/components/PanelTools/panel-tools-utils';
 
 describe('PANEL_TOOLS_TOOL_IDS', () => {
   it('lists search, agents, messages, stacks, activity, and help', () => {
@@ -103,6 +110,38 @@ describe('panelToolsDrawerResting', () => {
     assert.equal(panelToolsDrawerResting(false, 'opening'), false);
     assert.equal(panelToolsDrawerResting(false, 'closing'), false);
     assert.equal(panelToolsDrawerResting(true, 'opening'), false);
+  });
+});
+
+describe('panelToolsDrawerTransitionMs', () => {
+  it('resolves the max-width transition including delay', () => {
+    assert.equal(
+      panelToolsDrawerTransitionMs({
+        transitionProperty: 'opacity, max-width',
+        transitionDuration: '50ms, 0.3s',
+        transitionDelay: '0ms, 25ms',
+      }),
+      325,
+    );
+  });
+
+  it('supports all, repeated timing lists, and instant transitions', () => {
+    assert.equal(
+      panelToolsDrawerTransitionMs({
+        transitionProperty: 'color, all',
+        transitionDuration: '100ms',
+        transitionDelay: '0ms, 50ms',
+      }),
+      150,
+    );
+    assert.equal(
+      panelToolsDrawerTransitionMs({
+        transitionProperty: 'max-width',
+        transitionDuration: '0s',
+        transitionDelay: '0s',
+      }),
+      0,
+    );
   });
 });
 

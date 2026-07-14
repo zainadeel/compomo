@@ -44,6 +44,13 @@
   to   { transform: rotate(-360deg); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    animation: none;
+    transform: none;
+  }
+}
+
 /* ── Sizes (same tokens as ds-icon) ──────────────────────────────────────── */
 
 .loader--size-xs  { --_loader-sz: var(--dimension-iconography-xs);  }

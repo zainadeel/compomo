@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
+import '../../../../dist/components/ds-switch.js';
 import '../../../../dist/components/ds-shell-gradient-picker.js';
 import { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
@@ -64,16 +65,16 @@ export const WithSections: Story = {
   `,
 };
 
-export const WithToggle: Story = {
+export const WithSwitch: Story = {
   render: () => html`
     <div style="padding: 16px; height: 240px">
       <span id="menu-anchor-tog" style="display: inline-block; width: 1px; height: 1px"></span>
       <ds-menu
         ?open=${true}
         .items=${[
-          { label: 'Dark mode', showToggle: true, toggleValue: true },
-          { label: 'Notifications', showToggle: true, toggleValue: false },
-          { label: 'Auto-save', showToggle: true, toggleValue: true },
+          { label: 'Dark mode', showSwitch: true, switchValue: true },
+          { label: 'Notifications', showSwitch: true, switchValue: false },
+          { label: 'Auto-save', showSwitch: true, switchValue: true },
         ]}
         anchor-id="menu-anchor-tog"
       ></ds-menu>

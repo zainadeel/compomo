@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tooltip e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: var(--typography-font-family, system-ui);
+      }
+
+      section {
+        margin-block-end: 32px;
+      }
+
+      #scroll-container {
+        width: 320px;
+        height: 160px;
+        overflow: auto;
+        border: 1px solid;
+      }
+
+      #scroll-content {
+        height: 640px;
+        padding-top: 420px;
+        box-sizing: border-box;
+      }
+
+      #resize-row {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      #dynamic-tooltip {
+        display: block;
+        width: max-content;
+      }
+
+      #edge-row {
+        position: fixed;
+        inset: 2px 2px auto;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+
+      #edge-row button {
+        pointer-events: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="existing-description">Existing description</p>
+
+    <section>
+      <ds-tooltip id="aria-tooltip" label="Supplementary label" delay="0">
+        <button id="aria-anchor" aria-describedby="existing-description">ARIA trigger</button>
+      </ds-tooltip>
+    </section>
+
+    <section id="scroll-container">
+      <div id="scroll-content">
+        <ds-tooltip label="Scrolling label" side="right" delay="0">
+          <button id="scroll-anchor">Scrolling trigger</button>
+        </ds-tooltip>
+      </div>
+    </section>
+
+    <section id="resize-row">
+      <ds-tooltip label="Resize label" side="bottom" delay="0">
+        <button id="resize-anchor">Resize trigger</button>
+      </ds-tooltip>
+    </section>
+
+    <section>
+      <button id="swap-trigger">Replace dynamic trigger</button>
+      <ds-tooltip id="dynamic-tooltip" label="Dynamic label" side="right" delay="0">
+        <button id="dynamic-anchor-a">Initial trigger</button>
+      </ds-tooltip>
+    </section>
+
+    <section id="warm-row">
+      <ds-tooltip label="Warm one" delay="50">
+        <button id="warm-one">Warm one</button>
+      </ds-tooltip>
+      <ds-tooltip label="Warm two" delay="50">
+        <button id="warm-two">Warm two</button>
+      </ds-tooltip>
+    </section>
+
+    <section>
+      <ds-tooltip label="Touch should not open" delay="0">
+        <button id="touch-anchor">Touch trigger</button>
+      </ds-tooltip>
+    </section>
+
+    <div id="edge-row">
+      <ds-tooltip label="Top collision" side="top" delay="0">
+        <button id="top-edge-anchor">Top edge</button>
+      </ds-tooltip>
+      <ds-tooltip label="Right collision" side="right" delay="0">
+        <button id="right-edge-anchor">Right edge</button>
+      </ds-tooltip>
+    </div>
+
+    <script type="module" src="/tooltip-setup.mjs"></script>
+  </body>
+</html>

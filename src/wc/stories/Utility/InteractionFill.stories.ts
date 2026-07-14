@@ -20,11 +20,79 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
+const SURFACE_CONTEXTS = [
+  {
+    label: 'Medium parent surface',
+    className: 'medium',
+    helper: 'on-medium',
+    backgroundToken: '--color-background-medium-neutral',
+  },
+  {
+    label: 'Bold parent surface',
+    className: 'bold',
+    helper: 'on-bold',
+    backgroundToken: '--color-background-bold-neutral',
+  },
+  {
+    label: 'Strong parent surface',
+    className: 'strong',
+    helper: 'on-strong',
+    backgroundToken: '--color-background-strong-neutral',
+  },
+  {
+    label: 'Translucent parent surface over a brand backdrop',
+    className: 'translucent',
+    helper: 'on-translucent',
+    backgroundToken: '--color-translucent-translucent',
+  },
+  {
+    label: 'Inverted parent surface',
+    className: 'inverted',
+    helper: 'on-inverted',
+    backgroundToken: '--color-inverted-background',
+  },
+  {
+    label: 'Media parent surface',
+    className: 'media',
+    helper: 'on-media',
+    backgroundToken: '--color-media-background',
+  },
+  {
+    label: 'Always-dark parent surface',
+    className: 'always-dark',
+    helper: 'on-always-dark',
+    backgroundToken: '--color-always-dark-background',
+  },
+  {
+    label: 'Navigation parent surface',
+    className: 'navigation',
+    helper: 'on-navigation',
+    backgroundToken: '--color-navigation-background',
+  },
+] as const;
+
 function control(label: string, classes: string) {
   return html`
     <button type="button" class="util-demo-control ds-focus-ring-inset ${classes}">
       <span class="ds-interaction-fill__content">${label}</span>
     </button>
+  `;
+}
+
+function surfaceContext(context: (typeof SURFACE_CONTEXTS)[number]) {
+  const interactionClasses = `ds-interaction-fill ds-interaction-fill--${context.helper}`;
+
+  return html`
+    <div class=${`util-demo-surface util-demo-surface--${context.className}`}>
+      <div class="util-demo-surface__description">
+        <span class="util-demo-label">${context.label}</span>
+        <code class="util-demo-surface__token">${context.backgroundToken}</code>
+      </div>
+      <div class="util-demo-row">
+        ${control('Hover / press', interactionClasses)}
+        ${control('Selected fill', `${interactionClasses} ds-interaction-fill--selected`)}
+      </div>
+    </div>
   `;
 }
 
@@ -51,36 +119,15 @@ export const Overview: Story = {
       </div>
 
       <div class="util-demo-section">
-        <h2 class="util-demo-h2">Surface context</h2>
+        <h2 class="util-demo-h2">Same control on different parent surfaces</h2>
         <p class="util-demo-sub">
-          Remap with <code class="util-demo-code">.ds-interaction-fill--on-*</code> so washes match the parent surface.
+          The full row is the parent surface. Both controls remain transparent; only
+          <strong>Selected fill</strong> paints the surface-aware active overlay.
+          <code class="util-demo-code">.ds-interaction-fill--on-*</code> remaps hover, pressed,
+          selected, and focus tokens for the contrast underneath.
         </p>
         <div class="util-demo-col">
-          <div class="util-demo-surface util-demo-surface--medium">
-            <span class="util-demo-label">on-medium</span>
-            ${control('Hover me', 'ds-interaction-fill ds-interaction-fill--on-medium')}
-            ${control('Selected', 'ds-interaction-fill ds-interaction-fill--on-medium ds-interaction-fill--selected')}
-          </div>
-          <div class="util-demo-surface util-demo-surface--bold">
-            <span class="util-demo-label">on-bold</span>
-            ${control('Hover me', 'ds-interaction-fill ds-interaction-fill--on-bold')}
-            ${control('Selected', 'ds-interaction-fill ds-interaction-fill--on-bold ds-interaction-fill--selected')}
-          </div>
-          <div class="util-demo-surface util-demo-surface--strong">
-            <span class="util-demo-label">on-strong</span>
-            ${control('Hover me', 'ds-interaction-fill ds-interaction-fill--on-strong')}
-            ${control('Selected', 'ds-interaction-fill ds-interaction-fill--on-strong ds-interaction-fill--selected')}
-          </div>
-          <div class="util-demo-surface util-demo-surface--always-dark">
-            <span class="util-demo-label" style="color: var(--color-always-dark-foreground-secondary)">always-dark</span>
-            ${control('Hover me', 'ds-interaction-fill ds-interaction-fill--on-always-dark')}
-            ${control('Selected', 'ds-interaction-fill ds-interaction-fill--on-always-dark ds-interaction-fill--selected')}
-          </div>
-          <div class="util-demo-surface util-demo-surface--navigation">
-            <span class="util-demo-label" style="color: var(--color-navigation-foreground-secondary)">navigation</span>
-            ${control('Hover me', 'ds-interaction-fill ds-interaction-fill--on-navigation')}
-            ${control('Selected', 'ds-interaction-fill ds-interaction-fill--on-navigation ds-interaction-fill--selected')}
-          </div>
+          ${SURFACE_CONTEXTS.map(surfaceContext)}
         </div>
       </div>
     </div>

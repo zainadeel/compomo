@@ -36,6 +36,7 @@ import { SkeletonSurface, SkeletonVariant } from "./components/Skeleton/Skeleton
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
+import { SwitchSize } from "./components/Switch/Switch";
 import { TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
@@ -73,6 +74,7 @@ export { SkeletonSurface, SkeletonVariant } from "./components/Skeleton/Skeleton
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
+export { SwitchSize } from "./components/Switch/Switch";
 export { TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
@@ -112,11 +114,6 @@ export namespace Components {
           * @default false
          */
         "gradientBackground": boolean;
-        /**
-          * Deprecated alias for selected counter styling. Prefer context-specific color in the parent.
-          * @default false
-         */
-        "isSelected": boolean;
         /**
           * Accessible label. Defaults to the count as a string.
          */
@@ -996,7 +993,7 @@ export namespace Components {
      */
     interface DsSelect {
         /**
-          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). Selected/open promotes the label to primary; chevron stays secondary.
+          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). A selected value promotes the label to primary; chevron stays secondary.
           * @default true
          */
         "activeFill": boolean;
@@ -1153,6 +1150,56 @@ export namespace Components {
          */
         "value": number;
         "valueText": string | undefined;
+    }
+    interface DsSwitch {
+        /**
+          * Current on/off state. The initial value is restored when the owning form resets.
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Associates the switch with a form by id when it is rendered outside that form.
+         */
+        "form": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "name": string | undefined;
+        /**
+          * Removes standalone control semantics so a composite owner such as a `menuitemcheckbox` can use the switch as an aria-hidden visual indicator.
+          * @default false
+         */
+        "presentation": boolean;
+        /**
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        /**
+          * Compact track size for placement inside controls, menus, and form rows.
+          * @default 'md'
+         */
+        "size": SwitchSize;
+        /**
+          * Optional value submitted when unchecked; omitted by default like a native checkbox.
+         */
+        "uncheckedValue": string | undefined;
+        /**
+          * @default 'on'
+         */
+        "value": string;
     }
     interface DsTabGroup {
         /**
@@ -1321,33 +1368,6 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
-    interface DsToggle {
-        /**
-          * @default false
-         */
-        "checked": boolean;
-        /**
-          * @default false
-         */
-        "disabled": boolean;
-        /**
-          * @default false
-         */
-        "isInactive": boolean;
-        "name": string | undefined;
-        /**
-          * @default false
-         */
-        "required": boolean;
-        /**
-          * @default 'This field is required.'
-         */
-        "requiredMessage": string;
-        /**
-          * @default 'on'
-         */
-        "value": string;
-    }
     /**
      * Imperative body portal for the popup.
      * Stencil must not own the portaled node — moving a VDOM child to `document.body`
@@ -1515,6 +1535,10 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
 }
+export interface DsSwitchCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSwitchElement;
+}
 export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTabGroupElement;
@@ -1526,10 +1550,6 @@ export interface DsTabGroupNavCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableElement;
-}
-export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsToggleElement;
 }
 declare global {
     interface HTMLDsAppShellElement extends Components.DsAppShell, HTMLStencilElement {
@@ -1994,6 +2014,23 @@ declare global {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
     };
+    interface HTMLDsSwitchElementEventMap {
+        "dsChange": boolean;
+    }
+    interface HTMLDsSwitchElement extends Components.DsSwitch, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSwitchElementEventMap>(type: K, listener: (this: HTMLDsSwitchElement, ev: DsSwitchCustomEvent<HTMLDsSwitchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSwitchElementEventMap>(type: K, listener: (this: HTMLDsSwitchElement, ev: DsSwitchCustomEvent<HTMLDsSwitchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSwitchElement: {
+        prototype: HTMLDsSwitchElement;
+        new (): HTMLDsSwitchElement;
+    };
     interface HTMLDsTabGroupElementEventMap {
         "dsChange": string;
     }
@@ -2060,23 +2097,6 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
-    interface HTMLDsToggleElementEventMap {
-        "dsChange": boolean;
-    }
-    interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsToggleElement: {
-        prototype: HTMLDsToggleElement;
-        new (): HTMLDsToggleElement;
-    };
     /**
      * Imperative body portal for the popup.
      * Stencil must not own the portaled node — moving a VDOM child to `document.body`
@@ -2141,12 +2161,12 @@ declare global {
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
+        "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tab-group-nav": HTMLDsTabGroupNavElement;
         "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
-        "ds-toggle": HTMLDsToggleElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-data-viz": HTMLDsTooltipDataVizElement;
     }
@@ -2186,11 +2206,6 @@ declare namespace LocalJSX {
           * @default false
          */
         "gradientBackground"?: boolean;
-        /**
-          * Deprecated alias for selected counter styling. Prefer context-specific color in the parent.
-          * @default false
-         */
-        "isSelected"?: boolean;
         /**
           * Accessible label. Defaults to the count as a string.
          */
@@ -3144,7 +3159,7 @@ declare namespace LocalJSX {
      */
     interface DsSelect {
         /**
-          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). Selected/open promotes the label to primary; chevron stays secondary.
+          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). A selected value promotes the label to primary; chevron stays secondary.
           * @default true
          */
         "activeFill"?: boolean;
@@ -3312,6 +3327,57 @@ declare namespace LocalJSX {
          */
         "value"?: number;
         "valueText"?: string | undefined;
+    }
+    interface DsSwitch {
+        /**
+          * Current on/off state. The initial value is restored when the owning form resets.
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Associates the switch with a form by id when it is rendered outside that form.
+         */
+        "form"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsSwitchCustomEvent<boolean>) => void;
+        /**
+          * Removes standalone control semantics so a composite owner such as a `menuitemcheckbox` can use the switch as an aria-hidden visual indicator.
+          * @default false
+         */
+        "presentation"?: boolean;
+        /**
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * Compact track size for placement inside controls, menus, and form rows.
+          * @default 'md'
+         */
+        "size"?: SwitchSize;
+        /**
+          * Optional value submitted when unchecked; omitted by default like a native checkbox.
+         */
+        "uncheckedValue"?: string | undefined;
+        /**
+          * @default 'on'
+         */
+        "value"?: string;
     }
     interface DsTabGroup {
         /**
@@ -3486,38 +3552,6 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
-    interface DsToggle {
-        /**
-          * @default false
-         */
-        "checked"?: boolean;
-        /**
-          * @default false
-         */
-        "disabled"?: boolean;
-        /**
-          * The `id` of a `<form>` element to associate this element with.
-         */
-        "form"?: string;
-        /**
-          * @default false
-         */
-        "isInactive"?: boolean;
-        "name"?: string | undefined;
-        "onDsChange"?: (event: DsToggleCustomEvent<boolean>) => void;
-        /**
-          * @default false
-         */
-        "required"?: boolean;
-        /**
-          * @default 'This field is required.'
-         */
-        "requiredMessage"?: string;
-        /**
-          * @default 'on'
-         */
-        "value"?: string;
-    }
     /**
      * Imperative body portal for the popup.
      * Stencil must not own the portaled node — moving a VDOM child to `document.body`
@@ -3613,7 +3647,6 @@ declare namespace LocalJSX {
         "surface": BadgeSurface;
         "background": string | undefined;
         "gradientBackground": boolean;
-        "isSelected": boolean;
         "label": string | undefined;
     }
     interface DsBannerAttributes {
@@ -3889,6 +3922,20 @@ declare namespace LocalJSX {
         "valueText": string | undefined;
         "inputId": string | undefined;
     }
+    interface DsSwitchAttributes {
+        "checked": boolean;
+        "name": string | undefined;
+        "value": string;
+        "uncheckedValue": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "isInactive": boolean;
+        "size": SwitchSize;
+        "presentation": boolean;
+    }
     interface DsTabGroupAttributes {
         "value": string;
         "background": TabBackground | undefined;
@@ -3939,15 +3986,6 @@ declare namespace LocalJSX {
         "as": TextElement;
         "for": string | undefined;
         "textId": string | undefined;
-    }
-    interface DsToggleAttributes {
-        "checked": boolean;
-        "name": string | undefined;
-        "value": string;
-        "disabled": boolean;
-        "required": boolean;
-        "requiredMessage": string;
-        "isInactive": boolean;
     }
     interface DsTooltipAttributes {
         "label": string;
@@ -4001,12 +4039,12 @@ declare namespace LocalJSX {
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
+        "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tab-group-nav": Omit<DsTabGroupNav, keyof DsTabGroupNavAttributes> & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes]?: DsTabGroupNav[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `attr:${K}`]?: DsTabGroupNavAttributes[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `prop:${K}`]?: DsTabGroupNav[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
-        "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-data-viz": Omit<DsTooltipDataViz, keyof DsTooltipDataVizAttributes> & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes]?: DsTooltipDataViz[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `attr:${K}`]?: DsTooltipDataVizAttributes[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `prop:${K}`]?: DsTooltipDataViz[K] };
     }
@@ -4071,12 +4109,12 @@ declare module "@stencil/core" {
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
+            "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tab-group-nav": LocalJSX.IntrinsicElements["ds-tab-group-nav"] & JSXBase.HTMLAttributes<HTMLDsTabGroupNavElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
-            "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             /**
              * Imperative body portal for the popup.
              * Stencil must not own the portaled node — moving a VDOM child to `document.body`

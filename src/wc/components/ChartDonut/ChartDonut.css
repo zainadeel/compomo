@@ -29,6 +29,12 @@
   transition: opacity var(--effect-motion-short-2);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .chart-donut__svg path {
+    transition: none;
+  }
+}
+
 .chart-donut__svg path:focus-visible {
   outline: none;
   stroke: var(--color-interaction-focus);

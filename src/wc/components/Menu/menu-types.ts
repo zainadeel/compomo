@@ -15,8 +15,9 @@ export interface MenuItemData {
   isSelected?: boolean;
   isInactive?: boolean;
   isDestructive?: boolean;
-  showToggle?: boolean;
-  toggleValue?: boolean;
+  /** Render a compact switch indicator; the menu row owns interaction. */
+  showSwitch?: boolean;
+  switchValue?: boolean;
 }
 
 export interface MenuItemsSection {

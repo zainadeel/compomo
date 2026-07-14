@@ -246,7 +246,8 @@ export class MyComponent {
 - `local/prefer-ds-text` — flag TokoMo typography utility classes (`text-body-*`, `text-caption*`, …) in `class` / `className`. Use `<ds-text variant="…" emphasis>`. Allowlisted: `Text/`, `control-text.ts`, Typography stories.
 - `local/prefer-ds-icon` — flag raw `<svg>` / `createElement('svg')` and `@ds-mo/icons` imports in components. Use `<ds-icon name="…">`. Allowlisted: `Icon/`, `Loader/`, chart components, PanelNav M-mark, Icons stories.
 - `local/prefer-direct-ds-text` — flag neutral `<span>`/`<div>` elements whose only child is `<ds-text>`. Move layout classes to the `ds-text` host; keep wrappers only for real structural behavior or mixed content.
-- Disable with `// eslint-disable-next-line local/prefer-ds-text -- reason` (same for `prefer-ds-icon` / `prefer-direct-ds-text`) when an exception is intentional.
+- `local/no-selected-fill-emphasis-change` — flag dynamic `ds-text` emphasis inside a `.ds-interaction-fill--selected` target. The active fill owns selected state; keep the base text weight stable and promote foreground color instead. Always-emphasis base control recipes remain valid.
+- Disable with `// eslint-disable-next-line local/prefer-ds-text -- reason` (same pattern for the other local rules) when an exception is intentional.
 
 **Text metric-box contract**
 
@@ -285,6 +286,16 @@ Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNa
 
 CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Text line-height is not a density variable; the control's `size` maps internally to a complete `ds-text` variant via `CONTROL_TEXT_VARIANT`.
 
+**Switch density**
+
+- `ds-switch` is compact chrome placed inside menu, control, and form rows rather than a full-height control itself.
+- Sizes are `md` = 36×24 with a 16px thumb and 4px body inset, `sm` = 24×16 with a 12px thumb and 2px inset, and `xs` = 12×8 with a 6px thumb and 1px inset. The thumb's 1px outset tertiary stroke extends equally into that space on every side and does not consume its declared diameter.
+- Use the shared interaction-fill inset border and hover/press wash. Switch focus uses the shared **outset** `ds-focus-ring`, not the inset ring.
+- Track color and thumb position animate with `--effect-motion-short-3`, matching ShellGradientSwatch selection motion; do not add depressed/elevated shadows or press-scale transforms.
+- Every switch requires an accessible name. Use `aria-label` for standalone icon-like contexts or `aria-labelledby` to associate visible text; use `name`/`value` for form submission.
+- `readOnly` keeps the switch focusable and submitted but prevents state changes. `disabled` and `isInactive` remove it from keyboard interaction and form submission.
+- Composite controls may set `presentation` so the switch is an aria-hidden, non-focusable visual indicator. The owner must provide state semantics; Menu switch rows use `menuitemcheckbox` + `aria-checked`.
+
 **Interaction fill**
 
 Shared layer recipe for interactive controls (buttons, Chip, PanelNav items, Menu items, TabGroup tabs, ChartLegend rows, …). Import `src/wc/utils/interaction-fill.css` and apply `.ds-interaction-fill` on the interactive element.
@@ -296,7 +307,7 @@ Paint order (bottom → top): element background → `::before` (selected/active
 | `.ds-interaction-fill` | Stacking context + `::before`/`::after` shells |
 | `.ds-interaction-fill--selected` | Fills `::before` with `--ds-interaction-active` |
 | `.ds-interaction-fill--bordered` | Inset secondary stroke on `::after` (above selected / hover) |
-| `.ds-interaction-fill--on-medium\|bold\|strong\|always-dark\|navigation` | Remap hover/pressed/active + `--ds-focus-ring-color` |
+| `.ds-interaction-fill--on-medium\|bold\|strong\|translucent\|inverted\|media\|always-dark\|navigation` | Remap hover/pressed/active + `--ds-focus-ring-color` |
 | `--ds-interaction-hover\|pressed\|active` | Overridable token hooks |
 | `--ds-interaction-border-width\|color` | Inset stroke on `::after` (default off) |
 | `--ds-interaction-dot-ring` | Set under `--selected` to `--ds-interaction-active` — badge halo matches selected fill |
@@ -306,6 +317,7 @@ Rules:
 - Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
 - Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
 - `::before` = selected/active only. Omit `--selected` when chrome wants foreground-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav) — primary fg still applies.
+- `.ds-interaction-fill--selected` must not dynamically change label weight. Keep the component's base `ds-text` recipe and promote selected foreground color to the appropriate primary token instead. This rule is specific to the active-fill utility; separate selected-background recipes and foreground-only chrome define their own affordance contracts.
 - **Badge / notification-dot halo:** when the control is `--selected`, the util sets `--ds-interaction-dot-ring` to `--ds-interaction-active`. Prefer remapping the component’s surface ring token under `--selected`, or pass `background="var(--ds-interaction-active)"` from the parent when selected (ButtonUnfilled does both) — nested scoped hosts can miss custom-property fallbacks. Idle / chrome-without-fill keep the surface ring.
 - `::after` = hover + press (`transition: none`) + optional inset border + inset focus — **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
 - Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
@@ -324,7 +336,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-toggle`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 
@@ -337,6 +349,15 @@ Rules:
 - Use `ds-focus-ring--visible` only when component-managed roving focus has confirmed keyboard modality, such as a menu opened with Enter/Space/Arrow keys or navigated with arrow keys. Do not apply it after pointer/mouse opens.
 - Focus is a ring state, not hover. Keyboard/programmatic focus must not use hover or pressed fills unless the item is actually hovered or pressed.
 - Set `--ds-focus-ring-color` from the surface context instead of hardcoding colors: default app surfaces use `--color-interaction-focus`, navigation chrome uses `--color-navigation-interaction-focus`, and medium/bold/strong/always-dark surfaces use their matching `*-interaction-*-focus` token.
+
+**Reduced motion**
+
+- Every infinite animation, spatial/layout transition, transform transition, opacity state transition, and overlay enter/exit animation must define a `@media (prefers-reduced-motion: reduce)` end state in the same stylesheet. `local/require-reduced-motion` warns when this contract is missing.
+- Under reduced motion, stop infinite/decorative animation and make spatial, layout, opacity, and overlay changes immediate. Keep the final visual state; never hide required content merely to avoid motion. `ds-loader` remains a static loading glyph and relies on its status semantics or the owner's `aria-busy`.
+- Short color, background-color, and border-color control transitions may remain. They do not move content and are the intentional tiered-policy exception.
+- JS timers coupled to CSS enter/exit motion must use `resolveMotionTimeMs`; functional delays such as tooltip hover intent and banner auto-dismiss continue to use `resolveCssTimeMs`.
+- Web Animations API and View Transition effects must check `prefersReducedMotion()` and apply the final state without running the decorative reveal.
+- Chrome components emitting `dsChromeTransitionStart` must also settle on `transitioncancel`, zero computed duration, and a computed-duration watchdog so reduced motion cannot strand BarNav overflow coordination.
 
 **Scroll edge fades**
 
@@ -512,7 +533,7 @@ Release-please will open a release PR at that exact version. Useful when only `c
 - **Do not edit `src/wc/components.d.ts`** — auto-generated by Stencil. Do not append hand exports there (watch/dev rebuilds wipe them and CI fails “src/ mutated”). Ship non-component APIs from `@ds-mo/ui/nav` or `@ds-mo/ui/utils` instead (e.g. `PANEL_NAV_USER_MENU_PLACEMENT` from `/nav`).
 - **Do not hand-add React wrapper components** — new UI goes in `src/wc/components/`; React wrappers are generated automatically.
 - **Do not hardcode colors, spacing, or other design values** — always use `@ds-mo/tokens` CSS custom properties. Hardcoding breaks theming.
-- **Default to `scoped: true`** in `@Component()` so token CSS variables penetrate naturally. Use `shadow: true` only where required (e.g. `ds-loader`, `ds-toggle`, `ds-skeleton`).
+- **Default to `scoped: true`** in `@Component()` so token CSS variables penetrate naturally. Use `shadow: true` only where required (e.g. `ds-loader`, `ds-switch`, `ds-skeleton`).
 - **Do not name a `@Prop()` `title`** — it's a reserved HTML attribute and causes Stencil a build warning. Use `heading` or another name.
 - **Do not rely on `@Watch` firing for the initial prop value** — it only fires on subsequent changes. Call the handler explicitly in `componentDidLoad()` for initial state (e.g. `if (this.open) this.onOpenChange(true)`).
 - **Do not re-export service singletons from a file that has `@Component()`** — Stencil enforces one export per file. Put services in a separate `*.ts` file.

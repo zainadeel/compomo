@@ -1,5 +1,5 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
-import { resolveCssLengthPx, resolveCssTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
+import { resolveCssLengthPx, resolveMotionTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
 import { isMenuGradientPickerSection } from './menu-types';
@@ -83,11 +83,15 @@ export class Menu {
       this.closing = true;
       this.teardownListeners();
       this.listenersReady = false;
+      const closeAnimationMs = this.closeAnimationMs;
+      if (closeAnimationMs <= 0) {
+        this.finishClose();
+        return;
+      }
       this.closeTimer = setTimeout(() => {
-        this.shouldRender = false;
-        this.closing = false;
         this.closeTimer = null;
-      }, this.closeAnimationMs);
+        this.finishClose();
+      }, closeAnimationMs);
     }
   }
 
@@ -126,7 +130,12 @@ export class Menu {
   }
 
   private get closeAnimationMs(): number {
-    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort2, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort2, TOKEN_DEFAULTS.animationDurationShort3);
+  }
+
+  private finishClose() {
+    this.shouldRender = false;
+    this.closing = false;
   }
 
   private get resolvedAnchor(): HTMLElement | null {
@@ -398,8 +407,9 @@ export class Menu {
                       'menu-item--destructive': !!item.isDestructive,
                       'menu-item--focused': isFocused,
                     }}
-                    role="menuitem"
-                    aria-current={item.isSelected ? 'true' : undefined}
+                    role={item.showSwitch ? 'menuitemcheckbox' : 'menuitem'}
+                    aria-checked={item.showSwitch ? String(!!item.switchValue) : undefined}
+                    aria-current={!item.showSwitch && item.isSelected ? 'true' : undefined}
                     disabled={item.isInactive}
                     tabIndex={isFocused ? 0 : -1}
                     onMouseDown={() => { this.focusRingVisible = false; }}
@@ -411,7 +421,6 @@ export class Menu {
                         class="menu-item__label"
                         as="span"
                         variant="text-body-medium"
-                        emphasis={!!item.isSelected}
                         color={item.isSelected ? 'primary' : 'secondary'}
                       >
                         {item.label}
@@ -434,10 +443,13 @@ export class Menu {
                         />
                       </span>
                     )}
-                    {item.showToggle && (
-                      <div class={{ 'menu-item__toggle': true, 'menu-item__toggle--on': !!item.toggleValue, 'ds-interaction-fill__content': true }} aria-hidden="true">
-                        <div class="menu-item__toggle-thumb" />
-                      </div>
+                    {item.showSwitch && (
+                      <ds-switch
+                        class="menu-item__switch ds-interaction-fill__content"
+                        size="sm"
+                        checked={!!item.switchValue}
+                        presentation
+                      />
                     )}
                   </button>
                 );

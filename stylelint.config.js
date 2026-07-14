@@ -17,7 +17,10 @@ const RAW_TIME = '/(?<!\\d)(?<!,\\s-?)(?:[1-9]\\d*|0\\.[0-9]+)m?s\\b/';
 
 export default {
   extends: ['stylelint-config-standard'],
-  plugins: ['./stylelint-plugin-local/index.js'],
+  plugins: [
+    './stylelint-plugin-local/index.js',
+    './stylelint-plugin-local/require-reduced-motion.js',
+  ],
   defaultSeverity: 'warning',
   ignoreFiles: [
     '**/dist/**',
@@ -27,6 +30,7 @@ export default {
   ],
   rules: {
     'local/no-ds-text-metric-overrides': true,
+    'local/require-reduced-motion': true,
     // ── Turn off stylistic / browser-compat noise (not token coverage) ──
     'alpha-value-notation': null,
     'block-no-empty': null,

@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
-  <head><meta charset="utf-8"><title>Form-associated components</title></head>
+  <head>
+    <meta charset="utf-8">
+    <title>Form-associated components</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
   <body>
     <form id="profile">
       <ds-input id="email" name="email" required aria-label="Email"></ds-input>
@@ -8,12 +12,56 @@
       <ds-select id="region" required aria-label="Region"></ds-select>
       <ds-radio-group id="tier" name="tier" required aria-label="Tier"></ds-radio-group>
       <fieldset id="alert-fieldset">
-        <ds-toggle id="alerts" name="alerts" value="enabled" aria-label="Alerts"></ds-toggle>
+        <ds-switch id="alerts" name="alerts" value="enabled" aria-label="Alerts"></ds-switch>
       </fieldset>
       <button id="submit" type="submit">Submit</button>
       <button id="reset" type="reset">Reset</button>
     </form>
     <ds-pagination id="pagination" page="2" total-pages="3"></ds-pagination>
+    <div id="switch-sizes">
+      <ds-switch id="switch-md" size="md" aria-label="Medium switch"></ds-switch>
+      <ds-switch id="switch-sm" size="sm" aria-label="Small switch"></ds-switch>
+      <ds-switch id="switch-xs" size="xs" aria-label="Extra-small switch"></ds-switch>
+    </div>
+    <form id="switch-form">
+      <span id="readonly-switch-label">Read-only switch</span>
+      <ds-switch
+        id="readonly-switch"
+        name="readonly"
+        value="kept"
+        checked
+        read-only
+        aria-labelledby="readonly-switch-label"
+      ></ds-switch>
+      <ds-switch
+        id="unchecked-switch"
+        name="unchecked"
+        unchecked-value="off"
+        aria-label="Unchecked value switch"
+      ></ds-switch>
+      <ds-switch
+        id="required-switch"
+        name="required"
+        required
+        aria-label="Required switch"
+      ></ds-switch>
+      <ds-switch
+        id="presentation-switch"
+        name="presentation"
+        checked
+        presentation
+      ></ds-switch>
+    </form>
+    <ds-switch
+      id="external-switch"
+      form="switch-form"
+      name="external"
+      value="yes"
+      checked
+      aria-label="External form switch"
+    ></ds-switch>
+    <label for="labeled-switch">Labeled switch</label>
+    <ds-switch id="labeled-switch"></ds-switch>
     <script type="module" src="/forms-setup.mjs"></script>
   </body>
 </html>

@@ -1,0 +1,131 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
+
+:host {
+  --ds-switch-width: calc(var(--dimension-size-400) + var(--dimension-size-050));
+  --ds-switch-height: var(--dimension-size-300);
+  --ds-switch-thumb-size: var(--dimension-size-200);
+  --ds-switch-gap: var(--dimension-space-050);
+  --ds-switch-thumb-stroke: var(--dimension-stroke-width-012);
+  --ds-switch-inset: var(--ds-switch-gap);
+  --ds-switch-thumb-border-color: var(--color-border-tertiary);
+  --ds-switch-thumb-hover: var(--color-interaction-hover);
+  --ds-switch-thumb-pressed: var(--color-interaction-pressed);
+  --ds-switch-travel: calc(
+    var(--ds-switch-width) - var(--ds-switch-thumb-size) - var(--ds-switch-inset) -
+      var(--ds-switch-inset)
+  );
+  --ds-interaction-border-color: var(--color-border-secondary);
+
+  position: relative;
+  display: inline-flex;
+  width: var(--ds-switch-width);
+  height: var(--ds-switch-height);
+  padding: 0;
+  border: none;
+  border-radius: var(--dimension-radius-half);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  overflow: visible;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  background-color: var(--color-background-medium-neutral);
+  transition: background-color var(--effect-motion-short-3);
+}
+
+:host(.switch.ds-interaction-fill) {
+  /* The host owns the hit target; interaction washes paint on the thumb. */
+  --ds-interaction-hover: transparent;
+  --ds-interaction-pressed: transparent;
+}
+
+:host(.switch--sm) {
+  --ds-switch-width: var(--dimension-size-300);
+  --ds-switch-height: var(--dimension-size-200);
+  --ds-switch-thumb-size: var(--dimension-size-150);
+  --ds-switch-gap: var(--dimension-space-025);
+}
+
+:host(.switch--xs) {
+  --ds-switch-width: var(--dimension-size-150);
+  --ds-switch-height: var(--dimension-size-100);
+  --ds-switch-thumb-size: var(--dimension-size-075);
+  --ds-switch-gap: var(--dimension-space-012);
+}
+
+:host(.checked) {
+  background-color: var(--color-background-bold-brand);
+}
+
+:host(.switch--readonly),
+:host(.switch--presentation) {
+  --ds-interaction-hover: transparent;
+  --ds-interaction-pressed: transparent;
+}
+
+:host(.switch--readonly) {
+  cursor: default;
+}
+
+:host(.switch--presentation) {
+  pointer-events: none;
+}
+
+/* Inactive: `.ds-control-inactive` (25% opacity). */
+
+.thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--ds-switch-inset);
+  width: var(--ds-switch-thumb-size);
+  height: var(--ds-switch-thumb-size);
+  border-radius: var(--dimension-radius-half);
+  background-color: var(--color-background-primary);
+  /* Outset stroke: does not consume the thumb's declared diameter. */
+  box-shadow:
+    0 0 0 var(--ds-switch-thumb-stroke)
+    var(--ds-switch-thumb-border-color);
+  transform: translateY(-50%);
+  transition: transform var(--effect-motion-short-3);
+  pointer-events: none;
+}
+
+.thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+}
+
+:host(:hover:not(:disabled):not(.ds-control-inactive):not(.switch--readonly):not(.switch--presentation))
+  .thumb::after {
+  background: var(--ds-switch-thumb-hover);
+}
+
+:host(:active:not(:disabled):not(.ds-control-inactive):not(.switch--readonly):not(.switch--presentation))
+  .thumb::after {
+  background: var(--ds-switch-thumb-pressed);
+}
+
+:host(.checked) .thumb {
+  transform: translate3d(var(--ds-switch-travel), -50%, 0);
+}
+
+:host(:dir(rtl)) .thumb {
+  right: var(--ds-switch-inset);
+  left: auto;
+}
+
+:host(:dir(rtl).checked) .thumb {
+  transform: translate3d(calc(-1 * var(--ds-switch-travel)), -50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+}

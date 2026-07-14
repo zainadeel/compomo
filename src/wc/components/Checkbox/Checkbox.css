@@ -35,7 +35,9 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  transition: all var(--effect-motion-short-2);
+  transition:
+    background-color var(--effect-motion-short-2),
+    border-color var(--effect-motion-short-2);
 }
 
 .box--marked {

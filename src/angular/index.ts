@@ -34,12 +34,12 @@ export const DIRECTIVES = [
   d.DsShellGradientSwatch,
   d.DsSkeleton,
   d.DsSlider,
+  d.DsSwitch,
   d.DsTabGroup,
   d.DsTabGroupNav,
   d.DsTable,
   d.DsTag,
   d.DsText,
-  d.DsToggle,
   d.DsTooltip,
   d.DsTooltipDataViz
 ];

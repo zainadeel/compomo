@@ -61,6 +61,18 @@
   transform: scale(var(--dimension-scale-subtle));
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .button-filled {
+    transition:
+      background-color var(--effect-motion-short-2),
+      color var(--effect-motion-short-2);
+  }
+
+  .button-filled:active:not(:disabled):not(.ds-control-inactive) {
+    transform: none;
+  }
+}
+
 /* Inactive: `.ds-control-inactive` (25% opacity). */
 
 .button-filled__icon-wrap {

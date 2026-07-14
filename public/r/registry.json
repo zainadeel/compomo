@@ -169,10 +169,6 @@
             "type": "boolean",
             "required": false
           },
-          "isSelected": {
-            "type": "boolean",
-            "required": false
-          },
           "label": {
             "type": "string | undefined",
             "required": false
@@ -1511,7 +1507,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, toggles, and destructive actions.",
+      "description": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1522,10 +1518,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, toggles, and destructive actions.",
+          "summary": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
           "useWhen": [
             "A trigger reveals a short contextual list of commands or options.",
-            "Options need grouping, selected state, supplemental notification dots, toggle rows, or destructive treatment."
+            "Options need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
           ],
           "avoidWhen": [
             "The user is selecting a value for a form field.",
@@ -1547,17 +1543,20 @@
           "commonlyComposedWith": [
             "component:ds-button-unfilled",
             "component:ds-panel-nav",
+            "component:ds-switch",
             "component:ds-shell-gradient-picker"
           ],
           "accessibility": [
             "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
+            "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
           ],
           "states": [
             "The host owns open state and responds to selection and close events.",
             "Use either flat items or sections, not both.",
+            "After dsSelect from a switch row, update switchValue in the items property so the controlled indicator reflects the new state.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
             "Use one gradient-picker section in the user or account Appearance or Theme menu for the global AppShell wash preference; apply dsGradientSelect immediately without closing the menu."
           ],
@@ -1669,6 +1668,7 @@
       "registryDependencies": [
         "badge",
         "shell-gradient-picker",
+        "switch",
         "text"
       ]
     },
@@ -2694,6 +2694,161 @@
       ]
     },
     {
+      "name": "switch",
+      "title": "Switch",
+      "description": "Compact on/off setting control for changes that take effect immediately, with three sizes and form-associated behavior.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/switch",
+        "source": "src/wc/components/Switch/Switch.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Compact on/off setting control for changes that take effect immediately, with three sizes and form-associated behavior.",
+          "useWhen": [
+            "A binary setting takes effect immediately when the user turns it on or off.",
+            "A settings, form, or menu row needs a compact on/off control.",
+            "The checked value needs native form submission, required validation, reset, or external form association."
+          ],
+          "avoidWhen": [
+            "The user is providing consent, acknowledging a statement, or selecting multiple independent choices.",
+            "The user must choose one option from a mutually exclusive set.",
+            "The interaction triggers a one-time action instead of maintaining an on/off state."
+          ],
+          "alternatives": [
+            {
+              "when": "The interaction represents consent, acknowledgment, or multi-select choices.",
+              "component": "component:ds-checkbox",
+              "reason": "Checkbox semantics communicate selection or agreement rather than an immediately applied setting."
+            },
+            {
+              "when": "The user must choose one option from a mutually exclusive group.",
+              "component": "component:ds-radio-group",
+              "reason": "RadioGroup communicates one-of-many selection."
+            },
+            {
+              "when": "The control triggers a one-time command or submission.",
+              "component": "component:ds-button-filled",
+              "reason": "Button semantics communicate an action rather than persistent state."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-menu",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Every standalone switch requires an accessible name from a native label, aria-label, or aria-labelledby.",
+            "Checked state is exposed through switch semantics and thumb position, so state does not rely on color alone.",
+            "Read-only switches remain focusable and submitted but cannot change; inactive or disabled switches leave the tab order and are omitted from form submission.",
+            "Use presentation mode only when a composite owner such as a menuitemcheckbox provides the interaction and accessible state."
+          ],
+          "states": [
+            "Activation updates checked immediately and emits dsChange with the new boolean value.",
+            "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
+            "Sizes are md 36×24 with a 16px thumb and 4px body inset, sm 24×16 with a 12px thumb and 2px inset, and xs 12×8 with a 6px thumb and 1px inset.",
+            "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
+          ],
+          "responsiveBehavior": [
+            "Choose size from the density of the containing row; do not enlarge the switch to the full control height.",
+            "Keep the switch from shrinking when adjacent labels wrap."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set checked as a property for application state updates and listen for dsChange.",
+              "Use the form attribute to associate a switch rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsSwitch and handle onDsChange; checked is mutable and updates immediately when the component is activated."
+            ],
+            "angular": [
+              "Use DsSwitch with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Switch/Switch.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "presentation": {
+            "type": "boolean",
+            "required": false
+          },
+          "readOnly": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "SwitchSize",
+            "required": false
+          },
+          "uncheckedValue": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-switch",
+          "react": "DsSwitch",
+          "angular": "DsSwitch"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
       "name": "tab-group",
       "title": "TabGroup",
       "description": "Horizontal or vertical tab list with roving keyboard focus and optional dividers between tab groups.",
@@ -3056,78 +3211,99 @@
       "registryDependencies": []
     },
     {
-      "name": "toggle",
-      "title": "Toggle",
-      "description": "Switch control with on/off state and accessible switch semantics.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toggle",
-        "source": "src/wc/components/Toggle/Toggle.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "checked": {
-            "type": "boolean",
-            "required": false
-          },
-          "disabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "name": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "required": {
-            "type": "boolean",
-            "required": false
-          },
-          "requiredMessage": {
-            "type": "string",
-            "required": false
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsChange",
-            "detail": "boolean"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-toggle",
-          "react": "DsToggle",
-          "angular": "DsToggle"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
       "name": "tooltip",
       "title": "Tooltip",
-      "description": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping.",
+      "description": "Supplementary, non-interactive visual label for an already named action, shown on mouse or hover-capable pen and keyboard focus.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip",
         "source": "src/wc/components/Tooltip/Tooltip.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Supplementary, non-interactive visual label for an already named action, shown on mouse or hover-capable pen and keyboard focus.",
+          "useWhen": [
+            "An icon-only or dense control benefits from a short visual label for sighted mouse, pen, and keyboard users.",
+            "A non-essential keyboard shortcut should appear beside a concise visual label.",
+            "Adjacent chrome actions need delayed first disclosure with instant warm handoff between tooltips."
+          ],
+          "avoidWhen": [
+            "The tooltip would be the trigger's only accessible name or contain information required to complete the task.",
+            "The popup needs links, buttons, rich content, a close action, click-to-open behavior, or touch access.",
+            "The callout follows a chart cursor or data point rather than a slotted control."
+          ],
+          "alternatives": [
+            {
+              "when": "The popup contains a contextual list of actions or options.",
+              "component": "component:ds-menu",
+              "reason": "Menu provides interactive content, keyboard navigation, selection, and close behavior."
+            },
+            {
+              "when": "The content requires focus management, substantial explanation, confirmation, or a form.",
+              "component": "component:ds-modal",
+              "reason": "Modal provides dialog semantics and focus containment."
+            },
+            {
+              "when": "A chart needs a cursor- or data-point-positioned value callout.",
+              "component": "component:ds-tooltip-data-viz",
+              "reason": "TooltipDataViz accepts chart coordinates and is designed for data visualization hover feedback."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-panel-nav",
+            "component:ds-panel-tools"
+          ],
+          "accessibility": [
+            "The slotted trigger must have its own accessible name, usually an aria-label that closely matches the visual tooltip label.",
+            "Tooltip content is supplementary and non-essential; touch input intentionally does not open it.",
+            "While open, the trigger is linked to the role=tooltip popup with aria-describedby; the relationship is removed when the popup leaves the DOM without disturbing consumer description IDs.",
+            "Keyboard focus opens the tooltip and Escape dismisses it without moving focus."
+          ],
+          "states": [
+            "The first hover or keyboard focus waits for delay; moving to another tooltip shortly after dismissal opens it immediately.",
+            "An empty or whitespace-only label suppresses the popup while preserving the wrapper.",
+            "Only one tooltip remains active globally; warm handoff removes the previous popup before showing the next.",
+            "The preferred side flips when it cannot fit, then alignment is clamped to viewport padding.",
+            "Reduced motion removes enter and exit fades while retaining the final visible or hidden state."
+          ],
+          "responsiveBehavior": [
+            "The portaled popup follows trigger and popup resize, viewport resize, and nested scrolling while open.",
+            "Touch users rely on the trigger's accessible and visible context rather than tooltip disclosure.",
+            "Keep labels concise and non-wrapping; use inline text or a larger disclosure component for essential explanation."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Place exactly one trigger element as the component's light-DOM child.",
+              "Replacing the slotted trigger rebinds pointer and focus behavior automatically.",
+              "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values."
+            ],
+            "react": [
+              "Wrap one focusable trigger with DsTooltip; keep the trigger's aria-label independent from the tooltip label."
+            ],
+            "angular": [
+              "Wrap one focusable trigger with DsTooltip and use property binding when offset or delay values are not plain strings."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook behavior examples",
+              "path": "src/wc/components/Tooltip/Tooltip.stories.ts"
+            },
+            {
+              "label": "Cross-browser behavior and accessibility coverage",
+              "path": "tests/e2e/tooltip.spec.ts"
+            },
+            {
+              "label": "Positioning unit coverage",
+              "path": "tests/tooltip-position.test.ts"
+            }
+          ]
+        },
         "props": {
           "align": {
             "type": "TooltipAlign",

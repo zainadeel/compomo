@@ -11,17 +11,17 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsToggleCustomEvent } from "@ds-mo/ui";
+import { type DsSwitchCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
-import { DsToggle as DsToggleElement, defineCustomElement as defineDsToggle } from "@ds-mo/ui/dist/components/ds-toggle.js";
+import { DsSwitch as DsSwitchElement, defineCustomElement as defineDsSwitch } from "@ds-mo/ui/dist/components/ds-switch.js";
 
-export type DsToggleEvents = { onDsChange: EventName<DsToggleCustomEvent<boolean>> };
+export type DsSwitchEvents = { onDsChange: EventName<DsSwitchCustomEvent<boolean>> };
 
-export const DsToggle: StencilReactComponent<DsToggleElement, DsToggleEvents, Components.DsToggle> = /*@__PURE__*/ createComponent<DsToggleElement, DsToggleEvents, Components.DsToggle>({
-    tagName: 'ds-toggle',
-    elementClass: DsToggleElement,
+export const DsSwitch: StencilReactComponent<DsSwitchElement, DsSwitchEvents, Components.DsSwitch> = /*@__PURE__*/ createComponent<DsSwitchElement, DsSwitchEvents, Components.DsSwitch>({
+    tagName: 'ds-switch',
+    elementClass: DsSwitchElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsChange: 'dsChange' } as DsToggleEvents,
-    defineCustomElement: defineDsToggle
+    events: { onDsChange: 'dsChange' } as DsSwitchEvents,
+    defineCustomElement: defineDsSwitch
 });

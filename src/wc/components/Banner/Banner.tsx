@@ -1,5 +1,5 @@
 import { Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
-import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { resolveCssTimeMs, resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type BannerIntent =
   | 'brand' | 'positive' | 'negative' | 'warning' | 'caution'
@@ -31,7 +31,7 @@ export class Banner {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   private get fadeOutMs(): number {
-    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private get autoDismissMs(): number {
@@ -70,12 +70,18 @@ export class Banner {
   private beginClose() {
     this.clearTimers();
     if (this.floating) {
+      const fadeOutMs = this.fadeOutMs;
+      if (fadeOutMs <= 0) {
+        this.closing = false;
+        this.dsDismiss.emit();
+        return;
+      }
       this.closing = true;
       this.closeTimer = setTimeout(() => {
         this.closing = false;
         this.closeTimer = null;
         this.dsDismiss.emit();
-      }, this.fadeOutMs);
+      }, fadeOutMs);
     } else {
       this.dsDismiss.emit();
     }

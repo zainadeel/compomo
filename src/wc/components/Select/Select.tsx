@@ -71,7 +71,7 @@ export class Select {
    * When a value is selected, render the selected interaction fill (same recipe
    * as unfilled-button `activeFill`). Default `true`. Pass `false` for
    * foreground-only selection (primary label, no fill).
-   * Selected/open promotes the label to primary; chevron stays secondary.
+   * A selected value promotes the label to primary; chevron stays secondary.
    */
   @Prop() activeFill: boolean = true;
 
@@ -250,9 +250,8 @@ export class Select {
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const density = `ds-control--${this.size}`;
-    // Selected fill when a value is set (or while open), gated by `activeFill`.
-    const showSelectedFill =
-      !inactive && this.activeFill && (hasValue || this.isOpen);
+    // Opening the menu is transient interaction, not selected product state.
+    const showSelectedFill = !inactive && this.activeFill && hasValue;
 
     return (
       <Host
@@ -275,7 +274,6 @@ export class Select {
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
             'ds-interaction-fill--selected': showSelectedFill,
-            'trigger--open': this.isOpen,
             'trigger--bordered': this.hasBorder,
             'trigger--placeholder': showPlaceholder,
             'trigger--has-value': hasValue,

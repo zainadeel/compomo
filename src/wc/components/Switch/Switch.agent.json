@@ -1,0 +1,81 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-switch",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-switch",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact on/off setting control for changes that take effect immediately, with three sizes and form-associated behavior.",
+  "useWhen": [
+    "A binary setting takes effect immediately when the user turns it on or off.",
+    "A settings, form, or menu row needs a compact on/off control.",
+    "The checked value needs native form submission, required validation, reset, or external form association."
+  ],
+  "avoidWhen": [
+    "The user is providing consent, acknowledging a statement, or selecting multiple independent choices.",
+    "The user must choose one option from a mutually exclusive set.",
+    "The interaction triggers a one-time action instead of maintaining an on/off state."
+  ],
+  "alternatives": [
+    {
+      "when": "The interaction represents consent, acknowledgment, or multi-select choices.",
+      "component": "component:ds-checkbox",
+      "reason": "Checkbox semantics communicate selection or agreement rather than an immediately applied setting."
+    },
+    {
+      "when": "The user must choose one option from a mutually exclusive group.",
+      "component": "component:ds-radio-group",
+      "reason": "RadioGroup communicates one-of-many selection."
+    },
+    {
+      "when": "The control triggers a one-time command or submission.",
+      "component": "component:ds-button-filled",
+      "reason": "Button semantics communicate an action rather than persistent state."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-menu",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Every standalone switch requires an accessible name from a native label, aria-label, or aria-labelledby.",
+    "Checked state is exposed through switch semantics and thumb position, so state does not rely on color alone.",
+    "Read-only switches remain focusable and submitted but cannot change; inactive or disabled switches leave the tab order and are omitted from form submission.",
+    "Use presentation mode only when a composite owner such as a menuitemcheckbox provides the interaction and accessible state."
+  ],
+  "states": [
+    "Activation updates checked immediately and emits dsChange with the new boolean value.",
+    "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
+    "Sizes are md 36×24 with a 16px thumb and 4px body inset, sm 24×16 with a 12px thumb and 2px inset, and xs 12×8 with a 6px thumb and 1px inset.",
+    "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
+  ],
+  "responsiveBehavior": [
+    "Choose size from the density of the containing row; do not enlarge the switch to the full control height.",
+    "Keep the switch from shrinking when adjacent labels wrap."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set checked as a property for application state updates and listen for dsChange.",
+      "Use the form attribute to associate a switch rendered outside its owning form."
+    ],
+    "react": [
+      "Use DsSwitch and handle onDsChange; checked is mutable and updates immediately when the component is activated."
+    ],
+    "angular": [
+      "Use DsSwitch with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Switch/Switch.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

@@ -44,3 +44,21 @@ export function resolveCssTimeMs(
 
   return parseCssTimeMs(token, readTokenTimeMs(fallbackToken, 200));
 }
+
+/** Whether the user has requested reduced non-essential motion. */
+export function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/**
+ * Resolve an animation-coupled duration. Returns zero under reduced motion so
+ * JS cleanup stays synchronized with CSS that removes the corresponding motion.
+ */
+export function resolveMotionTimeMs(
+  value: number | string | undefined,
+  fallbackToken: string,
+): number {
+  return prefersReducedMotion() ? 0 : resolveCssTimeMs(value, fallbackToken);
+}

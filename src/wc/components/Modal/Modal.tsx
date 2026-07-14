@@ -1,5 +1,5 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';
-import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type ModalWidth = 'sm' | 'md' | 'lg';
 
@@ -60,6 +60,7 @@ export class Modal {
   @Watch('open')
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
+      this.teardownListeners();
       this.shouldRender = true;
       this.closing = false;
       this.previousFocus = document.activeElement as HTMLElement | null;
@@ -70,13 +71,15 @@ export class Modal {
     } else if (this.shouldRender) {
       this.closing = true;
       this.teardownListeners();
+      const closeAnimationMs = this.closeAnimationMs;
+      if (closeAnimationMs <= 0) {
+        this.finishClose();
+        return;
+      }
       this.closeTimer = setTimeout(() => {
-        this.shouldRender = false;
-        this.closing = false;
         this.closeTimer = null;
-        this.previousFocus?.focus?.();
-        this.previousFocus = null;
-      }, this.closeAnimationMs);
+        this.finishClose();
+      }, closeAnimationMs);
     }
   }
 
@@ -154,7 +157,14 @@ export class Modal {
   }
 
   private get closeAnimationMs(): number {
-    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+  }
+
+  private finishClose() {
+    this.shouldRender = false;
+    this.closing = false;
+    this.previousFocus?.focus?.();
+    this.previousFocus = null;
   }
 
   render() {

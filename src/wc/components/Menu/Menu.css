@@ -51,6 +51,17 @@
   to   { opacity: 0; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .menu-popup {
+    animation: none;
+    opacity: 1;
+  }
+
+  .menu-popup--closing {
+    opacity: 0;
+  }
+}
+
 /* ── Sections ────────────────────────────────────────────────────────────── */
 
 .menu-section {
@@ -144,33 +155,8 @@ ds-text.menu-item__subtext {
   pointer-events: none;
 }
 
-/* ── Toggle suffix ───────────────────────────────────────────────────────── */
+/* ── Switch suffix ───────────────────────────────────────────────────────── */
 
-.menu-item__toggle {
-  position: relative;
+.menu-item__switch {
   flex-shrink: 0;
-  width: calc(var(--dimension-size-400) + var(--dimension-size-050));
-  height: var(--dimension-size-250);
-  border-radius: var(--dimension-radius-125);
-  background-color: var(--color-translucent-translucent);
-  transition: background-color var(--effect-motion-short-2);
-}
-
-.menu-item__toggle--on {
-  background-color: var(--color-background-medium-brand);
-}
-
-.menu-item__toggle-thumb {
-  position: absolute;
-  top: var(--dimension-space-025);
-  left: var(--dimension-space-025);
-  width: var(--dimension-size-200);
-  height: var(--dimension-size-200);
-  border-radius: 50%;
-  background-color: var(--color-foreground-on-bold-background-primary);
-  transition: transform var(--effect-motion-short-2);
-}
-
-.menu-item__toggle--on .menu-item__toggle-thumb {
-  transform: translateX(var(--dimension-offset-200, 16px));
 }

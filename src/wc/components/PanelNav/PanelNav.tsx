@@ -20,6 +20,7 @@ import {
   type PanelNavUserActionDetail,
 } from './panel-nav-types';
 import { scrollEdgeFadeClassMap } from '../../utils/scroll-edge-fade';
+import { prefersReducedMotion } from '../../utils/resolve-css-time-ms';
 
 @Component({
   tag: 'ds-panel-nav',
@@ -469,6 +470,10 @@ export class PanelNav {
 
   private handleResizeHandleMouseEnter() {
     this.clearEdgeOverlayTimer();
+    if (prefersReducedMotion()) {
+      this.showEdgeOverlay = true;
+      return;
+    }
     this.edgeOverlayTimer = window.setTimeout(() => {
       this.showEdgeOverlay = true;
       this.edgeOverlayTimer = null;

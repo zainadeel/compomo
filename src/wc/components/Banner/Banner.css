@@ -103,3 +103,15 @@
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(-4px); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-toast {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .floating-toast--closing {
+    opacity: 0;
+  }
+}

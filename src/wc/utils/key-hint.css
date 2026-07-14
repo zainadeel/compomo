@@ -23,7 +23,7 @@
   border: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
   border-bottom-width: var(--dimension-stroke-width-025);
   border-radius: var(--dimension-radius-025);
-  color: var(--color-foreground-primary);
+  color: var(--color-foreground-secondary);
 }
 
 .key-hint--wide {
@@ -37,7 +37,7 @@
   font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-xs);
   line-height: 1;
-  font-weight: var(--typography-weight-bold);
+  font-weight: var(--typography-weight-regular);
   letter-spacing: 0;
   text-transform: uppercase;
   color: inherit;
