@@ -21,7 +21,7 @@
   font-family: var(--typography-font-family, system-ui);
 }
 
-:host(.app-shell--gradient) {
+:host {
   --_shell-chrome-bg: var(--color-background-secondary);
 }
 
@@ -44,9 +44,6 @@
   inset: 0;
   pointer-events: none;
   z-index: 0;
-}
-
-:host(.app-shell--gradient) .app-shell__chrome {
   background-color: var(--_shell-chrome-bg);
 }
 
@@ -113,7 +110,7 @@
 }
 
 /* Opaque page surface — masks the fixed chrome layer in the content column. */
-:host(.app-shell--gradient) .app-shell__content {
+.app-shell__content {
   position: relative;
   z-index: 1;
   background-color: var(--color-background-primary);

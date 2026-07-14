@@ -37,6 +37,11 @@
   transition: none;
 }
 
+:host(.panel-tools--ready) .panel-tools__drawer {
+  transition: max-width var(--_panel-tools-expand-dur)
+    var(--effect-animation-easing-ease-in-out, ease);
+}
+
 :host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__drawer {
   transition: max-width var(--_panel-tools-expand-dur)
     var(--effect-animation-easing-ease-out, ease-out);
@@ -109,6 +114,12 @@ ds-text.panel-tools__title,
 .panel-tools__body {
   opacity: 0;
   transition: none;
+}
+
+:host(.panel-tools--ready) ds-text.panel-tools__title,
+:host(.panel-tools--ready) .panel-tools__body {
+  transition: opacity var(--_panel-tools-expand-dur)
+    var(--effect-animation-easing-ease-in-out, ease);
 }
 
 :host(.panel-tools--ready.panel-tools--motion-opening) ds-text.panel-tools__title,

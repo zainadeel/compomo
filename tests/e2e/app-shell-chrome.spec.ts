@@ -220,6 +220,34 @@ test.describe('App shell chrome', () => {
     await expect(page.getByRole('tab', { name: 'Health' })).toBeVisible();
   });
 
+  test('none preset keeps the solid secondary chrome layer mounted', async ({ page }) => {
+    const shell = page.locator('ds-app-shell');
+    const chrome = page.locator('.app-shell__chrome');
+    await chrome.evaluate(element => {
+      element.setAttribute('data-e2e-persistent', '');
+    });
+
+    await shell.evaluate(element => {
+      (element as HTMLElement & { gradientPreset: string }).gradientPreset = 'none';
+    });
+
+    await expect(shell).toHaveAttribute('gradient-preset', 'none');
+    await expect(chrome).toHaveCount(1);
+    await expect(chrome).toHaveAttribute('data-e2e-persistent', '');
+    const colors = await chrome.evaluate(element => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = 'var(--color-background-secondary)';
+      document.body.append(probe);
+      const secondary = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return {
+        chrome: getComputedStyle(element).backgroundColor,
+        secondary,
+      };
+    });
+    expect(colors.chrome).toBe(colors.secondary);
+  });
+
   test('tools drawer sets inert and aria-hidden when resting closed', async ({ page }) => {
     const drawer = page.locator('.panel-tools__drawer');
     const host = page.locator('ds-panel-tools');
@@ -237,6 +265,28 @@ test.describe('App shell chrome', () => {
     await expect(host).toHaveClass(/panel-tools--drawer-resting/, { timeout: 5000 });
     await expect(drawer).toHaveAttribute('aria-hidden', 'true');
     await expect(drawer).toHaveAttribute('inert', '');
+  });
+
+  test('tools drawer animates closed when reversed during opening', async ({ page }) => {
+    const host = page.locator('ds-panel-tools');
+    const drawer = page.locator('.panel-tools__drawer');
+    const agents = page.getByRole('button', { name: 'Agents' });
+    await agents.click();
+    await page.waitForTimeout(100);
+    const openingWidth = await drawer.evaluate(element => element.getBoundingClientRect().width);
+    expect(openingWidth).toBeGreaterThan(0);
+
+    await agents.click();
+    await expect(host).toHaveClass(/panel-tools--motion-closing/);
+    await page.waitForTimeout(30);
+    const closingWidth = await drawer.evaluate(element => element.getBoundingClientRect().width);
+    expect(closingWidth).toBeGreaterThan(0);
+    await page.waitForTimeout(100);
+    const laterClosingWidth = await drawer.evaluate(element => element.getBoundingClientRect().width);
+    expect(laterClosingWidth).toBeLessThan(closingWidth);
+
+    await expect(host).toHaveClass(/panel-tools--drawer-resting/, { timeout: 5000 });
+    await expect(drawer).toHaveCSS('max-width', '0px');
   });
 
   test('uses fixed desktop and tablet drawer width tokens', async ({ page }) => {
