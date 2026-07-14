@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1](https://github.com/zainadeel/compomo/compare/v6.0.0...v6.0.1) (2026-07-14)
+
+
+### Fixed
+
+* **shell:** preserve chrome during motion reversals ([#320](https://github.com/zainadeel/compomo/issues/320)) ([9ac7018](https://github.com/zainadeel/compomo/commit/9ac701832e520b9858f9f764c808e4557c143974))
+
 ## [6.0.0](https://github.com/zainadeel/compomo/compare/v5.0.0...v6.0.0) (2026-07-14)
 
 
