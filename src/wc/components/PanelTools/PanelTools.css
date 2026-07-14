@@ -230,3 +230,14 @@ ds-text.panel-tools__title,
   height: var(--dimension-size-400);
   flex-shrink: 0;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__drawer,
+  :host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__drawer,
+  :host(.panel-tools--ready.panel-tools--motion-opening) ds-text.panel-tools__title,
+  :host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__body,
+  :host(.panel-tools--ready.panel-tools--motion-closing) ds-text.panel-tools__title,
+  :host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__body {
+    transition: none;
+  }
+}

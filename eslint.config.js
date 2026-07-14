@@ -41,6 +41,7 @@ export default tseslint.config(
       'local/prefer-ds-text': 'warn',
       'local/prefer-ds-icon': 'warn',
       'local/prefer-direct-ds-text': 'warn',
+      'local/no-selected-fill-emphasis-change': 'warn',
     },
   },
   {

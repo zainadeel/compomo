@@ -1,4 +1,5 @@
 import { parseJsonArrayProp } from '../BarNav/bar-nav-utils';
+import { parseCssTimeMs } from '../../utils/resolve-css-time-ms';
 import {
   PANEL_TOOLS_TOOL_IDS,
   type PanelToolsItem,
@@ -61,6 +62,26 @@ export function shouldResyncPanelToolsItems(
 }
 
 export type PanelToolsMotion = 'opening' | 'closing' | 'idle';
+
+export interface PanelToolsTransitionStyle {
+  transitionProperty: string;
+  transitionDuration: string;
+  transitionDelay: string;
+}
+
+/** Maximum computed time for the drawer's max-width transition, including delay. */
+export function panelToolsDrawerTransitionMs(style: PanelToolsTransitionStyle): number {
+  const properties = style.transitionProperty.split(',').map(item => item.trim());
+  const durations = style.transitionDuration.split(',').map(item => parseCssTimeMs(item.trim(), 0));
+  const delays = style.transitionDelay.split(',').map(item => parseCssTimeMs(item.trim(), 0));
+
+  return properties.reduce((max, property, index) => {
+    if (property !== 'all' && property !== 'max-width') return max;
+    const duration = durations[index % durations.length] ?? 0;
+    const delay = delays[index % delays.length] ?? 0;
+    return Math.max(max, duration + delay, 0);
+  }, 0);
+}
 
 /** True when the drawer clip is fully closed — safe to skip painting slot content. */
 export function panelToolsDrawerResting(open: boolean, motion: PanelToolsMotion): boolean {

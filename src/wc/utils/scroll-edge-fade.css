@@ -154,6 +154,12 @@
       0 var(--ds-scroll-edge-fade-reveal-distance),
       calc(100% - var(--ds-scroll-edge-fade-reveal-distance)) 100%;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-edge-fade--scroll-aware {
+      animation: none;
+    }
+  }
 }
 
 .scroll-edge-fade--at-end,

@@ -2,11 +2,11 @@ import '/dist/components/ds-input.js';
 import '/dist/components/ds-checkbox.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-radio-group.js';
-import '/dist/components/ds-toggle.js';
+import '/dist/components/ds-switch.js';
 import '/dist/components/ds-pagination.js';
 
 await Promise.all([
-  'ds-input', 'ds-checkbox', 'ds-select', 'ds-radio-group', 'ds-toggle', 'ds-pagination',
+  'ds-input', 'ds-checkbox', 'ds-select', 'ds-radio-group', 'ds-switch', 'ds-pagination',
 ].map(tag => customElements.whenDefined(tag)));
 
 document.getElementById('region').name = 'region';

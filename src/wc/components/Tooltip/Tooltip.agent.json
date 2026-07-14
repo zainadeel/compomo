@@ -1,0 +1,89 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-tooltip",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-tooltip",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Supplementary, non-interactive visual label for an already named action, shown on mouse or hover-capable pen and keyboard focus.",
+  "useWhen": [
+    "An icon-only or dense control benefits from a short visual label for sighted mouse, pen, and keyboard users.",
+    "A non-essential keyboard shortcut should appear beside a concise visual label.",
+    "Adjacent chrome actions need delayed first disclosure with instant warm handoff between tooltips."
+  ],
+  "avoidWhen": [
+    "The tooltip would be the trigger's only accessible name or contain information required to complete the task.",
+    "The popup needs links, buttons, rich content, a close action, click-to-open behavior, or touch access.",
+    "The callout follows a chart cursor or data point rather than a slotted control."
+  ],
+  "alternatives": [
+    {
+      "when": "The popup contains a contextual list of actions or options.",
+      "component": "component:ds-menu",
+      "reason": "Menu provides interactive content, keyboard navigation, selection, and close behavior."
+    },
+    {
+      "when": "The content requires focus management, substantial explanation, confirmation, or a form.",
+      "component": "component:ds-modal",
+      "reason": "Modal provides dialog semantics and focus containment."
+    },
+    {
+      "when": "A chart needs a cursor- or data-point-positioned value callout.",
+      "component": "component:ds-tooltip-data-viz",
+      "reason": "TooltipDataViz accepts chart coordinates and is designed for data visualization hover feedback."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-filled",
+    "component:ds-button-unfilled",
+    "component:ds-panel-nav",
+    "component:ds-panel-tools"
+  ],
+  "accessibility": [
+    "The slotted trigger must have its own accessible name, usually an aria-label that closely matches the visual tooltip label.",
+    "Tooltip content is supplementary and non-essential; touch input intentionally does not open it.",
+    "While open, the trigger is linked to the role=tooltip popup with aria-describedby; the relationship is removed when the popup leaves the DOM without disturbing consumer description IDs.",
+    "Keyboard focus opens the tooltip and Escape dismisses it without moving focus."
+  ],
+  "states": [
+    "The first hover or keyboard focus waits for delay; moving to another tooltip shortly after dismissal opens it immediately.",
+    "An empty or whitespace-only label suppresses the popup while preserving the wrapper.",
+    "Only one tooltip remains active globally; warm handoff removes the previous popup before showing the next.",
+    "The preferred side flips when it cannot fit, then alignment is clamped to viewport padding.",
+    "Reduced motion removes enter and exit fades while retaining the final visible or hidden state."
+  ],
+  "responsiveBehavior": [
+    "The portaled popup follows trigger and popup resize, viewport resize, and nested scrolling while open.",
+    "Touch users rely on the trigger's accessible and visible context rather than tooltip disclosure.",
+    "Keep labels concise and non-wrapping; use inline text or a larger disclosure component for essential explanation."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Place exactly one trigger element as the component's light-DOM child.",
+      "Replacing the slotted trigger rebinds pointer and focus behavior automatically.",
+      "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values."
+    ],
+    "react": [
+      "Wrap one focusable trigger with DsTooltip; keep the trigger's aria-label independent from the tooltip label."
+    ],
+    "angular": [
+      "Wrap one focusable trigger with DsTooltip and use property binding when offset or delay values are not plain strings."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook behavior examples",
+      "path": "src/wc/components/Tooltip/Tooltip.stories.ts"
+    },
+    {
+      "label": "Cross-browser behavior and accessibility coverage",
+      "path": "tests/e2e/tooltip.spec.ts"
+    },
+    {
+      "label": "Positioning unit coverage",
+      "path": "tests/tooltip-position.test.ts"
+    }
+  ]
+}

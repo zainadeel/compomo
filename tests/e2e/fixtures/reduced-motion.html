@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Reduced motion e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <ds-loader id="loader" label="Loading"></ds-loader>
+    <ds-switch id="switch" aria-label="Motion switch"></ds-switch>
+    <ds-button-filled id="button" label="Action"></ds-button-filled>
+    <button id="menu-anchor">Menu anchor</button>
+    <ds-menu id="menu" anchor-id="menu-anchor" menu-label="Motion menu" open></ds-menu>
+    <ds-modal id="modal" heading="Motion modal" open>
+      <button>Modal action</button>
+    </ds-modal>
+    <ds-banner id="banner" message="Saved" floating show-dismiss></ds-banner>
+    <script type="module" src="/reduced-motion-setup.mjs"></script>
+  </body>
+</html>

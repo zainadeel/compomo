@@ -66,6 +66,12 @@
   opacity: 0;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}
+
 /* ── Thumb ───────────────────────────────────────────────────────────────── */
 
 .thumb {

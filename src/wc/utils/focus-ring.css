@@ -4,29 +4,35 @@
   --ds-focus-ring-color: var(--color-interaction-focus);
 }
 
+:host(.ds-focus-ring:focus-visible),
 .ds-focus-ring:focus-visible {
   outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
   outline-offset: var(--ds-focus-ring-offset);
 }
 
+:host(.ds-focus-ring.ds-focus-ring--visible),
 .ds-focus-ring.ds-focus-ring--visible {
   outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
   outline-offset: var(--ds-focus-ring-offset);
 }
 
+:host(.ds-focus-ring-inset:focus-visible),
 .ds-focus-ring-inset:focus-visible {
   outline: none;
 }
 
+:host(.ds-focus-ring-inset:focus-visible)::after,
 .ds-focus-ring-inset:focus-visible::after {
   outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
   outline-offset: calc(-1 * var(--ds-focus-ring-width));
 }
 
+:host(.ds-focus-ring-inset.ds-focus-ring--visible),
 .ds-focus-ring-inset.ds-focus-ring--visible {
   outline: none;
 }
 
+:host(.ds-focus-ring-inset.ds-focus-ring--visible)::after,
 .ds-focus-ring-inset.ds-focus-ring--visible::after {
   outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
   outline-offset: calc(-1 * var(--ds-focus-ring-width));

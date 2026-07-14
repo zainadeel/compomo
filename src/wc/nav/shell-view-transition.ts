@@ -1,4 +1,4 @@
-import { parseCssTimeMs } from '../utils/resolve-css-time-ms';
+import { parseCssTimeMs, prefersReducedMotion } from '../utils/resolve-css-time-ms';
 
 /** `view-transition-name` on `ds-bar-nav` — pairs with root reveal in shell apps. */
 export const SHELL_BAR_NAV_VT_NAME = 'ds-shell-bar-nav';
@@ -23,12 +23,13 @@ function readCssCustomProperty(name: string, fallback: string): string {
 export function ensureShellNavVtStyle(): void {
   if (typeof document === 'undefined') return;
 
+  const reduceMotion = prefersReducedMotion();
   const content = [
     '::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}',
     `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}),::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){animation:none;mix-blend-mode:normal}`,
     `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}){z-index:1}`,
-    `::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){z-index:2;clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}`,
-    '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
+    `::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){z-index:2${reduceMotion ? '' : ';clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))'}}`,
+    reduceMotion ? '' : '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
   ].join('\n');
 
   const existing = document.getElementById(VT_STYLE_ID) as HTMLStyleElement | null;
@@ -73,6 +74,11 @@ export function animateShellNavRadialReveal(
   origin: ShellNavRevealOrigin,
   durationMs?: number,
 ): void {
+  if (prefersReducedMotion()) {
+    ensureShellNavVtStyle();
+    return;
+  }
+
   const duration =
     durationMs ??
     parseCssTimeMs(
@@ -111,6 +117,12 @@ export function runShellNavStyleRevealOnReady(
   originEl?: HTMLElement | null,
 ): void {
   ensureShellNavVtStyle();
+  if (prefersReducedMotion()) {
+    transition.ready.catch(() => {
+      /* transition skipped or superseded */
+    });
+    return;
+  }
   const origin = resolveShellNavRevealOrigin(originEl);
   setShellNavRevealOriginVars(origin);
 

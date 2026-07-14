@@ -5,7 +5,7 @@ import { ValueAccessor } from './value-accessor';
 
 @Directive({
   /* tslint:disable-next-line:directive-selector */
-  selector: 'ds-checkbox, ds-toggle',
+  selector: 'ds-checkbox, ds-switch',
   host: {
     '(dsChange)': 'handleChangeEvent($event.target?.["checked"])'
   },

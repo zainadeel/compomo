@@ -1,6 +1,11 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseCssTimeMs, resolveCssTimeMs } from '../src/wc/utils/resolve-css-time-ms';
+import {
+  parseCssTimeMs,
+  prefersReducedMotion,
+  resolveCssTimeMs,
+  resolveMotionTimeMs,
+} from '../src/wc/utils/resolve-css-time-ms';
 import { TOKEN_DEFAULTS } from '../src/wc/utils/token-defaults';
 
 describe('parseCssTimeMs', () => {
@@ -77,5 +82,38 @@ describe('resolveCssTimeMs', () => {
       resolveCssTimeMs(TOKEN_DEFAULTS.animationDelayMedium1, TOKEN_DEFAULTS.animationDelayMedium1),
       500,
     );
+  });
+});
+
+describe('reduced motion helpers', () => {
+  const originalWindow = globalThis.window;
+
+  after(() => {
+    if (originalWindow === undefined) {
+      // @ts-expect-error restore non-DOM test environment
+      delete globalThis.window;
+    } else {
+      globalThis.window = originalWindow;
+    }
+  });
+
+  it('detects the reduced-motion media query and zeroes motion durations', () => {
+    globalThis.window = {
+      matchMedia: (query: string) => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+      }),
+    } as Window & typeof globalThis;
+
+    assert.equal(prefersReducedMotion(), true);
+    assert.equal(resolveMotionTimeMs(600, TOKEN_DEFAULTS.animationDelayMedium1), 0);
+  });
+
+  it('preserves resolved durations when reduced motion is not requested', () => {
+    globalThis.window = {
+      matchMedia: () => ({ matches: false }),
+    } as Window & typeof globalThis;
+
+    assert.equal(prefersReducedMotion(), false);
+    assert.equal(resolveMotionTimeMs(600, TOKEN_DEFAULTS.animationDelayMedium1), 600);
   });
 });

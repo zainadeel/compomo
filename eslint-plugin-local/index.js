@@ -265,11 +265,132 @@ const preferDirectDsText = {
   },
 };
 
+const SELECTED_FILL_CLASS = 'ds-interaction-fill--selected';
+
+function classExpressionHasSelectedFill(node) {
+  if (!node) return false;
+
+  if (node.type === 'Literal') {
+    return typeof node.value === 'string' && node.value.split(/\s+/).includes(SELECTED_FILL_CLASS);
+  }
+
+  if (node.type === 'TemplateLiteral') {
+    return (
+      node.quasis.some(part =>
+        (part.value.cooked ?? '').split(/\s+/).includes(SELECTED_FILL_CLASS),
+      ) ||
+      node.expressions.some(classExpressionHasSelectedFill)
+    );
+  }
+
+  if (node.type === 'ConditionalExpression') {
+    return (
+      classExpressionHasSelectedFill(node.consequent) ||
+      classExpressionHasSelectedFill(node.alternate)
+    );
+  }
+
+  if (node.type === 'LogicalExpression' || node.type === 'BinaryExpression') {
+    return (
+      classExpressionHasSelectedFill(node.left) ||
+      classExpressionHasSelectedFill(node.right)
+    );
+  }
+
+  if (node.type === 'ObjectExpression') {
+    return node.properties.some(prop => {
+      if (prop.type !== 'Property' || prop.computed) return false;
+      const key =
+        prop.key.type === 'Literal'
+          ? prop.key.value
+          : prop.key.type === 'Identifier'
+            ? prop.key.name
+            : null;
+      return key === SELECTED_FILL_CLASS;
+    });
+  }
+
+  return false;
+}
+
+function elementUsesSelectedFill(openingElement) {
+  return openingElement.attributes.some(attribute => {
+    if (!isClassAttribute(attribute) || !attribute.value) return false;
+    if (attribute.value.type === 'Literal') {
+      return classExpressionHasSelectedFill(attribute.value);
+    }
+    return (
+      attribute.value.type === 'JSXExpressionContainer' &&
+      classExpressionHasSelectedFill(attribute.value.expression)
+    );
+  });
+}
+
+function dynamicEmphasisAttributes(jsxElement) {
+  const matches = [];
+
+  function visit(element) {
+    if (isDsTextJsxName(element.openingElement.name)) {
+      for (const attribute of element.openingElement.attributes) {
+        if (
+          attribute.type !== 'JSXAttribute' ||
+          attribute.name.type !== 'JSXIdentifier' ||
+          attribute.name.name !== 'emphasis' ||
+          attribute.value?.type !== 'JSXExpressionContainer'
+        ) {
+          continue;
+        }
+
+        const expression = attribute.value.expression;
+        const isStaticBoolean =
+          expression.type === 'Literal' && typeof expression.value === 'boolean';
+        if (!isStaticBoolean) matches.push(attribute);
+      }
+    }
+
+    for (const child of element.children ?? []) {
+      if (child.type === 'JSXElement') visit(child);
+    }
+  }
+
+  visit(jsxElement);
+  return matches;
+}
+
+/** @type {import('eslint').Rule.RuleModule} */
+const noSelectedFillEmphasisChange = {
+  meta: {
+    type: 'suggestion',
+    docs: {
+      description:
+        'Keep text weight stable when ds-interaction-fill--selected supplies selected state.',
+    },
+    schema: [],
+  },
+  create(context) {
+    return {
+      JSXElement(node) {
+        if (!elementUsesSelectedFill(node.openingElement)) return;
+
+        for (const attribute of dynamicEmphasisAttributes(node)) {
+          context.report({
+            node: attribute,
+            message:
+              'Do not change ds-text emphasis for ds-interaction-fill--selected state. ' +
+              'Keep the base text weight and promote foreground color instead.',
+          });
+        }
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: 'eslint-plugin-local', version: '1.0.0' },
   rules: {
     'prefer-ds-text': preferDsText,
     'prefer-ds-icon': preferDsIcon,
     'prefer-direct-ds-text': preferDirectDsText,
+    'no-selected-fill-emphasis-change': noSelectedFillEmphasisChange,
   },
 };

@@ -4,7 +4,7 @@ import { Linter } from 'eslint';
 import tseslint from 'typescript-eslint';
 import local from '../eslint-plugin-local/index.js';
 
-function lint(code: string) {
+function lint(code: string, rule = 'prefer-direct-ds-text') {
   const linter = new Linter({ configType: 'flat' });
   return linter.verify(
     code,
@@ -16,7 +16,7 @@ function lint(code: string) {
           parserOptions: { ecmaFeatures: { jsx: true } },
         },
         plugins: { local },
-        rules: { 'local/prefer-direct-ds-text': 'warn' },
+        rules: { [`local/${rule}`]: 'warn' },
       },
     ],
     { filename: 'src/wc/components/Example/Example.tsx' },
@@ -75,5 +75,53 @@ describe('local/prefer-direct-ds-text', () => {
       );
     `);
     assert.equal(messages.filter(message => message.ruleId === 'local/prefer-direct-ds-text').length, 0);
+  });
+});
+
+describe('local/no-selected-fill-emphasis-change', () => {
+  const rule = 'no-selected-fill-emphasis-change';
+
+  it('flags selection-driven emphasis inside the active fill utility', () => {
+    const messages = lint(`
+      const view = (
+        <button class={{
+          'ds-interaction-fill': true,
+          'ds-interaction-fill--selected': isSelected,
+        }}>
+          <ds-text emphasis={isSelected} color={isSelected ? 'primary' : 'secondary'}>
+            Label
+          </ds-text>
+        </button>
+      );
+    `, rule);
+
+    assert.equal(messages.filter(message => message.ruleId === `local/${rule}`).length, 1);
+  });
+
+  it('accepts a stable text weight with selected foreground color', () => {
+    const messages = lint(`
+      const view = (
+        <button class={{
+          'ds-interaction-fill': true,
+          'ds-interaction-fill--selected': isSelected,
+        }}>
+          <ds-text color={isSelected ? 'primary' : 'secondary'}>Label</ds-text>
+        </button>
+      );
+    `, rule);
+
+    assert.equal(messages.filter(message => message.ruleId === `local/${rule}`).length, 0);
+  });
+
+  it('accepts always-emphasis as part of the base control recipe', () => {
+    const messages = lint(`
+      const view = (
+        <button class="ds-interaction-fill ds-interaction-fill--selected">
+          <ds-text emphasis>Label</ds-text>
+        </button>
+      );
+    `, rule);
+
+    assert.equal(messages.filter(message => message.ruleId === `local/${rule}`).length, 0);
   });
 });

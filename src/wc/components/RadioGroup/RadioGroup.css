@@ -54,7 +54,7 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  transition: all var(--effect-motion-short-2);
+  transition: border-color var(--effect-motion-short-2);
 }
 
 .circle--checked {

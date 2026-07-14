@@ -57,6 +57,12 @@
   transition: opacity var(--effect-motion-short-2);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .chart-legend__item {
+    transition: none;
+  }
+}
+
 .chart-legend__item--interactive {
   cursor: pointer;
 }

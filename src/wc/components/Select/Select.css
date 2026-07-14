@@ -12,7 +12,7 @@
 :host(.select-host) {
   display: inline-flex;
   position: relative;
-  /* Idle = secondary. Selected/open: label → primary; chevron stays secondary. */
+  /* Idle/open = secondary. A selected value promotes only the label. */
   --ds-select-fg: var(--color-foreground-secondary);
   --ds-select-fg-active: var(--color-foreground-primary);
   --ds-select-border: var(--color-border-secondary);
@@ -47,7 +47,7 @@
   overflow: hidden;
   transition: color var(--effect-motion-short-2);
   /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected`).
-     Selected/open: label → primary; chevron stays secondary. */
+     A selected value promotes the label; opening alone does not. */
 }
 
 /* Inset stroke via interaction-fill ::after (same recipe as ButtonUnfilled). */
@@ -74,8 +74,7 @@
   transition: color var(--effect-motion-short-2);
 }
 
-.trigger--has-value .trigger__label,
-.trigger--open .trigger__label {
+.trigger--has-value .trigger__label {
   color: var(--ds-select-fg-active);
 }
 
@@ -88,6 +87,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Always secondary — only the label promotes on selected/open. */
+  /* Always secondary — only a selected label promotes. */
   color: var(--ds-select-fg);
 }

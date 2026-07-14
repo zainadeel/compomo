@@ -13,6 +13,7 @@ import {
   orderPanelToolsItems,
   parsePanelToolsItems,
   panelToolsDrawerResting,
+  panelToolsDrawerTransitionMs,
   reconcilePanelToolsAvailability,
   resolvePanelToolActivation,
 } from './panel-tools-utils';
@@ -71,6 +72,8 @@ export class PanelTools {
   @State() private rovingIndex = 0;
 
   private motionEnableGeneration = 0;
+  private transitionGeneration = 0;
+  private transitionFallbackTimer: number | null = null;
 
   private get railItems(): PanelToolsItem[] {
     return parsePanelToolsItems(this.items, this.itemsJson);
@@ -92,6 +95,8 @@ export class PanelTools {
 
   disconnectedCallback() {
     this.el.removeEventListener('transitionend', this.handleTransitionEnd);
+    this.el.removeEventListener('transitioncancel', this.handleTransitionEnd);
+    this.clearTransitionCompletion();
     this.motionEnableGeneration += 1;
   }
 
@@ -109,6 +114,7 @@ export class PanelTools {
 
   connectedCallback() {
     this.el.addEventListener('transitionend', this.handleTransitionEnd);
+    this.el.addEventListener('transitioncancel', this.handleTransitionEnd);
   }
 
   componentWillLoad() {
@@ -118,11 +124,7 @@ export class PanelTools {
   @Watch('open')
   openChanged(isOpen: boolean, wasOpen?: boolean) {
     if (this.readyForMotion && wasOpen !== undefined && wasOpen !== isOpen) {
-      this.motion = isOpen ? 'opening' : 'closing';
-      this.dsChromeTransitionStart.emit({
-        source: 'panel-tools',
-        phase: isOpen ? 'opening' : 'closing',
-      });
+      this.startDrawerTransition(isOpen ? 'opening' : 'closing');
     }
     this.deferMotionEnable();
   }
@@ -177,12 +179,61 @@ export class PanelTools {
     this.dsToolChange.emit({ id: next.removedTool, selected: false });
   }
 
+  private startDrawerTransition(phase: 'opening' | 'closing') {
+    const drawer = this.el.querySelector('.panel-tools__drawer') as HTMLElement | null;
+    const widthBefore = drawer?.getBoundingClientRect().width ?? 0;
+    if (this.motion !== 'idle') this.finishDrawerTransition();
+    this.motion = phase;
+    this.dsChromeTransitionStart.emit({ source: 'panel-tools', phase });
+    const generation = ++this.transitionGeneration;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (generation !== this.transitionGeneration || this.motion !== phase) return;
+        if (!drawer) {
+          this.finishDrawerTransition();
+          return;
+        }
+
+        const widthAfter = drawer.getBoundingClientRect().width;
+        if (Math.abs(widthAfter - widthBefore) < 1) {
+          this.finishDrawerTransition();
+          return;
+        }
+
+        const fallbackMs = panelToolsDrawerTransitionMs(getComputedStyle(drawer));
+        if (fallbackMs <= 0) {
+          this.finishDrawerTransition();
+          return;
+        }
+        this.transitionFallbackTimer = window.setTimeout(() => {
+          this.finishDrawerTransition();
+        }, fallbackMs);
+      });
+    });
+  }
+
   private handleTransitionEnd = (event: TransitionEvent) => {
     if (event.target !== this.el.querySelector('.panel-tools__drawer')) return;
     if (event.propertyName !== 'max-width') return;
+    this.finishDrawerTransition();
+  };
+
+  private finishDrawerTransition() {
+    const wasTransitioning = this.motion !== 'idle';
+    this.clearTransitionCompletion();
+    if (!wasTransitioning) return;
     this.motion = 'idle';
     this.dsChromeTransitionEnd.emit({ source: 'panel-tools' });
-  };
+  }
+
+  private clearTransitionCompletion() {
+    this.transitionGeneration += 1;
+    if (this.transitionFallbackTimer !== null) {
+      window.clearTimeout(this.transitionFallbackTimer);
+      this.transitionFallbackTimer = null;
+    }
+  }
 
   /** Rail selection follows `open` immediately — independent of the slide animation. */
   private isRailSelected(id: PanelToolsToolId): boolean {

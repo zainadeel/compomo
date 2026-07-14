@@ -36,10 +36,6 @@
   border-radius: var(--dimension-radius-half);
 }
 
-:host(.badge--selected) {
-  --_badge-bg: var(--color-foreground-primary);
-}
-
 /* Shell gradient ring — base fill + wash donut (option 3). */
 :host(.badge--on-gradient-background) .badge__mark {
   position: relative;

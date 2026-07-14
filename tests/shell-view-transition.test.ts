@@ -4,7 +4,9 @@ import {
   SHELL_BAR_NAV_VT_NAME,
   SHELL_NAV_REVEAL_DURATION_VAR,
   SHELL_NAV_REVEAL_EASING_VAR,
+  animateShellNavRadialReveal,
   ensureShellNavVtStyle,
+  runShellNavStyleRevealOnReady,
 } from '../src/wc/nav/shell-view-transition';
 
 describe('SHELL_BAR_NAV_VT_NAME', () => {
@@ -38,5 +40,67 @@ describe('ensureShellNavVtStyle', () => {
     assert.match(css, /view-transition-new\(ds-shell-bar-nav\)\{z-index:2;clip-path:circle\(0px/);
     assert.match(css, /view-transition-old\(ds-shell-bar-nav\)\{z-index:1\}/);
     delete (globalThis as { document?: typeof doc }).document;
+  });
+
+  it('leaves snapshots at their final state and skips WAAPI under reduced motion', () => {
+    const styles: { id: string; textContent: string }[] = [];
+    let animationCount = 0;
+    const doc = {
+      documentElement: {
+        animate: () => { animationCount += 1; },
+      },
+      getElementById: (id: string) => styles.find(s => s.id === id) ?? null,
+      createElement: () => ({ id: '', textContent: '' }),
+      head: {
+        appendChild(el: { id: string; textContent: string }) {
+          styles.push(el);
+        },
+      },
+    };
+    const win = {
+      matchMedia: () => ({ matches: true }),
+    };
+    (globalThis as { document?: typeof doc }).document = doc;
+    (globalThis as { window?: typeof win }).window = win;
+
+    runShellNavStyleRevealOnReady({ ready: Promise.resolve() });
+
+    assert.doesNotMatch(styles[0]?.textContent ?? '', /clip-path:circle\(0px/);
+    assert.equal(animationCount, 0);
+    delete (globalThis as { document?: typeof doc }).document;
+    delete (globalThis as { window?: typeof win }).window;
+  });
+
+  it('removes a pending reveal clip if motion preference changes before animation', () => {
+    const styles: { id: string; textContent: string }[] = [];
+    let reduceMotion = false;
+    let animationCount = 0;
+    const doc = {
+      documentElement: {
+        animate: () => { animationCount += 1; },
+      },
+      getElementById: (id: string) => styles.find(s => s.id === id) ?? null,
+      createElement: () => ({ id: '', textContent: '' }),
+      head: {
+        appendChild(el: { id: string; textContent: string }) {
+          styles.push(el);
+        },
+      },
+    };
+    const win = {
+      matchMedia: () => ({ matches: reduceMotion }),
+    };
+    (globalThis as { document?: typeof doc }).document = doc;
+    (globalThis as { window?: typeof win }).window = win;
+
+    ensureShellNavVtStyle();
+    assert.match(styles[0]?.textContent ?? '', /clip-path:circle\(0px/);
+    reduceMotion = true;
+    animateShellNavRadialReveal({ x: 0, y: 0, maxRadius: 100 });
+
+    assert.doesNotMatch(styles[0]?.textContent ?? '', /clip-path:circle\(0px/);
+    assert.equal(animationCount, 0);
+    delete (globalThis as { document?: typeof doc }).document;
+    delete (globalThis as { window?: typeof win }).window;
   });
 });

@@ -3,11 +3,13 @@ import {
   CONTROL_TEXT_VARIANT,
   resolveCssLengthPx,
   resolveCssTimeMs,
+  resolveMotionTimeMs,
   TOKEN_CSS_LENGTHS,
   TOKEN_DEFAULTS,
 } from '../../utils';
 import type { TextVariant } from '../Text/text-types';
 import { shortcutKeyLabels } from '../../utils/shortcut-key';
+import { computeTooltipPosition } from './tooltip-position';
 // Side-effect: register `ds-text` — the portal builds it via createElement, not JSX.
 import '../Text/Text';
 
@@ -109,24 +111,58 @@ export class Tooltip {
   private anchor: HTMLElement | null = null;
   private popupEl: HTMLElement | null = null;
   private positionObserver: ResizeObserver | null = null;
+  private anchorObserver: MutationObserver | null = null;
+  private positionFrame: number | null = null;
   private skipEnterAnimation = false;
   private isOpen = false;
-  private mouseEnterHandler: () => void = () => this.show();
-  private mouseLeaveHandler: () => void = () => this.hide();
+  private lastInteractionWasKeyboard = false;
+  private pointerEnterHandler = (event: PointerEvent) => {
+    if (event.pointerType === 'touch') return;
+    this.show();
+  };
+  private pointerLeaveHandler = (event: PointerEvent) => {
+    if (event.pointerType === 'touch') return;
+    this.hide();
+  };
+  private pointerDownHandler = (event: PointerEvent) => {
+    this.lastInteractionWasKeyboard = false;
+    if (event.pointerType === 'touch' && (this.isOpen || this.popupEl)) this.hideInstant();
+  };
+  private keyDownHandler = () => {
+    this.lastInteractionWasKeyboard = true;
+  };
   /** focusin/focusout so nested focus targets (e.g. ds-button-* inner button) still open the tip. */
-  private focusHandler: () => void = () => this.show();
+  private focusHandler = () => {
+    if (this.lastInteractionWasKeyboard || this.anchor?.matches(':focus-visible')) this.show();
+  };
   private blurHandler: (e: FocusEvent) => void = (e) => {
     const next = e.relatedTarget as Node | null;
     if (next && this.anchor?.contains(next)) return;
     this.hide();
   };
+  private scrollResizeHandler = () => {
+    if (this.positionFrame !== null) return;
+    this.positionFrame = requestAnimationFrame(() => {
+      this.positionFrame = null;
+      this.calculatePosition();
+    });
+  };
+  private escapeHandler = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape' || !this.isOpen) return;
+    event.preventDefault();
+    this.hide();
+  };
 
   componentDidLoad() {
     this.bindAnchor();
+    this.anchorObserver = new MutationObserver(() => this.handleSlotChange());
+    this.anchorObserver.observe(this.el, { childList: true });
   }
 
   disconnectedCallback() {
     if (activeTooltip === this) activeTooltip = null;
+    this.anchorObserver?.disconnect();
+    this.anchorObserver = null;
     this.unbindAnchor();
     this.clearTimers();
     this.destroyPopup();
@@ -174,7 +210,7 @@ export class Tooltip {
   }
 
   private get fadeOutMs(): number {
-    return resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private get tooltipFallbackWidthPx(): number {
@@ -190,33 +226,79 @@ export class Tooltip {
     const slot = this.el.querySelector('slot') as HTMLSlotElement | null;
     const slotted = slot?.assignedElements?.() ?? [];
     const child = (slotted[0] ?? this.el.firstElementChild) as HTMLElement | null;
-    if (!child) return;
+    if (!child || child === this.anchor) return;
     this.anchor = child;
-    child.setAttribute('aria-describedby', this.tooltipId);
-    child.addEventListener('mouseenter', this.mouseEnterHandler);
-    child.addEventListener('mouseleave', this.mouseLeaveHandler);
+    child.addEventListener('pointerenter', this.pointerEnterHandler);
+    child.addEventListener('pointerleave', this.pointerLeaveHandler);
+    child.addEventListener('pointerdown', this.pointerDownHandler);
+    child.addEventListener('keydown', this.keyDownHandler);
     child.addEventListener('focusin', this.focusHandler);
     child.addEventListener('focusout', this.blurHandler);
   }
 
   private unbindAnchor() {
     if (!this.anchor) return;
-    this.anchor.removeAttribute('aria-describedby');
-    this.anchor.removeEventListener('mouseenter', this.mouseEnterHandler);
-    this.anchor.removeEventListener('mouseleave', this.mouseLeaveHandler);
+    this.unlinkDescribedBy();
+    this.anchor.removeEventListener('pointerenter', this.pointerEnterHandler);
+    this.anchor.removeEventListener('pointerleave', this.pointerLeaveHandler);
+    this.anchor.removeEventListener('pointerdown', this.pointerDownHandler);
+    this.anchor.removeEventListener('keydown', this.keyDownHandler);
     this.anchor.removeEventListener('focusin', this.focusHandler);
     this.anchor.removeEventListener('focusout', this.blurHandler);
     this.anchor = null;
   }
+
+  private linkDescribedBy() {
+    if (!this.anchor || !this.popupEl) return;
+    const ids = new Set((this.anchor.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean));
+    ids.add(this.tooltipId);
+    this.anchor.setAttribute('aria-describedby', Array.from(ids).join(' '));
+  }
+
+  private unlinkDescribedBy() {
+    if (!this.anchor) return;
+    const ids = (this.anchor.getAttribute('aria-describedby') ?? '')
+      .split(/\s+/)
+      .filter(id => id && id !== this.tooltipId);
+    if (ids.length) this.anchor.setAttribute('aria-describedby', ids.join(' '));
+    else this.anchor.removeAttribute('aria-describedby');
+  }
+
+  private handleSlotChange = () => {
+    const slot = this.el.querySelector('slot') as HTMLSlotElement | null;
+    const next = (slot?.assignedElements?.()[0] ?? this.el.firstElementChild) as HTMLElement | null;
+    if (next === this.anchor) return;
+    if (this.isOpen || this.popupEl) this.hideInstant();
+    this.unbindAnchor();
+    this.bindAnchor();
+  };
 
   private clearTimers() {
     if (this.delayTimer) { clearTimeout(this.delayTimer); this.delayTimer = null; }
     if (this.closeTimer) { clearTimeout(this.closeTimer); this.closeTimer = null; }
   }
 
+  private setupOpenListeners() {
+    window.addEventListener('scroll', this.scrollResizeHandler, true);
+    window.addEventListener('resize', this.scrollResizeHandler);
+    document.addEventListener('keydown', this.escapeHandler);
+  }
+
+  private teardownOpenListeners() {
+    window.removeEventListener('scroll', this.scrollResizeHandler, true);
+    window.removeEventListener('resize', this.scrollResizeHandler);
+    document.removeEventListener('keydown', this.escapeHandler);
+    if (this.positionFrame !== null) {
+      cancelAnimationFrame(this.positionFrame);
+      this.positionFrame = null;
+    }
+  }
+
   private destroyPopup() {
+    this.teardownOpenListeners();
     this.positionObserver?.disconnect();
     this.positionObserver = null;
+    this.unlinkDescribedBy();
     if (!this.popupEl) return;
     this.popupEl.remove();
     this.popupEl = null;
@@ -246,6 +328,7 @@ export class Tooltip {
     this.positionObserver?.disconnect();
     this.positionObserver = new ResizeObserver(() => this.calculatePosition());
     this.positionObserver.observe(this.popupEl);
+    if (this.anchor) this.positionObserver.observe(this.anchor);
   }
 
   /** Drop the open tip immediately (warm handoff to another tooltip). */
@@ -286,15 +369,22 @@ export class Tooltip {
     this.clearTimers();
     if (!this.popupEl && !this.isOpen) return;
     lastDismissedAt = Date.now();
-    if (activeTooltip === this) activeTooltip = null;
     if (!this.popupEl) {
       this.isOpen = false;
       return;
     }
     this.popupEl.classList.remove('tooltip-popup--instant');
     this.popupEl.classList.add('tooltip-popup--closing');
+    if (this.fadeOutMs === 0) {
+      if (activeTooltip === this) activeTooltip = null;
+      this.destroyPopup();
+      this.isOpen = false;
+      this.skipEnterAnimation = false;
+      return;
+    }
     this.closeTimer = setTimeout(() => {
       this.closeTimer = null;
+      if (activeTooltip === this) activeTooltip = null;
       this.destroyPopup();
       this.isOpen = false;
       this.skipEnterAnimation = false;
@@ -319,6 +409,8 @@ export class Tooltip {
       this.popupEl = tip;
     }
 
+    this.setupOpenListeners();
+    this.linkDescribedBy();
     this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
     this.popupEl.classList.remove('tooltip-popup--closing');
     this.renderPopupContent();
@@ -375,47 +467,26 @@ export class Tooltip {
     const a = this.anchor.getBoundingClientRect();
     const tw = tip.offsetWidth || this.tooltipFallbackWidthPx;
     const th = tip.offsetHeight || this.tooltipFallbackHeightPx;
-    const sideOffset = this.sideOffsetPx;
-    const alignOffset = this.alignOffsetPx;
-    const vpPad = this.viewportPadPx;
-    let x = 0, y = 0;
-
-    switch (this.side) {
-      case 'top':
-        y = a.top - th - sideOffset;
-        x = this.align === 'start' ? a.left + alignOffset
-          : this.align === 'end' ? a.right - tw + alignOffset
-          : a.left + a.width / 2 - tw / 2 + alignOffset;
-        break;
-      case 'bottom':
-        y = a.bottom + sideOffset;
-        x = this.align === 'start' ? a.left + alignOffset
-          : this.align === 'end' ? a.right - tw + alignOffset
-          : a.left + a.width / 2 - tw / 2 + alignOffset;
-        break;
-      case 'left':
-        x = a.left - tw - sideOffset;
-        y = this.align === 'start' ? a.top + alignOffset
-          : this.align === 'end' ? a.bottom - th + alignOffset
-          : a.top + a.height / 2 - th / 2 + alignOffset;
-        break;
-      case 'right':
-        x = a.right + sideOffset;
-        y = this.align === 'start' ? a.top + alignOffset
-          : this.align === 'end' ? a.bottom - th + alignOffset
-          : a.top + a.height / 2 - th / 2 + alignOffset;
-        break;
-    }
-
-    const nextX = Math.min(Math.max(x, vpPad), window.innerWidth - tw - vpPad);
-    const nextY = Math.min(Math.max(y, vpPad), window.innerHeight - th - vpPad);
-    tip.style.transform = `translate(${Math.round(nextX)}px, ${Math.round(nextY)}px)`;
+    const { x, y, resolvedSide } = computeTooltipPosition({
+      anchorRect: a,
+      popupWidth: tw,
+      popupHeight: th,
+      side: this.side,
+      align: this.align,
+      sideOffsetPx: this.sideOffsetPx,
+      alignOffsetPx: this.alignOffsetPx,
+      viewportPadPx: this.viewportPadPx,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+    });
+    tip.dataset.side = resolvedSide;
+    tip.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
   }
 
   render() {
     return (
       <Host style={{ display: 'contents' }}>
-        <slot />
+        <slot onSlotchange={this.handleSlotChange} />
       </Host>
     );
   }

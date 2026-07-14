@@ -56,3 +56,16 @@
   from { opacity: 1; }
   to   { opacity: 0; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip-popup,
+  .tooltip-popup--instant {
+    animation: none;
+    opacity: 1;
+  }
+
+  .tooltip-popup--closing {
+    animation: none;
+    opacity: 0;
+  }
+}

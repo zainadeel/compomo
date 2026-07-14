@@ -27,9 +27,7 @@
     "component:ds-tab-group-nav": "Navigation-style tab list for primary and secondary navigation surfaces.",
     "component:ds-table": "Data table with CSS grid layout, sorting, pagination, loading skeleton, row selection, and custom cell rendering.",
     "component:ds-tag": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
-    "component:ds-text": "Typography primitive supporting all design-system text variants, colors, truncation, wrapping, and optional loading shimmer.",
-    "component:ds-toggle": "Switch control with on/off state and accessible switch semantics.",
-    "component:ds-tooltip": "Positioned tooltip with control-density sizes, delay, keyboard shortcut display, and viewport clamping."
+    "component:ds-text": "Typography primitive supporting all design-system text variants, colors, truncation, wrapping, and optional loading shimmer."
   },
   "metadataRefactors": {
     "component:ds-button-filled": "Expand selection guidance for variants, density, intent versus contrast, loading or submission behavior, and framework-specific composition."
@@ -64,8 +62,6 @@
     "component:ds-table",
     "component:ds-tag",
     "component:ds-text",
-    "component:ds-toggle",
-    "component:ds-tooltip",
     "component:ds-tooltip-data-viz"
   ]
 }

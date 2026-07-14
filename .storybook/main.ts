@@ -95,6 +95,13 @@ const config: StorybookConfig = {
       : [];
     aliases.push({ find: '@', replacement: resolve(__dirname, '../src') });
     config.resolve.alias = aliases;
+    config.resolve.dedupe = [
+      ...(config.resolve.dedupe || []),
+      'lit',
+      'lit-html',
+      'lit-element',
+      '@lit/reactive-element',
+    ];
 
     config.server = config.server || {};
     config.server.fs = config.server.fs || {};
@@ -124,6 +131,10 @@ const config: StorybookConfig = {
     config.optimizeDeps.exclude = [
       ...(config.optimizeDeps.exclude || []),
       '@ds-mo/ui',
+      'lit',
+      'lit-html',
+      'lit-element',
+      '@lit/reactive-element',
     ];
 
     config.plugins = [...(config.plugins || []), createDistReloadPlugin()];

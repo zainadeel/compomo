@@ -60,9 +60,6 @@ export class Badge {
    */
   @Prop({ attribute: 'gradient-background', reflect: true }) gradientBackground: boolean = false;
 
-  /** Deprecated alias for selected counter styling. Prefer context-specific color in the parent. */
-  @Prop() isSelected: boolean = false;
-
   /** Accessible label. Defaults to the count as a string. */
   @Prop() label: string | undefined;
 
@@ -160,7 +157,6 @@ export class Badge {
           badge: true,
           'badge--counter': !isDot,
           'badge--dot': isDot,
-          'badge--selected': this.isSelected,
           'badge--on-gradient-background': this.gradientBackground,
         }}
         aria-label={ariaLabel}
