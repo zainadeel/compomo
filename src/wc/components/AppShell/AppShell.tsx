@@ -344,7 +344,7 @@ export class AppShell {
     return (
       <Host class={shellCls}>
         <div class="app-shell__row">
-          {chromeActive ? <div class="app-shell__chrome" aria-hidden="true" /> : null}
+          <div class="app-shell__chrome" aria-hidden="true" />
           <div class="app-shell__panel">
             <slot name="panel" />
           </div>

@@ -74,6 +74,8 @@ export class PanelTools {
   private motionEnableGeneration = 0;
   private transitionGeneration = 0;
   private transitionFallbackTimer: number | null = null;
+  /** Ignores the old transition's terminal event when reversing direction. */
+  private ignoreReplacementTerminal = false;
 
   private get railItems(): PanelToolsItem[] {
     return parsePanelToolsItems(this.items, this.itemsJson);
@@ -182,7 +184,10 @@ export class PanelTools {
   private startDrawerTransition(phase: 'opening' | 'closing') {
     const drawer = this.el.querySelector('.panel-tools__drawer') as HTMLElement | null;
     const widthBefore = drawer?.getBoundingClientRect().width ?? 0;
-    if (this.motion !== 'idle') this.finishDrawerTransition();
+    if (this.motion !== 'idle') {
+      this.finishDrawerTransition();
+      this.ignoreReplacementTerminal = true;
+    }
     this.motion = phase;
     this.dsChromeTransitionStart.emit({ source: 'panel-tools', phase });
     const generation = ++this.transitionGeneration;
@@ -216,6 +221,10 @@ export class PanelTools {
   private handleTransitionEnd = (event: TransitionEvent) => {
     if (event.target !== this.el.querySelector('.panel-tools__drawer')) return;
     if (event.propertyName !== 'max-width') return;
+    if (this.ignoreReplacementTerminal) {
+      this.ignoreReplacementTerminal = false;
+      return;
+    }
     this.finishDrawerTransition();
   };
 
@@ -223,6 +232,7 @@ export class PanelTools {
     const wasTransitioning = this.motion !== 'idle';
     this.clearTransitionCompletion();
     if (!wasTransitioning) return;
+    this.ignoreReplacementTerminal = false;
     this.motion = 'idle';
     this.dsChromeTransitionEnd.emit({ source: 'panel-tools' });
   }
