@@ -3,7 +3,7 @@ import { resolveCssLengthPx, resolveMotionTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAU
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
 import { isMenuGradientPickerSection } from './menu-types';
-import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
+import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
 
 /** rAF retries while the popup mounts or the anchor resolves. */
 const POSITION_RETRY_BUDGET = 8;

@@ -76,7 +76,7 @@ function BackgroundColors(): TemplateResult {
           ${swatch('color-background-primary')}
           ${swatch('color-background-secondary')}
           ${swatch('color-background-shade')}
-          ${swatch('color-background-translucent', undefined, 'backdrop-filter: blur(16px);')}
+          ${swatch('color-translucent-translucent', 'translucent-translucent', 'backdrop-filter: blur(16px);')}
           ${swatch('color-background-transparent', undefined, 'background: repeating-conic-gradient(var(--color-border-tertiary) 0% 25%, var(--color-background-primary) 0% 50%) 0 0 / 12px 12px;')}
         </div>`)}
 

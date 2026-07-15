@@ -4,7 +4,7 @@ import type { TemplateResult } from 'lit';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-text.js';
-import type { NavChromeStyle } from '../../nav/nav-chrome';
+import type { NavChromeStyle } from '../../shell/nav-chrome';
 import type { PanelNavGroup } from './panel-nav-types';
 
 // ── Sample data (icon names verified against IcoMo) ───────────────────────

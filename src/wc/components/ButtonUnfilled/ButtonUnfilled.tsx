@@ -81,6 +81,7 @@ export class ButtonUnfilled {
   /** Actual parent surface context. Omit on primary and secondary surfaces. */
   @Prop() background: ButtonUnfilledBackground | undefined;
 
+  /** Accessible name override. Required for icon-only buttons. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop() controls: string | undefined;
   @Prop() expanded: boolean | undefined;
@@ -132,9 +133,7 @@ export class ButtonUnfilled {
   private get accessibleName(): string | undefined {
     if (this.ariaLabel) return this.ariaLabel;
     if (this.isLoading && this.variant === 'label' && this.label) return this.label;
-    if (this.showLabel && this.label) return undefined;
-    if (this.variant === 'icon') return this.icon || 'action';
-    return this.label || 'action';
+    return undefined;
   }
 
   render() {

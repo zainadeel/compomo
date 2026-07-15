@@ -1,4 +1,4 @@
-import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
+import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
 
 export type { MenuAlign, MenuSide } from './menu-position';
 export {

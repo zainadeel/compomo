@@ -1,2 +1,8 @@
-export type { DividerOrientation } from './Divider';
+export type {
+  DividerBackground,
+  DividerInset,
+  DividerInsetToken,
+  DividerLength,
+  DividerOrientation,
+} from './Divider';
 

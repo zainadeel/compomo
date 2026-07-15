@@ -25,7 +25,7 @@ export class Text {
    * `true`: display bold, title/caption semibold, body medium.
    */
   @Prop() emphasis: boolean = false;
-  @Prop() color: TextColor | undefined;
+  @Prop() color: TextColor = 'inherit';
   @Prop() decoration: TextDecoration | undefined;
   @Prop() italic: boolean = false;
   /** Animate the visible glyphs with the shared loading shimmer treatment. */
@@ -46,6 +46,7 @@ export class Text {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Tag = this.as as any;
     const isCustomColor = (c: TextColor) => typeof c === 'string' && c.startsWith('var(--');
+    const truncationLines = Number(this.lineTruncation);
 
     const cls: Record<string, boolean> = {
       'ds-text': true,
@@ -56,11 +57,11 @@ export class Text {
       'ds-text--nowrap': this.wrap === 'nowrap',
       'ds-text--balance': this.wrap === 'balance',
       'ds-text--pretty': this.wrap === 'pretty',
-      'ds-text--truncate-1': this.lineTruncation === 1 && this.wrap !== 'nowrap',
-      'ds-text--truncate-2': this.lineTruncation === 2 && this.wrap !== 'nowrap',
-      'ds-text--truncate-3': this.lineTruncation === 3 && this.wrap !== 'nowrap',
-      'ds-text--truncate-4': this.lineTruncation === 4 && this.wrap !== 'nowrap',
-      'ds-text--truncate-5': this.lineTruncation === 5 && this.wrap !== 'nowrap',
+      'ds-text--truncate-1': truncationLines === 1 && this.wrap !== 'nowrap',
+      'ds-text--truncate-2': truncationLines === 2 && this.wrap !== 'nowrap',
+      'ds-text--truncate-3': truncationLines === 3 && this.wrap !== 'nowrap',
+      'ds-text--truncate-4': truncationLines === 4 && this.wrap !== 'nowrap',
+      'ds-text--truncate-5': truncationLines === 5 && this.wrap !== 'nowrap',
       'ds-text--color-primary':   this.color === 'primary',
       'ds-text--color-secondary': this.color === 'secondary',
       'ds-text--color-tertiary':  this.color === 'tertiary',

@@ -74,6 +74,7 @@ export class ButtonFilled {
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
+  /** Accessible name override. Required for icon-only buttons. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
 
   @Event() dsClick!: EventEmitter<MouseEvent>;
@@ -101,9 +102,7 @@ export class ButtonFilled {
   private get accessibleName(): string | undefined {
     if (this.ariaLabel) return this.ariaLabel;
     if (this.isLoading && this.variant === 'label' && this.label) return this.label;
-    if (this.showLabel && this.label) return undefined;
-    if (this.variant === 'icon') return this.icon || 'action';
-    return this.label || 'action';
+    return undefined;
   }
 
   render() {

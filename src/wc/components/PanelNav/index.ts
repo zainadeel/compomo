@@ -5,7 +5,7 @@ export type {
   PanelNavUserActionDetail,
 } from './panel-nav-types';
 export { PANEL_NAV_USER_MENU_ANCHOR_ID, PANEL_NAV_USER_MENU_PLACEMENT } from './panel-nav-types';
-export type { NavChromeStyle } from '../../nav/nav-chrome';
+export type { NavChromeStyle } from '../../shell/nav-chrome';
 export {
   NAV_STYLE_HINT_ATTR,
   setNavStyleHint,

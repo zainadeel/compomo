@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Tag e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Tag test</h1>
+      <ds-tag id="tag" label="Active vehicle" intent="positive" contrast="faint"></ds-tag>
+      <ds-tag
+        id="icon-tag"
+        label="Fleet"
+        icon="VehicleTruck"
+        intent="brand"
+        contrast="medium"
+      ></ds-tag>
+      <ds-tag
+        id="long-tag"
+        label="A very long static metadata value that must truncate"
+        max-width="120px"
+      ></ds-tag>
+      <ds-tag
+        id="interactive-tag"
+        label="Vehicle status"
+        icon="Filters"
+        interactive
+        aria-controls="vehicle-status-menu"
+      ></ds-tag>
+      <div id="vehicle-status-menu" role="menu" hidden>
+        <button type="button" role="menuitem">Active</button>
+      </div>
+      <ds-tag
+        id="inactive-tag"
+        label="Unavailable"
+        interactive
+        is-inactive
+        aria-controls="unavailable-menu"
+      ></ds-tag>
+      <div id="unavailable-menu" role="menu" hidden></div>
+      <div id="matrix"></div>
+    </main>
+    <script type="module" src="/tag-setup.mjs"></script>
+  </body>
+</html>

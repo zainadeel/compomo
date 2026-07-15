@@ -38,16 +38,14 @@ export type IconColor = IconColorToken | `var(--${string})`;
 export class Icon {
   @Element() el!: HTMLElement;
 
-  /** Name of the system icon (e.g. `"Gear"`, `"ArrowRight"`) or flag (e.g. `"US"`) */
+  /** Exact canonical IcoMo export name, including the `Flag` prefix for flags. */
   @Prop() name: string = '';
   /** Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px. */
   @Prop() size: IconSize = 'md';
   /** Semantic foreground color token, or a raw CSS var reference. */
-  @Prop() color: IconColor | undefined;
+  @Prop() color: IconColor = 'inherit';
   /** Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons. */
   @Prop() label: string | undefined;
-  /** Set `true` to look up from the flag icon set instead of the system icon set. */
-  @Prop() flag: boolean = false;
 
   /** Resolved SVG markup — set synchronously on cache hit, async after a lazy load. */
   @State() private svg: string = '';
@@ -62,7 +60,7 @@ export class Icon {
    * ds-icon instance.
    */
   private resolveSvg() {
-    const flag = this.flag;
+    const flag = this.name.startsWith('Flag');
     const key = iconCacheKey(this.name, flag);
     const token = ++this.loadToken;
 
@@ -134,7 +132,6 @@ export class Icon {
   }
 
   @Watch('name')
-  @Watch('flag')
   onIconChange() {
     this.resolveSvg();
   }

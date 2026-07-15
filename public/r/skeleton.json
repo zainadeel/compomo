@@ -2,17 +2,98 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "skeleton",
   "title": "Skeleton",
-  "description": "Atomic loading placeholder with token-aligned text, icon, and control canvases. Supports optional shimmer, circular icons, and rounded controls.",
+  "description": "Aria-hidden atomic placeholder for preserving expected text, icon, or control geometry while structured content is pending.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/skeleton",
     "source": "src/wc/components/Skeleton/Skeleton.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Aria-hidden atomic placeholder for preserving expected text, icon, or control geometry while structured content is pending.",
+      "useWhen": [
+        "A pending content region has a predictable structure whose geometry should remain stable while data loads.",
+        "Text, icon, and control placeholder atoms can be composed to approximate the final hierarchy and arrangement.",
+        "The owning region can expose busy state and contextual loading status independently."
+      ],
+      "avoidWhen": [
+        "An action or operation is progressing without predictable content structure; use Loader.",
+        "The final layout is unknown or likely to differ substantially from the placeholder composition.",
+        "A complete card, list, or table preset is expected from one Skeleton; compose atomic shapes in the owner.",
+        "The shimmer would be used as decoration after content is available."
+      ],
+      "alternatives": [
+        {
+          "when": "An indeterminate action or operation is in progress.",
+          "component": "component:ds-loader",
+          "reason": "Loader owns operation-level indeterminate progress."
+        },
+        {
+          "when": "Real text content is already available.",
+          "component": "component:ds-text",
+          "reason": "Text should replace its placeholder as soon as content is ready."
+        },
+        {
+          "when": "A real system glyph is available.",
+          "component": "component:ds-icon",
+          "reason": "Icon renders actual glyph content rather than loading geometry."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card",
+        "component:ds-table",
+        "component:ds-text",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "Skeleton remains hidden from assistive technology because its shapes do not represent content.",
+        "The owning content region exposes busy state and a contextual loading status when an announcement is needed.",
+        "Do not announce every placeholder atom or duplicate status text across a composed skeleton layout.",
+        "The owner preserves focus and meaningful reading order when replacing placeholders with real content."
+      ],
+      "states": [
+        "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes.",
+        "Compose approximate line count, hierarchy, widths, and control placement without simulating actual values.",
+        "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
+        "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",
+        "Omitted background is for primary and secondary surfaces. Explicit faint documents a faint parent while using the same standard base and shimmer tokens; other contexts use matching surface tokens.",
+        "The owner decides whether to delay initial visibility and when to replace the complete composition."
+      ],
+      "responsiveBehavior": [
+        "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
+        "Skeleton does not infer breakpoints or rearrange sibling atoms."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Compose one element per placeholder atom and set aria-busy or loading status on the containing content region."
+        ],
+        "react": [
+          "Render Skeleton and real content from one loading branch so placeholder geometry and region busy state settle together."
+        ],
+        "angular": [
+          "Render Skeleton and real content from one loading branch so placeholder geometry and region busy state settle together."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Skeleton/Skeleton.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
+        "background": {
+          "type": "SkeletonBackground | undefined",
+          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"navigation\" | \"strong\" | \"translucent\" | undefined",
+          "attribute": "background",
+          "required": false,
+          "mutable": false,
+          "description": "Actual parent surface context. Omit on primary and secondary surfaces."
+        },
         "controlSize": {
           "type": "ControlSize",
           "resolvedType": "\"md\" | \"sm\" | \"xs\"",
@@ -49,15 +130,6 @@
           "mutable": false,
           "description": "Whether to show the shimmer animation."
         },
-        "surface": {
-          "type": "SkeletonSurface",
-          "resolvedType": "\"always-dark\" | \"default\" | \"inverted\" | \"media\" | \"navigation\" | \"on-bold-background\" | \"on-medium-background\" | \"on-strong-background\" | \"on-translucent-background\"",
-          "attribute": "surface",
-          "default": "'default'",
-          "required": false,
-          "mutable": false,
-          "description": "Surface context used to select the matching foreground base and shimmer tokens."
-        },
         "textVariant": {
           "type": "TextVariant",
           "resolvedType": "\"text-body-large\" | \"text-body-medium\" | \"text-body-small\" | \"text-caption\" | \"text-display-medium\" | \"text-display-small\" | \"text-title-large\" | \"text-title-medium\" | \"text-title-small\"",
@@ -89,6 +161,14 @@
       "slots": []
     },
     "props": {
+      "background": {
+        "type": "SkeletonBackground | undefined",
+        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"navigation\" | \"strong\" | \"translucent\" | undefined",
+        "attribute": "background",
+        "required": false,
+        "mutable": false,
+        "description": "Actual parent surface context. Omit on primary and secondary surfaces."
+      },
       "controlSize": {
         "type": "ControlSize",
         "resolvedType": "\"md\" | \"sm\" | \"xs\"",
@@ -124,15 +204,6 @@
         "required": false,
         "mutable": false,
         "description": "Whether to show the shimmer animation."
-      },
-      "surface": {
-        "type": "SkeletonSurface",
-        "resolvedType": "\"always-dark\" | \"default\" | \"inverted\" | \"media\" | \"navigation\" | \"on-bold-background\" | \"on-medium-background\" | \"on-strong-background\" | \"on-translucent-background\"",
-        "attribute": "surface",
-        "default": "'default'",
-        "required": false,
-        "mutable": false,
-        "description": "Surface context used to select the matching foreground base and shimmer tokens."
       },
       "textVariant": {
         "type": "TextVariant",
@@ -200,12 +271,12 @@
   "files": [
     {
       "path": "src/wc/components/Skeleton/Skeleton.css",
-      "content": "@import '../../utils/control-density.css';\n@import '../../utils/shimmer.css';\n\n:host {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  min-width: 0;\n  vertical-align: middle;\n  --ds-skeleton-base: var(--color-foreground-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer);\n}\n\n.skeleton__shape {\n  --ds-shimmer-surface-base: var(--ds-skeleton-base);\n\n  display: block;\n  width: 100%;\n  height: 100%;\n  flex: 0 0 auto;\n  background-color: var(--ds-skeleton-base);\n  border-radius: var(--dimension-radius-025);\n}\n\n/* ── Surface context ───────────────────────────────────────────────────── */\n\n:host(.skeleton--surface-on-medium-background) {\n  --ds-skeleton-base: var(--color-foreground-on-medium-background-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer-on-medium-background);\n}\n\n:host(.skeleton--surface-on-bold-background) {\n  --ds-skeleton-base: var(--color-foreground-on-bold-background-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer-on-bold-background);\n}\n\n:host(.skeleton--surface-on-strong-background) {\n  --ds-skeleton-base: var(--color-foreground-on-strong-background-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer-on-strong-background);\n}\n\n:host(.skeleton--surface-on-translucent-background) {\n  --ds-skeleton-base: var(--color-translucent-foreground-quaternary);\n  --ds-shimmer: var(--color-translucent-shimmer);\n}\n\n:host(.skeleton--surface-inverted) {\n  --ds-skeleton-base: var(--color-inverted-foreground-quaternary);\n  --ds-shimmer: var(--color-inverted-shimmer);\n}\n\n:host(.skeleton--surface-media) {\n  --ds-skeleton-base: var(--color-media-foreground-quaternary);\n  --ds-shimmer: var(--color-media-shimmer);\n}\n\n:host(.skeleton--surface-always-dark) {\n  --ds-skeleton-base: var(--color-always-dark-foreground-quaternary);\n  --ds-shimmer: var(--color-always-dark-shimmer);\n}\n\n:host(.skeleton--surface-navigation) {\n  --ds-skeleton-base: var(--color-navigation-foreground-quaternary);\n  --ds-shimmer: var(--color-navigation-shimmer);\n}\n\n/* ── Text ──────────────────────────────────────────────────────────────── */\n\n:host(.skeleton--text) {\n  width: 100%;\n  height: var(--ds-skeleton-canvas-size);\n  padding-block: var(--dimension-space-025);\n}\n\n:host(.skeleton--text) .skeleton__shape {\n  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n}\n\n:host(.skeleton--text-text-display-medium) { --ds-skeleton-canvas-size: var(--typography-lineheight-3xl); }\n:host(.skeleton--text-text-display-small)  { --ds-skeleton-canvas-size: var(--typography-lineheight-2xl); }\n:host(.skeleton--text-text-title-large)    { --ds-skeleton-canvas-size: var(--typography-lineheight-xl); }\n:host(.skeleton--text-text-title-medium),\n:host(.skeleton--text-text-body-large)     { --ds-skeleton-canvas-size: var(--typography-lineheight-lg); }\n:host(.skeleton--text-text-title-small),\n:host(.skeleton--text-text-body-medium)    { --ds-skeleton-canvas-size: var(--typography-lineheight-md); }\n:host(.skeleton--text-text-body-small)     { --ds-skeleton-canvas-size: var(--typography-lineheight-sm); }\n:host(.skeleton--text-text-caption)        { --ds-skeleton-canvas-size: var(--typography-lineheight-xs); }\n\n/* ── Icon ──────────────────────────────────────────────────────────────── */\n\n:host(.skeleton--icon) {\n  width: var(--ds-skeleton-canvas-size);\n  height: var(--ds-skeleton-canvas-size);\n  padding: var(--dimension-space-025);\n}\n\n:host(.skeleton--icon) .skeleton__shape {\n  width: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n}\n\n:host(.skeleton--icon.skeleton--rounded) .skeleton__shape {\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.skeleton--icon-xs)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xs); }\n:host(.skeleton--icon-sm)  { --ds-skeleton-canvas-size: var(--dimension-iconography-sm); }\n:host(.skeleton--icon-md)  { --ds-skeleton-canvas-size: var(--dimension-iconography-md); }\n:host(.skeleton--icon-lg)  { --ds-skeleton-canvas-size: var(--dimension-iconography-lg); }\n:host(.skeleton--icon-xl)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xl); }\n:host(.skeleton--icon-2xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-2xl); }\n:host(.skeleton--icon-3xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-3xl); }\n\n/* ── Control ───────────────────────────────────────────────────────────── */\n\n:host(.skeleton--control) {\n  width: 100%;\n  height: var(--ds-control-height);\n}\n\n:host(.skeleton--control.skeleton--rounded) .skeleton__shape {\n  border-radius: var(--dimension-radius-half);\n}\n",
+      "content": "@import '../../utils/control-density.css';\n@import '../../utils/shimmer.css';\n\n:host {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  min-width: 0;\n  vertical-align: middle;\n  --ds-skeleton-base: var(--color-foreground-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer);\n}\n\n.skeleton__shape {\n  --ds-shimmer-surface-base: var(--ds-skeleton-base);\n\n  display: block;\n  width: 100%;\n  height: 100%;\n  flex: 0 0 auto;\n  background-color: var(--ds-skeleton-base);\n  border-radius: var(--dimension-radius-025);\n}\n\n/* ── Background context ────────────────────────────────────────────────── */\n\n:host(.skeleton--background-medium) {\n  --ds-skeleton-base: var(--color-foreground-on-medium-background-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer-on-medium-background);\n}\n\n:host(.skeleton--background-bold) {\n  --ds-skeleton-base: var(--color-foreground-on-bold-background-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer-on-bold-background);\n}\n\n:host(.skeleton--background-strong) {\n  --ds-skeleton-base: var(--color-foreground-on-strong-background-quaternary);\n  --ds-shimmer: var(--color-shimmer-shimmer-on-strong-background);\n}\n\n:host(.skeleton--background-translucent) {\n  --ds-skeleton-base: var(--color-translucent-foreground-quaternary);\n  --ds-shimmer: var(--color-translucent-shimmer);\n}\n\n:host(.skeleton--background-inverted) {\n  --ds-skeleton-base: var(--color-inverted-foreground-quaternary);\n  --ds-shimmer: var(--color-inverted-shimmer);\n}\n\n:host(.skeleton--background-media) {\n  --ds-skeleton-base: var(--color-media-foreground-quaternary);\n  --ds-shimmer: var(--color-media-shimmer);\n}\n\n:host(.skeleton--background-always-dark) {\n  --ds-skeleton-base: var(--color-always-dark-foreground-quaternary);\n  --ds-shimmer: var(--color-always-dark-shimmer);\n}\n\n:host(.skeleton--background-navigation) {\n  --ds-skeleton-base: var(--color-navigation-foreground-quaternary);\n  --ds-shimmer: var(--color-navigation-shimmer);\n}\n\n/* ── Text ──────────────────────────────────────────────────────────────── */\n\n:host(.skeleton--text) {\n  width: 100%;\n  height: var(--ds-skeleton-canvas-size);\n  padding-block: var(--dimension-space-025);\n}\n\n:host(.skeleton--text) .skeleton__shape {\n  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n}\n\n:host(.skeleton--text-text-display-medium) { --ds-skeleton-canvas-size: var(--typography-lineheight-3xl); }\n:host(.skeleton--text-text-display-small)  { --ds-skeleton-canvas-size: var(--typography-lineheight-2xl); }\n:host(.skeleton--text-text-title-large)    { --ds-skeleton-canvas-size: var(--typography-lineheight-xl); }\n:host(.skeleton--text-text-title-medium),\n:host(.skeleton--text-text-body-large)     { --ds-skeleton-canvas-size: var(--typography-lineheight-lg); }\n:host(.skeleton--text-text-title-small),\n:host(.skeleton--text-text-body-medium)    { --ds-skeleton-canvas-size: var(--typography-lineheight-md); }\n:host(.skeleton--text-text-body-small)     { --ds-skeleton-canvas-size: var(--typography-lineheight-sm); }\n:host(.skeleton--text-text-caption)        { --ds-skeleton-canvas-size: var(--typography-lineheight-xs); }\n\n/* ── Icon ──────────────────────────────────────────────────────────────── */\n\n:host(.skeleton--icon) {\n  width: var(--ds-skeleton-canvas-size);\n  height: var(--ds-skeleton-canvas-size);\n  padding: var(--dimension-space-025);\n}\n\n:host(.skeleton--icon) .skeleton__shape {\n  width: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));\n}\n\n:host(.skeleton--icon.skeleton--rounded) .skeleton__shape {\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.skeleton--icon-xs)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xs); }\n:host(.skeleton--icon-sm)  { --ds-skeleton-canvas-size: var(--dimension-iconography-sm); }\n:host(.skeleton--icon-md)  { --ds-skeleton-canvas-size: var(--dimension-iconography-md); }\n:host(.skeleton--icon-lg)  { --ds-skeleton-canvas-size: var(--dimension-iconography-lg); }\n:host(.skeleton--icon-xl)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xl); }\n:host(.skeleton--icon-2xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-2xl); }\n:host(.skeleton--icon-3xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-3xl); }\n\n/* ── Control ───────────────────────────────────────────────────────────── */\n\n:host(.skeleton--control) {\n  width: 100%;\n  height: var(--ds-control-height);\n}\n\n:host(.skeleton--control.skeleton--rounded) .skeleton__shape {\n  border-radius: var(--dimension-radius-half);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Skeleton/Skeleton.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { IconSize } from '../Icon/Icon';\nimport type { TextVariant } from '../Text/text-types';\nimport type { ControlSize } from '../../utils/control-text';\n\nexport type SkeletonVariant = 'text' | 'icon' | 'control';\nexport type SkeletonSurface =\n  | 'default'\n  | 'on-bold-background'\n  | 'on-strong-background'\n  | 'on-medium-background'\n  | 'on-translucent-background'\n  | 'navigation'\n  | 'media'\n  | 'always-dark'\n  | 'inverted';\n\n@Component({\n  tag: 'ds-skeleton',\n  styleUrl: 'Skeleton.css',\n  shadow: true,\n})\nexport class Skeleton {\n  @Prop() variant: SkeletonVariant = 'text';\n  /** Text metric recipe whose line-height defines the text canvas. */\n  @Prop() textVariant: TextVariant = 'text-body-medium';\n  /** Iconography token whose square canvas defines the icon canvas. */\n  @Prop() iconSize: IconSize = 'md';\n  /** Shared control-density size whose height defines the control canvas. */\n  @Prop() controlSize: ControlSize = 'md';\n  /** Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons. */\n  @Prop() width: string | number | undefined;\n  /** Round icon skeletons into circles and control skeletons into pills. Ignored for text. */\n  @Prop() rounded: boolean = false;\n  /** Whether to show the shimmer animation. */\n  @Prop() shimmer: boolean = true;\n  /** Surface context used to select the matching foreground base and shimmer tokens. */\n  @Prop() surface: SkeletonSurface = 'default';\n\n  private get widthCss() {\n    const v = this.width;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  render() {\n    return (\n      <Host\n        aria-hidden=\"true\"\n        class={{\n          'skeleton': true,\n          [`skeleton--${this.variant}`]: true,\n          [`skeleton--text-${this.textVariant}`]: this.variant === 'text',\n          [`skeleton--icon-${this.iconSize}`]: this.variant === 'icon',\n          [`ds-control--${this.controlSize}`]: this.variant === 'control',\n          [`skeleton--surface-${this.surface}`]: true,\n          'skeleton--rounded': this.variant !== 'text' && this.rounded,\n        }}\n        style={this.variant === 'icon' ? undefined : { width: this.widthCss }}\n      >\n        <span\n          class={{\n            'skeleton__shape': true,\n            'ds-shimmer-surface': this.shimmer,\n          }}\n        />\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { IconSize } from '../Icon/Icon';\nimport type { TextVariant } from '../Text/text-types';\nimport type { ControlSize } from '../../utils/control-text';\n\nexport type SkeletonVariant = 'text' | 'icon' | 'control';\nexport type SkeletonBackground =\n  | 'faint'\n  | 'medium'\n  | 'bold'\n  | 'strong'\n  | 'translucent'\n  | 'inverted'\n  | 'media'\n  | 'navigation'\n  | 'always-dark';\n\n@Component({\n  tag: 'ds-skeleton',\n  styleUrl: 'Skeleton.css',\n  shadow: true,\n})\nexport class Skeleton {\n  @Prop() variant: SkeletonVariant = 'text';\n  /** Text metric recipe whose line-height defines the text canvas. */\n  @Prop() textVariant: TextVariant = 'text-body-medium';\n  /** Iconography token whose square canvas defines the icon canvas. */\n  @Prop() iconSize: IconSize = 'md';\n  /** Shared control-density size whose height defines the control canvas. */\n  @Prop() controlSize: ControlSize = 'md';\n  /** Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons. */\n  @Prop() width: string | number | undefined;\n  /** Round icon skeletons into circles and control skeletons into pills. Ignored for text. */\n  @Prop() rounded: boolean = false;\n  /** Whether to show the shimmer animation. */\n  @Prop() shimmer: boolean = true;\n  /** Actual parent surface context. Omit on primary and secondary surfaces. */\n  @Prop() background: SkeletonBackground | undefined;\n\n  private get widthCss() {\n    const v = this.width;\n    if (v == null) return undefined;\n    return typeof v === 'number' ? `${v}px` : v;\n  }\n\n  render() {\n    return (\n      <Host\n        aria-hidden=\"true\"\n        class={{\n          'skeleton': true,\n          [`skeleton--${this.variant}`]: true,\n          [`skeleton--text-${this.textVariant}`]: this.variant === 'text',\n          [`skeleton--icon-${this.iconSize}`]: this.variant === 'icon',\n          [`ds-control--${this.controlSize}`]: this.variant === 'control',\n          [`skeleton--background-${this.background}`]: !!this.background,\n          'skeleton--rounded': this.variant !== 'text' && this.rounded,\n        }}\n        style={this.variant === 'icon' ? undefined : { width: this.widthCss }}\n      >\n        <span\n          class={{\n            'skeleton__shape': true,\n            'ds-shimmer-surface': this.shimmer,\n          }}\n        />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -1,30 +1,48 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { buildShellRadialGradient } from '../../nav/shell-gradient';
+import { buildShellRadialGradient } from '../../shell/shell-gradient';
 import '../../../../dist/components/ds-badge.js';
 
 const COUNTS = [1, 5, 9, 10, 99];
 const VARIANTS = ['counter', 'dot'] as const;
-const SURFACES = ['default', 'primary', 'secondary', 'medium', 'bold', 'strong', 'navigation', 'always-dark'] as const;
+const SURFACES = [
+  'primary',
+  'secondary',
+  'faint',
+  'medium',
+  'bold',
+  'strong',
+  'translucent',
+  'inverted',
+  'media',
+  'navigation',
+  'always-dark',
+] as const;
 
 const STORY_SURFACE_BG: Record<(typeof SURFACES)[number], string> = {
-  default: 'var(--color-background-secondary)',
   primary: 'var(--color-background-primary)',
   secondary: 'var(--color-background-secondary)',
+  faint: 'var(--color-background-faint-neutral)',
   medium: 'var(--color-background-medium-neutral)',
   bold: 'var(--color-background-bold-neutral)',
   strong: 'var(--color-background-strong-neutral)',
+  translucent: 'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+  inverted: 'var(--color-inverted-background)',
+  media: 'var(--color-media-background)',
   navigation: 'var(--color-navigation-background)',
   'always-dark': 'var(--color-always-dark-background)',
 };
 
 const STORY_SURFACE_FG: Record<(typeof SURFACES)[number], string> = {
-  default: 'var(--color-foreground-secondary)',
   primary: 'var(--color-foreground-secondary)',
   secondary: 'var(--color-foreground-secondary)',
+  faint: 'var(--color-foreground-secondary)',
   medium: 'var(--color-foreground-strong-neutral)',
   bold: 'var(--color-foreground-on-bold-background-primary)',
   strong: 'var(--color-foreground-on-bold-background-primary)',
+  translucent: 'var(--color-translucent-foreground-primary)',
+  inverted: 'var(--color-inverted-foreground-primary)',
+  media: 'var(--color-media-foreground-primary)',
   navigation: 'var(--color-navigation-foreground-primary)',
   'always-dark': 'var(--color-always-dark-foreground-primary)',
 };
@@ -63,16 +81,16 @@ const meta: Meta = {
     max:        { control: 'number' },
     surface:    { control: 'select', options: SURFACES },
     background: { control: 'text' },
-    onGradientBackground: { control: 'boolean', name: 'on-gradient-background' },
+    gradientBackground: { control: 'boolean', name: 'gradient-background' },
     label:      { control: 'text' },
   },
   args: {
     variant: 'counter',
     count: 3,
     max: 9,
-    surface: 'default',
+    surface: 'primary',
     background: '',
-    onGradientBackground: false,
+    gradientBackground: false,
     label: '',
   },
 };
@@ -88,7 +106,7 @@ export const Playground: Story = {
       max=${args['max']}
       surface=${args['surface']}
       background=${args['background'] || undefined}
-      ?on-gradient-background=${args['onGradientBackground']}
+      ?gradient-background=${args['gradientBackground']}
       label=${args['label'] || undefined}
     ></ds-badge>
   `,
@@ -103,7 +121,7 @@ export const Counters: Story = {
             <ds-badge
               style="${BADGE_ANCHOR}"
               count=${c}
-              background="var(--color-background-secondary)"
+              surface="secondary"
               label="${c} notifications"
             ></ds-badge>
           </div>
@@ -128,7 +146,7 @@ export const Dots: Story = {
               <ds-badge
                 style="${BADGE_ANCHOR}"
                 variant="dot"
-                background=${STORY_SURFACE_BG[surface]}
+                surface=${surface}
                 label="${surface} notification"
               ></ds-badge>
             </div>
@@ -151,7 +169,7 @@ export const CounterAndDot: Story = {
               <ds-badge
                 style="${BADGE_ANCHOR}"
                 variant="dot"
-                background=${STORY_SURFACE_BG[surface]}
+                surface=${surface}
                 label="${surface} dot notification"
               ></ds-badge>
             </div>
@@ -159,7 +177,7 @@ export const CounterAndDot: Story = {
               <ds-badge
                 style="${BADGE_ANCHOR}"
                 count="3"
-                background=${STORY_SURFACE_BG[surface]}
+                surface=${surface}
                 label="3 notifications"
               ></ds-badge>
             </div>
@@ -177,7 +195,7 @@ export const OnGradientBackground: Story = {
     docs: {
       description: {
         story:
-          'Dot rings on gradient chrome use `on-gradient-background` with `background-attachment: fixed` ' +
+          'Badge rings on gradient chrome use `gradient-background` with `background-attachment: fixed` ' +
           'so the wash aligns with `ds-app-shell` viewport chrome.',
       },
     },
@@ -231,11 +249,11 @@ export const OnGradientBackground: Story = {
               style="${BADGE_ANCHOR}; --_badge-gradient-position: 0 0;"
               variant="dot"
               background="var(--color-background-secondary)"
-              on-gradient-background
+              gradient-background
               label="gradient ring"
             ></ds-badge>
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">on-gradient-background</span>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">gradient-background</span>
         </div>
       </div>
     `;

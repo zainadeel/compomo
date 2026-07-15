@@ -23,44 +23,44 @@
   border-radius: var(--dimension-radius-025);
 }
 
-/* ── Surface context ───────────────────────────────────────────────────── */
+/* ── Background context ────────────────────────────────────────────────── */
 
-:host(.skeleton--surface-on-medium-background) {
+:host(.skeleton--background-medium) {
   --ds-skeleton-base: var(--color-foreground-on-medium-background-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer-on-medium-background);
 }
 
-:host(.skeleton--surface-on-bold-background) {
+:host(.skeleton--background-bold) {
   --ds-skeleton-base: var(--color-foreground-on-bold-background-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer-on-bold-background);
 }
 
-:host(.skeleton--surface-on-strong-background) {
+:host(.skeleton--background-strong) {
   --ds-skeleton-base: var(--color-foreground-on-strong-background-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer-on-strong-background);
 }
 
-:host(.skeleton--surface-on-translucent-background) {
+:host(.skeleton--background-translucent) {
   --ds-skeleton-base: var(--color-translucent-foreground-quaternary);
   --ds-shimmer: var(--color-translucent-shimmer);
 }
 
-:host(.skeleton--surface-inverted) {
+:host(.skeleton--background-inverted) {
   --ds-skeleton-base: var(--color-inverted-foreground-quaternary);
   --ds-shimmer: var(--color-inverted-shimmer);
 }
 
-:host(.skeleton--surface-media) {
+:host(.skeleton--background-media) {
   --ds-skeleton-base: var(--color-media-foreground-quaternary);
   --ds-shimmer: var(--color-media-shimmer);
 }
 
-:host(.skeleton--surface-always-dark) {
+:host(.skeleton--background-always-dark) {
   --ds-skeleton-base: var(--color-always-dark-foreground-quaternary);
   --ds-shimmer: var(--color-always-dark-shimmer);
 }
 
-:host(.skeleton--surface-navigation) {
+:host(.skeleton--background-navigation) {
   --ds-skeleton-base: var(--color-navigation-foreground-quaternary);
   --ds-shimmer: var(--color-navigation-shimmer);
 }

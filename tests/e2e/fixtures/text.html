@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Text e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main style="color: var(--color-foreground-secondary)">
+      <h1>Text test</h1>
+      <h2>Semantic examples</h2>
+      <ds-text id="default">Default paragraph</ds-text>
+      <ds-text id="heading" as="h3" variant="text-display-small">Semantic heading</ds-text>
+      <label>
+        <ds-text as="span">Native wrapper label</ds-text>
+        <input id="native-input">
+      </label>
+      <ds-text id="label" as="label" for="named-input">Text label</ds-text>
+      <input id="named-input">
+      <div style="width: 160px">
+        <ds-text id="truncated" line-truncation="2">
+          Essential long content that continues across enough words to require more than two lines in this constrained region.
+        </ds-text>
+      </div>
+      <a href="#docs">
+        <ds-text id="link-text" as="span" decoration="underline">Documentation</ds-text>
+      </a>
+      <button type="button" aria-describedby="term-tooltip">
+        <ds-text id="tooltip-text" as="span" decoration="dotted-underline">Utilization</ds-text>
+      </button>
+      <div role="tooltip" id="term-tooltip">Percentage of available vehicle time in use.</div>
+      <div role="status">
+        <ds-text id="shimmer" as="span" shimmer>Generating summary</ds-text>
+      </div>
+      <ds-text id="numbers" as="span" font-feature="tabular-nums">11:11:11</ds-text>
+    </main>
+    <script type="module" src="/text-setup.mjs"></script>
+  </body>
+</html>

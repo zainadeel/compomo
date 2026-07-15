@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Icon e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Icon test</h1>
+      <div id="owner" style="color: var(--color-foreground-bold-positive)">
+        <ds-icon id="decorative" name="Bell"></ds-icon>
+      </div>
+      <ds-icon id="informative" name="Bell" label="Notifications"></ds-icon>
+      <ds-icon id="flag" name="FlagCanada" label="Canada"></ds-icon>
+      <ds-icon id="invalid" name="not-a-canonical-icon"></ds-icon>
+    </main>
+    <script type="module" src="/icon-setup.mjs"></script>
+  </body>
+</html>

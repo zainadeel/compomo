@@ -43,7 +43,7 @@ const meta: Meta = {
   args: {
     variant: 'text-body-medium',
     emphasis: false,
-    color: 'primary',
+    color: 'inherit',
     as: 'p',
     align: 'left',
     decoration: 'none',

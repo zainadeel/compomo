@@ -10,7 +10,7 @@ import {
   buildShellRadialGradientFromStops,
   shellGradientPresetOpacity,
   shellGradientPresetStopToken,
-} from '../src/wc/nav/shell-gradient-presets';
+} from '../src/wc/shell/shell-gradient-presets';
 
 describe('normalizeShellGradientPreset', () => {
   it('passes valid presets through', () => {

@@ -5,16 +5,18 @@ import { html } from 'lit';
 // Requires `npm run build` (stencil build) to have run first.
 import '../../../../dist/components/ds-divider.js';
 
-const SURFACES = [
-  'default',
-  'on-bold-background',
-  'on-strong-background',
-  'on-medium-background',
-  'on-translucent-background',
-  'navigation',
-  'media',
-  'always-dark',
-  'inverted',
+const BACKGROUND_CONTEXTS = [
+  { id: 'default-primary', value: '', label: 'default · primary', background: 'var(--color-background-primary)', color: 'var(--color-foreground-primary)' },
+  { id: 'default-secondary', value: '', label: 'default · secondary', background: 'var(--color-background-secondary)', color: 'var(--color-foreground-primary)' },
+  { id: 'faint', value: 'faint', label: 'faint', background: 'var(--color-background-faint-neutral)', color: 'var(--color-foreground-primary)' },
+  { id: 'medium', value: 'medium', label: 'medium', background: 'var(--color-background-medium-brand)', color: 'var(--color-foreground-on-medium-background-primary)' },
+  { id: 'bold', value: 'bold', label: 'bold', background: 'var(--color-background-bold-brand)', color: 'var(--color-foreground-on-bold-background-primary)' },
+  { id: 'strong', value: 'strong', label: 'strong', background: 'var(--color-background-strong-brand)', color: 'var(--color-foreground-on-strong-background-primary)' },
+  { id: 'translucent', value: 'translucent', label: 'translucent', background: 'var(--color-translucent-translucent)', color: 'var(--color-translucent-foreground-primary)' },
+  { id: 'inverted', value: 'inverted', label: 'inverted', background: 'var(--color-inverted-background)', color: 'var(--color-inverted-foreground-primary)' },
+  { id: 'media', value: 'media', label: 'media', background: 'var(--color-media-background)', color: 'var(--color-media-foreground-primary)' },
+  { id: 'navigation', value: 'navigation', label: 'navigation', background: 'var(--color-navigation-background)', color: 'var(--color-navigation-foreground-primary)' },
+  { id: 'always-dark', value: 'always-dark', label: 'always-dark', background: 'var(--color-always-dark-background)', color: 'var(--color-always-dark-foreground-primary)' },
 ] as const;
 
 const INSETS = [
@@ -45,10 +47,10 @@ const meta: Meta = {
       options: ['horizontal', 'vertical'],
       description: 'Direction of the divider line.',
     },
-    surface: {
+    background: {
       control: 'select',
-      options: SURFACES,
-      description: 'Surface context used to select the right divider token.',
+      options: [...new Set(BACKGROUND_CONTEXTS.map(context => context.value))],
+      description: 'Actual parent background used to select the right divider token.',
     },
     inset: {
       control: 'select',
@@ -66,7 +68,7 @@ const meta: Meta = {
   },
   args: {
     orientation: 'horizontal',
-    surface: 'default',
+    background: '',
     inset: 'none',
     length: 'auto',
     semantic: false,
@@ -81,7 +83,7 @@ export const Playground: Story = {
     <div style="display: flex; ${args['orientation'] === 'vertical' ? 'height: 80px; align-items: stretch;' : 'width: 320px;'}">
       <ds-divider
         orientation=${args['orientation']}
-        surface=${args['surface']}
+        background=${args['background'] || undefined}
         inset=${args['inset']}
         length=${args['length']}
         ?semantic=${args['semantic']}
@@ -136,37 +138,15 @@ export const Insets: Story = {
   `,
 };
 
-export const Surfaces: Story = {
+export const Backgrounds: Story = {
   render: () => html`
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--dimension-space-150);">
-      ${SURFACES.map(surface => {
-        const background =
-          surface === 'on-bold-background' ? 'var(--color-background-bold-brand)' :
-          surface === 'on-strong-background' ? 'var(--color-background-strong-brand)' :
-          surface === 'on-medium-background' ? 'var(--color-background-medium-brand)' :
-          surface === 'on-translucent-background' ? 'var(--color-translucent-translucent)' :
-          surface === 'navigation' ? 'var(--color-navigation-background)' :
-          surface === 'media' ? 'var(--color-media-background)' :
-          surface === 'always-dark' ? 'var(--color-always-dark-background)' :
-          surface === 'inverted' ? 'var(--color-inverted-background)' :
-          'var(--color-background-primary)';
-        const color =
-          surface === 'on-bold-background' ? 'var(--color-foreground-on-bold-background-primary)' :
-          surface === 'on-strong-background' ? 'var(--color-foreground-on-strong-background-primary)' :
-          surface === 'on-medium-background' ? 'var(--color-foreground-on-medium-background-primary)' :
-          surface === 'on-translucent-background' ? 'var(--color-translucent-foreground-primary)' :
-          surface === 'navigation' ? 'var(--color-navigation-foreground-primary)' :
-          surface === 'media' ? 'var(--color-media-foreground-primary)' :
-          surface === 'always-dark' ? 'var(--color-always-dark-foreground-primary)' :
-          surface === 'inverted' ? 'var(--color-inverted-foreground-primary)' :
-          'var(--color-foreground-primary)';
-
-        return html`
-          <div style="display: flex; flex-direction: column; gap: var(--dimension-space-100); padding: var(--dimension-space-150); border-radius: var(--dimension-radius-100); background: ${background}; color: ${color};">
-            <span style="font-size: var(--typography-fontsize-sm);">${surface}</span>
-            <ds-divider surface=${surface}></ds-divider>
-          </div>`;
-      })}
+      ${BACKGROUND_CONTEXTS.map(context => html`
+        <div style="display: flex; flex-direction: column; gap: var(--dimension-space-100); padding: var(--dimension-space-150); border-radius: var(--dimension-radius-100); background: ${context.background}; color: ${context.color};">
+          <span style="font-size: var(--typography-fontsize-sm);">${context.label}</span>
+          <ds-divider background=${context.value || undefined}></ds-divider>
+        </div>
+      `)}
     </div>
   `,
 };

@@ -1,5 +1,4 @@
-@import '../Tag/Tag.css';
-@import '../../utils/control-inactive.css';
+@import '../../utils/tag-chip.css';
 
 /*
  * Semantic state colors — Chip’s differentiator from Tag.
@@ -25,8 +24,55 @@
   color: var(--color-foreground-bold-caution);
 }
 
-:host(.chip) .tag__label {
-  flex-shrink: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/*
+ * Label↔dismiss uses host gap, mirroring Tag icon↔label spacing:
+ * [inset][text][inset][gap][icon].
+ */
+.tag__remove {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  border-radius: var(--dimension-radius-half);
+}
+
+.tag__remove::before {
+  content: '';
+  position: absolute;
+  inset: var(--dimension-space-n025);
+  border-radius: var(--dimension-radius-half);
+  background-color: transparent;
+  transition: var(--effect-transition-interaction-background-short-2);
+  pointer-events: none;
+}
+
+.tag__remove:hover::before {
+  background-color: var(--color-interaction-hover);
+}
+
+.tag__remove:active::before {
+  background-color: var(--color-interaction-pressed);
+}
+
+:host(.tag--size-sm) .tag__remove::before {
+  inset: var(--dimension-space-n012);
+}
+
+:host(.tag--size-xs) .tag__remove::before {
+  inset: 0;
+}
+
+.tag__remove-x {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: var(--ds-control-icon);
+  height: var(--ds-control-icon);
 }

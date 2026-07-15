@@ -7,9 +7,9 @@ import {
   resolveNavChromeStyle,
   setNavStyleHint,
   shouldResyncNavChromeStyle,
-} from '../../nav/nav-chrome';
+} from '../../shell/nav-chrome';
 
-export type { NavChromeStyle } from '../../nav/nav-chrome';
+export type { NavChromeStyle } from '../../shell/nav-chrome';
 export {
   NAV_STYLE_HINT_ATTR,
   readNavStyleAttr,

@@ -15,13 +15,13 @@ const GRID = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100
 const CELL = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--dimension-space-100); padding: var(--dimension-space-150) var(--dimension-space-100); border-radius: var(--dimension-radius-100); text-align: center;';
 const NAME = 'font-size: var(--typography-fontsize-xs); line-height: var(--typography-lineheight-xs); color: var(--color-foreground-secondary); word-break: break-word; max-width: 100%;';
 
-function gallery(names: string[], flag = false): TemplateResult {
+function gallery(names: string[]): TemplateResult {
   return html`
     <div style="${PAGE}">
       <div style="${GRID}">
         ${names.map(name => html`
           <div style="${CELL}">
-            <ds-icon name=${name} size="md" ?flag=${flag}></ds-icon>
+            <ds-icon name=${name} size="md"></ds-icon>
             <span style="${NAME}">${name}</span>
           </div>`)}
       </div>
@@ -44,5 +44,5 @@ export const System: Story = {
 
 export const Flag: Story = {
   name: 'Flag',
-  render: () => gallery(ALL_FLAGS, true),
+  render: () => gallery(ALL_FLAGS),
 };

@@ -7,8 +7,8 @@ import {
   parseCssBackgroundPosition,
   BADGE_GRADIENT_POSITION_VAR,
   syncBadgeGradientPosition,
-} from '../src/wc/nav/badge-gradient-ring';
-import { SHELL_GRADIENT_POSITION_BAR_VAR } from '../src/wc/nav/shell-gradient';
+} from '../src/wc/shell/badge-gradient-ring';
+import { SHELL_GRADIENT_POSITION_BAR_VAR } from '../src/wc/shell/shell-gradient';
 
 describe('parseCssBackgroundPosition', () => {
   it('parses pixel pairs', () => {

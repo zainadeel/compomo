@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-skeleton",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-skeleton",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Aria-hidden atomic placeholder for preserving expected text, icon, or control geometry while structured content is pending.",
+  "useWhen": [
+    "A pending content region has a predictable structure whose geometry should remain stable while data loads.",
+    "Text, icon, and control placeholder atoms can be composed to approximate the final hierarchy and arrangement.",
+    "The owning region can expose busy state and contextual loading status independently."
+  ],
+  "avoidWhen": [
+    "An action or operation is progressing without predictable content structure; use Loader.",
+    "The final layout is unknown or likely to differ substantially from the placeholder composition.",
+    "A complete card, list, or table preset is expected from one Skeleton; compose atomic shapes in the owner.",
+    "The shimmer would be used as decoration after content is available."
+  ],
+  "alternatives": [
+    {
+      "when": "An indeterminate action or operation is in progress.",
+      "component": "component:ds-loader",
+      "reason": "Loader owns operation-level indeterminate progress."
+    },
+    {
+      "when": "Real text content is already available.",
+      "component": "component:ds-text",
+      "reason": "Text should replace its placeholder as soon as content is ready."
+    },
+    {
+      "when": "A real system glyph is available.",
+      "component": "component:ds-icon",
+      "reason": "Icon renders actual glyph content rather than loading geometry."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card",
+    "component:ds-table",
+    "component:ds-text",
+    "component:ds-icon"
+  ],
+  "accessibility": [
+    "Skeleton remains hidden from assistive technology because its shapes do not represent content.",
+    "The owning content region exposes busy state and a contextual loading status when an announcement is needed.",
+    "Do not announce every placeholder atom or duplicate status text across a composed skeleton layout.",
+    "The owner preserves focus and meaningful reading order when replacing placeholders with real content."
+  ],
+  "states": [
+    "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes.",
+    "Compose approximate line count, hierarchy, widths, and control placement without simulating actual values.",
+    "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
+    "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",
+    "Omitted background is for primary and secondary surfaces. Explicit faint documents a faint parent while using the same standard base and shimmer tokens; other contexts use matching surface tokens.",
+    "The owner decides whether to delay initial visibility and when to replace the complete composition."
+  ],
+  "responsiveBehavior": [
+    "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
+    "Skeleton does not infer breakpoints or rearrange sibling atoms."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Compose one element per placeholder atom and set aria-busy or loading status on the containing content region."
+    ],
+    "react": [
+      "Render Skeleton and real content from one loading branch so placeholder geometry and region busy state settle together."
+    ],
+    "angular": [
+      "Render Skeleton and real content from one loading branch so placeholder geometry and region busy state settle together."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Skeleton/Skeleton.stories.ts"
+    }
+  ]
+}

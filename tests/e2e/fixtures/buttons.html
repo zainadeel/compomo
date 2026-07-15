@@ -14,6 +14,15 @@
       <ds-button-unfilled id="unfilled-label" variant="label" label="Cancel"></ds-button-unfilled>
       <ds-button-unfilled id="unfilled-icon" variant="icon" icon="Close" aria-label="Cancel"></ds-button-unfilled>
       <ds-button-unfilled id="unfilled-icon-label" variant="icon-label" icon="Close" label="Cancel"></ds-button-unfilled>
+      <ds-button-filled id="filled-inactive" label="Unavailable" is-inactive></ds-button-filled>
+      <ds-button-unfilled id="unfilled-inactive" label="Unavailable" is-inactive></ds-button-unfilled>
+      <form id="button-form">
+        <label for="form-value">Form value</label>
+        <input id="form-value" name="value" value="initial">
+        <ds-button-filled id="filled-submit" label="Submit primary" type="submit"></ds-button-filled>
+        <ds-button-unfilled id="unfilled-submit" label="Submit secondary" type="submit"></ds-button-unfilled>
+        <ds-button-unfilled id="unfilled-reset" label="Reset" type="reset"></ds-button-unfilled>
+      </form>
     </main>
     <script type="module" src="/buttons-setup.mjs"></script>
   </body>

@@ -6,7 +6,7 @@ import {
   createRafCoalescer,
   readChromeTransitionSource,
   readChromeTransitionPhase,
-} from '../src/wc/nav/chrome-transition';
+} from '../src/wc/shell/chrome-transition';
 
 describe('ChromeTransitionDepth', () => {
   it('tracks nested enter/exit', () => {

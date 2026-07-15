@@ -1,28 +1,28 @@
 import { Component, Prop, Element, Watch, Listen, h, Host } from '@stencil/core';
-import type { NavChromeStyle } from '../../nav/nav-chrome';
+import type { NavChromeStyle } from '../../shell/nav-chrome';
 import {
   isEditableShortcutTarget,
   resolveShellShortcut,
-} from '../../nav/shell-shortcuts';
+} from '../../shell/shell-shortcuts';
 import type { PanelToolsToolId } from '../PanelTools/panel-tools-types';
 import {
   DEFAULT_SHELL_GRADIENT_PRESET,
   normalizeShellGradientPreset,
   type ShellGradientPreset,
-} from '../../nav/shell-gradient-presets';
+} from '../../shell/shell-gradient-presets';
 import {
   CHROME_TRANSITION_END,
   CHROME_TRANSITION_START,
   ChromeTransitionDepth,
   createRafCoalescer,
   readChromeTransitionSource,
-} from '../../nav/chrome-transition';
+} from '../../shell/chrome-transition';
 import {
   isPanelNavCollapsed,
   panelWidthPxFromTokens,
   readPanelNavWidthTokens,
   type PanelNavWidthTokens,
-} from '../../nav/shell-chrome-metrics';
+} from '../../shell/shell-chrome-metrics';
 import {
   SHELL_GRADIENT_IMAGE_VAR,
   SHELL_GRADIENT_OPACITY_VAR,
@@ -35,7 +35,7 @@ import {
   shellGradientPositionPanel,
   shellGradientPresetOpacity,
   shellGradientSize,
-} from '../../nav/shell-gradient';
+} from '../../shell/shell-gradient';
 
 @Component({
   tag: 'ds-app-shell',

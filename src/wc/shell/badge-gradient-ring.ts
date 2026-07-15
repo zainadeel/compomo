@@ -16,7 +16,7 @@ export interface GradientSurface {
 export function isShellGradientActive(from: HTMLElement): boolean {
   // Explicit <HTMLElement>: the inferred HTMLDsAppShellElement type only
   // resolves where @stencil/core types are installed — consumers importing
-  // `@ds-mo/ui/nav` (raw TS) compile this without them.
+  // `@ds-mo/ui/shell` (raw TS) compile this without them.
   const shell = from.closest<HTMLElement>('ds-app-shell');
   return shell !== null && shell.getAttribute('gradient-preset') !== 'none';
 }

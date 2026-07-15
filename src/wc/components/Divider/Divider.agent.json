@@ -1,0 +1,72 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-divider",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-divider",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
+  "useWhen": [
+    "Related sibling content groups on one surface need stronger visual separation than spacing alone provides.",
+    "A list or panel needs an inset separator that does not define the outer edge of its container.",
+    "Meaningful document or group structure requires an explicit horizontal or vertical separator."
+  ],
+  "avoidWhen": [
+    "Spacing alone communicates the grouping clearly.",
+    "The line defines a container edge, control outline, or selected state; use the owning component's border treatment.",
+    "The divider would compensate for weak headings or unclear information hierarchy.",
+    "A decorative flourish does not clarify grouping."
+  ],
+  "alternatives": [
+    {
+      "when": "Content needs an enclosing surface and outer boundary.",
+      "component": "component:ds-card",
+      "reason": "Card owns container chrome, structure, and edge treatment."
+    },
+    {
+      "when": "A static compact label is being used to name a group.",
+      "component": "component:ds-text",
+      "reason": "Text communicates hierarchy directly instead of relying on a line."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card",
+    "component:ds-menu",
+    "component:ds-panel-sub-nav"
+  ],
+  "accessibility": [
+    "Keep purely visual dividers hidden from assistive technology.",
+    "Expose separator semantics only when the line represents meaningful document or group structure.",
+    "Semantic orientation must match the divider's visual orientation.",
+    "Do not use a semantic divider as a substitute for headings, landmarks, or explicit group labels."
+  ],
+  "states": [
+    "Horizontal and vertical variants separate sibling groups along the parent's layout axis.",
+    "The omitted background context is for primary and secondary surfaces. Explicit faint documents a faint surface while using the same standard divider token.",
+    "Other background contexts select their matching divider token, including navigation where Divider is composed inside app chrome.",
+    "Inset is symmetric along the line axis. Explicit length is reserved for layout-specific separators; otherwise the line fills the available axis."
+  ],
+  "responsiveBehavior": [
+    "The parent layout decides whether to change orientation, visibility, inset, or length at responsive breakpoints.",
+    "Divider does not infer layout direction or hide itself responsively."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set semantic mode only from known document structure; presentation alone should remain hidden from assistive technology."
+    ],
+    "react": [
+      "Derive orientation and visibility from the parent layout rather than viewport logic inside Divider."
+    ],
+    "angular": [
+      "Derive orientation and visibility from the parent layout rather than viewport logic inside Divider."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Divider/Divider.stories.ts"
+    }
+  ]
+}

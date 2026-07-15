@@ -14,7 +14,7 @@ import * as AppShellStories from './AppShell.stories';
 | `panel` | `ds-panel-nav` | Left navigation rail |
 | `bar` | `ds-bar-nav` | Top tab bar / heading row |
 | `tools` | `ds-panel-tools` | Right tool rail + drawer |
-| *(default)* | — | Scrollable page content (opaque primary surface when gradient is on) |
+| *(default)* | — | Scrollable page content on an opaque primary surface |
 
 ## Props
 
@@ -22,7 +22,7 @@ import * as AppShellStories from './AppShell.stories';
 | --- | --- | --- |
 | `navStyle` | `dashboard` | Propagated to slotted `ds-panel-nav` and `ds-bar-nav` |
 | `gradientPreset` | `neutral` | Chrome treatment: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh`. Color tokens adapt each wash to light and dark themes |
-| `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers) |
+| `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers, `?` Help) |
 
 ## Gradient presets
 
@@ -30,4 +30,6 @@ Use `ds-shell-gradient-picker` (or menu gradient-picker sections) to let users p
 
 Applications own preference persistence, cross-tab synchronization, and account/server preference precedence. Pass the resolved value to `gradientPreset`; keep the picker in the user/account menu and apply changes immediately without closing the menu.
 
-See [framework integration](/?path=/docs/docs-introduction--docs) for host-app wiring, viewport sizing, and Angular timing notes.
+See [Introduction](/?path=/docs/docs-introduction--docs) for package setup and the
+[framework integration guide](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md)
+for host-app wiring, viewport sizing, and Angular timing notes.

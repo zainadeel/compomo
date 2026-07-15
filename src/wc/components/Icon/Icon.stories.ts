@@ -9,6 +9,14 @@ const COLORS = [
   'faint-brand', 'medium-brand', 'bold-brand', 'strong-brand',
   'on-strong', 'on-bold', 'inherit',
 ] as const;
+const FLAGS = [
+  { name: 'FlagUnitedStates', label: 'United States' },
+  { name: 'FlagCanada', label: 'Canada' },
+  { name: 'FlagMexico', label: 'Mexico' },
+  { name: 'FlagUnitedKingdom', label: 'United Kingdom' },
+  { name: 'FlagFrance', label: 'France' },
+  { name: 'FlagGermany', label: 'Germany' },
+] as const;
 
 const PAGE = 'display: flex; flex-direction: column; gap: var(--dimension-space-300); color: var(--color-foreground-primary);';
 const GRID = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--dimension-space-150);';
@@ -28,14 +36,12 @@ const meta: Meta = {
       description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
     },
     label: { control: 'text' },
-    flag: { control: 'boolean' },
   },
   args: {
     name: 'Bell',
     size: 'md',
-    color: 'primary',
+    color: 'inherit',
     label: '',
-    flag: false,
   },
 };
 
@@ -49,7 +55,6 @@ export const Playground: Story = {
       size=${args['size']}
       color=${args['color'] || undefined}
       label=${args['label'] || undefined}
-      ?flag=${args['flag']}
     ></ds-icon>
   `,
 };
@@ -100,17 +105,10 @@ export const Accessibility: Story = {
 export const Flags: Story = {
   render: () => html`
     <div style="${GRID}">
-      ${[
-        'FlagUnitedStates',
-        'FlagCanada',
-        'FlagMexico',
-        'FlagUnitedKingdom',
-        'FlagFrance',
-        'FlagGermany',
-      ].map(name => html`
+      ${FLAGS.map(flag => html`
         <div style="${CARD}">
-          <ds-icon name=${name} size="xl" ?flag=${true} label=${name.replace(/^Flag/, '')}></ds-icon>
-          <span style="${LABEL}">${name}</span>
+          <ds-icon name=${flag.name} size="xl" label=${flag.label}></ds-icon>
+          <span style="${LABEL}">${flag.name}</span>
         </div>`)}
     </div>
   `,

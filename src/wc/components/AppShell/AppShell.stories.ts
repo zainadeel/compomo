@@ -8,7 +8,7 @@ import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
 import type { PanelToolsItem } from '../PanelTools/panel-tools-types';
-import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
+import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
 
 const PANEL_GROUPS: PanelNavGroup[] = [
   {

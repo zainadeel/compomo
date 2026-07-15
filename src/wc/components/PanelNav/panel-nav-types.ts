@@ -1,6 +1,6 @@
 import type { MenuPlacement } from '../Menu/menu-placement';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from '../Menu/menu-placement';
-import type { NavChromeStyle } from '../../nav/nav-chrome';
+import type { NavChromeStyle } from '../../shell/nav-chrome';
 
 export type { NavChromeStyle };
 export type PanelNavRouterMode = 'anchor' | 'event';
@@ -11,7 +11,6 @@ export interface PanelNavItem {
   label: string;
   /** Show a notification dot badge on the item */
   dot?: boolean;
-  flag?: boolean;
   /** Route path used for `currentUrl` matching. In `anchor` mode also sets `<a href>`.
    *  In `event` mode navigation is delegated to the host via `dsNavSelect`. */
   href?: string;

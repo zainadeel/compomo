@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { NavChromeStyle } from "./nav/nav-chrome";
-import { ShellGradientPreset } from "./nav/shell-gradient-presets";
+import { NavChromeStyle } from "./shell/nav-chrome";
+import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
@@ -18,7 +18,7 @@ import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
-import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
+import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
@@ -27,14 +27,14 @@ import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
-import { ChromeTransitionDetail } from "./nav/chrome-transition";
+import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
-import { SkeletonSurface, SkeletonVariant } from "./components/Skeleton/Skeleton";
+import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
@@ -44,8 +44,8 @@ import { TabBackground } from "./components/TabGroup/TabGroup";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
-export { NavChromeStyle } from "./nav/nav-chrome";
-export { ShellGradientPreset } from "./nav/shell-gradient-presets";
+export { NavChromeStyle } from "./shell/nav-chrome";
+export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
@@ -57,7 +57,7 @@ export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
-export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
+export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
@@ -66,14 +66,14 @@ export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
-export { ChromeTransitionDetail } from "./nav/chrome-transition";
+export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
-export { SkeletonSurface, SkeletonVariant } from "./components/Skeleton/Skeleton";
+export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
@@ -117,17 +117,17 @@ export namespace Components {
          */
         "gradientBackground": boolean;
         /**
-          * Accessible label. Defaults to the count as a string.
+          * Contextual supplemental text. Omit when the owner hides the badge from assistive technology.
          */
         "label": string | undefined;
         /**
-          * Highest count shown before compacting to "+".
+          * Highest count shown before compacting to "{max}+".
           * @default 9
          */
         "max": number;
         /**
-          * Surface context for the ring around dots.
-          * @default 'default'
+          * Immediate backing surface matched by the ring around either variant.
+          * @default 'primary'
          */
         "surface": BadgeSurface;
         /**
@@ -210,6 +210,7 @@ export namespace Components {
     }
     interface DsButtonFilled {
         /**
+          * Accessible name override. Required for icon-only buttons.
           * @default null
          */
         "ariaLabel": string | null;
@@ -272,6 +273,7 @@ export namespace Components {
          */
         "activeFill": boolean;
         /**
+          * Accessible name override. Required for icon-only buttons.
           * @default null
          */
         "ariaLabel": string | null;
@@ -588,6 +590,10 @@ export namespace Components {
     }
     interface DsDivider {
         /**
+          * Actual parent surface context. Omit on primary and secondary surfaces.
+         */
+        "background": DividerBackground | undefined;
+        /**
           * Insets the divider from its start/end edges. Accepts spacing token names or any CSS length.
           * @default 'none'
          */
@@ -607,11 +613,6 @@ export namespace Components {
           * @default false
          */
         "semantic": boolean;
-        /**
-          * Surface context so the divider uses the right TokoMo divider token.
-          * @default 'default'
-         */
-        "surface": DividerSurface;
     }
     interface DsEmptyState {
         "message": string | undefined;
@@ -635,19 +636,15 @@ export namespace Components {
     interface DsIcon {
         /**
           * Semantic foreground color token, or a raw CSS var reference.
+          * @default 'inherit'
          */
-        "color": IconColor | undefined;
-        /**
-          * Set `true` to look up from the flag icon set instead of the system icon set.
-          * @default false
-         */
-        "flag": boolean;
+        "color": IconColor;
         /**
           * Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons.
          */
         "label": string | undefined;
         /**
-          * Name of the system icon (e.g. `"Gear"`, `"ArrowRight"`) or flag (e.g. `"US"`)
+          * Exact canonical IcoMo export name, including the `Flag` prefix for flags.
           * @default ''
          */
         "name": string;
@@ -712,8 +709,9 @@ export namespace Components {
     interface DsLoader {
         /**
           * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+          * @default 'inherit'
          */
-        "color": LoaderColor | undefined;
+        "color": LoaderColor;
         /**
           * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
          */
@@ -1105,6 +1103,10 @@ export namespace Components {
     }
     interface DsSkeleton {
         /**
+          * Actual parent surface context. Omit on primary and secondary surfaces.
+         */
+        "background": SkeletonBackground | undefined;
+        /**
           * Shared control-density size whose height defines the control canvas.
           * @default 'md'
          */
@@ -1124,11 +1126,6 @@ export namespace Components {
           * @default true
          */
         "shimmer": boolean;
-        /**
-          * Surface context used to select the matching foreground base and shimmer tokens.
-          * @default 'default'
-         */
-        "surface": SkeletonSurface;
         /**
           * Text metric recipe whose line-height defines the text canvas.
           * @default 'text-body-medium'
@@ -1289,13 +1286,37 @@ export namespace Components {
     }
     interface DsTag {
         /**
+          * ID of the menu controlled by an interactive Tag.
+         */
+        "ariaControls": string | undefined;
+        /**
           * @default 'faint'
          */
         "contrast": TagContrast;
         /**
+          * Controlled open state for the menu triggered by an interactive Tag.
+          * @default false
+         */
+        "expanded": boolean;
+        /**
+          * Canonical icon name rendered before the visible label.
+          * @default ''
+         */
+        "icon": string;
+        /**
           * @default 'neutral'
          */
         "intent": TagIntent;
+        /**
+          * Render a menu-trigger button with a fixed ChevronUpDown suffix.
+          * @default false
+         */
+        "interactive": boolean;
+        /**
+          * Disable an interactive Tag and apply the shared inactive treatment.
+          * @default false
+         */
+        "isInactive": boolean;
         "label": string;
         "maxWidth": string | number | undefined;
         /**
@@ -1313,7 +1334,10 @@ export namespace Components {
           * @default 'p'
          */
         "as": TextElement;
-        "color": TextColor | undefined;
+        /**
+          * @default 'inherit'
+         */
+        "color": TextColor;
         "decoration": TextDecoration | undefined;
         /**
           * Heavier weight + tighter letter-spacing for the variant. `false` (default): one step below emphasis (display semibold, title/body medium, caption medium). `true`: display bold, title/caption semibold, body medium.
@@ -1533,6 +1557,10 @@ export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableElement;
+}
+export interface DsTagCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTagElement;
 }
 declare global {
     interface HTMLDsAppShellElement extends Components.DsAppShell, HTMLStencilElement {
@@ -2067,7 +2095,18 @@ declare global {
         prototype: HTMLDsTableElement;
         new (): HTMLDsTableElement;
     };
+    interface HTMLDsTagElementEventMap {
+        "dsClick": MouseEvent;
+    }
     interface HTMLDsTagElement extends Components.DsTag, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsTagElement: {
         prototype: HTMLDsTagElement;
@@ -2189,17 +2228,17 @@ declare namespace LocalJSX {
          */
         "gradientBackground"?: boolean;
         /**
-          * Accessible label. Defaults to the count as a string.
+          * Contextual supplemental text. Omit when the owner hides the badge from assistive technology.
          */
         "label"?: string | undefined;
         /**
-          * Highest count shown before compacting to "+".
+          * Highest count shown before compacting to "{max}+".
           * @default 9
          */
         "max"?: number;
         /**
-          * Surface context for the ring around dots.
-          * @default 'default'
+          * Immediate backing surface matched by the ring around either variant.
+          * @default 'primary'
          */
         "surface"?: BadgeSurface;
         /**
@@ -2287,6 +2326,7 @@ declare namespace LocalJSX {
     }
     interface DsButtonFilled {
         /**
+          * Accessible name override. Required for icon-only buttons.
           * @default null
          */
         "ariaLabel"?: string | null;
@@ -2349,6 +2389,7 @@ declare namespace LocalJSX {
          */
         "activeFill"?: boolean;
         /**
+          * Accessible name override. Required for icon-only buttons.
           * @default null
          */
         "ariaLabel"?: string | null;
@@ -2695,6 +2736,10 @@ declare namespace LocalJSX {
     }
     interface DsDivider {
         /**
+          * Actual parent surface context. Omit on primary and secondary surfaces.
+         */
+        "background"?: DividerBackground | undefined;
+        /**
           * Insets the divider from its start/end edges. Accepts spacing token names or any CSS length.
           * @default 'none'
          */
@@ -2714,11 +2759,6 @@ declare namespace LocalJSX {
           * @default false
          */
         "semantic"?: boolean;
-        /**
-          * Surface context so the divider uses the right TokoMo divider token.
-          * @default 'default'
-         */
-        "surface"?: DividerSurface;
     }
     interface DsEmptyState {
         "message"?: string | undefined;
@@ -2742,19 +2782,15 @@ declare namespace LocalJSX {
     interface DsIcon {
         /**
           * Semantic foreground color token, or a raw CSS var reference.
+          * @default 'inherit'
          */
-        "color"?: IconColor | undefined;
-        /**
-          * Set `true` to look up from the flag icon set instead of the system icon set.
-          * @default false
-         */
-        "flag"?: boolean;
+        "color"?: IconColor;
         /**
           * Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons.
          */
         "label"?: string | undefined;
         /**
-          * Name of the system icon (e.g. `"Gear"`, `"ArrowRight"`) or flag (e.g. `"US"`)
+          * Exact canonical IcoMo export name, including the `Flag` prefix for flags.
           * @default ''
          */
         "name"?: string;
@@ -2824,8 +2860,9 @@ declare namespace LocalJSX {
     interface DsLoader {
         /**
           * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+          * @default 'inherit'
          */
-        "color"?: LoaderColor | undefined;
+        "color"?: LoaderColor;
         /**
           * Accessible label for standalone usage. Wraps the spinner in a live region and renders the label visually-hidden. Omit when the host element already conveys busy state via aria-busy.
          */
@@ -3262,6 +3299,10 @@ declare namespace LocalJSX {
     }
     interface DsSkeleton {
         /**
+          * Actual parent surface context. Omit on primary and secondary surfaces.
+         */
+        "background"?: SkeletonBackground | undefined;
+        /**
           * Shared control-density size whose height defines the control canvas.
           * @default 'md'
          */
@@ -3281,11 +3322,6 @@ declare namespace LocalJSX {
           * @default true
          */
         "shimmer"?: boolean;
-        /**
-          * Surface context used to select the matching foreground base and shimmer tokens.
-          * @default 'default'
-         */
-        "surface"?: SkeletonSurface;
         /**
           * Text metric recipe whose line-height defines the text canvas.
           * @default 'text-body-medium'
@@ -3452,15 +3488,43 @@ declare namespace LocalJSX {
     }
     interface DsTag {
         /**
+          * ID of the menu controlled by an interactive Tag.
+         */
+        "ariaControls"?: string | undefined;
+        /**
           * @default 'faint'
          */
         "contrast"?: TagContrast;
         /**
+          * Controlled open state for the menu triggered by an interactive Tag.
+          * @default false
+         */
+        "expanded"?: boolean;
+        /**
+          * Canonical icon name rendered before the visible label.
+          * @default ''
+         */
+        "icon"?: string;
+        /**
           * @default 'neutral'
          */
         "intent"?: TagIntent;
+        /**
+          * Render a menu-trigger button with a fixed ChevronUpDown suffix.
+          * @default false
+         */
+        "interactive"?: boolean;
+        /**
+          * Disable an interactive Tag and apply the shared inactive treatment.
+          * @default false
+         */
+        "isInactive"?: boolean;
         "label": string;
         "maxWidth"?: string | number | undefined;
+        /**
+          * Fired when the interactive Tag button is activated.
+         */
+        "onDsClick"?: (event: DsTagCustomEvent<MouseEvent>) => void;
         /**
           * @default false
          */
@@ -3476,7 +3540,10 @@ declare namespace LocalJSX {
           * @default 'p'
          */
         "as"?: TextElement;
-        "color"?: TextColor | undefined;
+        /**
+          * @default 'inherit'
+         */
+        "color"?: TextColor;
         "decoration"?: TextDecoration | undefined;
         /**
           * Heavier weight + tighter letter-spacing for the variant. `false` (default): one step below emphasis (display semibold, title/body medium, caption medium). `true`: display bold, title/caption semibold, body medium.
@@ -3729,7 +3796,7 @@ declare namespace LocalJSX {
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
-        "surface": DividerSurface;
+        "background": DividerBackground | undefined;
         "inset": DividerInset;
         "length": DividerLength;
         "semantic": boolean;
@@ -3745,9 +3812,8 @@ declare namespace LocalJSX {
     interface DsIconAttributes {
         "name": string;
         "size": IconSize;
-        "color": IconColor | undefined;
+        "color": IconColor;
         "label": string | undefined;
-        "flag": boolean;
     }
     interface DsInputAttributes {
         "value": string;
@@ -3769,7 +3835,7 @@ declare namespace LocalJSX {
     }
     interface DsLoaderAttributes {
         "size": LoaderSize;
-        "color": LoaderColor | undefined;
+        "color": LoaderColor;
         "label": string | undefined;
     }
     interface DsMenuAttributes {
@@ -3877,7 +3943,7 @@ declare namespace LocalJSX {
         "width": string;
         "rounded": boolean;
         "shimmer": boolean;
-        "surface": SkeletonSurface;
+        "background": SkeletonBackground | undefined;
     }
     interface DsSliderAttributes {
         "value": number;
@@ -3923,16 +3989,21 @@ declare namespace LocalJSX {
     }
     interface DsTagAttributes {
         "label": string;
+        "icon": string;
         "intent": TagIntent;
         "contrast": TagContrast;
         "size": TagSize;
         "rounded": boolean;
         "maxWidth": string;
+        "interactive": boolean;
+        "expanded": boolean;
+        "ariaControls": string | undefined;
+        "isInactive": boolean;
     }
     interface DsTextAttributes {
         "variant": TextVariant;
         "emphasis": boolean;
-        "color": TextColor | undefined;
+        "color": TextColor;
         "decoration": TextDecoration | undefined;
         "italic": boolean;
         "shimmer": boolean;

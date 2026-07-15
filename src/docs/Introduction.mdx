@@ -2,24 +2,29 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Docs/Introduction" />
 
-# CompoMo — `@ds-mo/ui`
+# CompoMo
 
-Stencil web components (`<ds-*>`) styled with [TokoMo](https://github.com/zainadeel/TokoMo) design tokens. Stencil also generates **Angular** proxy directives and **React** wrappers from the same source.
+CompoMo (`@ds-mo/ui`) is the component layer of the ds-mo design system. It
+ships framework-agnostic Stencil web components plus generated Angular and
+React adapters from the same source.
 
 ## Install
 
+Install the complete runtime trilogy:
+
 ```bash
-npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons
+npm install @ds-mo/tokens @ds-mo/icons @ds-mo/ui
 ```
 
-**Required peer dependencies:**
+- `@ds-mo/tokens` supplies CSS custom properties and theme definitions.
+- `@ds-mo/icons` supplies SVG glyphs resolved by `ds-icon`.
+- `@ds-mo/ui` supplies the components and framework adapters.
 
-- **`@ds-mo/tokens`** — CSS custom properties (colors, dimensions, typography, effects).
-- **`@ds-mo/icons`** — runtime SVG catalog for `<ds-icon>` (resolved from your app's IcoMo install, not bundled inside `@ds-mo/ui`).
+CompoMo currently requires `@ds-mo/tokens` 3.1+ and `@ds-mo/icons` 6.2+.
 
-## Setup
+## Global setup
 
-Import TokoMo tokens globally (once, at your app root):
+Import TokoMo once at the application root:
 
 ```ts
 import '@ds-mo/tokens';
@@ -27,36 +32,88 @@ import '@ds-mo/tokens/reset';
 import '@ds-mo/tokens/globals';
 ```
 
-Register the custom elements you use (each module auto-defines its tag):
+Theme the application by setting `data-theme="light"` or `data-theme="dark"`
+on a parent element, normally `<html>`.
+
+## Import components
+
+### Custom elements
+
+Import every tag the application renders. Each module defines its own custom
+element:
 
 ```ts
-import '@ds-mo/ui/dist/components/ds-button-filled.js';
-import '@ds-mo/ui/dist/components/ds-button-unfilled.js';
-import '@ds-mo/ui/dist/components/ds-text.js';
+import '@ds-mo/ui/components/ds-button-filled.js';
+import '@ds-mo/ui/components/ds-text.js';
 ```
 
-**Angular:** `import { DsButtonFilled } from '@ds-mo/ui/angular'` (or module that re-exports proxies).
+```html
+<ds-button-filled label="Save"></ds-button-filled>
+```
 
-**React:** `import { DsButtonFilled, DsText } from '@ds-mo/ui/react'`.
+### Angular
 
-See [framework integration](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md) for shell/nav first-paint rules.
+Prefer per-component standalone adapters for tree shaking:
+
+```ts
+import { DsButtonFilled } from '@ds-mo/ui/angular/ds-button-filled';
+import { DsText } from '@ds-mo/ui/angular/ds-text';
+```
+
+Angular form controls also import the matching generated value accessor from
+`@ds-mo/ui/angular`.
+
+### React
+
+Use the generated React wrappers:
+
+```tsx
+import { DsButtonFilled, DsText } from '@ds-mo/ui/react';
+```
+
+## Icons
+
+Use exact canonical IcoMo export names:
+
+```html
+<ds-icon name="ArrowRight"></ds-icon>
+```
+
+Icons lazy-load on first use and then remain cached. Applications may preload
+critical first-paint icons:
+
+```ts
+import { Bell } from '@ds-mo/icons/svg/Bell';
+import { registerIcons } from '@ds-mo/ui/utils';
+
+registerIcons({ Bell });
+```
+
+Buttons and Tags accept the same canonical name through their `icon` prop.
+Chip owns removable metadata and always renders its fixed dismiss icon; Tag
+does not provide dismissal.
+
+## Public support APIs
+
+- `@ds-mo/ui/utils` contains generic helpers such as `registerIcons`.
+- `@ds-mo/ui/shell` contains non-component AppShell contracts such as shell
+  gradient presets, transition helpers, and panel-menu placement.
 
 ## Architecture
 
+```text
+TokoMo (@ds-mo/tokens)
+  ↓
+IcoMo (@ds-mo/icons)
+  ↓
+CompoMo (@ds-mo/ui)
+  ↓
+Applications
 ```
-TokoMo (@ds-mo/tokens)  ← CSS variables, JSON, TypeScript; source is Figma
-    ↓
-IcoMo (@ds-mo/icons)    ← SVG catalog; peer dependency at app bundle time
-    ↓
-CompoMo (@ds-mo/ui)     ← Stencil <ds-*> + generated Angular/React wrappers
-    ↓
-Apps (Webapp, lab, …)
-```
 
-## Icon pattern
+CompoMo styles use TokoMo custom properties; do not replace those contracts
+with application-specific hardcoded values.
 
-Use `<ds-icon name="ArrowRight" />` with IcoMo export keys, or slot an icon into `slot="icon"` on buttons and similar components.
-
-## Token dependency
-
-All styling uses TokoMo CSS custom properties. Components render unstyled if `@ds-mo/tokens` is not imported.
+See the
+[framework integration guide](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md)
+for shell composition, routing, forms, and first-paint integration.

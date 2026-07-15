@@ -7,6 +7,13 @@ async function focusByKeyboard(anchor: Locator) {
   });
 }
 
+async function waitForPopupPosition(popup: Locator) {
+  await expect(popup).toHaveAttribute('data-side', /^(top|right|bottom|left)$/);
+  await popup.evaluate(
+    () => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+  );
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/tooltip.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
@@ -35,6 +42,7 @@ test('tracks its trigger through nested scrolling and viewport resize', async ({
   await focusByKeyboard(scrollAnchor);
   const popup = page.getByRole('tooltip', { name: 'Scrolling label' });
   await expect(popup).toBeVisible();
+  await waitForPopupPosition(popup);
 
   const before = await popup.boundingBox();
   await scroller.evaluate(element => { element.scrollTop += 40; });
@@ -45,6 +53,7 @@ test('tracks its trigger through nested scrolling and viewport resize', async ({
   await focusByKeyboard(resizeAnchor);
   const resizePopup = page.getByRole('tooltip', { name: 'Resize label' });
   await expect(resizePopup).toBeVisible();
+  await waitForPopupPosition(resizePopup);
   const wide = await resizePopup.boundingBox();
   await page.setViewportSize({ width: 640, height: 600 });
   await expect.poll(async () => (await resizePopup.boundingBox())?.x).toBeLessThan(wide?.x ?? Infinity);

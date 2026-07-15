@@ -34,7 +34,7 @@ const meta: Meta = {
   },
   args: {
     size: 'md',
-    color: 'primary',
+    color: 'inherit',
     label: '',
   },
 };

@@ -1,0 +1,81 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-badge",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-badge",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Non-interactive brand counter or dot that supplements an owning control or label with unread notification information.",
+  "useWhen": [
+    "An existing control, navigation item, or label needs a compact unread notification count.",
+    "An owning element needs a small visual dot indicating that supplemental notification information exists.",
+    "The immediate backing surface can be identified so the badge ring visually separates the mark from its owner."
+  ],
+  "avoidWhen": [
+    "The status must stand alone without an owning label or control.",
+    "The mark needs semantic positive, caution, negative, or neutral color; Badge intentionally uses one brand treatment.",
+    "The compact content is metadata or taxonomy; use Tag or Chip according to whether it is removable.",
+    "The badge itself would receive pointer or keyboard interaction; put interaction on the owning control."
+  ],
+  "alternatives": [
+    {
+      "when": "A compact static label communicates taxonomy or a semantic status.",
+      "component": "component:ds-tag",
+      "reason": "Tag owns static metadata labels and semantic intent coloring."
+    },
+    {
+      "when": "A metadata value must be individually removable.",
+      "component": "component:ds-chip",
+      "reason": "Chip owns dismissible metadata values."
+    },
+    {
+      "when": "The count is primary content rather than supplemental notification chrome.",
+      "component": "component:ds-text",
+      "reason": "Text preserves the quantity as normal readable content."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-unfilled",
+    "component:ds-bar-nav",
+    "component:ds-panel-nav",
+    "component:ds-menu"
+  ],
+  "accessibility": [
+    "The owning control or content provides the primary accessible name; Badge contributes only supplemental unread or notification meaning.",
+    "When a dot is announced, provide contextual text that explains its meaning. Otherwise mark it aria-hidden from the owning composition.",
+    "When a counter is announced, provide contextual text such as “5 unread notifications”; a bare number is insufficient.",
+    "Avoid duplicating information already included in the owning control's accessible name.",
+    "Badge never receives focus and never owns an interaction."
+  ],
+  "states": [
+    "Counter represents an unread or notification count, while dot communicates presence without quantity.",
+    "Non-positive counter values hide the badge.",
+    "Counts above the configured compact limit display the limit with a plus suffix while accessible text retains meaningful context.",
+    "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
+    "The ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
+    "Shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+  ],
+  "responsiveBehavior": [
+    "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",
+    "Badge does not anchor itself or automatically switch between counter and dot variants."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Position Badge from the owning element's layout and synchronize its contextual accessibility text with the owner."
+    ],
+    "react": [
+      "Keep count, visibility, and contextual accessibility text derived from the same unread-notification state as the owning control."
+    ],
+    "angular": [
+      "Keep count, visibility, and contextual accessibility text derived from the same unread-notification state as the owning control."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Badge/Badge.stories.ts"
+    }
+  ]
+}

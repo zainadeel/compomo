@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   barGradientPositionFromPanelWidth,
   panelWidthPxFromTokens,
-} from '../src/wc/nav/shell-chrome-metrics';
+} from '../src/wc/shell/shell-chrome-metrics';
 
 describe('panelWidthPxFromTokens', () => {
   it('returns expanded width when not collapsed', () => {

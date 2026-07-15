@@ -8,9 +8,10 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Shared md / sm / xs metrics (`src/wc/utils/control-density.css`). ' +
+          'Single source of truth for shared md / sm / xs control metrics (`src/wc/utils/control-density.css`). ' +
           'Apply `.ds-control--md|sm|xs` to set `--ds-control-*` vars (height, padding, gap, icon, radius). ' +
-          'See AGENTS.md — Control density recipes.',
+          'Components consume these vars instead of defining per-component optical-sizing classes. ' +
+          'See AGENTS.md — Control density recipes for the maintained metric table.',
       },
     },
   },

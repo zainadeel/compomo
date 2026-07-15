@@ -7,20 +7,21 @@
 
 /* eslint-disable */
 
-import type { StencilReactComponent } from '@stencil/react-output-target/runtime';
+import type { EventName, StencilReactComponent } from '@stencil/react-output-target/runtime';
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
+import { type DsTagCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsTag as DsTagElement, defineCustomElement as defineDsTag } from "@ds-mo/ui/dist/components/ds-tag.js";
 
-export type DsTagEvents = NonNullable<unknown>;
+export type DsTagEvents = { onDsClick: EventName<DsTagCustomEvent<MouseEvent>> };
 
 export const DsTag: StencilReactComponent<DsTagElement, DsTagEvents, Components.DsTag, 'label'> = /*@__PURE__*/ createComponent<DsTagElement, DsTagEvents, Components.DsTag, 'label'>({
     tagName: 'ds-tag',
     elementClass: DsTagElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsTagEvents,
+    events: { onDsClick: 'dsClick' } as DsTagEvents,
     defineCustomElement: defineDsTag
 });

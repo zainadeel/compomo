@@ -1,16 +1,16 @@
 import { Component, Prop, h, Host } from '@stencil/core';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
-export type DividerSurface =
-  | 'default'
-  | 'on-bold-background'
-  | 'on-strong-background'
-  | 'on-medium-background'
-  | 'on-translucent-background'
-  | 'navigation'
+export type DividerBackground =
+  | 'faint'
+  | 'medium'
+  | 'bold'
+  | 'strong'
+  | 'translucent'
+  | 'inverted'
   | 'media'
-  | 'always-dark'
-  | 'inverted';
+  | 'navigation'
+  | 'always-dark';
 export type DividerInsetToken =
   | 'space-000'
   | 'space-012'
@@ -58,8 +58,8 @@ export class Divider {
   /** Direction of the divider line. Defaults to 'horizontal'. */
   @Prop() orientation: DividerOrientation = 'horizontal';
 
-  /** Surface context so the divider uses the right TokoMo divider token. */
-  @Prop() surface: DividerSurface = 'default';
+  /** Actual parent surface context. Omit on primary and secondary surfaces. */
+  @Prop() background: DividerBackground | undefined;
 
   /** Insets the divider from its start/end edges. Accepts spacing token names or any CSS length. */
   @Prop() inset: DividerInset = 'none';
@@ -95,7 +95,7 @@ export class Divider {
           divider: true,
           'divider--vertical': isVertical,
           'divider--custom-length': hasCustomLength,
-          [`divider--surface-${this.surface}`]: true,
+          [`divider--background-${this.background}`]: !!this.background,
         }}
         style={{
           '--_divider-inset': this.resolveInset(),
