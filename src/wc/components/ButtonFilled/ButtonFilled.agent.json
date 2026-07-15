@@ -7,15 +7,18 @@
   "tag": "ds-button-filled",
   "audience": "general",
   "status": "stable",
-  "summary": "Emphasized command button for primary, confirming, or semantically important actions.",
+  "summary": "Highest-emphasis command button for the single primary action in a local decision area, with semantic consequence and async progress treatments.",
   "useWhen": [
-    "The user initiates a primary or emphasized command.",
-    "An action needs a semantic intent such as positive, negative, warning, or AI."
+    "The user initiates the single primary command in a local decision area.",
+    "An action's consequence requires a matching semantic treatment.",
+    "A standalone compact primary action needs an icon-only presentation with an explicit accessible name."
   ],
   "avoidWhen": [
+    "Another filled action already exists in the same local decision area.",
     "The action is unfilled icon-only shell or navigation chrome.",
     "The element represents navigation rather than a command.",
-    "The content is a persistent selected state rather than an action."
+    "The content is a persistent selected state rather than an action.",
+    "A semantic color would be decorative or merely match the surrounding product area."
   ],
   "alternatives": [
     {
@@ -36,15 +39,31 @@
   "accessibility": [
     "Provide an explicit accessible name for icon-only buttons.",
     "Use inactive state only when the action must remain visible but unavailable.",
-    "Do not encode the action meaning through color alone."
+    "Do not encode the action meaning through color alone.",
+    "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when users need confirmation.",
+    "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
   ],
   "states": [
-    "Choose one primary filled action per local decision area when possible.",
-    "Use semantic intent for meaning and contrast for emphasis; do not use contrast as a substitute for state."
+    "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
+    "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
+    "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
+    "Loading prevents duplicate activation without applying inactive opacity.",
+    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
   ],
   "responsiveBehavior": [
     "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
   ],
+  "frameworkCaveats": {
+    "customElements": [
+      "For form submission, use the native submit type and listen to the form submit event; use dsClick for non-submit commands."
+    ],
+    "react": [
+      "Keep async state in the owner and pass it to the loading state until the command settles."
+    ],
+    "angular": [
+      "Keep async state in the owner and pass it to the loading state until the command settles."
+    ]
+  },
   "references": [
     {
       "label": "Storybook examples",

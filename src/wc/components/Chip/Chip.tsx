@@ -10,7 +10,6 @@ import { CONTROL_TEXT_VARIANT } from '../../utils';
  */
 export type ChipState = 'default' | 'active' | 'error' | 'caution';
 export type ChipSize = 'md' | 'sm' | 'xs';
-export type ChipBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
 
 /** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */
 const ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {
@@ -35,12 +34,8 @@ export class Chip {
   @Prop() state: ChipState = 'default';
   @Prop() size: ChipSize = 'md';
   @Prop() rounded: boolean = false;
-  /** When true (default), shows the trailing dismiss control. */
-  @Prop() removable: boolean = true;
   @Prop() maxWidth: string | number | undefined;
   @Prop() isInactive: boolean = false;
-  /** Surface context for interaction-fill tokens when the chip sits on a non-default surface. */
-  @Prop() background: ChipBackground | undefined;
   /** Accessible remove action. Use `{label}` as the chip-label placeholder. */
   @Prop() removeLabel: string = 'Remove {label}';
 
@@ -72,13 +67,9 @@ export class Chip {
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
           'tag--rounded': this.rounded,
-          'tag--removable': this.removable,
+          'tag--removable': true,
           /* Hover overlay on the chip surface — dismiss is the only action. */
-          'ds-interaction-fill': !this.isInactive && this.removable,
-          'ds-interaction-fill--on-medium': this.background === 'medium',
-          'ds-interaction-fill--on-bold': this.background === 'bold',
-          'ds-interaction-fill--on-strong': this.background === 'strong',
-          'ds-interaction-fill--on-always-dark': this.background === 'always-dark',
+          'ds-interaction-fill': !this.isInactive,
           'ds-control-inactive': this.isInactive,
         }}
         style={maxWidthStyle}
@@ -87,19 +78,15 @@ export class Chip {
         <ds-text class="tag__label" as="span" variant={textVariant} color="inherit">
           {this.label}
         </ds-text>
-        {this.removable && (
-          <button
-            type="button"
-            class="tag__remove ds-focus-ring-inset"
-            onClick={this.handleRemove}
-            aria-label={this.removeLabel.replace('{label}', this.label)}
-            disabled={this.isInactive || undefined}
-          >
-            <slot name="remove-icon">
-              <ds-icon class="tag__remove-x" name="Cross" size={iconSize} color="inherit"></ds-icon>
-            </slot>
-          </button>
-        )}
+        <button
+          type="button"
+          class="tag__remove ds-focus-ring-inset"
+          onClick={this.handleRemove}
+          aria-label={this.removeLabel.replace('{label}', this.label)}
+          disabled={this.isInactive || undefined}
+        >
+          <ds-icon class="tag__remove-x" name="Cross" size={iconSize} color="inherit"></ds-icon>
+        </button>
       </Host>
     );
   }

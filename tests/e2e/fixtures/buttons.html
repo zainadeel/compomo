@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Button loading e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Button loading test</h1>
+      <ds-button-filled id="filled-label" variant="label" label="Save"></ds-button-filled>
+      <ds-button-filled id="filled-icon" variant="icon" icon="Check" aria-label="Save"></ds-button-filled>
+      <ds-button-filled id="filled-icon-label" variant="icon-label" icon="Check" label="Save"></ds-button-filled>
+      <ds-button-unfilled id="unfilled-label" variant="label" label="Cancel"></ds-button-unfilled>
+      <ds-button-unfilled id="unfilled-icon" variant="icon" icon="Close" aria-label="Cancel"></ds-button-unfilled>
+      <ds-button-unfilled id="unfilled-icon-label" variant="icon-label" icon="Close" label="Cancel"></ds-button-unfilled>
+    </main>
+    <script type="module" src="/buttons-setup.mjs"></script>
+  </body>
+</html>

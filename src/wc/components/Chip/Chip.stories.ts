@@ -1,11 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-chip.js';
-import '../../../../dist/components/ds-icon.js';
 
 const STATES      = ['default', 'active', 'error', 'caution'] as const;
 const SIZES       = ['md', 'sm', 'xs'] as const;
-const BACKGROUNDS = ['', 'faint', 'medium', 'bold', 'strong', 'always-dark'];
 
 const meta: Meta = {
   title: 'Primitives/Chip',
@@ -15,9 +13,7 @@ const meta: Meta = {
     state:      { control: 'select', options: [...STATES] },
     size:       { control: 'select', options: [...SIZES] },
     rounded:    { control: 'boolean' },
-    removable:  { control: 'boolean' },
     isInactive: { control: 'boolean' },
-    background: { control: 'select', options: BACKGROUNDS },
     maxWidth:   { control: 'text' },
   },
   args: {
@@ -25,9 +21,7 @@ const meta: Meta = {
     state:      'default',
     size:       'md',
     rounded:    false,
-    removable:  true,
     isInactive: false,
-    background: '',
     maxWidth:   '',
   },
 };
@@ -41,10 +35,8 @@ export const Playground: Story = {
       label=${args['label']}
       state=${args['state']}
       size=${args['size']}
-      background=${args['background'] || undefined}
       max-width=${args['maxWidth'] || undefined}
       ?rounded=${args['rounded']}
-      ?removable=${args['removable']}
       ?is-inactive=${args['isInactive']}
     ></ds-chip>
   `,
@@ -78,17 +70,6 @@ export const Rounded: Story = {
     <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
       <ds-chip label="Default" state="default"></ds-chip>
       <ds-chip label="Rounded" state="active" rounded></ds-chip>
-    </div>
-  `,
-};
-
-/** Trailing dismiss control sized to control-density icon metrics (md/sm/xs). */
-export const Removable: Story = {
-  render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
-      ${SIZES.map(size => html`
-        <ds-chip label="Removable" state="default" size=${size} removable ?rounded=${size === 'md'}></ds-chip>
-      `)}
     </div>
   `,
 };

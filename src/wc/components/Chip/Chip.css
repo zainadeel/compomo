@@ -24,3 +24,9 @@
   background-color: var(--color-background-faint-caution);
   color: var(--color-foreground-bold-caution);
 }
+
+:host(.chip) .tag__label {
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

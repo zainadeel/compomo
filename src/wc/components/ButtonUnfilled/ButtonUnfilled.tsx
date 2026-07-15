@@ -1,9 +1,15 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
 
-export type ButtonUnfilledOnBackgroundContrast = 'default' | 'medium' | 'bold' | 'strong';
-
-export type ButtonUnfilledBackground = 'always-dark' | 'navigation';
+export type ButtonUnfilledBackground =
+  | 'faint'
+  | 'medium'
+  | 'bold'
+  | 'strong'
+  | 'translucent'
+  | 'inverted'
+  | 'media'
+  | 'always-dark';
 
 export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
 
@@ -66,17 +72,13 @@ export class ButtonUnfilled {
   /** Disables interaction. */
   @Prop() isInactive: boolean = false;
 
+  /** Shows an inline loader and prevents interaction without applying inactive opacity. */
+  @Prop() isLoading: boolean = false;
+
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
-  /**
-   * Foreground and interaction tokens when the button sits on a contrasting parent
-   * background (default, medium, bold, or strong).
-   */
-  @Prop({ attribute: 'on-background-contrast' })
-  backgroundContrast?: ButtonUnfilledOnBackgroundContrast;
-
-  /** Parent surface context for navigation and always-dark chrome. */
+  /** Actual parent surface context. Omit on primary and secondary surfaces. */
   @Prop() background: ButtonUnfilledBackground | undefined;
 
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
@@ -102,14 +104,10 @@ export class ButtonUnfilled {
   }
 
   private handleClick = (event: MouseEvent) => {
-    if (this.isInactive) return;
+    if (this.isInactive || this.isLoading) return;
     this.dsClick.emit(event);
     this.dsChange.emit(!this.isActive);
   };
-
-  private effectiveContrast(): ButtonUnfilledOnBackgroundContrast {
-    return this.backgroundContrast ?? 'default';
-  }
 
   private get showIcon(): boolean {
     return this.variant === 'icon' || this.variant === 'icon-label';
@@ -120,7 +118,7 @@ export class ButtonUnfilled {
   }
 
   private get showDot(): boolean {
-    return this.variant === 'icon' && this.dot;
+    return this.variant === 'icon' && this.dot && !this.isLoading;
   }
 
   /** Knock-out ring: selected fill → active wash; otherwise surface token. */
@@ -133,6 +131,7 @@ export class ButtonUnfilled {
 
   private get accessibleName(): string | undefined {
     if (this.ariaLabel) return this.ariaLabel;
+    if (this.isLoading && this.variant === 'label' && this.label) return this.label;
     if (this.showLabel && this.label) return undefined;
     if (this.variant === 'icon') return this.icon || 'action';
     return this.label || 'action';
@@ -140,7 +139,6 @@ export class ButtonUnfilled {
 
   render() {
     const bg = this.background;
-    const contrast = this.effectiveContrast();
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
@@ -149,11 +147,14 @@ export class ButtonUnfilled {
       'ds-focus-ring-inset': true,
       'ds-interaction-fill': true,
       'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
-      'ds-interaction-fill--on-medium': contrast === 'medium',
-      'ds-interaction-fill--on-bold': contrast === 'bold',
-      'ds-interaction-fill--on-strong': contrast === 'strong',
+      'ds-interaction-fill--on-faint': bg === 'faint',
+      'ds-interaction-fill--on-medium': bg === 'medium',
+      'ds-interaction-fill--on-bold': bg === 'bold',
+      'ds-interaction-fill--on-strong': bg === 'strong',
+      'ds-interaction-fill--on-translucent': bg === 'translucent',
+      'ds-interaction-fill--on-inverted': bg === 'inverted',
+      'ds-interaction-fill--on-media': bg === 'media',
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
-      'ds-interaction-fill--on-navigation': bg === 'navigation',
       'button-unfilled--active': this.isActive,
       'button-unfilled--bordered': this.hasBorder,
       'ds-control-inactive': this.isInactive,
@@ -163,11 +164,14 @@ export class ButtonUnfilled {
       'button-unfilled--icon': this.variant === 'icon',
       'button-unfilled--label': this.variant === 'label',
       'button-unfilled--icon-label': this.variant === 'icon-label',
-      'button-unfilled--contrast-medium': contrast === 'medium',
-      'button-unfilled--contrast-bold': contrast === 'bold',
-      'button-unfilled--contrast-strong': contrast === 'strong',
+      'button-unfilled--background-faint': bg === 'faint',
+      'button-unfilled--background-medium': bg === 'medium',
+      'button-unfilled--background-bold': bg === 'bold',
+      'button-unfilled--background-strong': bg === 'strong',
+      'button-unfilled--background-translucent': bg === 'translucent',
+      'button-unfilled--background-inverted': bg === 'inverted',
+      'button-unfilled--background-media': bg === 'media',
       'button-unfilled--on-always-dark': bg === 'always-dark',
-      'button-unfilled--on-navigation': bg === 'navigation',
     };
 
     return (
@@ -188,9 +192,10 @@ export class ButtonUnfilled {
           }}
           type={this.type}
           class={cls}
-          disabled={this.isInactive}
+          disabled={this.isInactive || this.isLoading}
           tabIndex={this.focusTabIndex ?? 0}
           aria-label={this.accessibleName}
+          aria-busy={this.isLoading ? 'true' : undefined}
           aria-controls={this.controls}
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
           aria-haspopup={this.haspopup}
@@ -199,7 +204,10 @@ export class ButtonUnfilled {
         >
           {this.showIcon && (
             <span class="button-unfilled__icon-wrap ds-interaction-fill__content">
-              <ds-icon name={this.icon} size={iconSize} color="inherit" />
+              {this.isLoading
+                ? <ds-loader size={iconSize} color="inherit" />
+                : <ds-icon name={this.icon} size={iconSize} color="inherit" />
+              }
               {this.showDot && (
                 <ds-badge
                   class="button-unfilled__dot"
@@ -213,7 +221,11 @@ export class ButtonUnfilled {
           )}
           {this.showLabel && (
             <ds-text
-              class="button-unfilled__label ds-interaction-fill__content"
+              class={{
+                'button-unfilled__label': true,
+                'button-unfilled__label--loading': this.isLoading && this.variant === 'label',
+                'ds-interaction-fill__content': true,
+              }}
               as="span"
               variant={textVariant}
               emphasis
@@ -221,6 +233,11 @@ export class ButtonUnfilled {
             >
               {this.label}
             </ds-text>
+          )}
+          {this.isLoading && this.variant === 'label' && (
+            <span class="button-unfilled__loader-overlay ds-interaction-fill__content">
+              <ds-loader size={iconSize} color="inherit" />
+            </span>
           )}
         </button>
       </Host>

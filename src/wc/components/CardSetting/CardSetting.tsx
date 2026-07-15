@@ -61,7 +61,7 @@ export class CardSetting {
                 variant="icon"
                 type="button"
                 icon="Cross"
-                backgroundContrast="bold"
+                background="bold"
                 aria-label={this.cancelLabel}
                 onDsClick={this.exitEdit}
               />

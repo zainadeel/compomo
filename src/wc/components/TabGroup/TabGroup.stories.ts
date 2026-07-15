@@ -10,15 +10,101 @@ const tabs = [
   { id: 'members',  label: 'Members' },
 ];
 
+const BACKGROUND_SURFACES = [
+  {
+    id: 'default-primary',
+    value: '',
+    label: 'default · primary',
+    background: 'var(--color-background-primary)',
+    labelColor: 'var(--color-foreground-secondary)',
+  },
+  {
+    id: 'default-secondary',
+    value: '',
+    label: 'default · secondary',
+    background: 'var(--color-background-secondary)',
+    labelColor: 'var(--color-foreground-secondary)',
+  },
+  {
+    id: 'faint',
+    value: 'faint',
+    label: 'faint',
+    background: 'var(--color-background-faint-neutral)',
+    labelColor: 'var(--color-foreground-secondary)',
+  },
+  {
+    id: 'medium',
+    value: 'medium',
+    label: 'medium',
+    background: 'var(--color-background-medium-neutral)',
+    labelColor: 'var(--color-foreground-on-medium-background-secondary)',
+  },
+  {
+    id: 'bold',
+    value: 'bold',
+    label: 'bold',
+    background: 'var(--color-background-bold-neutral)',
+    labelColor: 'var(--color-foreground-on-bold-background-secondary)',
+  },
+  {
+    id: 'strong',
+    value: 'strong',
+    label: 'strong',
+    background: 'var(--color-background-strong-neutral)',
+    labelColor: 'var(--color-foreground-on-strong-background-secondary)',
+  },
+  {
+    id: 'translucent',
+    value: 'translucent',
+    label: 'translucent',
+    background: 'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+    labelColor: 'var(--color-translucent-foreground-secondary)',
+  },
+  {
+    id: 'inverted',
+    value: 'inverted',
+    label: 'inverted',
+    background: 'var(--color-inverted-background)',
+    labelColor: 'var(--color-inverted-foreground-secondary)',
+  },
+  {
+    id: 'media',
+    value: 'media',
+    label: 'media',
+    background: 'var(--color-media-background)',
+    labelColor: 'var(--color-media-foreground-secondary)',
+  },
+  {
+    id: 'always-dark',
+    value: 'always-dark',
+    label: 'always-dark',
+    background: 'var(--color-always-dark-background)',
+    labelColor: 'var(--color-always-dark-foreground-secondary)',
+  },
+] as const;
+
 const meta: Meta = {
   title: 'Navigation/TabGroup',
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'select', options: tabs.map(t => t.id) },
-    background: { control: 'select', options: ['', 'faint', 'medium', 'bold', 'strong', 'always-dark'] },
-    orientation: { control: 'radio', options: ['horizontal', 'vertical'] },
+    variant: { control: 'select', options: ['label', 'icon', 'icon-label'] },
+    background: {
+      control: 'select',
+      options: [
+        '',
+        'faint',
+        'medium',
+        'bold',
+        'strong',
+        'translucent',
+        'inverted',
+        'media',
+        'always-dark',
+      ],
+    },
   },
-  args: { value: 'overview', orientation: 'horizontal' },
+  args: { value: 'overview', variant: 'label' },
 };
 
 export default meta;
@@ -26,11 +112,12 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => {
+    const variant = args['variant'] ?? 'label';
     const playgroundTabs = [
-      { id: 'overview', label: 'Overview' },
-      { id: 'activity', label: 'Activity', dot: true },
-      { id: 'settings', label: 'Settings' },
-      { id: 'members',  label: 'Members' },
+      { id: 'overview', label: 'Overview', icon: 'Bookmark', variant },
+      { id: 'activity', label: 'Activity', icon: 'Bolt', variant, dot: true },
+      { id: 'settings', label: 'Settings', icon: 'Bell', variant },
+      { id: 'members', label: 'Members', icon: 'Avatar', variant },
     ];
     return html`
       <div style="width: 400px">
@@ -38,12 +125,85 @@ export const Playground: Story = {
           .tabs=${playgroundTabs}
           value=${args['value'] ?? 'overview'}
           background=${args['background'] ?? ''}
-          orientation=${args['orientation'] ?? 'horizontal'}
           aria-label="Playground tabs"
         ></ds-tab-group>
       </div>
     `;
   },
+};
+
+export const Variants: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Keep one variant consistent across every selectable item in a TabGroup. Icon-only tabs retain their required label as the accessible name.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;">
+      ${(['label', 'icon', 'icon-label'] as const).map(variant => {
+        const variantTabs = [
+          { id: `${variant}-overview`, label: 'Overview', icon: 'Bookmark', variant, dot: true },
+          { id: `${variant}-activity`, label: 'Activity', icon: 'Bolt', variant },
+          { id: `${variant}-settings`, label: 'Settings', icon: 'Bell', variant },
+        ];
+        return html`
+          <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);">
+            <span style="color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);">
+              ${variant}
+            </span>
+            <ds-tab-group
+              .tabs=${variantTabs}
+              value=${variantTabs[0]?.id}
+              aria-label="${variant} tabs"
+            ></ds-tab-group>
+          </div>
+        `;
+      })}
+    </div>
+  `,
+};
+
+/** Current TabGroup surface contexts shown on their actual parent backgrounds. */
+export const Backgrounds: Story = {
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;">
+      ${BACKGROUND_SURFACES.map(
+        surface => html`
+          <div
+            style="
+              display:flex;
+              flex-direction:column;
+              gap:var(--dimension-space-100);
+              padding:var(--dimension-space-150);
+              border-radius:var(--dimension-radius-100);
+              background:${surface.background};
+            "
+          >
+            <span
+              style="
+                color:${surface.labelColor};
+                font:var(--typography-text-caption-font);
+              "
+            >
+              ${surface.label}
+            </span>
+            <ds-tab-group
+              .tabs=${[
+                { id: `${surface.id}-overview`, label: 'Overview', dot: true },
+                { id: `${surface.id}-activity`, label: 'Activity' },
+                { id: `${surface.id}-settings`, label: 'Settings' },
+              ]}
+              value=${`${surface.id}-overview`}
+              background=${surface.value}
+              aria-label="${surface.label} background tabs"
+            ></ds-tab-group>
+          </div>
+        `,
+      )}
+    </div>
+  `,
 };
 
 export const WithPanels: Story = {
@@ -107,57 +267,6 @@ export const WithDot: Story = {
       aria-label="Mailbox tabs"
     ></ds-tab-group>
   `,
-};
-
-export const Vertical: Story = {
-  render: () => {
-    const verticalTabs = [
-      { id: 'overview', label: 'Overview', panelId: 'vpanel-overview' },
-      { id: 'activity', label: 'Activity', panelId: 'vpanel-activity' },
-      { id: 'settings', label: 'Settings', panelId: 'vpanel-settings' },
-      { id: 'members',  label: 'Members',  panelId: 'vpanel-members'  },
-    ];
-    const panelContent: Record<string, string> = {
-      overview:  'Overview panel — summary and key metrics.',
-      activity:  'Activity panel — recent timeline.',
-      settings:  'Settings panel — configure preferences.',
-      members:   'Members panel — team and roles.',
-    };
-    return html`
-      <div style="display: flex; gap: var(--dimension-space-150); align-items: flex-start; width: 520px"
-        ${ref(el => {
-          if (!el) return;
-          const tabGroup = el.querySelector('ds-tab-group') as HTMLElement & { value: string };
-          if (!tabGroup) return;
-          const showPanel = (id: string) => {
-            el.querySelectorAll('[role="tabpanel"]').forEach(p => {
-              (p as HTMLElement).hidden = (p as HTMLElement).id !== `vpanel-${id}`;
-            });
-          };
-          tabGroup.addEventListener('dsChange', (e: Event) => showPanel((e as CustomEvent<string>).detail));
-          showPanel(tabGroup.value || 'overview');
-        })}>
-        <ds-tab-group
-          .tabs=${verticalTabs}
-          value="overview"
-          orientation="vertical"
-          aria-label="Vertical navigation"
-          style="width: 140px; flex-shrink: 0"
-        ></ds-tab-group>
-        <div style="flex: 1; padding: var(--dimension-space-100) 0; color: var(--color-foreground-primary)">
-          ${verticalTabs.map(t => html`
-            <div
-              id="vpanel-${t.id}"
-              role="tabpanel"
-              aria-labelledby="${t.id}"
-            >
-              ${panelContent[t.id]}
-            </div>
-          `)}
-        </div>
-      </div>
-    `;
-  },
 };
 
 export const WithInactive: Story = {

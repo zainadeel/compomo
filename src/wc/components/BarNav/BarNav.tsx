@@ -11,18 +11,13 @@ import {
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../nav/nav-chrome';
 import type { MenuItemData } from '../Menu/menu-types';
-import { isTabDivider } from '../TabGroup/tab-item-utils';
+import { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/tab-item-utils';
 import type { BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
   parseJsonArrayProp,
   shouldResyncBarNavProps,
 } from './bar-nav-utils';
-import {
-  getTabListFromTabGroup,
-  queryWithinComponentHost,
-  type QueryableHost,
-} from './bar-nav-dom-utils';
 import {
   tabsOverflowContainer,
   tabsToOverflowMenuSections,
@@ -88,6 +83,7 @@ export class BarNav {
   @State() private overflowTabs: BarNavTab[] = [];
   @State() private menuInitialFocusVisible = false;
   @State() private overflowRovingFocused = false;
+  @State() private focusedTabId = '';
 
   private static readonly HOST_PROP_SYNC_BUDGET = 8;
   private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;
@@ -97,8 +93,8 @@ export class BarNav {
   private headerEl: HTMLElement | null = null;
   private triggerEl: (HTMLElement & { setFocus?: () => Promise<void> }) | null = null;
   private menuEl: HTMLDsMenuElement | null = null;
-  private visibleTabGroupEl: HTMLDsTabGroupNavElement | null = null;
-  private probeTabGroupEl: QueryableHost | null = null;
+  private visibleTabListEl: HTMLElement | null = null;
+  private probeTabListEl: HTMLElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private intrinsicWidthRetryCount = 0;
   private tabLayoutPendingFrames = 0;
@@ -120,8 +116,22 @@ export class BarNav {
     return this.value;
   }
 
+  private get renderedSelectableTabs(): TabItemTab[] {
+    const tabs = this.hasOverflowTabs ? this.visibleTabs : this.resolvedTabs;
+    return getSelectableTabs(tabs);
+  }
+
   private get hasOverflowTabs(): boolean {
     return this.tabLayoutCommitted && this.tabsCollapsed && this.overflowTabs.length > 0;
+  }
+
+  private syncFocusedTabId(preferred: string, tabs: TabItemTab[]) {
+    if (tabs.some(tab => tab.id === preferred && !tab.isInactive)) {
+      this.focusedTabId = preferred;
+      return;
+    }
+    const first = tabs.find(tab => !tab.isInactive);
+    this.focusedTabId = first?.id ?? '';
   }
 
   private digestTabsConfig(tabs: BarNavTab[]): string {
@@ -150,6 +160,7 @@ export class BarNav {
   @Watch('value')
   @Watch('urlDerivedValue')
   onSelectionChange() {
+    this.syncFocusedTabId(this.effectiveValue, this.renderedSelectableTabs);
     this.syncMenuSections();
     this.scheduleOverflowCheck();
   }
@@ -181,6 +192,7 @@ export class BarNav {
 
   componentWillLoad() {
     this.applyHostProps();
+    this.syncFocusedTabId(this.effectiveValue, getSelectableTabs(this.resolvedTabs));
   }
 
   componentDidLoad() {
@@ -309,8 +321,7 @@ export class BarNav {
   }
 
   private getTabsIntrinsicWidth(): number {
-    const tabList = getTabListFromTabGroup(this.probeTabGroupEl);
-    return tabList?.scrollWidth ?? 0;
+    return this.probeTabListEl?.scrollWidth ?? 0;
   }
 
   private getHeaderGap(): number {
@@ -333,7 +344,7 @@ export class BarNav {
         listExtraWidth: number;
       }
     | null {
-    const tabList = getTabListFromTabGroup(this.probeTabGroupEl);
+    const tabList = this.probeTabListEl;
     if (!tabList) return null;
 
     const children = Array.from(tabList.children) as HTMLElement[];
@@ -368,6 +379,10 @@ export class BarNav {
         this.menuOpen = false;
       }
     }
+    this.syncFocusedTabId(
+      this.effectiveValue,
+      getSelectableTabs(nextCollapsed ? visibleTabs : this.resolvedTabs),
+    );
   }
 
   private scheduleIntrinsicWidthRetry() {
@@ -545,15 +560,73 @@ export class BarNav {
 
   /** Move focus to the selected tab in the visible tab group (after expand). */
   private focusVisibleSelectedTab() {
-    const tab = queryWithinComponentHost(
-      this.visibleTabGroupEl,
+    const tab = this.visibleTabListEl?.querySelector(
       `[data-tab-id="${this.effectiveValue}"]`,
-    );
+    ) as HTMLElement | null;
     tab?.focus({ preventScroll: true });
   }
 
-  private handleTabChange(e: Event) {
-    this.selectTab((e as CustomEvent<string>).detail);
+  private focusVisibleTab(id: string) {
+    this.focusedTabId = id;
+    const tab = this.visibleTabListEl?.querySelector(
+      `[data-tab-id="${id}"]`,
+    ) as HTMLElement | null;
+    tab?.focus({ preventScroll: true });
+  }
+
+  private focusLastVisibleTab() {
+    const last = [...this.renderedSelectableTabs].reverse().find(tab => !tab.isInactive);
+    if (last) this.focusVisibleTab(last.id);
+  }
+
+  private findEnabledVisibleTab(from: number, step: 1 | -1): number | null {
+    const tabs = this.renderedSelectableTabs;
+    for (let index = from + step; index >= 0 && index < tabs.length; index += step) {
+      if (!tabs[index]?.isInactive) return index;
+    }
+    return null;
+  }
+
+  private handleTabKeyDown(e: KeyboardEvent) {
+    const tabs = this.renderedSelectableTabs;
+    if (!tabs.length) return;
+    const targetId = (e.target as HTMLElement | null)?.getAttribute('data-tab-id');
+    const focusedId = targetId ?? this.focusedTabId;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      const focused = tabs.find(tab => tab.id === focusedId);
+      if (!focused || focused.isInactive) return;
+      e.preventDefault();
+      this.selectTab(focused.id);
+      return;
+    }
+
+    const currentIndex = tabs.findIndex(tab => tab.id === focusedId);
+    if (currentIndex < 0) return;
+
+    let nextIndex: number | null;
+    if (e.key === 'ArrowRight') {
+      nextIndex = this.findEnabledVisibleTab(currentIndex, 1);
+      if (nextIndex === null && this.hasOverflowTabs) {
+        e.preventDefault();
+        this.overflowRovingFocused = true;
+        void this.triggerEl?.setFocus?.();
+        return;
+      }
+    } else if (e.key === 'ArrowLeft') {
+      nextIndex = this.findEnabledVisibleTab(currentIndex, -1);
+    } else if (e.key === 'Home') {
+      nextIndex = tabs.findIndex(tab => !tab.isInactive);
+    } else if (e.key === 'End') {
+      const reversedIndex = [...tabs].reverse().findIndex(tab => !tab.isInactive);
+      nextIndex = reversedIndex < 0 ? null : tabs.length - 1 - reversedIndex;
+    } else {
+      return;
+    }
+
+    if (nextIndex === null || nextIndex < 0 || nextIndex === currentIndex) return;
+    e.preventDefault();
+    this.focusVisibleTab(tabs[nextIndex].id);
   }
 
   private toggleTabMenu(options?: { focusVisible?: boolean }) {
@@ -573,12 +646,6 @@ export class BarNav {
     this.menuOpen = true;
   }
 
-  private handleTabRovingExit(e: CustomEvent<'start' | 'end'>) {
-    if (e.detail !== 'end' || !this.hasOverflowTabs) return;
-    this.overflowRovingFocused = true;
-    void this.triggerEl?.setFocus?.();
-  }
-
   private handleOverflowFocus = () => {
     this.overflowRovingFocused = true;
   };
@@ -594,7 +661,7 @@ export class BarNav {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
         this.overflowRovingFocused = false;
-        void this.visibleTabGroupEl?.focusLastTab();
+        this.focusLastVisibleTab();
         return;
       }
 
@@ -611,6 +678,93 @@ export class BarNav {
       this.menuInitialFocusVisible = false;
       void this.triggerEl?.setFocus?.();
     }
+  }
+
+  private renderTabList(tabs: BarNavTab[], probe: boolean) {
+    return (
+      <div
+        role="tablist"
+        class="bar-nav__tab-list"
+        aria-label={this.heading}
+        ref={el => {
+          if (probe) {
+            const next = (el as HTMLElement) ?? null;
+            if (next === this.probeTabListEl) return;
+            this.probeTabListEl = next;
+            if (next) {
+              this.intrinsicWidthRetryCount = 0;
+              this.tabLayoutPendingFrames = 0;
+              this.scheduleOverflowCheck();
+            }
+          } else {
+            this.visibleTabListEl = (el as HTMLElement) ?? null;
+          }
+        }}
+        onKeyDown={probe ? undefined : (e: KeyboardEvent) => this.handleTabKeyDown(e)}
+        onFocusin={probe ? undefined : () => {
+          this.overflowRovingFocused = false;
+        }}
+      >
+        {tabs.map((tab, index) => {
+          if (isTabDivider(tab)) {
+            return (
+              <div class="bar-nav__tab-divider" key={`divider-${index}`} aria-hidden="true">
+                <div class="bar-nav__tab-divider-line" />
+              </div>
+            );
+          }
+
+          const isSelected = tab.id === this.effectiveValue;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              data-tab-id={tab.id}
+              class={{
+                'bar-nav__tab': true,
+                'bar-nav__tab--selected': isSelected,
+                'ds-focus-ring-inset': true,
+                'ds-control-inactive': !!tab.isInactive,
+              }}
+              aria-selected={isSelected ? 'true' : 'false'}
+              aria-disabled={tab.isInactive ? 'true' : undefined}
+              aria-controls={tab.panelId ?? undefined}
+              disabled={tab.isInactive}
+              tabIndex={
+                !probe && !this.overflowRovingFocused && tab.id === this.focusedTabId
+                  ? 0
+                  : -1
+              }
+              onClick={() => !probe && !tab.isInactive && this.selectTab(tab.id)}
+              onFocus={() => {
+                if (!probe) this.focusedTabId = tab.id;
+              }}
+            >
+              <span
+                class={{
+                  'bar-nav__tab-label': true,
+                  'bar-nav__tab-label--dot': !!tab.dot,
+                }}
+              >
+                <ds-text as="span" variant="text-body-medium" emphasis={isSelected} color="inherit">
+                  {tab.label}
+                </ds-text>
+                {tab.dot && (
+                  <ds-badge
+                    class="bar-nav__tab-dot"
+                    variant="dot"
+                    background="var(--_bar-nav-bg)"
+                    label=""
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    );
   }
 
   render() {
@@ -643,42 +797,17 @@ export class BarNav {
         >
             {hasTabs && (
               <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
-                <ds-tab-group-nav
-                  key={`probe-${tabGroupKey}`}
-                  ref={el => {
-                    const next = el ?? null;
-                    if (next === this.probeTabGroupEl) return;
-                    this.probeTabGroupEl = next;
-                    if (next) {
-                      this.intrinsicWidthRetryCount = 0;
-                      this.tabLayoutPendingFrames = 0;
-                      this.scheduleOverflowCheck();
-                    }
-                  }}
-                  tabs={this.resolvedTabs}
-                  value={this.effectiveValue}
-                />
+                <div key={`probe-${tabGroupKey}`}>
+                  {this.renderTabList(this.resolvedTabs, true)}
+                </div>
               </div>
             )}
 
             {hasTabs && this.tabLayoutCommitted && renderedTabs.length > 0 && (
               <div class="bar-nav__left">
-                <ds-tab-group-nav
-                  key={`visible-${tabGroupKey}`}
-                  class="bar-nav__tabs-visible"
-                  ref={el => {
-                    this.visibleTabGroupEl = el ?? null;
-                  }}
-                  tabs={renderedTabs}
-                  value={this.effectiveValue}
-                  selectionFollowsFocus={false}
-                  rovingEnabled={!this.overflowRovingFocused}
-                  onDsChange={(e: Event) => this.handleTabChange(e)}
-                  onDsRovingExit={(e: CustomEvent<'start' | 'end'>) => this.handleTabRovingExit(e)}
-                  onFocusin={() => {
-                    this.overflowRovingFocused = false;
-                  }}
-                />
+                <div key={`visible-${tabGroupKey}`} class="bar-nav__tabs-visible">
+                  {this.renderTabList(renderedTabs, false)}
+                </div>
               </div>
             )}
 

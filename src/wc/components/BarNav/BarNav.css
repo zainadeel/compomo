@@ -1,4 +1,5 @@
 @import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
 
 :host {
   display: block;
@@ -75,9 +76,10 @@
   align-items: center;
 }
 
-.bar-nav__left ds-tab-group-nav {
+.bar-nav__tabs-visible {
   flex: 1;
   min-width: 0;
+  width: 100%;
 }
 
 /* Unconstrained width so intrinsic tab row width is measurable while collapsed */
@@ -93,13 +95,95 @@
   z-index: -1;
 }
 
-.bar-nav__tabs-probe ds-tab-group-nav {
+.bar-nav__tabs-probe > div {
   width: max-content;
 }
 
-.bar-nav__tabs-visible {
-  width: 100%;
-  min-width: 0;
+.bar-nav__tab-list {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  position: relative;
+  width: max-content;
+}
+
+.bar-nav__tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dimension-space-050);
+  height: var(--dimension-size-400);
+  min-width: var(--dimension-size-400);
+  padding: var(--dimension-space-075);
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--dimension-radius-025);
+  background-color: transparent;
+  color: var(--_bar-nav-fg-secondary);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: color var(--effect-motion-short-2);
+}
+
+.bar-nav__tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  pointer-events: none;
+}
+
+.bar-nav__tab:hover::after {
+  background: var(--_bar-nav-hover);
+}
+
+.bar-nav__tab:active::after {
+  background: var(--_bar-nav-pressed);
+}
+
+.bar-nav__tab--selected {
+  color: var(--_bar-nav-fg-primary);
+}
+
+.bar-nav__tab-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--dimension-space-025);
+  white-space: nowrap;
+}
+
+.bar-nav__tab-label--dot {
+  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
+}
+
+.bar-nav__tab-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.bar-nav__tab-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--dimension-space-100);
+  height: var(--dimension-size-400);
+  padding-block: var(--dimension-space-075);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.bar-nav__tab-divider-line {
+  width: var(--dimension-stroke-width-012);
+  align-self: stretch;
+  background-color: var(--_bar-nav-border);
 }
 
 /* In-flow placeholder while measuring overflow — avoids layout jump; hidden from view/accessibility. */

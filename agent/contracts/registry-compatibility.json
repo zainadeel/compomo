@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "Stable public registry layout required by agent consumers.",
+  "masterPath": "public/r/registry.json",
+  "requiredTopLevelKeys": [
+    "$schema",
+    "name",
+    "homepage",
+    "description",
+    "meta",
+    "items"
+  ],
+  "componentPathTemplate": "public/r/{name}.json"
+}

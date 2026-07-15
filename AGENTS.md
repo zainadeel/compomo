@@ -47,8 +47,9 @@ public/
   r/                    # Generated registry (committed, rebuilt on dev/build)
 agent/
   schemas/              # Versioned platform-neutral agent metadata contracts
+  contracts/            # Stable compatibility contracts consumed by validation
   patterns/             # Cross-component workflow guidance
-  baseline/             # Compatibility snapshots and known registry drift
+  baseline/             # Temporary migration allowlists for legacy metadata
 docs/                   # Framework integration + optical-sizing reference (not Storybook source)
 dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + patched index.d.ts
@@ -262,12 +263,36 @@ export class MyComponent {
 
 - Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
+- `isLoading` disables activation without applying inactive opacity and sets native busy semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
+- Keep the action's accessible name while loading. The owning workflow announces broader progress when needed.
+- For forms, use `type="submit"` and handle native form submission; reserve `dsClick` for non-submit commands.
+- Use only one filled action in a local decision area. Secondary actions use `ds-button-unfilled`; filled semantic intent must describe the action's consequence rather than decorate a surface.
 - Use `ds-button-unfilled` (not a separate icon-only tag) for unfilled actions.
 - **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
+- ButtonUnfilled's omitted `background` is the shared default treatment for primary and secondary parent surfaces and uses the brand-active selected fill. Pass `faint` explicitly on faint surfaces to use the neutral active fill; use the other matching surface context on medium, bold, strong, translucent, inverted, media, or always-dark surfaces. Do not use surface context to make an action artificially louder or quieter.
 - Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground to **primary** (toggle mode) — not brand tint.
 - **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
 - Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
+
+**Chip**
+
+- `ds-chip` is an always-removable metadata value for primary surfaces, such as a user-applied filter, recipient, or tokenized input entry. Use `ds-tag` for static labels.
+- Semantic state describes the represented value; `active` is not selection or pressed state. Chip is not navigation, a toggle, or a persistent status badge.
+- The Cross dismiss icon is fixed. `dsRemove` has no payload; the parent identifies the bound item, removes it, and moves focus to the next chip, previous chip, or owning collection/input trigger.
+- `isInactive` keeps the chip visible while disabling and removing its dismiss action from keyboard interaction.
+- Labels stay on one line and truncate only when the parent supplies a maximum width. The parent owns size, wrapping, overflow, and responsive condensation.
+
+**Local tab navigation**
+
+- `ds-tab-group` is the horizontal local-view tab primitive. It does not support vertical orientation.
+- TabGroup's omitted default context (primary or secondary surfaces) keeps the filled outer track and selected pill with the brand-active fill. Explicit faint, medium, bold, strong, translucent, inverted, media, and always-dark contexts use a transparent outer track, the matching surface border, and that surface's active selected fill. TabGroup notification dots intentionally omit the halo because the selected active fill is a transient overlay rather than a stable ring surface.
+- TabGroup items use one uniform `label`, `icon`, or `icon-label` variant per group. Icon-only items keep `label` as their accessible name; dots remain supplemental on every variant. Only the omitted default context emphasizes selected label text; explicit surface contexts keep label weight stable and promote foreground color.
+- `ds-panel-sub-nav` is the vertical local-view tab primitive for panel/card side rails. It switches adjacent panels with `role="tablist"` / `role="tab"` semantics and ArrowUp/ArrowDown navigation.
+- PanelSubNav selected rows use `ds-interaction-fill--selected` plus primary foreground color. Keep the `text-body-medium` recipe stable; selection must not change text weight.
+- PanelSubNav's omitted `background` is the shared default treatment for primary and secondary parent surfaces and uses the brand-active selected fill. Pass `faint` explicitly on faint surfaces to use the neutral active fill; use the other matching context on medium, bold, strong, translucent, inverted, media, or always-dark surfaces.
+- PanelSubNav rows are label-only, require a valid selected value when enabled items exist, and remain vertical at every width. The consuming panel owns responsive adaptation.
+- `ds-panel-nav` and `ds-bar-nav` own application route navigation. BarNav renders its horizontal tabs internally; there is no standalone TabGroupNav component.
 
 **Control density recipes**
 
@@ -307,7 +332,7 @@ Paint order (bottom → top): element background → `::before` (selected/active
 | `.ds-interaction-fill` | Stacking context + `::before`/`::after` shells |
 | `.ds-interaction-fill--selected` | Fills `::before` with `--ds-interaction-active` |
 | `.ds-interaction-fill--bordered` | Inset secondary stroke on `::after` (above selected / hover) |
-| `.ds-interaction-fill--on-medium\|bold\|strong\|translucent\|inverted\|media\|always-dark\|navigation` | Remap hover/pressed/active + `--ds-focus-ring-color` |
+| `.ds-interaction-fill--on-faint\|medium\|bold\|strong\|translucent\|inverted\|media\|always-dark\|navigation` | Remap interaction tokens for the parent surface |
 | `--ds-interaction-hover\|pressed\|active` | Overridable token hooks |
 | `--ds-interaction-border-width\|color` | Inset stroke on `::after` (default off) |
 | `--ds-interaction-dot-ring` | Set under `--selected` to `--ds-interaction-active` — badge halo matches selected fill |
@@ -316,14 +341,14 @@ Rules:
 
 - Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
 - Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
-- `::before` = selected/active only. Omit `--selected` when chrome wants foreground-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav) — primary fg still applies.
+- `::before` = selected/active only. Default primary/secondary surfaces use `--color-interaction-active-brand`; explicit faint uses `--color-interaction-active`; stronger/specialized surfaces use their matching active token. Omit `--selected` when chrome wants foreground-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav) — primary fg still applies.
 - `.ds-interaction-fill--selected` must not dynamically change label weight. Keep the component's base `ds-text` recipe and promote selected foreground color to the appropriate primary token instead. This rule is specific to the active-fill utility; separate selected-background recipes and foreground-only chrome define their own affordance contracts.
 - **Badge / notification-dot halo:** when the control is `--selected`, the util sets `--ds-interaction-dot-ring` to `--ds-interaction-active`. Prefer remapping the component’s surface ring token under `--selected`, or pass `background="var(--ds-interaction-active)"` from the parent when selected (ButtonUnfilled does both) — nested scoped hosts can miss custom-property fallbacks. Idle / chrome-without-fill keep the surface ring.
 - `::after` = hover + press (`transition: none`) + optional inset border + inset focus — **topmost** in the control stack (z-index above label/icon/badge). Pairs with `ds-focus-ring-inset` on the same pseudo — do not invent a second focus layer. Badge dots must sit under this wash.
 - Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
 - If a control uses `all: unset`, re-assert `position: relative; z-index: 0` afterward so the util’s stacking context still applies (see PanelNav items).
 - Omit `.ds-interaction-fill` when `isInactive`, or rely on `:disabled` (util skips hover/press on `:disabled`).
-- Persistent selected *product* state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only — no select/toggle.
+- Persistent selected *product* state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only, has no select/toggle state, and is used only on primary surfaces.
 - **Inset borders on interaction targets:** paint the stroke on `::after` via `--ds-interaction-border-*` or `.ds-interaction-fill--bordered` so it stays visible **above** selected and hover washes. Do **not** put an inset `box-shadow` on the element itself (that layer sits under `::before` and gets covered when selected). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use the util stroke.
 
 **Control inactive**
@@ -336,7 +361,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / TabGroupNav tabs, RadioGroup options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / PanelSubNav tabs, RadioGroup options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 

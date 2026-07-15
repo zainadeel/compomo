@@ -177,7 +177,7 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^3.0.0",
+          "@ds-mo/tokens ^3.1.0",
           "@ds-mo/icons ^6.2.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chip test</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Chip test</h1>
+      <ds-chip id="chip" label="Vehicle: 452" removable="false"></ds-chip>
+      <ds-chip id="inactive-chip" label="Inactive value" is-inactive></ds-chip>
+      <ds-chip
+        id="long-chip"
+        label="A very long user-applied filter value that must truncate"
+      ></ds-chip>
+    </main>
+    <script type="module" src="/chip-setup.mjs"></script>
+  </body>
+</html>

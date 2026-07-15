@@ -2,11 +2,19 @@ import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host }
 import {
   getSelectableTabs,
   isTabDivider,
-  type TabItem,
+  type TabGroupItem,
   type TabItemTab,
 } from './tab-item-utils';
 
-export type TabBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';
+export type TabBackground =
+  | 'faint'
+  | 'medium'
+  | 'bold'
+  | 'strong'
+  | 'translucent'
+  | 'inverted'
+  | 'media'
+  | 'always-dark';
 
 @Component({
   tag: 'ds-tab-group',
@@ -17,11 +25,10 @@ export class TabGroup {
   @Element() el!: HTMLElement;
 
   @Prop({ mutable: true }) value: string = '';
-  @Prop() tabs: TabItem[] = [];
+  @Prop() tabs: TabGroupItem[] = [];
   @Prop() background: TabBackground | undefined;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
-  @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';
 
   @Event() dsChange!: EventEmitter<string>;
 
@@ -83,22 +90,13 @@ export class TabGroup {
     if (!tabs.length) return;
 
     const currentIdx = tabs.findIndex(t => t.id === this.value);
-    const isVertical = this.orientation === 'vertical';
 
     let nextIdx: number | null = null;
 
-    if (!isVertical) {
-      if (e.key === 'ArrowRight') {
-        nextIdx = this.findEnabled(currentIdx, 1);
-      } else if (e.key === 'ArrowLeft') {
-        nextIdx = this.findEnabled(currentIdx, -1);
-      }
-    } else {
-      if (e.key === 'ArrowDown') {
-        nextIdx = this.findEnabled(currentIdx, 1);
-      } else if (e.key === 'ArrowUp') {
-        nextIdx = this.findEnabled(currentIdx, -1);
-      }
+    if (e.key === 'ArrowRight') {
+      nextIdx = this.findEnabled(currentIdx, 1);
+    } else if (e.key === 'ArrowLeft') {
+      nextIdx = this.findEnabled(currentIdx, -1);
     }
 
     if (e.key === 'Home') {
@@ -117,33 +115,34 @@ export class TabGroup {
   }
 
   private getBgClass(): string {
-    if (!this.background || this.background === 'faint') return '';
+    if (!this.background) return '';
     if (this.background === 'always-dark') return 'on-always-dark';
     return `on-${this.background}`;
   }
 
   render() {
     const bgClass = this.getBgClass();
-    const isVertical = this.orientation === 'vertical';
 
     return (
-      <Host class="tab-group-host">
+      <Host
+        class={{
+          'tab-group-host': true,
+          'tab-group-host--surface': !!bgClass,
+          [`tab-group-host--${bgClass}`]: !!bgClass,
+        }}
+      >
         <div
           role="tablist"
-          class={{ 'tab-list': true, 'tab-list--vertical': isVertical }}
+          class="tab-list"
           aria-label={this.ariaLabel}
           aria-labelledby={this.ariaLabelledby}
-          aria-orientation={isVertical ? 'vertical' : undefined}
         >
           {this.tabs.map((tab, index) => {
             if (isTabDivider(tab)) {
               return (
                 <div
                   key={`divider-${index}`}
-                  class={{
-                    'tab-divider': true,
-                    'tab-divider--vertical': isVertical,
-                  }}
+                  class="tab-divider"
                   aria-hidden="true"
                 >
                   <div class="tab-divider__line" />
@@ -152,6 +151,10 @@ export class TabGroup {
             }
 
             const isSelected = tab.id === this.value;
+            const variant = tab.variant ?? 'label';
+            const showIcon = variant === 'icon' || variant === 'icon-label';
+            const showLabel = variant === 'label' || variant === 'icon-label';
+            const emphasizeLabel = isSelected && !bgClass;
             return (
               <button
                 key={tab.id}
@@ -163,13 +166,18 @@ export class TabGroup {
                   'tab--selected': isSelected,
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': !tab.isInactive,
+                  'ds-interaction-fill--on-faint': bgClass === 'on-faint',
                   'ds-interaction-fill--on-medium': bgClass === 'on-medium',
                   'ds-interaction-fill--on-bold': bgClass === 'on-bold',
                   'ds-interaction-fill--on-strong': bgClass === 'on-strong',
+                  'ds-interaction-fill--on-translucent': bgClass === 'on-translucent',
+                  'ds-interaction-fill--on-inverted': bgClass === 'on-inverted',
+                  'ds-interaction-fill--on-media': bgClass === 'on-media',
                   'ds-interaction-fill--on-always-dark': bgClass === 'on-always-dark',
                   'ds-control-inactive': !!tab.isInactive,
                   [bgClass]: !!bgClass,
                 }}
+                aria-label={variant === 'icon' ? tab.label : undefined}
                 aria-selected={isSelected}
                 aria-disabled={tab.isInactive ? 'true' : undefined}
                 aria-controls={tab.panelId ?? undefined}
@@ -178,17 +186,34 @@ export class TabGroup {
                 onClick={() => !tab.isInactive && this.selectTab(tab.id)}
               >
                 <span class={{
-                  tab__label: true,
-                  'tab__label--dot': !!tab.dot,
+                  tab__content: true,
+                  [`tab__content--${variant}`]: true,
+                  'tab__content--dot': !!tab.dot,
                 }}>
-                  <ds-text as="span" variant="text-body-small" emphasis={isSelected} color="inherit">
-                    {tab.label}
-                  </ds-text>
+                  {showIcon && (
+                    <ds-icon
+                      class="tab__icon"
+                      name={tab.icon}
+                      size="sm"
+                      color="inherit"
+                    />
+                  )}
+                  {showLabel && (
+                    <ds-text
+                      class="tab__label"
+                      as="span"
+                      variant="text-body-small"
+                      emphasis={emphasizeLabel}
+                      color="inherit"
+                    >
+                      {tab.label}
+                    </ds-text>
+                  )}
                   {tab.dot && (
                     <ds-badge
                       class="tab__dot"
                       variant="dot"
-                      background="var(--_dot-ring)"
+                      style={{ '--_badge-ring-width': '0' }}
                       label=""
                       aria-hidden="true"
                     />
