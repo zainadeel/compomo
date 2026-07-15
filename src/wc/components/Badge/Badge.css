@@ -23,6 +23,10 @@
   white-space: nowrap;
 }
 
+:host(.badge--no-ring) {
+  --_badge-ring-width: 0;
+}
+
 .badge__a11y {
   position: absolute;
   /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */

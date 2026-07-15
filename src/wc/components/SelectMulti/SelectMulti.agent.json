@@ -1,0 +1,82 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-select-multi",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-select-multi",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Form-associated multi-value select with a persistent trigger label, selected-count badge, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+  "useWhen": [
+    "The user may choose several independent values from one finite set.",
+    "A compact trigger should summarize selection with the field label and a count.",
+    "The option set benefits from local search, subtext, grouping, or disabled choices."
+  ],
+  "avoidWhen": [
+    "Exactly one value may be selected.",
+    "Selected values must remain individually removable as persistent tags outside the popup.",
+    "The choices form a hierarchy with cascading parent selection."
+  ],
+  "alternatives": [
+    {
+      "when": "Exactly one value may be selected.",
+      "component": "component:ds-select",
+      "reason": "Select owns scalar form value and single-select listbox behavior."
+    },
+    {
+      "when": "The popup contains actions rather than values.",
+      "component": "component:ds-menu",
+      "reason": "Menu uses command semantics and closes according to action-menu expectations."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-text",
+    "component:ds-badge",
+    "component:ds-checkbox",
+    "component:ds-loader"
+  ],
+  "accessibility": [
+    "Provide aria-label or aria-labelledby when no external label association supplies the accessible name.",
+    "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
+    "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
+    "Each row uses a presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
+    "The trigger keeps its field label visible; the count badge is supplemental and hidden from assistive technology.",
+    "Use errorMessage with error so the trigger is described by the rendered alert."
+  ],
+  "states": [
+    "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
+    "Selecting an option keeps the popup open so additional values can be toggled.",
+    "The count badge sits without a halo in a reserved suffix box matching the control icon size: 20px md, 16px sm, and 12px xs.",
+    "The popup search row stays md at every trigger size, using body-medium text, a 20px icon, and option-aligned horizontal insets.",
+    "Clear-all emits an empty dsChange and dsClear while preserving useful popup or search focus.",
+    "Native form submission emits one entry per selected value under the component name.",
+    "Use options for a flat list or sections for grouped choices. Multi-select option contracts intentionally exclude icons because the leading checkbox owns that row zone; hierarchical parent selection is deferred."
+  ],
+  "responsiveBehavior": [
+    "Use width fill in forms and filter rows; the persistent trigger label avoids variable-width selected labels.",
+    "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+    "Long option collections scroll inside the popup; virtualization and remote search are not part of this version."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign values, options, and sections through JavaScript properties; array values cannot be represented safely as attributes."
+    ],
+    "react": [
+      "Pass values, options, and sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+    ],
+    "angular": [
+      "Import DsSelectMulti and SelectMultiValueAccessor when integrating with Angular Forms."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/SelectMulti/SelectMulti.stories.ts"
+    },
+    {
+      "label": "Selection patterns",
+      "path": "src/docs/SelectionPatterns.mdx"
+    }
+  ]
+}

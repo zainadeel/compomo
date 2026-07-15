@@ -17,6 +17,7 @@ import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataViz
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
+import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -32,7 +33,8 @@ import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
-import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
+import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
+import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
@@ -56,6 +58,7 @@ export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataViz
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
+export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
@@ -71,7 +74,8 @@ export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
-export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
+export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
+export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
@@ -116,6 +120,11 @@ export namespace Components {
           * @default false
          */
         "gradientBackground": boolean;
+        /**
+          * Show the separation ring when the badge overlaps an icon or other content.
+          * @default true
+         */
+        "hasRing": boolean;
         /**
           * Contextual supplemental text. Omit when the owner hides the badge from assistive technology.
          */
@@ -527,32 +536,55 @@ export namespace Components {
     }
     interface DsCheckbox {
         /**
+          * Current checked state.
           * @default false
          */
         "checked": boolean;
         /**
+          * Native disabled state.
           * @default false
          */
         "disabled": boolean;
         /**
+          * Mixed visual state. Activation clears it before toggling checked.
           * @default false
          */
         "indeterminate": boolean;
         /**
+          * Design-system inactive state.
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Visible label and accessible name. Omitted only in presentation mode.
+         */
         "label": string;
+        /**
+          * Native form field name.
+         */
         "name": string | undefined;
         /**
+          * Visual-only indicator for a composite control that owns selection semantics.
+          * @default false
+         */
+        "presentation": boolean;
+        /**
+          * Require the checkbox to be checked for form validity.
           * @default false
          */
         "required": boolean;
         /**
+          * Validation message used when a required checkbox is unchecked.
           * @default 'This field is required.'
          */
         "requiredMessage": string;
         /**
+          * Visual and placement density.
+          * @default 'md'
+         */
+        "size": CheckboxSize;
+        /**
+          * Submitted value when checked.
           * @default 'on'
          */
         "value": string;
@@ -1005,70 +1037,292 @@ export namespace Components {
          */
         "value": string;
     }
-    /**
-     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
-     * control-density sizes, with `ds-menu` for the option list.
-     */
     interface DsSelect {
         /**
-          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). A selected value promotes the label to primary; chevron stays secondary.
+          * Show the selected interaction fill when a valid value exists.
           * @default true
          */
         "activeFill": boolean;
         /**
+          * Show the clear footer action when a value exists.
+          * @default true
+         */
+        "allowClear": boolean;
+        /**
+          * Additional IDs that describe the combobox.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * Direct accessible name when no external label is available.
           * @default null
          */
         "ariaLabel": string | null;
+        /**
+          * IDs of elements that label the combobox.
+         */
         "ariaLabelledby": string | undefined;
         /**
+          * Actual parent surface context; omit on primary and secondary surfaces.
+         */
+        "background": SelectBackground | undefined;
+        /**
+          * Localized clear action label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * Native disabled state.
           * @default false
          */
         "disabled": boolean;
         /**
-          * Show a 1px secondary inset border. Default on (matches unfilled button).
+          * Show invalid visual state.
+          * @default false
+         */
+        "error": boolean;
+        /**
+          * Error text rendered below the trigger when error is true.
+         */
+        "errorMessage": string | undefined;
+        /**
+          * Show the surface-aware inset border.
           * @default true
          */
         "hasBorder": boolean;
         /**
-          * Disables interaction (25% opacity via ds-control-inactive).
+          * Optional trigger prefix icon name.
+         */
+        "icon": string | undefined;
+        /**
+          * ID applied to the internal combobox trigger for external labels.
+         */
+        "inputId": string | undefined;
+        /**
+          * Shared inactive treatment; removes interaction and form submission.
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Replace the prefix with a loader and disable option interaction.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Accessible loading status label.
+          * @default 'Loading'
+         */
+        "loadingLabel": string;
+        /**
+          * Native form field name.
+         */
         "name": string | undefined;
         /**
-          * Array of options. Set via JS property.
-          * @example el.options = [{ label: 'Apple', value: 'apple' }];
+          * Localized empty-filter result text.
+          * @default 'No results found'
+         */
+        "noResultsText": string;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Flat choices. Assign arrays through the JavaScript property.
           * @default []
          */
         "options": SelectOption[];
         /**
-          * Placeholder shown when no value is selected.
+          * Trigger text shown when no valid value is selected.
           * @default 'Select'
          */
         "placeholder": string;
         /**
+          * Require one valid selected value.
           * @default false
          */
         "required": boolean;
         /**
+          * Validation message used when required is missing.
           * @default 'This field is required.'
          */
         "requiredMessage": string;
         /**
-          * Control density (height, padding, icon, type).
+          * Localized search-field placeholder and accessible name.
+          * @default 'Search'
+         */
+        "searchPlaceholder": string;
+        /**
+          * Show immediate local filtering over option labels and subtext.
+          * @default false
+         */
+        "searchable": boolean;
+        /**
+          * Grouped choices; takes precedence over options. Assign through JavaScript.
+          * @default []
+         */
+        "sections": SelectSection[];
+        "setFocus": () => Promise<void>;
+        /**
+          * Control density.
           * @default 'md'
          */
         "size": SelectSize;
         /**
-          * Currently selected value.
+          * Selected string value. Unknown values render the placeholder and are not submitted.
           * @default ''
          */
         "value": string;
         /**
-          * Width fit — fill the parent (default) or hug content.
+          * Width behavior: fill the parent or hug content.
           * @default 'fill'
          */
         "width": SelectWidth;
+    }
+    interface DsSelectMulti {
+        /**
+          * Show the selected interaction fill when at least one value exists.
+          * @default true
+         */
+        "activeFill": boolean;
+        /**
+          * Show the clear-all footer action when values exist.
+          * @default true
+         */
+        "allowClear": boolean;
+        /**
+          * Additional IDs that describe the combobox.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * Direct accessible name when no external label is available.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * IDs of elements that label the combobox.
+         */
+        "ariaLabelledby": string | undefined;
+        /**
+          * Actual parent surface context; omit on primary and secondary surfaces.
+         */
+        "background": SelectMultiBackground | undefined;
+        /**
+          * Localized clear-all action label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * Native disabled state.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Show invalid visual state.
+          * @default false
+         */
+        "error": boolean;
+        /**
+          * Error text rendered below the trigger when error is true.
+         */
+        "errorMessage": string | undefined;
+        /**
+          * Show the surface-aware inset border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Optional trigger prefix icon name.
+         */
+        "icon": string | undefined;
+        /**
+          * ID applied to the internal combobox trigger for external labels.
+         */
+        "inputId": string | undefined;
+        /**
+          * Shared inactive treatment; removes interaction and form submission.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Replace the prefix with a loader and disable option interaction.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Accessible loading status label.
+          * @default 'Loading'
+         */
+        "loadingLabel": string;
+        /**
+          * Native form field name used for each repeated selected-value entry.
+         */
+        "name": string | undefined;
+        /**
+          * Localized empty-filter result text.
+          * @default 'No results found'
+         */
+        "noResultsText": string;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Flat choices. Assign arrays through the JavaScript property.
+          * @default []
+         */
+        "options": SelectMultiOption[];
+        /**
+          * Persistent trigger label; selected option labels never replace it.
+          * @default 'Select'
+         */
+        "placeholder": string;
+        /**
+          * Require at least one valid selected value.
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * Validation message used when required is missing.
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        /**
+          * Localized search-field placeholder and accessible name.
+          * @default 'Search'
+         */
+        "searchPlaceholder": string;
+        /**
+          * Show immediate local filtering over option labels and subtext.
+          * @default false
+         */
+        "searchable": boolean;
+        /**
+          * Grouped choices; takes precedence over options. Assign through JavaScript.
+          * @default []
+         */
+        "sections": SelectMultiSection[];
+        /**
+          * Localized noun displayed after the selected count.
+          * @default 'selected'
+         */
+        "selectedLabel": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * Control density.
+          * @default 'md'
+         */
+        "size": SelectMultiSize;
+        /**
+          * Selected values. Assign arrays through the JavaScript property.
+          * @default []
+         */
+        "values": string[];
+        /**
+          * Width behavior: fill the parent or hug content.
+          * @default 'fill'
+         */
+        "width": SelectMultiWidth;
     }
     interface DsShellGradientPicker {
         /**
@@ -1338,6 +1592,9 @@ export namespace Components {
           * @default 'inherit'
          */
         "color": TextColor;
+        /**
+          * Link underline or dotted hidden-interaction affordance; does not add semantics.
+         */
         "decoration": TextDecoration | undefined;
         /**
           * Heavier weight + tighter letter-spacing for the variant. `false` (default): one step below emphasis (display semibold, title/body medium, caption medium). `true`: display bold, title/caption semibold, body medium.
@@ -1533,6 +1790,10 @@ export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
+}
+export interface DsSelectMultiCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSelectMultiElement;
 }
 export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1966,11 +2227,9 @@ declare global {
     };
     interface HTMLDsSelectElementEventMap {
         "dsChange": string;
+        "dsClear": void;
+        "dsOpenChange": boolean;
     }
-    /**
-     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
-     * control-density sizes, with `ds-menu` for the option list.
-     */
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1984,6 +2243,25 @@ declare global {
     var HTMLDsSelectElement: {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
+    };
+    interface HTMLDsSelectMultiElementEventMap {
+        "dsChange": string[];
+        "dsClear": void;
+        "dsOpenChange": boolean;
+    }
+    interface HTMLDsSelectMultiElement extends Components.DsSelectMulti, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSelectMultiElementEventMap>(type: K, listener: (this: HTMLDsSelectMultiElement, ev: DsSelectMultiCustomEvent<HTMLDsSelectMultiElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSelectMultiElementEventMap>(type: K, listener: (this: HTMLDsSelectMultiElement, ev: DsSelectMultiCustomEvent<HTMLDsSelectMultiElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSelectMultiElement: {
+        prototype: HTMLDsSelectMultiElement;
+        new (): HTMLDsSelectMultiElement;
     };
     interface HTMLDsShellGradientPickerElementEventMap {
         "dsChange": ShellGradientPreset1;
@@ -2179,6 +2457,7 @@ declare global {
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-select": HTMLDsSelectElement;
+        "ds-select-multi": HTMLDsSelectMultiElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
@@ -2227,6 +2506,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "gradientBackground"?: boolean;
+        /**
+          * Show the separation ring when the badge overlaps an icon or other content.
+          * @default true
+         */
+        "hasRing"?: boolean;
         /**
           * Contextual supplemental text. Omit when the owner hides the badge from assistive technology.
          */
@@ -2664,10 +2948,12 @@ declare namespace LocalJSX {
     }
     interface DsCheckbox {
         /**
+          * Current checked state.
           * @default false
          */
         "checked"?: boolean;
         /**
+          * Native disabled state.
           * @default false
          */
         "disabled"?: boolean;
@@ -2676,25 +2962,49 @@ declare namespace LocalJSX {
          */
         "form"?: string;
         /**
+          * Mixed visual state. Activation clears it before toggling checked.
           * @default false
          */
         "indeterminate"?: boolean;
         /**
+          * Design-system inactive state.
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Visible label and accessible name. Omitted only in presentation mode.
+         */
         "label": string;
+        /**
+          * Native form field name.
+         */
         "name"?: string | undefined;
+        /**
+          * Emitted after user activation with the new checked state.
+         */
         "onDsChange"?: (event: DsCheckboxCustomEvent<boolean>) => void;
         /**
+          * Visual-only indicator for a composite control that owns selection semantics.
+          * @default false
+         */
+        "presentation"?: boolean;
+        /**
+          * Require the checkbox to be checked for form validity.
           * @default false
          */
         "required"?: boolean;
         /**
+          * Validation message used when a required checkbox is unchecked.
           * @default 'This field is required.'
          */
         "requiredMessage"?: string;
         /**
+          * Visual and placement density.
+          * @default 'md'
+         */
+        "size"?: CheckboxSize;
+        /**
+          * Submitted value when checked.
           * @default 'on'
          */
         "value"?: string;
@@ -3191,78 +3501,322 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    /**
-     * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
-     * control-density sizes, with `ds-menu` for the option list.
-     */
     interface DsSelect {
         /**
-          * When a value is selected, render the selected interaction fill (same recipe as unfilled-button `activeFill`). Default `true`. Pass `false` for foreground-only selection (primary label, no fill). A selected value promotes the label to primary; chevron stays secondary.
+          * Show the selected interaction fill when a valid value exists.
           * @default true
          */
         "activeFill"?: boolean;
         /**
+          * Show the clear footer action when a value exists.
+          * @default true
+         */
+        "allowClear"?: boolean;
+        /**
+          * Additional IDs that describe the combobox.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * Direct accessible name when no external label is available.
           * @default null
          */
         "ariaLabel"?: string | null;
+        /**
+          * IDs of elements that label the combobox.
+         */
         "ariaLabelledby"?: string | undefined;
         /**
+          * Actual parent surface context; omit on primary and secondary surfaces.
+         */
+        "background"?: SelectBackground | undefined;
+        /**
+          * Localized clear action label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * Native disabled state.
           * @default false
          */
         "disabled"?: boolean;
+        /**
+          * Show invalid visual state.
+          * @default false
+         */
+        "error"?: boolean;
+        /**
+          * Error text rendered below the trigger when error is true.
+         */
+        "errorMessage"?: string | undefined;
         /**
           * The `id` of a `<form>` element to associate this element with.
          */
         "form"?: string;
         /**
-          * Show a 1px secondary inset border. Default on (matches unfilled button).
+          * Show the surface-aware inset border.
           * @default true
          */
         "hasBorder"?: boolean;
         /**
-          * Disables interaction (25% opacity via ds-control-inactive).
+          * Optional trigger prefix icon name.
+         */
+        "icon"?: string | undefined;
+        /**
+          * ID applied to the internal combobox trigger for external labels.
+         */
+        "inputId"?: string | undefined;
+        /**
+          * Shared inactive treatment; removes interaction and form submission.
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Replace the prefix with a loader and disable option interaction.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Accessible loading status label.
+          * @default 'Loading'
+         */
+        "loadingLabel"?: string;
+        /**
+          * Native form field name.
+         */
         "name"?: string | undefined;
         /**
-          * Emits the selected value string.
+          * Localized empty-filter result text.
+          * @default 'No results found'
+         */
+        "noResultsText"?: string;
+        /**
+          * Emitted after user selection or clearing with the next scalar value.
          */
         "onDsChange"?: (event: DsSelectCustomEvent<string>) => void;
         /**
-          * Array of options. Set via JS property.
-          * @example el.options = [{ label: 'Apple', value: 'apple' }];
+          * Emitted after the footer clear action.
+         */
+        "onDsClear"?: (event: DsSelectCustomEvent<void>) => void;
+        /**
+          * Emitted whenever popup visibility changes.
+         */
+        "onDsOpenChange"?: (event: DsSelectCustomEvent<boolean>) => void;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Flat choices. Assign arrays through the JavaScript property.
           * @default []
          */
         "options"?: SelectOption[];
         /**
-          * Placeholder shown when no value is selected.
+          * Trigger text shown when no valid value is selected.
           * @default 'Select'
          */
         "placeholder"?: string;
         /**
+          * Require one valid selected value.
           * @default false
          */
         "required"?: boolean;
         /**
+          * Validation message used when required is missing.
           * @default 'This field is required.'
          */
         "requiredMessage"?: string;
         /**
-          * Control density (height, padding, icon, type).
+          * Localized search-field placeholder and accessible name.
+          * @default 'Search'
+         */
+        "searchPlaceholder"?: string;
+        /**
+          * Show immediate local filtering over option labels and subtext.
+          * @default false
+         */
+        "searchable"?: boolean;
+        /**
+          * Grouped choices; takes precedence over options. Assign through JavaScript.
+          * @default []
+         */
+        "sections"?: SelectSection[];
+        /**
+          * Control density.
           * @default 'md'
          */
         "size"?: SelectSize;
         /**
-          * Currently selected value.
+          * Selected string value. Unknown values render the placeholder and are not submitted.
           * @default ''
          */
         "value"?: string;
         /**
-          * Width fit — fill the parent (default) or hug content.
+          * Width behavior: fill the parent or hug content.
           * @default 'fill'
          */
         "width"?: SelectWidth;
+    }
+    interface DsSelectMulti {
+        /**
+          * Show the selected interaction fill when at least one value exists.
+          * @default true
+         */
+        "activeFill"?: boolean;
+        /**
+          * Show the clear-all footer action when values exist.
+          * @default true
+         */
+        "allowClear"?: boolean;
+        /**
+          * Additional IDs that describe the combobox.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * Direct accessible name when no external label is available.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * IDs of elements that label the combobox.
+         */
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * Actual parent surface context; omit on primary and secondary surfaces.
+         */
+        "background"?: SelectMultiBackground | undefined;
+        /**
+          * Localized clear-all action label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * Native disabled state.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Show invalid visual state.
+          * @default false
+         */
+        "error"?: boolean;
+        /**
+          * Error text rendered below the trigger when error is true.
+         */
+        "errorMessage"?: string | undefined;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * Show the surface-aware inset border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Optional trigger prefix icon name.
+         */
+        "icon"?: string | undefined;
+        /**
+          * ID applied to the internal combobox trigger for external labels.
+         */
+        "inputId"?: string | undefined;
+        /**
+          * Shared inactive treatment; removes interaction and form submission.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * Replace the prefix with a loader and disable option interaction.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Accessible loading status label.
+          * @default 'Loading'
+         */
+        "loadingLabel"?: string;
+        /**
+          * Native form field name used for each repeated selected-value entry.
+         */
+        "name"?: string | undefined;
+        /**
+          * Localized empty-filter result text.
+          * @default 'No results found'
+         */
+        "noResultsText"?: string;
+        /**
+          * Emitted after user toggles or clearing with a new values array.
+         */
+        "onDsChange"?: (event: DsSelectMultiCustomEvent<string[]>) => void;
+        /**
+          * Emitted after the footer clear-all action.
+         */
+        "onDsClear"?: (event: DsSelectMultiCustomEvent<void>) => void;
+        /**
+          * Emitted whenever popup visibility changes.
+         */
+        "onDsOpenChange"?: (event: DsSelectMultiCustomEvent<boolean>) => void;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Flat choices. Assign arrays through the JavaScript property.
+          * @default []
+         */
+        "options"?: SelectMultiOption[];
+        /**
+          * Persistent trigger label; selected option labels never replace it.
+          * @default 'Select'
+         */
+        "placeholder"?: string;
+        /**
+          * Require at least one valid selected value.
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * Validation message used when required is missing.
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * Localized search-field placeholder and accessible name.
+          * @default 'Search'
+         */
+        "searchPlaceholder"?: string;
+        /**
+          * Show immediate local filtering over option labels and subtext.
+          * @default false
+         */
+        "searchable"?: boolean;
+        /**
+          * Grouped choices; takes precedence over options. Assign through JavaScript.
+          * @default []
+         */
+        "sections"?: SelectMultiSection[];
+        /**
+          * Localized noun displayed after the selected count.
+          * @default 'selected'
+         */
+        "selectedLabel"?: string;
+        /**
+          * Control density.
+          * @default 'md'
+         */
+        "size"?: SelectMultiSize;
+        /**
+          * Selected values. Assign arrays through the JavaScript property.
+          * @default []
+         */
+        "values"?: string[];
+        /**
+          * Width behavior: fill the parent or hug content.
+          * @default 'fill'
+         */
+        "width"?: SelectMultiWidth;
     }
     interface DsShellGradientPicker {
         /**
@@ -3544,6 +4098,9 @@ declare namespace LocalJSX {
           * @default 'inherit'
          */
         "color"?: TextColor;
+        /**
+          * Link underline or dotted hidden-interaction affordance; does not add semantics.
+         */
         "decoration"?: TextDecoration | undefined;
         /**
           * Heavier weight + tighter letter-spacing for the variant. `false` (default): one step below emphasis (display semibold, title/body medium, caption medium). `true`: display bold, title/caption semibold, body medium.
@@ -3675,6 +4232,7 @@ declare namespace LocalJSX {
         "max": number;
         "surface": BadgeSurface;
         "background": string | undefined;
+        "hasRing": boolean;
         "gradientBackground": boolean;
         "label": string | undefined;
     }
@@ -3777,6 +4335,7 @@ declare namespace LocalJSX {
     interface DsCheckboxAttributes {
         "label": string;
         "checked": boolean;
+        "size": CheckboxSize;
         "name": string | undefined;
         "value": string;
         "disabled": boolean;
@@ -3784,6 +4343,7 @@ declare namespace LocalJSX {
         "requiredMessage": string;
         "indeterminate": boolean;
         "isInactive": boolean;
+        "presentation": boolean;
     }
     interface DsChipAttributes {
         "label": string;
@@ -3912,6 +4472,7 @@ declare namespace LocalJSX {
     }
     interface DsSelectAttributes {
         "value": string;
+        "open": boolean;
         "name": string | undefined;
         "disabled": boolean;
         "required": boolean;
@@ -3920,10 +4481,52 @@ declare namespace LocalJSX {
         "size": SelectSize;
         "width": SelectWidth;
         "isInactive": boolean;
+        "isLoading": boolean;
         "activeFill": boolean;
         "hasBorder": boolean;
+        "icon": string | undefined;
+        "allowClear": boolean;
+        "clearLabel": string;
+        "searchable": boolean;
+        "searchPlaceholder": string;
+        "noResultsText": string;
+        "loadingLabel": string;
+        "background": SelectBackground | undefined;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
+    interface DsSelectMultiAttributes {
+        "open": boolean;
+        "name": string | undefined;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "placeholder": string;
+        "size": SelectMultiSize;
+        "width": SelectMultiWidth;
+        "isInactive": boolean;
+        "isLoading": boolean;
+        "activeFill": boolean;
+        "hasBorder": boolean;
+        "icon": string | undefined;
+        "allowClear": boolean;
+        "clearLabel": string;
+        "selectedLabel": string;
+        "searchable": boolean;
+        "searchPlaceholder": string;
+        "noResultsText": string;
+        "loadingLabel": string;
+        "background": SelectMultiBackground | undefined;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
     }
     interface DsShellGradientPickerAttributes {
         "value": ShellGradientPreset;
@@ -4064,6 +4667,7 @@ declare namespace LocalJSX {
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-select-multi": Omit<DsSelectMulti, keyof DsSelectMultiAttributes> & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes]?: DsSelectMulti[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `attr:${K}`]?: DsSelectMultiAttributes[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `prop:${K}`]?: DsSelectMulti[K] };
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
@@ -4129,11 +4733,8 @@ declare module "@stencil/core" {
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
-            /**
-             * Dropdown select — unfilled-button chrome (label + trailing ChevronDown) in
-             * control-density sizes, with `ds-menu` for the option list.
-             */
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            "ds-select-multi": LocalJSX.IntrinsicElements["ds-select-multi"] & JSXBase.HTMLAttributes<HTMLDsSelectMultiElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;

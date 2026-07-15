@@ -259,7 +259,7 @@ export class MyComponent {
 - One rendered line is exactly one variant line-height; N lines are N × that token. Width constraints determine wrapping.
 - Put layout classes (padding, flex/grid participation, truncation width, z-index) directly on `ds-text`. Do not add a wrapper whose only purpose is layout.
 - Choose `as` from native document semantics and heading hierarchy independently from visual `variant`. Omitted color inherits `currentColor`.
-- Solid underline is reserved for Text composed inside a real link. Dotted underline signals hidden or supplemental interaction such as a tooltip; the owning trigger supplies focus, keyboard behavior, and accessible semantics.
+- Links are underlined by default. Brand-blue link text may omit the resting underline when color already provides the link affordance; an underline on hover remains appropriate. Dotted underline is required for hidden or supplemental interaction such as a tooltip, and the owning trigger supplies focus, keyboard behavior, and accessible semantics.
 - Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to a future prose/app renderer, not `ds-text`.
 - Native form values cannot contain a custom element. Native inputs use the internal `typography.css` recipe as the explicit exception.
 
@@ -278,6 +278,29 @@ export class MyComponent {
 - **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
 - Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
+
+**Select / SelectMulti**
+
+- `ds-select` owns one string value; `ds-select-multi` owns a JavaScript array of string values. Multi keeps the field label/placeholder visible and summarizes selection with a count badge rather than replacing the label or rendering tags.
+- Select popups use listbox/option semantics. `ds-menu` remains an action menu even though all three share anchored-popup and choice-row visual foundations; never switch select rows back to menu/menuitem roles.
+- Single-select rows rely on the selected active fill and foreground change; do not add a trailing check icon. They may use prefix icons. Multi-select rows use a presentation-only `ds-checkbox` indicator while the owning option retains listbox semantics and interaction; their option contract excludes icons because a choice row must never combine a checkbox and prefix icon.
+- Options support label, value, subtext, and `isInactive`; single-select options additionally support a prefix icon. Use either flat `options` or grouped `sections`; sections take precedence. Arrays and objects must be assigned as JavaScript properties.
+- `searchable` is immediate local filtering over label and subtext. Server search, debounce, networking, virtualization, and hierarchical children are intentionally outside these components.
+- The popup search row always uses the md choice-row recipe: body-medium input text, a 20px md search icon, and the same outer plus row padding and label inset as popup options. It does not shrink with an sm or xs trigger.
+- `isLoading` replaces or occupies the trigger prefix-icon zone, exposes busy state, and shows a centered loader while option interaction is unavailable.
+- Clear actions live in the popup footer. Single clear emits an empty string; multi clear emits an empty array. Both emit `dsClear`, keep the popup open, and preserve useful focus.
+- Omitted `background` is for primary and secondary surfaces. Pass `faint` explicitly on faint surfaces and use the matching medium, bold, strong, translucent, inverted, media, or always-dark context elsewhere.
+- Multi native forms submit one repeated entry per selected value. Angular forms import `SelectValueAccessor` or `SelectMultiValueAccessor` with the matching generated component proxy.
+- Hierarchical selection belongs to a future tree-select contract: single-select parents navigate, multi-select parents cascade with indeterminate state, and submitted values remain leaf-only by default.
+
+**Checkbox**
+
+- `ds-checkbox` owns independent selection, acknowledgment, and consent. Use `ds-radio-group` for mutually exclusive choices and `ds-switch` for settings that apply immediately.
+- Sizes are md with a 16px box centered in a 20px placement, sm with a 12px box in 16px, and xs with an 8px box in 12px. Labels map to body-medium, body-small, and caption respectively.
+- The box always has a 2px radius and a 1px inset secondary border, including when selected. Unchecked is empty; checked uses the canonical `Check` icon and indeterminate uses `Subtract` on a brand fill. The icon matches the visual box size at every density.
+- Space activates an interactive checkbox. Activation clears indeterminate before toggling checked; native form reset restores both initial states.
+- Use `presentation` only when a composite owner supplies selection semantics and interaction. Multi-select rows render a sm presentation checkbox centered inside the shared 20px option icon zone; never combine it with a prefix icon.
+- Checkbox is for primary, secondary, and faint app surfaces and does not expose a background prop.
 
 **Chip**
 
@@ -304,7 +327,7 @@ export class MyComponent {
 - The owner provides the primary accessible name. Give an announced counter or dot contextual supplemental text, or mark a purely visual badge `aria-hidden`; never expose a bare count or generic “notification” name.
 - Non-positive counters hide. Counts above the compact limit render the limit plus a suffix (for example `9+`).
 - Badge keeps one brand treatment. Use Tag or normal content for semantic statuses and quantities that must stand alone.
-- Match the ring to the immediate backing surface for both variants. Prefer typed surface presets; use the direct ring override only for component-local fills. Gradient rings align automatically inside active AppShell gradient chrome.
+- Use the halo ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot such as a SelectMulti count or dedicated row suffix. When enabled, match it to the immediate backing surface; prefer typed surface presets and reserve direct overrides for component-local fills. Gradient rings align automatically inside active AppShell gradient chrome.
 - The owner positions Badge and owns responsive visibility or condensation. Badge never receives focus or pointer interaction.
 
 **Divider**
@@ -419,7 +442,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, TabGroup / PanelSubNav tabs, RadioGroup options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, Select/SelectMulti options, TabGroup / PanelSubNav tabs, RadioGroup options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 

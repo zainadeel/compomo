@@ -754,7 +754,7 @@ export class BarNav {
                   <ds-badge
                     class="bar-nav__tab-dot"
                     variant="dot"
-                    background="var(--_bar-nav-bg)"
+                    hasRing={false}
                     label=""
                     aria-hidden="true"
                   />

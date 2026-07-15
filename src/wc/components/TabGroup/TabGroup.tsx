@@ -213,7 +213,7 @@ export class TabGroup {
                     <ds-badge
                       class="tab__dot"
                       variant="dot"
-                      style={{ '--_badge-ring-width': '0' }}
+                      hasRing={false}
                       label=""
                       aria-hidden="true"
                     />

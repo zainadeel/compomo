@@ -2,15 +2,90 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "checkbox",
   "title": "Checkbox",
-  "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
+  "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
     "source": "src/wc/components/Checkbox/Checkbox.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+      "useWhen": [
+        "A user may independently select zero or more choices.",
+        "A form requires acknowledgment, consent, or an opt-in value before submission.",
+        "A composite multi-select option needs a presentation-only checkbox indicator."
+      ],
+      "avoidWhen": [
+        "Exactly one option must be chosen from a mutually exclusive set.",
+        "A binary setting takes effect immediately rather than being submitted or confirmed.",
+        "The control triggers a one-time command instead of maintaining selection state."
+      ],
+      "alternatives": [
+        {
+          "when": "Exactly one option must be chosen from a mutually exclusive set.",
+          "component": "component:ds-radio-group",
+          "reason": "RadioGroup communicates one-of-many selection."
+        },
+        {
+          "when": "A binary setting takes effect immediately.",
+          "component": "component:ds-switch",
+          "reason": "Switch communicates an immediately applied on/off setting."
+        },
+        {
+          "when": "The interaction triggers a one-time command.",
+          "component": "component:ds-button-filled",
+          "reason": "Button semantics communicate an action rather than persistent selection."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-select-multi",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Every interactive checkbox requires a visible label that provides its accessible name.",
+        "Space activates the checkbox; checked and mixed state are exposed through aria-checked.",
+        "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
+        "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
+      ],
+      "states": [
+        "Unchecked renders an empty bordered box; checked renders the Check icon and indeterminate renders the Subtract icon on a brand fill.",
+        "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
+        "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
+        "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
+        "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
+      ],
+      "responsiveBehavior": [
+        "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
+        "Use the sm indicator centered by a parent 20px icon zone in multi-select rows so checkbox and icon-based choice layouts retain matching alignment."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Bind checked and indeterminate as properties for application state updates and listen for dsChange.",
+          "Use the form attribute on the host when associating a checkbox rendered outside its owning form."
+        ],
+        "react": [
+          "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
+        ],
+        "angular": [
+          "Use DsCheckbox with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Checkbox/Checkbox.stories.ts"
+        },
+        {
+          "label": "Cross-browser form and accessibility coverage",
+          "path": "tests/e2e/forms.spec.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "checked": {
@@ -19,7 +94,8 @@
           "attribute": "checked",
           "default": "false",
           "required": false,
-          "mutable": true
+          "mutable": true,
+          "description": "Current checked state."
         },
         "disabled": {
           "type": "boolean",
@@ -27,7 +103,8 @@
           "attribute": "disabled",
           "default": "false",
           "required": false,
-          "mutable": false
+          "mutable": false,
+          "description": "Native disabled state."
         },
         "indeterminate": {
           "type": "boolean",
@@ -35,7 +112,8 @@
           "attribute": "indeterminate",
           "default": "false",
           "required": false,
-          "mutable": false
+          "mutable": true,
+          "description": "Mixed visual state. Activation clears it before toggling checked."
         },
         "isInactive": {
           "type": "boolean",
@@ -43,21 +121,33 @@
           "attribute": "is-inactive",
           "default": "false",
           "required": false,
-          "mutable": false
+          "mutable": false,
+          "description": "Design-system inactive state."
         },
         "label": {
           "type": "string",
           "resolvedType": "string",
           "attribute": "label",
           "required": true,
-          "mutable": false
+          "mutable": false,
+          "description": "Visible label and accessible name. Omitted only in presentation mode."
         },
         "name": {
           "type": "string | undefined",
           "resolvedType": "string | undefined",
           "attribute": "name",
           "required": false,
-          "mutable": false
+          "mutable": false,
+          "description": "Native form field name."
+        },
+        "presentation": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "presentation",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Visual-only indicator for a composite control that owns selection semantics."
         },
         "required": {
           "type": "boolean",
@@ -65,7 +155,8 @@
           "attribute": "required",
           "default": "false",
           "required": false,
-          "mutable": false
+          "mutable": false,
+          "description": "Require the checkbox to be checked for form validity."
         },
         "requiredMessage": {
           "type": "string",
@@ -73,7 +164,17 @@
           "attribute": "required-message",
           "default": "'This field is required.'",
           "required": false,
-          "mutable": false
+          "mutable": false,
+          "description": "Validation message used when a required checkbox is unchecked."
+        },
+        "size": {
+          "type": "CheckboxSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Visual and placement density."
         },
         "value": {
           "type": "string",
@@ -81,7 +182,8 @@
           "attribute": "value",
           "default": "'on'",
           "required": false,
-          "mutable": false
+          "mutable": false,
+          "description": "Submitted value when checked."
         }
       },
       "events": [
@@ -90,7 +192,8 @@
           "detail": "boolean",
           "bubbles": true,
           "cancelable": true,
-          "composed": true
+          "composed": true,
+          "description": "Emitted after user activation with the new checked state."
         }
       ],
       "methods": [],
@@ -103,7 +206,8 @@
         "attribute": "checked",
         "default": "false",
         "required": false,
-        "mutable": true
+        "mutable": true,
+        "description": "Current checked state."
       },
       "disabled": {
         "type": "boolean",
@@ -111,7 +215,8 @@
         "attribute": "disabled",
         "default": "false",
         "required": false,
-        "mutable": false
+        "mutable": false,
+        "description": "Native disabled state."
       },
       "indeterminate": {
         "type": "boolean",
@@ -119,7 +224,8 @@
         "attribute": "indeterminate",
         "default": "false",
         "required": false,
-        "mutable": false
+        "mutable": true,
+        "description": "Mixed visual state. Activation clears it before toggling checked."
       },
       "isInactive": {
         "type": "boolean",
@@ -127,21 +233,33 @@
         "attribute": "is-inactive",
         "default": "false",
         "required": false,
-        "mutable": false
+        "mutable": false,
+        "description": "Design-system inactive state."
       },
       "label": {
         "type": "string",
         "resolvedType": "string",
         "attribute": "label",
         "required": true,
-        "mutable": false
+        "mutable": false,
+        "description": "Visible label and accessible name. Omitted only in presentation mode."
       },
       "name": {
         "type": "string | undefined",
         "resolvedType": "string | undefined",
         "attribute": "name",
         "required": false,
-        "mutable": false
+        "mutable": false,
+        "description": "Native form field name."
+      },
+      "presentation": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "presentation",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Visual-only indicator for a composite control that owns selection semantics."
       },
       "required": {
         "type": "boolean",
@@ -149,7 +267,8 @@
         "attribute": "required",
         "default": "false",
         "required": false,
-        "mutable": false
+        "mutable": false,
+        "description": "Require the checkbox to be checked for form validity."
       },
       "requiredMessage": {
         "type": "string",
@@ -157,7 +276,17 @@
         "attribute": "required-message",
         "default": "'This field is required.'",
         "required": false,
-        "mutable": false
+        "mutable": false,
+        "description": "Validation message used when a required checkbox is unchecked."
+      },
+      "size": {
+        "type": "CheckboxSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Visual and placement density."
       },
       "value": {
         "type": "string",
@@ -165,7 +294,8 @@
         "attribute": "value",
         "default": "'on'",
         "required": false,
-        "mutable": false
+        "mutable": false,
+        "description": "Submitted value when checked."
       }
     },
     "events": [
@@ -174,7 +304,8 @@
         "detail": "boolean",
         "bubbles": true,
         "cancelable": true,
-        "composed": true
+        "composed": true,
+        "description": "Emitted after user activation with the new checked state."
       }
     ],
     "methods": [],
@@ -210,20 +341,22 @@
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens"
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
   ],
   "registryDependencies": [
+    "icon",
     "text"
   ],
   "files": [
     {
       "path": "src/wc/components/Checkbox/Checkbox.css",
-      "content": "@import '../../utils/control-inactive.css';\n\n.checkbox {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-075);\n  height: var(--dimension-size-400);\n  box-sizing: border-box;\n  cursor: pointer;\n  user-select: none;\n  border-radius: var(--dimension-radius-075);\n  transition: background-color var(--effect-motion-short-2);\n}\n\n.checkbox:hover {\n  background-color: var(--color-interaction-hover);\n}\n\n.checkbox:active {\n  background-color: var(--color-interaction-pressed);\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n/* ── Default box indicator ───────────────────────────────────────────────── */\n\n.box {\n  width: var(--dimension-iconography-md);\n  height: var(--dimension-iconography-md);\n  flex-shrink: 0;\n  border: var(--dimension-stroke-width-018) solid var(--color-foreground-secondary);\n  border-radius: var(--dimension-radius-050);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  transition:\n    background-color var(--effect-motion-short-2),\n    border-color var(--effect-motion-short-2);\n}\n\n.box--marked {\n  background-color: var(--color-foreground-primary);\n  border-color: var(--color-foreground-primary);\n}\n\n.checkmark {\n  color: var(--color-foreground-on-bold-background-primary);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-bold);\n}\n\n/* ── Label ───────────────────────────────────────────────────────────────── */\n\n.checkbox__label {\n  flex: 1;\n  min-width: 0;\n}\n",
+      "content": "@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n\n:host {\n  display: inline-flex;\n  align-items: center;\n  box-sizing: border-box;\n  gap: var(--ds-control-gap);\n  height: var(--ds-control-height);\n  padding: 0 var(--ds-control-padding-inline);\n  border-radius: var(--ds-control-radius);\n  cursor: pointer;\n  user-select: none;\n}\n\n:host(.checkbox--presentation) {\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n  padding: 0;\n  gap: 0;\n  pointer-events: none;\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity). */\n\n:host(.checkbox--md) {\n  --_checkbox-box: var(--dimension-iconography-sm);\n  --_checkbox-glyph: var(--dimension-iconography-xs);\n}\n\n:host(.checkbox--sm) {\n  --_checkbox-box: var(--dimension-iconography-xs);\n  --_checkbox-glyph: var(--dimension-size-100);\n}\n\n:host(.checkbox--xs) {\n  --_checkbox-box: var(--dimension-size-100);\n  --_checkbox-glyph: var(--dimension-size-075);\n}\n\n.checkbox__placement {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n\n.box {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: var(--_checkbox-box);\n  height: var(--_checkbox-box);\n  border: var(--dimension-stroke-width-018) solid var(--color-foreground-secondary);\n  border-radius: var(--dimension-radius-025);\n  transition:\n    background-color var(--effect-motion-short-2),\n    border-color var(--effect-motion-short-2);\n}\n\n.box--marked {\n  color: var(--color-foreground-on-bold-background-primary);\n  background-color: var(--color-background-bold-brand);\n  border-color: var(--color-background-bold-brand);\n}\n\n.checkmark {\n  flex-shrink: 0;\n}\n\n.checkbox__label {\n  flex: 1;\n  min-width: 0;\n  padding: 0 var(--ds-control-label-inset);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Checkbox/Checkbox.tsx",
-      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Checkbox {\n  @AttachInternals() internals!: ElementInternals;\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  @Prop() label!: string;\n  @Prop({ mutable: true }) checked: boolean = false;\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop() value: string = 'on';\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() indeterminate: boolean = false;\n  @Prop() isInactive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n  }\n\n  private handleActivate = () => {\n    if (this.isInactive || this.disabled || this.formDisabled) return;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ' || e.key === 'Enter') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const isMarked = this.checked || this.indeterminate;\n\n    return (\n      <Host\n        role=\"checkbox\"\n        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={inactive ? 'true' : undefined}\n        aria-labelledby={this.labelId}\n        tabIndex={inactive ? -1 : 0}\n        class={{ checkbox: true, 'ds-control-inactive': inactive }}\n        onClick={this.handleActivate}\n        onKeyDown={this.handleKeyDown}\n      >\n        <span class={{ box: true, 'box--marked': isMarked }}>\n          {isMarked && (\n            <span class=\"checkmark\" aria-hidden=\"true\">\n              {this.indeterminate ? '−' : '✓'}\n            </span>\n          )}\n        </span>\n        <ds-text class=\"checkbox__label\" as=\"span\" variant=\"text-body-medium\" textId={this.labelId}>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';\n\nexport type CheckboxSize = 'md' | 'sm' | 'xs';\n\nconst LABEL_VARIANT: Record<CheckboxSize, 'text-body-medium' | 'text-body-small' | 'text-caption'> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-checkbox',\n  styleUrl: 'Checkbox.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Checkbox {\n  @AttachInternals() internals!: ElementInternals;\n  private labelId = `ds-checkbox-label-${++idCounter}`;\n\n  /** Visible label and accessible name. Omitted only in presentation mode. */\n  @Prop() label!: string;\n  /** Current checked state. */\n  @Prop({ mutable: true }) checked: boolean = false;\n  /** Visual and placement density. */\n  @Prop() size: CheckboxSize = 'md';\n  /** Native form field name. */\n  @Prop({ reflect: true }) name: string | undefined;\n  /** Submitted value when checked. */\n  @Prop() value: string = 'on';\n  /** Native disabled state. */\n  @Prop({ reflect: true }) disabled: boolean = false;\n  /** Require the checkbox to be checked for form validity. */\n  @Prop({ reflect: true }) required: boolean = false;\n  /** Validation message used when a required checkbox is unchecked. */\n  @Prop() requiredMessage: string = 'This field is required.';\n  /** Mixed visual state. Activation clears it before toggling checked. */\n  @Prop({ mutable: true }) indeterminate: boolean = false;\n  /** Design-system inactive state. */\n  @Prop() isInactive: boolean = false;\n  /** Visual-only indicator for a composite control that owns selection semantics. */\n  @Prop() presentation: boolean = false;\n\n  /** Emitted after user activation with the new checked state. */\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private initialChecked = false;\n  private initialIndeterminate = false;\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialChecked = this.checked;\n    this.initialIndeterminate = this.indeterminate;\n    this.syncFormValue();\n  }\n\n  @Watch('checked')\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  @Watch('presentation')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled || this.presentation;\n    this.internals.setFormValue(!inactive && this.checked ? this.value : null);\n    const missing = this.required && !inactive && !this.checked;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.checked = this.initialChecked;\n    this.indeterminate = this.initialIndeterminate;\n  }\n\n  private handleActivate = () => {\n    if (this.isInactive || this.disabled || this.formDisabled || this.presentation) return;\n    if (this.indeterminate) this.indeterminate = false;\n    this.checked = !this.checked;\n    this.dsChange.emit(this.checked);\n  };\n\n  private handleKeyDown = (e: KeyboardEvent) => {\n    if (e.key === ' ') {\n      e.preventDefault();\n      this.handleActivate();\n    }\n  };\n\n  render() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const isMarked = this.checked || this.indeterminate;\n    const icon = this.indeterminate ? 'Subtract' : 'Check';\n\n    return (\n      <Host\n        role={this.presentation ? undefined : 'checkbox'}\n        aria-checked={this.presentation ? undefined : this.indeterminate ? 'mixed' : String(this.checked)}\n        aria-disabled={!this.presentation && inactive ? 'true' : undefined}\n        aria-labelledby={this.presentation ? undefined : this.labelId}\n        aria-hidden={this.presentation ? 'true' : undefined}\n        tabIndex={this.presentation || inactive ? -1 : 0}\n        class={{\n          checkbox: true,\n          'checkbox--presentation': this.presentation,\n          [`checkbox--${this.size}`]: true,\n          [`ds-control--${this.size}`]: true,\n          'ds-control-inactive': inactive && !this.presentation,\n          'ds-focus-ring-inset': !this.presentation,\n          'ds-interaction-fill': !inactive && !this.presentation,\n        }}\n        onClick={this.presentation ? undefined : this.handleActivate}\n        onKeyDown={this.presentation ? undefined : this.handleKeyDown}\n      >\n        <span class=\"checkbox__placement ds-interaction-fill__content\" aria-hidden=\"true\">\n          <span class={{ box: true, 'box--marked': isMarked }}>\n            {isMarked && (\n              <ds-icon\n                class=\"checkmark\"\n                name={icon}\n                size=\"xs\"\n                color=\"inherit\"\n                style={{\n                  width: 'var(--_checkbox-glyph)',\n                  height: 'var(--_checkbox-glyph)',\n                }}\n              />\n            )}\n          </span>\n        </span>\n        {!this.presentation && (\n          <ds-text\n            class=\"checkbox__label ds-interaction-fill__content\"\n            as=\"span\"\n            variant={LABEL_VARIANT[this.size]}\n            textId={this.labelId}\n          >\n            {this.label}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

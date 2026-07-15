@@ -1,1 +1,7 @@
-export type { SelectOption, SelectSize, SelectWidth } from './Select';
+export type {
+  SelectBackground,
+  SelectOption,
+  SelectSection,
+  SelectSize,
+  SelectWidth,
+} from './Select';

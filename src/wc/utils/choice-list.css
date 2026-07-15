@@ -1,0 +1,180 @@
+@import './focus-ring.css';
+@import './interaction-fill.css';
+@import './control-inactive.css';
+@import './control-density.css';
+
+.ds-choice-popup {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: var(--dimension-menu-width-xs);
+  max-width: min(
+    var(--dimension-panel-width-lg),
+    calc(100vw - var(--dimension-space-200))
+  );
+  max-height: calc(100vh - var(--dimension-space-200));
+  overflow: hidden;
+  background-color: var(--color-background-primary);
+  border-radius: var(--dimension-radius-075);
+  box-shadow: var(--effect-shadow-elevated-floating);
+  animation: dsChoiceFadeIn var(--effect-motion-short-2) forwards;
+  backface-visibility: hidden;
+  will-change: transform;
+  text-align: start;
+}
+
+.ds-choice-popup::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--effect-highlight-elevated-floating);
+}
+
+.ds-choice-popup--closing {
+  animation: dsChoiceFadeOut var(--effect-motion-short-2) forwards;
+}
+
+@keyframes dsChoiceFadeIn {
+  from { opacity: 0; transform: inherit scale(0.97); }
+  to { opacity: 1; }
+}
+
+@keyframes dsChoiceFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-choice-popup {
+    animation: none;
+    opacity: 1;
+  }
+
+  .ds-choice-popup--closing {
+    opacity: 0;
+  }
+}
+
+.ds-choice-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ds-choice-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  padding: var(--dimension-space-050);
+}
+
+.ds-choice-section--divided {
+  border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+}
+
+ds-text.ds-choice-section__header {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 calc(
+    var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
+  text-align: start;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.ds-choice-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-control-gap, var(--dimension-space-050));
+  width: 100%;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  background: transparent;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  text-align: left;
+  color: inherit;
+}
+
+.ds-choice-item:has(.ds-choice-item__subtext) {
+  height: auto;
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+  padding-block: var(--ds-control-padding-inline, var(--dimension-space-075));
+  align-items: flex-start;
+}
+
+.ds-choice-item__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+}
+
+ds-text.ds-choice-item__label,
+.ds-choice-item__subtext,
+ds-text.ds-choice-item__subtext {
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+}
+
+.ds-choice-item__icon,
+.ds-choice-item__suffix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  pointer-events: none;
+}
+
+.ds-choice-empty,
+.ds-choice-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+}
+
+.ds-choice-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: var(--dimension-size-400);
+  padding: 0 calc(
+    var(--dimension-space-050) +
+      var(--ds-control-padding-inline, var(--dimension-space-075))
+  );
+  border-top: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+}
+
+.ds-choice-footer__clear {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  color: var(--color-foreground-bold-brand);
+  cursor: pointer;
+}
+
+.ds-choice-footer__clear:hover {
+  text-decoration: underline;
+}

@@ -68,7 +68,7 @@ const preview: Preview = {
       storySort: {
         order: [
           'Docs',
-          ['Introduction', 'Typography Usage', 'Color Usage', 'Elevation Usage'],
+          ['Introduction', 'Typography Usage', 'Color Usage', 'Elevation Usage', 'Selection Patterns'],
           'Foundation',
           ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
           'Primitives',
@@ -91,6 +91,7 @@ const preview: Preview = {
             'ControlDensity',
             'FocusRing',
             'ScrollEdgeFade',
+            'Choice Lists',
           ],
         ],
       },

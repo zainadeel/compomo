@@ -1,0 +1,12 @@
+@import '../Select/Select.css';
+
+.trigger__count-box {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+}

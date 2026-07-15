@@ -26,6 +26,7 @@ export class Text {
    */
   @Prop() emphasis: boolean = false;
   @Prop() color: TextColor = 'inherit';
+  /** Link underline or dotted hidden-interaction affordance; does not add semantics. */
   @Prop() decoration: TextDecoration | undefined;
   @Prop() italic: boolean = false;
   /** Animate the visible glyphs with the shared loading shimmer treatment. */

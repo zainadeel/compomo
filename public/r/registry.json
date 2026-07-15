@@ -162,7 +162,7 @@
           "useWhen": [
             "An existing control, navigation item, or label needs a compact unread notification count.",
             "An owning element needs a small visual dot indicating that supplemental notification information exists.",
-            "The immediate backing surface can be identified so the badge ring visually separates the mark from its owner."
+            "When the badge overlaps an icon or content, the immediate backing surface can be identified so its separation ring matches."
           ],
           "avoidWhen": [
             "The status must stand alone without an owning label or control.",
@@ -205,8 +205,9 @@
             "Non-positive counter values hide the badge.",
             "Counts above the configured compact limit display the limit with a plus suffix while accessible text retains meaningful context.",
             "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
-            "The ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
-            "Shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+            "Use the ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot.",
+            "When enabled, the ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
+            "Enabled shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
           ],
           "responsiveBehavior": [
             "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",
@@ -240,6 +241,10 @@
             "required": false
           },
           "gradientBackground": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasRing": {
             "type": "boolean",
             "required": false
           },
@@ -1217,15 +1222,90 @@
     {
       "name": "checkbox",
       "title": "Checkbox",
-      "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
+      "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
         "source": "src/wc/components/Checkbox/Checkbox.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+          "useWhen": [
+            "A user may independently select zero or more choices.",
+            "A form requires acknowledgment, consent, or an opt-in value before submission.",
+            "A composite multi-select option needs a presentation-only checkbox indicator."
+          ],
+          "avoidWhen": [
+            "Exactly one option must be chosen from a mutually exclusive set.",
+            "A binary setting takes effect immediately rather than being submitted or confirmed.",
+            "The control triggers a one-time command instead of maintaining selection state."
+          ],
+          "alternatives": [
+            {
+              "when": "Exactly one option must be chosen from a mutually exclusive set.",
+              "component": "component:ds-radio-group",
+              "reason": "RadioGroup communicates one-of-many selection."
+            },
+            {
+              "when": "A binary setting takes effect immediately.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates an immediately applied on/off setting."
+            },
+            {
+              "when": "The interaction triggers a one-time command.",
+              "component": "component:ds-button-filled",
+              "reason": "Button semantics communicate an action rather than persistent selection."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-select-multi",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Every interactive checkbox requires a visible label that provides its accessible name.",
+            "Space activates the checkbox; checked and mixed state are exposed through aria-checked.",
+            "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
+            "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
+          ],
+          "states": [
+            "Unchecked renders an empty bordered box; checked renders the Check icon and indeterminate renders the Subtract icon on a brand fill.",
+            "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
+            "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
+            "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
+            "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
+          ],
+          "responsiveBehavior": [
+            "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
+            "Use the sm indicator centered by a parent 20px icon zone in multi-select rows so checkbox and icon-based choice layouts retain matching alignment."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Bind checked and indeterminate as properties for application state updates and listen for dsChange.",
+              "Use the form attribute on the host when associating a checkbox rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
+            ],
+            "angular": [
+              "Use DsCheckbox with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Checkbox/Checkbox.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
         "props": {
           "checked": {
             "type": "boolean",
@@ -1251,12 +1331,20 @@
             "type": "string | undefined",
             "required": false
           },
+          "presentation": {
+            "type": "boolean",
+            "required": false
+          },
           "required": {
             "type": "boolean",
             "required": false
           },
           "requiredMessage": {
             "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "CheckboxSize",
             "required": false
           },
           "value": {
@@ -1279,9 +1367,11 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "icon",
         "text"
       ]
     },
@@ -1947,7 +2037,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
+      "description": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1958,10 +2048,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
+          "summary": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
           "useWhen": [
-            "A trigger reveals a short contextual list of commands or options.",
-            "Options need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
+            "A trigger reveals a short contextual list of commands or state-changing actions.",
+            "Actions need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
           ],
           "avoidWhen": [
             "The user is selecting a value for a form field.",
@@ -1973,6 +2063,11 @@
               "when": "The choice is a form value with a label, validation, and submitted value.",
               "component": "component:ds-select",
               "reason": "Select provides form-control semantics and value ownership."
+            },
+            {
+              "when": "Several form values may be selected.",
+              "component": "component:ds-select-multi",
+              "reason": "SelectMulti provides multi-select listbox semantics, array value ownership, and count presentation."
             },
             {
               "when": "The interaction needs substantial content, confirmation, or a form.",
@@ -2830,18 +2925,104 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Dropdown select with unfilled-button chrome in control-density sizes and width hug/fill. Uses ds-menu for the option list.",
+      "description": "Form-associated single-value select with listbox semantics, local search, rich flat options, grouped sections, loading, clearing, and surface-aware trigger chrome.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/select",
         "source": "src/wc/components/Select/Select.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated single-value select with listbox semantics, local search, rich flat options, grouped sections, loading, clearing, and surface-aware trigger chrome.",
+          "useWhen": [
+            "The user must choose one value from a finite set.",
+            "The option set benefits from local search, subtext, prefix icons, grouping, or disabled choices.",
+            "The selected value must participate in native, Angular, or React form state."
+          ],
+          "avoidWhen": [
+            "Several values may be selected at once.",
+            "The rows perform commands rather than choosing a form value.",
+            "The choices form a hierarchy with expandable parents."
+          ],
+          "alternatives": [
+            {
+              "when": "Several independent values may be selected.",
+              "component": "component:ds-select-multi",
+              "reason": "SelectMulti owns array values, multi-selection semantics, and count presentation."
+            },
+            {
+              "when": "The popup contains commands or state-changing actions.",
+              "component": "component:ds-menu",
+              "reason": "Menu uses action-menu roles and command-focused keyboard behavior."
+            },
+            {
+              "when": "A small set of choices should remain visible.",
+              "component": "component:ds-radio-group",
+              "reason": "RadioGroup exposes all mutually exclusive choices without a popup."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-icon",
+            "component:ds-loader"
+          ],
+          "accessibility": [
+            "Provide aria-label or aria-labelledby when no external label association supplies the accessible name.",
+            "The trigger uses combobox semantics and the popup uses listbox and option semantics; do not replace them with menu roles.",
+            "Disabled options remain visible, expose aria-disabled, and are skipped by keyboard navigation and typeahead.",
+            "Selected options rely on active fill and foreground treatment without a redundant trailing check icon.",
+            "Local search moves focus into the search field while preserving the active option through aria-activedescendant.",
+            "Use errorMessage with error so the trigger is described by the rendered alert."
+          ],
+          "states": [
+            "Value is controlled through the mutable value property; dsChange reports user selection and clearing.",
+            "Clearing emits dsChange with an empty string and dsClear, keeps the popup open, and restores useful focus.",
+            "Loading replaces the trigger prefix icon, marks the control busy, and temporarily disables option interaction.",
+            "The popup search row stays md at every trigger size, using body-medium text, a 20px icon, and option-aligned horizontal insets.",
+            "Use options for a flat list or sections for grouped choices; when sections are present they take precedence.",
+            "The background prop describes the actual parent surface and uses the same surface set as ButtonUnfilled."
+          ],
+          "responsiveBehavior": [
+            "Use width fill in forms and constrained layouts; use hug only when the label-sized control remains discoverable.",
+            "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+            "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign options and sections through JavaScript properties because arrays and objects cannot be represented safely as attributes."
+            ],
+            "react": [
+              "Pass options or sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+            ],
+            "angular": [
+              "Import DsSelect and SelectValueAccessor when integrating with Angular Forms; bind options and sections as properties."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Select/Select.stories.ts"
+            },
+            {
+              "label": "Selection patterns",
+              "path": "src/docs/SelectionPatterns.mdx"
+            }
+          ]
+        },
         "props": {
           "activeFill": {
             "type": "boolean",
+            "required": false
+          },
+          "allowClear": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaDescribedby": {
+            "type": "string | undefined",
             "required": false
           },
           "ariaLabel": {
@@ -2852,20 +3033,60 @@
             "type": "string | undefined",
             "required": false
           },
+          "background": {
+            "type": "SelectBackground | undefined",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
           "disabled": {
             "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
             "required": false
           },
           "hasBorder": {
             "type": "boolean",
             "required": false
           },
+          "icon": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
           "isInactive": {
             "type": "boolean",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingLabel": {
+            "type": "string",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
+            "required": false
+          },
+          "noResultsText": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
             "required": false
           },
           "options": {
@@ -2882,6 +3103,18 @@
           },
           "requiredMessage": {
             "type": "string",
+            "required": false
+          },
+          "searchPlaceholder": {
+            "type": "string",
+            "required": false
+          },
+          "searchable": {
+            "type": "boolean",
+            "required": false
+          },
+          "sections": {
+            "type": "SelectSection[]",
             "required": false
           },
           "size": {
@@ -2901,6 +3134,14 @@
           {
             "name": "dsChange",
             "detail": "string"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
           }
         ],
         "slots": [],
@@ -2917,7 +3158,250 @@
       ],
       "registryDependencies": [
         "icon",
-        "menu",
+        "loader",
+        "text"
+      ]
+    },
+    {
+      "name": "select-multi",
+      "title": "SelectMulti",
+      "description": "Form-associated multi-value select with a persistent trigger label, selected-count badge, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select-multi",
+        "source": "src/wc/components/SelectMulti/SelectMulti.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated multi-value select with a persistent trigger label, selected-count badge, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+          "useWhen": [
+            "The user may choose several independent values from one finite set.",
+            "A compact trigger should summarize selection with the field label and a count.",
+            "The option set benefits from local search, subtext, grouping, or disabled choices."
+          ],
+          "avoidWhen": [
+            "Exactly one value may be selected.",
+            "Selected values must remain individually removable as persistent tags outside the popup.",
+            "The choices form a hierarchy with cascading parent selection."
+          ],
+          "alternatives": [
+            {
+              "when": "Exactly one value may be selected.",
+              "component": "component:ds-select",
+              "reason": "Select owns scalar form value and single-select listbox behavior."
+            },
+            {
+              "when": "The popup contains actions rather than values.",
+              "component": "component:ds-menu",
+              "reason": "Menu uses command semantics and closes according to action-menu expectations."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-badge",
+            "component:ds-checkbox",
+            "component:ds-loader"
+          ],
+          "accessibility": [
+            "Provide aria-label or aria-labelledby when no external label association supplies the accessible name.",
+            "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
+            "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
+            "Each row uses a presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
+            "The trigger keeps its field label visible; the count badge is supplemental and hidden from assistive technology.",
+            "Use errorMessage with error so the trigger is described by the rendered alert."
+          ],
+          "states": [
+            "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
+            "Selecting an option keeps the popup open so additional values can be toggled.",
+            "The count badge sits without a halo in a reserved suffix box matching the control icon size: 20px md, 16px sm, and 12px xs.",
+            "The popup search row stays md at every trigger size, using body-medium text, a 20px icon, and option-aligned horizontal insets.",
+            "Clear-all emits an empty dsChange and dsClear while preserving useful popup or search focus.",
+            "Native form submission emits one entry per selected value under the component name.",
+            "Use options for a flat list or sections for grouped choices. Multi-select option contracts intentionally exclude icons because the leading checkbox owns that row zone; hierarchical parent selection is deferred."
+          ],
+          "responsiveBehavior": [
+            "Use width fill in forms and filter rows; the persistent trigger label avoids variable-width selected labels.",
+            "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+            "Long option collections scroll inside the popup; virtualization and remote search are not part of this version."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign values, options, and sections through JavaScript properties; array values cannot be represented safely as attributes."
+            ],
+            "react": [
+              "Pass values, options, and sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+            ],
+            "angular": [
+              "Import DsSelectMulti and SelectMultiValueAccessor when integrating with Angular Forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/SelectMulti/SelectMulti.stories.ts"
+            },
+            {
+              "label": "Selection patterns",
+              "path": "src/docs/SelectionPatterns.mdx"
+            }
+          ]
+        },
+        "props": {
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "allowClear": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "background": {
+            "type": "SelectMultiBackground | undefined",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingLabel": {
+            "type": "string",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "noResultsText": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "options": {
+            "type": "SelectMultiOption[]",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "searchPlaceholder": {
+            "type": "string",
+            "required": false
+          },
+          "searchable": {
+            "type": "boolean",
+            "required": false
+          },
+          "sections": {
+            "type": "SelectMultiSection[]",
+            "required": false
+          },
+          "selectedLabel": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "SelectMultiSize",
+            "required": false
+          },
+          "values": {
+            "type": "string[]",
+            "required": false
+          },
+          "width": {
+            "type": "SelectMultiWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string[]"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-select-multi",
+          "react": "DsSelectMulti",
+          "angular": "DsSelectMulti"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "badge",
+        "checkbox",
+        "icon",
+        "loader",
         "text"
       ]
     },
@@ -3935,15 +4419,15 @@
             "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
             "Use label semantics and its for association only for a real form control.",
             "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
-            "Use solid underline only when Text is composed inside a real link.",
-            "Use dotted underline to signal hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
+            "Underline link text by default. Brand-blue links may omit the resting underline when color already supplies the affordance.",
+            "Use dotted underline for hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
           ],
           "states": [
             "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
             "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
             "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
             "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
-            "Solid underline communicates a real link; dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
+            "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
             "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",
             "Shimmer is reserved for visible generating/loading status text whose owner provides status semantics; reduced motion keeps static readable text."
           ],

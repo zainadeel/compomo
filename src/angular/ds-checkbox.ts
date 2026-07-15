@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsCheckbox } from '@ds-mo/ui/components/ds
 
 @ProxyCmp({
   defineCustomElementFn: defineDsCheckbox,
-  inputs: ['checked', 'disabled', 'indeterminate', 'isInactive', 'label', 'name', 'required', 'requiredMessage', 'value']
+  inputs: ['checked', 'disabled', 'indeterminate', 'isInactive', 'label', 'name', 'presentation', 'required', 'requiredMessage', 'size', 'value']
 })
 @Component({
   selector: 'ds-checkbox',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['checked', 'disabled', 'indeterminate', 'isInactive', { name: 'label', required: true }, 'name', 'required', 'requiredMessage', 'value'],
+  inputs: ['checked', 'disabled', 'indeterminate', 'isInactive', { name: 'label', required: true }, 'name', 'presentation', 'required', 'requiredMessage', 'size', 'value'],
   outputs: ['dsChange'],
 })
 export class DsCheckbox {
@@ -33,7 +33,9 @@ export class DsCheckbox {
 import type { DsCheckboxCustomEvent } from '@ds-mo/ui/components';
 
 export declare interface DsCheckbox extends Components.DsCheckbox {
-
+  /**
+   * Emitted after user activation with the new checked state.
+   */
   dsChange: EventEmitter<DsCheckboxCustomEvent<boolean>>;
 }
 

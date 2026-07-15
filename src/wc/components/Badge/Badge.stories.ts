@@ -81,6 +81,7 @@ const meta: Meta = {
     max:        { control: 'number' },
     surface:    { control: 'select', options: SURFACES },
     background: { control: 'text' },
+    hasRing: { control: 'boolean' },
     gradientBackground: { control: 'boolean', name: 'gradient-background' },
     label:      { control: 'text' },
   },
@@ -90,6 +91,7 @@ const meta: Meta = {
     max: 9,
     surface: 'primary',
     background: '',
+    hasRing: true,
     gradientBackground: false,
     label: '',
   },
@@ -106,9 +108,26 @@ export const Playground: Story = {
       max=${args['max']}
       surface=${args['surface']}
       background=${args['background'] || undefined}
+      .hasRing=${args['hasRing']}
       ?gradient-background=${args['gradientBackground']}
       label=${args['label'] || undefined}
     ></ds-badge>
+  `,
+};
+
+export const RingUsage: Story = {
+  render: () => html`
+    <div style="display:flex;align-items:center;gap:var(--dimension-space-300);">
+      <div style="${REVIEW_CELL};background:var(--color-background-secondary);color:var(--color-foreground-secondary);">
+        <div style="${BADGE_TARGET}">
+          <ds-badge style="${BADGE_ANCHOR}" count="3" surface="secondary" label="3 notifications"></ds-badge>
+        </div>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:var(--dimension-space-050);">
+        <ds-text as="span" variant="text-body-medium">Selected filters</ds-text>
+        <ds-badge count="3" .hasRing=${false} aria-hidden="true"></ds-badge>
+      </div>
+    </div>
   `,
 };
 

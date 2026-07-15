@@ -7,10 +7,10 @@
   "tag": "ds-menu",
   "audience": "general",
   "status": "stable",
-  "summary": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
+  "summary": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
   "useWhen": [
-    "A trigger reveals a short contextual list of commands or options.",
-    "Options need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
+    "A trigger reveals a short contextual list of commands or state-changing actions.",
+    "Actions need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
   ],
   "avoidWhen": [
     "The user is selecting a value for a form field.",
@@ -22,6 +22,11 @@
       "when": "The choice is a form value with a label, validation, and submitted value.",
       "component": "component:ds-select",
       "reason": "Select provides form-control semantics and value ownership."
+    },
+    {
+      "when": "Several form values may be selected.",
+      "component": "component:ds-select-multi",
+      "reason": "SelectMulti provides multi-select listbox semantics, array value ownership, and count presentation."
     },
     {
       "when": "The interaction needs substantial content, confirmation, or a form.",

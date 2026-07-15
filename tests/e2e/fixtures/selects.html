@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select foundations test</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Select foundations test</h1>
+
+      <ds-select id="single" aria-label="Fruit"></ds-select>
+      <ds-select id="searchable" searchable aria-label="Search fruit"></ds-select>
+      <ds-select id="loading" icon="Chart" is-loading aria-label="Loading fruit"></ds-select>
+      <ds-select id="surface" background="bold" aria-label="Bold fruit"></ds-select>
+      <ds-select-multi id="multi" name="entities" placeholder="Entities" aria-label="Entities"></ds-select-multi>
+      <ds-select-multi id="multi-search" searchable placeholder="Entities" aria-label="Search entities"></ds-select-multi>
+
+      <form id="selection-form">
+        <ds-select id="required-single" name="fruit" required aria-label="Required fruit"></ds-select>
+        <ds-select-multi
+          id="required-multi"
+          name="group"
+          required
+          placeholder="Groups"
+          aria-label="Required groups"
+        ></ds-select-multi>
+        <button id="submit" type="submit">Submit</button>
+        <button id="reset" type="reset">Reset</button>
+      </form>
+    </main>
+
+    <script type="module" src="/selects-setup.mjs"></script>
+  </body>
+</html>

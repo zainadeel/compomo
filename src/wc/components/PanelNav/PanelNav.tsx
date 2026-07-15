@@ -628,7 +628,7 @@ export class PanelNav {
           <ds-badge
             class="panel-nav__item-dot"
             variant="dot"
-            background="var(--_nav-bg)"
+            hasRing={collapsed}
             label=""
           />
         </span>

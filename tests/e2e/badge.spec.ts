@@ -55,6 +55,14 @@ test('maps every immediate backing surface and allows a direct ring override', a
   ))).toBe('hotpink');
 });
 
+test('omits the separation ring in reserved safe-area placements', async ({ page }) => {
+  const badge = page.locator('#safe-area');
+  await expect(badge).toHaveClass(/badge--no-ring/);
+  await expect.poll(() => badge.evaluate(element => (
+    getComputedStyle(element).getPropertyValue('--_badge-ring-width').trim()
+  ))).toBe('0');
+});
+
 test('remains non-interactive and has no detectable accessibility violations', async ({ page }) => {
   await expect(page.locator('#counter')).toHaveCSS('pointer-events', 'none');
   await expect(page.locator('ds-badge button')).toHaveCount(0);

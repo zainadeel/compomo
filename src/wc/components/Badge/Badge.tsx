@@ -55,6 +55,9 @@ export class Badge {
   /** Direct ring background override for component-local surfaces. */
   @Prop() background: string | undefined;
 
+  /** Show the separation ring when the badge overlaps an icon or other content. */
+  @Prop() hasRing: boolean = true;
+
   /**
    * Ring samples the shell gradient stack (base fill + wash) instead of a flat
    * `box-shadow`. Auto-enabled under an AppShell with an active gradient preset;
@@ -84,12 +87,23 @@ export class Badge {
   }
 
   @Watch('gradientBackground')
+  @Watch('hasRing')
   gradientBackgroundChanged() {
+    if (!this.hasRing) {
+      this.unbindGradientRingSync();
+      return;
+    }
+    if (!this.gradientBackground && isShellGradientActive(this.el)) {
+      this.gradientBackground = true;
+      return;
+    }
     this.bindGradientRingSync();
   }
 
   /** Imperative opt-in avoids Stencil aborting parent render for nested badges. */
   private enableShellGradientRingIfNeeded() {
+    if (!this.hasRing) return;
+
     if (!this.gradientBackground && isShellGradientActive(this.el)) {
       this.gradientBackground = true;
     }
@@ -162,7 +176,8 @@ export class Badge {
           badge: true,
           'badge--counter': !isDot,
           'badge--dot': isDot,
-          'badge--on-gradient-background': this.gradientBackground,
+          'badge--no-ring': !this.hasRing,
+          'badge--on-gradient-background': this.hasRing && this.gradientBackground,
         }}
         style={this.ringHostStyle(ring)}
       >
