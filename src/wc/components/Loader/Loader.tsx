@@ -13,7 +13,7 @@ export class Loader {
   /** Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px. */
   @Prop() size: LoaderSize = 'md';
   /** Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. */
-  @Prop() color: LoaderColor | undefined;
+  @Prop() color: LoaderColor = 'inherit';
   /**
    * Accessible label for standalone usage. Wraps the spinner in a live region
    * and renders the label visually-hidden. Omit when the host element already

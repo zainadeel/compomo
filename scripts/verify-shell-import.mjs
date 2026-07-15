@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Smoke-test: install the packed tarball in a temp project and import @ds-mo/ui/nav.
+ * Smoke-test: install the packed tarball in a temp project and import @ds-mo/ui/shell.
  */
 import { execSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
@@ -32,7 +32,7 @@ try {
     join(smokeDir, 'package.json'),
     JSON.stringify(
       {
-        name: 'ds-mo-nav-smoke',
+        name: 'ds-mo-shell-smoke',
         private: true,
         type: 'module',
         dependencies: {
@@ -47,8 +47,8 @@ try {
   execSync('npm install --no-audit --no-fund', { cwd: smokeDir, stdio: 'inherit' });
   const listing = execSync(`tar -tzf "${tarballPath}"`, { encoding: 'utf8' });
   for (const suffix of [
-    'package/dist/lib/nav/index.js',
-    'package/dist/lib/nav/index.d.ts',
+    'package/dist/lib/shell/index.js',
+    'package/dist/lib/shell/index.d.ts',
     'package/dist/lib/utils/index.js',
     'package/dist/lib/utils/index.d.ts',
   ]) {
@@ -62,18 +62,18 @@ try {
   // @stencil/core types). See compomo#257.
   execSync(
     `node --input-type=module -e "
-      const nav = await import('@ds-mo/ui/nav');
+      const shell = await import('@ds-mo/ui/shell');
       for (const name of ['runShellNavStyleRevealOnReady', 'normalizeShellGradientPreset']) {
-        if (typeof nav[name] !== 'function') {
+        if (typeof shell[name] !== 'function') {
           console.error('missing ' + name);
           process.exit(1);
         }
       }
-      if (nav.DEFAULT_SHELL_GRADIENT_PRESET !== 'neutral') {
+      if (shell.DEFAULT_SHELL_GRADIENT_PRESET !== 'neutral') {
         console.error('unexpected DEFAULT_SHELL_GRADIENT_PRESET');
         process.exit(1);
       }
-      if (!nav.PANEL_NAV_USER_MENU_PLACEMENT || nav.PANEL_NAV_USER_MENU_PLACEMENT.side !== 'right') {
+      if (!shell.PANEL_NAV_USER_MENU_PLACEMENT || shell.PANEL_NAV_USER_MENU_PLACEMENT.side !== 'right') {
         console.error('missing or unexpected PANEL_NAV_USER_MENU_PLACEMENT');
         process.exit(1);
       }
@@ -88,7 +88,7 @@ try {
     { cwd: smokeDir, stdio: 'inherit' },
   );
 
-  console.log('✅ @ds-mo/ui/nav and @ds-mo/ui/utils import from packed tarball with plain node.');
+  console.log('✅ @ds-mo/ui/shell and @ds-mo/ui/utils import from packed tarball with plain node.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

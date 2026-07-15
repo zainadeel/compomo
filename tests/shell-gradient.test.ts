@@ -7,7 +7,7 @@ import {
   shellChromeSurfacePosition,
   shellGradientSize,
   readShellViewportDimensions,
-} from '../src/wc/nav/shell-gradient';
+} from '../src/wc/shell/shell-gradient';
 
 describe('buildShellRadialGradient', () => {
   it('uses unified three-stop radial at top-left for neutral by default', () => {

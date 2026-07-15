@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsIcon } from '@ds-mo/ui/components/ds-ico
 
 @ProxyCmp({
   defineCustomElementFn: defineDsIcon,
-  inputs: ['color', 'flag', 'label', 'name', 'size']
+  inputs: ['color', 'label', 'name', 'size']
 })
 @Component({
   selector: 'ds-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['color', 'flag', 'label', 'name', 'size'],
+  inputs: ['color', 'label', 'name', 'size'],
 })
 export class DsIcon {
   protected el: HTMLDsIconElement;

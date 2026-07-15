@@ -28,11 +28,11 @@ export function iconCache(): IconCacheMap {
  *
  * ```ts
  * import { Bell } from '@ds-mo/icons/svg/Bell';
- * import { US } from '@ds-mo/icons/svg/flags/US';
+ * import { FlagUnitedStates } from '@ds-mo/icons/svg/flags/FlagUnitedStates';
  * import { registerIcons } from '@ds-mo/ui/utils';
  *
  * registerIcons({ Bell });
- * registerIcons({ US }, { flag: true });
+ * registerIcons({ FlagUnitedStates });
  * ```
  *
  * Icons that are not registered still work — they lazy-load on first render
@@ -40,8 +40,8 @@ export function iconCache(): IconCacheMap {
  */
 export function registerIcons(icons: Record<string, string>, options?: { flag?: boolean }): void {
   const cache = iconCache();
-  const flag = options?.flag === true;
   for (const [name, svg] of Object.entries(icons)) {
+    const flag = options?.flag ?? name.startsWith('Flag');
     cache.set(iconCacheKey(name, flag), svg);
   }
 }

@@ -2,120 +2,125 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Docs/Typography Usage" />
 
-# Typography Usage Guidelines
+# Typography usage
 
-## 1. Quick Decision Rule
+Use `ds-text` for product copy. A typography variant is an atomic recipe:
+font size, line height, weight, and letter spacing stay together.
 
-Use this rule first:
+## Choose a variant
 
-1. start with `body-medium` for normal product copy,
-2. use `body-small` when the text is supporting or slightly subdued,
-3. use `body-large` when you need a little more hierarchy than normal body copy,
-4. use `title-*` styles for actual titles and section headers,
-5. use `display-*` styles only for rare, oversized emphasis such as large numeric values.
+| Variant | Typical use |
+| --- | --- |
+| `text-body-medium` | Default product copy and standard labels |
+| `text-body-small` | Helper text, metadata, and supporting copy |
+| `text-body-large` | Introductory copy or a modest hierarchy increase |
+| `text-title-small` | Card titles and compact section headings |
+| `text-title-medium` | Section headings and dialog titles |
+| `text-title-large` | Page headings |
+| `text-display-small` | Prominent summary values |
+| `text-display-medium` | Rare hero metrics |
+| `text-caption` | Compact labels and xs-density control text |
 
-**If you are unsure, start with `body-medium`.**
+If no stronger hierarchy is required, start with `text-body-medium`.
 
-## 2. Body Styles
+```html
+<ds-text variant="text-body-medium">
+  Normal product copy
+</ds-text>
+```
 
-### body-medium (default)
+## Semantics and appearance are separate
 
-The default text style for most product copy:
+Use `as` for the correct native element and `variant` for the visual recipe.
+A heading level describes document structure; it does not force a particular
+visual size.
 
-- paragraph text
-- standard labels
-- most explanatory copy
-- the majority of text content in the product
+```html
+<ds-text as="h1" variant="text-title-large">Page title</ds-text>
+<ds-text as="h2" variant="text-title-medium">Section title</ds-text>
+<ds-text as="p" variant="text-body-medium">Paragraph copy</ds-text>
+<ds-text as="label" for="email" variant="text-body-small">Email</ds-text>
+```
 
-### body-small
+Available semantic elements are `p`, `span`, `div`, `label`, and `h1`–`h6`.
 
-For supporting text that should feel slightly more subdued:
+## Emphasis
 
-- helper text
-- secondary metadata
-- supporting subtext below primary copy
+`emphasis` is a boolean modifier, not a separate variant:
 
-### body-large
+```html
+<ds-text variant="text-body-medium" emphasis>
+  Emphasized label
+</ds-text>
+```
 
-For text that should sit above normal body copy without becoming a true title:
+Use emphasis to strengthen text within the same size tier. If the text is
+actually a heading, choose the appropriate title variant instead.
 
-- emphasized labels
-- short introductory lines
-- lightweight card or section headings when a full title style would feel too strong
+Selected controls that use the shared interaction fill must not change text
+weight dynamically. Selection should use the component's foreground and fill
+contract while the base text recipe remains stable.
 
-> **Note:** Text hierarchy and color hierarchy should work together. De-emphasis usually comes from a combination of text role and foreground role rather than from color alone.
+## Color hierarchy
 
-## 3. Emphasis Styles
+Let text inherit the surrounding foreground by default. Use semantic `color`
+values only when the text owns a clear hierarchy or intent:
 
-Emphasis variants add more weight without changing the size tier. They are useful when:
+```html
+<ds-text color="secondary">Supporting copy</ds-text>
+<ds-text color="negative">Validation error</ds-text>
+```
 
-1. emphasizing a term inside a paragraph,
-2. giving one label more emphasis than another at the same body size,
-3. increasing emphasis through weight rather than a size jump.
+Supported named values include `primary`, `secondary`, `tertiary`, `brand`,
+`negative`, `positive`, `warning`, `caution`, `ai`, `on-strong`, `on-bold`,
+and `inherit`. A TokoMo custom property such as
+`var(--color-foreground-secondary)` is also accepted.
 
-> **Important:** Emphasis variants should not replace hierarchy. If text needs to function as a heading, move to a title or display role instead of trying to create hierarchy through emphasis alone.
+Do not use tertiary foreground for essential standard-size text without
+checking contrast in its actual theme and surface context.
 
-## 4. Title Styles
+## Underlines and interaction
 
-Use `title-*` styles for actual titles:
+| Decoration | Meaning |
+| --- | --- |
+| `underline` | Text composed inside a real link |
+| `dotted-underline` | Hidden or supplemental interaction such as a tooltip |
 
-- card titles
-- section headers
-- page section labels
-- other short text that needs to read clearly as a title rather than body copy
+Decoration is visual only; it does not make `ds-text` interactive.
 
-| Style | Typical use |
-|-------|------------|
-| <code>title-small</code> | Card titles, compact section headers |
-| <code>title-medium</code> | Standard section headers, dialog titles |
-| <code>title-large</code> | Page-level headers, prominent section titles |
+- A solid underline belongs inside a real `<a>` or another link component.
+- A dotted underline requires an owning trigger that provides focus, keyboard
+  interaction, and accessible tooltip or disclosure semantics.
+- Do not alternate dotted and solid underlines to imply two competing actions.
 
-If the text is functioning as a title, use a title style rather than forcing hierarchy by increasing body size.
+## Wrapping and truncation
 
-## 5. Underline Styles
+Use `wrap="nowrap"`, `wrap="balance"`, or `wrap="pretty"` when the text owner
+has a clear layout reason. `lineTruncation` supports one through five lines:
 
-Underline treatments communicate interactive meaning:
+```html
+<ds-text variant="text-body-small" line-truncation="2">
+  Long supporting copy
+</ds-text>
+```
 
-| Treatment | Meaning |
-|-----------|---------|
-| **Solid underline** | Text is a hyperlink or tappable link |
-| **Dotted underline** | Text has an associated hover/reveal interaction |
+The host needs a bounded width for truncation to occur. `ds-text` owns the
+measurable text box, so apply width, flex, grid, and truncation classes directly
+to it rather than adding a neutral wrapper.
 
-- If text already uses brand bold foreground color, a solid underline isn't always required — the color can signal link behavior on its own
-- Dotted and solid can work together: dotted at rest, solid on hover (for text that discloses info and also navigates)
+## Numeric content
 
-> These underline treatments should communicate interaction meaning, not be used as decoration.
+Use `font-feature="tabular-nums"` for columns, counters, or changing values
+whose digits need stable widths.
 
-## 6. Display Styles
+## Avoid
 
-Display styles should be used **very sparingly**. They are reserved for:
+- Raw typography utility classes in components when `ds-text` can express the
+  recipe.
+- Overriding a variant's font size, line height, weight, or letter spacing.
+- Using display variants for ordinary headings.
+- Using title variants for paragraph copy.
+- Using underline styles as decoration.
 
-- large scores
-- primary summary metrics
-- rare hero-value moments (e.g., a prominent driver safety score)
-
-> Display styles should not be treated as general-purpose headings. They are intentionally dramatic and reserved for exceptional emphasis.
-
-## 7. Anti-Patterns
-
-Avoid these patterns:
-
-1. defaulting to `body-large` when normal copy should use `body-medium`,
-2. defaulting to emphasis variants instead of using them only where extra emphasis is needed,
-3. using underline treatments as decoration instead of interaction cues,
-4. using title styles for ordinary paragraph text,
-5. using display styles for common headers or labels,
-6. escalating text size too quickly when a smaller hierarchy shift would do the job.
-
-## 8. Practical Summary
-
-| Need | Style |
-|------|-------|
-| Normal product copy | <code>body-medium</code> |
-| Subdued supporting copy | <code>body-small</code> |
-| Slight hierarchy bump | <code>body-large</code> |
-| More emphasis, same size | <code>body-&#42;-emphasis</code> |
-| Link indication | Solid underline |
-| Hover/reveal indication | Dotted underline |
-| Actual titles | <code>title-small</code>, <code>title-medium</code>, <code>title-large</code> |
-| Rare oversized emphasis | <code>display-small</code>, <code>display-medium</code> |
+See **Foundation → Typography** and **Primitives → Text** for the complete
+visual and component references.

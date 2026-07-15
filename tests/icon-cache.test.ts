@@ -9,11 +9,14 @@ describe('icon cache', () => {
 
   it('registerIcons fills the shared cache for synchronous resolution', () => {
     registerIcons({ Bell: '<svg data-test="bell"/>' });
-    registerIcons({ US: '<svg data-test="us-flag"/>' }, { flag: true });
+    registerIcons({ FlagUnitedStates: '<svg data-test="us-flag"/>' });
 
     assert.equal(iconCache().get(iconCacheKey('Bell', false)), '<svg data-test="bell"/>');
-    assert.equal(iconCache().get(iconCacheKey('US', true)), '<svg data-test="us-flag"/>');
-    assert.equal(iconCache().get(iconCacheKey('US', false)), undefined);
+    assert.equal(
+      iconCache().get(iconCacheKey('FlagUnitedStates', true)),
+      '<svg data-test="us-flag"/>',
+    );
+    assert.equal(iconCache().get(iconCacheKey('FlagUnitedStates', false)), undefined);
   });
 
   it('shares one cache across module instances via the global symbol key', () => {

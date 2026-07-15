@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Skeleton e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Skeleton test</h1>
+      <section aria-busy="true" aria-labelledby="loading-label">
+        <h2 id="loading-label">Loading vehicle details</h2>
+        <ds-skeleton id="text" variant="text" text-variant="text-body-medium"></ds-skeleton>
+        <ds-skeleton id="icon" variant="icon" icon-size="md" rounded></ds-skeleton>
+        <ds-skeleton id="control" variant="control" control-size="md" width="160"></ds-skeleton>
+        <ds-skeleton id="static" variant="text" shimmer="false"></ds-skeleton>
+      </section>
+    </main>
+    <script type="module" src="/skeleton-setup.mjs"></script>
+  </body>
+</html>

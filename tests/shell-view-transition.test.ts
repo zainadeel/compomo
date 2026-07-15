@@ -7,7 +7,7 @@ import {
   animateShellNavRadialReveal,
   ensureShellNavVtStyle,
   runShellNavStyleRevealOnReady,
-} from '../src/wc/nav/shell-view-transition';
+} from '../src/wc/shell/shell-view-transition';
 
 describe('SHELL_BAR_NAV_VT_NAME', () => {
   it('matches ds-bar-nav view-transition-name', () => {

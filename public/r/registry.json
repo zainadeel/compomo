@@ -147,15 +147,89 @@
     {
       "name": "badge",
       "title": "Badge",
-      "description": "Compact counter or notification dot for status and unread indicators.",
+      "description": "Non-interactive brand counter or dot that supplements an owning control or label with unread notification information.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/badge",
         "source": "src/wc/components/Badge/Badge.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Non-interactive brand counter or dot that supplements an owning control or label with unread notification information.",
+          "useWhen": [
+            "An existing control, navigation item, or label needs a compact unread notification count.",
+            "An owning element needs a small visual dot indicating that supplemental notification information exists.",
+            "The immediate backing surface can be identified so the badge ring visually separates the mark from its owner."
+          ],
+          "avoidWhen": [
+            "The status must stand alone without an owning label or control.",
+            "The mark needs semantic positive, caution, negative, or neutral color; Badge intentionally uses one brand treatment.",
+            "The compact content is metadata or taxonomy; use Tag or Chip according to whether it is removable.",
+            "The badge itself would receive pointer or keyboard interaction; put interaction on the owning control."
+          ],
+          "alternatives": [
+            {
+              "when": "A compact static label communicates taxonomy or a semantic status.",
+              "component": "component:ds-tag",
+              "reason": "Tag owns static metadata labels and semantic intent coloring."
+            },
+            {
+              "when": "A metadata value must be individually removable.",
+              "component": "component:ds-chip",
+              "reason": "Chip owns dismissible metadata values."
+            },
+            {
+              "when": "The count is primary content rather than supplemental notification chrome.",
+              "component": "component:ds-text",
+              "reason": "Text preserves the quantity as normal readable content."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-unfilled",
+            "component:ds-bar-nav",
+            "component:ds-panel-nav",
+            "component:ds-menu"
+          ],
+          "accessibility": [
+            "The owning control or content provides the primary accessible name; Badge contributes only supplemental unread or notification meaning.",
+            "When a dot is announced, provide contextual text that explains its meaning. Otherwise mark it aria-hidden from the owning composition.",
+            "When a counter is announced, provide contextual text such as “5 unread notifications”; a bare number is insufficient.",
+            "Avoid duplicating information already included in the owning control's accessible name.",
+            "Badge never receives focus and never owns an interaction."
+          ],
+          "states": [
+            "Counter represents an unread or notification count, while dot communicates presence without quantity.",
+            "Non-positive counter values hide the badge.",
+            "Counts above the configured compact limit display the limit with a plus suffix while accessible text retains meaningful context.",
+            "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
+            "The ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
+            "Shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+          ],
+          "responsiveBehavior": [
+            "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",
+            "Badge does not anchor itself or automatically switch between counter and dot variants."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Position Badge from the owning element's layout and synchronize its contextual accessibility text with the owner."
+            ],
+            "react": [
+              "Keep count, visibility, and contextual accessibility text derived from the same unread-notification state as the owning control."
+            ],
+            "angular": [
+              "Keep count, visibility, and contextual accessibility text derived from the same unread-notification state as the owning control."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Badge/Badge.stories.ts"
+            }
+          ]
+        },
         "props": {
           "background": {
             "type": "string | undefined",
@@ -1349,16 +1423,85 @@
     {
       "name": "divider",
       "title": "Divider",
-      "description": "Decorative horizontal or vertical visual separator for non-edge-to-edge separation. Supports surface-aware divider tokens, inset, and custom line length.",
+      "description": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/divider",
         "source": "src/wc/components/Divider/Divider.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
+          "useWhen": [
+            "Related sibling content groups on one surface need stronger visual separation than spacing alone provides.",
+            "A list or panel needs an inset separator that does not define the outer edge of its container.",
+            "Meaningful document or group structure requires an explicit horizontal or vertical separator."
+          ],
+          "avoidWhen": [
+            "Spacing alone communicates the grouping clearly.",
+            "The line defines a container edge, control outline, or selected state; use the owning component's border treatment.",
+            "The divider would compensate for weak headings or unclear information hierarchy.",
+            "A decorative flourish does not clarify grouping."
+          ],
+          "alternatives": [
+            {
+              "when": "Content needs an enclosing surface and outer boundary.",
+              "component": "component:ds-card",
+              "reason": "Card owns container chrome, structure, and edge treatment."
+            },
+            {
+              "when": "A static compact label is being used to name a group.",
+              "component": "component:ds-text",
+              "reason": "Text communicates hierarchy directly instead of relying on a line."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card",
+            "component:ds-menu",
+            "component:ds-panel-sub-nav"
+          ],
+          "accessibility": [
+            "Keep purely visual dividers hidden from assistive technology.",
+            "Expose separator semantics only when the line represents meaningful document or group structure.",
+            "Semantic orientation must match the divider's visual orientation.",
+            "Do not use a semantic divider as a substitute for headings, landmarks, or explicit group labels."
+          ],
+          "states": [
+            "Horizontal and vertical variants separate sibling groups along the parent's layout axis.",
+            "The omitted background context is for primary and secondary surfaces. Explicit faint documents a faint surface while using the same standard divider token.",
+            "Other background contexts select their matching divider token, including navigation where Divider is composed inside app chrome.",
+            "Inset is symmetric along the line axis. Explicit length is reserved for layout-specific separators; otherwise the line fills the available axis."
+          ],
+          "responsiveBehavior": [
+            "The parent layout decides whether to change orientation, visibility, inset, or length at responsive breakpoints.",
+            "Divider does not infer layout direction or hide itself responsively."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set semantic mode only from known document structure; presentation alone should remain hidden from assistive technology."
+            ],
+            "react": [
+              "Derive orientation and visibility from the parent layout rather than viewport logic inside Divider."
+            ],
+            "angular": [
+              "Derive orientation and visibility from the parent layout rather than viewport logic inside Divider."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Divider/Divider.stories.ts"
+            }
+          ]
+        },
         "props": {
+          "background": {
+            "type": "DividerBackground | undefined",
+            "required": false
+          },
           "inset": {
             "type": "DividerInset",
             "required": false
@@ -1373,10 +1516,6 @@
           },
           "semantic": {
             "type": "boolean",
-            "required": false
-          },
-          "surface": {
-            "type": "DividerSurface",
             "required": false
           }
         },
@@ -1477,22 +1616,95 @@
     {
       "name": "icon",
       "title": "Icon",
-      "description": "Icon component from @ds-mo/ui.",
+      "description": "Secure, lazily loaded renderer for canonical IcoMo system and flag glyphs, decorative by default with optional graphic semantics.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/icon",
         "source": "src/wc/components/Icon/Icon.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Secure, lazily loaded renderer for canonical IcoMo system and flag glyphs, decorative by default with optional graphic semantics.",
+          "useWhen": [
+            "An approved IcoMo system glyph supplements visible text or control chrome.",
+            "A canonical flag glyph communicates a country or region with adjacent text or an explicit localized label.",
+            "A standalone non-interactive symbol conveys meaning that is unavailable from nearby text."
+          ],
+          "avoidWhen": [
+            "The glyph itself must be clickable or keyboard interactive; use an appropriate button or link and compose Icon inside it.",
+            "The visual is an illustration, logo, chart, or arbitrary SVG artwork rather than a canonical IcoMo glyph.",
+            "An alias, guessed name, or case-insensitive lookup would be required; runtime lookup uses exact canonical export names.",
+            "A fallback glyph would be required when loading fails; Icon intentionally preserves an empty fixed-size box."
+          ],
+          "alternatives": [
+            {
+              "when": "The icon initiates an action or persistent toggle.",
+              "component": "component:ds-button-unfilled",
+              "reason": "ButtonUnfilled owns interaction, focus, naming, and toggle semantics."
+            },
+            {
+              "when": "The visual communicates indeterminate loading progress.",
+              "component": "component:ds-loader",
+              "reason": "Loader owns progress status and motion behavior."
+            },
+            {
+              "when": "The compact visual is an unread count or notification dot.",
+              "component": "component:ds-badge",
+              "reason": "Badge owns supplemental notification semantics."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-menu",
+            "component:ds-panel-nav"
+          ],
+          "accessibility": [
+            "Icons are decorative by default and remain hidden from assistive technology when visible text or an owning control already communicates the meaning.",
+            "The owning button, link, or composite control provides the accessible name; do not repeat that name on its nested Icon.",
+            "Provide an explicit label only when the non-interactive icon itself communicates otherwise unavailable meaning.",
+            "Informative flags require an explicit localized country or region label; never derive accessible text from the export name.",
+            "Icon never receives focus or owns interaction."
+          ],
+          "states": [
+            "Omitted color inherits currentColor from the owning context. Explicit semantic aliases and CSS-variable references are available when the icon has an independent color role.",
+            "Built-in glyph lookup accepts exact canonical IcoMo export names only. Names beginning with Flag select the flag catalog automatically.",
+            "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
+            "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
+            "Every SVG is validated at the render boundary and injected as parsed DOM nodes so app-registered markup cannot bypass executable-content or external-reference checks."
+          ],
+          "responsiveBehavior": [
+            "The owning component or layout chooses icon size and any responsive changes.",
+            "Icon does not scale from viewport width or change glyphs automatically."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Import each canonical glyph as an SVG string and call registerIcons before first render when synchronous critical-icon paint is required."
+            ],
+            "react": [
+              "Keep nested control icons decorative and place the accessible name on the owning React control."
+            ],
+            "angular": [
+              "Keep nested control icons decorative and place the accessible name on the owning Angular control."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Icon/Icon.stories.ts"
+            },
+            {
+              "label": "Preload API guidance",
+              "path": "src/wc/components/Icon/icon-cache.ts"
+            }
+          ]
+        },
         "props": {
           "color": {
-            "type": "IconColor | undefined",
-            "required": false
-          },
-          "flag": {
-            "type": "boolean",
+            "type": "IconColor",
             "required": false
           },
           "label": {
@@ -1629,18 +1841,84 @@
     {
       "name": "loader",
       "title": "Loader",
-      "description": "Anti-clockwise SVG spinner matching ds-icon size/color tokens.",
+      "description": "Indeterminate progress glyph for ongoing operations, inheriting owner color and optionally exposing standalone polite status text.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/loader",
         "source": "src/wc/components/Loader/Loader.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Indeterminate progress glyph for ongoing operations, inheriting owner color and optionally exposing standalone polite status text.",
+          "useWhen": [
+            "An action or operation is in progress and its remaining duration cannot be quantified.",
+            "A button, field, or bounded workflow needs a compact visual busy indicator owned by that control or region.",
+            "A standalone operation needs a visible spinner with contextual polite status text."
+          ],
+          "avoidWhen": [
+            "Pending content has a predictable structure; use Skeleton to preserve that layout.",
+            "Progress is measurable; use an appropriate determinate progress pattern.",
+            "The UI needs a blocking overlay or automatic centering; the owning layout must provide that structure.",
+            "Success, failure, retry, or completion must be communicated; the owning workflow handles outcomes."
+          ],
+          "alternatives": [
+            {
+              "when": "A content region is waiting for structured data.",
+              "component": "component:ds-skeleton",
+              "reason": "Skeleton preserves the expected content geometry while data loads."
+            },
+            {
+              "when": "A static visual symbol is needed without progress semantics.",
+              "component": "component:ds-icon",
+              "reason": "Icon owns non-progress system and flag glyphs."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-input",
+            "component:ds-select"
+          ],
+          "accessibility": [
+            "When Loader is nested in a busy button, field, or region, keep it unnamed and expose busy state from the owner.",
+            "Standalone Loader requires contextual status text that explains what is loading; do not rely on a generic visual spinner alone.",
+            "Avoid duplicate announcements from both Loader and its owning busy region.",
+            "Reduced motion stops rotation while keeping the glyph and status semantics visible."
+          ],
+          "states": [
+            "Loader communicates indeterminate progress only and does not emit completion or failure events.",
+            "Omitted color inherits currentColor. Explicit semantic aliases and CSS-variable references match Icon when an independent progress color is required.",
+            "The owner decides whether to delay Loader visibility for short operations and removes it when the operation settles.",
+            "The owner reserves space and supplies centering or overlay layout so Loader never causes unexpected layout movement."
+          ],
+          "responsiveBehavior": [
+            "The owning component or layout chooses Loader size, placement, and any responsive changes.",
+            "Loader does not infer container size or viewport breakpoints."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Use the label only for standalone status; nested usage should synchronize aria-busy on the owning element."
+            ],
+            "react": [
+              "Derive Loader visibility and the owner's busy state from the same operation state."
+            ],
+            "angular": [
+              "Derive Loader visibility and the owner's busy state from the same operation state."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Loader/Loader.stories.ts"
+            }
+          ]
+        },
         "props": {
           "color": {
-            "type": "LoaderColor | undefined",
+            "type": "LoaderColor",
             "required": false
           },
           "label": {
@@ -2859,16 +3137,93 @@
     {
       "name": "skeleton",
       "title": "Skeleton",
-      "description": "Atomic loading placeholder with token-aligned text, icon, and control canvases. Supports optional shimmer, circular icons, and rounded controls.",
+      "description": "Aria-hidden atomic placeholder for preserving expected text, icon, or control geometry while structured content is pending.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/skeleton",
         "source": "src/wc/components/Skeleton/Skeleton.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Aria-hidden atomic placeholder for preserving expected text, icon, or control geometry while structured content is pending.",
+          "useWhen": [
+            "A pending content region has a predictable structure whose geometry should remain stable while data loads.",
+            "Text, icon, and control placeholder atoms can be composed to approximate the final hierarchy and arrangement.",
+            "The owning region can expose busy state and contextual loading status independently."
+          ],
+          "avoidWhen": [
+            "An action or operation is progressing without predictable content structure; use Loader.",
+            "The final layout is unknown or likely to differ substantially from the placeholder composition.",
+            "A complete card, list, or table preset is expected from one Skeleton; compose atomic shapes in the owner.",
+            "The shimmer would be used as decoration after content is available."
+          ],
+          "alternatives": [
+            {
+              "when": "An indeterminate action or operation is in progress.",
+              "component": "component:ds-loader",
+              "reason": "Loader owns operation-level indeterminate progress."
+            },
+            {
+              "when": "Real text content is already available.",
+              "component": "component:ds-text",
+              "reason": "Text should replace its placeholder as soon as content is ready."
+            },
+            {
+              "when": "A real system glyph is available.",
+              "component": "component:ds-icon",
+              "reason": "Icon renders actual glyph content rather than loading geometry."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card",
+            "component:ds-table",
+            "component:ds-text",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "Skeleton remains hidden from assistive technology because its shapes do not represent content.",
+            "The owning content region exposes busy state and a contextual loading status when an announcement is needed.",
+            "Do not announce every placeholder atom or duplicate status text across a composed skeleton layout.",
+            "The owner preserves focus and meaningful reading order when replacing placeholders with real content."
+          ],
+          "states": [
+            "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes.",
+            "Compose approximate line count, hierarchy, widths, and control placement without simulating actual values.",
+            "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
+            "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",
+            "Omitted background is for primary and secondary surfaces. Explicit faint documents a faint parent while using the same standard base and shimmer tokens; other contexts use matching surface tokens.",
+            "The owner decides whether to delay initial visibility and when to replace the complete composition."
+          ],
+          "responsiveBehavior": [
+            "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
+            "Skeleton does not infer breakpoints or rearrange sibling atoms."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Compose one element per placeholder atom and set aria-busy or loading status on the containing content region."
+            ],
+            "react": [
+              "Render Skeleton and real content from one loading branch so placeholder geometry and region busy state settle together."
+            ],
+            "angular": [
+              "Render Skeleton and real content from one loading branch so placeholder geometry and region busy state settle together."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Skeleton/Skeleton.stories.ts"
+            }
+          ]
+        },
         "props": {
+          "background": {
+            "type": "SkeletonBackground | undefined",
+            "required": false
+          },
           "controlSize": {
             "type": "ControlSize",
             "required": false
@@ -2883,10 +3238,6 @@
           },
           "shimmer": {
             "type": "boolean",
-            "required": false
-          },
-          "surface": {
-            "type": "SkeletonSurface",
             "required": false
           },
           "textVariant": {
@@ -3377,22 +3728,120 @@
     {
       "name": "tag",
       "title": "Tag",
-      "description": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
+      "description": "Compact metadata or semantic-status label on primary surfaces, optionally rendered as a controlled menu trigger with leading and fixed suffix icons.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/tag",
         "source": "src/wc/components/Tag/Tag.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Compact metadata or semantic-status label on primary surfaces, optionally rendered as a controlled menu trigger with leading and fixed suffix icons.",
+          "useWhen": [
+            "A value needs a compact static metadata or category label.",
+            "A status needs persistent semantic color and visible text without interaction.",
+            "Product affiliation or AI-generated content needs an explicit labelled marker.",
+            "A compact metadata value opens a related menu and needs a native button with controlled popup state."
+          ],
+          "avoidWhen": [
+            "The value must be individually removable; use Chip.",
+            "The element triggers an action other than opening a related menu; use the appropriate button or link.",
+            "The element represents persistent selection or a toggle; use a control whose active state owns that meaning.",
+            "A count or notification dot supplements another control; use Badge.",
+            "The tag would be placed on a non-primary parent surface."
+          ],
+          "alternatives": [
+            {
+              "when": "A metadata value is individually removable.",
+              "component": "component:ds-chip",
+              "reason": "Chip owns dismiss interaction and parent-managed removal."
+            },
+            {
+              "when": "A compact mark communicates unread count or notification presence.",
+              "component": "component:ds-badge",
+              "reason": "Badge owns supplemental notification indicators."
+            },
+            {
+              "when": "The compact element triggers a non-menu action or toggle.",
+              "component": "component:ds-button-unfilled",
+              "reason": "ButtonUnfilled owns general actions, focus, and active state."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card",
+            "component:ds-table",
+            "component:ds-text",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The visible label provides Tag's accessible name; a separate aria-label is normally unnecessary.",
+            "Leading icons reinforce the visible label and remain decorative. The fixed ChevronUpDown suffix is always decorative.",
+            "Static Tag stays outside the tab order. Interactive Tag renders a native button with menu popup semantics.",
+            "The owner controls expanded state, associates the menu with aria-controls when available, and moves focus according to the Menu contract.",
+            "Do not communicate semantic intent by color alone; the label must remain understandable without color."
+          ],
+          "states": [
+            "Intent describes the represented value's semantic meaning, never selection or interaction state.",
+            "Neutral is ordinary metadata; brand marks Motive or product affiliation; AI marks AI-generated or AI-assisted content; positive, caution, warning, and negative communicate increasingly specific status meaning.",
+            "Warning signals higher urgency or risk than caution, which asks for attention before a possible issue.",
+            "Contrast changes visual prominence without changing semantic intent or parent surface context.",
+            "Rounded is an optional visual style with no semantic difference.",
+            "Labels stay on one line and truncate only when the owner supplies a maximum width.",
+            "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
+            "isInactive disables only the interactive button and applies the shared inactive treatment."
+          ],
+          "responsiveBehavior": [
+            "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation.",
+            "Tag does not change size or behavior automatically at breakpoints."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsClick to open the associated menu, then update expanded as controlled state. Use the Tag host ID as the menu anchor when required."
+            ],
+            "react": [
+              "Use a stable key and parent-owned layout for Tag collections. For interactive Tag, synchronize expanded and the associated menu from the same state."
+            ],
+            "angular": [
+              "Use parent-owned layout for Tag collections. For interactive Tag, synchronize expanded and the associated menu from the same state."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Tag/Tag.stories.ts"
+            }
+          ]
+        },
         "props": {
+          "ariaControls": {
+            "type": "string | undefined",
+            "required": false
+          },
           "contrast": {
             "type": "TagContrast",
             "required": false
           },
+          "expanded": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
           "intent": {
             "type": "TagIntent",
+            "required": false
+          },
+          "interactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
             "required": false
           },
           "label": {
@@ -3412,7 +3861,12 @@
             "required": false
           }
         },
-        "events": [],
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
         "slots": [],
         "exports": {
           "customElement": "ds-tag",
@@ -3422,24 +3876,103 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "icon",
         "text"
       ]
     },
     {
       "name": "text",
       "title": "Text",
-      "description": "Typography primitive supporting all design-system text variants, colors, truncation, wrapping, and optional loading shimmer.",
+      "description": "Semantic plain UI text with atomic tokenized typography recipes, measurable line boxes, and composition-owned wrapping and truncation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/text",
         "source": "src/wc/components/Text/Text.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Semantic plain UI text with atomic tokenized typography recipes, measurable line boxes, and composition-owned wrapping and truncation.",
+          "useWhen": [
+            "Plain UI text needs a complete design-system typography recipe.",
+            "Headings, paragraphs, labels, or inline phrasing need native HTML semantics independent from their visual scale.",
+            "A component needs a stable measurable text box aligned to shared typography metrics.",
+            "Changing numeric values need tabular glyph widths."
+          ],
+          "avoidWhen": [
+            "Content is markdown, rich prose, or an arbitrary nested document structure.",
+            "The element is interactive; use the correct native or design-system control and compose Text only for its label.",
+            "Individual font metrics must be overridden instead of selecting an existing complete variant.",
+            "Typography alone would be used to repair an incorrect heading hierarchy."
+          ],
+          "alternatives": [
+            {
+              "when": "Predictable text geometry is pending while content loads.",
+              "component": "component:ds-skeleton",
+              "reason": "Skeleton owns aria-hidden loading geometry aligned to Text line metrics."
+            },
+            {
+              "when": "Compact static metadata or semantic status needs a contained treatment.",
+              "component": "component:ds-tag",
+              "reason": "Tag owns compact labelled metadata and intent surfaces."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-icon",
+            "component:ds-card",
+            "component:ds-field",
+            "component:ds-button-filled"
+          ],
+          "accessibility": [
+            "Choose the native element from document meaning and hierarchy; choose the visual variant independently.",
+            "Composition authors preserve logical h1–h6 order regardless of visual size.",
+            "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
+            "Use label semantics and its for association only for a real form control.",
+            "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
+            "Use solid underline only when Text is composed inside a real link.",
+            "Use dotted underline to signal hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
+          ],
+          "states": [
+            "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
+            "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
+            "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
+            "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
+            "Solid underline communicates a real link; dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
+            "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",
+            "Shimmer is reserved for visible generating/loading status text whose owner provides status semantics; reduced motion keeps static readable text."
+          ],
+          "responsiveBehavior": [
+            "The composition owns width, wrapping, truncation, alignment, and any responsive variant change.",
+            "Text preserves complete token recipes and does not scale fluidly or infer breakpoints."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set as explicitly for inline text, headings, and labels; omitted as renders a paragraph."
+            ],
+            "react": [
+              "Keep semantic as choices aligned with the rendered document hierarchy rather than component styling."
+            ],
+            "angular": [
+              "Use the for prop only when Text renders a label associated with a real control ID."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Text/Text.stories.ts"
+            },
+            {
+              "label": "Typography contract",
+              "path": "AGENTS.md"
+            }
+          ]
+        },
         "props": {
           "align": {
             "type": "TextAlign | undefined",
@@ -3450,7 +3983,7 @@
             "required": false
           },
           "color": {
-            "type": "TextColor | undefined",
+            "type": "TextColor",
             "required": false
           },
           "decoration": {

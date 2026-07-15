@@ -4,16 +4,16 @@ import type { TextVariant } from '../Text/text-types';
 import type { ControlSize } from '../../utils/control-text';
 
 export type SkeletonVariant = 'text' | 'icon' | 'control';
-export type SkeletonSurface =
-  | 'default'
-  | 'on-bold-background'
-  | 'on-strong-background'
-  | 'on-medium-background'
-  | 'on-translucent-background'
-  | 'navigation'
+export type SkeletonBackground =
+  | 'faint'
+  | 'medium'
+  | 'bold'
+  | 'strong'
+  | 'translucent'
+  | 'inverted'
   | 'media'
-  | 'always-dark'
-  | 'inverted';
+  | 'navigation'
+  | 'always-dark';
 
 @Component({
   tag: 'ds-skeleton',
@@ -34,8 +34,8 @@ export class Skeleton {
   @Prop() rounded: boolean = false;
   /** Whether to show the shimmer animation. */
   @Prop() shimmer: boolean = true;
-  /** Surface context used to select the matching foreground base and shimmer tokens. */
-  @Prop() surface: SkeletonSurface = 'default';
+  /** Actual parent surface context. Omit on primary and secondary surfaces. */
+  @Prop() background: SkeletonBackground | undefined;
 
   private get widthCss() {
     const v = this.width;
@@ -53,7 +53,7 @@ export class Skeleton {
           [`skeleton--text-${this.textVariant}`]: this.variant === 'text',
           [`skeleton--icon-${this.iconSize}`]: this.variant === 'icon',
           [`ds-control--${this.controlSize}`]: this.variant === 'control',
-          [`skeleton--surface-${this.surface}`]: true,
+          [`skeleton--background-${this.background}`]: !!this.background,
           'skeleton--rounded': this.variant !== 'text' && this.rounded,
         }}
         style={this.variant === 'icon' ? undefined : { width: this.widthCss }}

@@ -5,7 +5,7 @@ import {
   DEFAULT_SHELL_GRADIENT_PRESET,
   type ShellGradientPreset,
 } from './shell-gradient-swatch-types';
-import { shellGradientPresetOpacity } from '../../nav/shell-gradient-presets';
+import { shellGradientPresetOpacity } from '../../shell/shell-gradient-presets';
 
 @Component({
   tag: 'ds-shell-gradient-swatch',

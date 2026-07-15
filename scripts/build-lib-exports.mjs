@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Compile the /nav and /utils subpath exports to dist/lib (bundled ESM + d.ts).
+ * Compile the /shell and /utils subpath exports to dist/lib (bundled ESM + d.ts).
  *
  * These subpaths used to ship raw TypeScript source, which made consumer
  * type-checking depend on OUR devDependencies (@stencil/core types) and broke
@@ -17,7 +17,7 @@ import { execSync } from 'node:child_process';
 import { build } from 'esbuild';
 
 await build({
-  entryPoints: ['src/wc/nav/index.ts', 'src/wc/utils/index.ts'],
+  entryPoints: ['src/wc/shell/index.ts', 'src/wc/utils/index.ts'],
   outdir: 'dist/lib',
   outbase: 'src/wc',
   bundle: true,
@@ -30,4 +30,4 @@ await build({
 
 execSync('npx tsc -p tsconfig.lib.json', { stdio: 'inherit' });
 
-console.log('  Built dist/lib exports (nav, utils): bundled ESM + declarations');
+console.log('  Built dist/lib exports (shell, utils): bundled ESM + declarations');

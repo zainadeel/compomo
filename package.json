@@ -49,9 +49,9 @@
       "types": "./dist/types/components.d.ts",
       "import": "./dist/components/index.js"
     },
-    "./nav": {
-      "types": "./dist/lib/nav/index.d.ts",
-      "import": "./dist/lib/nav/index.js"
+    "./shell": {
+      "types": "./dist/lib/shell/index.d.ts",
+      "import": "./dist/lib/shell/index.js"
     },
     "./utils": {
       "types": "./dist/lib/utils/index.d.ts",

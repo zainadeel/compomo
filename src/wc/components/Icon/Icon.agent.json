@@ -1,0 +1,84 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-icon",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-icon",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Secure, lazily loaded renderer for canonical IcoMo system and flag glyphs, decorative by default with optional graphic semantics.",
+  "useWhen": [
+    "An approved IcoMo system glyph supplements visible text or control chrome.",
+    "A canonical flag glyph communicates a country or region with adjacent text or an explicit localized label.",
+    "A standalone non-interactive symbol conveys meaning that is unavailable from nearby text."
+  ],
+  "avoidWhen": [
+    "The glyph itself must be clickable or keyboard interactive; use an appropriate button or link and compose Icon inside it.",
+    "The visual is an illustration, logo, chart, or arbitrary SVG artwork rather than a canonical IcoMo glyph.",
+    "An alias, guessed name, or case-insensitive lookup would be required; runtime lookup uses exact canonical export names.",
+    "A fallback glyph would be required when loading fails; Icon intentionally preserves an empty fixed-size box."
+  ],
+  "alternatives": [
+    {
+      "when": "The icon initiates an action or persistent toggle.",
+      "component": "component:ds-button-unfilled",
+      "reason": "ButtonUnfilled owns interaction, focus, naming, and toggle semantics."
+    },
+    {
+      "when": "The visual communicates indeterminate loading progress.",
+      "component": "component:ds-loader",
+      "reason": "Loader owns progress status and motion behavior."
+    },
+    {
+      "when": "The compact visual is an unread count or notification dot.",
+      "component": "component:ds-badge",
+      "reason": "Badge owns supplemental notification semantics."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-filled",
+    "component:ds-button-unfilled",
+    "component:ds-menu",
+    "component:ds-panel-nav"
+  ],
+  "accessibility": [
+    "Icons are decorative by default and remain hidden from assistive technology when visible text or an owning control already communicates the meaning.",
+    "The owning button, link, or composite control provides the accessible name; do not repeat that name on its nested Icon.",
+    "Provide an explicit label only when the non-interactive icon itself communicates otherwise unavailable meaning.",
+    "Informative flags require an explicit localized country or region label; never derive accessible text from the export name.",
+    "Icon never receives focus or owns interaction."
+  ],
+  "states": [
+    "Omitted color inherits currentColor from the owning context. Explicit semantic aliases and CSS-variable references are available when the icon has an independent color role.",
+    "Built-in glyph lookup accepts exact canonical IcoMo export names only. Names beginning with Flag select the flag catalog automatically.",
+    "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
+    "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
+    "Every SVG is validated at the render boundary and injected as parsed DOM nodes so app-registered markup cannot bypass executable-content or external-reference checks."
+  ],
+  "responsiveBehavior": [
+    "The owning component or layout chooses icon size and any responsive changes.",
+    "Icon does not scale from viewport width or change glyphs automatically."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Import each canonical glyph as an SVG string and call registerIcons before first render when synchronous critical-icon paint is required."
+    ],
+    "react": [
+      "Keep nested control icons decorative and place the accessible name on the owning React control."
+    ],
+    "angular": [
+      "Keep nested control icons decorative and place the accessible name on the owning Angular control."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Icon/Icon.stories.ts"
+    },
+    {
+      "label": "Preload API guidance",
+      "path": "src/wc/components/Icon/icon-cache.ts"
+    }
+  ]
+}

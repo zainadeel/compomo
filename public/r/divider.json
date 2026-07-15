@@ -2,17 +2,90 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "divider",
   "title": "Divider",
-  "description": "Decorative horizontal or vertical visual separator for non-edge-to-edge separation. Supports surface-aware divider tokens, inset, and custom line length.",
+  "description": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/divider",
     "source": "src/wc/components/Divider/Divider.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
+      "useWhen": [
+        "Related sibling content groups on one surface need stronger visual separation than spacing alone provides.",
+        "A list or panel needs an inset separator that does not define the outer edge of its container.",
+        "Meaningful document or group structure requires an explicit horizontal or vertical separator."
+      ],
+      "avoidWhen": [
+        "Spacing alone communicates the grouping clearly.",
+        "The line defines a container edge, control outline, or selected state; use the owning component's border treatment.",
+        "The divider would compensate for weak headings or unclear information hierarchy.",
+        "A decorative flourish does not clarify grouping."
+      ],
+      "alternatives": [
+        {
+          "when": "Content needs an enclosing surface and outer boundary.",
+          "component": "component:ds-card",
+          "reason": "Card owns container chrome, structure, and edge treatment."
+        },
+        {
+          "when": "A static compact label is being used to name a group.",
+          "component": "component:ds-text",
+          "reason": "Text communicates hierarchy directly instead of relying on a line."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card",
+        "component:ds-menu",
+        "component:ds-panel-sub-nav"
+      ],
+      "accessibility": [
+        "Keep purely visual dividers hidden from assistive technology.",
+        "Expose separator semantics only when the line represents meaningful document or group structure.",
+        "Semantic orientation must match the divider's visual orientation.",
+        "Do not use a semantic divider as a substitute for headings, landmarks, or explicit group labels."
+      ],
+      "states": [
+        "Horizontal and vertical variants separate sibling groups along the parent's layout axis.",
+        "The omitted background context is for primary and secondary surfaces. Explicit faint documents a faint surface while using the same standard divider token.",
+        "Other background contexts select their matching divider token, including navigation where Divider is composed inside app chrome.",
+        "Inset is symmetric along the line axis. Explicit length is reserved for layout-specific separators; otherwise the line fills the available axis."
+      ],
+      "responsiveBehavior": [
+        "The parent layout decides whether to change orientation, visibility, inset, or length at responsive breakpoints.",
+        "Divider does not infer layout direction or hide itself responsively."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Set semantic mode only from known document structure; presentation alone should remain hidden from assistive technology."
+        ],
+        "react": [
+          "Derive orientation and visibility from the parent layout rather than viewport logic inside Divider."
+        ],
+        "angular": [
+          "Derive orientation and visibility from the parent layout rather than viewport logic inside Divider."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Divider/Divider.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
+        "background": {
+          "type": "DividerBackground | undefined",
+          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"navigation\" | \"strong\" | \"translucent\" | undefined",
+          "attribute": "background",
+          "required": false,
+          "mutable": false,
+          "description": "Actual parent surface context. Omit on primary and secondary surfaces."
+        },
         "inset": {
           "type": "DividerInset",
           "resolvedType": "\"none\" | \"space-000\" | \"space-012\" | \"space-025\" | \"space-050\" | \"space-075\" | \"space-100\" | \"space-125\" | \"space-150\" | \"space-175\" | \"space-200\" | \"space-250\" | \"space-300\" | \"space-400\" | \"space-600\" | \"space-800\" | string & {}",
@@ -48,15 +121,6 @@
           "required": false,
           "mutable": false,
           "description": "Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default."
-        },
-        "surface": {
-          "type": "DividerSurface",
-          "resolvedType": "\"always-dark\" | \"default\" | \"inverted\" | \"media\" | \"navigation\" | \"on-bold-background\" | \"on-medium-background\" | \"on-strong-background\" | \"on-translucent-background\"",
-          "attribute": "surface",
-          "default": "'default'",
-          "required": false,
-          "mutable": false,
-          "description": "Surface context so the divider uses the right TokoMo divider token."
         }
       },
       "events": [],
@@ -64,6 +128,14 @@
       "slots": []
     },
     "props": {
+      "background": {
+        "type": "DividerBackground | undefined",
+        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"navigation\" | \"strong\" | \"translucent\" | undefined",
+        "attribute": "background",
+        "required": false,
+        "mutable": false,
+        "description": "Actual parent surface context. Omit on primary and secondary surfaces."
+      },
       "inset": {
         "type": "DividerInset",
         "resolvedType": "\"none\" | \"space-000\" | \"space-012\" | \"space-025\" | \"space-050\" | \"space-075\" | \"space-100\" | \"space-125\" | \"space-150\" | \"space-175\" | \"space-200\" | \"space-250\" | \"space-300\" | \"space-400\" | \"space-600\" | \"space-800\" | string & {}",
@@ -99,15 +171,6 @@
         "required": false,
         "mutable": false,
         "description": "Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default."
-      },
-      "surface": {
-        "type": "DividerSurface",
-        "resolvedType": "\"always-dark\" | \"default\" | \"inverted\" | \"media\" | \"navigation\" | \"on-bold-background\" | \"on-medium-background\" | \"on-strong-background\" | \"on-translucent-background\"",
-        "attribute": "surface",
-        "default": "'default'",
-        "required": false,
-        "mutable": false,
-        "description": "Surface context so the divider uses the right TokoMo divider token."
       }
     },
     "events": [],
@@ -150,12 +213,12 @@
   "files": [
     {
       "path": "src/wc/components/Divider/Divider.css",
-      "content": ":host {\n  --_divider-color: var(--color-divider-divider);\n  --_divider-inset: 0;\n  --_divider-length: 100%;\n\n  display: block;\n  flex-shrink: 0;\n  width: var(--_divider-length);\n  height: var(--dimension-stroke-width-012);\n  margin: 0 var(--_divider-inset);\n  border: none;\n  background-color: var(--_divider-color);\n}\n\n:host(.divider--vertical) {\n  width: var(--dimension-stroke-width-012);\n  height: var(--_divider-length);\n  min-height: var(--dimension-stroke-width-012);\n  margin: var(--_divider-inset) 0;\n  align-self: stretch;\n}\n\n:host(.divider--vertical.divider--custom-length) {\n  align-self: center;\n}\n\n:host([surface='on-bold-background']),\n:host(.divider--surface-on-bold-background) {\n  --_divider-color: var(--color-divider-divider-on-bold-background);\n}\n\n:host([surface='on-strong-background']),\n:host(.divider--surface-on-strong-background) {\n  --_divider-color: var(--color-divider-divider-on-strong-background);\n}\n\n:host([surface='on-medium-background']),\n:host(.divider--surface-on-medium-background) {\n  --_divider-color: var(--color-divider-divider-on-medium-background);\n}\n\n:host([surface='on-translucent-background']),\n:host(.divider--surface-on-translucent-background) {\n  --_divider-color: var(--color-translucent-divider);\n}\n\n:host([surface='navigation']),\n:host(.divider--surface-navigation) {\n  --_divider-color: var(--color-navigation-divider);\n}\n\n:host([surface='media']),\n:host(.divider--surface-media) {\n  --_divider-color: var(--color-media-divider);\n}\n\n:host([surface='always-dark']),\n:host(.divider--surface-always-dark) {\n  --_divider-color: var(--color-always-dark-divider);\n}\n\n:host([surface='inverted']),\n:host(.divider--surface-inverted) {\n  --_divider-color: var(--color-inverted-divider);\n}\n",
+      "content": ":host {\n  --_divider-color: var(--color-divider-divider);\n  --_divider-inset: 0;\n  --_divider-length: 100%;\n\n  display: block;\n  flex-shrink: 0;\n  width: var(--_divider-length);\n  height: var(--dimension-stroke-width-012);\n  margin: 0 var(--_divider-inset);\n  border: none;\n  background-color: var(--_divider-color);\n}\n\n:host(.divider--vertical) {\n  width: var(--dimension-stroke-width-012);\n  height: var(--_divider-length);\n  min-height: var(--dimension-stroke-width-012);\n  margin: var(--_divider-inset) 0;\n  align-self: stretch;\n}\n\n:host(.divider--vertical.divider--custom-length) {\n  align-self: center;\n}\n\n:host([background='bold']),\n:host(.divider--background-bold) {\n  --_divider-color: var(--color-divider-divider-on-bold-background);\n}\n\n:host([background='strong']),\n:host(.divider--background-strong) {\n  --_divider-color: var(--color-divider-divider-on-strong-background);\n}\n\n:host([background='medium']),\n:host(.divider--background-medium) {\n  --_divider-color: var(--color-divider-divider-on-medium-background);\n}\n\n:host([background='translucent']),\n:host(.divider--background-translucent) {\n  --_divider-color: var(--color-translucent-divider);\n}\n\n:host([background='navigation']),\n:host(.divider--background-navigation) {\n  --_divider-color: var(--color-navigation-divider);\n}\n\n:host([background='media']),\n:host(.divider--background-media) {\n  --_divider-color: var(--color-media-divider);\n}\n\n:host([background='always-dark']),\n:host(.divider--background-always-dark) {\n  --_divider-color: var(--color-always-dark-divider);\n}\n\n:host([background='inverted']),\n:host(.divider--background-inverted) {\n  --_divider-color: var(--color-inverted-divider);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Divider/Divider.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type DividerOrientation = 'horizontal' | 'vertical';\nexport type DividerSurface =\n  | 'default'\n  | 'on-bold-background'\n  | 'on-strong-background'\n  | 'on-medium-background'\n  | 'on-translucent-background'\n  | 'navigation'\n  | 'media'\n  | 'always-dark'\n  | 'inverted';\nexport type DividerInsetToken =\n  | 'space-000'\n  | 'space-012'\n  | 'space-025'\n  | 'space-050'\n  | 'space-075'\n  | 'space-100'\n  | 'space-125'\n  | 'space-150'\n  | 'space-175'\n  | 'space-200'\n  | 'space-250'\n  | 'space-300'\n  | 'space-400'\n  | 'space-600'\n  | 'space-800';\nexport type DividerInset = 'none' | DividerInsetToken | (string & {});\nexport type DividerLength = 'auto' | 'full' | (string & {});\n\nconst INSET_VALUE: Record<'none' | DividerInsetToken, string> = {\n  none: '0',\n  'space-000': 'var(--dimension-space-000)',\n  'space-012': 'var(--dimension-space-012)',\n  'space-025': 'var(--dimension-space-025)',\n  'space-050': 'var(--dimension-space-050)',\n  'space-075': 'var(--dimension-space-075)',\n  'space-100': 'var(--dimension-space-100)',\n  'space-125': 'var(--dimension-space-125)',\n  'space-150': 'var(--dimension-space-150)',\n  'space-175': 'var(--dimension-space-175)',\n  'space-200': 'var(--dimension-space-200)',\n  'space-250': 'var(--dimension-space-250)',\n  'space-300': 'var(--dimension-space-300)',\n  'space-400': 'var(--dimension-space-400)',\n  'space-600': 'var(--dimension-space-600)',\n  'space-800': 'var(--dimension-space-800)',\n};\n\n@Component({\n  tag: 'ds-divider',\n  styleUrl: 'Divider.css',\n  scoped: true,\n})\nexport class Divider {\n  /** Direction of the divider line. Defaults to 'horizontal'. */\n  @Prop() orientation: DividerOrientation = 'horizontal';\n\n  /** Surface context so the divider uses the right TokoMo divider token. */\n  @Prop() surface: DividerSurface = 'default';\n\n  /** Insets the divider from its start/end edges. Accepts spacing token names or any CSS length. */\n  @Prop() inset: DividerInset = 'none';\n\n  /** Visual line length. Defaults to filling the available axis. Accepts any CSS length. */\n  @Prop() length: DividerLength = 'auto';\n\n  /** Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default. */\n  @Prop() semantic: boolean = false;\n\n  private resolveInset(): string {\n    return Object.prototype.hasOwnProperty.call(INSET_VALUE, this.inset)\n      ? INSET_VALUE[this.inset as keyof typeof INSET_VALUE]\n      : this.inset;\n  }\n\n  private resolveLength(): string {\n    return this.length === 'auto' || this.length === 'full'\n      ? '100%'\n      : this.length;\n  }\n\n  render() {\n    const isVertical = this.orientation === 'vertical';\n    const hasCustomLength = this.length !== 'auto' && this.length !== 'full';\n\n    return (\n      <Host\n        role={this.semantic ? 'separator' : undefined}\n        aria-orientation={this.semantic ? this.orientation : undefined}\n        aria-hidden={this.semantic ? undefined : 'true'}\n        class={{\n          divider: true,\n          'divider--vertical': isVertical,\n          'divider--custom-length': hasCustomLength,\n          [`divider--surface-${this.surface}`]: true,\n        }}\n        style={{\n          '--_divider-inset': this.resolveInset(),\n          '--_divider-length': this.resolveLength(),\n        }}\n      />\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\n\nexport type DividerOrientation = 'horizontal' | 'vertical';\nexport type DividerBackground =\n  | 'faint'\n  | 'medium'\n  | 'bold'\n  | 'strong'\n  | 'translucent'\n  | 'inverted'\n  | 'media'\n  | 'navigation'\n  | 'always-dark';\nexport type DividerInsetToken =\n  | 'space-000'\n  | 'space-012'\n  | 'space-025'\n  | 'space-050'\n  | 'space-075'\n  | 'space-100'\n  | 'space-125'\n  | 'space-150'\n  | 'space-175'\n  | 'space-200'\n  | 'space-250'\n  | 'space-300'\n  | 'space-400'\n  | 'space-600'\n  | 'space-800';\nexport type DividerInset = 'none' | DividerInsetToken | (string & {});\nexport type DividerLength = 'auto' | 'full' | (string & {});\n\nconst INSET_VALUE: Record<'none' | DividerInsetToken, string> = {\n  none: '0',\n  'space-000': 'var(--dimension-space-000)',\n  'space-012': 'var(--dimension-space-012)',\n  'space-025': 'var(--dimension-space-025)',\n  'space-050': 'var(--dimension-space-050)',\n  'space-075': 'var(--dimension-space-075)',\n  'space-100': 'var(--dimension-space-100)',\n  'space-125': 'var(--dimension-space-125)',\n  'space-150': 'var(--dimension-space-150)',\n  'space-175': 'var(--dimension-space-175)',\n  'space-200': 'var(--dimension-space-200)',\n  'space-250': 'var(--dimension-space-250)',\n  'space-300': 'var(--dimension-space-300)',\n  'space-400': 'var(--dimension-space-400)',\n  'space-600': 'var(--dimension-space-600)',\n  'space-800': 'var(--dimension-space-800)',\n};\n\n@Component({\n  tag: 'ds-divider',\n  styleUrl: 'Divider.css',\n  scoped: true,\n})\nexport class Divider {\n  /** Direction of the divider line. Defaults to 'horizontal'. */\n  @Prop() orientation: DividerOrientation = 'horizontal';\n\n  /** Actual parent surface context. Omit on primary and secondary surfaces. */\n  @Prop() background: DividerBackground | undefined;\n\n  /** Insets the divider from its start/end edges. Accepts spacing token names or any CSS length. */\n  @Prop() inset: DividerInset = 'none';\n\n  /** Visual line length. Defaults to filling the available axis. Accepts any CSS length. */\n  @Prop() length: DividerLength = 'auto';\n\n  /** Expose the divider as a semantic separator. Visual-only dividers are hidden from assistive tech by default. */\n  @Prop() semantic: boolean = false;\n\n  private resolveInset(): string {\n    return Object.prototype.hasOwnProperty.call(INSET_VALUE, this.inset)\n      ? INSET_VALUE[this.inset as keyof typeof INSET_VALUE]\n      : this.inset;\n  }\n\n  private resolveLength(): string {\n    return this.length === 'auto' || this.length === 'full'\n      ? '100%'\n      : this.length;\n  }\n\n  render() {\n    const isVertical = this.orientation === 'vertical';\n    const hasCustomLength = this.length !== 'auto' && this.length !== 'full';\n\n    return (\n      <Host\n        role={this.semantic ? 'separator' : undefined}\n        aria-orientation={this.semantic ? this.orientation : undefined}\n        aria-hidden={this.semantic ? undefined : 'true'}\n        class={{\n          divider: true,\n          'divider--vertical': isVertical,\n          'divider--custom-length': hasCustomLength,\n          [`divider--background-${this.background}`]: !!this.background,\n        }}\n        style={{\n          '--_divider-inset': this.resolveInset(),\n          '--_divider-length': this.resolveLength(),\n        }}\n      />\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

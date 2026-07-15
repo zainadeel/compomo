@@ -1,0 +1,84 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-text",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-text",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Semantic plain UI text with atomic tokenized typography recipes, measurable line boxes, and composition-owned wrapping and truncation.",
+  "useWhen": [
+    "Plain UI text needs a complete design-system typography recipe.",
+    "Headings, paragraphs, labels, or inline phrasing need native HTML semantics independent from their visual scale.",
+    "A component needs a stable measurable text box aligned to shared typography metrics.",
+    "Changing numeric values need tabular glyph widths."
+  ],
+  "avoidWhen": [
+    "Content is markdown, rich prose, or an arbitrary nested document structure.",
+    "The element is interactive; use the correct native or design-system control and compose Text only for its label.",
+    "Individual font metrics must be overridden instead of selecting an existing complete variant.",
+    "Typography alone would be used to repair an incorrect heading hierarchy."
+  ],
+  "alternatives": [
+    {
+      "when": "Predictable text geometry is pending while content loads.",
+      "component": "component:ds-skeleton",
+      "reason": "Skeleton owns aria-hidden loading geometry aligned to Text line metrics."
+    },
+    {
+      "when": "Compact static metadata or semantic status needs a contained treatment.",
+      "component": "component:ds-tag",
+      "reason": "Tag owns compact labelled metadata and intent surfaces."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-icon",
+    "component:ds-card",
+    "component:ds-field",
+    "component:ds-button-filled"
+  ],
+  "accessibility": [
+    "Choose the native element from document meaning and hierarchy; choose the visual variant independently.",
+    "Composition authors preserve logical h1–h6 order regardless of visual size.",
+    "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
+    "Use label semantics and its for association only for a real form control.",
+    "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
+    "Use solid underline only when Text is composed inside a real link.",
+    "Use dotted underline to signal hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
+  ],
+  "states": [
+    "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
+    "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
+    "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
+    "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
+    "Solid underline communicates a real link; dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
+    "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",
+    "Shimmer is reserved for visible generating/loading status text whose owner provides status semantics; reduced motion keeps static readable text."
+  ],
+  "responsiveBehavior": [
+    "The composition owns width, wrapping, truncation, alignment, and any responsive variant change.",
+    "Text preserves complete token recipes and does not scale fluidly or infer breakpoints."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set as explicitly for inline text, headings, and labels; omitted as renders a paragraph."
+    ],
+    "react": [
+      "Keep semantic as choices aligned with the rendered document hierarchy rather than component styling."
+    ],
+    "angular": [
+      "Use the for prop only when Text renders a label associated with a real control ID."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Text/Text.stories.ts"
+    },
+    {
+      "label": "Typography contract",
+      "path": "AGENTS.md"
+    }
+  ]
+}

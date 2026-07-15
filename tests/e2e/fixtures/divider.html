@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Divider e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Divider test</h1>
+      <section style="width: 320px">
+        <p>Before</p>
+        <ds-divider id="decorative"></ds-divider>
+        <p>After</p>
+      </section>
+      <div style="display: flex; height: 80px">
+        <span>Left</span>
+        <ds-divider
+          id="semantic"
+          orientation="vertical"
+          length="var(--dimension-size-300)"
+          inset="space-100"
+          semantic
+        ></ds-divider>
+        <span>Right</span>
+      </div>
+    </main>
+    <script type="module" src="/divider-setup.mjs"></script>
+  </body>
+</html>

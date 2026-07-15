@@ -67,6 +67,8 @@ const preview: Preview = {
       showPanel: true,
       storySort: {
         order: [
+          'Docs',
+          ['Introduction', 'Typography Usage', 'Color Usage', 'Elevation Usage'],
           'Foundation',
           ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
           'Primitives',

@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsDivider } from '@ds-mo/ui/components/ds-
 
 @ProxyCmp({
   defineCustomElementFn: defineDsDivider,
-  inputs: ['inset', 'length', 'orientation', 'semantic', 'surface']
+  inputs: ['background', 'inset', 'length', 'orientation', 'semantic']
 })
 @Component({
   selector: 'ds-divider',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['inset', 'length', 'orientation', 'semantic', 'surface'],
+  inputs: ['background', 'inset', 'length', 'orientation', 'semantic'],
 })
 export class DsDivider {
   protected el: HTMLDsDividerElement;

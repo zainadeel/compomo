@@ -4,7 +4,7 @@ import {
   isBareShellShortcutKey,
   isEditableShortcutTarget,
   resolveShellShortcut,
-} from '../src/wc/nav/shell-shortcuts';
+} from '../src/wc/shell/shell-shortcuts';
 import { shortcutKeyLabels } from '../src/wc/utils/shortcut-key';
 
 function keyEvent(

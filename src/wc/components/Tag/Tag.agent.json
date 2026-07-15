@@ -1,0 +1,85 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-tag",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-tag",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact metadata or semantic-status label on primary surfaces, optionally rendered as a controlled menu trigger with leading and fixed suffix icons.",
+  "useWhen": [
+    "A value needs a compact static metadata or category label.",
+    "A status needs persistent semantic color and visible text without interaction.",
+    "Product affiliation or AI-generated content needs an explicit labelled marker.",
+    "A compact metadata value opens a related menu and needs a native button with controlled popup state."
+  ],
+  "avoidWhen": [
+    "The value must be individually removable; use Chip.",
+    "The element triggers an action other than opening a related menu; use the appropriate button or link.",
+    "The element represents persistent selection or a toggle; use a control whose active state owns that meaning.",
+    "A count or notification dot supplements another control; use Badge.",
+    "The tag would be placed on a non-primary parent surface."
+  ],
+  "alternatives": [
+    {
+      "when": "A metadata value is individually removable.",
+      "component": "component:ds-chip",
+      "reason": "Chip owns dismiss interaction and parent-managed removal."
+    },
+    {
+      "when": "A compact mark communicates unread count or notification presence.",
+      "component": "component:ds-badge",
+      "reason": "Badge owns supplemental notification indicators."
+    },
+    {
+      "when": "The compact element triggers a non-menu action or toggle.",
+      "component": "component:ds-button-unfilled",
+      "reason": "ButtonUnfilled owns general actions, focus, and active state."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card",
+    "component:ds-table",
+    "component:ds-text",
+    "component:ds-icon"
+  ],
+  "accessibility": [
+    "The visible label provides Tag's accessible name; a separate aria-label is normally unnecessary.",
+    "Leading icons reinforce the visible label and remain decorative. The fixed ChevronUpDown suffix is always decorative.",
+    "Static Tag stays outside the tab order. Interactive Tag renders a native button with menu popup semantics.",
+    "The owner controls expanded state, associates the menu with aria-controls when available, and moves focus according to the Menu contract.",
+    "Do not communicate semantic intent by color alone; the label must remain understandable without color."
+  ],
+  "states": [
+    "Intent describes the represented value's semantic meaning, never selection or interaction state.",
+    "Neutral is ordinary metadata; brand marks Motive or product affiliation; AI marks AI-generated or AI-assisted content; positive, caution, warning, and negative communicate increasingly specific status meaning.",
+    "Warning signals higher urgency or risk than caution, which asks for attention before a possible issue.",
+    "Contrast changes visual prominence without changing semantic intent or parent surface context.",
+    "Rounded is an optional visual style with no semantic difference.",
+    "Labels stay on one line and truncate only when the owner supplies a maximum width.",
+    "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
+    "isInactive disables only the interactive button and applies the shared inactive treatment."
+  ],
+  "responsiveBehavior": [
+    "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation.",
+    "Tag does not change size or behavior automatically at breakpoints."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsClick to open the associated menu, then update expanded as controlled state. Use the Tag host ID as the menu anchor when required."
+    ],
+    "react": [
+      "Use a stable key and parent-owned layout for Tag collections. For interactive Tag, synchronize expanded and the associated menu from the same state."
+    ],
+    "angular": [
+      "Use parent-owned layout for Tag collections. For interactive Tag, synchronize expanded and the associated menu from the same state."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Tag/Tag.stories.ts"
+    }
+  ]
+}

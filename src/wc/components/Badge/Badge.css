@@ -23,6 +23,20 @@
   white-space: nowrap;
 }
 
+.badge__a11y {
+  position: absolute;
+  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  /* stylelint-enable declaration-property-value-disallowed-list */
+}
+
 :host(.badge--dot) .badge__mark {
   width: var(--dimension-size-075);
   height: var(--dimension-size-075);
@@ -30,9 +44,10 @@
 }
 
 :host(.badge--counter) .badge__mark {
-  width: var(--dimension-size-150);
+  width: auto;
+  min-width: var(--dimension-size-150);
   height: var(--dimension-size-150);
-  padding: 0;
+  padding: 0 var(--dimension-space-025);
   border-radius: var(--dimension-radius-half);
 }
 

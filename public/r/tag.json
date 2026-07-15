@@ -2,17 +2,103 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "tag",
   "title": "Tag",
-  "description": "Static metadata label with intent coloring and optional icon support. Uses control-density recipes for md/sm/xs.",
+  "description": "Compact metadata or semantic-status label on primary surfaces, optionally rendered as a controlled menu trigger with leading and fixed suffix icons.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/tag",
     "source": "src/wc/components/Tag/Tag.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Compact metadata or semantic-status label on primary surfaces, optionally rendered as a controlled menu trigger with leading and fixed suffix icons.",
+      "useWhen": [
+        "A value needs a compact static metadata or category label.",
+        "A status needs persistent semantic color and visible text without interaction.",
+        "Product affiliation or AI-generated content needs an explicit labelled marker.",
+        "A compact metadata value opens a related menu and needs a native button with controlled popup state."
+      ],
+      "avoidWhen": [
+        "The value must be individually removable; use Chip.",
+        "The element triggers an action other than opening a related menu; use the appropriate button or link.",
+        "The element represents persistent selection or a toggle; use a control whose active state owns that meaning.",
+        "A count or notification dot supplements another control; use Badge.",
+        "The tag would be placed on a non-primary parent surface."
+      ],
+      "alternatives": [
+        {
+          "when": "A metadata value is individually removable.",
+          "component": "component:ds-chip",
+          "reason": "Chip owns dismiss interaction and parent-managed removal."
+        },
+        {
+          "when": "A compact mark communicates unread count or notification presence.",
+          "component": "component:ds-badge",
+          "reason": "Badge owns supplemental notification indicators."
+        },
+        {
+          "when": "The compact element triggers a non-menu action or toggle.",
+          "component": "component:ds-button-unfilled",
+          "reason": "ButtonUnfilled owns general actions, focus, and active state."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card",
+        "component:ds-table",
+        "component:ds-text",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "The visible label provides Tag's accessible name; a separate aria-label is normally unnecessary.",
+        "Leading icons reinforce the visible label and remain decorative. The fixed ChevronUpDown suffix is always decorative.",
+        "Static Tag stays outside the tab order. Interactive Tag renders a native button with menu popup semantics.",
+        "The owner controls expanded state, associates the menu with aria-controls when available, and moves focus according to the Menu contract.",
+        "Do not communicate semantic intent by color alone; the label must remain understandable without color."
+      ],
+      "states": [
+        "Intent describes the represented value's semantic meaning, never selection or interaction state.",
+        "Neutral is ordinary metadata; brand marks Motive or product affiliation; AI marks AI-generated or AI-assisted content; positive, caution, warning, and negative communicate increasingly specific status meaning.",
+        "Warning signals higher urgency or risk than caution, which asks for attention before a possible issue.",
+        "Contrast changes visual prominence without changing semantic intent or parent surface context.",
+        "Rounded is an optional visual style with no semantic difference.",
+        "Labels stay on one line and truncate only when the owner supplies a maximum width.",
+        "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
+        "isInactive disables only the interactive button and applies the shared inactive treatment."
+      ],
+      "responsiveBehavior": [
+        "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation.",
+        "Tag does not change size or behavior automatically at breakpoints."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsClick to open the associated menu, then update expanded as controlled state. Use the Tag host ID as the menu anchor when required."
+        ],
+        "react": [
+          "Use a stable key and parent-owned layout for Tag collections. For interactive Tag, synchronize expanded and the associated menu from the same state."
+        ],
+        "angular": [
+          "Use parent-owned layout for Tag collections. For interactive Tag, synchronize expanded and the associated menu from the same state."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Tag/Tag.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
+        "ariaControls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-controls",
+          "required": false,
+          "mutable": false,
+          "description": "ID of the menu controlled by an interactive Tag."
+        },
         "contrast": {
           "type": "TagContrast",
           "resolvedType": "\"bold\" | \"faint\" | \"medium\" | \"strong\"",
@@ -21,6 +107,24 @@
           "required": false,
           "mutable": false
         },
+        "expanded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "expanded",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled open state for the menu triggered by an interactive Tag."
+        },
+        "icon": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "icon",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Canonical icon name rendered before the visible label."
+        },
         "intent": {
           "type": "TagIntent",
           "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"negative\" | \"neutral\" | \"positive\" | \"warning\"",
@@ -28,6 +132,24 @@
           "default": "'neutral'",
           "required": false,
           "mutable": false
+        },
+        "interactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "interactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Render a menu-trigger button with a fixed ChevronUpDown suffix."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Disable an interactive Tag and apply the shared inactive treatment."
         },
         "label": {
           "type": "string",
@@ -60,11 +182,28 @@
           "mutable": false
         }
       },
-      "events": [],
+      "events": [
+        {
+          "name": "dsClick",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Fired when the interactive Tag button is activated."
+        }
+      ],
       "methods": [],
       "slots": []
     },
     "props": {
+      "ariaControls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-controls",
+        "required": false,
+        "mutable": false,
+        "description": "ID of the menu controlled by an interactive Tag."
+      },
       "contrast": {
         "type": "TagContrast",
         "resolvedType": "\"bold\" | \"faint\" | \"medium\" | \"strong\"",
@@ -73,6 +212,24 @@
         "required": false,
         "mutable": false
       },
+      "expanded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "expanded",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled open state for the menu triggered by an interactive Tag."
+      },
+      "icon": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "icon",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Canonical icon name rendered before the visible label."
+      },
       "intent": {
         "type": "TagIntent",
         "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"negative\" | \"neutral\" | \"positive\" | \"warning\"",
@@ -80,6 +237,24 @@
         "default": "'neutral'",
         "required": false,
         "mutable": false
+      },
+      "interactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "interactive",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Render a menu-trigger button with a fixed ChevronUpDown suffix."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Disable an interactive Tag and apply the shared inactive treatment."
       },
       "label": {
         "type": "string",
@@ -112,7 +287,16 @@
         "mutable": false
       }
     },
-    "events": [],
+    "events": [
+      {
+        "name": "dsClick",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Fired when the interactive Tag button is activated."
+      }
+    ],
     "methods": [],
     "slots": [],
     "exports": {
@@ -146,20 +330,22 @@
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens"
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
   ],
   "registryDependencies": [
+    "icon",
     "text"
   ],
   "files": [
     {
       "path": "src/wc/components/Tag/Tag.css",
-      "content": "/* ==========================================================================\n   ds-tag / ds-chip shared visual recipe\n   ========================================================================== */\n\n@import '../../utils/control-density.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/focus-ring.css';\n\n:host {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  color: var(--color-foreground-primary);\n  position: relative;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  height: var(--ds-control-height);\n  padding: 0 var(--ds-control-padding-inline);\n  gap: var(--ds-control-gap);\n  user-select: none;\n  -webkit-user-select: none;\n}\n\n/* Density vars come from .ds-control--md|sm|xs on the host (set in TSX). */\n/* Hover/press overlay comes from .ds-interaction-fill (Chip); do not swap host bg. */\n\n/* ── Rounded ────────────────────────────────────────────────────────────── */\n\n:host(.tag--rounded) { border-radius: var(--dimension-radius-half); }\n\n/* ── Intent × Contrast — strong ─────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-strong)  { background-color: var(--color-background-strong-neutral);  color: var(--color-foreground-medium-neutral);  }\n:host(.tag--intent-brand.tag--contrast-strong)    { background-color: var(--color-background-strong-brand);    color: var(--color-foreground-medium-brand);    }\n:host(.tag--intent-ai.tag--contrast-strong)       { background-color: var(--color-background-strong-ai);       color: var(--color-foreground-medium-ai);       }\n:host(.tag--intent-negative.tag--contrast-strong) { background-color: var(--color-background-strong-negative); color: var(--color-foreground-medium-negative); }\n:host(.tag--intent-warning.tag--contrast-strong)  { background-color: var(--color-background-strong-warning);  color: var(--color-foreground-medium-warning);  }\n:host(.tag--intent-caution.tag--contrast-strong)  { background-color: var(--color-background-strong-caution);  color: var(--color-foreground-medium-caution);  }\n:host(.tag--intent-positive.tag--contrast-strong) { background-color: var(--color-background-strong-positive); color: var(--color-foreground-medium-positive); }\n\n/* ── Intent × Contrast — bold ───────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-bold)  { background-color: var(--color-background-bold-neutral);  color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-brand.tag--contrast-bold)    { background-color: var(--color-background-bold-brand);    color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-ai.tag--contrast-bold)       { background-color: var(--color-background-bold-ai);       color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-negative.tag--contrast-bold) { background-color: var(--color-background-bold-negative); color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-warning.tag--contrast-bold)  { background-color: var(--color-background-bold-warning);  color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-caution.tag--contrast-bold)  { background-color: var(--color-background-bold-caution);  color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-positive.tag--contrast-bold) { background-color: var(--color-background-bold-positive); color: var(--color-foreground-on-bold-background-primary); }\n\n/* ── Intent × Contrast — medium ─────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-medium)  { background-color: var(--color-background-medium-neutral);  color: var(--color-foreground-strong-neutral);  }\n:host(.tag--intent-brand.tag--contrast-medium)    { background-color: var(--color-background-medium-brand);    color: var(--color-foreground-strong-brand);    }\n:host(.tag--intent-ai.tag--contrast-medium)       { background-color: var(--color-background-medium-ai);       color: var(--color-foreground-strong-ai);       }\n:host(.tag--intent-negative.tag--contrast-medium) { background-color: var(--color-background-medium-negative); color: var(--color-foreground-strong-negative); }\n:host(.tag--intent-warning.tag--contrast-medium)  { background-color: var(--color-background-medium-warning);  color: var(--color-foreground-strong-warning);  }\n:host(.tag--intent-caution.tag--contrast-medium)  { background-color: var(--color-background-medium-caution);  color: var(--color-foreground-strong-caution);  }\n:host(.tag--intent-positive.tag--contrast-medium) { background-color: var(--color-background-medium-positive); color: var(--color-foreground-strong-positive); }\n\n/* ── Intent × Contrast — faint ──────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-faint)  { background-color: var(--color-background-faint-neutral);  color: var(--color-foreground-bold-neutral);  }\n:host(.tag--intent-brand.tag--contrast-faint)    { background-color: var(--color-background-faint-brand);    color: var(--color-foreground-bold-brand);    }\n:host(.tag--intent-ai.tag--contrast-faint)       { background-color: var(--color-background-faint-ai);       color: var(--color-foreground-bold-ai);       }\n:host(.tag--intent-negative.tag--contrast-faint) { background-color: var(--color-background-faint-negative); color: var(--color-foreground-bold-negative); }\n:host(.tag--intent-warning.tag--contrast-faint)  { background-color: var(--color-background-faint-warning);  color: var(--color-foreground-bold-warning);  }\n:host(.tag--intent-caution.tag--contrast-faint)  { background-color: var(--color-background-faint-caution);  color: var(--color-foreground-bold-caution);  }\n:host(.tag--intent-positive.tag--contrast-faint) { background-color: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }\n\n/* ── Interactive (Chip) ─────────────────────────────────────────────────── */\n\n:host(.tag--interactive) {\n  cursor: pointer;\n  outline: none;\n}\n\n/* Hover/press: `.ds-interaction-fill` paints via ::after — keep intent bg intact. */\n\n/* ── Label ──────────────────────────────────────────────────────────────── */\n\n.tag__label {\n  position: relative;\n  z-index: 2;\n  padding: 0 var(--ds-control-label-inset);\n  white-space: nowrap;\n  flex-shrink: 0;\n  min-width: 0;\n}\n\n/* ── Icon slot ──────────────────────────────────────────────────────────── */\n\n/*\n * `display: contents` so an unused icon slot doesn't reserve a gap; when a\n * consumer slots an icon it becomes a flex child of the host and picks up\n * `--ds-control-gap`. Prefer matching `ds-icon` size to the tag size (md/sm/xs).\n */\n.tag__icon-slot {\n  display: contents;\n}\n\n.tag__icon-slot ::slotted(*) {\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n\n/* ── Remove button (Chip) ───────────────────────────────────────────────── */\n\n/*\n * Label↔dismiss uses host `gap` (`--ds-control-gap`) — same as Tag icon↔label.\n * Keep label inset on both sides so spacing mirrors Tag: [inset][text][inset][gap][icon].\n */\n.tag__remove {\n  padding: 0;\n  margin: 0;\n  border: none;\n  background: none;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  color: inherit;\n  flex-shrink: 0;\n  position: relative;\n  z-index: 2;\n  border-radius: var(--dimension-radius-half);\n}\n\n.tag__remove::before {\n  content: '';\n  position: absolute;\n  /* Expand hover fill slightly past the glyph so the remove control feels clickable. */\n  inset: var(--dimension-space-n025);\n  border-radius: var(--dimension-radius-half);\n  background-color: transparent;\n  transition: var(--effect-transition-interaction-background-short-2);\n  pointer-events: none;\n}\n\n.tag__remove:hover::before  { background-color: var(--color-interaction-hover); }\n.tag__remove:active::before { background-color: var(--color-interaction-pressed); }\n\n:host(.tag--size-sm) .tag__remove::before { inset: var(--dimension-space-n012); }\n:host(.tag--size-xs) .tag__remove::before { inset: 0; }\n\n.tag__remove-x {\n  display: inline-flex;\n  flex-shrink: 0;\n  /* Box sized by ds-icon’s size prop (md/sm/xs → iconography tokens). */\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n\n.tag__remove ::slotted(*) {\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n",
+      "content": "@import '../../utils/tag-chip.css';\n\n/* ── Intent × Contrast — strong ─────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-strong)  { background-color: var(--color-background-strong-neutral);  color: var(--color-foreground-medium-neutral);  }\n:host(.tag--intent-brand.tag--contrast-strong)    { background-color: var(--color-background-strong-brand);    color: var(--color-foreground-on-strong-background-primary); }\n:host(.tag--intent-ai.tag--contrast-strong)       { background-color: var(--color-background-strong-ai);       color: var(--color-foreground-medium-ai);       }\n:host(.tag--intent-negative.tag--contrast-strong) { background-color: var(--color-background-strong-negative); color: var(--color-foreground-medium-negative); }\n:host(.tag--intent-warning.tag--contrast-strong)  { background-color: var(--color-background-strong-warning);  color: var(--color-foreground-medium-warning);  }\n:host(.tag--intent-caution.tag--contrast-strong)  { background-color: var(--color-background-strong-caution);  color: var(--color-foreground-medium-caution);  }\n:host(.tag--intent-positive.tag--contrast-strong) { background-color: var(--color-background-strong-positive); color: var(--color-foreground-medium-positive); }\n\n/* ── Intent × Contrast — bold ───────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-bold)  { background-color: var(--color-background-bold-neutral);  color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-brand.tag--contrast-bold)    { background-color: var(--color-background-bold-brand);    color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-ai.tag--contrast-bold)       { background-color: var(--color-background-bold-ai);       color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-negative.tag--contrast-bold) { background-color: var(--color-background-bold-negative); color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-warning.tag--contrast-bold)  { background-color: var(--color-background-bold-warning);  color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-caution.tag--contrast-bold)  { background-color: var(--color-background-bold-caution);  color: var(--color-foreground-on-bold-background-primary); }\n:host(.tag--intent-positive.tag--contrast-bold) { background-color: var(--color-background-bold-positive); color: var(--color-foreground-on-bold-background-primary); }\n\n/* ── Intent × Contrast — medium ─────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-medium)  { background-color: var(--color-background-medium-neutral);  color: var(--color-foreground-strong-neutral);  }\n:host(.tag--intent-brand.tag--contrast-medium)    { background-color: var(--color-background-medium-brand);    color: var(--color-foreground-on-medium-background-primary); }\n:host(.tag--intent-ai.tag--contrast-medium)       { background-color: var(--color-background-medium-ai);       color: var(--color-foreground-strong-ai);       }\n:host(.tag--intent-negative.tag--contrast-medium) { background-color: var(--color-background-medium-negative); color: var(--color-foreground-strong-negative); }\n:host(.tag--intent-warning.tag--contrast-medium)  { background-color: var(--color-background-medium-warning);  color: var(--color-foreground-strong-warning);  }\n:host(.tag--intent-caution.tag--contrast-medium)  { background-color: var(--color-background-medium-caution);  color: var(--color-foreground-strong-caution);  }\n:host(.tag--intent-positive.tag--contrast-medium) { background-color: var(--color-background-medium-positive); color: var(--color-foreground-strong-positive); }\n\n/* ── Intent × Contrast — faint ──────────────────────────────────────────── */\n\n:host(.tag--intent-neutral.tag--contrast-faint)  { background-color: var(--color-background-faint-neutral);  color: var(--color-foreground-bold-neutral);  }\n:host(.tag--intent-brand.tag--contrast-faint)    { background-color: var(--color-background-faint-brand);    color: var(--color-foreground-bold-brand);    }\n:host(.tag--intent-ai.tag--contrast-faint)       { background-color: var(--color-background-faint-ai);       color: var(--color-foreground-bold-ai);       }\n:host(.tag--intent-negative.tag--contrast-faint) { background-color: var(--color-background-faint-negative); color: var(--color-foreground-bold-negative); }\n:host(.tag--intent-warning.tag--contrast-faint)  { background-color: var(--color-background-faint-warning);  color: var(--color-foreground-bold-warning);  }\n:host(.tag--intent-caution.tag--contrast-faint)  { background-color: var(--color-background-faint-caution);  color: var(--color-foreground-bold-caution);  }\n:host(.tag--intent-positive.tag--contrast-faint) { background-color: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }\n\n/* ── Interactive menu trigger ───────────────────────────────────────────── */\n\n:host(.tag--interactive) {\n  padding: 0;\n  gap: 0;\n}\n\n.tag__button {\n  all: unset;\n  position: relative;\n  z-index: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  min-width: 0;\n  max-width: 100%;\n  height: 100%;\n  padding: 0 var(--ds-control-padding-inline);\n  gap: var(--ds-control-gap);\n  border-radius: inherit;\n  color: inherit;\n  cursor: pointer;\n}\n\n.tag__button:disabled {\n  cursor: not-allowed;\n}\n\n/* Hover/press wash stays above the Tag's semantic background. */\n\n/* ── Icons ──────────────────────────────────────────────────────────────── */\n\n.tag__prefix-icon,\n.tag__suffix-icon {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Tag/Tag.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport { CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type TagIntent   = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';\nexport type TagContrast = 'strong' | 'bold' | 'medium' | 'faint';\nexport type TagSize     = 'md' | 'sm' | 'xs';\n\n/**\n * `ds-icon` size prop matching control-density icon metrics\n * (md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).\n */\nconst ICON_SIZE: Record<TagSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n@Component({\n  tag: 'ds-tag',\n  styleUrl: 'Tag.css',\n  scoped: true,\n})\nexport class Tag {\n  @Prop() label!: string;\n  @Prop() intent: TagIntent = 'neutral';\n  @Prop() contrast: TagContrast = 'faint';\n  @Prop() size: TagSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n\n  render() {\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n\n    return (\n      <Host\n        class={{\n          'tag': true,\n          [`tag--intent-${this.intent}`]: true,\n          [`tag--contrast-${this.contrast}`]: true,\n          [`tag--size-${this.size}`]: true,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          'tag--rounded': this.rounded,\n        }}\n        style={maxWidthStyle}\n      >\n        {/* Leading icon — consumer provides ds-icon (or any SVG); prefer size matching tag size. */}\n        <span class=\"tag__icon-slot\" data-icon-size={iconSize}>\n          <slot name=\"icon\" />\n        </span>\n        <ds-text class=\"tag__label\" as=\"span\" variant={textVariant} color=\"inherit\">\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, Prop, h, Host } from '@stencil/core';\nimport { CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type TagIntent   = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';\nexport type TagContrast = 'strong' | 'bold' | 'medium' | 'faint';\nexport type TagSize     = 'md' | 'sm' | 'xs';\n\n/**\n * `ds-icon` size prop matching control-density icon metrics\n * (md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).\n */\nconst ICON_SIZE: Record<TagSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n@Component({\n  tag: 'ds-tag',\n  styleUrl: 'Tag.css',\n  scoped: true,\n})\nexport class Tag {\n  @Prop() label!: string;\n  /** Canonical icon name rendered before the visible label. */\n  @Prop() icon: string = '';\n  @Prop() intent: TagIntent = 'neutral';\n  @Prop() contrast: TagContrast = 'faint';\n  @Prop() size: TagSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n  /** Render a menu-trigger button with a fixed ChevronUpDown suffix. */\n  @Prop() interactive: boolean = false;\n  /** Controlled open state for the menu triggered by an interactive Tag. */\n  @Prop() expanded: boolean = false;\n  /** ID of the menu controlled by an interactive Tag. */\n  @Prop() ariaControls: string | undefined;\n  /** Disable an interactive Tag and apply the shared inactive treatment. */\n  @Prop() isInactive: boolean = false;\n\n  /** Fired when the interactive Tag button is activated. */\n  @Event() dsClick!: EventEmitter<MouseEvent>;\n\n  private handleClick = (event: MouseEvent) => {\n    if (!this.interactive || this.isInactive) return;\n    this.dsClick.emit(event);\n  };\n\n  render() {\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n    const hostClass = {\n      'tag': true,\n      [`tag--intent-${this.intent}`]: true,\n      [`tag--contrast-${this.contrast}`]: true,\n      [`tag--size-${this.size}`]: true,\n      'ds-control--md': this.size === 'md',\n      'ds-control--sm': this.size === 'sm',\n      'ds-control--xs': this.size === 'xs',\n      'tag--rounded': this.rounded,\n      'tag--interactive': this.interactive,\n      'ds-control-inactive': this.interactive && this.isInactive,\n    };\n    const content = [\n      this.icon && (\n        <ds-icon\n          class=\"tag__prefix-icon\"\n          name={this.icon}\n          size={iconSize}\n          color=\"inherit\"\n        ></ds-icon>\n      ),\n      <ds-text class=\"tag__label\" as=\"span\" variant={textVariant} color=\"inherit\">\n        {this.label}\n      </ds-text>,\n    ];\n\n    if (!this.interactive) {\n      return <Host class={hostClass} style={maxWidthStyle}>{content}</Host>;\n    }\n\n    return (\n      <Host class={hostClass} style={maxWidthStyle}>\n        <button\n          type=\"button\"\n          class=\"tag__button ds-interaction-fill ds-focus-ring-inset\"\n          aria-haspopup=\"menu\"\n          aria-expanded={this.expanded ? 'true' : 'false'}\n          aria-controls={this.ariaControls}\n          disabled={this.isInactive || undefined}\n          onClick={this.handleClick}\n        >\n          {content}\n          <ds-icon\n            class=\"tag__suffix-icon\"\n            name=\"ChevronUpDown\"\n            size={iconSize}\n            color=\"inherit\"\n          ></ds-icon>\n        </button>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

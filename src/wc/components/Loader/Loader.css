@@ -6,7 +6,7 @@
   justify-content: center;
   flex-shrink: 0;
   line-height: 0;
-  color: var(--color-foreground-primary);
+  color: inherit;
   width: var(--_loader-sz, var(--dimension-iconography-md));
   height: var(--_loader-sz, var(--dimension-iconography-md));
   animation: loader-spin var(--effect-animation-duration-long-2) var(--effect-animation-easing-linear) infinite;

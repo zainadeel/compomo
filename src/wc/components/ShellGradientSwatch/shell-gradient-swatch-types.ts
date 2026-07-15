@@ -1,4 +1,4 @@
-import type { ShellGradientPreset } from '../../nav/shell-gradient-presets';
+import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
 export type { ShellGradientPreset };
 
 export {
@@ -13,4 +13,4 @@ export {
   shellGradientPresetOpacity,
   shellGradientPresetRecipe,
   shellGradientPresetStopToken,
-} from '../../nav/shell-gradient-presets';
+} from '../../shell/shell-gradient-presets';

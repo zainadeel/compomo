@@ -52,7 +52,7 @@ try {
     const angular = await import('@ds-mo/ui/angular');
     const angularComponent = await import('@ds-mo/ui/angular/ds-button-filled');
     const react = await import('@ds-mo/ui/react');
-    const nav = await import('@ds-mo/ui/nav');
+    const shell = await import('@ds-mo/ui/shell');
     const utils = await import('@ds-mo/ui/utils');
     const agent = await import('@ds-mo/ui/agent', { with: { type: 'json' } });
     for (const [surface, value] of [
@@ -61,7 +61,7 @@ try {
       ['angular component subpath', angularComponent.DsButtonFilled],
       ['angular forms', angular.TextValueAccessor],
       ['react', react.DsButtonFilled],
-      ['nav', nav.normalizeShellGradientPreset],
+      ['shell', shell.normalizeShellGradientPreset],
       ['utils', utils.resolveCssLengthPx],
       ['agent manifest', agent.default?.entries?.length],
     ]) {
@@ -72,7 +72,7 @@ try {
     cwd: smokeDir,
     stdio: 'inherit',
   });
-  console.log('✅ Packed native, Angular, React, nav, utils, and agent entry points load successfully.');
+  console.log('✅ Packed native, Angular, React, shell, utils, and agent entry points load successfully.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

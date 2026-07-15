@@ -5,7 +5,7 @@ import '../../../../dist/components/ds-shell-gradient-picker.js';
 import {
   buildShellRadialGradientFromStops,
   type ShellGradientStop,
-} from '../../nav/shell-gradient-presets';
+} from '../../shell/shell-gradient-presets';
 
 const WORKSHOP_STOP_INDEXES = [1, 2, 3, 4, 5] as const;
 const INTENT_HUES = [

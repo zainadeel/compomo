@@ -2,94 +2,102 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Docs/Elevation Usage" />
 
-# Elevation Usage Guidelines
+# Elevation usage
 
-## 1. Quick Decision Rule
+Elevation communicates whether a surface is raised, floating, inset, or
+attached to an edge. Consume the complete TokoMo elevation token through
+`box-shadow`.
 
-Use this rule first:
+```css
+.surface {
+  box-shadow: var(--effect-elevation-elevated-sm);
+}
+```
 
-1. if the surface touches most of its container edges, use a **panel** elevation,
-2. if the surface has breathing room on all four sides, use `flat` or `elevated`,
-3. if the surface has breathing room and is meant to visually float above other content, use `floating`,
-4. if the surface should feel inset or embedded, use `depressed`,
-5. if elevation is intentionally turned off, use `none`.
+## Standard elevation tokens
 
-In practice, panel elevations are for surfaces that touch at least three sides of the container they live in, or otherwise read as edge-attached.
+| Token | Use |
+| --- | --- |
+| `--effect-elevation-elevated-none` | Explicitly no elevation |
+| `--effect-elevation-elevated-sm` | Subtle raised surface |
+| `--effect-elevation-elevated-md` | Stronger raised surface |
+| `--effect-elevation-elevated-floating` | Popover, tooltip, modal, or other floating overlay |
+| `--effect-elevation-depressed-sm` | Compact inset field or control |
+| `--effect-elevation-depressed-md` | Stronger inset region |
 
-## 2. Panel Elevations
+Choose the lowest level that communicates the required relationship. A normal
+card does not need floating elevation merely because it should be noticeable;
+surface, border, and spacing hierarchy usually provide that distinction.
 
-Panel elevations are for surfaces that are attached to the boundary of the area they sit inside.
+## Directional panel elevation
 
-These styles are directional. The panel direction should match the side of the container that the panel is attached to.
+Use panel tokens only for surfaces attached to the matching container edge:
 
-This makes them the right choice for:
+| Attached edge | Token |
+| --- | --- |
+| Top | `--effect-elevation-elevated-panel-top` |
+| Right | `--effect-elevation-elevated-panel-right` |
+| Bottom | `--effect-elevation-elevated-panel-bottom` |
+| Left | `--effect-elevation-elevated-panel-left` |
 
-- app headers
-- bottom bars
-- left and right drawers
-- edge-attached trays or panels
+Directional panel shadows are asymmetric. Do not use them on floating cards or
+surfaces with open space around every side.
 
-| Surface | Elevation |
-|---------|-----------|
-| Top header or app bar | <code>elevation-panel-top</code> |
-| Bottom bar or footer | <code>elevation-panel-bottom</code> |
-| Left-side drawer | <code>elevation-panel-left</code> |
-| Right-side drawer | <code>elevation-panel-right</code> |
+AppShell, BarNav, and PanelNav currently establish chrome hierarchy with
+surfaces and borders rather than panel elevation tokens. A token's existence
+does not mean every edge-attached component should use it.
 
-> **Do not** use panel elevations on floating cards or standalone containers. They are intentionally asymmetric and will look wrong when the surface has clearance on every side.
+## How CompoMo uses elevation
 
-## 3. Non-Panel Elevations
+- `ds-modal`, `ds-tooltip`, and `ds-tooltip-data-viz` use
+  `--effect-elevation-elevated-floating`.
+- `ds-menu` uses the floating shadow/highlight parts separately to preserve its
+  rounded clipping behavior.
+- `ds-input` and the Slider track use
+  `--effect-elevation-depressed-sm`.
+- Slider thumbs use `--effect-elevation-elevated-sm`.
+- Banner uses elevated-sm or elevated-floating according to presentation.
+- Cards primarily use surface and border hierarchy rather than elevation.
 
-`flat`, `elevated`, and `floating` are for surfaces that do not touch surrounding boundaries on any of their four sides.
+Prefer the component's existing treatment. Consumers should not add a second
+shadow around a component that already owns its elevation.
 
-| Level | Purpose | Use for |
-|-------|---------|---------|
-| <code>flat</code> | Lightest raised treatment | Cards, containers with subtle lift |
-| <code>elevated</code> | Standard raised treatment | Cards, free-standing containers |
-| <code>floating</code> | Visually floating above content | FABs, popups, dropdown menus, modals |
+## Shadow and highlight parts
 
-> **Do not** use `floating` just because an element needs more lift than `elevated`. If the surface is not actually meant to float above other content, `flat` or `elevated` is usually the better choice.
+Every elevation recipe is composed from matching shadow and highlight tokens:
 
-## 4. Depressed Elevation
+```css
+box-shadow:
+  var(--effect-shadow-elevated-floating),
+  var(--effect-highlight-elevated-floating);
+```
 
-`depressed` is for elements that should appear embedded within a surrounding surface rather than raised above it.
+Use the combined `--effect-elevation-*` token by default. Split the parts only
+when component structure requires separate paint layers—for example, when
+`overflow: hidden` or `overflow: clip` would otherwise cut off the outer
+shadow. Keep both parts from the same elevation level.
 
-Typical use cases:
+The underlying `--color-elevation-shadow` and
+`--color-elevation-highlight` values are token ingredients. Do not consume
+them directly to invent new elevation recipes in component code.
 
-- text inputs
-- embedded fields
-- inset control regions
-- surfaces that read as carved into their parent
+## Accessibility and motion
 
-Like non-panel elevations, `depressed` should only be used when the element has visible clearance on all four sides.
+Elevation is supplemental hierarchy. It must not be the only indication that a
+surface is interactive, selected, modal, or disabled. Use the component's
+semantic structure, focus treatment, and state API as the primary signal.
 
-## 5. None
+Elevation tokens are static effects. Do not animate between elevations unless
+the component also follows the repository's reduced-motion contract.
 
-`none` is for cases where elevation is part of the component model but the visual result should be no elevation treatment.
+## Avoid
 
-Use it when:
+- Hardcoded `box-shadow` values.
+- Panel elevation on a free-standing surface.
+- A panel direction that does not match the attached edge.
+- Floating elevation on ordinary content containers.
+- Depressed elevation on content intended to read as raised.
+- Mixing shadow and highlight parts from different levels.
+- Adding consumer elevation over a component-owned shadow.
 
-- a component supports elevation variants but should currently render flat,
-- you want to explicitly choose no elevation instead of leaving it undefined,
-- you need a zero-elevation option that fits into the same naming system.
-
-## 6. Anti-Patterns
-
-Avoid these patterns:
-
-1. using a panel elevation on a card that has open space on all four sides,
-2. using `flat`, `elevated`, `floating`, or `depressed` on a surface attached to a container edge,
-3. choosing a panel direction that does not match the aligned edge,
-4. using `depressed` for elements meant to read as raised,
-5. using `floating` on a normal card that isn't hovering above content,
-6. leaving elevation unspecified when the component API expects a named elevation style.
-
-## 7. Practical Summary
-
-| Situation | Use |
-|-----------|-----|
-| Surface attached to container boundary | Panel elevation (matching direction) |
-| Surface with clearance on all sides, standard lift | <code>flat</code> or <code>elevated</code> |
-| Surface visually hovering above other content | <code>floating</code> |
-| Surface embedded/inset into parent | <code>depressed</code> |
-| Elevation slot present but no visual lift needed | <code>none</code> |
+See **Foundation → Effects** for the live elevation, motion, and blur catalog.

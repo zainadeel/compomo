@@ -8,8 +8,8 @@ import { join } from 'node:path';
 const REQUIRED_PATHS = [
   'dist/components/index.js',
   'dist/types/components.d.ts',
-  'dist/lib/nav/index.js',
-  'dist/lib/nav/index.d.ts',
+  'dist/lib/shell/index.js',
+  'dist/lib/shell/index.d.ts',
   'dist/lib/utils/index.js',
   'dist/lib/utils/index.d.ts',
   'dist/react/components.js',

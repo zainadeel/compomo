@@ -20,16 +20,18 @@ const TEXT_VARIANTS = [
 
 const ICON_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;
 const CONTROL_SIZES = ['xs', 'sm', 'md'] as const;
-const SURFACES = [
-  { value: 'default', background: 'var(--color-background-primary)' },
-  { value: 'on-medium-background', background: 'var(--color-background-medium-brand)' },
-  { value: 'on-bold-background', background: 'var(--color-background-bold-brand)' },
-  { value: 'on-strong-background', background: 'var(--color-background-strong-brand)' },
-  { value: 'on-translucent-background', background: 'var(--color-translucent-translucent)' },
-  { value: 'inverted', background: 'var(--color-inverted-background)' },
-  { value: 'media', background: 'var(--color-media-background)' },
-  { value: 'always-dark', background: 'var(--color-always-dark-background)' },
-  { value: 'navigation', background: 'var(--color-navigation-background)' },
+const BACKGROUND_CONTEXTS = [
+  { id: 'default-primary', value: '', label: 'default · primary', background: 'var(--color-background-primary)' },
+  { id: 'default-secondary', value: '', label: 'default · secondary', background: 'var(--color-background-secondary)' },
+  { id: 'faint', value: 'faint', label: 'faint', background: 'var(--color-background-faint-neutral)' },
+  { id: 'medium', value: 'medium', label: 'medium', background: 'var(--color-background-medium-brand)' },
+  { id: 'bold', value: 'bold', label: 'bold', background: 'var(--color-background-bold-brand)' },
+  { id: 'strong', value: 'strong', label: 'strong', background: 'var(--color-background-strong-brand)' },
+  { id: 'translucent', value: 'translucent', label: 'translucent', background: 'var(--color-translucent-translucent)' },
+  { id: 'inverted', value: 'inverted', label: 'inverted', background: 'var(--color-inverted-background)' },
+  { id: 'media', value: 'media', label: 'media', background: 'var(--color-media-background)' },
+  { id: 'navigation', value: 'navigation', label: 'navigation', background: 'var(--color-navigation-background)' },
+  { id: 'always-dark', value: 'always-dark', label: 'always-dark', background: 'var(--color-always-dark-background)' },
 ] as const;
 
 const REVIEW_STACK = 'display:flex;flex-direction:column;gap:var(--dimension-space-200);';
@@ -44,7 +46,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Atomic loading placeholder whose outer canvas matches ds-text line heights, ds-icon canvases, or shared control-density heights. Text and icon shapes are inset by 2px per edge; controls fill their canvas. Its surface context selects a quaternary foreground token for the base and the matching semantic shimmer token for the moving band.',
+          'Atomic loading placeholder whose outer canvas matches ds-text line heights, ds-icon canvases, or shared control-density heights. Text and icon shapes are inset by 2px per edge; controls fill their canvas. Its background context selects a quaternary foreground token for the base and the matching semantic shimmer token for the moving band.',
       },
     },
   },
@@ -84,10 +86,10 @@ const meta: Meta = {
       control: 'boolean',
       description: 'Enables the shared tokenized shimmer animation.',
     },
-    surface: {
+    background: {
       control: 'select',
-      options: SURFACES.map(surface => surface.value),
-      description: 'Surface context used to select the matching foreground base and shimmer tokens.',
+      options: [...new Set(BACKGROUND_CONTEXTS.map(context => context.value))],
+      description: 'Actual parent background used to select matching base and shimmer tokens.',
     },
   },
   args: {
@@ -98,7 +100,7 @@ const meta: Meta = {
     width: '240px',
     rounded: false,
     shimmer: true,
-    surface: 'default',
+    background: '',
   },
 };
 
@@ -118,7 +120,7 @@ export const Playground: Story = {
       width=${args['width']}
       ?rounded=${args['rounded']}
       ?shimmer=${args['shimmer']}
-      surface=${args['surface']}
+      background=${args['background'] || undefined}
     ></ds-skeleton>
   `,
 };
@@ -252,7 +254,7 @@ export const ShimmerStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Shimmer defaults on. The shape base uses the faintest foreground token for its surface context, while the moving band uses the corresponding semantic shimmer token with no added opacity or color underneath. A stationary paint layer animates an oversized background with a tokenized fixed spread and off-screen travel buffer. Set shimmer=false for a static placeholder; reduced-motion preferences also remove animation automatically.',
+        story: 'Shimmer defaults on. The shape base uses the faintest foreground token for its background context, while the moving band uses the corresponding semantic shimmer token with no added opacity or color underneath. A stationary paint layer animates an oversized background with a tokenized fixed spread and off-screen travel buffer. Set shimmer=false for a static placeholder; reduced-motion preferences also remove animation automatically.',
       },
     },
   },
@@ -270,36 +272,36 @@ export const ShimmerStates: Story = {
   `,
 };
 
-export const SurfaceContexts: Story = {
-  name: 'Surface contexts',
+export const BackgroundContexts: Story = {
+  name: 'Background contexts',
   parameters: {
     docs: {
       description: {
         story:
-          'Every supported surface maps to its quaternary foreground token and matching shimmer token. Default covers primary, secondary, transparent, and all faint intent backgrounds.',
+          'Every supported background maps to its quaternary foreground token and matching shimmer token. Omitted default covers primary and secondary; explicit faint uses the same standard tokens.',
       },
     },
   },
   render: () => html`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--dimension-space-150);">
-      ${SURFACES.map(surface => html`
+      ${BACKGROUND_CONTEXTS.map(context => html`
         <div style="display:flex;flex-direction:column;gap:var(--dimension-space-050);">
-          <ds-text as="span" variant="text-caption" color="secondary">${surface.value}</ds-text>
+          <ds-text as="span" variant="text-caption" color="secondary">${context.label}</ds-text>
           <div
-            style="display:flex;flex-direction:column;gap:var(--dimension-space-100);padding:var(--dimension-space-200);background:${surface.background};border-radius:var(--dimension-radius-100);"
+            style="display:flex;flex-direction:column;gap:var(--dimension-space-100);padding:var(--dimension-space-200);background:${context.background};border-radius:var(--dimension-radius-100);"
           >
             <ds-skeleton
               variant="text"
               text-variant="text-body-medium"
               width="100%"
-              surface=${surface.value}
+              background=${context.value || undefined}
             ></ds-skeleton>
             <ds-skeleton
               variant="control"
               control-size="md"
               width="60%"
               rounded
-              surface=${surface.value}
+              background=${context.value || undefined}
             ></ds-skeleton>
           </div>
         </div>

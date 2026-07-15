@@ -8,5 +8,5 @@
     "rootDir": "src/wc",
     "outDir": "dist/lib"
   },
-  "include": ["src/wc/nav/index.ts", "src/wc/utils/index.ts"]
+  "include": ["src/wc/shell/index.ts", "src/wc/utils/index.ts"]
 }

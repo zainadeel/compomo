@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Loader e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Loader test</h1>
+      <button type="button" aria-busy="true" style="color: var(--color-foreground-primary)">
+        Saving
+        <ds-loader id="nested"></ds-loader>
+      </button>
+      <ds-loader id="standalone" label="Loading vehicle details"></ds-loader>
+    </main>
+    <script type="module" src="/loader-setup.mjs"></script>
+  </body>
+</html>

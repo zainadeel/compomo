@@ -1,0 +1,38 @@
+@import './control-density.css';
+@import './interaction-fill.css';
+@import './focus-ring.css';
+@import './control-inactive.css';
+
+/*
+ * Shared metric box for compact metadata controls. Tag owns semantic intent
+ * and optional menu interaction; Chip owns its fixed dismiss interaction.
+ */
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: var(--color-foreground-primary);
+  position: relative;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  height: var(--ds-control-height);
+  padding: 0 var(--ds-control-padding-inline);
+  gap: var(--ds-control-gap);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:host(.tag--rounded) {
+  border-radius: var(--dimension-radius-half);
+}
+
+.tag__label {
+  position: relative;
+  z-index: 2;
+  padding: 0 var(--ds-control-label-inset);
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

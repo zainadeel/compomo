@@ -1,6 +1,6 @@
 import { Component, Prop, Event, EventEmitter, Watch, State, Element, Method, h, Host } from '@stencil/core';
-import type { ChromeTransitionDetail } from '../../nav/chrome-transition';
-import type { NavChromeStyle } from '../../nav/nav-chrome';
+import type { ChromeTransitionDetail } from '../../shell/chrome-transition';
+import type { NavChromeStyle } from '../../shell/nav-chrome';
 import {
   deriveActiveIdFromUrl,
   panelNavWidthTransitionMs,
@@ -612,7 +612,7 @@ export class PanelNav {
 
     const itemContent = [
       <span class="panel-nav__item-icon">
-        <ds-icon name={item.icon} size="md" color="inherit" flag={item.flag} />
+        <ds-icon name={item.icon} size="md" color="inherit" />
       </span>,
       <ds-text
         class="panel-nav__item-label panel-nav__item-label-text"

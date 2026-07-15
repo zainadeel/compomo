@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Badge e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Badge test</h1>
+      <button type="button">
+        Inbox
+        <ds-badge id="counter" count="10" max="9" label="10 unread notifications"></ds-badge>
+      </button>
+      <ds-badge id="zero" count="0" aria-hidden="true"></ds-badge>
+      <ds-badge id="negative" count="-1" aria-hidden="true"></ds-badge>
+      <ds-badge id="dot" variant="dot" aria-hidden="true"></ds-badge>
+      <ds-badge id="labelled-dot" variant="dot" label="New activity"></ds-badge>
+    </main>
+    <script type="module" src="/badge-setup.mjs"></script>
+  </body>
+</html>

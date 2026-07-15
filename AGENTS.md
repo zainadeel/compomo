@@ -50,7 +50,7 @@ agent/
   contracts/            # Stable compatibility contracts consumed by validation
   patterns/             # Cross-component workflow guidance
   baseline/             # Temporary migration allowlists for legacy metadata
-docs/                   # Framework integration + optical-sizing reference (not Storybook source)
+docs/                   # Framework integration reference (not Storybook source)
 dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + patched index.d.ts
 stencil.config.ts       # Stencil build config (output targets, namespace, srcDir)
@@ -122,13 +122,13 @@ Package `exports`:
   "./react":         { "import": "./dist/react/components.js", "types": "./dist/react/components.d.ts" },
   "./agent":         "./dist/agent.json",
   "./dist/components": { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
-  "./nav":           { "import": "./dist/lib/nav/index.js", "types": "./dist/lib/nav/index.d.ts" },
+  "./shell":         { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
   "./utils":         { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
 }
 ```
 
-**`/nav` and `/utils` ship compiled JS + d.ts** (`scripts/build-lib-exports.mjs`: esbuild bundle per entry + `tsc -p tsconfig.lib.json` declarations → `dist/lib/`). They previously shipped raw TS source, which made consumer type-checking depend on our devDependencies (`@stencil/core` types) and broke toolchains that don't transpile node_modules TS. `/angular` and `/react` still ship source — the Stencil output-target convention — revisit in [#257](https://github.com/zainadeel/compomo/issues/257) if it bites a consumer.
+**`/shell` and `/utils` ship compiled JS + d.ts** (`scripts/build-lib-exports.mjs`: esbuild bundle per entry + `tsc -p tsconfig.lib.json` declarations → `dist/lib/`). They previously shipped raw TS source, which made consumer type-checking depend on our devDependencies (`@stencil/core` types) and broke toolchains that don't transpile node_modules TS. `/angular` and `/react` still ship source — the Stencil output-target convention — revisit in [#257](https://github.com/zainadeel/compomo/issues/257) if it bites a consumer.
 
 Consumers install the **ds-mo trilogy** and import the tags they render:
 
@@ -151,7 +151,7 @@ import { DsButtonFilled, DsBarNav } from '@ds-mo/ui/react';
 
 **Peer dependency model:** `@ds-mo/tokens` and `@ds-mo/icons` are **required** runtime peers — same as tokens, icons are **not** inlined into `dist/`. Stencil externalizes `@ds-mo/icons`; the consumer's bundler resolves SVG exports when bundling `ds-icon`.
 
-**`ds-icon` names:** Pass canonical IcoMo export keys only (`Bell`, `Chart`, `DeviceMobile`). IcoMo `meta.json` aliases are for discovery/docs — not runtime resolution. `prebuild` generates `system-icon-catalog.ts` / `flag-icon-catalog.ts` as **lazy loader maps** — one static-analyzable `() => import('@ds-mo/icons/svg/<Name>')` per icon, so consumer bundlers code-split a tiny chunk per icon instead of shipping the whole catalog (~340 kB raw) in the initial bundle. Glyphs cache in a global-symbol-keyed shared cache (`icon-cache.ts`) after first load.
+**`ds-icon` names:** Pass canonical IcoMo export keys only (`Bell`, `Chart`, `DeviceMobile`, `FlagUnitedStates`). `Flag*` names select the flag catalog automatically; there is no separate flag prop. IcoMo `meta.json` aliases are for discovery/docs — not runtime resolution. `prebuild` generates `system-icon-catalog.ts` / `flag-icon-catalog.ts` as **lazy loader maps** — one static-analyzable `() => import('@ds-mo/icons/svg/<Name>')` per icon, so consumer bundlers code-split a tiny chunk per icon instead of shipping the whole catalog (~340 kB raw) in the initial bundle. Glyphs cache in a global-symbol-keyed shared cache (`icon-cache.ts`) after first load.
 
 **Icon preloading (`registerIcons`):** icons render async on first use (glyph pops into a fixed-size box — no layout shift). Apps can pre-register critical icons (nav chrome) for synchronous first paint: statically import the SVG strings from `@ds-mo/icons` and call `registerIcons` from `@ds-mo/ui/utils` before rendering. See the JSDoc in `src/wc/components/Icon/icon-cache.ts`.
 
@@ -256,6 +256,8 @@ export class MyComponent {
 - A variant is atomic: its font-size, line-height, weight, and letter-spacing come from the shared typography recipe. Parent controls/density classes must never override text line-height.
 - One rendered line is exactly one variant line-height; N lines are N × that token. Width constraints determine wrapping.
 - Put layout classes (padding, flex/grid participation, truncation width, z-index) directly on `ds-text`. Do not add a wrapper whose only purpose is layout.
+- Choose `as` from native document semantics and heading hierarchy independently from visual `variant`. Omitted color inherits `currentColor`.
+- Solid underline is reserved for Text composed inside a real link. Dotted underline signals hidden or supplemental interaction such as a tooltip; the owning trigger supplies focus, keyboard behavior, and accessible semantics.
 - Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to a future prose/app renderer, not `ds-text`.
 - Native form values cannot contain a custom element. Native inputs use the internal `typography.css` recipe as the explicit exception.
 
@@ -282,6 +284,60 @@ export class MyComponent {
 - The Cross dismiss icon is fixed. `dsRemove` has no payload; the parent identifies the bound item, removes it, and moves focus to the next chip, previous chip, or owning collection/input trigger.
 - `isInactive` keeps the chip visible while disabling and removing its dismiss action from keyboard interaction.
 - Labels stay on one line and truncate only when the parent supplies a maximum width. The parent owns size, wrapping, overflow, and responsive condensation.
+
+**Tag**
+
+- `ds-tag` is static metadata, taxonomy, affiliation, or semantic status on primary application surfaces by default. Use Chip for removable values and ButtonUnfilled for non-menu actions/toggles.
+- Pass `interactive` only when the Tag opens a related menu. It renders a native button, emits `dsClick`, exposes controlled `expanded` + optional `ariaControls`, and adds a fixed decorative `ChevronUpDown` suffix. It never toggles open state internally.
+- `icon` renders a decorative leading `ds-icon`, matching the Button icon API. There is no icon slot or consumer-configurable suffix.
+- `isInactive` disables the interactive button and applies the shared inactive treatment. Static Tag remains outside the tab order and has no event or suffix.
+- Intent describes content meaning, never interaction state. Brand marks Motive/product affiliation; AI marks AI-generated or AI-assisted content. Warning is higher urgency/risk than caution.
+- Contrast changes prominence without changing meaning or parent surface context. `rounded` is a visual style only.
+- The visible label owns the accessible name. The menu owner synchronizes `expanded`, associates `aria-controls`, opens the menu from `dsClick`, and follows Menu focus management.
+- Labels stay on one line and truncate only when the parent supplies `maxWidth`. The parent selects density and owns collection wrapping, overflow, and responsive condensation.
+
+**Badge**
+
+- `ds-badge` is non-interactive supplemental notification chrome attached to an owning control or label. Counter is for unread quantity; dot communicates presence without quantity.
+- The owner provides the primary accessible name. Give an announced counter or dot contextual supplemental text, or mark a purely visual badge `aria-hidden`; never expose a bare count or generic “notification” name.
+- Non-positive counters hide. Counts above the compact limit render the limit plus a suffix (for example `9+`).
+- Badge keeps one brand treatment. Use Tag or normal content for semantic statuses and quantities that must stand alone.
+- Match the ring to the immediate backing surface for both variants. Prefer typed surface presets; use the direct ring override only for component-local fills. Gradient rings align automatically inside active AppShell gradient chrome.
+- The owner positions Badge and owns responsive visibility or condensation. Badge never receives focus or pointer interaction.
+
+**Divider**
+
+- `ds-divider` separates sibling content groups within one surface when spacing alone is insufficient. Use the owning component's border for container edges, control outlines, and selected states.
+- Horizontal and vertical orientations are supported. The parent owns placement and any responsive changes to orientation, visibility, inset, or length.
+- Decorative dividers are hidden from assistive technology by default. Enable separator semantics only when the line represents meaningful document or group structure.
+- Omitted `background` is for primary and secondary surfaces. Pass `faint` explicitly on faint surfaces even though it uses the same standard divider token; other contexts use their matching divider token, including navigation chrome.
+- Insets remain symmetric along the line axis. Prefer token presets; explicit CSS lengths are for layout-specific exceptions.
+
+**Icon**
+
+- `ds-icon` renders canonical IcoMo system and `Flag*` glyphs. It is visual content, never the interactive target; compose it inside the owning button, link, or control.
+- Icons are decorative by default. Add a label only when the icon itself conveys otherwise unavailable meaning; nested control icons stay decorative because the owner provides the accessible name.
+- Omitted color inherits `currentColor`. Use semantic aliases or CSS-variable references only when the glyph needs an independent color role.
+- Unknown names, failed loads, and rejected SVG markup leave an empty fixed-size box. Do not add a fallback glyph that could communicate the wrong meaning.
+- Lazy loading is the default. Pre-register only critical first-paint glyphs with `registerIcons`; render-boundary SVG validation and parsed-DOM injection remain mandatory.
+- Informative flags require explicit localized labels. The parent owns icon size and responsive changes.
+
+**Loader**
+
+- `ds-loader` communicates indeterminate progress for an operation. Use Skeleton for pending content with predictable structure; Loader does not represent determinate progress.
+- Nested Loader stays unnamed while the owning button, field, or region exposes its busy state. Standalone Loader requires contextual status text; avoid duplicate announcements.
+- Omitted color inherits `currentColor`. Explicit color aliases and CSS variables follow the Icon contract.
+- The owner decides whether to delay visibility for short operations, reserves space, supplies centering/overlay layout, and communicates completion or failure.
+- Reduced motion stops rotation but keeps the glyph and status semantics visible. The parent owns size and responsive changes.
+
+**Skeleton**
+
+- `ds-skeleton` preserves expected content geometry while structured data is pending. It is an aria-hidden atom, not an operation-level progress indicator; use Loader for actions.
+- Compose text, icon, and control atoms in the owner to approximate final count, hierarchy, width, and arrangement. Skeleton does not provide card, list, or table presets.
+- The owning region exposes busy/loading semantics, delays brief placeholder flashes when appropriate, preserves focus, and swaps the complete composition for real content.
+- Shimmer defaults on and may be disabled. Reduced motion always renders a static final shape. `rounded` is an optional visual treatment for icon and control atoms.
+- Omitted `background` is for primary and secondary surfaces. Pass `faint` explicitly on faint surfaces even though it uses the same standard base/shimmer tokens; other contexts use matching tokens.
+- The owner adapts placeholder count, width, and arrangement to its real responsive layout.
 
 **Local tab navigation**
 
@@ -555,7 +611,7 @@ Release-please will open a release PR at that exact version. Useful when only `c
 - **Do not edit `dist/`** — it's generated by `stencil build`. Edit `src/wc/`, then run `npm run build`.
 - **Do not edit `src/angular/`** — auto-generated by the Angular output target. The hand-owned public barrel is `src/framework/angular.ts`.
 - **Do not edit `src/react/`** — auto-generated by the React output target on every build.
-- **Do not edit `src/wc/components.d.ts`** — auto-generated by Stencil. Do not append hand exports there (watch/dev rebuilds wipe them and CI fails “src/ mutated”). Ship non-component APIs from `@ds-mo/ui/nav` or `@ds-mo/ui/utils` instead (e.g. `PANEL_NAV_USER_MENU_PLACEMENT` from `/nav`).
+- **Do not edit `src/wc/components.d.ts`** — auto-generated by Stencil. Do not append hand exports there (watch/dev rebuilds wipe them and CI fails “src/ mutated”). Ship shell APIs from `@ds-mo/ui/shell` and generic APIs from `@ds-mo/ui/utils` instead (e.g. `PANEL_NAV_USER_MENU_PLACEMENT` from `/shell`).
 - **Do not hand-add React wrapper components** — new UI goes in `src/wc/components/`; React wrappers are generated automatically.
 - **Do not hardcode colors, spacing, or other design values** — always use `@ds-mo/tokens` CSS custom properties. Hardcoding breaks theming.
 - **Default to `scoped: true`** in `@Component()` so token CSS variables penetrate naturally. Use `shadow: true` only where required (e.g. `ds-loader`, `ds-switch`, `ds-skeleton`).

@@ -9,7 +9,7 @@ import {
   h,
   Host,
 } from '@stencil/core';
-import type { NavChromeStyle } from '../../nav/nav-chrome';
+import type { NavChromeStyle } from '../../shell/nav-chrome';
 import type { MenuItemData } from '../Menu/menu-types';
 import { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/tab-item-utils';
 import type { BarNavTab } from './bar-nav-types';
@@ -31,7 +31,7 @@ import {
   createRafCoalescer,
   readChromeTransitionSource,
   readChromeTransitionPhase,
-} from '../../nav/chrome-transition';
+} from '../../shell/chrome-transition';
 
 @Component({
   tag: 'ds-bar-nav',
