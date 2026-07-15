@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/zainadeel/compomo/compare/v7.0.0...v8.0.0) (2026-07-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* harden primitive contracts and shell APIs ([#325](https://github.com/zainadeel/compomo/issues/325))
+
+### Added
+
+* harden primitive contracts and shell APIs ([#325](https://github.com/zainadeel/compomo/issues/325)) ([9ed98fb](https://github.com/zainadeel/compomo/commit/9ed98fbc4b093044c35b380db4117ab59a0d4165))
+
 ## [7.0.0](https://github.com/zainadeel/compomo/compare/v6.0.1...v7.0.0) (2026-07-15)
 
 
