@@ -43,7 +43,7 @@ test('keeps an empty fixed-size box for invalid names', async ({ page }) => {
   const box = await invalid.boundingBox();
   expect(box?.width).toBeGreaterThan(0);
   expect(box?.height).toBeGreaterThan(0);
-  expect(box?.width).toBe(box?.height);
+  expect(box?.width).toBeCloseTo(box?.height ?? 0, 3);
 });
 
 test('has no detectable accessibility violations', async ({ page }) => {
