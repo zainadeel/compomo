@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://github.com/zainadeel/compomo/compare/v6.0.1...v7.0.0) (2026-07-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* consolidate local navigation and surface contracts ([#323](https://github.com/zainadeel/compomo/issues/323))
+
+### Added
+
+* consolidate local navigation and surface contracts ([#323](https://github.com/zainadeel/compomo/issues/323)) ([88ea1d8](https://github.com/zainadeel/compomo/commit/88ea1d8a8e3063cb86e057030cdd4eeca81631c1))
+
 ## [6.0.1](https://github.com/zainadeel/compomo/compare/v6.0.0...v6.0.1) (2026-07-14)
 
 
