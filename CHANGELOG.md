@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.1](https://github.com/zainadeel/compomo/compare/v8.0.0...v8.0.1) (2026-07-15)
+
+
+### Fixed
+
+* clean stale framework proxies ([#327](https://github.com/zainadeel/compomo/issues/327)) ([39b3467](https://github.com/zainadeel/compomo/commit/39b3467e87c3e2d96a8d4cd7d674e076bfbc2026)), closes [#322](https://github.com/zainadeel/compomo/issues/322)
+
 ## [8.0.0](https://github.com/zainadeel/compomo/compare/v7.0.0...v8.0.0) (2026-07-15)
 
 
