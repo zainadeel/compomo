@@ -75,6 +75,7 @@ release-please-config.json      # Release Please config (node, changelog section
 
 ```bash
 npm run build            # Stencil compiler build → dist/
+npm run clean:framework-proxies # Remove generated Angular/React source proxies + barrels only
 npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, etc.)
 npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
 npm run test:e2e:install # One-time Chromium, Firefox, and WebKit for Playwright
@@ -102,13 +103,14 @@ npm run clean            # Remove dist/
 
 The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 
-1. Transpiles every `@Component()` class in `src/wc/components/**/*.tsx` to native Custom Elements
-2. Emits per-component ESM files to `dist/components/` (`dist-custom-elements` — auto-define on import)
-3. Generates TypeScript declarations → `src/wc/components.d.ts` (+ `scripts/patch-index-types.mjs` augments `dist/components/index.d.ts` only — never patch `components.d.ts`; Stencil rewrites it on every build/watch)
-4. Runs Angular output target → regenerates `src/angular/` and compiles it to `dist/angular/`
-5. Runs React output target → regenerates `src/react/` and compiles it to `dist/react/`
-6. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
-7. Regenerates `public/r/` from compiler facts + component intent and emits the package manifest at `dist/agent.json`
+1. Removes generated Angular/React proxies and barrels via `scripts/clean-framework-proxies.mjs`; hand-maintained Angular support files are preserved. Build, docs build, and watch startup share this cleanup path.
+2. Transpiles every `@Component()` class in `src/wc/components/**/*.tsx` to native Custom Elements
+3. Emits per-component ESM files to `dist/components/` (`dist-custom-elements` — auto-define on import)
+4. Generates TypeScript declarations → `src/wc/components.d.ts` (+ `scripts/patch-index-types.mjs` augments `dist/components/index.d.ts` only — never patch `components.d.ts`; Stencil rewrites it on every build/watch)
+5. Runs Angular output target → regenerates `src/angular/`, verifies the proxy inventory, and compiles it to `dist/angular/`
+6. Runs React output target → regenerates `src/react/`, verifies the proxy inventory, and compiles it to `dist/react/`; the inventory is verified again at the end of the build
+7. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
+8. Regenerates `public/r/` from compiler facts + component intent and emits the package manifest at `dist/agent.json`
 
 There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
