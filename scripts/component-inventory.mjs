@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 import { fileURLToPath } from 'node:url';
+import { listFrameworkComponentProxies } from './clean-framework-proxies.mjs';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const COMPONENT_ROOT = 'src/wc/components';
@@ -125,19 +126,35 @@ export function validateAuthoredArtifacts({
     if (hasAgent && migrationIds.has(component.id)) {
       errors.push(`remove completed ${component.id} from missingAgentMetadata`);
     }
-    if (checkAdapters) {
-      for (const generatedPath of [component.angularPath, component.reactPath]) {
-        if (!fs.existsSync(path.join(root, generatedPath))) {
-          errors.push(`${component.tag}: missing generated framework adapter ${generatedPath}; run npm run build`);
-        }
-      }
-    }
   }
+  if (checkAdapters) errors.push(...validateFrameworkAdapters({ root, components }));
   for (const id of migrationIds) {
     if (!componentIds.has(id)) errors.push(`stale or unknown migration component ${id}`);
   }
   for (const id of Object.keys(artifactExceptions)) {
     if (!componentIds.has(id)) errors.push(`stale or unknown artifact exception ${id}`);
+  }
+  return errors;
+}
+
+export function validateFrameworkAdapters({ root = ROOT, components }) {
+  const errors = [];
+  const expected = new Map();
+  for (const component of components) {
+    expected.set(component.angularPath, component.tag);
+    expected.set(component.reactPath, component.tag);
+  }
+  const actual = new Set(listFrameworkComponentProxies(root));
+
+  for (const [generatedPath, tag] of expected) {
+    if (!actual.has(generatedPath)) {
+      errors.push(`${tag}: missing generated framework adapter ${generatedPath}; run npm run build`);
+    }
+  }
+  for (const generatedPath of actual) {
+    if (!expected.has(generatedPath)) {
+      errors.push(`stale generated framework adapter ${generatedPath}; run npm run build`);
+    }
   }
   return errors;
 }

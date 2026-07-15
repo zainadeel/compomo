@@ -7,8 +7,10 @@ import {
   componentSourceFiles,
   discoverComponents,
   validateAuthoredArtifacts,
+  validateFrameworkAdapters,
   validateRegistryCoverage,
 } from '../scripts/component-inventory.mjs';
+import { cleanFrameworkProxies } from '../scripts/clean-framework-proxies.mjs';
 import './registry-formatters.test.ts';
 
 const temporaryRoots: string[] = [];
@@ -38,6 +40,12 @@ function writeComponent(root: string, directory: string, tag: string, options: {
   if (options.style !== false) fs.writeFileSync(path.join(componentDirectory, `${directory}.css`), '');
   if (options.story !== false) fs.writeFileSync(path.join(componentDirectory, `${directory}.stories.ts`), '');
   if (options.agent !== false) fs.writeFileSync(path.join(componentDirectory, `${directory}.agent.json`), '{}');
+}
+
+function writeFile(root: string, relativePath: string, contents = '') {
+  const absolutePath = path.join(root, relativePath);
+  fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+  fs.writeFileSync(absolutePath, contents);
 }
 
 describe('source-derived component inventory', () => {
@@ -99,6 +107,55 @@ describe('source-derived component inventory', () => {
       checkAdapters: false,
     });
     assert.ok(errors.some(error => error.includes('remove completed component:ds-legacy-widget')));
+  });
+
+  it('detects missing and stale generated framework adapters', () => {
+    const root = fixtureRoot();
+    writeComponent(root, 'NewWidget', 'ds-new-widget');
+    writeFile(root, 'src/angular/ds-new-widget.ts');
+    writeFile(root, 'src/angular/ds-deleted-widget.ts');
+    writeFile(root, 'src/react/ds-deleted-widget.ts');
+
+    const errors = validateFrameworkAdapters({ root, components: discoverComponents(root) });
+    assert.ok(errors.some(error => error.includes('missing generated framework adapter src/react/ds-new-widget.ts')));
+    assert.ok(errors.some(error => error.includes('stale generated framework adapter src/angular/ds-deleted-widget.ts')));
+    assert.ok(errors.some(error => error.includes('stale generated framework adapter src/react/ds-deleted-widget.ts')));
+  });
+
+  it('cleans generated proxies and barrels while preserving Angular support files', () => {
+    const root = fixtureRoot();
+    for (const generatedPath of [
+      'src/angular/ds-new-widget.ts',
+      'src/angular/ds-new-widget 2.ts',
+      'src/angular/proxies.ts',
+      'src/angular/proxies 2.ts',
+      'src/angular/index.ts',
+      'src/react/ds-new-widget.ts',
+      'src/react/components.ts',
+      'src/react/components 2.ts',
+    ]) writeFile(root, generatedPath, 'generated');
+    for (const supportPath of [
+      'src/angular/boolean-value-accessor.ts',
+      'src/angular/value-accessor.ts',
+      'src/angular/angular-component-lib/utils.ts',
+    ]) writeFile(root, supportPath, 'preserved');
+
+    const removed = cleanFrameworkProxies(root);
+    assert.deepEqual(removed, [
+      'src/angular/ds-new-widget 2.ts',
+      'src/angular/ds-new-widget.ts',
+      'src/angular/index.ts',
+      'src/angular/proxies 2.ts',
+      'src/angular/proxies.ts',
+      'src/react/components 2.ts',
+      'src/react/components.ts',
+      'src/react/ds-new-widget.ts',
+    ]);
+    for (const supportPath of [
+      'src/angular/boolean-value-accessor.ts',
+      'src/angular/value-accessor.ts',
+      'src/angular/angular-component-lib/utils.ts',
+    ]) assert.equal(fs.readFileSync(path.join(root, supportPath), 'utf8'), 'preserved');
   });
 
   it('detects renamed registry items and detail files', () => {
