@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsButtonUnfilled } from '@ds-mo/ui/compone
 
 @ProxyCmp({
   defineCustomElementFn: defineDsButtonUnfilled,
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'isLoading', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsButtonUnfilled } from '@ds-mo/ui/compone
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeFill', 'ariaLabel', 'background', 'backgroundContrast', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
+  inputs: ['activeFill', 'ariaLabel', 'background', 'controls', 'dot', 'expanded', 'focusTabIndex', 'hasBorder', 'haspopup', 'icon', 'isActive', 'isInactive', 'isLoading', 'label', 'pressed', 'size', 'type', 'variant', 'width'],
   outputs: ['dsClick', 'dsChange'],
 })
 export class DsButtonUnfilled {

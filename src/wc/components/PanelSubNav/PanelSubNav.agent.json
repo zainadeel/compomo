@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-panel-sub-nav",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-panel-sub-nav",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Persistent vertical tab navigation for a panel or card side rail, switching adjacent local content with menu-like selected fill and stable text weight.",
+  "useWhen": [
+    "A panel or card side rail needs a persistent vertical list that switches adjacent local content.",
+    "Each concise text label controls an immediately available tabpanel without changing application routes."
+  ],
+  "avoidWhen": [
+    "The navigation is not contained in a panel or card side rail.",
+    "Local views should be arranged horizontally; use TabGroup instead.",
+    "The choices navigate routes in application shell chrome; use PanelNav or BarNav instead.",
+    "The choices are temporary commands or contextual options; use Menu instead.",
+    "Rows need icons, subtext, notification dots, nested levels, or section headers."
+  ],
+  "alternatives": [
+    {
+      "when": "Local panel choices fit a horizontal tab row.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup is the horizontal local-view counterpart."
+    },
+    {
+      "when": "The choices are primary application destinations.",
+      "component": "component:ds-panel-nav",
+      "reason": "PanelNav owns primary application navigation."
+    },
+    {
+      "when": "The choices are secondary application routes.",
+      "component": "component:ds-bar-nav",
+      "reason": "BarNav owns route sections inside AppShell."
+    },
+    {
+      "when": "The choices are transient actions or options.",
+      "component": "component:ds-menu",
+      "reason": "Menu owns temporary popup collections."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Provide an accessible name with aria-label or aria-labelledby.",
+    "Give every item a unique id and the id of its controlled tabpanel.",
+    "Keep each controlled tabpanel labelled by its matching item id.",
+    "Always provide a valid selected item when enabled items exist so exactly one tab and panel are active.",
+    "ArrowUp and ArrowDown move and activate selection; Home and End select the first and last available items.",
+    "Do not use selected text weight as the selection cue; active fill and primary foreground communicate selection."
+  ],
+  "states": [
+    "The parent owns the canonical selected value and panel visibility, and should update both from dsChange.",
+    "A missing, empty, or unknown selected value is invalid when enabled items exist; the component does not choose a fallback selection.",
+    "Inactive items remain visible but cannot be focused or selected.",
+    "Selection is singular and follows keyboard focus.",
+    "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
+    "Rows contain one text label only and do not express nested navigation or grouped hierarchy."
+  ],
+  "responsiveBehavior": [
+    "The component remains vertical at every width.",
+    "The consuming panel owns responsive adaptation and decides whether to reposition or replace the side rail."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign items as a JavaScript property because structured arrays are not represented by HTML attributes.",
+      "Keep value synchronized to a valid enabled item and update the controlled panel from dsChange."
+    ],
+    "react": [
+      "Pass items as an array through the generated wrapper, keep value controlled, and use onDsChange to synchronize the visible panel."
+    ],
+    "angular": [
+      "Bind items and a valid value as properties, and handle dsChange to synchronize the visible panel."
+    ]
+  }
+}

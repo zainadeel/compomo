@@ -31,6 +31,7 @@ const meta: Meta = {
     intent: { control: 'select', options: [...INTENTS] },
     contrast: { control: 'select', options: [...CONTRASTS] },
     isInactive: { control: 'boolean' },
+    isLoading: { control: 'boolean' },
     ariaLabel: { control: 'text' },
   },
   args: {
@@ -42,6 +43,7 @@ const meta: Meta = {
     intent: 'brand',
     contrast: 'bold',
     isInactive: false,
+    isLoading: false,
     ariaLabel: '',
   },
 };
@@ -65,6 +67,7 @@ export const Playground: Story = {
       intent=${args['intent']}
       contrast=${args['contrast']}
       ?is-inactive=${args['isInactive']}
+      ?is-loading=${args['isLoading']}
       aria-label=${args['ariaLabel'] || undefined}
     ></ds-button-filled>
   `,
@@ -90,6 +93,24 @@ export const VariantsAndSizes: Story = {
               `,
             )}
           </div>
+        `,
+      )}
+    </div>
+  `,
+};
+
+export const LoadingVariants: Story = {
+  render: () => html`
+    <div style="${ROW}">
+      ${VARIANTS.map(
+        variant => html`
+          <ds-button-filled
+            variant=${variant}
+            label="Confirm"
+            icon="Check"
+            is-loading
+            aria-label=${variant === 'icon' ? 'Confirm' : undefined}
+          ></ds-button-filled>
         `,
       )}
     </div>

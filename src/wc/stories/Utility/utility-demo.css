@@ -106,6 +106,10 @@
   background: var(--color-background-medium-neutral);
 }
 
+.util-demo-surface--faint {
+  background: var(--color-background-faint-neutral);
+}
+
 .util-demo-surface--bold {
   background: var(--color-background-bold-neutral);
 }

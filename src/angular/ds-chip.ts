@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsChip } from '@ds-mo/ui/components/ds-chi
 
 @ProxyCmp({
   defineCustomElementFn: defineDsChip,
-  inputs: ['background', 'isInactive', 'label', 'maxWidth', 'removable', 'removeLabel', 'rounded', 'size', 'state']
+  inputs: ['isInactive', 'label', 'maxWidth', 'removeLabel', 'rounded', 'size', 'state']
 })
 @Component({
   selector: 'ds-chip',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'isInactive', { name: 'label', required: true }, 'maxWidth', 'removable', 'removeLabel', 'rounded', 'size', 'state'],
+  inputs: ['isInactive', { name: 'label', required: true }, 'maxWidth', 'removeLabel', 'rounded', 'size', 'state'],
   outputs: ['dsRemove'],
 })
 export class DsChip {

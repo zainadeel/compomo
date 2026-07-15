@@ -68,6 +68,9 @@ export class ButtonFilled {
   /** Disables interaction. */
   @Prop() isInactive: boolean = false;
 
+  /** Shows an inline loader and prevents interaction without applying inactive opacity. */
+  @Prop() isLoading: boolean = false;
+
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
@@ -83,7 +86,7 @@ export class ButtonFilled {
   }
 
   private handleClick = (event: MouseEvent) => {
-    if (this.isInactive) return;
+    if (this.isInactive || this.isLoading) return;
     this.dsClick.emit(event);
   };
 
@@ -97,6 +100,7 @@ export class ButtonFilled {
 
   private get accessibleName(): string | undefined {
     if (this.ariaLabel) return this.ariaLabel;
+    if (this.isLoading && this.variant === 'label' && this.label) return this.label;
     if (this.showLabel && this.label) return undefined;
     if (this.variant === 'icon') return this.icon || 'action';
     return this.label || 'action';
@@ -144,18 +148,26 @@ export class ButtonFilled {
           }}
           type={this.type}
           class={cls}
-          disabled={this.isInactive}
+          disabled={this.isInactive || this.isLoading}
           aria-label={this.accessibleName}
+          aria-busy={this.isLoading ? 'true' : undefined}
           onClick={this.handleClick}
         >
           {this.showIcon && (
             <span class="button-filled__icon-wrap ds-interaction-fill__content">
-              <ds-icon name={this.icon} size={iconSize} color="inherit" />
+              {this.isLoading
+                ? <ds-loader size={iconSize} color="inherit" />
+                : <ds-icon name={this.icon} size={iconSize} color="inherit" />
+              }
             </span>
           )}
           {this.showLabel && (
             <ds-text
-              class="button-filled__label ds-interaction-fill__content"
+              class={{
+                'button-filled__label': true,
+                'button-filled__label--loading': this.isLoading && this.variant === 'label',
+                'ds-interaction-fill__content': true,
+              }}
               as="span"
               variant={textVariant}
               emphasis
@@ -163,6 +175,11 @@ export class ButtonFilled {
             >
               {this.label}
             </ds-text>
+          )}
+          {this.isLoading && this.variant === 'label' && (
+            <span class="button-filled__loader-overlay ds-interaction-fill__content">
+              <ds-loader size={iconSize} color="inherit" />
+            </span>
           )}
         </button>
       </Host>

@@ -11,13 +11,13 @@ import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { ButtonUnfilledBackground, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardAppearance, CardWidth } from "./components/Card/Card";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
-import { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
+import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { IconColor, IconSize } from "./components/Icon/Icon";
@@ -28,6 +28,8 @@ import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { ChromeTransitionDetail } from "./nav/chrome-transition";
+import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
+import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption } from "./components/RadioGroup/RadioGroup";
 import { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
@@ -37,9 +39,8 @@ import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
 import { SwitchSize } from "./components/Switch/Switch";
-import { TabItem } from "./components/TabGroup/tab-item-utils";
+import { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
-import { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -49,13 +50,13 @@ export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledBackground, ButtonUnfilledOnBackgroundContrast, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { ButtonUnfilledBackground, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardAppearance, CardWidth } from "./components/Card/Card";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
-export { ChipBackground, ChipSize, ChipState } from "./components/Chip/Chip";
+export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerInset, DividerLength, DividerOrientation, DividerSurface } from "./components/Divider/Divider";
 export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { IconColor, IconSize } from "./components/Icon/Icon";
@@ -66,6 +67,8 @@ export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { ChromeTransitionDetail } from "./nav/chrome-transition";
+export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
+export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption } from "./components/RadioGroup/RadioGroup";
 export { SelectOption, SelectSize, SelectWidth } from "./components/Select/Select";
@@ -75,9 +78,8 @@ export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
 export { SwitchSize } from "./components/Switch/Switch";
-export { TabItem } from "./components/TabGroup/tab-item-utils";
+export { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
-export { TabGroupNavBackground } from "./components/TabGroupNav/TabGroupNav";
 export { SortState, TableColumn } from "./components/Table/Table";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -232,6 +234,11 @@ export namespace Components {
          */
         "isInactive": boolean;
         /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
           * Visible text for `label` / `icon-label` variants.
           * @default ''
          */
@@ -269,13 +276,9 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
-          * Parent surface context for navigation and always-dark chrome.
+          * Actual parent surface context. Omit on primary and secondary surfaces.
          */
         "background": ButtonUnfilledBackground | undefined;
-        /**
-          * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
-         */
-        "backgroundContrast"?: ButtonUnfilledOnBackgroundContrast;
         "controls": string | undefined;
         /**
           * Show a notification dot at the top-right of the icon zone (icon variant only).
@@ -308,6 +311,11 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading": boolean;
         /**
           * Visible text for `label` / `icon-label` variants.
           * @default ''
@@ -554,20 +562,11 @@ export namespace Components {
      */
     interface DsChip {
         /**
-          * Surface context for interaction-fill tokens when the chip sits on a non-default surface.
-         */
-        "background": ChipBackground | undefined;
-        /**
           * @default false
          */
         "isInactive": boolean;
         "label": string;
         "maxWidth": string | number | undefined;
-        /**
-          * When true (default), shows the trailing dismiss control.
-          * @default true
-         */
-        "removable": boolean;
         /**
           * Accessible remove action. Use `{label}` as the chip-label placeholder.
           * @default 'Remove {label}'
@@ -908,6 +907,27 @@ export namespace Components {
          */
         "userName": string;
     }
+    interface DsPanelSubNav {
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * Actual parent surface context. Omit on primary and secondary surfaces.
+         */
+        "background": PanelSubNavBackground | undefined;
+        /**
+          * Local panel tabs. Assign this array through the JavaScript property. Replace the array reference when items change.
+          * @default []
+         */
+        "items": PanelSubNavItem[];
+        /**
+          * Required selected item id when enabled items exist. Keep synchronized with the visible panel.
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsPanelTools {
         /**
           * Toggle any rail tool open/closed — shell shortcuts K/A/S/M/N call this.
@@ -1209,46 +1229,9 @@ export namespace Components {
         "ariaLabelledby": string | undefined;
         "background": TabBackground | undefined;
         /**
-          * @default 'horizontal'
-         */
-        "orientation": 'horizontal' | 'vertical';
-        /**
           * @default []
          */
-        "tabs": TabItem[];
-        /**
-          * @default ''
-         */
-        "value": string;
-    }
-    interface DsTabGroupNav {
-        /**
-          * @default null
-         */
-        "ariaLabel": string | null;
-        "ariaLabelledby": string | undefined;
-        "background": TabGroupNavBackground | undefined;
-        "focusFirstTab": () => Promise<void>;
-        "focusLastTab": () => Promise<void>;
-        "focusTab": (id: string) => Promise<void>;
-        /**
-          * @default 'horizontal'
-         */
-        "orientation": 'horizontal' | 'vertical';
-        /**
-          * When `false`, every tab uses `tabindex="-1"` (another chrome control owns the tab stop).
-          * @default true
-         */
-        "rovingEnabled": boolean;
-        /**
-          * When `false`, arrow keys move focus only — Space/Enter (or click) commits selection. Used by bar nav where each tab is a full page transition.
-          * @default true
-         */
-        "selectionFollowsFocus": boolean;
-        /**
-          * @default []
-         */
-        "tabs": TabItem[];
+        "tabs": TabGroupItem[];
         /**
           * @default ''
          */
@@ -1511,6 +1494,10 @@ export interface DsPanelNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelNavElement;
 }
+export interface DsPanelSubNavCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelSubNavElement;
+}
 export interface DsPanelToolsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelToolsElement;
@@ -1542,10 +1529,6 @@ export interface DsSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTabGroupElement;
-}
-export interface DsTabGroupNavCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTabGroupNavElement;
 }
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1897,6 +1880,23 @@ declare global {
         prototype: HTMLDsPanelNavElement;
         new (): HTMLDsPanelNavElement;
     };
+    interface HTMLDsPanelSubNavElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsPanelSubNavElement extends Components.DsPanelSubNav, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPanelSubNavElementEventMap>(type: K, listener: (this: HTMLDsPanelSubNavElement, ev: DsPanelSubNavCustomEvent<HTMLDsPanelSubNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPanelSubNavElementEventMap>(type: K, listener: (this: HTMLDsPanelSubNavElement, ev: DsPanelSubNavCustomEvent<HTMLDsPanelSubNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPanelSubNavElement: {
+        prototype: HTMLDsPanelSubNavElement;
+        new (): HTMLDsPanelSubNavElement;
+    };
     interface HTMLDsPanelToolsElementEventMap {
         "dsToolChange": {
     id: PanelToolsToolId;
@@ -2048,24 +2048,6 @@ declare global {
         prototype: HTMLDsTabGroupElement;
         new (): HTMLDsTabGroupElement;
     };
-    interface HTMLDsTabGroupNavElementEventMap {
-        "dsChange": string;
-        "dsRovingExit": 'start' | 'end';
-    }
-    interface HTMLDsTabGroupNavElement extends Components.DsTabGroupNav, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTabGroupNavElementEventMap>(type: K, listener: (this: HTMLDsTabGroupNavElement, ev: DsTabGroupNavCustomEvent<HTMLDsTabGroupNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTabGroupNavElementEventMap>(type: K, listener: (this: HTMLDsTabGroupNavElement, ev: DsTabGroupNavCustomEvent<HTMLDsTabGroupNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTabGroupNavElement: {
-        prototype: HTMLDsTabGroupNavElement;
-        new (): HTMLDsTabGroupNavElement;
-    };
     interface HTMLDsTableElementEventMap {
         "dsSort": { columnId: string };
         "dsRowClick": { row: unknown; rowIndex: number };
@@ -2154,6 +2136,7 @@ declare global {
         "ds-modal": HTMLDsModalElement;
         "ds-pagination": HTMLDsPaginationElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
+        "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-radio-group": HTMLDsRadioGroupElement;
         "ds-select": HTMLDsSelectElement;
@@ -2163,7 +2146,6 @@ declare global {
         "ds-slider": HTMLDsSliderElement;
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
-        "ds-tab-group-nav": HTMLDsTabGroupNavElement;
         "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
@@ -2329,6 +2311,11 @@ declare namespace LocalJSX {
          */
         "isInactive"?: boolean;
         /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
           * Visible text for `label` / `icon-label` variants.
           * @default ''
          */
@@ -2366,13 +2353,9 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
-          * Parent surface context for navigation and always-dark chrome.
+          * Actual parent surface context. Omit on primary and secondary surfaces.
          */
         "background"?: ButtonUnfilledBackground | undefined;
-        /**
-          * Foreground and interaction tokens when the button sits on a contrasting parent background (default, medium, bold, or strong).
-         */
-        "backgroundContrast"?: ButtonUnfilledOnBackgroundContrast;
         "controls"?: string | undefined;
         /**
           * Show a notification dot at the top-right of the icon zone (icon variant only).
@@ -2405,6 +2388,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading"?: boolean;
         /**
           * Visible text for `label` / `icon-label` variants.
           * @default ''
@@ -2677,10 +2665,6 @@ declare namespace LocalJSX {
      */
     interface DsChip {
         /**
-          * Surface context for interaction-fill tokens when the chip sits on a non-default surface.
-         */
-        "background"?: ChipBackground | undefined;
-        /**
           * @default false
          */
         "isInactive"?: boolean;
@@ -2690,11 +2674,6 @@ declare namespace LocalJSX {
           * Fired when the remove button is clicked.
          */
         "onDsRemove"?: (event: DsChipCustomEvent<void>) => void;
-        /**
-          * When true (default), shows the trailing dismiss control.
-          * @default true
-         */
-        "removable"?: boolean;
         /**
           * Accessible remove action. Use `{label}` as the chip-label placeholder.
           * @default 'Remove {label}'
@@ -3065,6 +3044,28 @@ declare namespace LocalJSX {
          */
         "userName"?: string;
     }
+    interface DsPanelSubNav {
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * Actual parent surface context. Omit on primary and secondary surfaces.
+         */
+        "background"?: PanelSubNavBackground | undefined;
+        /**
+          * Local panel tabs. Assign this array through the JavaScript property. Replace the array reference when items change.
+          * @default []
+         */
+        "items"?: PanelSubNavItem[];
+        "onDsChange"?: (event: DsPanelSubNavCustomEvent<string>) => void;
+        /**
+          * Required selected item id when enabled items exist. Keep synchronized with the visible panel.
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsPanelTools {
         /**
           * Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`.
@@ -3388,48 +3389,9 @@ declare namespace LocalJSX {
         "background"?: TabBackground | undefined;
         "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
         /**
-          * @default 'horizontal'
-         */
-        "orientation"?: 'horizontal' | 'vertical';
-        /**
           * @default []
          */
-        "tabs"?: TabItem[];
-        /**
-          * @default ''
-         */
-        "value"?: string;
-    }
-    interface DsTabGroupNav {
-        /**
-          * @default null
-         */
-        "ariaLabel"?: string | null;
-        "ariaLabelledby"?: string | undefined;
-        "background"?: TabGroupNavBackground | undefined;
-        "onDsChange"?: (event: DsTabGroupNavCustomEvent<string>) => void;
-        /**
-          * Fired when arrow navigation reaches the first/last tab in manual selection mode.
-         */
-        "onDsRovingExit"?: (event: DsTabGroupNavCustomEvent<'start' | 'end'>) => void;
-        /**
-          * @default 'horizontal'
-         */
-        "orientation"?: 'horizontal' | 'vertical';
-        /**
-          * When `false`, every tab uses `tabindex="-1"` (another chrome control owns the tab stop).
-          * @default true
-         */
-        "rovingEnabled"?: boolean;
-        /**
-          * When `false`, arrow keys move focus only — Space/Enter (or click) commits selection. Used by bar nav where each tab is a full page transition.
-          * @default true
-         */
-        "selectionFollowsFocus"?: boolean;
-        /**
-          * @default []
-         */
-        "tabs"?: TabItem[];
+        "tabs"?: TabGroupItem[];
         /**
           * @default ''
          */
@@ -3676,6 +3638,7 @@ declare namespace LocalJSX {
         "intent": ButtonFilledIntent;
         "contrast": ButtonFilledContrast;
         "isInactive": boolean;
+        "isLoading": boolean;
         "type": 'button' | 'submit' | 'reset';
         "ariaLabel": string | null;
     }
@@ -3690,8 +3653,8 @@ declare namespace LocalJSX {
         "hasBorder": boolean;
         "dot": boolean;
         "isInactive": boolean;
+        "isLoading": boolean;
         "type": 'button' | 'submit' | 'reset';
-        "backgroundContrast": ButtonUnfilledOnBackgroundContrast;
         "background": ButtonUnfilledBackground | undefined;
         "ariaLabel": string | null;
         "controls": string | undefined;
@@ -3760,10 +3723,8 @@ declare namespace LocalJSX {
         "state": ChipState;
         "size": ChipSize;
         "rounded": boolean;
-        "removable": boolean;
         "maxWidth": string;
         "isInactive": boolean;
-        "background": ChipBackground | undefined;
         "removeLabel": string;
     }
     interface DsDividerAttributes {
@@ -3858,6 +3819,12 @@ declare namespace LocalJSX {
         "expandNavigationLabel": string;
         "collapseNavigationLabel": string;
     }
+    interface DsPanelSubNavAttributes {
+        "value": string;
+        "background": PanelSubNavBackground | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+    }
     interface DsPanelToolsAttributes {
         "open": boolean;
         "activeTool": PanelToolsToolId | '';
@@ -3941,16 +3908,6 @@ declare namespace LocalJSX {
         "background": TabBackground | undefined;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
-        "orientation": 'horizontal' | 'vertical';
-    }
-    interface DsTabGroupNavAttributes {
-        "value": string;
-        "background": TabGroupNavBackground | undefined;
-        "ariaLabel": string | null;
-        "ariaLabelledby": string | undefined;
-        "orientation": 'horizontal' | 'vertical';
-        "selectionFollowsFocus": boolean;
-        "rovingEnabled": boolean;
     }
     interface DsTableAttributes {
         "loading": boolean;
@@ -4032,6 +3989,7 @@ declare namespace LocalJSX {
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
+        "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
@@ -4041,7 +3999,6 @@ declare namespace LocalJSX {
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
-        "ds-tab-group-nav": Omit<DsTabGroupNav, keyof DsTabGroupNavAttributes> & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes]?: DsTabGroupNav[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `attr:${K}`]?: DsTabGroupNavAttributes[K] } & { [K in keyof DsTabGroupNav & keyof DsTabGroupNavAttributes as `prop:${K}`]?: DsTabGroupNav[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
@@ -4098,6 +4055,7 @@ declare module "@stencil/core" {
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
+            "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
             /**
@@ -4111,7 +4069,6 @@ declare module "@stencil/core" {
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
-            "ds-tab-group-nav": LocalJSX.IntrinsicElements["ds-tab-group-nav"] & JSXBase.HTMLAttributes<HTMLDsTabGroupNavElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;

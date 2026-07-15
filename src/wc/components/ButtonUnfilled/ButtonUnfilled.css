@@ -75,25 +75,46 @@
 /* Inactive: `.ds-control-inactive` (25% opacity). */
 
 /* Foreground / chrome tokens per surface — interaction tokens come from util `--on-*`. */
-.button-unfilled--contrast-medium {
+.button-unfilled--background-medium {
   --ds-button-unfilled-fg: var(--color-foreground-on-medium-background-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-on-medium-background-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-medium-neutral);
   --ds-button-unfilled-border: var(--color-border-on-medium-background-secondary);
 }
 
-.button-unfilled--contrast-bold {
+.button-unfilled--background-bold {
   --ds-button-unfilled-fg: var(--color-foreground-on-bold-background-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-on-bold-background-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-bold-neutral);
   --ds-button-unfilled-border: var(--color-border-on-bold-background-secondary);
 }
 
-.button-unfilled--contrast-strong {
+.button-unfilled--background-strong {
   --ds-button-unfilled-fg: var(--color-foreground-on-strong-background-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-on-strong-background-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-strong-neutral);
   --ds-button-unfilled-border: var(--color-border-on-strong-background-secondary);
+}
+
+.button-unfilled--background-translucent {
+  --ds-button-unfilled-fg: var(--color-translucent-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-translucent-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-translucent-translucent);
+  --ds-button-unfilled-border: var(--color-translucent-border-secondary);
+}
+
+.button-unfilled--background-inverted {
+  --ds-button-unfilled-fg: var(--color-inverted-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-inverted-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-inverted-background);
+  --ds-button-unfilled-border: var(--color-inverted-border-secondary);
+}
+
+.button-unfilled--background-media {
+  --ds-button-unfilled-fg: var(--color-media-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-media-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-media-background);
+  --ds-button-unfilled-border: var(--color-media-border-secondary);
 }
 
 .button-unfilled--on-always-dark {
@@ -101,13 +122,6 @@
   --ds-button-unfilled-fg-active: var(--color-always-dark-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-always-dark-background);
   --ds-button-unfilled-border: var(--color-always-dark-border-secondary);
-}
-
-.button-unfilled--on-navigation {
-  --ds-button-unfilled-fg: var(--color-navigation-foreground-secondary);
-  --ds-button-unfilled-fg-active: var(--color-navigation-foreground-primary);
-  --ds-button-unfilled-dot-ring: var(--color-navigation-background);
-  --ds-button-unfilled-border: var(--color-navigation-border-secondary);
 }
 
 /*
@@ -136,6 +150,20 @@
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 0;
+}
+
+.button-unfilled__label--loading {
+  visibility: hidden;
+}
+
+.button-unfilled > .button-unfilled__loader-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 .button-unfilled__dot {

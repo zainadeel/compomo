@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>PanelSubNav e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Panel sub navigation test</h1>
+      <ds-panel-sub-nav id="sub-nav" aria-label="Settings sections"></ds-panel-sub-nav>
+      <section id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
+        Overview panel
+      </section>
+      <section id="activity-panel" role="tabpanel" aria-labelledby="activity-tab">
+        Activity panel
+      </section>
+      <section id="settings-panel" role="tabpanel" aria-labelledby="settings-tab">
+        Settings panel
+      </section>
+    </main>
+    <script type="module" src="/panel-sub-nav-setup.mjs"></script>
+  </body>
+</html>

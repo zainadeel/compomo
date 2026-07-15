@@ -95,6 +95,20 @@
   min-width: 0;
 }
 
+.button-filled__label--loading {
+  visibility: hidden;
+}
+
+.button-filled > .button-filled__loader-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
 /* ── Intent + contrast (bold default) ─────────────────────────────────────── */
 
 .button-filled--intent-neutral {

@@ -17,7 +17,7 @@ test('formats compiler API, framework imports, and complete intent', () => {
   assert.match(output, /@ds-mo\/ui\/dist\/components\/ds-button-filled\.js/);
   assert.match(output, /@ds-mo\/ui\/react/);
   assert.match(output, /@ds-mo\/ui\/angular\/ds-button-filled/);
-  assert.match(output, /The user initiates a primary or emphasized command/);
+  assert.match(output, /The user initiates the single primary command in a local decision area/);
   assert.doesNotMatch(output, /undefined/);
 });
 

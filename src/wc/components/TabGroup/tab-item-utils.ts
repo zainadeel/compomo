@@ -15,6 +15,29 @@ export interface TabItemTab {
 
 export type TabItem = TabItemTab | TabItemDivider;
 
+export type TabGroupItemVariant = 'label' | 'icon' | 'icon-label';
+
+export interface TabGroupItemLabel extends TabItemTab {
+  variant?: 'label';
+  icon?: never;
+}
+
+export interface TabGroupItemIcon extends TabItemTab {
+  variant: 'icon';
+  icon: string;
+}
+
+export interface TabGroupItemIconLabel extends TabItemTab {
+  variant: 'icon-label';
+  icon: string;
+}
+
+export type TabGroupItem =
+  | TabGroupItemLabel
+  | TabGroupItemIcon
+  | TabGroupItemIconLabel
+  | TabItemDivider;
+
 export function isTabDivider(item: TabItem): item is TabItemDivider {
   return 'type' in item && item.type === 'divider';
 }

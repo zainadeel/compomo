@@ -2,25 +2,87 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "chip",
   "title": "Chip",
-  "description": "Removable metadata chip — same control-density recipe as Tag, colored by semantic state (default / active / error / caution). Not a toggle/select control.",
+  "description": "Always-removable metadata value for primary surfaces, with semantic value status and parent-owned removal.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/chip",
     "source": "src/wc/components/Chip/Chip.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Always-removable metadata value for primary surfaces, with semantic value status and parent-owned removal.",
+      "useWhen": [
+        "A user-applied value such as a filter, recipient, or tokenized input entry must remain visible and individually removable.",
+        "A compact metadata value needs a semantic neutral, active, error, or caution status before removal.",
+        "A collection owner can remove the represented value and restore focus after the dismiss action."
+      ],
+      "avoidWhen": [
+        "The label is static or not individually removable; use Tag instead.",
+        "The control selects, toggles, or navigates; use the matching button or navigation component.",
+        "The information is a persistent status, count, or unread indicator; use Badge or an appropriate status composition instead.",
+        "The chip would be placed on any surface other than a primary surface."
+      ],
+      "alternatives": [
+        {
+          "when": "The metadata label is static and has no dismiss action.",
+          "component": "component:ds-tag",
+          "reason": "Tag owns non-interactive taxonomy and metadata labels."
+        },
+        {
+          "when": "The compact mark communicates a count, status, or unread indicator.",
+          "component": "component:ds-badge",
+          "reason": "Badge owns supplemental counters and status marks without a dismiss action."
+        },
+        {
+          "when": "The value is a selectable or persistent toggle.",
+          "component": "component:ds-button-unfilled",
+          "reason": "ButtonUnfilled owns command and toggle semantics."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-input",
+        "component:ds-select"
+      ],
+      "accessibility": [
+        "Keep the visible label meaningful without relying on semantic color alone.",
+        "Give the dismiss action a name that identifies the represented value.",
+        "After removal, the parent moves focus to the next chip, then the previous chip, or the owning collection or input trigger when no chips remain.",
+        "Inactive chips remain visible while their dismiss action is disabled and removed from keyboard interaction."
+      ],
+      "states": [
+        "Semantic state describes the represented value; active does not mean selected or pressed.",
+        "The dismiss action is the chip's only interaction, and the parent owns data mutation after dsRemove.",
+        "Long labels remain on one line and truncate only when the consuming layout supplies a maximum width; otherwise the chip sizes to its content.",
+        "Rounded shape is a visual choice and does not change semantics or interaction.",
+        "Chip is designed only for primary surfaces and has no surface-context API."
+      ],
+      "responsiveBehavior": [
+        "The parent chooses chip size and owns wrapping, overflow, and collection condensation.",
+        "Chip does not automatically resize, hide, or collapse its label at responsive breakpoints."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "dsRemove has no payload; associate each rendered chip with its owning value and remove that value from the event handler."
+        ],
+        "react": [
+          "Use the rendered chip's bound item context in the dsRemove handler, then restore focus after the collection rerenders."
+        ],
+        "angular": [
+          "Use the rendered chip's bound item context in the dsRemove handler, then restore focus after the collection rerenders."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Chip/Chip.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
-        "background": {
-          "type": "ChipBackground | undefined",
-          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"medium\" | \"strong\" | undefined",
-          "attribute": "background",
-          "required": false,
-          "mutable": false,
-          "description": "Surface context for interaction-fill tokens when the chip sits on a non-default surface."
-        },
         "isInactive": {
           "type": "boolean",
           "resolvedType": "boolean",
@@ -42,15 +104,6 @@
           "attribute": "max-width",
           "required": false,
           "mutable": false
-        },
-        "removable": {
-          "type": "boolean",
-          "resolvedType": "boolean",
-          "attribute": "removable",
-          "default": "true",
-          "required": false,
-          "mutable": false,
-          "description": "When true (default), shows the trailing dismiss control."
         },
         "removeLabel": {
           "type": "string",
@@ -101,14 +154,6 @@
       "slots": []
     },
     "props": {
-      "background": {
-        "type": "ChipBackground | undefined",
-        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"medium\" | \"strong\" | undefined",
-        "attribute": "background",
-        "required": false,
-        "mutable": false,
-        "description": "Surface context for interaction-fill tokens when the chip sits on a non-default surface."
-      },
       "isInactive": {
         "type": "boolean",
         "resolvedType": "boolean",
@@ -130,15 +175,6 @@
         "attribute": "max-width",
         "required": false,
         "mutable": false
-      },
-      "removable": {
-        "type": "boolean",
-        "resolvedType": "boolean",
-        "attribute": "removable",
-        "default": "true",
-        "required": false,
-        "mutable": false,
-        "description": "When true (default), shows the trailing dismiss control."
       },
       "removeLabel": {
         "type": "string",
@@ -209,7 +245,7 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^3.0.0",
+          "@ds-mo/tokens ^3.1.0",
           "@ds-mo/icons ^6.2.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
@@ -228,12 +264,12 @@
   "files": [
     {
       "path": "src/wc/components/Chip/Chip.css",
-      "content": "@import '../Tag/Tag.css';\n@import '../../utils/control-inactive.css';\n\n/*\n * Semantic state colors — Chip’s differentiator from Tag.\n * All states use the faint contrast weight; hue comes from the state.\n */\n:host(.chip--default) {\n  background-color: var(--color-background-faint-neutral);\n  color: var(--color-foreground-bold-neutral);\n}\n\n:host(.chip--active) {\n  background-color: var(--color-background-faint-brand);\n  color: var(--color-foreground-bold-brand);\n}\n\n:host(.chip--error) {\n  background-color: var(--color-background-faint-negative);\n  color: var(--color-foreground-bold-negative);\n}\n\n:host(.chip--caution) {\n  background-color: var(--color-background-faint-caution);\n  color: var(--color-foreground-bold-caution);\n}\n",
+      "content": "@import '../Tag/Tag.css';\n@import '../../utils/control-inactive.css';\n\n/*\n * Semantic state colors — Chip’s differentiator from Tag.\n * All states use the faint contrast weight; hue comes from the state.\n */\n:host(.chip--default) {\n  background-color: var(--color-background-faint-neutral);\n  color: var(--color-foreground-bold-neutral);\n}\n\n:host(.chip--active) {\n  background-color: var(--color-background-faint-brand);\n  color: var(--color-foreground-bold-brand);\n}\n\n:host(.chip--error) {\n  background-color: var(--color-background-faint-negative);\n  color: var(--color-foreground-bold-negative);\n}\n\n:host(.chip--caution) {\n  background-color: var(--color-background-faint-caution);\n  color: var(--color-foreground-bold-caution);\n}\n\n:host(.chip) .tag__label {\n  flex-shrink: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Chip/Chip.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport { CONTROL_TEXT_VARIANT } from '../../utils';\n\n/**\n * Semantic chip state — replaces Tag’s intent × contrast matrix.\n * - `default` — neutral faint\n * - `active` — brand faint\n * - `error` — negative faint\n * - `caution` — caution faint\n */\nexport type ChipState = 'default' | 'active' | 'error' | 'caution';\nexport type ChipSize = 'md' | 'sm' | 'xs';\nexport type ChipBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';\n\n/** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */\nconst ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n/**\n * Removable chip — same density recipe as Tag, but colored by semantic `state`\n * (not intent × contrast). Not a toggle/select control; the only intentional\n * action is remove.\n */\n@Component({\n  tag: 'ds-chip',\n  styleUrl: 'Chip.css',\n  scoped: true,\n})\nexport class Chip {\n  @Prop() label!: string;\n  /** Semantic color state. @default 'default' */\n  @Prop() state: ChipState = 'default';\n  @Prop() size: ChipSize = 'md';\n  @Prop() rounded: boolean = false;\n  /** When true (default), shows the trailing dismiss control. */\n  @Prop() removable: boolean = true;\n  @Prop() maxWidth: string | number | undefined;\n  @Prop() isInactive: boolean = false;\n  /** Surface context for interaction-fill tokens when the chip sits on a non-default surface. */\n  @Prop() background: ChipBackground | undefined;\n  /** Accessible remove action. Use `{label}` as the chip-label placeholder. */\n  @Prop() removeLabel: string = 'Remove {label}';\n\n  /** Fired when the remove button is clicked. */\n  @Event() dsRemove!: EventEmitter<void>;\n\n  private handleRemove = (e: MouseEvent) => {\n    e.stopPropagation();\n    if (this.isInactive) return;\n    this.dsRemove.emit();\n  };\n\n  render() {\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n\n    return (\n      <Host\n        class={{\n          'tag': true,\n          'chip': true,\n          [`chip--${this.state}`]: true,\n          [`tag--size-${this.size}`]: true,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          'tag--rounded': this.rounded,\n          'tag--removable': this.removable,\n          /* Hover overlay on the chip surface — dismiss is the only action. */\n          'ds-interaction-fill': !this.isInactive && this.removable,\n          'ds-interaction-fill--on-medium': this.background === 'medium',\n          'ds-interaction-fill--on-bold': this.background === 'bold',\n          'ds-interaction-fill--on-strong': this.background === 'strong',\n          'ds-interaction-fill--on-always-dark': this.background === 'always-dark',\n          'ds-control-inactive': this.isInactive,\n        }}\n        style={maxWidthStyle}\n        aria-disabled={this.isInactive ? 'true' : undefined}\n      >\n        <ds-text class=\"tag__label\" as=\"span\" variant={textVariant} color=\"inherit\">\n          {this.label}\n        </ds-text>\n        {this.removable && (\n          <button\n            type=\"button\"\n            class=\"tag__remove ds-focus-ring-inset\"\n            onClick={this.handleRemove}\n            aria-label={this.removeLabel.replace('{label}', this.label)}\n            disabled={this.isInactive || undefined}\n          >\n            <slot name=\"remove-icon\">\n              <ds-icon class=\"tag__remove-x\" name=\"Cross\" size={iconSize} color=\"inherit\"></ds-icon>\n            </slot>\n          </button>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport { CONTROL_TEXT_VARIANT } from '../../utils';\n\n/**\n * Semantic chip state — replaces Tag’s intent × contrast matrix.\n * - `default` — neutral faint\n * - `active` — brand faint\n * - `error` — negative faint\n * - `caution` — caution faint\n */\nexport type ChipState = 'default' | 'active' | 'error' | 'caution';\nexport type ChipSize = 'md' | 'sm' | 'xs';\n\n/** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */\nconst ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n/**\n * Removable chip — same density recipe as Tag, but colored by semantic `state`\n * (not intent × contrast). Not a toggle/select control; the only intentional\n * action is remove.\n */\n@Component({\n  tag: 'ds-chip',\n  styleUrl: 'Chip.css',\n  scoped: true,\n})\nexport class Chip {\n  @Prop() label!: string;\n  /** Semantic color state. @default 'default' */\n  @Prop() state: ChipState = 'default';\n  @Prop() size: ChipSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n  @Prop() isInactive: boolean = false;\n  /** Accessible remove action. Use `{label}` as the chip-label placeholder. */\n  @Prop() removeLabel: string = 'Remove {label}';\n\n  /** Fired when the remove button is clicked. */\n  @Event() dsRemove!: EventEmitter<void>;\n\n  private handleRemove = (e: MouseEvent) => {\n    e.stopPropagation();\n    if (this.isInactive) return;\n    this.dsRemove.emit();\n  };\n\n  render() {\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle = this.maxWidth != null\n      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n      : undefined;\n\n    return (\n      <Host\n        class={{\n          'tag': true,\n          'chip': true,\n          [`chip--${this.state}`]: true,\n          [`tag--size-${this.size}`]: true,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          'tag--rounded': this.rounded,\n          'tag--removable': true,\n          /* Hover overlay on the chip surface — dismiss is the only action. */\n          'ds-interaction-fill': !this.isInactive,\n          'ds-control-inactive': this.isInactive,\n        }}\n        style={maxWidthStyle}\n        aria-disabled={this.isInactive ? 'true' : undefined}\n      >\n        <ds-text class=\"tag__label\" as=\"span\" variant={textVariant} color=\"inherit\">\n          {this.label}\n        </ds-text>\n        <button\n          type=\"button\"\n          class=\"tag__remove ds-focus-ring-inset\"\n          onClick={this.handleRemove}\n          aria-label={this.removeLabel.replace('{label}', this.label)}\n          disabled={this.isInactive || undefined}\n        >\n          <ds-icon class=\"tag__remove-x\" name=\"Cross\" size={iconSize} color=\"inherit\"></ds-icon>\n        </button>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

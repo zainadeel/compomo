@@ -2,15 +2,97 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "tab-group",
   "title": "TabGroup",
-  "description": "Horizontal or vertical tab list with roving keyboard focus and optional dividers between tab groups.",
+  "description": "Horizontal single-selection tabs for switching adjacent local views or view modes, with uniform label, icon, or icon-label presentation and surface-aware selection.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group",
     "source": "src/wc/components/TabGroup/TabGroup.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Horizontal single-selection tabs for switching adjacent local views or view modes, with uniform label, icon, or icon-label presentation and surface-aware selection.",
+      "useWhen": [
+        "Adjacent local content views or panels fit in a horizontal tab row.",
+        "A compact horizontal selector switches between equivalent local view modes such as list and grid.",
+        "A tab set needs concise labels, icons, or icon-label content with optional supplemental notification dots."
+      ],
+      "avoidWhen": [
+        "The choices navigate application routes; use PanelNav or BarNav instead.",
+        "The choices belong in a vertical panel or card side rail; use PanelSubNav instead.",
+        "The choices are temporary commands or contextual options; use Menu instead.",
+        "The row requires mixed content variants, subtext, nested levels, or multi-row wrapping.",
+        "No enabled tab can remain selected while enabled choices exist."
+      ],
+      "alternatives": [
+        {
+          "when": "Local views need persistent vertical side-rail navigation.",
+          "component": "component:ds-panel-sub-nav",
+          "reason": "PanelSubNav owns the vertical local-view keyboard and selection model."
+        },
+        {
+          "when": "The choices are primary application destinations.",
+          "component": "component:ds-panel-nav",
+          "reason": "PanelNav owns application route selection in shell navigation."
+        },
+        {
+          "when": "The choices are secondary application route sections.",
+          "component": "component:ds-bar-nav",
+          "reason": "BarNav owns route sections, overflow, and shell coordination."
+        },
+        {
+          "when": "The choices are transient actions or options.",
+          "component": "component:ds-menu",
+          "reason": "Menu owns temporary popup collections rather than persistent local views."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-text",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "Provide an accessible tab-list name with aria-label or aria-labelledby.",
+        "Keep exactly one valid enabled tab selected whenever enabled tabs exist, and keep its controlled view synchronized.",
+        "When tabs control tabpanels, give each tab the id of its panel and label each panel from its tab.",
+        "ArrowLeft and ArrowRight move and activate selection; Home and End select the first and last available tabs.",
+        "Icon-only tabs retain their required text label as the accessible name even though the label is not visible.",
+        "Notification dots are supplemental status only and must never replace a label, state, or accessible name.",
+        "Inactive tabs remain visible but cannot be focused or selected."
+      ],
+      "states": [
+        "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
+        "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
+        "Selection is singular and follows keyboard focus.",
+        "Use one consistent content variant across every selectable tab in a group.",
+        "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
+        "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
+        "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups."
+      ],
+      "responsiveBehavior": [
+        "The component remains a single horizontal row and does not become vertical or wrap.",
+        "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign tabs as a JavaScript property because structured arrays are not represented by HTML attributes.",
+          "Use one item variant consistently, keep value synchronized to an enabled item, and update controlled content from dsChange."
+        ],
+        "react": [
+          "Pass tabs as an array through the generated wrapper, keep value controlled, and use onDsChange to synchronize the visible view."
+        ],
+        "angular": [
+          "Bind tabs and a valid value as properties, and handle dsChange to synchronize the visible view."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/TabGroup/TabGroup.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "ariaLabel": {
@@ -30,22 +112,14 @@
         },
         "background": {
           "type": "TabBackground | undefined",
-          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"medium\" | \"strong\" | undefined",
+          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"strong\" | \"translucent\" | undefined",
           "attribute": "background",
           "required": false,
           "mutable": false
         },
-        "orientation": {
-          "type": "'horizontal' | 'vertical'",
-          "resolvedType": "\"horizontal\" | \"vertical\"",
-          "attribute": "orientation",
-          "default": "'horizontal'",
-          "required": false,
-          "mutable": false
-        },
         "tabs": {
-          "type": "TabItem[]",
-          "resolvedType": "TabItem[]",
+          "type": "TabGroupItem[]",
+          "resolvedType": "TabGroupItem[]",
           "default": "[]",
           "required": false,
           "mutable": false
@@ -89,22 +163,14 @@
       },
       "background": {
         "type": "TabBackground | undefined",
-        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"medium\" | \"strong\" | undefined",
+        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"strong\" | \"translucent\" | undefined",
         "attribute": "background",
         "required": false,
         "mutable": false
       },
-      "orientation": {
-        "type": "'horizontal' | 'vertical'",
-        "resolvedType": "\"horizontal\" | \"vertical\"",
-        "attribute": "orientation",
-        "default": "'horizontal'",
-        "required": false,
-        "mutable": false
-      },
       "tabs": {
-        "type": "TabItem[]",
-        "resolvedType": "TabItem[]",
+        "type": "TabGroupItem[]",
+        "resolvedType": "TabGroupItem[]",
         "default": "[]",
         "required": false,
         "mutable": false
@@ -152,7 +218,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: tabs.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^3.0.0",
+          "@ds-mo/tokens ^3.1.0",
           "@ds-mo/icons ^6.2.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
@@ -161,26 +227,28 @@
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens"
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
   ],
   "registryDependencies": [
     "badge",
+    "icon",
     "text"
   ],
   "files": [
     {
       "path": "src/wc/components/TabGroup/TabGroup.css",
-      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n\n:host {\n  display: block;\n}\n\n.tab-list {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  position: relative;\n  width: max-content;\n  max-width: 100%;\n  height: var(--dimension-size-400);\n  padding: calc(var(--dimension-space-050) - var(--dimension-stroke-width-012));\n  background-color: var(--color-background-secondary);\n  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  border-radius: var(--dimension-radius-half);\n  box-sizing: border-box;\n}\n\n.tab-list--vertical {\n  flex-direction: column;\n  align-items: stretch;\n}\n\n.tab {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-050);\n  background-color: transparent;\n  border: none;\n  border-radius: var(--dimension-radius-half);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  color: var(--color-foreground-secondary);\n  transition: color var(--effect-motion-short-2);\n  flex-shrink: 0;\n  height: var(--dimension-size-300);\n  min-width: var(--dimension-size-400);\n  box-sizing: border-box;\n  --_dot: var(--color-foreground-bold-brand);\n  --_dot-ring: var(--color-background-secondary);\n  /* Hover/press: `.ds-interaction-fill` — fills cover full 24px box (no layout border). */\n}\n\n.tab--selected {\n  color: var(--color-foreground-primary);\n  background-color: var(--color-background-primary);\n  /* Inset stroke on interaction-fill ::after — stays above hover wash. */\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--color-border-tertiary);\n}\n\n.tab--selected:not(.ds-interaction-fill) {\n  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity) — applied via class in TSX. */\n\n.tab-list--vertical .tab { justify-content: flex-start; }\n\n.tab__label {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  align-items: center;\n  padding: 0 var(--dimension-space-025);\n  white-space: nowrap;\n}\n\n.tab__label--dot {\n  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));\n}\n\n.tab__dot {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  pointer-events: none;\n}\n\n.on-medium {\n  --_dot-ring: var(--color-background-medium-neutral);\n}\n\n.on-bold {\n  --_dot-ring: var(--color-background-bold-neutral);\n  color: var(--color-foreground-on-bold-background-secondary);\n}\n\n.on-bold.tab--selected { color: var(--color-foreground-on-bold-background-primary); }\n\n.on-strong {\n  --_dot-ring: var(--color-background-strong-neutral);\n  color: var(--color-foreground-on-bold-background-secondary);\n}\n\n.on-strong.tab--selected { color: var(--color-foreground-on-bold-background-primary); }\n\n.on-always-dark {\n  --_dot-ring: var(--color-always-dark-background);\n  color: var(--color-always-dark-foreground-secondary);\n}\n\n.on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }\n\n.tab-divider {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: var(--dimension-stroke-width-012);\n  align-self: center;\n  padding: 0;\n  flex-shrink: 0;\n  pointer-events: none;\n}\n\n.tab-divider__line {\n  width: var(--dimension-stroke-width-012);\n  height: var(--typography-lineheight-sm);\n  flex-shrink: 0;\n  background-color: var(--color-border-secondary);\n}\n\n.tab-divider--vertical {\n  width: auto;\n  height: var(--dimension-stroke-width-012);\n  align-self: stretch;\n  padding: 0;\n}\n\n.tab-divider--vertical .tab-divider__line {\n  width: auto;\n  height: var(--dimension-stroke-width-012);\n  align-self: stretch;\n}\n",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n\n:host {\n  display: block;\n  --_tab-group-surface-border: var(--color-border-tertiary);\n  --_tab-group-divider: var(--color-border-secondary);\n}\n\n:host(.tab-group-host--on-medium) {\n  --_tab-group-surface-border: var(--color-border-on-medium-background-tertiary);\n  --_tab-group-divider: var(--color-border-on-medium-background-secondary);\n}\n\n:host(.tab-group-host--on-bold) {\n  --_tab-group-surface-border: var(--color-border-on-bold-background-tertiary);\n  --_tab-group-divider: var(--color-border-on-bold-background-secondary);\n}\n\n:host(.tab-group-host--on-strong) {\n  --_tab-group-surface-border: var(--color-border-on-strong-background-tertiary);\n  --_tab-group-divider: var(--color-border-on-strong-background-secondary);\n}\n\n:host(.tab-group-host--on-translucent) {\n  --_tab-group-surface-border: var(--color-translucent-border-tertiary);\n  --_tab-group-divider: var(--color-translucent-border-secondary);\n}\n\n:host(.tab-group-host--on-inverted) {\n  --_tab-group-surface-border: var(--color-inverted-border-tertiary);\n  --_tab-group-divider: var(--color-inverted-border-secondary);\n}\n\n:host(.tab-group-host--on-media) {\n  --_tab-group-surface-border: var(--color-media-border-tertiary);\n  --_tab-group-divider: var(--color-media-border-secondary);\n}\n\n:host(.tab-group-host--on-always-dark) {\n  --_tab-group-surface-border: var(--color-always-dark-border-tertiary);\n  --_tab-group-divider: var(--color-always-dark-border-secondary);\n}\n\n.tab-list {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  position: relative;\n  width: max-content;\n  max-width: 100%;\n  height: var(--dimension-size-400);\n  padding: calc(var(--dimension-space-050) - var(--dimension-stroke-width-012));\n  background-color: var(--color-background-secondary);\n  border: var(--dimension-stroke-width-012) solid var(--_tab-group-surface-border);\n  border-radius: var(--dimension-radius-half);\n  box-sizing: border-box;\n}\n\n:host(.tab-group-host--surface) .tab-list {\n  background-color: transparent;\n}\n\n.tab {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-050);\n  background-color: transparent;\n  border: none;\n  border-radius: var(--dimension-radius-half);\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n  color: var(--color-foreground-secondary);\n  transition: color var(--effect-motion-short-2);\n  flex-shrink: 0;\n  height: var(--dimension-size-300);\n  min-width: var(--dimension-size-400);\n  box-sizing: border-box;\n  --_dot: var(--color-foreground-bold-brand);\n  /* Hover/press: `.ds-interaction-fill` — fills cover full 24px box (no layout border). */\n}\n\n.tab--selected {\n  color: var(--color-foreground-primary);\n  background-color: var(--color-background-primary);\n  /* Inset stroke on interaction-fill ::after — stays above hover wash. */\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--_tab-group-surface-border);\n}\n\n:host(.tab-group-host--surface) .tab--selected {\n  background-color: var(--ds-interaction-active);\n}\n\n.tab--selected:not(.ds-interaction-fill) {\n  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);\n}\n\n/* Inactive: `.ds-control-inactive` (25% opacity) — applied via class in TSX. */\n\n.tab__content {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-025);\n  min-width: 0;\n}\n\n.tab__content--label,\n.tab__content--icon-label {\n  padding: 0 var(--dimension-space-025);\n}\n\n.tab__content--dot {\n  padding-right: var(--dimension-space-050);\n}\n\n.tab__content--label.tab__content--dot,\n.tab__content--icon-label.tab__content--dot {\n  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));\n}\n\n.tab__label {\n  white-space: nowrap;\n}\n\n.tab__icon {\n  flex-shrink: 0;\n}\n\n.tab__dot {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  pointer-events: none;\n}\n\n.on-medium {\n  color: var(--color-foreground-on-medium-background-secondary);\n}\n\n.on-medium.tab--selected { color: var(--color-foreground-on-medium-background-primary); }\n\n.on-bold {\n  color: var(--color-foreground-on-bold-background-secondary);\n}\n\n.on-bold.tab--selected { color: var(--color-foreground-on-bold-background-primary); }\n\n.on-strong {\n  color: var(--color-foreground-on-strong-background-secondary);\n}\n\n.on-strong.tab--selected { color: var(--color-foreground-on-strong-background-primary); }\n\n.on-translucent { color: var(--color-translucent-foreground-secondary); }\n\n.on-translucent.tab--selected { color: var(--color-translucent-foreground-primary); }\n\n.on-inverted { color: var(--color-inverted-foreground-secondary); }\n\n.on-inverted.tab--selected { color: var(--color-inverted-foreground-primary); }\n\n.on-media { color: var(--color-media-foreground-secondary); }\n\n.on-media.tab--selected { color: var(--color-media-foreground-primary); }\n\n.on-always-dark {\n  color: var(--color-always-dark-foreground-secondary);\n}\n\n.on-always-dark.tab--selected { color: var(--color-always-dark-foreground-primary); }\n\n.tab-divider {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: var(--dimension-stroke-width-012);\n  align-self: center;\n  padding: 0;\n  flex-shrink: 0;\n  pointer-events: none;\n}\n\n.tab-divider__line {\n  width: var(--dimension-stroke-width-012);\n  height: var(--typography-lineheight-sm);\n  flex-shrink: 0;\n  background-color: var(--_tab-group-divider);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/TabGroup/TabGroup.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';\nimport {\n  getSelectableTabs,\n  isTabDivider,\n  type TabItem,\n  type TabItemTab,\n} from './tab-item-utils';\n\nexport type TabBackground = 'faint' | 'medium' | 'bold' | 'strong' | 'always-dark';\n\n@Component({\n  tag: 'ds-tab-group',\n  styleUrl: 'TabGroup.css',\n  scoped: true,\n})\nexport class TabGroup {\n  @Element() el!: HTMLElement;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop() tabs: TabItem[] = [];\n  @Prop() background: TabBackground | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop() orientation: 'horizontal' | 'vertical' = 'horizontal';\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private get selectableTabs(): TabItemTab[] {\n    return getSelectableTabs(this.tabs);\n  }\n\n  private selectTab(id: string, options?: { focus?: boolean }) {\n    this.value = id;\n    this.dsChange.emit(id);\n    if (options?.focus !== false) {\n      this.focusTab(id);\n    }\n  }\n\n  private focusTab(id: string) {\n    const btn = this.el.querySelector(`[data-tab-id=\"${id}\"]`) as HTMLElement | null;\n    btn?.focus({ preventScroll: true });\n  }\n\n  /** Keep focus on the selected tab when value changes externally (e.g. BarNav menu). */\n  @Watch('value')\n  onValueChange(next: string, prev: string | undefined) {\n    if (prev === undefined || next === prev) return;\n\n    requestAnimationFrame(() => {\n      const active = document.activeElement as HTMLElement | null;\n      if (!active || !this.el.contains(active)) return;\n\n      const activeId = active.getAttribute('data-tab-id');\n      if (activeId === next) return;\n\n      const nextTab = this.el.querySelector(`[data-tab-id=\"${next}\"]`) as HTMLElement | null;\n      if (nextTab) {\n        nextTab.focus({ preventScroll: true });\n      } else {\n        active.blur();\n      }\n    });\n  }\n\n  /**\n   * Find the next non-inactive tab index relative to `from`, stepping by `step`.\n   * Returns `from` unchanged if no other enabled tab exists.\n   */\n  private findEnabled(from: number, step: 1 | -1): number {\n    const tabs = this.selectableTabs;\n    const len = tabs.length;\n    for (let n = 0; n < len; n++) {\n      const i = (from + step * (n + 1) + len * (n + 1)) % len;\n      if (!tabs[i]?.isInactive) return i;\n    }\n    return from;\n  }\n\n  @Listen('keydown')\n  handleKeyDown(e: KeyboardEvent) {\n    const tabs = this.selectableTabs;\n    if (!tabs.length) return;\n\n    const currentIdx = tabs.findIndex(t => t.id === this.value);\n    const isVertical = this.orientation === 'vertical';\n\n    let nextIdx: number | null = null;\n\n    if (!isVertical) {\n      if (e.key === 'ArrowRight') {\n        nextIdx = this.findEnabled(currentIdx, 1);\n      } else if (e.key === 'ArrowLeft') {\n        nextIdx = this.findEnabled(currentIdx, -1);\n      }\n    } else {\n      if (e.key === 'ArrowDown') {\n        nextIdx = this.findEnabled(currentIdx, 1);\n      } else if (e.key === 'ArrowUp') {\n        nextIdx = this.findEnabled(currentIdx, -1);\n      }\n    }\n\n    if (e.key === 'Home') {\n      const first = tabs.findIndex(t => !t.isInactive);\n      nextIdx = first === -1 ? null : first;\n    } else if (e.key === 'End') {\n      const lastEnabled = [...tabs].reverse().findIndex(t => !t.isInactive);\n      nextIdx = lastEnabled === -1 ? null : tabs.length - 1 - lastEnabled;\n    }\n\n    if (nextIdx !== null) {\n      e.preventDefault();\n      const next = tabs[nextIdx];\n      this.selectTab(next.id);\n    }\n  }\n\n  private getBgClass(): string {\n    if (!this.background || this.background === 'faint') return '';\n    if (this.background === 'always-dark') return 'on-always-dark';\n    return `on-${this.background}`;\n  }\n\n  render() {\n    const bgClass = this.getBgClass();\n    const isVertical = this.orientation === 'vertical';\n\n    return (\n      <Host class=\"tab-group-host\">\n        <div\n          role=\"tablist\"\n          class={{ 'tab-list': true, 'tab-list--vertical': isVertical }}\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n          aria-orientation={isVertical ? 'vertical' : undefined}\n        >\n          {this.tabs.map((tab, index) => {\n            if (isTabDivider(tab)) {\n              return (\n                <div\n                  key={`divider-${index}`}\n                  class={{\n                    'tab-divider': true,\n                    'tab-divider--vertical': isVertical,\n                  }}\n                  aria-hidden=\"true\"\n                >\n                  <div class=\"tab-divider__line\" />\n                </div>\n              );\n            }\n\n            const isSelected = tab.id === this.value;\n            return (\n              <button\n                key={tab.id}\n                type=\"button\"\n                role=\"tab\"\n                data-tab-id={tab.id}\n                class={{\n                  tab: true,\n                  'tab--selected': isSelected,\n                  'ds-focus-ring-inset': true,\n                  'ds-interaction-fill': !tab.isInactive,\n                  'ds-interaction-fill--on-medium': bgClass === 'on-medium',\n                  'ds-interaction-fill--on-bold': bgClass === 'on-bold',\n                  'ds-interaction-fill--on-strong': bgClass === 'on-strong',\n                  'ds-interaction-fill--on-always-dark': bgClass === 'on-always-dark',\n                  'ds-control-inactive': !!tab.isInactive,\n                  [bgClass]: !!bgClass,\n                }}\n                aria-selected={isSelected}\n                aria-disabled={tab.isInactive ? 'true' : undefined}\n                aria-controls={tab.panelId ?? undefined}\n                disabled={tab.isInactive}\n                tabIndex={isSelected ? 0 : -1}\n                onClick={() => !tab.isInactive && this.selectTab(tab.id)}\n              >\n                <span class={{\n                  tab__label: true,\n                  'tab__label--dot': !!tab.dot,\n                }}>\n                  <ds-text as=\"span\" variant=\"text-body-small\" emphasis={isSelected} color=\"inherit\">\n                    {tab.label}\n                  </ds-text>\n                  {tab.dot && (\n                    <ds-badge\n                      class=\"tab__dot\"\n                      variant=\"dot\"\n                      background=\"var(--_dot-ring)\"\n                      label=\"\"\n                      aria-hidden=\"true\"\n                    />\n                  )}\n                </span>\n              </button>\n            );\n          })}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';\nimport {\n  getSelectableTabs,\n  isTabDivider,\n  type TabGroupItem,\n  type TabItemTab,\n} from './tab-item-utils';\n\nexport type TabBackground =\n  | 'faint'\n  | 'medium'\n  | 'bold'\n  | 'strong'\n  | 'translucent'\n  | 'inverted'\n  | 'media'\n  | 'always-dark';\n\n@Component({\n  tag: 'ds-tab-group',\n  styleUrl: 'TabGroup.css',\n  scoped: true,\n})\nexport class TabGroup {\n  @Element() el!: HTMLElement;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop() tabs: TabGroupItem[] = [];\n  @Prop() background: TabBackground | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private get selectableTabs(): TabItemTab[] {\n    return getSelectableTabs(this.tabs);\n  }\n\n  private selectTab(id: string, options?: { focus?: boolean }) {\n    this.value = id;\n    this.dsChange.emit(id);\n    if (options?.focus !== false) {\n      this.focusTab(id);\n    }\n  }\n\n  private focusTab(id: string) {\n    const btn = this.el.querySelector(`[data-tab-id=\"${id}\"]`) as HTMLElement | null;\n    btn?.focus({ preventScroll: true });\n  }\n\n  /** Keep focus on the selected tab when value changes externally (e.g. BarNav menu). */\n  @Watch('value')\n  onValueChange(next: string, prev: string | undefined) {\n    if (prev === undefined || next === prev) return;\n\n    requestAnimationFrame(() => {\n      const active = document.activeElement as HTMLElement | null;\n      if (!active || !this.el.contains(active)) return;\n\n      const activeId = active.getAttribute('data-tab-id');\n      if (activeId === next) return;\n\n      const nextTab = this.el.querySelector(`[data-tab-id=\"${next}\"]`) as HTMLElement | null;\n      if (nextTab) {\n        nextTab.focus({ preventScroll: true });\n      } else {\n        active.blur();\n      }\n    });\n  }\n\n  /**\n   * Find the next non-inactive tab index relative to `from`, stepping by `step`.\n   * Returns `from` unchanged if no other enabled tab exists.\n   */\n  private findEnabled(from: number, step: 1 | -1): number {\n    const tabs = this.selectableTabs;\n    const len = tabs.length;\n    for (let n = 0; n < len; n++) {\n      const i = (from + step * (n + 1) + len * (n + 1)) % len;\n      if (!tabs[i]?.isInactive) return i;\n    }\n    return from;\n  }\n\n  @Listen('keydown')\n  handleKeyDown(e: KeyboardEvent) {\n    const tabs = this.selectableTabs;\n    if (!tabs.length) return;\n\n    const currentIdx = tabs.findIndex(t => t.id === this.value);\n\n    let nextIdx: number | null = null;\n\n    if (e.key === 'ArrowRight') {\n      nextIdx = this.findEnabled(currentIdx, 1);\n    } else if (e.key === 'ArrowLeft') {\n      nextIdx = this.findEnabled(currentIdx, -1);\n    }\n\n    if (e.key === 'Home') {\n      const first = tabs.findIndex(t => !t.isInactive);\n      nextIdx = first === -1 ? null : first;\n    } else if (e.key === 'End') {\n      const lastEnabled = [...tabs].reverse().findIndex(t => !t.isInactive);\n      nextIdx = lastEnabled === -1 ? null : tabs.length - 1 - lastEnabled;\n    }\n\n    if (nextIdx !== null) {\n      e.preventDefault();\n      const next = tabs[nextIdx];\n      this.selectTab(next.id);\n    }\n  }\n\n  private getBgClass(): string {\n    if (!this.background) return '';\n    if (this.background === 'always-dark') return 'on-always-dark';\n    return `on-${this.background}`;\n  }\n\n  render() {\n    const bgClass = this.getBgClass();\n\n    return (\n      <Host\n        class={{\n          'tab-group-host': true,\n          'tab-group-host--surface': !!bgClass,\n          [`tab-group-host--${bgClass}`]: !!bgClass,\n        }}\n      >\n        <div\n          role=\"tablist\"\n          class=\"tab-list\"\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n        >\n          {this.tabs.map((tab, index) => {\n            if (isTabDivider(tab)) {\n              return (\n                <div\n                  key={`divider-${index}`}\n                  class=\"tab-divider\"\n                  aria-hidden=\"true\"\n                >\n                  <div class=\"tab-divider__line\" />\n                </div>\n              );\n            }\n\n            const isSelected = tab.id === this.value;\n            const variant = tab.variant ?? 'label';\n            const showIcon = variant === 'icon' || variant === 'icon-label';\n            const showLabel = variant === 'label' || variant === 'icon-label';\n            const emphasizeLabel = isSelected && !bgClass;\n            return (\n              <button\n                key={tab.id}\n                type=\"button\"\n                role=\"tab\"\n                data-tab-id={tab.id}\n                class={{\n                  tab: true,\n                  'tab--selected': isSelected,\n                  'ds-focus-ring-inset': true,\n                  'ds-interaction-fill': !tab.isInactive,\n                  'ds-interaction-fill--on-faint': bgClass === 'on-faint',\n                  'ds-interaction-fill--on-medium': bgClass === 'on-medium',\n                  'ds-interaction-fill--on-bold': bgClass === 'on-bold',\n                  'ds-interaction-fill--on-strong': bgClass === 'on-strong',\n                  'ds-interaction-fill--on-translucent': bgClass === 'on-translucent',\n                  'ds-interaction-fill--on-inverted': bgClass === 'on-inverted',\n                  'ds-interaction-fill--on-media': bgClass === 'on-media',\n                  'ds-interaction-fill--on-always-dark': bgClass === 'on-always-dark',\n                  'ds-control-inactive': !!tab.isInactive,\n                  [bgClass]: !!bgClass,\n                }}\n                aria-label={variant === 'icon' ? tab.label : undefined}\n                aria-selected={isSelected}\n                aria-disabled={tab.isInactive ? 'true' : undefined}\n                aria-controls={tab.panelId ?? undefined}\n                disabled={tab.isInactive}\n                tabIndex={isSelected ? 0 : -1}\n                onClick={() => !tab.isInactive && this.selectTab(tab.id)}\n              >\n                <span class={{\n                  tab__content: true,\n                  [`tab__content--${variant}`]: true,\n                  'tab__content--dot': !!tab.dot,\n                }}>\n                  {showIcon && (\n                    <ds-icon\n                      class=\"tab__icon\"\n                      name={tab.icon}\n                      size=\"sm\"\n                      color=\"inherit\"\n                    />\n                  )}\n                  {showLabel && (\n                    <ds-text\n                      class=\"tab__label\"\n                      as=\"span\"\n                      variant=\"text-body-small\"\n                      emphasis={emphasizeLabel}\n                      color=\"inherit\"\n                    >\n                      {tab.label}\n                    </ds-text>\n                  )}\n                  {tab.dot && (\n                    <ds-badge\n                      class=\"tab__dot\"\n                      variant=\"dot\"\n                      style={{ '--_badge-ring-width': '0' }}\n                      label=\"\"\n                      aria-hidden=\"true\"\n                    />\n                  )}\n                </span>\n              </button>\n            );\n          })}\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/TabGroup/tab-item-utils.ts",
-      "content": "export interface TabItemDivider {\n  type: 'divider';\n}\n\nexport interface TabItemTab {\n  id: string;\n  label: string;\n  /** Disables the tab (same meaning as control `isInactive`). */\n  isInactive?: boolean;\n  /** id of the tabpanel this tab controls */\n  panelId?: string;\n  /** Show a notification dot (brand) on the tab — no count, matching panel-nav. */\n  dot?: boolean;\n}\n\nexport type TabItem = TabItemTab | TabItemDivider;\n\nexport function isTabDivider(item: TabItem): item is TabItemDivider {\n  return 'type' in item && item.type === 'divider';\n}\n\n/** Tab entries that participate in selection, keyboard nav, and URL matching. */\nexport function getSelectableTabs(tabs: TabItem[]): TabItemTab[] {\n  return tabs.filter((t): t is TabItemTab => !isTabDivider(t));\n}\n",
+      "content": "export interface TabItemDivider {\n  type: 'divider';\n}\n\nexport interface TabItemTab {\n  id: string;\n  label: string;\n  /** Disables the tab (same meaning as control `isInactive`). */\n  isInactive?: boolean;\n  /** id of the tabpanel this tab controls */\n  panelId?: string;\n  /** Show a notification dot (brand) on the tab — no count, matching panel-nav. */\n  dot?: boolean;\n}\n\nexport type TabItem = TabItemTab | TabItemDivider;\n\nexport type TabGroupItemVariant = 'label' | 'icon' | 'icon-label';\n\nexport interface TabGroupItemLabel extends TabItemTab {\n  variant?: 'label';\n  icon?: never;\n}\n\nexport interface TabGroupItemIcon extends TabItemTab {\n  variant: 'icon';\n  icon: string;\n}\n\nexport interface TabGroupItemIconLabel extends TabItemTab {\n  variant: 'icon-label';\n  icon: string;\n}\n\nexport type TabGroupItem =\n  | TabGroupItemLabel\n  | TabGroupItemIcon\n  | TabGroupItemIconLabel\n  | TabItemDivider;\n\nexport function isTabDivider(item: TabItem): item is TabItemDivider {\n  return 'type' in item && item.type === 'divider';\n}\n\n/** Tab entries that participate in selection, keyboard nav, and URL matching. */\nexport function getSelectableTabs(tabs: TabItem[]): TabItemTab[] {\n  return tabs.filter((t): t is TabItemTab => !isTabDivider(t));\n}\n",
       "type": "registry:ui"
     }
   ]

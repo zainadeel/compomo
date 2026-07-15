@@ -47,7 +47,7 @@
   ],
   "accessibility": [
     "Use concise localized labels for every route section.",
-    "Keep section navigation keyboard accessible through the generated TabGroupNav behavior and overflow menu.",
+    "Keep section navigation keyboard accessible through BarNav's built-in horizontal roving focus and overflow menu.",
     "Preserve the selected route state when sections move between the visible row and overflow menu.",
     "Use notification dots only as supplemental status and not as the sole indication of important information.",
     "Pass the active PanelNav destination label through heading whenever section tabs are absent or hidden."

@@ -1,0 +1,77 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-chip",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-chip",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Always-removable metadata value for primary surfaces, with semantic value status and parent-owned removal.",
+  "useWhen": [
+    "A user-applied value such as a filter, recipient, or tokenized input entry must remain visible and individually removable.",
+    "A compact metadata value needs a semantic neutral, active, error, or caution status before removal.",
+    "A collection owner can remove the represented value and restore focus after the dismiss action."
+  ],
+  "avoidWhen": [
+    "The label is static or not individually removable; use Tag instead.",
+    "The control selects, toggles, or navigates; use the matching button or navigation component.",
+    "The information is a persistent status, count, or unread indicator; use Badge or an appropriate status composition instead.",
+    "The chip would be placed on any surface other than a primary surface."
+  ],
+  "alternatives": [
+    {
+      "when": "The metadata label is static and has no dismiss action.",
+      "component": "component:ds-tag",
+      "reason": "Tag owns non-interactive taxonomy and metadata labels."
+    },
+    {
+      "when": "The compact mark communicates a count, status, or unread indicator.",
+      "component": "component:ds-badge",
+      "reason": "Badge owns supplemental counters and status marks without a dismiss action."
+    },
+    {
+      "when": "The value is a selectable or persistent toggle.",
+      "component": "component:ds-button-unfilled",
+      "reason": "ButtonUnfilled owns command and toggle semantics."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-input",
+    "component:ds-select"
+  ],
+  "accessibility": [
+    "Keep the visible label meaningful without relying on semantic color alone.",
+    "Give the dismiss action a name that identifies the represented value.",
+    "After removal, the parent moves focus to the next chip, then the previous chip, or the owning collection or input trigger when no chips remain.",
+    "Inactive chips remain visible while their dismiss action is disabled and removed from keyboard interaction."
+  ],
+  "states": [
+    "Semantic state describes the represented value; active does not mean selected or pressed.",
+    "The dismiss action is the chip's only interaction, and the parent owns data mutation after dsRemove.",
+    "Long labels remain on one line and truncate only when the consuming layout supplies a maximum width; otherwise the chip sizes to its content.",
+    "Rounded shape is a visual choice and does not change semantics or interaction.",
+    "Chip is designed only for primary surfaces and has no surface-context API."
+  ],
+  "responsiveBehavior": [
+    "The parent chooses chip size and owns wrapping, overflow, and collection condensation.",
+    "Chip does not automatically resize, hide, or collapse its label at responsive breakpoints."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "dsRemove has no payload; associate each rendered chip with its owning value and remove that value from the event handler."
+    ],
+    "react": [
+      "Use the rendered chip's bound item context in the dsRemove handler, then restore focus after the collection rerenders."
+    ],
+    "angular": [
+      "Use the rendered chip's bound item context in the dsRemove handler, then restore focus after the collection rerenders."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Chip/Chip.stories.ts"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsButtonFilled } from '@ds-mo/ui/component
 
 @ProxyCmp({
   defineCustomElementFn: defineDsButtonFilled,
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant', 'width'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'isLoading', 'label', 'size', 'type', 'variant', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsButtonFilled } from '@ds-mo/ui/component
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'label', 'size', 'type', 'variant', 'width'],
+  inputs: ['ariaLabel', 'contrast', 'icon', 'intent', 'isInactive', 'isLoading', 'label', 'size', 'type', 'variant', 'width'],
   outputs: ['dsClick'],
 })
 export class DsButtonFilled {

@@ -1,0 +1,89 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-tab-group",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-tab-group",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Horizontal single-selection tabs for switching adjacent local views or view modes, with uniform label, icon, or icon-label presentation and surface-aware selection.",
+  "useWhen": [
+    "Adjacent local content views or panels fit in a horizontal tab row.",
+    "A compact horizontal selector switches between equivalent local view modes such as list and grid.",
+    "A tab set needs concise labels, icons, or icon-label content with optional supplemental notification dots."
+  ],
+  "avoidWhen": [
+    "The choices navigate application routes; use PanelNav or BarNav instead.",
+    "The choices belong in a vertical panel or card side rail; use PanelSubNav instead.",
+    "The choices are temporary commands or contextual options; use Menu instead.",
+    "The row requires mixed content variants, subtext, nested levels, or multi-row wrapping.",
+    "No enabled tab can remain selected while enabled choices exist."
+  ],
+  "alternatives": [
+    {
+      "when": "Local views need persistent vertical side-rail navigation.",
+      "component": "component:ds-panel-sub-nav",
+      "reason": "PanelSubNav owns the vertical local-view keyboard and selection model."
+    },
+    {
+      "when": "The choices are primary application destinations.",
+      "component": "component:ds-panel-nav",
+      "reason": "PanelNav owns application route selection in shell navigation."
+    },
+    {
+      "when": "The choices are secondary application route sections.",
+      "component": "component:ds-bar-nav",
+      "reason": "BarNav owns route sections, overflow, and shell coordination."
+    },
+    {
+      "when": "The choices are transient actions or options.",
+      "component": "component:ds-menu",
+      "reason": "Menu owns temporary popup collections rather than persistent local views."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-text",
+    "component:ds-icon"
+  ],
+  "accessibility": [
+    "Provide an accessible tab-list name with aria-label or aria-labelledby.",
+    "Keep exactly one valid enabled tab selected whenever enabled tabs exist, and keep its controlled view synchronized.",
+    "When tabs control tabpanels, give each tab the id of its panel and label each panel from its tab.",
+    "ArrowLeft and ArrowRight move and activate selection; Home and End select the first and last available tabs.",
+    "Icon-only tabs retain their required text label as the accessible name even though the label is not visible.",
+    "Notification dots are supplemental status only and must never replace a label, state, or accessible name.",
+    "Inactive tabs remain visible but cannot be focused or selected."
+  ],
+  "states": [
+    "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
+    "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
+    "Selection is singular and follows keyboard focus.",
+    "Use one consistent content variant across every selectable tab in a group.",
+    "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
+    "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
+    "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups."
+  ],
+  "responsiveBehavior": [
+    "The component remains a single horizontal row and does not become vertical or wrap.",
+    "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign tabs as a JavaScript property because structured arrays are not represented by HTML attributes.",
+      "Use one item variant consistently, keep value synchronized to an enabled item, and update controlled content from dsChange."
+    ],
+    "react": [
+      "Pass tabs as an array through the generated wrapper, keep value controlled, and use onDsChange to synchronize the visible view."
+    ],
+    "angular": [
+      "Bind tabs and a valid value as properties, and handle dsChange to synchronize the visible view."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/TabGroup/TabGroup.stories.ts"
+    }
+  ]
+}

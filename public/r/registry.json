@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^3.0.0",
+        "@ds-mo/tokens ^3.1.0",
         "@ds-mo/icons ^6.2.0"
       ],
       "optional": [],
@@ -319,7 +319,7 @@
           ],
           "accessibility": [
             "Use concise localized labels for every route section.",
-            "Keep section navigation keyboard accessible through the generated TabGroupNav behavior and overflow menu.",
+            "Keep section navigation keyboard accessible through BarNav's built-in horizontal roving focus and overflow menu.",
             "Preserve the selected route state when sections move between the visible row and overflow menu.",
             "Use notification dots only as supplemental status and not as the sole indication of important information.",
             "Pass the active PanelNav destination label through heading whenever section tabs are absent or hidden."
@@ -421,16 +421,16 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "badge",
         "button-unfilled",
         "menu",
-        "tab-group-nav",
         "text"
       ]
     },
     {
       "name": "button-filled",
       "title": "ButtonFilled",
-      "description": "Emphasized command button for primary, confirming, or semantically important actions.",
+      "description": "Highest-emphasis command button for the single primary action in a local decision area, with semantic consequence and async progress treatments.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -441,15 +441,18 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Emphasized command button for primary, confirming, or semantically important actions.",
+          "summary": "Highest-emphasis command button for the single primary action in a local decision area, with semantic consequence and async progress treatments.",
           "useWhen": [
-            "The user initiates a primary or emphasized command.",
-            "An action needs a semantic intent such as positive, negative, warning, or AI."
+            "The user initiates the single primary command in a local decision area.",
+            "An action's consequence requires a matching semantic treatment.",
+            "A standalone compact primary action needs an icon-only presentation with an explicit accessible name."
           ],
           "avoidWhen": [
+            "Another filled action already exists in the same local decision area.",
             "The action is unfilled icon-only shell or navigation chrome.",
             "The element represents navigation rather than a command.",
-            "The content is a persistent selected state rather than an action."
+            "The content is a persistent selected state rather than an action.",
+            "A semantic color would be decorative or merely match the surrounding product area."
           ],
           "alternatives": [
             {
@@ -470,15 +473,31 @@
           "accessibility": [
             "Provide an explicit accessible name for icon-only buttons.",
             "Use inactive state only when the action must remain visible but unavailable.",
-            "Do not encode the action meaning through color alone."
+            "Do not encode the action meaning through color alone.",
+            "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when users need confirmation.",
+            "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
           ],
           "states": [
-            "Choose one primary filled action per local decision area when possible.",
-            "Use semantic intent for meaning and contrast for emphasis; do not use contrast as a substitute for state."
+            "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
+            "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
+            "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
+            "Loading prevents duplicate activation without applying inactive opacity.",
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
           ],
           "responsiveBehavior": [
             "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
           ],
+          "frameworkCaveats": {
+            "customElements": [
+              "For form submission, use the native submit type and listen to the form submit event; use dsClick for non-submit commands."
+            ],
+            "react": [
+              "Keep async state in the owner and pass it to the loading state until the command settles."
+            ],
+            "angular": [
+              "Keep async state in the owner and pass it to the loading state until the command settles."
+            ]
+          },
           "references": [
             {
               "label": "Storybook examples",
@@ -504,6 +523,10 @@
             "required": false
           },
           "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isLoading": {
             "type": "boolean",
             "required": false
           },
@@ -548,21 +571,97 @@
       ],
       "registryDependencies": [
         "icon",
+        "loader",
         "text"
       ]
     },
     {
       "name": "button-unfilled",
       "title": "ButtonUnfilled",
-      "description": "Unfilled button with variant (label / icon / icon-label), control-density sizes, width hug/fill, active/border/dot, and surface-aware interaction states.",
+      "description": "Secondary command and compact chrome button with optional persistent toggle state, surface-aware interaction treatment, and async progress.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-unfilled",
         "source": "src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Secondary command and compact chrome button with optional persistent toggle state, surface-aware interaction treatment, and async progress.",
+          "useWhen": [
+            "A secondary command accompanies the single filled primary action in a local decision area.",
+            "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
+            "A command represents a persistent toggle or mode whose active state remains meaningful after activation."
+          ],
+          "avoidWhen": [
+            "The command is the single primary action in a local decision area; use ButtonFilled instead.",
+            "The control selects an application destination or local content panel; use the matching navigation component.",
+            "Active styling would only indicate the most recently invoked command or add decorative emphasis.",
+            "Surface context would be used to make the action louder or quieter rather than describe its actual parent surface."
+          ],
+          "alternatives": [
+            {
+              "when": "The command is the single primary action in the decision area.",
+              "component": "component:ds-button-filled",
+              "reason": "ButtonFilled owns highest-emphasis commands."
+            },
+            {
+              "when": "The choices are persistent application destinations.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav owns primary route selection and navigation semantics."
+            },
+            {
+              "when": "The choices are transient commands or contextual options.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns temporary popup collections and their keyboard model."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-menu",
+            "component:ds-panel-tools"
+          ],
+          "accessibility": [
+            "Provide an explicit accessible name for every icon-only action.",
+            "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
+            "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
+            "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when needed.",
+            "Use inactive state only when an unavailable action must remain visible.",
+            "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
+          ],
+          "states": [
+            "General content UI keeps the selected interaction fill and border for persistent active state.",
+            "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
+            "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
+            "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
+            "Loading prevents duplicate activation without applying inactive opacity.",
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+          ],
+          "responsiveBehavior": [
+            "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",
+            "Use fill width only when the parent layout requires a full-width secondary action."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "For form submission, use the native submit type and listen to the form submit event; use dsClick for non-submit commands.",
+              "Roving-focus composites own the button's tab-stop placement and selection semantics."
+            ],
+            "react": [
+              "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+            ],
+            "angular": [
+              "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.stories.ts"
+            }
+          ]
+        },
         "props": {
           "activeFill": {
             "type": "boolean",
@@ -574,10 +673,6 @@
           },
           "background": {
             "type": "ButtonUnfilledBackground | undefined",
-            "required": false
-          },
-          "backgroundContrast": {
-            "type": "ButtonUnfilledOnBackgroundContrast",
             "required": false
           },
           "controls": {
@@ -613,6 +708,10 @@
             "required": false
           },
           "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isLoading": {
             "type": "boolean",
             "required": false
           },
@@ -666,6 +765,7 @@
       "registryDependencies": [
         "badge",
         "icon",
+        "loader",
         "text"
       ]
     },
@@ -1114,20 +1214,86 @@
     {
       "name": "chip",
       "title": "Chip",
-      "description": "Removable metadata chip — same control-density recipe as Tag, colored by semantic state (default / active / error / caution). Not a toggle/select control.",
+      "description": "Always-removable metadata value for primary surfaces, with semantic value status and parent-owned removal.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/chip",
         "source": "src/wc/components/Chip/Chip.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "background": {
-            "type": "ChipBackground | undefined",
-            "required": false
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Always-removable metadata value for primary surfaces, with semantic value status and parent-owned removal.",
+          "useWhen": [
+            "A user-applied value such as a filter, recipient, or tokenized input entry must remain visible and individually removable.",
+            "A compact metadata value needs a semantic neutral, active, error, or caution status before removal.",
+            "A collection owner can remove the represented value and restore focus after the dismiss action."
+          ],
+          "avoidWhen": [
+            "The label is static or not individually removable; use Tag instead.",
+            "The control selects, toggles, or navigates; use the matching button or navigation component.",
+            "The information is a persistent status, count, or unread indicator; use Badge or an appropriate status composition instead.",
+            "The chip would be placed on any surface other than a primary surface."
+          ],
+          "alternatives": [
+            {
+              "when": "The metadata label is static and has no dismiss action.",
+              "component": "component:ds-tag",
+              "reason": "Tag owns non-interactive taxonomy and metadata labels."
+            },
+            {
+              "when": "The compact mark communicates a count, status, or unread indicator.",
+              "component": "component:ds-badge",
+              "reason": "Badge owns supplemental counters and status marks without a dismiss action."
+            },
+            {
+              "when": "The value is a selectable or persistent toggle.",
+              "component": "component:ds-button-unfilled",
+              "reason": "ButtonUnfilled owns command and toggle semantics."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-input",
+            "component:ds-select"
+          ],
+          "accessibility": [
+            "Keep the visible label meaningful without relying on semantic color alone.",
+            "Give the dismiss action a name that identifies the represented value.",
+            "After removal, the parent moves focus to the next chip, then the previous chip, or the owning collection or input trigger when no chips remain.",
+            "Inactive chips remain visible while their dismiss action is disabled and removed from keyboard interaction."
+          ],
+          "states": [
+            "Semantic state describes the represented value; active does not mean selected or pressed.",
+            "The dismiss action is the chip's only interaction, and the parent owns data mutation after dsRemove.",
+            "Long labels remain on one line and truncate only when the consuming layout supplies a maximum width; otherwise the chip sizes to its content.",
+            "Rounded shape is a visual choice and does not change semantics or interaction.",
+            "Chip is designed only for primary surfaces and has no surface-context API."
+          ],
+          "responsiveBehavior": [
+            "The parent chooses chip size and owns wrapping, overflow, and collection condensation.",
+            "Chip does not automatically resize, hide, or collapse its label at responsive breakpoints."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "dsRemove has no payload; associate each rendered chip with its owning value and remove that value from the event handler."
+            ],
+            "react": [
+              "Use the rendered chip's bound item context in the dsRemove handler, then restore focus after the collection rerenders."
+            ],
+            "angular": [
+              "Use the rendered chip's bound item context in the dsRemove handler, then restore focus after the collection rerenders."
+            ]
           },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Chip/Chip.stories.ts"
+            }
+          ]
+        },
+        "props": {
           "isInactive": {
             "type": "boolean",
             "required": false
@@ -1138,10 +1304,6 @@
           },
           "maxWidth": {
             "type": "string | number | undefined",
-            "required": false
-          },
-          "removable": {
-            "type": "boolean",
             "required": false
           },
           "removeLabel": {
@@ -2015,6 +2177,134 @@
       ]
     },
     {
+      "name": "panel-sub-nav",
+      "title": "PanelSubNav",
+      "description": "Persistent vertical tab navigation for a panel or card side rail, switching adjacent local content with menu-like selected fill and stable text weight.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-sub-nav",
+        "source": "src/wc/components/PanelSubNav/PanelSubNav.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Persistent vertical tab navigation for a panel or card side rail, switching adjacent local content with menu-like selected fill and stable text weight.",
+          "useWhen": [
+            "A panel or card side rail needs a persistent vertical list that switches adjacent local content.",
+            "Each concise text label controls an immediately available tabpanel without changing application routes."
+          ],
+          "avoidWhen": [
+            "The navigation is not contained in a panel or card side rail.",
+            "Local views should be arranged horizontally; use TabGroup instead.",
+            "The choices navigate routes in application shell chrome; use PanelNav or BarNav instead.",
+            "The choices are temporary commands or contextual options; use Menu instead.",
+            "Rows need icons, subtext, notification dots, nested levels, or section headers."
+          ],
+          "alternatives": [
+            {
+              "when": "Local panel choices fit a horizontal tab row.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup is the horizontal local-view counterpart."
+            },
+            {
+              "when": "The choices are primary application destinations.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav owns primary application navigation."
+            },
+            {
+              "when": "The choices are secondary application routes.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav owns route sections inside AppShell."
+            },
+            {
+              "when": "The choices are transient actions or options.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns temporary popup collections."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Provide an accessible name with aria-label or aria-labelledby.",
+            "Give every item a unique id and the id of its controlled tabpanel.",
+            "Keep each controlled tabpanel labelled by its matching item id.",
+            "Always provide a valid selected item when enabled items exist so exactly one tab and panel are active.",
+            "ArrowUp and ArrowDown move and activate selection; Home and End select the first and last available items.",
+            "Do not use selected text weight as the selection cue; active fill and primary foreground communicate selection."
+          ],
+          "states": [
+            "The parent owns the canonical selected value and panel visibility, and should update both from dsChange.",
+            "A missing, empty, or unknown selected value is invalid when enabled items exist; the component does not choose a fallback selection.",
+            "Inactive items remain visible but cannot be focused or selected.",
+            "Selection is singular and follows keyboard focus.",
+            "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
+            "Rows contain one text label only and do not express nested navigation or grouped hierarchy."
+          ],
+          "responsiveBehavior": [
+            "The component remains vertical at every width.",
+            "The consuming panel owns responsive adaptation and decides whether to reposition or replace the side rail."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign items as a JavaScript property because structured arrays are not represented by HTML attributes.",
+              "Keep value synchronized to a valid enabled item and update the controlled panel from dsChange."
+            ],
+            "react": [
+              "Pass items as an array through the generated wrapper, keep value controlled, and use onDsChange to synchronize the visible panel."
+            ],
+            "angular": [
+              "Bind items and a valid value as properties, and handle dsChange to synchronize the visible panel."
+            ]
+          }
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "background": {
+            "type": "PanelSubNavBackground | undefined",
+            "required": false
+          },
+          "items": {
+            "type": "PanelSubNavItem[]",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-panel-sub-nav",
+          "react": "DsPanelSubNav",
+          "angular": "DsPanelSubNav"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "panel-tools",
       "title": "PanelTools",
       "description": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
@@ -2851,15 +3141,97 @@
     {
       "name": "tab-group",
       "title": "TabGroup",
-      "description": "Horizontal or vertical tab list with roving keyboard focus and optional dividers between tab groups.",
+      "description": "Horizontal single-selection tabs for switching adjacent local views or view modes, with uniform label, icon, or icon-label presentation and surface-aware selection.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group",
         "source": "src/wc/components/TabGroup/TabGroup.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Horizontal single-selection tabs for switching adjacent local views or view modes, with uniform label, icon, or icon-label presentation and surface-aware selection.",
+          "useWhen": [
+            "Adjacent local content views or panels fit in a horizontal tab row.",
+            "A compact horizontal selector switches between equivalent local view modes such as list and grid.",
+            "A tab set needs concise labels, icons, or icon-label content with optional supplemental notification dots."
+          ],
+          "avoidWhen": [
+            "The choices navigate application routes; use PanelNav or BarNav instead.",
+            "The choices belong in a vertical panel or card side rail; use PanelSubNav instead.",
+            "The choices are temporary commands or contextual options; use Menu instead.",
+            "The row requires mixed content variants, subtext, nested levels, or multi-row wrapping.",
+            "No enabled tab can remain selected while enabled choices exist."
+          ],
+          "alternatives": [
+            {
+              "when": "Local views need persistent vertical side-rail navigation.",
+              "component": "component:ds-panel-sub-nav",
+              "reason": "PanelSubNav owns the vertical local-view keyboard and selection model."
+            },
+            {
+              "when": "The choices are primary application destinations.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav owns application route selection in shell navigation."
+            },
+            {
+              "when": "The choices are secondary application route sections.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav owns route sections, overflow, and shell coordination."
+            },
+            {
+              "when": "The choices are transient actions or options.",
+              "component": "component:ds-menu",
+              "reason": "Menu owns temporary popup collections rather than persistent local views."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "Provide an accessible tab-list name with aria-label or aria-labelledby.",
+            "Keep exactly one valid enabled tab selected whenever enabled tabs exist, and keep its controlled view synchronized.",
+            "When tabs control tabpanels, give each tab the id of its panel and label each panel from its tab.",
+            "ArrowLeft and ArrowRight move and activate selection; Home and End select the first and last available tabs.",
+            "Icon-only tabs retain their required text label as the accessible name even though the label is not visible.",
+            "Notification dots are supplemental status only and must never replace a label, state, or accessible name.",
+            "Inactive tabs remain visible but cannot be focused or selected."
+          ],
+          "states": [
+            "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
+            "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
+            "Selection is singular and follows keyboard focus.",
+            "Use one consistent content variant across every selectable tab in a group.",
+            "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
+            "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
+            "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups."
+          ],
+          "responsiveBehavior": [
+            "The component remains a single horizontal row and does not become vertical or wrap.",
+            "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign tabs as a JavaScript property because structured arrays are not represented by HTML attributes.",
+              "Use one item variant consistently, keep value synchronized to an enabled item, and update controlled content from dsChange."
+            ],
+            "react": [
+              "Pass tabs as an array through the generated wrapper, keep value controlled, and use onDsChange to synchronize the visible view."
+            ],
+            "angular": [
+              "Bind tabs and a valid value as properties, and handle dsChange to synchronize the visible view."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/TabGroup/TabGroup.stories.ts"
+            }
+          ]
+        },
         "props": {
           "ariaLabel": {
             "type": "string | null",
@@ -2873,12 +3245,8 @@
             "type": "TabBackground | undefined",
             "required": false
           },
-          "orientation": {
-            "type": "'horizontal' | 'vertical'",
-            "required": false
-          },
           "tabs": {
-            "type": "TabItem[]",
+            "type": "TabGroupItem[]",
             "required": false
           },
           "value": {
@@ -2901,82 +3269,12 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
         "badge",
-        "text"
-      ]
-    },
-    {
-      "name": "tab-group-nav",
-      "title": "TabGroupNav",
-      "description": "Navigation-style tab list for primary and secondary navigation surfaces.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tab-group-nav",
-        "source": "src/wc/components/TabGroupNav/TabGroupNav.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "ariaLabel": {
-            "type": "string | null",
-            "required": false
-          },
-          "ariaLabelledby": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "background": {
-            "type": "TabGroupNavBackground | undefined",
-            "required": false
-          },
-          "orientation": {
-            "type": "'horizontal' | 'vertical'",
-            "required": false
-          },
-          "rovingEnabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "selectionFollowsFocus": {
-            "type": "boolean",
-            "required": false
-          },
-          "tabs": {
-            "type": "TabItem[]",
-            "required": false
-          },
-          "value": {
-            "type": "string",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsChange",
-            "detail": "string"
-          },
-          {
-            "name": "dsRovingExit",
-            "detail": "'start' | 'end'"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-tab-group-nav",
-          "react": "DsTabGroupNav",
-          "angular": "DsTabGroupNav"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "badge",
+        "icon",
         "text"
       ]
     },

@@ -85,6 +85,55 @@ test.describe('BarNav responsive overflow', () => {
     await expect(page.locator('.bar-nav__overflow-trigger')).toHaveCount(0);
   });
 
+  test('internal tab row uses manual horizontal roving focus', async ({ page }) => {
+    await page.evaluate(() => window.__setShellWidth(900));
+    await page.evaluate(() => {
+      const nav = document.getElementById('nav') as HTMLElement & {
+        basePath: string;
+        currentUrl: string;
+        tabs: Array<
+          | { id: string; label: string; isInactive?: boolean }
+          | { type: 'divider' }
+        >;
+        value: string;
+      };
+      nav.basePath = '';
+      nav.currentUrl = '';
+      nav.tabs = [
+        { id: 'overview', label: 'Overview' },
+        { id: 'inactive', label: 'Inactive', isInactive: true },
+        { type: 'divider' },
+        { id: 'settings', label: 'Settings' },
+      ];
+      nav.value = 'overview';
+      nav.addEventListener('dsTabChange', event => {
+        (window as typeof window & { __barNavChange?: string }).__barNavChange =
+          (event as CustomEvent<string>).detail;
+      });
+    });
+
+    const visible = page.locator('.bar-nav__tabs-visible');
+    await expect(visible).toBeVisible({ timeout: 5000 });
+    await expect(visible.locator('.bar-nav__tab-divider')).toHaveCount(1);
+    const overview = visible.getByRole('tab', { name: 'Overview' });
+    const settings = visible.getByRole('tab', { name: 'Settings' });
+
+    await overview.focus();
+    await overview.press('ArrowRight');
+    await expect(settings).toBeFocused();
+    await expect(overview).toHaveAttribute('aria-selected', 'true');
+    await expect(settings).toHaveAttribute('aria-selected', 'false');
+
+    await settings.press('Enter');
+    await expect.poll(() => page.evaluate(() => (
+      window as typeof window & { __barNavChange?: string }
+    ).__barNavChange)).toBe('settings');
+    await expect.poll(() => page.locator('#nav').evaluate(element => (
+      element as HTMLElement & { value: string }
+    ).value)).toBe('settings');
+    await expect(settings).toHaveAttribute('aria-selected', 'true');
+  });
+
   test('overflow trigger shows inset focus ring on keyboard focus', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(320));
     await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });

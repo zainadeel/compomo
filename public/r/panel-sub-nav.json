@@ -1,0 +1,249 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "panel-sub-nav",
+  "title": "PanelSubNav",
+  "description": "Persistent vertical tab navigation for a panel or card side rail, switching adjacent local content with menu-like selected fill and stable text weight.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-sub-nav",
+    "source": "src/wc/components/PanelSubNav/PanelSubNav.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Persistent vertical tab navigation for a panel or card side rail, switching adjacent local content with menu-like selected fill and stable text weight.",
+      "useWhen": [
+        "A panel or card side rail needs a persistent vertical list that switches adjacent local content.",
+        "Each concise text label controls an immediately available tabpanel without changing application routes."
+      ],
+      "avoidWhen": [
+        "The navigation is not contained in a panel or card side rail.",
+        "Local views should be arranged horizontally; use TabGroup instead.",
+        "The choices navigate routes in application shell chrome; use PanelNav or BarNav instead.",
+        "The choices are temporary commands or contextual options; use Menu instead.",
+        "Rows need icons, subtext, notification dots, nested levels, or section headers."
+      ],
+      "alternatives": [
+        {
+          "when": "Local panel choices fit a horizontal tab row.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup is the horizontal local-view counterpart."
+        },
+        {
+          "when": "The choices are primary application destinations.",
+          "component": "component:ds-panel-nav",
+          "reason": "PanelNav owns primary application navigation."
+        },
+        {
+          "when": "The choices are secondary application routes.",
+          "component": "component:ds-bar-nav",
+          "reason": "BarNav owns route sections inside AppShell."
+        },
+        {
+          "when": "The choices are transient actions or options.",
+          "component": "component:ds-menu",
+          "reason": "Menu owns temporary popup collections."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Provide an accessible name with aria-label or aria-labelledby.",
+        "Give every item a unique id and the id of its controlled tabpanel.",
+        "Keep each controlled tabpanel labelled by its matching item id.",
+        "Always provide a valid selected item when enabled items exist so exactly one tab and panel are active.",
+        "ArrowUp and ArrowDown move and activate selection; Home and End select the first and last available items.",
+        "Do not use selected text weight as the selection cue; active fill and primary foreground communicate selection."
+      ],
+      "states": [
+        "The parent owns the canonical selected value and panel visibility, and should update both from dsChange.",
+        "A missing, empty, or unknown selected value is invalid when enabled items exist; the component does not choose a fallback selection.",
+        "Inactive items remain visible but cannot be focused or selected.",
+        "Selection is singular and follows keyboard focus.",
+        "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
+        "Rows contain one text label only and do not express nested navigation or grouped hierarchy."
+      ],
+      "responsiveBehavior": [
+        "The component remains vertical at every width.",
+        "The consuming panel owns responsive adaptation and decides whether to reposition or replace the side rail."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign items as a JavaScript property because structured arrays are not represented by HTML attributes.",
+          "Keep value synchronized to a valid enabled item and update the controlled panel from dsChange."
+        ],
+        "react": [
+          "Pass items as an array through the generated wrapper, keep value controlled, and use onDsChange to synchronize the visible panel."
+        ],
+        "angular": [
+          "Bind items and a valid value as properties, and handle dsChange to synchronize the visible panel."
+        ]
+      }
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false
+        },
+        "background": {
+          "type": "PanelSubNavBackground | undefined",
+          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"strong\" | \"translucent\" | undefined",
+          "attribute": "background",
+          "required": false,
+          "mutable": false,
+          "description": "Actual parent surface context. Omit on primary and secondary surfaces."
+        },
+        "items": {
+          "type": "PanelSubNavItem[]",
+          "resolvedType": "PanelSubNavItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Local panel tabs. Assign this array through the JavaScript property.\nReplace the array reference when items change."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true,
+          "description": "Required selected item id when enabled items exist. Keep synchronized with the visible panel."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false
+      },
+      "background": {
+        "type": "PanelSubNavBackground | undefined",
+        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"strong\" | \"translucent\" | undefined",
+        "attribute": "background",
+        "required": false,
+        "mutable": false,
+        "description": "Actual parent surface context. Omit on primary and secondary surfaces."
+      },
+      "items": {
+        "type": "PanelSubNavItem[]",
+        "resolvedType": "PanelSubNavItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Local panel tabs. Assign this array through the JavaScript property.\nReplace the array reference when items change."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true,
+        "description": "Required selected item id when enabled items exist. Keep synchronized with the visible panel."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-panel-sub-nav",
+      "react": "DsPanelSubNav",
+      "angular": "DsPanelSubNav"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-panel-sub-nav.js';",
+        "example": "<ds-panel-sub-nav></ds-panel-sub-nav>"
+      },
+      "react": {
+        "import": "import { DsPanelSubNav } from '@ds-mo/ui/react';",
+        "example": "<DsPanelSubNav />"
+      },
+      "angular": {
+        "import": "import { DsPanelSubNav } from '@ds-mo/ui/angular/ds-panel-sub-nav';",
+        "example": "<ds-panel-sub-nav></ds-panel-sub-nav>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/PanelSubNav/PanelSubNav.css",
+      "content": "@import '../../utils/control-density.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n\n:host {\n  display: block;\n  width: 100%;\n}\n\n.panel-sub-nav {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  width: 100%;\n}\n\n.panel-sub-nav__item {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  gap: var(--ds-control-gap);\n  width: 100%;\n  height: var(--ds-control-height);\n  padding: 0 var(--ds-control-padding-inline);\n  box-sizing: border-box;\n  border: none;\n  border-radius: var(--ds-control-radius);\n  background: transparent;\n  color: var(--color-foreground-secondary);\n  cursor: pointer;\n  text-align: left;\n  -webkit-user-select: none;\n  user-select: none;\n  transition: color var(--effect-motion-short-2);\n}\n\n.panel-sub-nav__item--selected {\n  color: var(--color-foreground-primary);\n}\n\n.panel-sub-nav__item--on-medium {\n  color: var(--color-foreground-on-medium-background-secondary);\n}\n\n.panel-sub-nav__item--on-medium.panel-sub-nav__item--selected {\n  color: var(--color-foreground-on-medium-background-primary);\n}\n\n.panel-sub-nav__item--on-bold {\n  color: var(--color-foreground-on-bold-background-secondary);\n}\n\n.panel-sub-nav__item--on-bold.panel-sub-nav__item--selected {\n  color: var(--color-foreground-on-bold-background-primary);\n}\n\n.panel-sub-nav__item--on-strong {\n  color: var(--color-foreground-on-strong-background-secondary);\n}\n\n.panel-sub-nav__item--on-strong.panel-sub-nav__item--selected {\n  color: var(--color-foreground-on-strong-background-primary);\n}\n\n.panel-sub-nav__item--on-translucent {\n  color: var(--color-translucent-foreground-secondary);\n}\n\n.panel-sub-nav__item--on-translucent.panel-sub-nav__item--selected {\n  color: var(--color-translucent-foreground-primary);\n}\n\n.panel-sub-nav__item--on-inverted {\n  color: var(--color-inverted-foreground-secondary);\n}\n\n.panel-sub-nav__item--on-inverted.panel-sub-nav__item--selected {\n  color: var(--color-inverted-foreground-primary);\n}\n\n.panel-sub-nav__item--on-media {\n  color: var(--color-media-foreground-secondary);\n}\n\n.panel-sub-nav__item--on-media.panel-sub-nav__item--selected {\n  color: var(--color-media-foreground-primary);\n}\n\n.panel-sub-nav__item--on-always-dark {\n  color: var(--color-always-dark-foreground-secondary);\n}\n\n.panel-sub-nav__item--on-always-dark.panel-sub-nav__item--selected {\n  color: var(--color-always-dark-foreground-primary);\n}\n\nds-text.panel-sub-nav__label {\n  flex: 1;\n  min-width: 0;\n  padding: 0 var(--ds-control-label-inset);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/PanelSubNav/PanelSubNav.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';\nimport type { PanelSubNavItem } from './panel-sub-nav-types';\n\nexport type PanelSubNavBackground =\n  | 'faint'\n  | 'medium'\n  | 'bold'\n  | 'strong'\n  | 'translucent'\n  | 'inverted'\n  | 'media'\n  | 'always-dark';\n\n@Component({\n  tag: 'ds-panel-sub-nav',\n  styleUrl: 'PanelSubNav.css',\n  scoped: true,\n})\nexport class PanelSubNav {\n  @Element() el!: HTMLElement;\n\n  /** Required selected item id when enabled items exist. Keep synchronized with the visible panel. */\n  @Prop({ mutable: true }) value: string = '';\n  /**\n   * Local panel tabs. Assign this array through the JavaScript property.\n   * Replace the array reference when items change.\n   */\n  @Prop() items: PanelSubNavItem[] = [];\n  /** Actual parent surface context. Omit on primary and secondary surfaces. */\n  @Prop() background: PanelSubNavBackground | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private get enabledItems(): PanelSubNavItem[] {\n    return this.items.filter(item => !item.isInactive);\n  }\n\n  private get focusableId(): string {\n    return this.enabledItems.some(item => item.id === this.value)\n      ? this.value\n      : (this.enabledItems[0]?.id ?? '');\n  }\n\n  private selectItem(id: string) {\n    this.value = id;\n    this.dsChange.emit(id);\n    this.focusItem(id);\n  }\n\n  private focusItem(id: string) {\n    const item = this.el.querySelector(`[data-panel-sub-nav-id=\"${id}\"]`) as HTMLElement | null;\n    item?.focus({ preventScroll: true });\n  }\n\n  @Watch('value')\n  onValueChange(next: string, previous: string | undefined) {\n    if (previous === undefined || next === previous) return;\n\n    requestAnimationFrame(() => {\n      const active = document.activeElement as HTMLElement | null;\n      if (!active || !this.el.contains(active)) return;\n      this.focusItem(next);\n    });\n  }\n\n  private findEnabled(from: number, step: 1 | -1): number {\n    const length = this.items.length;\n    for (let offset = 1; offset <= length; offset++) {\n      const index = (from + step * offset + length * offset) % length;\n      if (!this.items[index]?.isInactive) return index;\n    }\n    return from;\n  }\n\n  @Listen('keydown')\n  handleKeyDown(event: KeyboardEvent) {\n    if (!this.enabledItems.length) return;\n\n    const selectedIndex = this.items.findIndex(item => item.id === this.value);\n    const currentIndex = selectedIndex >= 0\n      ? selectedIndex\n      : (event.key === 'ArrowUp' ? 0 : -1);\n    let nextIndex: number | null = null;\n\n    if (event.key === 'ArrowDown') {\n      nextIndex = this.findEnabled(currentIndex, 1);\n    } else if (event.key === 'ArrowUp') {\n      nextIndex = this.findEnabled(currentIndex, -1);\n    } else if (event.key === 'Home') {\n      nextIndex = this.items.findIndex(item => !item.isInactive);\n    } else if (event.key === 'End') {\n      const reversedIndex = [...this.items].reverse().findIndex(item => !item.isInactive);\n      nextIndex = reversedIndex < 0 ? null : this.items.length - 1 - reversedIndex;\n    }\n\n    if (nextIndex === null || nextIndex < 0) return;\n    const next = this.items[nextIndex];\n    if (!next || next.isInactive) return;\n\n    event.preventDefault();\n    this.selectItem(next.id);\n  }\n\n  render() {\n    const focusableId = this.focusableId;\n    const background = this.background;\n\n    return (\n      <Host>\n        <div\n          class=\"panel-sub-nav\"\n          role=\"tablist\"\n          aria-orientation=\"vertical\"\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n        >\n          {this.items.map(item => {\n            const isSelected = item.id === this.value;\n            return (\n              <button\n                id={item.id}\n                type=\"button\"\n                role=\"tab\"\n                data-panel-sub-nav-id={item.id}\n                class={{\n                  'panel-sub-nav__item': true,\n                  'panel-sub-nav__item--selected': isSelected,\n                  'ds-control--md': true,\n                  'ds-focus-ring-inset': true,\n                  'ds-interaction-fill': !item.isInactive,\n                  'ds-interaction-fill--selected': isSelected && !item.isInactive,\n                  'ds-interaction-fill--on-faint': background === 'faint',\n                  'ds-interaction-fill--on-medium': background === 'medium',\n                  'ds-interaction-fill--on-bold': background === 'bold',\n                  'ds-interaction-fill--on-strong': background === 'strong',\n                  'ds-interaction-fill--on-translucent': background === 'translucent',\n                  'ds-interaction-fill--on-inverted': background === 'inverted',\n                  'ds-interaction-fill--on-media': background === 'media',\n                  'ds-interaction-fill--on-always-dark': background === 'always-dark',\n                  [`panel-sub-nav__item--on-${background}`]: !!background,\n                  'ds-control-inactive': !!item.isInactive,\n                }}\n                aria-selected={isSelected ? 'true' : 'false'}\n                aria-controls={item.panelId}\n                aria-disabled={item.isInactive ? 'true' : undefined}\n                disabled={item.isInactive}\n                tabIndex={item.id === focusableId ? 0 : -1}\n                onClick={() => !item.isInactive && this.selectItem(item.id)}\n              >\n                <ds-text\n                  class=\"panel-sub-nav__label ds-interaction-fill__content\"\n                  as=\"span\"\n                  variant=\"text-body-medium\"\n                  color=\"inherit\"\n                >\n                  {item.label}\n                </ds-text>\n              </button>\n            );\n          })}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/PanelSubNav/panel-sub-nav-types.ts",
+      "content": "export interface PanelSubNavItem {\n  /** Unique tab id. Also used by the controlled panel's aria-labelledby. */\n  id: string;\n  label: string;\n  /** ID of the tabpanel controlled by this item. */\n  panelId: string;\n  /** Prevent selection and remove the item from keyboard navigation. */\n  isInactive?: boolean;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

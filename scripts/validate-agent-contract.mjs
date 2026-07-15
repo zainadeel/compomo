@@ -117,7 +117,7 @@ export function validateAgentContract() {
     }
   }
 
-  const compatibility = readJson('agent/baseline/2026-07-11.json').registryCompatibility;
+  const compatibility = readJson('agent/contracts/registry-compatibility.json');
   const registry = readJson(compatibility.masterPath);
   errors.push(...validateRegistryCoverage(
     inventory,

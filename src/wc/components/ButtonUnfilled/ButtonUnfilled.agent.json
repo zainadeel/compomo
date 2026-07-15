@@ -1,0 +1,82 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-button-unfilled",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-button-unfilled",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Secondary command and compact chrome button with optional persistent toggle state, surface-aware interaction treatment, and async progress.",
+  "useWhen": [
+    "A secondary command accompanies the single filled primary action in a local decision area.",
+    "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
+    "A command represents a persistent toggle or mode whose active state remains meaningful after activation."
+  ],
+  "avoidWhen": [
+    "The command is the single primary action in a local decision area; use ButtonFilled instead.",
+    "The control selects an application destination or local content panel; use the matching navigation component.",
+    "Active styling would only indicate the most recently invoked command or add decorative emphasis.",
+    "Surface context would be used to make the action louder or quieter rather than describe its actual parent surface."
+  ],
+  "alternatives": [
+    {
+      "when": "The command is the single primary action in the decision area.",
+      "component": "component:ds-button-filled",
+      "reason": "ButtonFilled owns highest-emphasis commands."
+    },
+    {
+      "when": "The choices are persistent application destinations.",
+      "component": "component:ds-panel-nav",
+      "reason": "PanelNav owns primary route selection and navigation semantics."
+    },
+    {
+      "when": "The choices are transient commands or contextual options.",
+      "component": "component:ds-menu",
+      "reason": "Menu owns temporary popup collections and their keyboard model."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-filled",
+    "component:ds-menu",
+    "component:ds-panel-tools"
+  ],
+  "accessibility": [
+    "Provide an explicit accessible name for every icon-only action.",
+    "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
+    "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
+    "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when needed.",
+    "Use inactive state only when an unavailable action must remain visible.",
+    "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
+  ],
+  "states": [
+    "General content UI keeps the selected interaction fill and border for persistent active state.",
+    "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
+    "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
+    "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
+    "Loading prevents duplicate activation without applying inactive opacity.",
+    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+  ],
+  "responsiveBehavior": [
+    "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",
+    "Use fill width only when the parent layout requires a full-width secondary action."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "For form submission, use the native submit type and listen to the form submit event; use dsClick for non-submit commands.",
+      "Roving-focus composites own the button's tab-stop placement and selection semantics."
+    ],
+    "react": [
+      "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+    ],
+    "angular": [
+      "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.stories.ts"
+    }
+  ]
+}

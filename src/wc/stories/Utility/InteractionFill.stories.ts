@@ -22,6 +22,12 @@ type Story = StoryObj;
 
 const SURFACE_CONTEXTS = [
   {
+    label: 'Faint parent surface',
+    className: 'faint',
+    helper: 'on-faint',
+    backgroundToken: '--color-background-faint-neutral',
+  },
+  {
     label: 'Medium parent surface',
     className: 'medium',
     helper: 'on-medium',
@@ -104,8 +110,10 @@ export const Overview: Story = {
         <p class="util-demo-sub">
           Hover and press paint on <code class="util-demo-code">::after</code>; selected uses
           <code class="util-demo-code">::before</code> with the surface’s
-          <code class="util-demo-code">--color-*-interaction-active</code> token. Demo controls are
-          transparent so the wash composites over the parent surface (same as real chrome).
+          <code class="util-demo-code">--color-*-interaction-active</code> token. Default primary and
+          secondary surfaces use <code class="util-demo-code">--color-interaction-active-brand</code>;
+          explicit faint surfaces use <code class="util-demo-code">--color-interaction-active</code>.
+          Demo controls are transparent so the wash composites over the parent surface.
         </p>
         <div class="util-demo-row">
           ${control('Idle', 'ds-interaction-fill')}

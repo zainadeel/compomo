@@ -55,8 +55,8 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 ### Primitives
 - **Text**, **Icon**, **Divider**, **Loader**, **Skeleton**
 - **ButtonFilled** — filled button; `variant` (label / icon / icon-label) + `size` + intent×contrast
-- **ButtonUnfilled** — unfilled button; same variants/sizes; surface-aware chrome (`on-background-contrast`, `background`)
-- **Tag**, **Chip**, **Badge**
+- **ButtonUnfilled** — unfilled button; same variants/sizes; surface-aware chrome through `background`
+- **Tag** (static metadata), **Chip** (removable metadata on primary surfaces), **Badge**
 
 ### Controls
 - **Toggle**, **Checkbox**, **RadioGroup**, **Input**, **Slider**, **Field**
@@ -68,7 +68,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Modal**, **Menu**, **Tooltip**, **Select**, **Banner**
 
 ### Navigation
-- **TabGroup** (pill), **TabGroupNav** (underline)
+- **TabGroup** (horizontal local views), **PanelSubNav** (vertical local views)
 - **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout

@@ -29,7 +29,7 @@
  * after the unset so this util’s stacking context still applies.
  *
  * Surface helpers remap tokens + `--ds-focus-ring-color`:
- *   `.ds-interaction-fill--on-medium|bold|strong|translucent|inverted|media|always-dark|navigation`
+ *   `.ds-interaction-fill--on-faint|medium|bold|strong|translucent|inverted|media|always-dark|navigation`
  *
  * Override hooks: `--ds-interaction-hover`, `--ds-interaction-pressed`,
  * `--ds-interaction-active`, `--ds-interaction-border-color`,
@@ -44,7 +44,7 @@
   z-index: 0;
   --ds-interaction-hover: var(--color-interaction-hover);
   --ds-interaction-pressed: var(--color-interaction-pressed);
-  --ds-interaction-active: var(--color-interaction-active);
+  --ds-interaction-active: var(--color-interaction-active-brand);
   /* Inset stroke on ::after — default off (transparent / zero width). */
   --ds-interaction-border-width: 0px;
   --ds-interaction-border-color: transparent;
@@ -120,6 +120,11 @@
 }
 
 /* ── Surface context ─────────────────────────────────────────────────────── */
+
+:host(.ds-interaction-fill--on-faint),
+.ds-interaction-fill--on-faint {
+  --ds-interaction-active: var(--color-interaction-active);
+}
 
 :host(.ds-interaction-fill--on-medium),
 .ds-interaction-fill--on-medium {
