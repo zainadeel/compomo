@@ -10,7 +10,7 @@ export type TextVariant =
   | 'text-caption';
 
 export type TextColorToken =
-  | 'primary' | 'secondary' | 'tertiary'
+  | 'primary' | 'secondary' | 'tertiary' | 'quaternary'
   | 'brand' | 'negative' | 'positive' | 'warning' | 'caution' | 'ai'
   | 'on-strong' | 'on-bold' | 'inherit';
 

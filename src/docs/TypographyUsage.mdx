@@ -71,17 +71,18 @@ values only when the text owns a clear hierarchy or intent:
 <ds-text color="negative">Validation error</ds-text>
 ```
 
-Supported named values include `primary`, `secondary`, `tertiary`, `brand`,
-`negative`, `positive`, `warning`, `caution`, `ai`, `on-strong`, `on-bold`,
-and `inherit`. A TokoMo custom property such as
+Supported named values include `primary`, `secondary`, `tertiary`,
+`quaternary`, `brand`, `negative`, `positive`, `warning`, `caution`, `ai`,
+`on-strong`, `on-bold`, and `inherit`. A TokoMo custom property such as
 `var(--color-foreground-secondary)` is also accepted.
 
-`tertiary` is not a general low-emphasis text role. It is restricted to text
-inside a genuinely inactive or disabled UI component, or to purely decorative
-content whose removal would not change meaning, status, hierarchy, or task
-understanding. Prefer the owning component's `isInactive` or native `disabled`
-state instead of manually selecting tertiary. `aria-hidden` alone does not make
-meaningful visible text decorative.
+`tertiary` and `quaternary` are not general low-emphasis text roles. Both are
+restricted to text inside a genuinely inactive or disabled UI component, or to
+purely decorative content whose removal would not change meaning, status,
+hierarchy, or task understanding. Quaternary is the fainter tier. Prefer the
+owning component's `isInactive` or native `disabled` state instead of manually
+selecting either one. `aria-hidden` alone does not make meaningful visible text
+decorative.
 
 ## Underlines and interaction
 

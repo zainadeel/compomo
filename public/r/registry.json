@@ -1839,13 +1839,13 @@
             "Icons are decorative by default and remain hidden from assistive technology when visible text or an owning control already communicates the meaning.",
             "The owning button, link, or composite control provides the accessible name; do not repeat that name on its nested Icon.",
             "Provide an explicit label only when the non-interactive icon itself communicates otherwise unavailable meaning.",
-            "Tertiary foreground is restricted to icons inside genuinely inactive or disabled UI, or to purely decorative icons; informative icons and meaningful status graphics retain sufficient rendered contrast even when aria-hidden.",
+            "Tertiary and quaternary foregrounds are restricted to icons inside genuinely inactive or disabled UI, or to purely decorative icons; quaternary is the fainter tier, and informative icons and meaningful status graphics retain sufficient rendered contrast even when aria-hidden.",
             "Informative flags require an explicit localized country or region label; never derive accessible text from the export name.",
             "Icon never receives focus or owns interaction."
           ],
           "states": [
             "Omitted color inherits currentColor from the owning context. Explicit semantic aliases and CSS-variable references are available when the icon has an independent color role.",
-            "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary so visual treatment and inactive semantics remain synchronized.",
+            "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary or quaternary so visual treatment and inactive semantics remain synchronized.",
             "Built-in glyph lookup accepts exact canonical IcoMo export names only. Names beginning with Flag select the flag catalog automatically.",
             "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
             "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
@@ -2060,14 +2060,14 @@
           "accessibility": [
             "When Loader is nested in a busy button, field, or region, keep it unnamed and expose busy state from the owner.",
             "Standalone Loader requires contextual status text that explains what is loading; do not rely on a generic visual spinner alone.",
-            "Loader is an informative progress graphic and must retain sufficient rendered contrast; tertiary is not a supported standalone or informative Loader treatment.",
+            "Loader is an informative progress graphic and must retain sufficient rendered contrast; tertiary and quaternary are not supported standalone or informative Loader treatments.",
             "Avoid duplicate announcements from both Loader and its owning busy region.",
             "Reduced motion stops rotation while keeping the glyph and status semantics visible."
           ],
           "states": [
             "Loader communicates indeterminate progress only and does not emit completion or failure events.",
             "Omitted color inherits currentColor. Explicit semantic aliases and CSS-variable references match Icon when an independent progress color is required.",
-            "Nested Loader inherits a readable color from its owning busy control or region rather than selecting tertiary directly.",
+            "Nested Loader inherits a readable color from its owning busy control or region rather than selecting tertiary or quaternary directly.",
             "The owner decides whether to delay Loader visibility for short operations and removes it when the operation settles.",
             "The owner reserves space and supplies centering or overlay layout so Loader never causes unexpected layout movement."
           ],
@@ -3079,7 +3079,7 @@
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
-            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused.",
+            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text remains secondary at rest and while focused.",
             "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
             "The shared clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
@@ -3333,7 +3333,7 @@
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when selection promotes the label and count to primary.",
-            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused.",
+            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text remains secondary at rest and while focused.",
             "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
             "The shared summary-and-clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
@@ -4546,7 +4546,7 @@
             "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
             "Use label semantics and its for association only for a real form control.",
             "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
-            "Tertiary foreground is restricted to text inside genuinely inactive or disabled UI, or to purely decorative content whose removal would not change meaning; aria-hidden alone does not exempt meaningful visible text from contrast requirements.",
+            "Tertiary and quaternary foregrounds are restricted to text inside genuinely inactive or disabled UI, or to purely decorative content whose removal would not change meaning; quaternary is the fainter tier, and aria-hidden alone does not exempt meaningful visible text from contrast requirements.",
             "Underline link text by default. Brand-blue links may omit the resting underline when color already supplies the affordance.",
             "Use dotted underline for hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
           ],
@@ -4554,7 +4554,7 @@
             "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
             "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
             "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
-            "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary so visual treatment and inactive semantics remain synchronized.",
+            "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary or quaternary so visual treatment and inactive semantics remain synchronized.",
             "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
             "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
             "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",

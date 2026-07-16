@@ -10,7 +10,7 @@ const VARIANTS = [
 ];
 
 const COLORS = [
-  'primary', 'secondary', 'tertiary',
+  'primary', 'secondary', 'tertiary', 'quaternary',
   'brand', 'negative', 'positive', 'warning', 'caution', 'ai',
   'on-strong', 'on-bold', 'inherit',
 ];
@@ -37,7 +37,7 @@ const meta: Meta = {
     },
     color: {
       control: 'text',
-      description: `Color token (${COLORS.join(', ')}) or CSS var. Tertiary is restricted to genuinely inactive/disabled or purely decorative content; prefer the owning control's inactive state.`,
+      description: `Color token (${COLORS.join(', ')}) or CSS var. Tertiary and quaternary are restricted to genuinely inactive/disabled or purely decorative content; quaternary is the fainter tier. Prefer the owning control's inactive state.`,
     },
     as:            { control: 'select', options: ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label'] },
     align:         { control: 'select', options: ['left', 'center', 'right'] },
@@ -150,13 +150,15 @@ export const Colors: Story = {
         </div>
       `)}
 
-      <button
-        disabled
-        style="display: flex; align-items: center; gap: 16px; padding: 0; border: 0; background: transparent; text-align: left"
-      >
-        <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0">tertiary · restricted</span>
-        <ds-text as="span" color="tertiary">Unavailable setting</ds-text>
-      </button>
+      ${(['tertiary', 'quaternary'] as const).map(color => html`
+        <button
+          disabled
+          style="display: flex; align-items: center; gap: 16px; padding: 0; border: 0; background: transparent; text-align: left"
+        >
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0">${color} · restricted</span>
+          <ds-text as="span" color=${color}>Unavailable setting</ds-text>
+        </button>
+      `)}
     </div>
   `,
 };

@@ -44,8 +44,9 @@ export class Icon {
   @Prop() size: IconSize = 'md';
   /**
    * Semantic foreground color token, or a raw CSS var reference. `tertiary`
-   * is restricted to icons inside genuinely inactive/disabled UI or to purely
-   * decorative icons; informative icons must retain sufficient contrast.
+   * and the still-fainter `quaternary` are restricted to icons inside genuinely
+   * inactive/disabled UI or to purely decorative icons; informative icons must
+   * retain sufficient contrast.
    */
   @Prop() color: IconColor = 'inherit';
   /** Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons. */

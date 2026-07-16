@@ -14,8 +14,9 @@ export class Loader {
   @Prop() size: LoaderSize = 'md';
   /**
    * Semantic foreground color token, or a raw CSS var reference. Same tokens
-   * as `ds-icon`. Do not use `tertiary` for a standalone or informative Loader;
-   * inherit a readable color from the owning busy control or region.
+   * as `ds-icon`. Do not use `tertiary` or `quaternary` for a standalone or
+   * informative Loader; inherit a readable color from the owning busy control
+   * or region.
    */
   @Prop() color: LoaderColor = 'inherit';
   /**

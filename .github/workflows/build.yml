@@ -95,7 +95,7 @@ jobs:
         run: npm run build
 
       - name: Install Playwright browsers
-        run: npx playwright install chromium firefox webkit --with-deps
+        run: npx playwright install chromium webkit --with-deps
 
       - name: E2E tests
         run: npx playwright test
