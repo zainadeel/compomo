@@ -1067,16 +1067,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "color-contrast",
-    "storyId": "navigation-tabgroup--backgrounds",
-    "theme": "dark",
-    "targets": [
-      "button[data-tab-id=\"medium-overview\"] > .tab__content--dot.tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -1085,16 +1075,6 @@
     "targets": [
       "button[data-tab-id=\"translucent-activity\"] > .tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
       "button[data-tab-id=\"translucent-settings\"] > .tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "color-contrast",
-    "storyId": "navigation-tabgroup--backgrounds",
-    "theme": "light",
-    "targets": [
-      "button[data-tab-id=\"bold-overview\"] > .tab__content--dot.tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
     ]
   },
   {
