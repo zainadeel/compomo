@@ -103,7 +103,9 @@ const preview: Preview = {
       },
     },
     a11y: {
-      // Keep the interactive panel aligned with the automated Storybook scan.
+      // Keep the interactive panel focused on rendered Stencil components instead of
+      // Storybook captions. CI narrows this further to top-level component fixtures.
+      context: { include: '#storybook-root .hydrated' },
       // The region rule is noisy for isolated components without page landmarks.
       config: {
         rules: [{ id: 'region', enabled: false }],

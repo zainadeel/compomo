@@ -1,332 +1,1267 @@
 [
   {
-    "allowedNodes": 1,
     "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-required-children",
-    "storyId": "data-table--loading"
+    "storyId": "data-table--loading",
+    "theme": "dark",
+    "targets": [
+      ".table"
+    ]
   },
   {
-    "allowedNodes": 4,
     "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-required-parent",
-    "storyId": "data-table--loading"
+    "storyId": "data-table--loading",
+    "theme": "dark",
+    "targets": [
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(1)",
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(2)",
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(3)",
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(4)"
+    ]
   },
   {
-    "allowedNodes": 3,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "data-viz-chart-donut--center-text-truncation"
-  },
-  {
-    "allowedNodes": 1,
-    "impact": "serious",
-    "ruleId": "aria-prohibited-attr",
-    "storyId": "data-viz-chart-donut--empty"
-  },
-  {
-    "allowedNodes": 1,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "data-viz-chart-donut--synced-with-legend"
-  },
-  {
-    "allowedNodes": 2,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "data-viz-chart-legend--truncate-and-format"
-  },
-  {
-    "allowedNodes": 1,
     "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "data-table--loading",
+    "theme": "light",
+    "targets": [
+      ".table"
+    ]
+  },
+  {
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-parent",
+    "storyId": "data-table--loading",
+    "theme": "light",
+    "targets": [
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(1)",
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(2)",
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(3)",
+      "div[role=\"status\"] > .cell.sc-ds-table[role=\"cell\"]:nth-child(4)"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-table--with-sorting",
+    "theme": "dark",
+    "targets": [
+      ".sort-indicator"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-table--with-sorting",
+    "theme": "light",
+    "targets": [
+      ".sort-indicator"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-carddatavizdonut--view",
+    "theme": "dark",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-carddatavizdonut--view",
+    "theme": "light",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-carddatavizdonut--widths",
+    "theme": "dark",
+    "targets": [
+      "ds-card-data-viz-donut[heading=\"Device status (lg)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-caption[y=\"112\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (lg)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-value[y=\"86\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (md)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-caption[y=\"112\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (md)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-value[y=\"86\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (sm)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-caption[y=\"112\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (sm)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-value[y=\"86\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-carddatavizdonut--widths",
+    "theme": "light",
+    "targets": [
+      "ds-card-data-viz-donut[heading=\"Device status (lg)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-caption[y=\"112\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (lg)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-value[y=\"86\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (md)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-caption[y=\"112\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (md)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-value[y=\"86\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (sm)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-caption[y=\"112\"]",
+      "ds-card-data-viz-donut[heading=\"Device status (sm)\"] > ds-card > .card__body.sc-ds-card-s.sc-ds-card > .card-data-viz-donut__layout.sc-ds-card-data-viz-donut > .card-data-viz-donut__chart-region.sc-ds-card-data-viz-donut-s.sc-ds-card-data-viz-donut > ds-chart-donut > .chart-donut__wrapper.sc-ds-chart-donut > .chart-donut__svg[viewBox=\"0 0 192 192\"][width=\"192\"] > .chart-donut__center-value[y=\"86\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-bar--playground",
+    "theme": "dark",
+    "targets": [
+      "g:nth-child(2) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(3) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(4) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(5) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g[transform=\"translate(0, 200)\"] > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "text[x=\"166.3448275862069\"]",
+      "text[x=\"265.65517241379314\"]",
+      "text[x=\"364.96551724137936\"]",
+      "text[x=\"67.03448275862067\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-bar--playground",
+    "theme": "light",
+    "targets": [
+      "g:nth-child(2) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(3) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(4) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(5) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g[transform=\"translate(0, 200)\"] > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "text[x=\"166.3448275862069\"]",
+      "text[x=\"265.65517241379314\"]",
+      "text[x=\"364.96551724137936\"]",
+      "text[x=\"67.03448275862067\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--availability-status-pattern",
+    "theme": "dark",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--availability-status-pattern",
+    "theme": "light",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--center-text-truncation",
+    "theme": "dark",
+    "targets": [
+      "text[y=\"100\"]",
+      "text[y=\"126\"]",
+      "text[y=\"34\"]",
+      "text[y=\"54\"]",
+      "text[y=\"60\"]",
+      "text[y=\"80\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--center-text-truncation",
+    "theme": "light",
+    "targets": [
+      "text[y=\"100\"]",
+      "text[y=\"126\"]",
+      "text[y=\"34\"]",
+      "text[y=\"54\"]",
+      "text[y=\"60\"]",
+      "text[y=\"80\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--empty",
+    "theme": "dark",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "aria-prohibited-attr",
+    "storyId": "data-viz-chart-donut--empty",
+    "theme": "dark",
+    "targets": [
+      "path"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--empty",
+    "theme": "light",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "aria-prohibited-attr",
+    "storyId": "data-viz-chart-donut--empty",
+    "theme": "light",
+    "targets": [
+      "path"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--playground",
+    "theme": "dark",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--playground",
+    "theme": "light",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--synced-with-legend",
+    "theme": "dark",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--synced-with-legend",
+    "theme": "light",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--with-legend",
+    "theme": "dark",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--with-legend",
+    "theme": "light",
+    "targets": [
+      ".chart-donut__center-caption",
+      ".chart-donut__center-value"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-line--playground",
+    "theme": "dark",
+    "targets": [
+      "g:nth-child(2) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(3) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(4) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(5) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g[transform=\"translate(0, 200)\"] > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "text[x=\"0\"]",
+      "text[x=\"172.8\"]",
+      "text[x=\"259.20000000000005\"]",
+      "text[x=\"345.6\"]",
+      "text[x=\"432\"]",
+      "text[x=\"86.4\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-line--playground",
+    "theme": "light",
+    "targets": [
+      "g:nth-child(2) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(3) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(4) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(5) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g[transform=\"translate(0, 200)\"] > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "text[x=\"0\"]",
+      "text[x=\"172.8\"]",
+      "text[x=\"259.20000000000005\"]",
+      "text[x=\"345.6\"]",
+      "text[x=\"432\"]",
+      "text[x=\"86.4\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-line--with-legend",
+    "theme": "dark",
+    "targets": [
+      "g:nth-child(2) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(3) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(4) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(5) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g[transform=\"translate(0, 200)\"] > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "text[x=\"0\"]",
+      "text[x=\"172.8\"]",
+      "text[x=\"259.20000000000005\"]",
+      "text[x=\"345.6\"]",
+      "text[x=\"432\"]",
+      "text[x=\"86.4\"]"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-line--with-legend",
+    "theme": "light",
+    "targets": [
+      "g:nth-child(2) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(3) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(4) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g:nth-child(5) > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "g[transform=\"translate(0, 200)\"] > text[x=\"-8\"][text-anchor=\"end\"][dominant-baseline=\"middle\"]",
+      "text[x=\"0\"]",
+      "text[x=\"172.8\"]",
+      "text[x=\"259.20000000000005\"]",
+      "text[x=\"345.6\"]",
+      "text[x=\"432\"]",
+      "text[x=\"86.4\"]"
+    ]
+  },
+  {
+    "impact": "critical",
+    "kind": "violation",
     "ruleId": "select-name",
-    "storyId": "form-field--with-select"
+    "storyId": "form-field--with-select",
+    "theme": "dark",
+    "targets": [
+      "#status"
+    ]
   },
   {
-    "allowedNodes": 5,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "form-select--backgrounds"
-  },
-  {
-    "allowedNodes": 1,
     "impact": "critical",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select--loading"
+    "kind": "violation",
+    "ruleId": "select-name",
+    "storyId": "form-field--with-select",
+    "theme": "light",
+    "targets": [
+      "#status"
+    ]
   },
   {
-    "allowedNodes": 1,
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--backgrounds",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-10 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-11 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-12 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-13 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-14 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-15 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-16 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-17 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-18 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "ds-text[data-a11y-component-root=\"12\"] > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--backgrounds",
+    "theme": "dark",
+    "targets": [
+      "ds-text[data-a11y-component-root=\"6\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "ds-text[data-a11y-component-root=\"8\"] > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--backgrounds",
+    "theme": "light",
+    "targets": [
+      "#ds-select-10 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-11 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-12 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-13 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-14 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-15 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-16 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-17 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-18 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--backgrounds",
+    "theme": "light",
+    "targets": [
+      "ds-text[data-a11y-component-root=\"12\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "ds-text[data-a11y-component-root=\"14\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "ds-text[data-a11y-component-root=\"16\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "ds-text[data-a11y-component-root=\"6\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "ds-text[data-a11y-component-root=\"8\"] > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--clear-footer",
+    "theme": "dark",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--clear-footer",
+    "theme": "light",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--keyboard-navigation",
+    "theme": "dark",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--keyboard-navigation",
+    "theme": "light",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
     "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-required-children",
-    "storyId": "form-select--no-results"
+    "storyId": "form-select--loading",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-4-listbox"
+    ]
   },
   {
-    "allowedNodes": 1,
     "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-required-children",
-    "storyId": "form-select-multi--loading"
+    "storyId": "form-select--loading",
+    "theme": "light",
+    "targets": [
+      "#ds-select-4-listbox"
+    ]
   },
   {
-    "allowedNodes": 1,
     "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-required-children",
-    "storyId": "form-select-multi--search-no-results"
+    "storyId": "form-select--no-results",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-2-listbox"
+    ]
   },
   {
-    "allowedNodes": 60,
-    "impact": "serious",
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select--no-results",
+    "theme": "light",
+    "targets": [
+      "#ds-select-2-listbox"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--always-dark"
+    "storyId": "form-select--rich-options",
+    "theme": "dark",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium.ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-primary.ds-choice-item__label.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 2,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--borders"
+    "storyId": "form-select--rich-options",
+    "theme": "light",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium.ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-primary.ds-choice-item__label.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 2,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--color-intent"
+    "storyId": "form-select--sizes-and-states",
+    "theme": "dark",
+    "targets": [
+      ".ds-text--body-small.trigger__label.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-8 > .ds-text--body-medium.trigger__label.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 19,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--foregrounds"
+    "storyId": "form-select--sizes-and-states",
+    "theme": "light",
+    "targets": [
+      ".ds-text--body-small.trigger__label.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-8 > .ds-text--body-medium.trigger__label.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 60,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--inverted"
+    "storyId": "form-select-multi--backgrounds",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-multi-10 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-11 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-12 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-13 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-14 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-15 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-16 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-17 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-18 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 14,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--media"
+    "storyId": "form-select-multi--backgrounds",
+    "theme": "light",
+    "targets": [
+      "#ds-select-multi-10 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-11 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-12 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-13 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-14 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-15 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-16 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-17 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-18 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 15,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--navigation"
+    "storyId": "form-select-multi--loading",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-multi-3 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 118,
-    "impact": "serious",
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select-multi--loading",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-multi-4-listbox"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--references"
+    "storyId": "form-select-multi--loading",
+    "theme": "light",
+    "targets": [
+      "#ds-select-multi-3 > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 1,
-    "impact": "serious",
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select-multi--loading",
+    "theme": "light",
+    "targets": [
+      "#ds-select-multi-4-listbox"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-colors-semantic--safety-score"
+    "storyId": "form-select-multi--open-with-count",
+    "theme": "dark",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium.ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-0 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__label.ds-text--color-primary.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-0 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__subtext.ds-text--body-small.ds-text--color-secondary > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-1 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__label.ds-text--color-primary.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-1 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__subtext.ds-text--body-small.ds-text--color-secondary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 10,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-effects--elevation"
+    "storyId": "form-select-multi--open-with-count",
+    "theme": "light",
+    "targets": [
+      ".ds-choice-footer__clear > .ds-text--color-inherit.ds-text--body-medium.ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".trigger__label > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-0 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__label.ds-text--color-primary.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-0 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__subtext.ds-text--body-small.ds-text--color-secondary > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-1 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__label.ds-text--color-primary.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-2-option-1 > .ds-choice-item__content.ds-interaction-fill__content.sc-ds-select-multi > .ds-choice-item__subtext.ds-text--body-small.ds-text--color-secondary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 9,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-effects--motion-and-blur"
+    "storyId": "form-select-multi--playground",
+    "theme": "dark",
+    "targets": [
+      ".ds-text__element"
+    ]
   },
   {
-    "allowedNodes": 18,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "foundation-typography--styles"
+    "storyId": "form-select-multi--playground",
+    "theme": "light",
+    "targets": [
+      ".ds-text__element"
+    ]
   },
   {
-    "allowedNodes": 1,
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select-multi--search-no-results",
+    "theme": "dark",
+    "targets": [
+      "#ds-select-multi-2-listbox"
+    ]
+  },
+  {
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select-multi--search-no-results",
+    "theme": "light",
+    "targets": [
+      "#ds-select-multi-2-listbox"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select-multi--sizes-and-widths",
+    "theme": "dark",
+    "targets": [
+      ".ds-text--body-small > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-5 > .ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-6 > .ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "form-select-multi--sizes-and-widths",
+    "theme": "light",
+    "targets": [
+      ".ds-text--body-small > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-5 > .ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#ds-select-multi-6 > .ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--angular-host-timing",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
     "impact": "serious",
+    "kind": "violation",
     "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--angular-host-timing"
+    "storyId": "navigation-panelnav--angular-host-timing",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__body"
+    ]
   },
   {
-    "allowedNodes": 1,
-    "impact": "serious",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--breakpoint-locked"
-  },
-  {
-    "allowedNodes": 1,
-    "impact": "serious",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--dashboard"
-  },
-  {
-    "allowedNodes": 1,
-    "impact": "serious",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--router-mode-event"
-  },
-  {
-    "allowedNodes": 1,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "navigation-tabgroup--backgrounds"
+    "storyId": "navigation-panelnav--angular-host-timing",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 3,
     "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "navigation-tabgroup--variants"
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--angular-host-timing",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__body"
+    ]
   },
   {
-    "allowedNodes": 1,
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--breakpoint-locked",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--breakpoint-locked",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__body"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--breakpoint-locked",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--breakpoint-locked",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__body"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--dashboard",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--dashboard",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__body"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--dashboard",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--dashboard",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__body"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--router-mode-event",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--router-mode-event",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav__body"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--router-mode-event",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--router-mode-event",
+    "theme": "light",
+    "targets": [
+      ".panel-nav__body"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--side-by-side",
+    "theme": "dark",
+    "targets": [
+      ".panel-nav--dashboard.panel-nav--collapsed[aria-label=\"Dashboard navigation\"] > .panel-nav__footer > ds-tooltip:nth-child(2) > .panel-nav__footer-user.panel-nav__item[aria-label=\"Account\"] > .panel-nav__footer-user-icon.panel-nav__item-icon[aria-hidden=\"true\"] > .panel-nav__footer-icon-collapsed > .panel-nav__user-initial.ds-text--align-center.ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav--settings.panel-nav--collapsed[aria-label=\"Settings navigation\"] > .panel-nav__footer > ds-tooltip:nth-child(2) > .panel-nav__footer-user.panel-nav__item[aria-label=\"Account\"] > .panel-nav__footer-user-icon.panel-nav__item-icon[aria-hidden=\"true\"] > .panel-nav__footer-icon-collapsed > .panel-nav__user-initial.ds-text--align-center.ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelnav--side-by-side",
+    "theme": "light",
+    "targets": [
+      ".panel-nav--dashboard.panel-nav--collapsed[aria-label=\"Dashboard navigation\"] > .panel-nav__footer > ds-tooltip:nth-child(2) > .panel-nav__footer-user.panel-nav__item[aria-label=\"Account\"] > .panel-nav__footer-user-icon.panel-nav__item-icon[aria-hidden=\"true\"] > .panel-nav__footer-icon-collapsed > .panel-nav__user-initial.ds-text--align-center.ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".panel-nav--settings.panel-nav--collapsed[aria-label=\"Settings navigation\"] > .panel-nav__footer > ds-tooltip:nth-child(2) > .panel-nav__footer-user.panel-nav__item[aria-label=\"Account\"] > .panel-nav__footer-user-icon.panel-nav__item-icon[aria-hidden=\"true\"] > .panel-nav__footer-icon-collapsed > .panel-nav__user-initial.ds-text--align-center.ds-text--caption > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelsubnav--backgrounds",
+    "theme": "dark",
+    "targets": [
+      "#always-dark-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#bold-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#default-primary-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#default-secondary-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#faint-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#inverted-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#media-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#medium-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#strong-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#translucent-notifications-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#translucent-permissions-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#translucent-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelsubnav--backgrounds",
+    "theme": "light",
+    "targets": [
+      "#always-dark-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#bold-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#default-primary-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#default-secondary-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#faint-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#inverted-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#media-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#medium-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#strong-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#translucent-notifications-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#translucent-permissions-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "#translucent-profile-tab > ds-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelsubnav--playground",
+    "theme": "dark",
+    "targets": [
+      "#profile-tab > .panel-sub-nav__label.ds-interaction-fill__content.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelsubnav--playground",
+    "theme": "light",
+    "targets": [
+      "#profile-tab > .panel-sub-nav__label.ds-interaction-fill__content.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelsubnav--with-inactive-item",
+    "theme": "dark",
+    "targets": [
+      "#profile-tab > .panel-sub-nav__label.ds-interaction-fill__content.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-panelsubnav--with-inactive-item",
+    "theme": "light",
+    "targets": [
+      "#profile-tab > .panel-sub-nav__label.ds-interaction-fill__content.ds-text--inline-box > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-tabgroup--backgrounds",
+    "theme": "dark",
+    "targets": [
+      "button[data-tab-id=\"translucent-activity\"] > .tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "button[data-tab-id=\"translucent-settings\"] > .tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-tabgroup--backgrounds",
+    "theme": "dark",
+    "targets": [
+      "button[data-tab-id=\"medium-overview\"] > .tab__content--dot.tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-tabgroup--backgrounds",
+    "theme": "light",
+    "targets": [
+      "button[data-tab-id=\"translucent-activity\"] > .tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      "button[data-tab-id=\"translucent-settings\"] > .tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "serious",
+    "kind": "violation",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-tabgroup--backgrounds",
+    "theme": "light",
+    "targets": [
+      "button[data-tab-id=\"bold-overview\"] > .tab__content--dot.tab__content.tab__content--label > .ds-text--regular > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--appearance-and-theme",
+    "theme": "dark",
+    "targets": [
+      ".ds-interaction-fill--selected > .menu-item__content.ds-choice-item__content.ds-interaction-fill__content > .menu-item__label.ds-choice-item__label.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
     "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-required-children",
-    "storyId": "overlay-menu--appearance-and-theme"
+    "storyId": "overlay-menu--appearance-and-theme",
+    "theme": "dark",
+    "targets": [
+      ".menu-popup"
+    ]
   },
   {
-    "allowedNodes": 1,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "primitives-badge--counters"
+    "storyId": "overlay-menu--appearance-and-theme",
+    "theme": "light",
+    "targets": [
+      ".ds-interaction-fill--selected > .menu-item__content.ds-choice-item__content.ds-interaction-fill__content > .menu-item__label.ds-choice-item__label.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 4,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonfilled--contrast-matrix"
-  },
-  {
-    "allowedNodes": 3,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonfilled--variants-and-sizes"
-  },
-  {
-    "allowedNodes": 2,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonfilled--widths"
-  },
-  {
-    "allowedNodes": 6,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonunfilled--states"
-  },
-  {
-    "allowedNodes": 6,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonunfilled--surfaces"
-  },
-  {
-    "allowedNodes": 3,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonunfilled--variants-and-sizes"
-  },
-  {
-    "allowedNodes": 2,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-buttonunfilled--widths"
-  },
-  {
-    "allowedNodes": 3,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-chip--sizes"
-  },
-  {
-    "allowedNodes": 4,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-tag--intent-matrix"
-  },
-  {
-    "allowedNodes": 3,
     "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-required-children",
+    "storyId": "overlay-menu--appearance-and-theme",
+    "theme": "light",
+    "targets": [
+      ".menu-popup"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--token-side-offset-right",
+    "theme": "dark",
+    "targets": [
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--token-side-offset-right",
+    "theme": "light",
+    "targets": [
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--with-notification-dot",
+    "theme": "dark",
+    "targets": [
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--with-notification-dot",
+    "theme": "light",
+    "targets": [
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-tooltip--scroll-and-resize",
+    "theme": "dark",
+    "targets": [
+      ".ds-text__element"
+    ]
+  },
+  {
+    "impact": "critical",
+    "kind": "violation",
     "ruleId": "aria-valid-attr-value",
-    "storyId": "primitives-tag--interactive-menu-trigger"
+    "storyId": "primitives-tag--interactive-menu-trigger",
+    "theme": "dark",
+    "targets": [
+      ".ds-control-inactive",
+      "ds-tag[label=\"Expanded\"]",
+      "ds-tag[label=\"Vehicle status\"]"
+    ]
   },
   {
-    "allowedNodes": 3,
+    "impact": "critical",
+    "kind": "violation",
+    "ruleId": "aria-valid-attr-value",
+    "storyId": "primitives-tag--interactive-menu-trigger",
+    "theme": "light",
+    "targets": [
+      ".ds-control-inactive",
+      "ds-tag[label=\"Expanded\"]",
+      "ds-tag[label=\"Vehicle status\"]"
+    ]
+  },
+  {
     "impact": "serious",
+    "kind": "violation",
     "ruleId": "color-contrast",
-    "storyId": "primitives-tag--sizes"
+    "storyId": "primitives-text--colors",
+    "theme": "dark",
+    "targets": [
+      ".ds-text--color-on-bold > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-on-strong > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-tertiary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 3,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "primitives-text--alignment"
+    "storyId": "primitives-text--colors",
+    "theme": "light",
+    "targets": [
+      ".ds-text--color-on-bold > .ds-text__element.sc-ds-text.sc-ds-text-s",
+      ".ds-text--color-on-strong > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 9,
     "impact": "serious",
+    "kind": "violation",
     "ruleId": "color-contrast",
-    "storyId": "primitives-text--all-variants"
+    "storyId": "primitives-text--colors",
+    "theme": "light",
+    "targets": [
+      ".ds-text--color-tertiary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
   },
   {
-    "allowedNodes": 12,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "primitives-text--colors"
+    "storyId": "primitives-text--shimmer",
+    "theme": "dark",
+    "targets": [
+      ".ds-text__element"
+    ]
   },
   {
-    "allowedNodes": 5,
-    "impact": "serious",
+    "impact": "review",
+    "kind": "manual-review",
     "ruleId": "color-contrast",
-    "storyId": "primitives-text--decorations"
-  },
-  {
-    "allowedNodes": 9,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-text--emphasis"
-  },
-  {
-    "allowedNodes": 9,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-text--semantic-elements"
-  },
-  {
-    "allowedNodes": 7,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "utility-controldensity--overview"
-  },
-  {
-    "allowedNodes": 2,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "utility-controlinactive--overview"
-  },
-  {
-    "allowedNodes": 1,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "utility-focusring--overview"
-  },
-  {
-    "allowedNodes": 7,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "utility-interactionfill--overview"
-  },
-  {
-    "allowedNodes": 12,
-    "impact": "serious",
-    "ruleId": "aria-prohibited-attr",
-    "storyId": "utility-keyhint--sizes"
-  },
-  {
-    "allowedNodes": 2,
-    "impact": "serious",
-    "ruleId": "color-contrast",
-    "storyId": "utility-scrolledgefade--overview"
+    "storyId": "primitives-text--shimmer",
+    "theme": "light",
+    "targets": [
+      ".ds-text__element"
+    ]
   }
 ]
