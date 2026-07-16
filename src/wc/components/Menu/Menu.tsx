@@ -350,12 +350,18 @@ export class Menu {
     return (
       <Host style={{ display: 'contents' }}>
         <div
-          class={{ 'menu-popup': true, 'menu-popup--closing': this.closing }}
+          class={{
+            'menu-popup': true,
+            'menu-popup--closing': this.closing,
+            'ds-choice-popup': true,
+            'ds-choice-popup--closing': this.closing,
+          }}
           style={popupStyle}
           role="menu"
           aria-label={this.menuLabel}
           aria-orientation="vertical"
         >
+          <div class="ds-choice-list">
           {sections.map((section, si) => (
             <div
               key={si}
@@ -363,13 +369,15 @@ export class Menu {
                 'menu-section': true,
                 'menu-section--divided': si < sections.length - 1,
                 'menu-section--gradient-picker': isMenuGradientPickerSection(section),
+                'ds-choice-section': true,
+                'ds-choice-section--divided': si < sections.length - 1,
               }}
               role={section.header ? 'group' : undefined}
               aria-label={section.header}
             >
               {section.header && (
                 <ds-text
-                  class="section-header ds-control--md"
+                  class="section-header ds-choice-section__header ds-control--md"
                   as="span"
                   variant="text-body-small"
                   emphasis
@@ -397,6 +405,7 @@ export class Menu {
                     type="button"
                     class={{
                       'menu-item': true,
+                      'ds-choice-item': true,
                       'ds-control--md': true,
                       'ds-focus-ring-inset': true,
                       'ds-focus-ring--visible': isFocused && this.focusRingVisible,
@@ -416,9 +425,9 @@ export class Menu {
                     onClick={() => this.handleItemClick(item)}
                     onFocus={() => { this.focusedIndex = idx; }}
                   >
-                    <div class="menu-item__content ds-interaction-fill__content">
+                    <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
                       <ds-text
-                        class="menu-item__label"
+                        class="menu-item__label ds-choice-item__label"
                         as="span"
                         variant="text-body-medium"
                         color={item.isSelected ? 'primary' : 'secondary'}
@@ -426,7 +435,7 @@ export class Menu {
                         {item.label}
                       </ds-text>
                       {item.subtext && (
-                        <ds-text class="menu-item__subtext" as="span" variant="text-body-small" color="secondary">
+                        <ds-text class="menu-item__subtext ds-choice-item__subtext" as="span" variant="text-body-small" color="secondary">
                           {item.subtext}
                         </ds-text>
                       )}
@@ -436,9 +445,7 @@ export class Menu {
                         <ds-badge
                           class="menu-item__dot"
                           variant="dot"
-                          background={item.isSelected && !item.isInactive
-                            ? 'var(--ds-interaction-active)'
-                            : 'var(--color-background-primary)'}
+                          hasRing={false}
                           label=""
                         />
                       </span>
@@ -456,6 +463,7 @@ export class Menu {
               }))}
             </div>
           ))}
+          </div>
         </div>
       </Host>
     );

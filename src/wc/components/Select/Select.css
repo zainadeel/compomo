@@ -1,37 +1,29 @@
-/* ==========================================================================
-   Select — unfilled-button chrome trigger + ds-menu dropdown.
-   Density via `.ds-control--md|sm|xs` (control-density.css).
-   ========================================================================== */
-
-@import '../../utils/focus-ring.css';
-@import '../../utils/interaction-fill.css';
-@import '../../utils/control-inactive.css';
-@import '../../utils/control-density.css';
+@import '../../utils/choice-list.css';
 @import '../../utils/control-width.css';
+@import '../../utils/typography.css';
 
 :host(.select-host) {
   display: inline-flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
   position: relative;
-  /* Idle/open = secondary. A selected value promotes only the label. */
+  outline: none;
   --ds-select-fg: var(--color-foreground-secondary);
   --ds-select-fg-active: var(--color-foreground-primary);
+  --ds-select-prefix-fg: var(--ds-select-fg);
+  --ds-select-chevron-fg: var(--ds-select-fg);
   --ds-select-border: var(--color-border-secondary);
 }
 
+:host(.ds-control-width--fill),
 :host(.ds-control-width--fill) .trigger {
   width: 100%;
 }
 
-:host(.ds-control-width--hug) .trigger__label {
-  flex: 0 1 auto;
-}
-
-/* Inactive: `.ds-control-inactive` (25% opacity). */
-
 .trigger {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   box-sizing: border-box;
   height: var(--ds-control-height, var(--dimension-size-400));
   padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
@@ -46,18 +38,40 @@
   user-select: none;
   overflow: hidden;
   transition: color var(--effect-motion-short-2);
-  /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected`).
-     A selected value promotes the label; opening alone does not. */
 }
 
-/* Inset stroke via interaction-fill ::after (same recipe as ButtonUnfilled). */
 .trigger--bordered {
   --ds-interaction-border-width: var(--dimension-stroke-width-012);
   --ds-interaction-border-color: var(--ds-select-border);
 }
 
-.trigger--bordered:not(.ds-interaction-fill) {
-  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
+.trigger--has-value .trigger__label {
+  color: var(--ds-select-fg-active);
+}
+
+.wrapper--error {
+  --ds-interaction-border-width: var(--dimension-stroke-width-018);
+  --ds-interaction-border-color: var(--color-border-bold-negative);
+}
+
+.trigger__prefix,
+.trigger__chevron {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trigger__prefix {
+  color: var(--ds-select-prefix-fg);
+}
+
+.trigger__chevron {
+  color: var(--ds-select-chevron-fg);
 }
 
 .trigger__label {
@@ -74,19 +88,118 @@
   transition: color var(--effect-motion-short-2);
 }
 
-.trigger--has-value .trigger__label {
-  color: var(--ds-select-fg-active);
+.select-popup {
+  color: var(--color-foreground-secondary);
 }
 
-.trigger__chevron {
+.select-search {
   position: relative;
-  z-index: 2;
-  flex-shrink: 0;
-  width: var(--ds-control-icon, var(--dimension-iconography-md));
-  height: var(--ds-control-icon, var(--dimension-iconography-md));
-  display: inline-flex;
+  box-sizing: border-box;
+  padding: var(--dimension-space-050);
+}
+
+.select-search::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--dimension-stroke-width-012);
+  background-color: var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+.select-search:focus-within::after {
+  height: var(--dimension-stroke-width-018);
+  background-color: var(--color-border-bold-brand);
+}
+
+.select-search__control {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  /* Always secondary — only a selected label promotes. */
-  color: var(--ds-select-fg);
+  box-sizing: border-box;
+  gap: var(--ds-control-gap, var(--dimension-space-050));
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+  border: 0;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+}
+
+.select-search__control:has(.select-search__clear) {
+  padding-right: 0;
+}
+
+.select-search__clear {
+  align-self: center;
+  flex-shrink: 0;
+  margin-right: var(--dimension-space-050);
+}
+
+.select-search__control input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-foreground-primary);
+  font-family: inherit;
+}
+
+.select-search__control input::placeholder {
+  color: var(--color-foreground-secondary);
+}
+
+.select-search__control input:focus::placeholder {
+  color: var(--color-foreground-quaternary);
+}
+
+.select-search__control input[type='search']::-webkit-search-cancel-button,
+.select-search__control input[type='search']::-webkit-search-decoration {
+  display: none;
+}
+
+.error-text {
+  width: 100%;
+}
+
+:host(.select-host--background-medium) {
+  --ds-select-fg: var(--color-foreground-on-medium-background-secondary);
+  --ds-select-fg-active: var(--color-foreground-on-medium-background-primary);
+  --ds-select-border: var(--color-border-on-medium-background-secondary);
+}
+
+:host(.select-host--background-bold) {
+  --ds-select-fg: var(--color-foreground-on-bold-background-secondary);
+  --ds-select-fg-active: var(--color-foreground-on-bold-background-primary);
+  --ds-select-border: var(--color-border-on-bold-background-secondary);
+}
+
+:host(.select-host--background-strong) {
+  --ds-select-fg: var(--color-foreground-on-strong-background-secondary);
+  --ds-select-fg-active: var(--color-foreground-on-strong-background-primary);
+  --ds-select-border: var(--color-border-on-strong-background-secondary);
+}
+
+:host(.select-host--background-translucent) {
+  --ds-select-fg: var(--color-translucent-foreground-secondary);
+  --ds-select-fg-active: var(--color-translucent-foreground-primary);
+  --ds-select-border: var(--color-translucent-border-secondary);
+}
+
+:host(.select-host--background-inverted) {
+  --ds-select-fg: var(--color-inverted-foreground-secondary);
+  --ds-select-fg-active: var(--color-inverted-foreground-primary);
+  --ds-select-border: var(--color-inverted-border-secondary);
+}
+
+:host(.select-host--background-media) {
+  --ds-select-fg: var(--color-media-foreground-secondary);
+  --ds-select-fg-active: var(--color-media-foreground-primary);
+  --ds-select-border: var(--color-media-border-secondary);
+}
+
+:host(.select-host--background-always-dark) {
+  --ds-select-fg: var(--color-always-dark-foreground-secondary);
+  --ds-select-fg-active: var(--color-always-dark-foreground-primary);
+  --ds-select-border: var(--color-always-dark-border-secondary);
 }

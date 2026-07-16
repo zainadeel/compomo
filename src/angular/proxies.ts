@@ -33,6 +33,7 @@ export { DsPanelSubNav } from './ds-panel-sub-nav';
 export { DsPanelTools } from './ds-panel-tools';
 export { DsRadioGroup } from './ds-radio-group';
 export { DsSelect } from './ds-select';
+export { DsSelectMulti } from './ds-select-multi';
 export { DsShellGradientPicker } from './ds-shell-gradient-picker';
 export { DsShellGradientSwatch } from './ds-shell-gradient-swatch';
 export { DsSkeleton } from './ds-skeleton';

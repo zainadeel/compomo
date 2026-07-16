@@ -15,13 +15,21 @@ import { type DsSelectCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsSelect as DsSelectElement, defineCustomElement as defineDsSelect } from "@ds-mo/ui/dist/components/ds-select.js";
 
-export type DsSelectEvents = { onDsChange: EventName<DsSelectCustomEvent<string>> };
+export type DsSelectEvents = {
+    onDsChange: EventName<DsSelectCustomEvent<string>>,
+    onDsClear: EventName<DsSelectCustomEvent<void>>,
+    onDsOpenChange: EventName<DsSelectCustomEvent<boolean>>
+};
 
 export const DsSelect: StencilReactComponent<DsSelectElement, DsSelectEvents, Components.DsSelect> = /*@__PURE__*/ createComponent<DsSelectElement, DsSelectEvents, Components.DsSelect>({
     tagName: 'ds-select',
     elementClass: DsSelectElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsChange: 'dsChange' } as DsSelectEvents,
+    events: {
+        onDsChange: 'dsChange',
+        onDsClear: 'dsClear',
+        onDsOpenChange: 'dsOpenChange'
+    } as DsSelectEvents,
     defineCustomElement: defineDsSelect
 });

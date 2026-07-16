@@ -4,12 +4,31 @@
   height: 100%;
 }
 
+:host,
+.empty-state,
+.empty-state__text {
+  box-sizing: border-box;
+}
+
 .empty-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Fill the parent slot — callers size the container (page body, table body, etc.).
-     Do not use --dimension-card-height-* here; those are for card chrome, not empty placeholders. */
+  gap: var(--dimension-space-100);
   height: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+.empty-state__icon {
+  flex: 0 0 auto;
+}
+
+.empty-state__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dimension-space-050);
   width: 100%;
 }

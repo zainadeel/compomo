@@ -20,7 +20,7 @@ const migration = JSON.parse(fs.readFileSync(
 test('prototype agent metadata is schema-valid and references source components', () => {
   const result = validateAgentContract();
 
-  assert.equal(result.sourceComponents, 40);
+  assert.equal(result.sourceComponents, 41);
   assert.equal(
     result.componentDocuments,
     result.sourceComponents - migration.missingAgentMetadata.length,

@@ -1,0 +1,755 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "select-multi",
+  "title": "SelectMulti",
+  "description": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/select-multi",
+    "source": "src/wc/components/SelectMulti/SelectMulti.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+      "useWhen": [
+        "The user may choose several independent values from one finite set.",
+        "A compact trigger should summarize selection with the field label and a count.",
+        "The option set benefits from local search, subtext, grouping, or disabled choices.",
+        "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain where search materially improves retrieval."
+      ],
+      "avoidWhen": [
+        "Exactly one value may be selected.",
+        "Selected values must remain individually removable as persistent tags outside the popup.",
+        "The choices form a hierarchy with cascading parent selection.",
+        "The customer task benefits more from keeping every choice and checkbox directly visible; choose between SelectMulti and a visible checkbox list from the use-case context rather than a fixed option-count threshold."
+      ],
+      "alternatives": [
+        {
+          "when": "Exactly one value may be selected.",
+          "component": "component:ds-select",
+          "reason": "Select owns scalar form value and single-select listbox behavior."
+        },
+        {
+          "when": "The popup contains actions rather than values.",
+          "component": "component:ds-menu",
+          "reason": "Menu uses command semantics and closes according to action-menu expectations."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-text",
+        "component:ds-checkbox",
+        "component:ds-empty-state",
+        "component:ds-loader"
+      ],
+      "accessibility": [
+        "In forms, provide a persistent visible external field label. In a compact filter bar, the trigger's visible persistent label and count may supply the accessible name.",
+        "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
+        "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
+        "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
+        "Each row uses a medium-size presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
+        "The trigger keeps its field label visible and appends the current selected count; an explicit aria-label or aria-labelledby remains the authoritative accessible name when supplied.",
+        "Use errorMessage with error so the trigger is described by the rendered alert."
+      ],
+      "states": [
+        "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
+        "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
+        "Selecting an option keeps the popup open so additional values can be toggled.",
+        "The trigger label stays left-aligned at every width; every option row uses the same leading medium Checkbox indicator. The default control size is md in both forms and filter bars.",
+        "The selected count always follows the persistent label as plain text separated by a centered dot, including for one selection, and counts every selected value even when search or grouping hides it. Never replace the count with selected option names.",
+        "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
+        "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
+        "Option labels stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
+        "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when selection promotes the label and count to primary.",
+        "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused.",
+        "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+        "The shared summary-and-clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
+        "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
+        "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
+        "When allowClear is enabled, clear-all appears only after at least one value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
+        "Clear-all emits an empty dsChange and dsClear while preserving useful popup or search focus.",
+        "Loading keeps the trigger visible, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
+        "SelectMulti has no maximum-selection behavior; every available non-inactive option may be selected.",
+        "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the component exposes validity and error presentation without imposing that policy.",
+        "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry.",
+        "An initially empty option set is not an expected SelectMulti use case. The no-results state describes a search with no matches, not a source with no choices.",
+        "Native form submission emits one entry per selected value under the component name.",
+        "Use options for a flat list or sections for grouped choices. Multi-select option contracts intentionally exclude icons because the leading checkbox owns that row zone; hierarchical parent selection is deferred."
+      ],
+      "responsiveBehavior": [
+        "Use width fill for form fields and width hug for compact filter bars; the persistent trigger label avoids variable-width selected labels.",
+        "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+        "Long option collections scroll inside the popup; virtualization and remote search are not part of this version."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign values, options, and sections through JavaScript properties; array values cannot be represented safely as attributes."
+        ],
+        "react": [
+          "Pass values, options, and sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+        ],
+        "angular": [
+          "Import DsSelectMulti and SelectMultiValueAccessor when integrating with Angular Forms."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/SelectMulti/SelectMulti.stories.ts"
+        },
+        {
+          "label": "Selection patterns",
+          "path": "src/docs/SelectionPatterns.mdx"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "activeFill": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "active-fill",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the selected interaction fill when at least one value exists."
+        },
+        "allowClear": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "allow-clear",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the clear-all footer action when values exist."
+        },
+        "ariaDescribedby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-describedby",
+          "required": false,
+          "mutable": false,
+          "description": "Additional IDs that describe the combobox."
+        },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Direct accessible name when no external label is available."
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false,
+          "description": "IDs of elements that label the combobox."
+        },
+        "background": {
+          "type": "SelectMultiBackground | undefined",
+          "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"strong\" | \"translucent\" | undefined",
+          "attribute": "background",
+          "required": false,
+          "mutable": false,
+          "description": "Actual parent surface context; omit on primary and secondary surfaces."
+        },
+        "clearLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "clear-label",
+          "default": "'Clear'",
+          "required": false,
+          "mutable": false,
+          "description": "Localized clear-all action label."
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Native disabled state."
+        },
+        "error": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "error",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show invalid visual state."
+        },
+        "errorMessage": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "error-message",
+          "required": false,
+          "mutable": false,
+          "description": "Error text rendered below the trigger when error is true."
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the surface-aware inset border."
+        },
+        "icon": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "icon",
+          "required": false,
+          "mutable": false,
+          "description": "Optional trigger prefix icon name."
+        },
+        "inputId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "input-id",
+          "required": false,
+          "mutable": false,
+          "description": "ID applied to the internal combobox trigger for external labels."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Shared inactive treatment; removes interaction and form submission."
+        },
+        "isLoading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-loading",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Replace the prefix with a loader and disable option interaction."
+        },
+        "loadingLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "loading-label",
+          "default": "'Loading'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible loading status label."
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false,
+          "description": "Native form field name used for each repeated selected-value entry."
+        },
+        "noResultsText": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "no-results-text",
+          "default": "'No results found'",
+          "required": false,
+          "mutable": false,
+          "description": "Localized empty-filter result text."
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": true,
+          "description": "Controlled popup visibility."
+        },
+        "options": {
+          "type": "SelectMultiOption[]",
+          "resolvedType": "SelectMultiOption[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Flat choices. Assign arrays through the JavaScript property."
+        },
+        "placeholder": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "placeholder",
+          "default": "'Select'",
+          "required": false,
+          "mutable": false,
+          "description": "Persistent trigger label; selected option labels never replace it."
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Require at least one valid selected value."
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false,
+          "description": "Validation message used when required is missing."
+        },
+        "searchPlaceholder": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "search-placeholder",
+          "default": "'Search'",
+          "required": false,
+          "mutable": false,
+          "description": "Localized search-field placeholder and accessible name."
+        },
+        "searchable": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "searchable",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show immediate local filtering over option labels, subtext, and section headings."
+        },
+        "sections": {
+          "type": "SelectMultiSection[]",
+          "resolvedType": "SelectMultiSection[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Grouped choices; takes precedence over options. Assign through JavaScript."
+        },
+        "selectedLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "selected-label",
+          "default": "'selected'",
+          "required": false,
+          "mutable": false,
+          "description": "Localized noun displayed after the selected count."
+        },
+        "size": {
+          "type": "SelectMultiSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density."
+        },
+        "values": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": true,
+          "description": "Selected values. Assign arrays through the JavaScript property."
+        },
+        "width": {
+          "type": "SelectMultiWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'hug'",
+          "required": false,
+          "mutable": false,
+          "description": "Width fit — hug content (default) or fill the parent."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string[]",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted after user toggles or clearing with a new values array."
+        },
+        {
+          "name": "dsClear",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted after the footer clear-all action."
+        },
+        {
+          "name": "dsOpenChange",
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted whenever popup visibility changes."
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "activeFill": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "active-fill",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the selected interaction fill when at least one value exists."
+      },
+      "allowClear": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "allow-clear",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the clear-all footer action when values exist."
+      },
+      "ariaDescribedby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-describedby",
+        "required": false,
+        "mutable": false,
+        "description": "Additional IDs that describe the combobox."
+      },
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Direct accessible name when no external label is available."
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false,
+        "description": "IDs of elements that label the combobox."
+      },
+      "background": {
+        "type": "SelectMultiBackground | undefined",
+        "resolvedType": "\"always-dark\" | \"bold\" | \"faint\" | \"inverted\" | \"media\" | \"medium\" | \"strong\" | \"translucent\" | undefined",
+        "attribute": "background",
+        "required": false,
+        "mutable": false,
+        "description": "Actual parent surface context; omit on primary and secondary surfaces."
+      },
+      "clearLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "clear-label",
+        "default": "'Clear'",
+        "required": false,
+        "mutable": false,
+        "description": "Localized clear-all action label."
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Native disabled state."
+      },
+      "error": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "error",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show invalid visual state."
+      },
+      "errorMessage": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "error-message",
+        "required": false,
+        "mutable": false,
+        "description": "Error text rendered below the trigger when error is true."
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the surface-aware inset border."
+      },
+      "icon": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "icon",
+        "required": false,
+        "mutable": false,
+        "description": "Optional trigger prefix icon name."
+      },
+      "inputId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "input-id",
+        "required": false,
+        "mutable": false,
+        "description": "ID applied to the internal combobox trigger for external labels."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Shared inactive treatment; removes interaction and form submission."
+      },
+      "isLoading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-loading",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Replace the prefix with a loader and disable option interaction."
+      },
+      "loadingLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "loading-label",
+        "default": "'Loading'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible loading status label."
+      },
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false,
+        "description": "Native form field name used for each repeated selected-value entry."
+      },
+      "noResultsText": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "no-results-text",
+        "default": "'No results found'",
+        "required": false,
+        "mutable": false,
+        "description": "Localized empty-filter result text."
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": true,
+        "description": "Controlled popup visibility."
+      },
+      "options": {
+        "type": "SelectMultiOption[]",
+        "resolvedType": "SelectMultiOption[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Flat choices. Assign arrays through the JavaScript property."
+      },
+      "placeholder": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "placeholder",
+        "default": "'Select'",
+        "required": false,
+        "mutable": false,
+        "description": "Persistent trigger label; selected option labels never replace it."
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Require at least one valid selected value."
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false,
+        "description": "Validation message used when required is missing."
+      },
+      "searchPlaceholder": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "search-placeholder",
+        "default": "'Search'",
+        "required": false,
+        "mutable": false,
+        "description": "Localized search-field placeholder and accessible name."
+      },
+      "searchable": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "searchable",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show immediate local filtering over option labels, subtext, and section headings."
+      },
+      "sections": {
+        "type": "SelectMultiSection[]",
+        "resolvedType": "SelectMultiSection[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Grouped choices; takes precedence over options. Assign through JavaScript."
+      },
+      "selectedLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "selected-label",
+        "default": "'selected'",
+        "required": false,
+        "mutable": false,
+        "description": "Localized noun displayed after the selected count."
+      },
+      "size": {
+        "type": "SelectMultiSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density."
+      },
+      "values": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": true,
+        "description": "Selected values. Assign arrays through the JavaScript property."
+      },
+      "width": {
+        "type": "SelectMultiWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'hug'",
+        "required": false,
+        "mutable": false,
+        "description": "Width fit — hug content (default) or fill the parent."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string[]",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted after user toggles or clearing with a new values array."
+      },
+      {
+        "name": "dsClear",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted after the footer clear-all action."
+      },
+      {
+        "name": "dsOpenChange",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted whenever popup visibility changes."
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-select-multi",
+      "react": "DsSelectMulti",
+      "angular": "DsSelectMulti"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-select-multi.js';",
+        "example": "<ds-select-multi></ds-select-multi>"
+      },
+      "react": {
+        "import": "import { DsSelectMulti } from '@ds-mo/ui/react';",
+        "example": "<DsSelectMulti />"
+      },
+      "angular": {
+        "import": "import { DsSelectMulti } from '@ds-mo/ui/angular/ds-select-multi';",
+        "example": "<ds-select-multi></ds-select-multi>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: options, sections, values.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.0",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "checkbox",
+    "empty-state",
+    "icon",
+    "loader",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/SelectMulti/SelectMulti.css",
+      "content": "@import '../Select/Select.css';\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SelectMulti/SelectMulti.tsx",
+      "content": "import {\n  AttachInternals,\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport {\n  controlWidthClass,\n  CONTROL_TEXT_VARIANT,\n  resolveCssLengthPx,\n  resolveCssTimeMs,\n  TOKEN_DEFAULTS,\n  type ControlWidth,\n} from '../../utils';\nimport { computeAnchoredPopupPosition } from '../../utils/anchored-popup';\nimport { ChoiceFooter, ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';\nimport {\n  choiceBackgroundClassMap,\n  choiceListUsesSubtext,\n  enabledChoiceIndexes,\n  filterChoiceSections,\n  findChoiceTypeaheadMatch,\n  flattenChoiceSections,\n  moveChoiceIndex,\n  resolveChoiceSections,\n} from '../../utils/choice-list';\nimport type {\n  SelectBackground,\n  SelectOption,\n  SelectSection,\n  SelectSize,\n} from '../Select/Select';\n\nexport type SelectMultiOption = Omit<SelectOption, 'icon'>;\nexport type SelectMultiSection = Omit<SelectSection, 'options'> & {\n  options: SelectMultiOption[];\n};\nexport type SelectMultiBackground = SelectBackground;\nexport type SelectMultiSize = SelectSize;\nexport type SelectMultiWidth = ControlWidth;\n\nconst ICON_SIZE: Record<SelectMultiSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\nlet selectMultiId = 0;\n\n@Component({\n  tag: 'ds-select-multi',\n  styleUrl: 'SelectMulti.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class SelectMulti {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  /** Flat choices. Assign arrays through the JavaScript property. */\n  @Prop() options: SelectMultiOption[] = [];\n  /** Grouped choices; takes precedence over options. Assign through JavaScript. */\n  @Prop() sections: SelectMultiSection[] = [];\n  /** Selected values. Assign arrays through the JavaScript property. */\n  @Prop({ mutable: true }) values: string[] = [];\n  /** Controlled popup visibility. */\n  @Prop({ mutable: true, reflect: true }) open: boolean = false;\n  /** Native form field name used for each repeated selected-value entry. */\n  @Prop({ reflect: true }) name: string | undefined;\n  /** Native disabled state. */\n  @Prop({ reflect: true }) disabled: boolean = false;\n  /** Require at least one valid selected value. */\n  @Prop({ reflect: true }) required: boolean = false;\n  /** Validation message used when required is missing. */\n  @Prop() requiredMessage: string = 'This field is required.';\n  /** Persistent trigger label; selected option labels never replace it. */\n  @Prop() placeholder: string = 'Select';\n  /** Control density. */\n  @Prop() size: SelectMultiSize = 'md';\n  /** Width fit — hug content (default) or fill the parent. */\n  @Prop() width: SelectMultiWidth = 'hug';\n  /** Shared inactive treatment; removes interaction and form submission. */\n  @Prop() isInactive: boolean = false;\n  /** Replace the prefix with a loader and disable option interaction. */\n  @Prop() isLoading: boolean = false;\n  /** Show the selected interaction fill when at least one value exists. */\n  @Prop() activeFill: boolean = true;\n  /** Show the surface-aware inset border. */\n  @Prop() hasBorder: boolean = true;\n  /** Optional trigger prefix icon name. */\n  @Prop() icon: string | undefined;\n  /** Show the clear-all footer action when values exist. */\n  @Prop() allowClear: boolean = true;\n  /** Localized clear-all action label. */\n  @Prop() clearLabel: string = 'Clear';\n  /** Localized noun displayed after the selected count. */\n  @Prop() selectedLabel: string = 'selected';\n  /** Show immediate local filtering over option labels, subtext, and section headings. */\n  @Prop() searchable: boolean = false;\n  /** Localized search-field placeholder and accessible name. */\n  @Prop() searchPlaceholder: string = 'Search';\n  /** Localized empty-filter result text. */\n  @Prop() noResultsText: string = 'No results found';\n  /** Accessible loading status label. */\n  @Prop() loadingLabel: string = 'Loading';\n  /** Actual parent surface context; omit on primary and secondary surfaces. */\n  @Prop() background: SelectMultiBackground | undefined;\n  /** Show invalid visual state. */\n  @Prop() error: boolean = false;\n  /** Error text rendered below the trigger when error is true. */\n  @Prop() errorMessage: string | undefined;\n  /** ID applied to the internal combobox trigger for external labels. */\n  @Prop() inputId: string | undefined;\n  /** Direct accessible name when no external label is available. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** IDs of elements that label the combobox. */\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  /** Additional IDs that describe the combobox. */\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  /** Emitted after user toggles or clearing with a new values array. */\n  @Event() dsChange!: EventEmitter<string[]>;\n  /** Emitted after the footer clear-all action. */\n  @Event() dsClear!: EventEmitter<void>;\n  /** Emitted whenever popup visibility changes. */\n  @Event() dsOpenChange!: EventEmitter<boolean>;\n\n  @State() private activeIndex = -1;\n  @State() private searchTerm = '';\n  @State() private formDisabled = false;\n  @State() private position = { x: 0, y: 0 };\n  @State() private positionReady = false;\n  @State() private focusRingVisible = false;\n\n  private readonly generatedId = `ds-select-multi-${++selectMultiId}`;\n  private readonly listboxId = `${this.generatedId}-listbox`;\n  private readonly errorId = `${this.generatedId}-error`;\n  private triggerEl: HTMLButtonElement | null = null;\n  private popupEl: HTMLDivElement | null = null;\n  private searchEl: HTMLInputElement | null = null;\n  private initialValues: string[] = [];\n  private typeahead = '';\n  private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;\n  private outsideHandler: ((event: MouseEvent) => void) | null = null;\n  private repositionHandler: (() => void) | null = null;\n\n  componentWillLoad() {\n    this.initialValues = [...this.values];\n    this.syncFormValue();\n  }\n\n  componentDidLoad() {\n    if (this.open) this.onOpenChange(true);\n  }\n\n  disconnectedCallback() {\n    this.unbindPopupListeners();\n    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);\n  }\n\n  @Watch('values')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  @Watch('name')\n  @Watch('options')\n  @Watch('sections')\n  syncFormValue() {\n    const resolvedValues = this.resolvedValues;\n    if (this.isDisabled || !this.name || resolvedValues.length === 0) {\n      this.internals.setFormValue(null);\n    } else {\n      const data = new FormData();\n      resolvedValues.forEach(value => data.append(this.name as string, value));\n      this.internals.setFormValue(data, JSON.stringify(resolvedValues));\n    }\n    const missing = this.required && !this.isDisabled && resolvedValues.length === 0;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n    if (this.open) {\n      const enabled = enabledChoiceIndexes(this.visibleOptions);\n      if (!enabled.includes(this.activeIndex)) this.activeIndex = enabled[0] ?? -1;\n      requestAnimationFrame(() => this.updatePosition());\n    }\n  }\n\n  @Watch('isLoading')\n  onLoadingChange() {\n    if (this.open) requestAnimationFrame(() => this.updatePosition());\n  }\n\n  @Watch('open')\n  onOpenChange(open: boolean) {\n    this.dsOpenChange.emit(open);\n    if (open) {\n      this.bindPopupListeners();\n      this.positionReady = false;\n      requestAnimationFrame(() => {\n        this.updatePosition();\n        this.scrollActiveOptionIntoView();\n        if (this.searchable) this.searchEl?.focus();\n      });\n    } else {\n      this.unbindPopupListeners();\n      this.searchTerm = '';\n      this.positionReady = false;\n    }\n  }\n\n  @Watch('searchTerm')\n  onSearchTermChange() {\n    this.activeIndex = enabledChoiceIndexes(this.visibleOptions)[0] ?? -1;\n    requestAnimationFrame(() => {\n      this.updatePosition();\n      this.scrollActiveOptionIntoView();\n    });\n  }\n\n  @Watch('activeIndex')\n  onActiveIndexChange() {\n    requestAnimationFrame(() => this.scrollActiveOptionIntoView());\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.values = [...this.initialValues];\n    this.closePopup();\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    if (typeof state !== 'string') {\n      this.values = [];\n      return;\n    }\n    try {\n      const restored = JSON.parse(state);\n      this.values = Array.isArray(restored)\n        ? restored.filter((value): value is string => typeof value === 'string')\n        : [];\n    } catch {\n      this.values = [];\n    }\n  }\n\n  @Method()\n  async setFocus() {\n    this.triggerEl?.focus();\n  }\n\n  private get isDisabled(): boolean {\n    return this.disabled || this.isInactive || this.formDisabled;\n  }\n\n  private get allSections(): SelectMultiSection[] {\n    return resolveChoiceSections(this.options, this.sections);\n  }\n\n  private get allOptions(): SelectMultiOption[] {\n    return flattenChoiceSections(this.allSections);\n  }\n\n  private get visibleSections(): SelectMultiSection[] {\n    return this.searchable\n      ? filterChoiceSections(this.allSections, this.searchTerm)\n      : this.allSections;\n  }\n\n  private get visibleOptions(): SelectMultiOption[] {\n    return flattenChoiceSections(this.visibleSections);\n  }\n\n  private get resolvedValues(): string[] {\n    const valid = new Set(this.allOptions.map(option => option.value));\n    return [...new Set(this.values.filter(value => valid.has(value)))];\n  }\n\n  private get hasSelection(): boolean {\n    return this.resolvedValues.length > 0;\n  }\n\n  private get activeOptionId(): string | undefined {\n    return !this.isLoading && this.activeIndex >= 0\n      ? `${this.generatedId}-option-${this.activeIndex}`\n      : undefined;\n  }\n\n  private scrollActiveOptionIntoView() {\n    if (!this.open || !this.activeOptionId) return;\n    this.el\n      .querySelector<HTMLElement>(`#${this.activeOptionId}`)\n      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });\n  }\n\n  private bindPopupListeners() {\n    this.unbindPopupListeners();\n    this.outsideHandler = event => {\n      if (this.el.contains(event.target as Node)) return;\n      this.closePopup();\n    };\n    this.repositionHandler = () => this.updatePosition();\n    document.addEventListener('mousedown', this.outsideHandler, true);\n    window.addEventListener('scroll', this.repositionHandler, true);\n    window.addEventListener('resize', this.repositionHandler);\n  }\n\n  private unbindPopupListeners() {\n    if (this.outsideHandler) {\n      document.removeEventListener('mousedown', this.outsideHandler, true);\n      this.outsideHandler = null;\n    }\n    if (this.repositionHandler) {\n      window.removeEventListener('scroll', this.repositionHandler, true);\n      window.removeEventListener('resize', this.repositionHandler);\n      this.repositionHandler = null;\n    }\n  }\n\n  private updatePosition() {\n    if (!this.open || !this.triggerEl || !this.popupEl) return;\n    const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);\n    this.popupEl.style.minWidth = `${this.triggerEl.offsetWidth + sectionPadding * 2}px`;\n    this.position = computeAnchoredPopupPosition({\n      anchorRect: this.triggerEl.getBoundingClientRect(),\n      popupWidth: this.popupEl.offsetWidth,\n      popupHeight: this.popupEl.offsetHeight,\n      side: 'bottom',\n      align: 'start',\n      sideOffsetPx: sectionPadding,\n      alignOffsetPx: -sectionPadding,\n      viewportPadPx: sectionPadding,\n      viewportWidth: window.innerWidth,\n      viewportHeight: window.innerHeight,\n    });\n    this.positionReady = true;\n  }\n\n  private openPopup(focusVisible: boolean, edge?: 'first' | 'last') {\n    if (this.isDisabled || (!this.allOptions.length && !this.isLoading)) return;\n    const enabled = enabledChoiceIndexes(this.visibleOptions);\n    this.activeIndex =\n      edge === 'last'\n        ? (enabled[enabled.length - 1] ?? -1)\n        : (enabled[0] ?? -1);\n    this.focusRingVisible = focusVisible;\n    this.open = true;\n  }\n\n  private closePopup(restoreFocus = false) {\n    if (!this.open) return;\n    this.open = false;\n    if (restoreFocus) requestAnimationFrame(() => this.triggerEl?.focus());\n  }\n\n  private toggleOption(option: SelectMultiOption) {\n    if (option.isInactive || this.isLoading) return;\n    const current = this.resolvedValues;\n    const next = current.includes(option.value)\n      ? current.filter(value => value !== option.value)\n      : [...current, option.value];\n    this.values = next;\n    this.dsChange.emit([...next]);\n  }\n\n  private clearSelection = (event: Event) => {\n    event.preventDefault();\n    event.stopPropagation();\n    this.values = [];\n    this.dsChange.emit([]);\n    this.dsClear.emit();\n    requestAnimationFrame(() => (this.searchable ? this.searchEl?.focus() : this.triggerEl?.focus()));\n  };\n\n  private handleTypeahead(key: string) {\n    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);\n    this.focusRingVisible = true;\n    const normalized = key.toLocaleLowerCase();\n    const repeatedCharacter =\n      this.typeahead.length > 0 &&\n      [...this.typeahead].every(character => character === normalized);\n    this.typeahead = repeatedCharacter ? normalized : `${this.typeahead}${normalized}`;\n    const match = findChoiceTypeaheadMatch(this.visibleOptions, this.typeahead, this.activeIndex);\n    if (match >= 0) this.activeIndex = match;\n    const resetMs = resolveCssTimeMs(\n      TOKEN_DEFAULTS.animationDurationMedium1,\n      TOKEN_DEFAULTS.animationDurationMedium1,\n    );\n    this.typeaheadTimer = setTimeout(() => {\n      this.typeahead = '';\n      this.typeaheadTimer = null;\n    }, resetMs);\n  }\n\n  private handleListKeyDown(event: KeyboardEvent) {\n    switch (event.key) {\n      case 'ArrowDown':\n        event.preventDefault();\n        this.focusRingVisible = true;\n        this.activeIndex = moveChoiceIndex(this.visibleOptions, this.activeIndex, 1);\n        break;\n      case 'ArrowUp':\n        event.preventDefault();\n        this.focusRingVisible = true;\n        this.activeIndex = moveChoiceIndex(this.visibleOptions, this.activeIndex, -1);\n        break;\n      case 'Home':\n        event.preventDefault();\n        this.focusRingVisible = true;\n        this.activeIndex = enabledChoiceIndexes(this.visibleOptions)[0] ?? -1;\n        break;\n      case 'End': {\n        event.preventDefault();\n        this.focusRingVisible = true;\n        const enabled = enabledChoiceIndexes(this.visibleOptions);\n        this.activeIndex = enabled[enabled.length - 1] ?? -1;\n        break;\n      }\n      case 'Enter':\n      case ' ': {\n        if (event.key === ' ' && this.searchable && event.target === this.searchEl) break;\n        event.preventDefault();\n        const option = this.visibleOptions[this.activeIndex];\n        if (option) this.toggleOption(option);\n        break;\n      }\n      case 'Escape':\n        event.preventDefault();\n        this.closePopup(true);\n        break;\n      case 'Tab':\n        this.closePopup();\n        break;\n      default:\n        if (!this.searchable && event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {\n          this.handleTypeahead(event.key);\n        }\n    }\n  }\n\n  private handleTriggerKeyDown = (event: KeyboardEvent) => {\n    if (!this.open) {\n      if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {\n        event.preventDefault();\n        this.openPopup(true, event.key === 'ArrowUp' ? 'last' : 'first');\n      } else if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {\n        event.preventDefault();\n        this.openPopup(true);\n        if (this.searchable) this.searchTerm = event.key;\n        else this.handleTypeahead(event.key);\n      }\n      return;\n    }\n    this.handleListKeyDown(event);\n  };\n\n  private renderOption(option: SelectMultiOption, index: number, usesSubtext: boolean) {\n    const selected = this.values.includes(option.value);\n    const active = this.activeIndex === index;\n    return (\n      <ChoiceOptionRow\n        id={`${this.generatedId}-option-${index}`}\n        option={option}\n        selected={selected}\n        active={active}\n        focusRingVisible={this.focusRingVisible}\n        usesSubtext={usesSubtext}\n        leading={(\n          <span class=\"ds-choice-item__icon ds-interaction-fill__content\" aria-hidden=\"true\">\n            <ds-checkbox\n              class=\"select-option__checkbox\"\n              label=\"\"\n              size=\"md\"\n              checked={selected}\n              presentation\n            />\n          </span>\n        )}\n        onHover={() => {\n            this.focusRingVisible = false;\n            this.activeIndex = index;\n        }}\n        onSelect={() => this.toggleOption(option)}\n      />\n    );\n  }\n\n  render() {\n    const inactive = this.isDisabled;\n    const count = this.resolvedValues.length;\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n    const usesOptionSubtext = choiceListUsesSubtext(this.allOptions);\n    const showError = this.error && Boolean(this.errorMessage);\n    const describedBy = [this.ariaDescribedby, showError ? this.errorId : undefined]\n      .filter(Boolean)\n      .join(' ') || undefined;\n    const popupStyle = {\n      position: 'fixed',\n      left: '0',\n      top: '0',\n      transform: `translate(${Math.round(this.position.x)}px, ${Math.round(this.position.y)}px)`,\n      zIndex: 'var(--dimension-z-index-floating)',\n      visibility: this.positionReady ? 'visible' : 'hidden',\n    };\n    let flatIndex = 0;\n\n    return (\n      <Host\n        class={{\n          'select-host': true,\n          'ds-control-inactive': inactive,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          ...controlWidthClass(this.width),\n          [`select-host--background-${this.background}`]: !!this.background,\n        }}\n      >\n        <button\n          ref={element => {\n            this.triggerEl = (element as HTMLButtonElement) ?? null;\n          }}\n          id={this.inputId ?? this.generatedId}\n          type=\"button\"\n          class={{\n            trigger: true,\n            'ds-focus-ring-inset': true,\n            'ds-interaction-fill': true,\n            'ds-interaction-fill--selected':\n              !inactive && this.activeFill && this.hasSelection,\n            'trigger--bordered': this.hasBorder || this.error,\n            'trigger--has-value': this.hasSelection,\n            'wrapper--error': this.error,\n            [`ds-control--${this.size}`]: true,\n            ...choiceBackgroundClassMap(this.background),\n          }}\n          disabled={inactive}\n          role=\"combobox\"\n          aria-haspopup=\"listbox\"\n          aria-expanded={String(this.open)}\n          aria-controls={this.open ? this.listboxId : undefined}\n          aria-activedescendant={this.open && !this.searchable ? this.activeOptionId : undefined}\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n          aria-describedby={describedBy}\n          aria-invalid={this.error || undefined}\n          aria-required={this.required || undefined}\n          aria-busy={this.isLoading ? 'true' : undefined}\n          onClick={() => (this.open ? this.closePopup() : this.openPopup(false))}\n          onKeyDown={this.handleTriggerKeyDown}\n        >\n          {(this.icon || this.isLoading) && (\n            <span class=\"trigger__prefix ds-interaction-fill__content\" aria-hidden=\"true\">\n              {this.isLoading ? (\n                <ds-loader size={iconSize} color=\"inherit\" />\n              ) : (\n                <ds-icon name={this.icon} size={iconSize} color=\"inherit\" />\n              )}\n            </span>\n          )}\n          <ds-text\n            class=\"trigger__label ds-interaction-fill__content\"\n            as=\"span\"\n            variant={textVariant}\n            color=\"inherit\"\n            lineTruncation={1}\n          >\n            {`${this.placeholder}${count > 0 ? ` · ${count}` : ''}`}\n          </ds-text>\n          <span class=\"trigger__chevron ds-interaction-fill__content\" aria-hidden=\"true\">\n            <ds-icon name=\"ChevronDown\" size={iconSize} color=\"inherit\" />\n          </span>\n        </button>\n\n        {this.open && (\n          <div\n            ref={element => {\n              this.popupEl = (element as HTMLDivElement) ?? null;\n            }}\n            class=\"select-popup ds-choice-popup\"\n            style={popupStyle}\n          >\n            {this.searchable && (\n              <ChoiceSearch\n                value={this.searchTerm}\n                placeholder={this.searchPlaceholder}\n                controls={this.listboxId}\n                activeDescendant={this.activeOptionId}\n                inputRef={element => {\n                  this.searchEl = element;\n                }}\n                clearLabel={this.clearLabel}\n                onValueChange={value => {\n                  this.searchTerm = value;\n                }}\n                onKeyDown={event => this.handleListKeyDown(event)}\n              />\n            )}\n            <div\n              id={this.listboxId}\n              class=\"ds-choice-list\"\n              role=\"listbox\"\n              aria-multiselectable=\"true\"\n              aria-label={this.ariaLabel ?? this.placeholder}\n              aria-busy={this.isLoading ? 'true' : undefined}\n            >\n              {this.isLoading ? (\n                <div class=\"ds-choice-loading\">\n                  <ds-loader size=\"md\" color=\"inherit\" label={this.loadingLabel} />\n                </div>\n              ) : this.visibleOptions.length === 0 ? (\n                <div class=\"ds-choice-empty\">\n                  <ds-empty-state body={this.noResultsText} />\n                </div>\n              ) : (\n                this.visibleSections.map(section => (\n                  <div\n                    class={{\n                      'ds-choice-section': true,\n                      'ds-choice-section--divided': !!section.divider,\n                    }}\n                    role={section.header ? 'group' : undefined}\n                    aria-label={section.header}\n                  >\n                    {section.header && (\n                      <ds-text\n                        class=\"ds-choice-section__header ds-control--md\"\n                        as=\"span\"\n                        variant=\"text-body-small\"\n                        emphasis\n                        color=\"primary\"\n                        aria-hidden=\"true\"\n                      >\n                        {section.header}\n                      </ds-text>\n                    )}\n                    {section.options.map(option => this.renderOption(\n                      option,\n                      flatIndex++,\n                      usesOptionSubtext,\n                    ))}\n                  </div>\n                ))\n              )}\n            </div>\n            {this.allowClear && this.hasSelection && !this.isLoading && (\n              <ChoiceFooter\n                summary={`${count} ${this.selectedLabel}`}\n                clearLabel={this.clearLabel}\n                onClear={this.clearSelection}\n              />\n            )}\n          </div>\n        )}\n\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

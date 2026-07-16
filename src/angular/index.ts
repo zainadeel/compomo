@@ -31,6 +31,7 @@ export const DIRECTIVES = [
   d.DsPanelTools,
   d.DsRadioGroup,
   d.DsSelect,
+  d.DsSelectMulti,
   d.DsShellGradientPicker,
   d.DsShellGradientSwatch,
   d.DsSkeleton,

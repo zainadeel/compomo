@@ -30,6 +30,7 @@ const meta: Meta = {
     icon: { control: 'text' },
     intent: { control: 'select', options: [...INTENTS] },
     contrast: { control: 'select', options: [...CONTRASTS] },
+    rounded: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
     ariaLabel: { control: 'text' },
@@ -42,6 +43,7 @@ const meta: Meta = {
     icon: 'Check',
     intent: 'brand',
     contrast: 'bold',
+    rounded: false,
     isInactive: false,
     isLoading: false,
     ariaLabel: '',
@@ -66,6 +68,7 @@ export const Playground: Story = {
       icon=${args['icon']}
       intent=${args['intent']}
       contrast=${args['contrast']}
+      ?rounded=${args['rounded']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}
       aria-label=${args['ariaLabel'] || undefined}
@@ -95,6 +98,16 @@ export const VariantsAndSizes: Story = {
           </div>
         `,
       )}
+    </div>
+  `,
+};
+
+export const Rounded: Story = {
+  render: () => html`
+    <div style="${ROW}">
+      <ds-button-filled rounded variant="label" label="Confirm"></ds-button-filled>
+      <ds-button-filled rounded variant="icon-label" icon="Check" label="Confirm"></ds-button-filled>
+      <ds-button-filled rounded variant="icon" icon="Check" aria-label="Confirm"></ds-button-filled>
     </div>
   `,
 };

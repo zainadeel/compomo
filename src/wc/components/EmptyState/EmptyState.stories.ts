@@ -3,16 +3,18 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-empty-state.js';
 
 const meta: Meta = {
-  title: 'Data/EmptyState',
+  title: 'Utility/Empty State',
   tags: ['autodocs'],
   argTypes: {
-    type: {
-      control: 'select',
-      options: ['no-content', 'no-results', 'no-results-filter', 'no-access'],
-    },
-    message: { control: 'text' },
+    icon: { control: 'text' },
+    heading: { control: 'text' },
+    body: { control: 'text' },
   },
-  args: { type: 'no-results' },
+  args: {
+    icon: 'MagnifyingGlass',
+    heading: 'No results found',
+    body: 'Try adjusting your search or filters.',
+  },
 };
 
 export default meta;
@@ -20,23 +22,43 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => html`
-    <div style="padding: 16px; height: 300px; border: 1px solid var(--color-border-primary)">
+    <div style="padding:var(--dimension-space-200);height:240px;border:1px solid var(--color-border-primary);">
       <ds-empty-state
-        type=${args['type'] ?? 'no-results'}
-        message=${args['message'] ?? ''}
+        icon=${args['icon'] ?? ''}
+        heading=${args['heading'] ?? ''}
+        body=${args['body'] ?? ''}
       ></ds-empty-state>
     </div>
   `,
 };
 
-export const NoContent: Story = {
-  render: () => html`<div style="height: 300px"><ds-empty-state type="no-content"></ds-empty-state></div>`,
+export const IconTitleBody: Story = {
+  render: () => html`
+    <div style="height:240px;">
+      <ds-empty-state
+        icon="MagnifyingGlass"
+        heading="No results found"
+        body="Try adjusting your search or filters."
+      ></ds-empty-state>
+    </div>
+  `,
 };
 
-export const NoAccess: Story = {
-  render: () => html`<div style="height: 300px"><ds-empty-state type="no-access"></ds-empty-state></div>`,
+export const TitleBody: Story = {
+  render: () => html`
+    <div style="height:240px;">
+      <ds-empty-state
+        heading="Nothing here yet"
+        body="Content will appear here when it becomes available."
+      ></ds-empty-state>
+    </div>
+  `,
 };
 
-export const CustomMessage: Story = {
-  render: () => html`<div style="height: 300px"><ds-empty-state message="No vehicles match your search."></ds-empty-state></div>`,
+export const BodyOnly: Story = {
+  render: () => html`
+    <div style="height:var(--dimension-size-600);">
+      <ds-empty-state body="No results found"></ds-empty-state>
+    </div>
+  `,
 };

@@ -162,7 +162,7 @@
           "useWhen": [
             "An existing control, navigation item, or label needs a compact unread notification count.",
             "An owning element needs a small visual dot indicating that supplemental notification information exists.",
-            "The immediate backing surface can be identified so the badge ring visually separates the mark from its owner."
+            "When the badge overlaps an icon or content, the immediate backing surface can be identified so its separation ring matches."
           ],
           "avoidWhen": [
             "The status must stand alone without an owning label or control.",
@@ -205,8 +205,9 @@
             "Non-positive counter values hide the badge.",
             "Counts above the configured compact limit display the limit with a plus suffix while accessible text retains meaningful context.",
             "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
-            "The ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
-            "Shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+            "Use the ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot.",
+            "When enabled, the ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
+            "Enabled shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
           ],
           "responsiveBehavior": [
             "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",
@@ -240,6 +241,10 @@
             "required": false
           },
           "gradientBackground": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasRing": {
             "type": "boolean",
             "required": false
           },
@@ -555,6 +560,7 @@
             "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
             "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
             "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
+            "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
             "Loading prevents duplicate activation without applying inactive opacity.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
           ],
@@ -606,6 +612,10 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -711,6 +721,7 @@
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
             "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
             "Loading prevents duplicate activation without applying inactive opacity.",
+            "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
           ],
           "responsiveBehavior": [
@@ -795,6 +806,10 @@
           },
           "pressed": {
             "type": "boolean | undefined",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -1217,15 +1232,90 @@
     {
       "name": "checkbox",
       "title": "Checkbox",
-      "description": "Three-state checkbox (checked, unchecked, indeterminate) with keyboard support and custom icon slots.",
+      "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox",
         "source": "src/wc/components/Checkbox/Checkbox.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+          "useWhen": [
+            "A user may independently select zero or more choices.",
+            "A form requires acknowledgment, consent, or an opt-in value before submission.",
+            "A composite multi-select option needs a presentation-only checkbox indicator."
+          ],
+          "avoidWhen": [
+            "Exactly one option must be chosen from a mutually exclusive set.",
+            "A binary setting takes effect immediately rather than being submitted or confirmed.",
+            "The control triggers a one-time command instead of maintaining selection state."
+          ],
+          "alternatives": [
+            {
+              "when": "Exactly one option must be chosen from a mutually exclusive set.",
+              "component": "component:ds-radio-group",
+              "reason": "RadioGroup communicates one-of-many selection."
+            },
+            {
+              "when": "A binary setting takes effect immediately.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates an immediately applied on/off setting."
+            },
+            {
+              "when": "The interaction triggers a one-time command.",
+              "component": "component:ds-button-filled",
+              "reason": "Button semantics communicate an action rather than persistent selection."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-select-multi",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Every interactive checkbox requires a visible label that provides its accessible name.",
+            "Enter and Space activate the checkbox; checked and mixed state are exposed through aria-checked.",
+            "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
+            "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
+          ],
+          "states": [
+            "Every box keeps a 1px inset secondary border and 2px radius, including when selected. Checked renders the box-sized Check icon and indeterminate renders the box-sized Subtract icon on a brand fill.",
+            "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
+            "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
+            "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
+            "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
+          ],
+          "responsiveBehavior": [
+            "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
+            "Use the md indicator centered by the shared 20px option icon zone in multi-select rows."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Bind checked and indeterminate as properties for application state updates and listen for dsChange.",
+              "Use the form attribute on the host when associating a checkbox rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
+            ],
+            "angular": [
+              "Use DsCheckbox with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Checkbox/Checkbox.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
         "props": {
           "checked": {
             "type": "boolean",
@@ -1251,12 +1341,20 @@
             "type": "string | undefined",
             "required": false
           },
+          "presentation": {
+            "type": "boolean",
+            "required": false
+          },
           "required": {
             "type": "boolean",
             "required": false
           },
           "requiredMessage": {
             "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "CheckboxSize",
             "required": false
           },
           "value": {
@@ -1279,9 +1377,11 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "icon",
         "text"
       ]
     },
@@ -1536,26 +1636,97 @@
     {
       "name": "empty-state",
       "title": "EmptyState",
-      "description": "Centered placeholder for empty content, no results, or no access states.",
+      "description": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/empty-state",
         "source": "src/wc/components/EmptyState/EmptyState.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+          "useWhen": [
+            "A bounded content area is in a first-use, no-content, filtered no-results, or no-access state and needs a calm explanatory message tailored to that cause.",
+            "A prominent empty region benefits from a decorative icon, visual title, and supporting body copy.",
+            "A compact owner such as a Select popup needs only centered body copy."
+          ],
+          "avoidWhen": [
+            "Content is still loading; use Skeleton for predictable structure or Loader for an indeterminate operation.",
+            "The state is an error, warning, or confirmation that needs semantic intent and announcement from the owning workflow.",
+            "The state needs a recovery action, link, or other interactive content; the current EmptyState pattern is intentionally message-only.",
+            "A decorative illustration, arbitrary rich content, or custom layout is required."
+          ],
+          "alternatives": [
+            {
+              "when": "A content region is waiting for structured data.",
+              "component": "component:ds-skeleton",
+              "reason": "Skeleton preserves expected geometry while content is pending."
+            },
+            {
+              "when": "An operation is progressing without predictable content structure.",
+              "component": "component:ds-loader",
+              "reason": "Loader owns indeterminate progress rather than an empty outcome."
+            },
+            {
+              "when": "Only ordinary prose is needed without empty-state layout.",
+              "component": "component:ds-text",
+              "reason": "Text owns typography without adding centered empty-state composition."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-select",
+            "component:ds-text",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The optional icon is decorative; the title and body provide all meaning in text.",
+            "EmptyState does not create a live region or alert automatically. The owner decides whether a dynamic transition requires announcement.",
+            "The visual title does not impose a document heading level because the correct hierarchy belongs to the consuming page or region.",
+            "Keep localized body copy concise and sufficient when using the body-only variant."
+          ],
+          "states": [
+            "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
+            "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
+            "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
+            "All content is centered. The owner supplies container size and surrounding padding; do not compose actions into or immediately alongside the current EmptyState pattern.",
+            "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
+          ],
+          "responsiveBehavior": [
+            "The owner controls available width and height; text wraps naturally while remaining centered.",
+            "EmptyState does not infer breakpoints or change composition automatically."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Pass canonical IcoMo icon names and localized heading/body strings through properties or attributes."
+            ],
+            "react": [
+              "Choose one supported composition by passing body with optional heading and icon props."
+            ],
+            "angular": [
+              "Choose one supported composition by binding body with optional heading and icon inputs."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/EmptyState/EmptyState.stories.ts"
+            }
+          ]
+        },
         "props": {
-          "message": {
+          "body": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
             "type": "string | undefined",
             "required": false
           },
-          "messages": {
-            "type": "Partial<Record<EmptyStateType, string>>",
-            "required": false
-          },
-          "type": {
-            "type": "EmptyStateType",
+          "icon": {
+            "type": "string | undefined",
             "required": false
           }
         },
@@ -1569,9 +1740,11 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "icon",
         "text"
       ]
     },
@@ -1947,7 +2120,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
+      "description": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1958,10 +2131,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action or option menu with flat items, grouped sections, selection, supplemental notification dots, switches, and destructive actions.",
+          "summary": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
           "useWhen": [
-            "A trigger reveals a short contextual list of commands or options.",
-            "Options need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
+            "A trigger reveals a short contextual list of commands or state-changing actions.",
+            "Actions need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
           ],
           "avoidWhen": [
             "The user is selecting a value for a form field.",
@@ -1973,6 +2146,11 @@
               "when": "The choice is a form value with a label, validation, and submitted value.",
               "component": "component:ds-select",
               "reason": "Select provides form-control semantics and value ownership."
+            },
+            {
+              "when": "Several form values may be selected.",
+              "component": "component:ds-select-multi",
+              "reason": "SelectMulti provides multi-select listbox semantics, array value ownership, and count presentation."
             },
             {
               "when": "The interaction needs substantial content, confirmation, or a form.",
@@ -2830,18 +3008,122 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Dropdown select with unfilled-button chrome in control-density sizes and width hug/fill. Uses ds-menu for the option list.",
+      "description": "Form-associated single-value select with listbox semantics, local search, rich flat options, grouped sections, loading, clearing, and surface-aware trigger chrome.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/select",
         "source": "src/wc/components/Select/Select.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated single-value select with listbox semantics, local search, rich flat options, grouped sections, loading, clearing, and surface-aware trigger chrome.",
+          "useWhen": [
+            "The user must choose one value from a finite set.",
+            "The option set benefits from local search, subtext, prefix icons, grouping, or disabled choices.",
+            "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain such as addresses where search materially improves retrieval.",
+            "The selected value must participate in native, Angular, or React form state."
+          ],
+          "avoidWhen": [
+            "Several values may be selected at once.",
+            "The rows perform commands rather than choosing a form value.",
+            "The choices form a hierarchy with expandable parents."
+          ],
+          "alternatives": [
+            {
+              "when": "Several independent values may be selected.",
+              "component": "component:ds-select-multi",
+              "reason": "SelectMulti owns array values, multi-selection semantics, and count presentation."
+            },
+            {
+              "when": "The popup contains commands or state-changing actions.",
+              "component": "component:ds-menu",
+              "reason": "Menu uses action-menu roles and command-focused keyboard behavior."
+            },
+            {
+              "when": "A small set of choices should remain visible.",
+              "component": "component:ds-radio-group",
+              "reason": "Prefer RadioGroup for roughly two to five mutually exclusive choices when the available space allows all choices to remain visible."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-icon",
+            "component:ds-empty-state",
+            "component:ds-loader"
+          ],
+          "accessibility": [
+            "In forms, provide a persistent visible external field label; placeholder text is guidance and must not be the field's only label. In a compact filter bar, the trigger's visible text may supply the accessible name.",
+            "The trigger uses combobox semantics and the popup uses listbox and option semantics; do not replace them with menu roles.",
+            "Disabled options remain visible, expose aria-disabled, and are skipped by keyboard navigation and typeahead.",
+            "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
+            "Selected options rely on active fill and foreground treatment without a redundant trailing check icon.",
+            "Local search moves focus into the search field while preserving the active option through aria-activedescendant.",
+            "Use errorMessage with error so the trigger is described by the rendered alert."
+          ],
+          "states": [
+            "Value is controlled through the mutable value property; dsChange reports user selection and clearing.",
+            "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
+            "When allowClear is enabled, the clear affordance appears only after a value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
+            "Clearing emits dsChange with an empty string and dsClear, keeps the popup open, and restores useful focus.",
+            "Loading keeps the trigger visible, replaces its prefix icon, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
+            "The trigger label stays left-aligned at every width. The default size is md in both forms and filter bars; smaller sizes require an explicit density need.",
+            "Use option icons only when they help users differentiate choices. Icons render only when every option in the complete list provides one; mixed icon data falls back to the text-only row layout.",
+            "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
+            "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
+            "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
+            "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
+            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused.",
+            "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+            "The shared clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
+            "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
+            "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
+            "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the Select exposes validity and error presentation without imposing that policy.",
+            "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry.",
+            "An initially empty option set is not an expected Select use case. The no-results state describes a search with no matches, not a source with no choices.",
+            "Use options for a flat list or sections for grouped choices; when sections are present they take precedence.",
+            "The background prop describes the actual parent surface and uses the same surface set as ButtonUnfilled."
+          ],
+          "responsiveBehavior": [
+            "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
+            "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+            "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign options and sections through JavaScript properties because arrays and objects cannot be represented safely as attributes."
+            ],
+            "react": [
+              "Pass options or sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+            ],
+            "angular": [
+              "Import DsSelect and SelectValueAccessor when integrating with Angular Forms; bind options and sections as properties."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Select/Select.stories.ts"
+            },
+            {
+              "label": "Selection patterns",
+              "path": "src/docs/SelectionPatterns.mdx"
+            }
+          ]
+        },
         "props": {
           "activeFill": {
             "type": "boolean",
+            "required": false
+          },
+          "allowClear": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaDescribedby": {
+            "type": "string | undefined",
             "required": false
           },
           "ariaLabel": {
@@ -2852,20 +3134,60 @@
             "type": "string | undefined",
             "required": false
           },
+          "background": {
+            "type": "SelectBackground | undefined",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
           "disabled": {
             "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
             "required": false
           },
           "hasBorder": {
             "type": "boolean",
             "required": false
           },
+          "icon": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
           "isInactive": {
             "type": "boolean",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingLabel": {
+            "type": "string",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
+            "required": false
+          },
+          "noResultsText": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
             "required": false
           },
           "options": {
@@ -2882,6 +3204,18 @@
           },
           "requiredMessage": {
             "type": "string",
+            "required": false
+          },
+          "searchPlaceholder": {
+            "type": "string",
+            "required": false
+          },
+          "searchable": {
+            "type": "boolean",
+            "required": false
+          },
+          "sections": {
+            "type": "SelectSection[]",
             "required": false
           },
           "size": {
@@ -2901,6 +3235,14 @@
           {
             "name": "dsChange",
             "detail": "string"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
           }
         ],
         "slots": [],
@@ -2916,8 +3258,273 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "button-unfilled",
+        "empty-state",
         "icon",
-        "menu",
+        "loader",
+        "text"
+      ]
+    },
+    {
+      "name": "select-multi",
+      "title": "SelectMulti",
+      "description": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select-multi",
+        "source": "src/wc/components/SelectMulti/SelectMulti.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+          "useWhen": [
+            "The user may choose several independent values from one finite set.",
+            "A compact trigger should summarize selection with the field label and a count.",
+            "The option set benefits from local search, subtext, grouping, or disabled choices.",
+            "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain where search materially improves retrieval."
+          ],
+          "avoidWhen": [
+            "Exactly one value may be selected.",
+            "Selected values must remain individually removable as persistent tags outside the popup.",
+            "The choices form a hierarchy with cascading parent selection.",
+            "The customer task benefits more from keeping every choice and checkbox directly visible; choose between SelectMulti and a visible checkbox list from the use-case context rather than a fixed option-count threshold."
+          ],
+          "alternatives": [
+            {
+              "when": "Exactly one value may be selected.",
+              "component": "component:ds-select",
+              "reason": "Select owns scalar form value and single-select listbox behavior."
+            },
+            {
+              "when": "The popup contains actions rather than values.",
+              "component": "component:ds-menu",
+              "reason": "Menu uses command semantics and closes according to action-menu expectations."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-checkbox",
+            "component:ds-empty-state",
+            "component:ds-loader"
+          ],
+          "accessibility": [
+            "In forms, provide a persistent visible external field label. In a compact filter bar, the trigger's visible persistent label and count may supply the accessible name.",
+            "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
+            "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
+            "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
+            "Each row uses a medium-size presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
+            "The trigger keeps its field label visible and appends the current selected count; an explicit aria-label or aria-labelledby remains the authoritative accessible name when supplied.",
+            "Use errorMessage with error so the trigger is described by the rendered alert."
+          ],
+          "states": [
+            "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
+            "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
+            "Selecting an option keeps the popup open so additional values can be toggled.",
+            "The trigger label stays left-aligned at every width; every option row uses the same leading medium Checkbox indicator. The default control size is md in both forms and filter bars.",
+            "The selected count always follows the persistent label as plain text separated by a centered dot, including for one selection, and counts every selected value even when search or grouping hides it. Never replace the count with selected option names.",
+            "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
+            "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
+            "Option labels stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
+            "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when selection promotes the label and count to primary.",
+            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused.",
+            "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+            "The shared summary-and-clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
+            "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
+            "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
+            "When allowClear is enabled, clear-all appears only after at least one value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
+            "Clear-all emits an empty dsChange and dsClear while preserving useful popup or search focus.",
+            "Loading keeps the trigger visible, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
+            "SelectMulti has no maximum-selection behavior; every available non-inactive option may be selected.",
+            "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the component exposes validity and error presentation without imposing that policy.",
+            "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry.",
+            "An initially empty option set is not an expected SelectMulti use case. The no-results state describes a search with no matches, not a source with no choices.",
+            "Native form submission emits one entry per selected value under the component name.",
+            "Use options for a flat list or sections for grouped choices. Multi-select option contracts intentionally exclude icons because the leading checkbox owns that row zone; hierarchical parent selection is deferred."
+          ],
+          "responsiveBehavior": [
+            "Use width fill for form fields and width hug for compact filter bars; the persistent trigger label avoids variable-width selected labels.",
+            "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+            "Long option collections scroll inside the popup; virtualization and remote search are not part of this version."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign values, options, and sections through JavaScript properties; array values cannot be represented safely as attributes."
+            ],
+            "react": [
+              "Pass values, options, and sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+            ],
+            "angular": [
+              "Import DsSelectMulti and SelectMultiValueAccessor when integrating with Angular Forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/SelectMulti/SelectMulti.stories.ts"
+            },
+            {
+              "label": "Selection patterns",
+              "path": "src/docs/SelectionPatterns.mdx"
+            }
+          ]
+        },
+        "props": {
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "allowClear": {
+            "type": "boolean",
+            "required": false
+          },
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "background": {
+            "type": "SelectMultiBackground | undefined",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingLabel": {
+            "type": "string",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "noResultsText": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "options": {
+            "type": "SelectMultiOption[]",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "searchPlaceholder": {
+            "type": "string",
+            "required": false
+          },
+          "searchable": {
+            "type": "boolean",
+            "required": false
+          },
+          "sections": {
+            "type": "SelectMultiSection[]",
+            "required": false
+          },
+          "selectedLabel": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "SelectMultiSize",
+            "required": false
+          },
+          "values": {
+            "type": "string[]",
+            "required": false
+          },
+          "width": {
+            "type": "SelectMultiWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string[]"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-select-multi",
+          "react": "DsSelectMulti",
+          "angular": "DsSelectMulti"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "checkbox",
+        "empty-state",
+        "icon",
+        "loader",
         "text"
       ]
     },
@@ -3935,15 +4542,15 @@
             "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
             "Use label semantics and its for association only for a real form control.",
             "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
-            "Use solid underline only when Text is composed inside a real link.",
-            "Use dotted underline to signal hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
+            "Underline link text by default. Brand-blue links may omit the resting underline when color already supplies the affordance.",
+            "Use dotted underline for hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
           ],
           "states": [
             "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
             "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
             "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
             "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
-            "Solid underline communicates a real link; dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
+            "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
             "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",
             "Shimmer is reserved for visible generating/loading status text whose owner provides status semantics; reduced motion keeps static readable text."
           ],

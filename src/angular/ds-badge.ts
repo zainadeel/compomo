@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsBadge } from '@ds-mo/ui/components/ds-ba
 
 @ProxyCmp({
   defineCustomElementFn: defineDsBadge,
-  inputs: ['background', 'count', 'gradientBackground', 'label', 'max', 'surface', 'variant']
+  inputs: ['background', 'count', 'gradientBackground', 'hasRing', 'label', 'max', 'surface', 'variant']
 })
 @Component({
   selector: 'ds-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['background', 'count', 'gradientBackground', 'label', 'max', 'surface', 'variant'],
+  inputs: ['background', 'count', 'gradientBackground', 'hasRing', 'label', 'max', 'surface', 'variant'],
 })
 export class DsBadge {
   protected el: HTMLDsBadgeElement;

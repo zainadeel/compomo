@@ -18,6 +18,7 @@ const meta: Meta = {
     isActive: { control: 'boolean' },
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
+    rounded: { control: 'boolean' },
     dot: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -47,6 +48,7 @@ const meta: Meta = {
     isActive: false,
     activeFill: true,
     hasBorder: true,
+    rounded: false,
     dot: false,
     isInactive: false,
     isLoading: false,
@@ -75,6 +77,7 @@ export const Playground: Story = {
       ?is-active=${args['isActive']}
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
+      ?rounded=${args['rounded']}
       ?dot=${args['dot']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}
@@ -105,6 +108,16 @@ export const VariantsAndSizes: Story = {
           </div>
         `,
       )}
+    </div>
+  `,
+};
+
+export const Rounded: Story = {
+  render: () => html`
+    <div style="${ROW}">
+      <ds-button-unfilled rounded variant="label" label="Action"></ds-button-unfilled>
+      <ds-button-unfilled rounded variant="icon-label" icon="Bell" label="Action"></ds-button-unfilled>
+      <ds-button-unfilled rounded variant="icon" icon="Bell" aria-label="Action"></ds-button-unfilled>
     </div>
   `,
 };

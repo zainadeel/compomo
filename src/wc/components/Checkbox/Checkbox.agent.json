@@ -1,0 +1,82 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-checkbox",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-checkbox",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+  "useWhen": [
+    "A user may independently select zero or more choices.",
+    "A form requires acknowledgment, consent, or an opt-in value before submission.",
+    "A composite multi-select option needs a presentation-only checkbox indicator."
+  ],
+  "avoidWhen": [
+    "Exactly one option must be chosen from a mutually exclusive set.",
+    "A binary setting takes effect immediately rather than being submitted or confirmed.",
+    "The control triggers a one-time command instead of maintaining selection state."
+  ],
+  "alternatives": [
+    {
+      "when": "Exactly one option must be chosen from a mutually exclusive set.",
+      "component": "component:ds-radio-group",
+      "reason": "RadioGroup communicates one-of-many selection."
+    },
+    {
+      "when": "A binary setting takes effect immediately.",
+      "component": "component:ds-switch",
+      "reason": "Switch communicates an immediately applied on/off setting."
+    },
+    {
+      "when": "The interaction triggers a one-time command.",
+      "component": "component:ds-button-filled",
+      "reason": "Button semantics communicate an action rather than persistent selection."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-select-multi",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Every interactive checkbox requires a visible label that provides its accessible name.",
+    "Enter and Space activate the checkbox; checked and mixed state are exposed through aria-checked.",
+    "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
+    "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
+  ],
+  "states": [
+    "Every box keeps a 1px inset secondary border and 2px radius, including when selected. Checked renders the box-sized Check icon and indeterminate renders the box-sized Subtract icon on a brand fill.",
+    "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
+    "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
+    "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
+    "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
+  ],
+  "responsiveBehavior": [
+    "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
+    "Use the md indicator centered by the shared 20px option icon zone in multi-select rows."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Bind checked and indeterminate as properties for application state updates and listen for dsChange.",
+      "Use the form attribute on the host when associating a checkbox rendered outside its owning form."
+    ],
+    "react": [
+      "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
+    ],
+    "angular": [
+      "Use DsCheckbox with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Checkbox/Checkbox.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

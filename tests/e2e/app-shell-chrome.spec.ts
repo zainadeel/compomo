@@ -19,6 +19,9 @@ test.describe('App shell chrome', () => {
   test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts', async ({
     page,
   }) => {
+    await expect(page.locator('.panel-nav__item-dot')).toHaveCount(1);
+    await expect(page.locator('.panel-nav__item-dot-box')).toHaveCount(1);
+
     const readDotGeometry = () => page.evaluate(() => {
       const dot = document.querySelector('.panel-nav__item-dot') as HTMLElement;
       const box = document.querySelector('.panel-nav__item-dot-box') as HTMLElement;

@@ -83,13 +83,16 @@ checking contrast in its actual theme and surface context.
 
 | Decoration | Meaning |
 | --- | --- |
-| `underline` | Text composed inside a real link |
+| `underline` | Default affordance for link text |
 | `dotted-underline` | Hidden or supplemental interaction such as a tooltip |
 
 Decoration is visual only; it does not make `ds-text` interactive.
 
-- A solid underline belongs inside a real `<a>` or another link component.
-- A dotted underline requires an owning trigger that provides focus, keyboard
+- Links are underlined by default. Brand-blue links may omit the resting
+  underline when color already provides the link affordance; underlining on
+  hover remains appropriate.
+- A dotted underline is required when text signals hidden or supplemental
+  interaction such as a tooltip. It requires an owning trigger with focus, keyboard
   interaction, and accessible tooltip or disclosure semantics.
 - Do not alternate dotted and solid underlines to imply two competing actions.
 

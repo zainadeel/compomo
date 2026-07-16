@@ -32,6 +32,7 @@ export { DsPanelNav } from "./ds-panel-nav.js";
 export { DsPanelSubNav } from "./ds-panel-sub-nav.js";
 export { DsPanelTools } from "./ds-panel-tools.js";
 export { DsRadioGroup } from "./ds-radio-group.js";
+export { DsSelectMulti } from "./ds-select-multi.js";
 export { DsSelect } from "./ds-select.js";
 export { DsShellGradientPicker } from "./ds-shell-gradient-picker.js";
 export { DsShellGradientSwatch } from "./ds-shell-gradient-swatch.js";

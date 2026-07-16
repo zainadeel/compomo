@@ -1,5 +1,19 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
 
+export type CheckboxSize = 'md' | 'sm' | 'xs';
+
+const LABEL_VARIANT: Record<CheckboxSize, 'text-body-medium' | 'text-body-small' | 'text-caption'> = {
+  md: 'text-body-medium',
+  sm: 'text-body-small',
+  xs: 'text-caption',
+};
+
+const GLYPH_SIZE: Record<CheckboxSize, 'sm' | 'xs'> = {
+  md: 'sm',
+  sm: 'xs',
+  xs: 'xs',
+};
+
 let idCounter = 0;
 
 @Component({
@@ -12,23 +26,39 @@ export class Checkbox {
   @AttachInternals() internals!: ElementInternals;
   private labelId = `ds-checkbox-label-${++idCounter}`;
 
+  /** Visible label and accessible name. Omitted only in presentation mode. */
   @Prop() label!: string;
+  /** Current checked state. */
   @Prop({ mutable: true }) checked: boolean = false;
+  /** Visual and placement density. */
+  @Prop() size: CheckboxSize = 'md';
+  /** Native form field name. */
   @Prop({ reflect: true }) name: string | undefined;
+  /** Submitted value when checked. */
   @Prop() value: string = 'on';
+  /** Native disabled state. */
   @Prop({ reflect: true }) disabled: boolean = false;
+  /** Require the checkbox to be checked for form validity. */
   @Prop({ reflect: true }) required: boolean = false;
+  /** Validation message used when a required checkbox is unchecked. */
   @Prop() requiredMessage: string = 'This field is required.';
-  @Prop() indeterminate: boolean = false;
+  /** Mixed visual state. Activation clears it before toggling checked. */
+  @Prop({ mutable: true }) indeterminate: boolean = false;
+  /** Design-system inactive state. */
   @Prop() isInactive: boolean = false;
+  /** Visual-only indicator for a composite control that owns selection semantics. */
+  @Prop() presentation: boolean = false;
 
+  /** Emitted after user activation with the new checked state. */
   @Event() dsChange!: EventEmitter<boolean>;
 
   private initialChecked = false;
+  private initialIndeterminate = false;
   @State() private formDisabled = false;
 
   componentWillLoad() {
     this.initialChecked = this.checked;
+    this.initialIndeterminate = this.indeterminate;
     this.syncFormValue();
   }
 
@@ -37,8 +67,9 @@ export class Checkbox {
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('presentation')
   syncFormValue() {
-    const inactive = this.isInactive || this.disabled || this.formDisabled;
+    const inactive = this.isInactive || this.disabled || this.formDisabled || this.presentation;
     this.internals.setFormValue(!inactive && this.checked ? this.value : null);
     const missing = this.required && !inactive && !this.checked;
     this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
@@ -51,16 +82,18 @@ export class Checkbox {
 
   formResetCallback() {
     this.checked = this.initialChecked;
+    this.indeterminate = this.initialIndeterminate;
   }
 
   private handleActivate = () => {
-    if (this.isInactive || this.disabled || this.formDisabled) return;
+    if (this.isInactive || this.disabled || this.formDisabled || this.presentation) return;
+    if (this.indeterminate) this.indeterminate = false;
     this.checked = !this.checked;
     this.dsChange.emit(this.checked);
   };
 
   private handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === ' ' || e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.handleActivate();
     }
@@ -69,28 +102,53 @@ export class Checkbox {
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     const isMarked = this.checked || this.indeterminate;
+    const icon = this.indeterminate ? 'Subtract' : 'Check';
 
     return (
       <Host
-        role="checkbox"
-        aria-checked={this.indeterminate ? 'mixed' : String(this.checked)}
-        aria-disabled={inactive ? 'true' : undefined}
-        aria-labelledby={this.labelId}
-        tabIndex={inactive ? -1 : 0}
-        class={{ checkbox: true, 'ds-control-inactive': inactive }}
-        onClick={this.handleActivate}
-        onKeyDown={this.handleKeyDown}
+        role={this.presentation ? undefined : 'checkbox'}
+        aria-checked={this.presentation ? undefined : this.indeterminate ? 'mixed' : String(this.checked)}
+        aria-disabled={!this.presentation && inactive ? 'true' : undefined}
+        aria-labelledby={this.presentation ? undefined : this.labelId}
+        aria-hidden={this.presentation ? 'true' : undefined}
+        tabIndex={this.presentation || inactive ? -1 : 0}
+        class={{
+          checkbox: true,
+          'checkbox--presentation': this.presentation,
+          [`checkbox--${this.size}`]: true,
+          [`ds-control--${this.size}`]: true,
+          'ds-control-inactive': inactive && !this.presentation,
+          'ds-focus-ring-inset': !this.presentation,
+          'ds-interaction-fill': !inactive && !this.presentation,
+        }}
+        onClick={this.presentation ? undefined : this.handleActivate}
+        onKeyDown={this.presentation ? undefined : this.handleKeyDown}
       >
-        <span class={{ box: true, 'box--marked': isMarked }}>
-          {isMarked && (
-            <span class="checkmark" aria-hidden="true">
-              {this.indeterminate ? '−' : '✓'}
-            </span>
-          )}
+        <span class="checkbox__placement ds-interaction-fill__content" aria-hidden="true">
+          <span class={{ box: true, 'box--marked': isMarked }}>
+            {isMarked && (
+              <ds-icon
+                class={{
+                  checkmark: true,
+                  'checkmark--xs': this.size === 'xs',
+                }}
+                name={icon}
+                size={GLYPH_SIZE[this.size]}
+                color="inherit"
+              />
+            )}
+          </span>
         </span>
-        <ds-text class="checkbox__label" as="span" variant="text-body-medium" textId={this.labelId}>
-          {this.label}
-        </ds-text>
+        {!this.presentation && (
+          <ds-text
+            class="checkbox__label ds-interaction-fill__content"
+            as="span"
+            variant={LABEL_VARIANT[this.size]}
+            textId={this.labelId}
+          >
+            {this.label}
+          </ds-text>
+        )}
       </Host>
     );
   }

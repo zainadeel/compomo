@@ -1,268 +1,218 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-select.js';
-import '../../../../dist/components/ds-menu.js';
 
-const FRUIT_OPTIONS = [
-  { label: 'Apple', value: 'apple' },
-  { label: 'Banana', value: 'banana' },
-  { label: 'Cherry', value: 'cherry' },
-  { label: 'Date', value: 'date' },
-  { label: 'Elderberry', value: 'elderberry' },
+const OPTIONS = [
+  { label: 'Apple', value: 'apple', icon: 'Chart' },
+  { label: 'Banana', value: 'banana', icon: 'Bell', subtext: 'Unavailable for this account', isInactive: true },
+  { label: 'Cherry', value: 'cherry', icon: 'Bell' },
+  { label: 'Date', value: 'date', icon: 'Chart', subtext: 'A longer secondary description' },
 ];
 
-const STATUS_OPTIONS = [
-  { label: 'Active', value: 'active' },
-  { label: 'Inactive', value: 'inactive' },
-  { label: 'Pending', value: 'pending' },
-  { label: 'Suspended', value: 'suspended' },
+const SECTIONS = [
+  {
+    header: 'Recommended',
+    divider: true,
+    options: OPTIONS.slice(0, 2),
+  },
+  {
+    header: 'More fruit',
+    options: OPTIONS.slice(2),
+  },
 ];
 
-const SIZES = ['md', 'sm', 'xs'] as const;
-const WIDTHS = ['hug', 'fill'] as const;
+const BACKGROUNDS = [
+  { value: undefined, label: 'default', surface: 'var(--color-background-primary)' },
+  { value: 'faint', label: 'faint', surface: 'var(--color-background-faint-neutral)' },
+  { value: 'medium', label: 'medium', surface: 'var(--color-background-medium-neutral)' },
+  { value: 'bold', label: 'bold', surface: 'var(--color-background-bold-neutral)' },
+  { value: 'strong', label: 'strong', surface: 'var(--color-background-strong-neutral)' },
+  { value: 'translucent', label: 'translucent', surface: 'var(--color-translucent-translucent)' },
+  { value: 'inverted', label: 'inverted', surface: 'var(--color-inverted-background)' },
+  { value: 'media', label: 'media', surface: 'var(--color-media-background)' },
+  { value: 'always-dark', label: 'always-dark', surface: 'var(--color-always-dark-background)' },
+] as const;
 
 const meta: Meta = {
   title: 'Form/Select',
   tags: ['autodocs'],
   argTypes: {
-    value: { control: 'text' },
+    value: { control: 'select', options: ['', 'apple', 'cherry', 'date'] },
     placeholder: { control: 'text' },
-    size: { control: 'select', options: [...SIZES] },
-    width: { control: 'select', options: [...WIDTHS] },
+    size: { control: 'select', options: ['md', 'sm', 'xs'] },
+    width: { control: 'select', options: ['fill', 'hug'] },
+    icon: { control: 'text' },
+    searchable: { control: 'boolean' },
+    isLoading: { control: 'boolean' },
+    allowClear: { control: 'boolean' },
     isInactive: { control: 'boolean' },
-    activeFill: { control: 'boolean' },
-    hasBorder: { control: 'boolean' },
+    background: {
+      control: 'select',
+      options: [undefined, 'faint', 'medium', 'bold', 'strong', 'translucent', 'inverted', 'media', 'always-dark'],
+    },
   },
   args: {
     value: '',
-    placeholder: 'Select',
+    placeholder: 'Select fruit',
     size: 'md',
-    width: 'fill',
+    width: 'hug',
+    icon: 'Chart',
+    searchable: false,
+    isLoading: false,
+    allowClear: true,
     isInactive: false,
-    activeFill: true,
-    hasBorder: true,
   },
 };
 
 export default meta;
 type Story = StoryObj;
 
-const COL =
-  'display:flex;flex-direction:column;gap:var(--dimension-space-200);align-items:stretch;width:240px;';
-const LBL =
-  'font-size:var(--typography-fontsize-xs);font-family:monospace;color:var(--color-foreground-tertiary);';
-
-const bindOptions = (options: typeof FRUIT_OPTIONS, value?: string) =>
-  ref((el: Element | undefined) => {
-    if (!el) return;
-    (el as HTMLDsSelectElement).options = options;
-    if (value !== undefined) (el as HTMLDsSelectElement).value = value;
-  });
-
 export const Playground: Story = {
   render: args => html`
     <div style="width:240px;">
       <ds-select
-        value=${args['value'] ?? ''}
-        placeholder=${args['placeholder'] ?? 'Select'}
+        .options=${OPTIONS}
+        value=${args['value']}
+        placeholder=${args['placeholder']}
         size=${args['size']}
         width=${args['width']}
+        icon=${args['icon']}
+        background=${args['background']}
+        ?searchable=${args['searchable']}
+        ?is-loading=${args['isLoading']}
+        .allowClear=${args['allowClear']}
         ?is-inactive=${args['isInactive']}
-        .activeFill=${args['activeFill']}
-        .hasBorder=${args['hasBorder']}
-        ${bindOptions(FRUIT_OPTIONS)}
+        aria-label="Fruit"
       ></ds-select>
     </div>
   `,
 };
 
-/** Side-by-side md / sm / xs — match unfilled-button control density. */
-export const Sizes: Story = {
-  parameters: { controls: { exclude: ['size'] } },
-  render: args => html`
-    <div
-      style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--dimension-space-300);"
-    >
-      ${SIZES.map(
-        size => html`
-          <div style="${COL}">
-            <span style="${LBL}">size=${size}</span>
-            <ds-select
-              size=${size}
-              width=${args['width']}
-              placeholder=${args['placeholder']}
-              .activeFill=${args['activeFill']}
-              .hasBorder=${args['hasBorder']}
-              ${bindOptions(FRUIT_OPTIONS, 'cherry')}
-            ></ds-select>
-            <ds-select
-              size=${size}
-              width=${args['width']}
-              placeholder=${args['placeholder']}
-              .activeFill=${args['activeFill']}
-              .hasBorder=${args['hasBorder']}
-              ${bindOptions(FRUIT_OPTIONS)}
-            ></ds-select>
-          </div>
-        `,
-      )}
-    </div>
-  `,
-};
-
-/** Hug vs fill in a fixed parent — fill stretches; hug sizes to the label. */
-export const Widths: Story = {
-  parameters: { controls: { exclude: ['width'] } },
-  render: args => html`
-    <div
-      style="display:flex;flex-direction:column;gap:var(--dimension-space-300);width:320px;"
-    >
-      ${WIDTHS.map(
-        width => html`
-          <div style="${COL};width:100%;">
-            <span style="${LBL}">width=${width}</span>
-            <ds-select
-              size=${args['size']}
-              width=${width}
-              placeholder=${args['placeholder']}
-              .activeFill=${args['activeFill']}
-              .hasBorder=${args['hasBorder']}
-              ${bindOptions(FRUIT_OPTIONS, 'cherry')}
-            ></ds-select>
-            <ds-select
-              size=${args['size']}
-              width=${width}
-              placeholder=${args['placeholder']}
-              .activeFill=${args['activeFill']}
-              .hasBorder=${args['hasBorder']}
-              ${bindOptions(FRUIT_OPTIONS)}
-            ></ds-select>
-          </div>
-        `,
-      )}
-    </div>
-  `,
-};
-
-export const WithPlaceholder: Story = {
+export const RichOptions: Story = {
   render: () => html`
-    <div style="${COL}">
-      <span style="${LBL}">No value — placeholder</span>
-      <ds-select placeholder="Select" ${bindOptions(FRUIT_OPTIONS, '')}></ds-select>
-
-      <span style="${LBL}">Value selected</span>
-      <ds-select ${bindOptions(FRUIT_OPTIONS, 'cherry')}></ds-select>
-    </div>
-  `,
-};
-
-/** Selected fill on/off — primary label, secondary chevron. */
-export const ActiveFill: Story = {
-  parameters: { controls: { exclude: ['activeFill', 'value'] } },
-  render: args => html`
-    <div style="${COL}">
-      <span style="${LBL}">activeFill=true (default)</span>
+    <div style="width:280px;min-height:360px;">
       <ds-select
-        size=${args['size']}
-        width=${args['width']}
-        .hasBorder=${args['hasBorder']}
-        .activeFill=${true}
-        ${bindOptions(FRUIT_OPTIONS, 'cherry')}
-      ></ds-select>
-
-      <span style="${LBL}">activeFill=false — primary label, no fill</span>
-      <ds-select
-        size=${args['size']}
-        width=${args['width']}
-        .hasBorder=${args['hasBorder']}
-        .activeFill=${false}
-        ${bindOptions(FRUIT_OPTIONS, 'cherry')}
+        .sections=${SECTIONS}
+        value="cherry"
+        searchable
+        open
+        placeholder="Select fruit"
+        aria-label="Fruit"
       ></ds-select>
     </div>
   `,
 };
 
-export const Inactive: Story = {
+export const Loading: Story = {
   render: () => html`
-    <div style="${COL}">
-      <span style="${LBL}">Inactive — no selection</span>
+    <div style="display:flex;gap:var(--dimension-space-200);width:520px;">
       <ds-select
-        is-inactive
-        placeholder="Select"
-        ${bindOptions(FRUIT_OPTIONS)}
+        style="flex:1;"
+        .options=${OPTIONS}
+        icon="Chart"
+        is-loading
+        placeholder="Loading with icon"
+        aria-label="Loading fruit"
       ></ds-select>
-
-      <span style="${LBL}">Inactive — with selection</span>
-      <ds-select is-inactive ${bindOptions(STATUS_OPTIONS, 'active')}></ds-select>
+      <ds-select
+        style="flex:1;"
+        .options=${OPTIONS}
+        is-loading
+        open
+        placeholder="Loading without icon"
+        aria-label="Loading fruit"
+      ></ds-select>
     </div>
   `,
 };
 
-export const StatusSelect: Story = {
-  name: 'Status Select',
+export const ClearFooter: Story = {
   render: () => html`
-    <div style="width:200px;">
-      <ds-select placeholder="Select" ${bindOptions(STATUS_OPTIONS)}></ds-select>
+    <div style="width:240px;min-height:260px;">
+      <ds-select
+        .options=${OPTIONS}
+        value="cherry"
+        open
+        placeholder="Select fruit"
+        aria-label="Fruit"
+      ></ds-select>
     </div>
   `,
 };
 
-const LONG_OPTIONS = [
-  { label: 'Apple', value: 'apple' },
-  { label: 'Banana', value: 'banana' },
-  { label: 'Cherry', value: 'cherry' },
-  { label: 'Date — very long option label that grows the menu', value: 'date' },
-  { label: 'Elderberry', value: 'elderberry' },
-];
-
-/** Open the select once mounted so the menu alignment is visible in Storybook. */
-const bindOpen = (options: typeof FRUIT_OPTIONS, value: string) =>
-  ref((el: Element | undefined) => {
-    if (!el) return;
-    const select = el as HTMLDsSelectElement;
-    select.options = options;
-    select.value = value;
-    // Wait for Stencil to paint the trigger, then open.
-    const tryOpen = (attempt = 0) => {
-      const btn = select.querySelector('button');
-      if (btn) {
-        btn.click();
-        return;
-      }
-      if (attempt < 10) requestAnimationFrame(() => tryOpen(attempt + 1));
-    };
-    requestAnimationFrame(() => tryOpen());
-  });
-
-/**
- * Menu min-width matches the select (plus section chrome) so option labels
- * line up with the trigger label. Left-bottom placement (`side=bottom`,
- * `align=start`); long labels can grow the menu to the right.
- */
-export const MenuAlignment: Story = {
-  name: 'Menu Alignment',
-  parameters: {
-    controls: { disable: true },
-    docs: {
-      description: {
-        story:
-          'Open menus are left-bottom aligned under the field. Option text lines up with the select label; long options may widen the menu to the right.',
-      },
-    },
+export const NoResults: Story = {
+  render: () => html`
+    <div style="width:240px;min-height:220px;">
+      <ds-select
+        .options=${OPTIONS}
+        searchable
+        open
+        placeholder="Select fruit"
+        aria-label="Fruit"
+      ></ds-select>
+    </div>
+  `,
+  play: async ({ canvasElement }) => {
+    await customElements.whenDefined('ds-select');
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    const select = canvasElement.querySelector<HTMLDsSelectElement>('ds-select');
+    const search = select?.querySelector<HTMLInputElement>('input[type="search"]');
+    if (!search) return;
+    search.value = 'no matching fruit';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
   },
+};
+
+export const KeyboardNavigation: Story = {
   render: () => html`
-    <div
-      style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--dimension-space-400);min-height:280px;"
-    >
-      <div style="${COL};width:200px;">
-        <span style="${LBL}">match width — labels line up</span>
-        <ds-select width="fill" ${bindOpen(FRUIT_OPTIONS, 'cherry')}></ds-select>
-      </div>
-      <div style="${COL};width:160px;">
-        <span style="${LBL}">narrow field — menu grows for long label</span>
-        <ds-select width="fill" ${bindOpen(LONG_OPTIONS, 'cherry')}></ds-select>
-      </div>
+    <div style="width:240px;min-height:300px;">
+      <ds-select .options=${OPTIONS} value="cherry" aria-label="Fruit"></ds-select>
+    </div>
+  `,
+  play: async ({ canvasElement }) => {
+    await customElements.whenDefined('ds-select');
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    const select = canvasElement.querySelector<HTMLDsSelectElement>('ds-select');
+    const trigger = select?.querySelector<HTMLButtonElement>('[role="combobox"]');
+    trigger?.focus();
+    trigger?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  },
+};
+
+export const Backgrounds: Story = {
+  render: () => html`
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:var(--dimension-space-100);">
+      ${BACKGROUNDS.map(
+        background => html`
+          <div style="padding:var(--dimension-space-200);background:${background.surface};">
+            <ds-text as="div" variant="text-body-small" color="inherit">${background.label}</ds-text>
+            <ds-select
+              style="margin-top:var(--dimension-space-100);"
+              .options=${OPTIONS}
+              value="cherry"
+              background=${background.value}
+              aria-label="${background.label} fruit"
+            ></ds-select>
+          </div>
+        `,
+      )}
+    </div>
+  `,
+};
+
+export const SizesAndStates: Story = {
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:260px;">
+      ${(['md', 'sm', 'xs'] as const).map(
+        size => html`<ds-select .options=${OPTIONS} value="cherry" size=${size} aria-label="${size} fruit"></ds-select>`,
+      )}
+      <ds-select .options=${OPTIONS} is-inactive aria-label="Inactive fruit"></ds-select>
+      <ds-select
+        .options=${OPTIONS}
+        error
+        error-message="Choose a valid fruit."
+        aria-label="Invalid fruit"
+      ></ds-select>
     </div>
   `,
 };

@@ -1,1 +1,1 @@
-export type { } from './Checkbox';
+export type { CheckboxSize } from './Checkbox';

@@ -11,7 +11,7 @@
   "useWhen": [
     "An existing control, navigation item, or label needs a compact unread notification count.",
     "An owning element needs a small visual dot indicating that supplemental notification information exists.",
-    "The immediate backing surface can be identified so the badge ring visually separates the mark from its owner."
+    "When the badge overlaps an icon or content, the immediate backing surface can be identified so its separation ring matches."
   ],
   "avoidWhen": [
     "The status must stand alone without an owning label or control.",
@@ -54,8 +54,9 @@
     "Non-positive counter values hide the badge.",
     "Counts above the configured compact limit display the limit with a plus suffix while accessible text retains meaningful context.",
     "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
-    "The ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
-    "Shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+    "Use the ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot.",
+    "When enabled, the ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
+    "Enabled shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
   ],
   "responsiveBehavior": [
     "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",

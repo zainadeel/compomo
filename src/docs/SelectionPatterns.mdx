@@ -1,0 +1,38 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Selection Patterns" />
+
+# Selection patterns
+
+Use `ds-select` for one value and `ds-select-multi` for several independent
+values. Both use the same visual list-row and popup foundation as `ds-menu`,
+but selects expose listbox semantics while menus remain collections of actions.
+
+## Current flat option contract
+
+Flat options may provide a label, string value, subtext, and inactive state.
+Single-select options may also provide a prefix icon. Multi-select options
+exclude icons because their leading zone is reserved for the checkbox
+indicator; a choice row never combines both. Sections add headings and dividers
+without changing the value model. Search is immediate and local to the supplied
+options.
+
+## Future hierarchical selection
+
+Hierarchical selection is deliberately outside the flat Select APIs. It should
+be planned as a separate tree-select pattern with these rules:
+
+- In a single-select tree, a parent with children navigates or expands; leaves
+  are the selectable values.
+- In a multi-select tree, selecting a parent cascades to selectable
+  descendants and mixed descendants render an indeterminate parent.
+- Submitted values are leaf values by default. Parent identifiers are not
+  emitted merely because all children are selected.
+- Search results include the ancestor path so duplicate child labels remain
+  understandable.
+- Keyboard behavior follows tree/treeitem semantics, including Left/Right for
+  collapse and expansion.
+
+Do not add `children` to the current flat option contract until the tree-select
+component, parent-selection policy, and form serialization have been reviewed
+together.

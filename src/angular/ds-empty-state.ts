@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsEmptyState } from '@ds-mo/ui/components/
 
 @ProxyCmp({
   defineCustomElementFn: defineDsEmptyState,
-  inputs: ['message', 'messages', 'type']
+  inputs: ['body', 'heading', 'icon']
 })
 @Component({
   selector: 'ds-empty-state',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['message', 'messages', 'type'],
+  inputs: ['body', 'heading', 'icon'],
 })
 export class DsEmptyState {
   protected el: HTMLDsEmptyStateElement;
