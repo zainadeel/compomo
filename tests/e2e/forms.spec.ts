@@ -53,48 +53,50 @@ test('select applies selected styling only after choosing an option', async ({ p
   await expect(trigger).toHaveClass(/ds-interaction-fill--selected/);
 });
 
-test('checkbox sizes center icon glyphs in density placement boxes', async ({ page }) => {
+test('checkbox sizes center owned marks with density-specific strokes', async ({ page }) => {
   const expected = {
-    md: { height: 32, placement: 20, box: 16, glyph: 16, svg: 16 },
-    sm: { height: 24, placement: 16, box: 12, glyph: 12, svg: 12 },
-    xs: { height: 16, placement: 12, box: 8, glyph: 8, svg: 8 },
+    md: { height: 32, placement: 20, box: 16, mark: 16, stroke: '1.25px' },
+    sm: { height: 24, placement: 16, box: 12, mark: 12, stroke: '1px' },
+    xs: { height: 16, placement: 12, box: 8, mark: 8, stroke: '0.75px' },
   } as const;
 
   for (const [size, dimensions] of Object.entries(expected)) {
     const checkbox = page.locator(`#checkbox-${size}`);
-    await expect(checkbox.locator('ds-icon svg')).toHaveCount(1);
+    await expect(checkbox.locator('.checkbox__mark')).toHaveCount(1);
+    await expect(checkbox.locator('ds-icon')).toHaveCount(0);
     const actual = await checkbox.evaluate(element => {
       const host = element.getBoundingClientRect();
       const placement = element.querySelector('.checkbox__placement')!.getBoundingClientRect();
       const box = element.querySelector('.box')!.getBoundingClientRect();
-      const glyph = element.querySelector('ds-icon')!.getBoundingClientRect();
-      const svg = element.querySelector('ds-icon svg')!.getBoundingClientRect();
+      const markElement = element.querySelector('.checkbox__mark')!;
+      const mark = markElement.getBoundingClientRect();
       return {
         height: Math.round(host.height),
         placement: Math.round(placement.width),
         box: Math.round(box.width),
-        glyph: Math.round(glyph.width),
-        svg: Math.round(svg.width),
+        mark: Math.round(mark.width),
+        stroke: getComputedStyle(markElement).strokeWidth,
         border: getComputedStyle(element.querySelector('.box')!).boxShadow,
       };
     });
 
     expect(actual).toMatchObject(dimensions);
-    expect(actual.border).toContain('inset');
-    await expect(checkbox.locator('ds-icon')).toHaveJSProperty('name', 'Check');
+    expect(actual.border).toBe('none');
+    await expect(checkbox.locator('.checkbox__mark path')).toHaveAttribute('d', 'M3.5 8.25L6.75 11.5L12.5 4.75');
   }
 });
 
 test('checkbox supports Enter and Space activation with mixed-state and presentation semantics', async ({ page }) => {
   const mixed = page.locator('#checkbox-mixed');
   await expect(mixed).toHaveAttribute('aria-checked', 'mixed');
-  await expect(mixed.locator('ds-icon')).toHaveJSProperty('name', 'Subtract');
+  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M4 8H12');
 
   await mixed.press('Enter');
   await expect(mixed).toHaveAttribute('aria-checked', 'true');
-  await expect(mixed.locator('ds-icon')).toHaveJSProperty('name', 'Check');
+  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M3.5 8.25L6.75 11.5L12.5 4.75');
   await mixed.press('Space');
   await expect(mixed).toHaveAttribute('aria-checked', 'false');
+  await expect(mixed.locator('.checkbox__mark')).toHaveCount(0);
 
   const presentation = page.locator('#checkbox-presentation');
   await expect(presentation).toHaveAttribute('aria-hidden', 'true');
