@@ -141,7 +141,7 @@
   "files": [
     {
       "path": "src/wc/components/ChartLine/ChartLine.css",
-      "content": ":host {\n  display: inline-block;\n  font-family: var(--typography-font-family);\n}\n\n.chart-line__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-line__axis-label {\n  fill: var(--color-foreground-tertiary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-line__path {\n  fill: none;\n  stroke-width: 2;\n}\n\n.chart-line__point {\n  stroke: var(--color-background-primary);\n  stroke-width: 1.5;\n}\n",
+      "content": ":host {\n  display: inline-block;\n  font-family: var(--typography-font-family);\n}\n\n.chart-line__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-line__axis-label {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-line__path {\n  fill: none;\n  stroke-width: 2;\n}\n\n.chart-line__point {\n  stroke: var(--color-background-primary);\n  stroke-width: 1.5;\n}\n",
       "type": "registry:ui"
     },
     {
