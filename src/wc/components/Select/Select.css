@@ -149,6 +149,10 @@
   color: var(--color-foreground-secondary);
 }
 
+.select-search__control input:focus::placeholder {
+  color: var(--color-foreground-quaternary);
+}
+
 .select-search__control input[type='search']::-webkit-search-cancel-button,
 .select-search__control input[type='search']::-webkit-search-decoration {
   display: none;

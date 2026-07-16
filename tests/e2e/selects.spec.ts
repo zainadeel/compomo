@@ -228,7 +228,7 @@ test('shares a rounded sm search clear button across single and multi selects', 
 
     const focusedPlaceholder = await search.evaluate(element => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-foreground-secondary)';
+      probe.style.color = 'var(--color-foreground-quaternary)';
       element.parentElement?.append(probe);
       const expected = getComputedStyle(probe).color;
       probe.remove();
