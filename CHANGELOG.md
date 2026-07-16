@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.1.0](https://github.com/zainadeel/compomo/compare/v8.0.1...v8.1.0) (2026-07-16)
+
+
+### Added
+
+* expand select and multi-select foundations ([#329](https://github.com/zainadeel/compomo/issues/329)) ([f1471dd](https://github.com/zainadeel/compomo/commit/f1471dde0bab48ccb3cbe58944a2a8f32e66405e))
+
 ## [8.0.1](https://github.com/zainadeel/compomo/compare/v8.0.0...v8.0.1) (2026-07-15)
 
 
