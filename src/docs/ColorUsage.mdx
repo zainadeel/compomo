@@ -46,13 +46,20 @@ Choose semantic tokens by purpose rather than hue.
 | Secondary surface or card chrome | `--color-background-secondary` |
 | Primary content | `--color-foreground-primary` |
 | Supporting content | `--color-foreground-secondary` |
-| Low-emphasis content | `--color-foreground-tertiary` |
+| Inactive/disabled UI content only | `--color-foreground-tertiary` |
 | Structural border | `--color-border-primary`, `secondary`, or `tertiary` |
 | Internal content rule | `--color-divider-divider` |
 
 Use border tokens for container and control edges. Use divider tokens only for
 rules that separate content inside a surface; prefer `ds-divider` when the rule
 is part of component composition.
+
+Tertiary foreground is not a general low-emphasis role. Restrict it to content
+inside a genuinely inactive or disabled UI component, or to purely decorative
+content whose removal would not change information, status, hierarchy, or task
+understanding. Prefer the owning component's `isInactive` API or native
+`disabled` state so semantics and visuals stay synchronized. `aria-hidden`
+alone does not make meaningful visible content decorative.
 
 ### Intent and contrast
 
@@ -164,7 +171,10 @@ their named domain meaning; they are not substitute chart palettes.
 - Do not communicate status through color alone.
 - Verify text and essential icon contrast against the rendered surface in both
   themes.
-- Treat tertiary and quaternary foregrounds as nonessential low-emphasis roles.
+- Restrict tertiary foreground to genuinely inactive/disabled UI content or
+  purely decorative content; never use it to quiet active information.
+- Meaningful chart labels, data markers, icons, and status graphics still need
+  sufficient rendered contrast even when hidden from assistive technology.
 - Use matching on-background families for colored surfaces.
 - Let semantic tokens adapt to theme; do not freeze their resolved values.
 
@@ -176,6 +186,7 @@ their named domain meaning; they are not substitute chart palettes.
 - Using data colors for interface chrome.
 - Painting hover or pressed state by replacing a component's base background.
 - Treating navigation tokens as a general dark-surface theme.
+- Using tertiary foreground to reduce the prominence of active content.
 
 See **Foundation → Colors Semantic** and **Foundation → Colors Data** for the
 complete live catalogs.

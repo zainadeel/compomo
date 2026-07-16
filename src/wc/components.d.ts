@@ -678,7 +678,7 @@ export namespace Components {
     }
     interface DsIcon {
         /**
-          * Semantic foreground color token, or a raw CSS var reference.
+          * Semantic foreground color token, or a raw CSS var reference. `tertiary` is restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
           * @default 'inherit'
          */
         "color": IconColor;
@@ -751,7 +751,7 @@ export namespace Components {
     }
     interface DsLoader {
         /**
-          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. Do not use `tertiary` for a standalone or informative Loader; inherit a readable color from the owning busy control or region.
           * @default 'inherit'
          */
         "color": LoaderColor;
@@ -1600,6 +1600,7 @@ export namespace Components {
          */
         "as": TextElement;
         /**
+          * Semantic foreground color token or CSS variable. `tertiary` is restricted to genuinely inactive/disabled UI content or purely decorative content; prefer the owning control's inactive state whenever one exists.
           * @default 'inherit'
          */
         "color": TextColor;
@@ -3115,7 +3116,7 @@ declare namespace LocalJSX {
     }
     interface DsIcon {
         /**
-          * Semantic foreground color token, or a raw CSS var reference.
+          * Semantic foreground color token, or a raw CSS var reference. `tertiary` is restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
           * @default 'inherit'
          */
         "color"?: IconColor;
@@ -3193,7 +3194,7 @@ declare namespace LocalJSX {
     }
     interface DsLoader {
         /**
-          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. Do not use `tertiary` for a standalone or informative Loader; inherit a readable color from the owning busy control or region.
           * @default 'inherit'
          */
         "color"?: LoaderColor;
@@ -4119,6 +4120,7 @@ declare namespace LocalJSX {
          */
         "as"?: TextElement;
         /**
+          * Semantic foreground color token or CSS variable. `tertiary` is restricted to genuinely inactive/disabled UI content or purely decorative content; prefer the owning control's inactive state whenever one exists.
           * @default 'inherit'
          */
         "color"?: TextColor;

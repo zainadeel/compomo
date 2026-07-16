@@ -259,6 +259,7 @@ export class MyComponent {
 - One rendered line is exactly one variant line-height; N lines are N × that token. Width constraints determine wrapping.
 - Put layout classes (padding, flex/grid participation, truncation width, z-index) directly on `ds-text`. Do not add a wrapper whose only purpose is layout.
 - Choose `as` from native document semantics and heading hierarchy independently from visual `variant`. Omitted color inherits `currentColor`.
+- `tertiary` is restricted to text inside genuinely inactive/disabled UI or to purely decorative content whose removal changes no meaning, status, hierarchy, or task understanding. Prefer the owning component's `isInactive` or native `disabled` state; `aria-hidden` alone does not exempt meaningful visible text from contrast requirements.
 - Links are underlined by default. Brand-blue link text may omit the resting underline when color already provides the link affordance; an underline on hover remains appropriate. Dotted underline is required for hidden or supplemental interaction such as a tooltip, and the owning trigger supplies focus, keyboard behavior, and accessible semantics.
 - Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to a future prose/app renderer, not `ds-text`.
 - Native form values cannot contain a custom element. Native inputs use the internal `typography.css` recipe as the explicit exception.
@@ -344,6 +345,7 @@ export class MyComponent {
 - `ds-icon` renders canonical IcoMo system and `Flag*` glyphs. It is visual content, never the interactive target; compose it inside the owning button, link, or control.
 - Icons are decorative by default. Add a label only when the icon itself conveys otherwise unavailable meaning; nested control icons stay decorative because the owner provides the accessible name.
 - Omitted color inherits `currentColor`. Use semantic aliases or CSS-variable references only when the glyph needs an independent color role.
+- `tertiary` is restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons. Prefer the owning control's inactive state; informative icons and meaningful status graphics retain sufficient rendered contrast even when `aria-hidden`.
 - Unknown names, failed loads, and rejected SVG markup leave an empty fixed-size box. Do not add a fallback glyph that could communicate the wrong meaning.
 - Lazy loading is the default. Pre-register only critical first-paint glyphs with `registerIcons`; render-boundary SVG validation and parsed-DOM injection remain mandatory.
 - Informative flags require explicit localized labels. The parent owns icon size and responsive changes.
@@ -353,6 +355,7 @@ export class MyComponent {
 - `ds-loader` communicates indeterminate progress for an operation. Use Skeleton for pending content with predictable structure; Loader does not represent determinate progress.
 - Nested Loader stays unnamed while the owning button, field, or region exposes its busy state. Standalone Loader requires contextual status text; avoid duplicate announcements.
 - Omitted color inherits `currentColor`. Explicit color aliases and CSS variables follow the Icon contract.
+- Loader is an informative progress graphic: do not use `tertiary` for standalone or informative loading states. Nested Loader inherits a readable color from its owning busy control or region.
 - The owner decides whether to delay visibility for short operations, reserves space, supplies centering/overlay layout, and communicates completion or failure.
 - Reduced motion stops rotation but keeps the glyph and status semantics visible. The parent owns size and responsive changes.
 

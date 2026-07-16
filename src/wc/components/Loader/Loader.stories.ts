@@ -25,7 +25,7 @@ const meta: Meta = {
     },
     color: {
       control: 'text',
-      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
+      description: `Color token (${COLORS.join(', ')}) or CSS var. Tertiary remains accepted for compatibility but is not supported for a standalone or informative Loader; inherit a readable owner color instead.`,
     },
     label: {
       control: 'text',
@@ -74,7 +74,7 @@ export const Sizes: Story = {
 export const Colors: Story = {
   render: () => html`
     <div style="${GRID}">
-      ${COLORS.filter(color => color !== 'inherit').map(color => html`
+      ${COLORS.filter(color => color !== 'inherit' && color !== 'tertiary').map(color => html`
         <div style="${CARD}">
           <ds-loader size="lg" color=${color}></ds-loader>
           <span style="${LABEL}">${color}</span>

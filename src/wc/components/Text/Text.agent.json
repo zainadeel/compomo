@@ -44,6 +44,7 @@
     "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
     "Use label semantics and its for association only for a real form control.",
     "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
+    "Tertiary foreground is restricted to text inside genuinely inactive or disabled UI, or to purely decorative content whose removal would not change meaning; aria-hidden alone does not exempt meaningful visible text from contrast requirements.",
     "Underline link text by default. Brand-blue links may omit the resting underline when color already supplies the affordance.",
     "Use dotted underline for hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
   ],
@@ -51,6 +52,7 @@
     "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
     "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
     "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
+    "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary so visual treatment and inactive semantics remain synchronized.",
     "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
     "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
     "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",

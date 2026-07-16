@@ -1839,11 +1839,13 @@
             "Icons are decorative by default and remain hidden from assistive technology when visible text or an owning control already communicates the meaning.",
             "The owning button, link, or composite control provides the accessible name; do not repeat that name on its nested Icon.",
             "Provide an explicit label only when the non-interactive icon itself communicates otherwise unavailable meaning.",
+            "Tertiary foreground is restricted to icons inside genuinely inactive or disabled UI, or to purely decorative icons; informative icons and meaningful status graphics retain sufficient rendered contrast even when aria-hidden.",
             "Informative flags require an explicit localized country or region label; never derive accessible text from the export name.",
             "Icon never receives focus or owns interaction."
           ],
           "states": [
             "Omitted color inherits currentColor from the owning context. Explicit semantic aliases and CSS-variable references are available when the icon has an independent color role.",
+            "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary so visual treatment and inactive semantics remain synchronized.",
             "Built-in glyph lookup accepts exact canonical IcoMo export names only. Names beginning with Flag select the flag catalog automatically.",
             "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
             "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
@@ -2058,12 +2060,14 @@
           "accessibility": [
             "When Loader is nested in a busy button, field, or region, keep it unnamed and expose busy state from the owner.",
             "Standalone Loader requires contextual status text that explains what is loading; do not rely on a generic visual spinner alone.",
+            "Loader is an informative progress graphic and must retain sufficient rendered contrast; tertiary is not a supported standalone or informative Loader treatment.",
             "Avoid duplicate announcements from both Loader and its owning busy region.",
             "Reduced motion stops rotation while keeping the glyph and status semantics visible."
           ],
           "states": [
             "Loader communicates indeterminate progress only and does not emit completion or failure events.",
             "Omitted color inherits currentColor. Explicit semantic aliases and CSS-variable references match Icon when an independent progress color is required.",
+            "Nested Loader inherits a readable color from its owning busy control or region rather than selecting tertiary directly.",
             "The owner decides whether to delay Loader visibility for short operations and removes it when the operation settles.",
             "The owner reserves space and supplies centering or overlay layout so Loader never causes unexpected layout movement."
           ],
@@ -4542,6 +4546,7 @@
             "Visible content and the selected native element provide accessible meaning; avoid redundant roles and labels.",
             "Use label semantics and its for association only for a real form control.",
             "When truncating essential content, the owner provides an accessible way to obtain the omitted text.",
+            "Tertiary foreground is restricted to text inside genuinely inactive or disabled UI, or to purely decorative content whose removal would not change meaning; aria-hidden alone does not exempt meaningful visible text from contrast requirements.",
             "Underline link text by default. Brand-blue links may omit the resting underline when color already supplies the affordance.",
             "Use dotted underline for hidden or supplemental interaction such as a tooltip; the owning trigger must provide focus, keyboard interaction, and accessible tooltip semantics."
           ],
@@ -4549,6 +4554,7 @@
             "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
             "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
             "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
+            "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary so visual treatment and inactive semantics remain synchronized.",
             "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
             "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
             "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",

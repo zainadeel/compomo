@@ -33,7 +33,7 @@ const meta: Meta = {
     size: { control: 'select', options: SIZES },
     color: {
       control: 'text',
-      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
+      description: `Color token (${COLORS.join(', ')}) or CSS var. Tertiary is restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.`,
     },
     label: { control: 'text' },
   },
@@ -74,12 +74,25 @@ export const Sizes: Story = {
 export const Colors: Story = {
   render: () => html`
     <div style="${GRID}">
-      ${COLORS.filter(color => color !== 'inherit').map(color => html`
+      ${COLORS.filter(color => color !== 'inherit' && color !== 'tertiary').map(color => html`
         <div style="${CARD}">
           <ds-icon name="Bell" size="lg" color=${color}></ds-icon>
           <span style="${LABEL}">${color}</span>
         </div>`)}
     </div>
+  `,
+};
+
+export const InactiveTertiary: Story = {
+  name: 'Tertiary — inactive only',
+  render: () => html`
+    <button
+      disabled
+      style="display: inline-flex; align-items: center; gap: var(--dimension-space-100); padding: var(--dimension-space-100); color: inherit"
+    >
+      <ds-icon name="Bell" size="md" color="tertiary"></ds-icon>
+      <span>Notifications unavailable</span>
+    </button>
   `,
 };
 

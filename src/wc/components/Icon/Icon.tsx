@@ -42,7 +42,11 @@ export class Icon {
   @Prop() name: string = '';
   /** Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px. */
   @Prop() size: IconSize = 'md';
-  /** Semantic foreground color token, or a raw CSS var reference. */
+  /**
+   * Semantic foreground color token, or a raw CSS var reference. `tertiary`
+   * is restricted to icons inside genuinely inactive/disabled UI or to purely
+   * decorative icons; informative icons must retain sufficient contrast.
+   */
   @Prop() color: IconColor = 'inherit';
   /** Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons. */
   @Prop() label: string | undefined;

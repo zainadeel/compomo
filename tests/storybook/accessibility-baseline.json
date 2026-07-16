@@ -1212,39 +1212,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-text--colors",
-    "theme": "dark",
-    "targets": [
-      ".ds-text--color-on-bold > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      ".ds-text--color-on-strong > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      ".ds-text--color-tertiary > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "review",
-    "kind": "manual-review",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-text--colors",
-    "theme": "light",
-    "targets": [
-      ".ds-text--color-on-bold > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      ".ds-text--color-on-strong > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "color-contrast",
-    "storyId": "primitives-text--colors",
-    "theme": "light",
-    "targets": [
-      ".ds-text--color-tertiary > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",

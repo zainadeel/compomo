@@ -25,6 +25,11 @@ export class Text {
    * `true`: display bold, title/caption semibold, body medium.
    */
   @Prop() emphasis: boolean = false;
+  /**
+   * Semantic foreground color token or CSS variable. `tertiary` is restricted
+   * to genuinely inactive/disabled UI content or purely decorative content;
+   * prefer the owning control's inactive state whenever one exists.
+   */
   @Prop() color: TextColor = 'inherit';
   /** Link underline or dotted hidden-interaction affordance; does not add semantics. */
   @Prop() decoration: TextDecoration | undefined;

@@ -40,12 +40,14 @@
   "accessibility": [
     "When Loader is nested in a busy button, field, or region, keep it unnamed and expose busy state from the owner.",
     "Standalone Loader requires contextual status text that explains what is loading; do not rely on a generic visual spinner alone.",
+    "Loader is an informative progress graphic and must retain sufficient rendered contrast; tertiary is not a supported standalone or informative Loader treatment.",
     "Avoid duplicate announcements from both Loader and its owning busy region.",
     "Reduced motion stops rotation while keeping the glyph and status semantics visible."
   ],
   "states": [
     "Loader communicates indeterminate progress only and does not emit completion or failure events.",
     "Omitted color inherits currentColor. Explicit semantic aliases and CSS-variable references match Icon when an independent progress color is required.",
+    "Nested Loader inherits a readable color from its owning busy control or region rather than selecting tertiary directly.",
     "The owner decides whether to delay Loader visibility for short operations and removes it when the operation settles.",
     "The owner reserves space and supplies centering or overlay layout so Loader never causes unexpected layout movement."
   ],
