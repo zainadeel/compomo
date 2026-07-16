@@ -62,6 +62,7 @@ test('checkbox sizes center icon glyphs in density placement boxes', async ({ pa
 
   for (const [size, dimensions] of Object.entries(expected)) {
     const checkbox = page.locator(`#checkbox-${size}`);
+    await expect(checkbox.locator('ds-icon svg')).toHaveCount(1);
     const actual = await checkbox.evaluate(element => {
       const host = element.getBoundingClientRect();
       const placement = element.querySelector('.checkbox__placement')!.getBoundingClientRect();

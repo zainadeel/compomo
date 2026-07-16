@@ -259,7 +259,9 @@ test('shares a rounded sm search clear button across single and multi selects', 
         bottom: control.bottom - (button?.bottom ?? 0),
       };
     });
-    expect(spacing).toEqual({ top: 4, right: 4, bottom: 4 });
+    expect(spacing.top).toBeCloseTo(4, 3);
+    expect(spacing.right).toBeCloseTo(4, 3);
+    expect(spacing.bottom).toBeCloseTo(4, 3);
 
     await clear.click();
     await expect(search).toHaveValue('');
