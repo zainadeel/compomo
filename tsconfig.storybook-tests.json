@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "playwright.storybook.config.ts",
+    "tests/storybook/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist", "storybook-static"]
+}

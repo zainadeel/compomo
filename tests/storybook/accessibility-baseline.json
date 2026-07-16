@@ -1,0 +1,332 @@
+[
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "aria-required-children",
+    "storyId": "data-table--loading"
+  },
+  {
+    "allowedNodes": 4,
+    "impact": "critical",
+    "ruleId": "aria-required-parent",
+    "storyId": "data-table--loading"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--center-text-truncation"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "aria-prohibited-attr",
+    "storyId": "data-viz-chart-donut--empty"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-donut--synced-with-legend"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "data-viz-chart-legend--truncate-and-format"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "select-name",
+    "storyId": "form-field--with-select"
+  },
+  {
+    "allowedNodes": 5,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "form-select--backgrounds"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select--loading"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select--no-results"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select-multi--loading"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "aria-required-children",
+    "storyId": "form-select-multi--search-no-results"
+  },
+  {
+    "allowedNodes": 60,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--always-dark"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--borders"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--color-intent"
+  },
+  {
+    "allowedNodes": 19,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--foregrounds"
+  },
+  {
+    "allowedNodes": 60,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--inverted"
+  },
+  {
+    "allowedNodes": 14,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--media"
+  },
+  {
+    "allowedNodes": 15,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--navigation"
+  },
+  {
+    "allowedNodes": 118,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--references"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-colors-semantic--safety-score"
+  },
+  {
+    "allowedNodes": 10,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-effects--elevation"
+  },
+  {
+    "allowedNodes": 9,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-effects--motion-and-blur"
+  },
+  {
+    "allowedNodes": 18,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "foundation-typography--styles"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--angular-host-timing"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--breakpoint-locked"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--dashboard"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "scrollable-region-focusable",
+    "storyId": "navigation-panelnav--router-mode-event"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-tabgroup--backgrounds"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-tabgroup--variants"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "critical",
+    "ruleId": "aria-required-children",
+    "storyId": "overlay-menu--appearance-and-theme"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-badge--counters"
+  },
+  {
+    "allowedNodes": 4,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonfilled--contrast-matrix"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonfilled--variants-and-sizes"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonfilled--widths"
+  },
+  {
+    "allowedNodes": 6,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonunfilled--states"
+  },
+  {
+    "allowedNodes": 6,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonunfilled--surfaces"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonunfilled--variants-and-sizes"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-buttonunfilled--widths"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-chip--sizes"
+  },
+  {
+    "allowedNodes": 4,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-tag--intent-matrix"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "critical",
+    "ruleId": "aria-valid-attr-value",
+    "storyId": "primitives-tag--interactive-menu-trigger"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-tag--sizes"
+  },
+  {
+    "allowedNodes": 3,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-text--alignment"
+  },
+  {
+    "allowedNodes": 9,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-text--all-variants"
+  },
+  {
+    "allowedNodes": 12,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-text--colors"
+  },
+  {
+    "allowedNodes": 5,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-text--decorations"
+  },
+  {
+    "allowedNodes": 9,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-text--emphasis"
+  },
+  {
+    "allowedNodes": 9,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "primitives-text--semantic-elements"
+  },
+  {
+    "allowedNodes": 7,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "utility-controldensity--overview"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "utility-controlinactive--overview"
+  },
+  {
+    "allowedNodes": 1,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "utility-focusring--overview"
+  },
+  {
+    "allowedNodes": 7,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "utility-interactionfill--overview"
+  },
+  {
+    "allowedNodes": 12,
+    "impact": "serious",
+    "ruleId": "aria-prohibited-attr",
+    "storyId": "utility-keyhint--sizes"
+  },
+  {
+    "allowedNodes": 2,
+    "impact": "serious",
+    "ruleId": "color-contrast",
+    "storyId": "utility-scrolledgefade--overview"
+  }
+]

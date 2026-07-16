@@ -102,6 +102,13 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    a11y: {
+      // Keep the interactive panel aligned with the automated Storybook scan.
+      // The region rule is noisy for isolated components without page landmarks.
+      config: {
+        rules: [{ id: 'region', enabled: false }],
+      },
+    },
     backgrounds: { disable: true },
   },
 };
