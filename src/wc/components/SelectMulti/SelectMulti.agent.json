@@ -7,16 +7,18 @@
   "tag": "ds-select-multi",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated multi-value select with a persistent trigger label, selected-count badge, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
+  "summary": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
   "useWhen": [
     "The user may choose several independent values from one finite set.",
     "A compact trigger should summarize selection with the field label and a count.",
-    "The option set benefits from local search, subtext, grouping, or disabled choices."
+    "The option set benefits from local search, subtext, grouping, or disabled choices.",
+    "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain where search materially improves retrieval."
   ],
   "avoidWhen": [
     "Exactly one value may be selected.",
     "Selected values must remain individually removable as persistent tags outside the popup.",
-    "The choices form a hierarchy with cascading parent selection."
+    "The choices form a hierarchy with cascading parent selection.",
+    "The customer task benefits more from keeping every choice and checkbox directly visible; choose between SelectMulti and a visible checkbox list from the use-case context rather than a fixed option-count threshold."
   ],
   "alternatives": [
     {
@@ -32,29 +34,46 @@
   ],
   "commonlyComposedWith": [
     "component:ds-text",
-    "component:ds-badge",
     "component:ds-checkbox",
+    "component:ds-empty-state",
     "component:ds-loader"
   ],
   "accessibility": [
-    "Provide aria-label or aria-labelledby when no external label association supplies the accessible name.",
+    "In forms, provide a persistent visible external field label. In a compact filter bar, the trigger's visible persistent label and count may supply the accessible name.",
     "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
     "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
-    "Each row uses a presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
-    "The trigger keeps its field label visible; the count badge is supplemental and hidden from assistive technology.",
+    "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
+    "Each row uses a medium-size presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
+    "The trigger keeps its field label visible and appends the current selected count; an explicit aria-label or aria-labelledby remains the authoritative accessible name when supplied.",
     "Use errorMessage with error so the trigger is described by the rendered alert."
   ],
   "states": [
     "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
+    "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
     "Selecting an option keeps the popup open so additional values can be toggled.",
-    "The count badge sits without a halo in a reserved suffix box matching the control icon size: 20px md, 16px sm, and 12px xs.",
-    "The popup search row stays md at every trigger size, using body-medium text, a 20px icon, and option-aligned horizontal insets.",
+    "The trigger label stays left-aligned at every width; every option row uses the same leading medium Checkbox indicator. The default control size is md in both forms and filter bars.",
+    "The selected count always follows the persistent label as plain text separated by a centered dot, including for one selection, and counts every selected value even when search or grouping hides it. Never replace the count with selected option names.",
+    "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
+    "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
+    "Option labels stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
+    "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when selection promotes the label and count to primary.",
+    "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused.",
+    "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+    "The shared summary-and-clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
+    "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
+    "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
+    "When allowClear is enabled, clear-all appears only after at least one value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
     "Clear-all emits an empty dsChange and dsClear while preserving useful popup or search focus.",
+    "Loading keeps the trigger visible, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
+    "SelectMulti has no maximum-selection behavior; every available non-inactive option may be selected.",
+    "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the component exposes validity and error presentation without imposing that policy.",
+    "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry.",
+    "An initially empty option set is not an expected SelectMulti use case. The no-results state describes a search with no matches, not a source with no choices.",
     "Native form submission emits one entry per selected value under the component name.",
     "Use options for a flat list or sections for grouped choices. Multi-select option contracts intentionally exclude icons because the leading checkbox owns that row zone; hierarchical parent selection is deferred."
   ],
   "responsiveBehavior": [
-    "Use width fill in forms and filter rows; the persistent trigger label avoids variable-width selected labels.",
+    "Use width fill for form fields and width hug for compact filter bars; the persistent trigger label avoids variable-width selected labels.",
     "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
     "Long option collections scroll inside the popup; virtualization and remote search are not part of this version."
   ],

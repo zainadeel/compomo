@@ -2,6 +2,7 @@ export interface ChoiceOption {
   label: string;
   value: string;
   subtext?: string;
+  /** Rendered only when every option in the complete list supplies an icon. */
   icon?: string;
   isInactive?: boolean;
 }
@@ -33,6 +34,16 @@ export function flattenChoiceSections(sections: ChoiceSection[]): ChoiceOption[]
   return sections.flatMap(section => section.options);
 }
 
+/** A choice list has one stable row layout: every option has an icon, or none do. */
+export function choiceListUsesIcons(options: ChoiceOption[]): boolean {
+  return options.length > 0 && options.every(option => Boolean(option.icon));
+}
+
+/** Once one option needs supporting text, every row keeps the same two-line structure. */
+export function choiceListUsesSubtext(options: ChoiceOption[]): boolean {
+  return options.some(option => Boolean(option.subtext?.trim()));
+}
+
 export function filterChoiceSections(
   sections: ChoiceSection[],
   searchTerm: string,
@@ -41,12 +52,17 @@ export function filterChoiceSections(
   if (!normalized) return sections;
 
   return sections
-    .map(section => ({
-      ...section,
-      options: section.options.filter(option =>
-        `${option.label} ${option.subtext ?? ''}`.toLocaleLowerCase().includes(normalized),
-      ),
-    }))
+    .map(section => {
+      const sectionMatches = section.header?.toLocaleLowerCase().includes(normalized);
+      return {
+        ...section,
+        options: sectionMatches
+          ? section.options
+          : section.options.filter(option =>
+            `${option.label} ${option.subtext ?? ''}`.toLocaleLowerCase().includes(normalized),
+          ),
+      };
+    })
     .filter(section => section.options.length > 0);
 }
 

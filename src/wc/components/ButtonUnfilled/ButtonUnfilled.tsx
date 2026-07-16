@@ -66,6 +66,9 @@ export class ButtonUnfilled {
   /** Show a 1px secondary inset border. Default on; shell chrome can pass `false`. */
   @Prop() hasBorder: boolean = true;
 
+  /** Use the half-radius treatment instead of the default control radius. */
+  @Prop() rounded: boolean = false;
+
   /** Show a notification dot at the top-right of the icon zone (icon variant only). */
   @Prop() dot: boolean = false;
 
@@ -156,6 +159,7 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
       'button-unfilled--active': this.isActive,
       'button-unfilled--bordered': this.hasBorder,
+      'button-unfilled--rounded': this.rounded,
       'ds-control-inactive': this.isInactive,
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',

@@ -159,6 +159,17 @@ test('setFocus targets the native button for both button families', async ({ pag
   }
 });
 
+test('supports the rounded treatment across both button families', async ({ page }) => {
+  for (const id of ['filled-icon', 'unfilled-icon']) {
+    const host = page.locator(`#${id}`);
+    await host.evaluate(element => {
+      (element as HTMLElement & { rounded: boolean }).rounded = true;
+    });
+    await expect(host).toHaveJSProperty('rounded', true);
+    await expect(host.locator('button')).toHaveCSS('border-radius', '9999px');
+  }
+});
+
 test('preserves native submit and reset behavior', async ({ page }) => {
   await page.locator('#filled-submit button').click();
   await page.locator('#unfilled-submit button').click();

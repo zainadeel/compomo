@@ -47,6 +47,7 @@
     "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
     "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
     "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
+    "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
     "Loading prevents duplicate activation without applying inactive opacity.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
   ],

@@ -1,0 +1,78 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-empty-state",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-empty-state",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+  "useWhen": [
+    "A bounded content area is in a first-use, no-content, filtered no-results, or no-access state and needs a calm explanatory message tailored to that cause.",
+    "A prominent empty region benefits from a decorative icon, visual title, and supporting body copy.",
+    "A compact owner such as a Select popup needs only centered body copy."
+  ],
+  "avoidWhen": [
+    "Content is still loading; use Skeleton for predictable structure or Loader for an indeterminate operation.",
+    "The state is an error, warning, or confirmation that needs semantic intent and announcement from the owning workflow.",
+    "The state needs a recovery action, link, or other interactive content; the current EmptyState pattern is intentionally message-only.",
+    "A decorative illustration, arbitrary rich content, or custom layout is required."
+  ],
+  "alternatives": [
+    {
+      "when": "A content region is waiting for structured data.",
+      "component": "component:ds-skeleton",
+      "reason": "Skeleton preserves expected geometry while content is pending."
+    },
+    {
+      "when": "An operation is progressing without predictable content structure.",
+      "component": "component:ds-loader",
+      "reason": "Loader owns indeterminate progress rather than an empty outcome."
+    },
+    {
+      "when": "Only ordinary prose is needed without empty-state layout.",
+      "component": "component:ds-text",
+      "reason": "Text owns typography without adding centered empty-state composition."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-select",
+    "component:ds-text",
+    "component:ds-icon"
+  ],
+  "accessibility": [
+    "The optional icon is decorative; the title and body provide all meaning in text.",
+    "EmptyState does not create a live region or alert automatically. The owner decides whether a dynamic transition requires announcement.",
+    "The visual title does not impose a document heading level because the correct hierarchy belongs to the consuming page or region.",
+    "Keep localized body copy concise and sufficient when using the body-only variant."
+  ],
+  "states": [
+    "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
+    "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
+    "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
+    "All content is centered. The owner supplies container size and surrounding padding; do not compose actions into or immediately alongside the current EmptyState pattern.",
+    "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
+  ],
+  "responsiveBehavior": [
+    "The owner controls available width and height; text wraps naturally while remaining centered.",
+    "EmptyState does not infer breakpoints or change composition automatically."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Pass canonical IcoMo icon names and localized heading/body strings through properties or attributes."
+    ],
+    "react": [
+      "Choose one supported composition by passing body with optional heading and icon props."
+    ],
+    "angular": [
+      "Choose one supported composition by binding body with optional heading and icon inputs."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/EmptyState/EmptyState.stories.ts"
+    }
+  ]
+}

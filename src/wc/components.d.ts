@@ -20,7 +20,6 @@ import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-import { EmptyStateType } from "./components/EmptyState/EmptyState";
 import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputType } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
@@ -61,7 +60,6 @@ export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-export { EmptyStateType } from "./components/EmptyState/EmptyState";
 export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputType } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
@@ -253,6 +251,11 @@ export namespace Components {
           * @default ''
          */
         "label": string;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded": boolean;
         "setFocus": () => Promise<void>;
         /**
           * Control density (height, padding, icon, type).
@@ -333,6 +336,11 @@ export namespace Components {
          */
         "label": string;
         "pressed": boolean | undefined;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded": boolean;
         "setFocus": () => Promise<void>;
         /**
           * Control density (height, padding, icon, type).
@@ -647,16 +655,19 @@ export namespace Components {
         "semantic": boolean;
     }
     interface DsEmptyState {
-        "message": string | undefined;
         /**
-          * Localized defaults keyed by empty-state type. Set as a JS property.
-          * @default {}
+          * Explanatory empty-state copy. Every supported variant includes body text.
+          * @default ''
          */
-        "messages": Partial<Record<EmptyStateType, string>>;
+        "body": string;
         /**
-          * @default 'no-content'
+          * Optional visual title. Use with body; required when icon is provided.
          */
-        "type": EmptyStateType;
+        "heading": string | undefined;
+        /**
+          * Optional decorative prefix glyph for the complete icon + title + body variant.
+         */
+        "icon": string | undefined;
     }
     interface DsField {
         /**
@@ -1152,7 +1163,7 @@ export namespace Components {
          */
         "searchPlaceholder": string;
         /**
-          * Show immediate local filtering over option labels and subtext.
+          * Show immediate local filtering over option labels, subtext, and section headings.
           * @default false
          */
         "searchable": boolean;
@@ -1173,8 +1184,8 @@ export namespace Components {
          */
         "value": string;
         /**
-          * Width behavior: fill the parent or hug content.
-          * @default 'fill'
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
          */
         "width": SelectWidth;
     }
@@ -1293,7 +1304,7 @@ export namespace Components {
          */
         "searchPlaceholder": string;
         /**
-          * Show immediate local filtering over option labels and subtext.
+          * Show immediate local filtering over option labels, subtext, and section headings.
           * @default false
          */
         "searchable": boolean;
@@ -1319,8 +1330,8 @@ export namespace Components {
          */
         "values": string[];
         /**
-          * Width behavior: fill the parent or hug content.
-          * @default 'fill'
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
          */
         "width": SelectMultiWidth;
     }
@@ -2646,6 +2657,11 @@ declare namespace LocalJSX {
         "label"?: string;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
         /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
           * Control density (height, padding, icon, type).
           * @default 'md'
          */
@@ -2726,6 +2742,11 @@ declare namespace LocalJSX {
         "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
         "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
         "pressed"?: boolean | undefined;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded"?: boolean;
         /**
           * Control density (height, padding, icon, type).
           * @default 'md'
@@ -3071,16 +3092,19 @@ declare namespace LocalJSX {
         "semantic"?: boolean;
     }
     interface DsEmptyState {
-        "message"?: string | undefined;
         /**
-          * Localized defaults keyed by empty-state type. Set as a JS property.
-          * @default {}
+          * Explanatory empty-state copy. Every supported variant includes body text.
+          * @default ''
          */
-        "messages"?: Partial<Record<EmptyStateType, string>>;
+        "body"?: string;
         /**
-          * @default 'no-content'
+          * Optional visual title. Use with body; required when icon is provided.
          */
-        "type"?: EmptyStateType;
+        "heading"?: string | undefined;
+        /**
+          * Optional decorative prefix glyph for the complete icon + title + body variant.
+         */
+        "icon"?: string | undefined;
     }
     interface DsField {
         /**
@@ -3632,7 +3656,7 @@ declare namespace LocalJSX {
          */
         "searchPlaceholder"?: string;
         /**
-          * Show immediate local filtering over option labels and subtext.
+          * Show immediate local filtering over option labels, subtext, and section headings.
           * @default false
          */
         "searchable"?: boolean;
@@ -3652,8 +3676,8 @@ declare namespace LocalJSX {
          */
         "value"?: string;
         /**
-          * Width behavior: fill the parent or hug content.
-          * @default 'fill'
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
          */
         "width"?: SelectWidth;
     }
@@ -3788,7 +3812,7 @@ declare namespace LocalJSX {
          */
         "searchPlaceholder"?: string;
         /**
-          * Show immediate local filtering over option labels and subtext.
+          * Show immediate local filtering over option labels, subtext, and section headings.
           * @default false
          */
         "searchable"?: boolean;
@@ -3813,8 +3837,8 @@ declare namespace LocalJSX {
          */
         "values"?: string[];
         /**
-          * Width behavior: fill the parent or hug content.
-          * @default 'fill'
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
          */
         "width"?: SelectMultiWidth;
     }
@@ -4262,6 +4286,7 @@ declare namespace LocalJSX {
         "icon": string;
         "intent": ButtonFilledIntent;
         "contrast": ButtonFilledContrast;
+        "rounded": boolean;
         "isInactive": boolean;
         "isLoading": boolean;
         "type": 'button' | 'submit' | 'reset';
@@ -4276,6 +4301,7 @@ declare namespace LocalJSX {
         "isActive": boolean;
         "activeFill": boolean;
         "hasBorder": boolean;
+        "rounded": boolean;
         "dot": boolean;
         "isInactive": boolean;
         "isLoading": boolean;
@@ -4362,8 +4388,9 @@ declare namespace LocalJSX {
         "semantic": boolean;
     }
     interface DsEmptyStateAttributes {
-        "type": EmptyStateType;
-        "message": string | undefined;
+        "icon": string | undefined;
+        "heading": string | undefined;
+        "body": string;
     }
     interface DsFieldAttributes {
         "label": string;

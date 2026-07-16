@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Empty State test</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Empty State examples</h1>
+      <ds-empty-state
+        id="complete"
+        icon="MagnifyingGlass"
+        heading="No results found"
+        body="Try adjusting your search or filters."
+      ></ds-empty-state>
+      <ds-empty-state
+        id="title-body"
+        heading="Nothing here yet"
+        body="Content will appear here when it becomes available."
+      ></ds-empty-state>
+      <ds-empty-state id="body-only" body="No results found"></ds-empty-state>
+    </main>
+    <script type="module" src="/empty-state-setup.mjs"></script>
+  </body>
+</html>

@@ -84,16 +84,16 @@ test('checkbox sizes center icon glyphs in density placement boxes', async ({ pa
   }
 });
 
-test('checkbox uses native mixed-state keyboard behavior and presentation semantics', async ({ page }) => {
+test('checkbox supports Enter and Space activation with mixed-state and presentation semantics', async ({ page }) => {
   const mixed = page.locator('#checkbox-mixed');
   await expect(mixed).toHaveAttribute('aria-checked', 'mixed');
   await expect(mixed.locator('ds-icon')).toHaveJSProperty('name', 'Subtract');
 
   await mixed.press('Enter');
-  await expect(mixed).toHaveAttribute('aria-checked', 'mixed');
-  await mixed.press('Space');
   await expect(mixed).toHaveAttribute('aria-checked', 'true');
   await expect(mixed.locator('ds-icon')).toHaveJSProperty('name', 'Check');
+  await mixed.press('Space');
+  await expect(mixed).toHaveAttribute('aria-checked', 'false');
 
   const presentation = page.locator('#checkbox-presentation');
   await expect(presentation).toHaveAttribute('aria-hidden', 'true');

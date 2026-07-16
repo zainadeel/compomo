@@ -55,6 +55,7 @@
     "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
     "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
     "Loading prevents duplicate activation without applying inactive opacity.",
+    "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
   ],
   "responsiveBehavior": [

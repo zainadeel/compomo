@@ -42,7 +42,7 @@
   ],
   "accessibility": [
     "Every interactive checkbox requires a visible label that provides its accessible name.",
-    "Space activates the checkbox; checked and mixed state are exposed through aria-checked.",
+    "Enter and Space activate the checkbox; checked and mixed state are exposed through aria-checked.",
     "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
     "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
   ],
@@ -55,7 +55,7 @@
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
-    "Use the sm indicator centered by a parent 20px icon zone in multi-select rows so checkbox and icon-based choice layouts retain matching alignment."
+    "Use the md indicator centered by the shared 20px option icon zone in multi-select rows."
   ],
   "frameworkCaveats": {
     "customElements": [

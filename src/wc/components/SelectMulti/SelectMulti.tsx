@@ -20,8 +20,10 @@ import {
   type ControlWidth,
 } from '../../utils';
 import { computeAnchoredPopupPosition } from '../../utils/anchored-popup';
+import { ChoiceFooter, ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import {
   choiceBackgroundClassMap,
+  choiceListUsesSubtext,
   enabledChoiceIndexes,
   filterChoiceSections,
   findChoiceTypeaheadMatch,
@@ -82,8 +84,8 @@ export class SelectMulti {
   @Prop() placeholder: string = 'Select';
   /** Control density. */
   @Prop() size: SelectMultiSize = 'md';
-  /** Width behavior: fill the parent or hug content. */
-  @Prop() width: SelectMultiWidth = 'fill';
+  /** Width fit — hug content (default) or fill the parent. */
+  @Prop() width: SelectMultiWidth = 'hug';
   /** Shared inactive treatment; removes interaction and form submission. */
   @Prop() isInactive: boolean = false;
   /** Replace the prefix with a loader and disable option interaction. */
@@ -100,7 +102,7 @@ export class SelectMulti {
   @Prop() clearLabel: string = 'Clear';
   /** Localized noun displayed after the selected count. */
   @Prop() selectedLabel: string = 'selected';
-  /** Show immediate local filtering over option labels and subtext. */
+  /** Show immediate local filtering over option labels, subtext, and section headings. */
   @Prop() searchable: boolean = false;
   /** Localized search-field placeholder and accessible name. */
   @Prop() searchPlaceholder: string = 'Search';
@@ -201,6 +203,7 @@ export class SelectMulti {
       this.positionReady = false;
       requestAnimationFrame(() => {
         this.updatePosition();
+        this.scrollActiveOptionIntoView();
         if (this.searchable) this.searchEl?.focus();
       });
     } else {
@@ -213,7 +216,15 @@ export class SelectMulti {
   @Watch('searchTerm')
   onSearchTermChange() {
     this.activeIndex = enabledChoiceIndexes(this.visibleOptions)[0] ?? -1;
-    requestAnimationFrame(() => this.updatePosition());
+    requestAnimationFrame(() => {
+      this.updatePosition();
+      this.scrollActiveOptionIntoView();
+    });
+  }
+
+  @Watch('activeIndex')
+  onActiveIndexChange() {
+    requestAnimationFrame(() => this.scrollActiveOptionIntoView());
   }
 
   formDisabledCallback(disabled: boolean) {
@@ -281,6 +292,13 @@ export class SelectMulti {
     return !this.isLoading && this.activeIndex >= 0
       ? `${this.generatedId}-option-${this.activeIndex}`
       : undefined;
+  }
+
+  private scrollActiveOptionIntoView() {
+    if (!this.open || !this.activeOptionId) return;
+    this.el
+      .querySelector<HTMLElement>(`#${this.activeOptionId}`)
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
   private bindPopupListeners() {
@@ -444,60 +462,34 @@ export class SelectMulti {
     this.handleListKeyDown(event);
   };
 
-  private renderOption(option: SelectMultiOption, index: number) {
+  private renderOption(option: SelectMultiOption, index: number, usesSubtext: boolean) {
     const selected = this.values.includes(option.value);
     const active = this.activeIndex === index;
     return (
-      <div
+      <ChoiceOptionRow
         id={`${this.generatedId}-option-${index}`}
-        class={{
-          'select-option': true,
-          'ds-choice-item': true,
-          'ds-control--md': true,
-          'ds-focus-ring-inset': true,
-          'ds-focus-ring--visible': active && this.focusRingVisible,
-          'ds-interaction-fill': !option.isInactive,
-          'ds-interaction-fill--selected': selected && !option.isInactive,
-          'ds-control-inactive': !!option.isInactive,
-          'select-option--active': active,
-        }}
-        role="option"
-        aria-selected={String(selected)}
-        aria-disabled={option.isInactive ? 'true' : undefined}
-        onMouseDown={event => event.preventDefault()}
-        onMouseMove={() => {
-          if (!option.isInactive) {
+        option={option}
+        selected={selected}
+        active={active}
+        focusRingVisible={this.focusRingVisible}
+        usesSubtext={usesSubtext}
+        leading={(
+          <span class="ds-choice-item__icon ds-interaction-fill__content" aria-hidden="true">
+            <ds-checkbox
+              class="select-option__checkbox"
+              label=""
+              size="md"
+              checked={selected}
+              presentation
+            />
+          </span>
+        )}
+        onHover={() => {
             this.focusRingVisible = false;
             this.activeIndex = index;
-          }
         }}
-        onClick={() => this.toggleOption(option)}
-      >
-        <span class="ds-choice-item__icon ds-interaction-fill__content" aria-hidden="true">
-          <ds-checkbox
-            class="select-option__checkbox"
-            label=""
-            size="sm"
-            checked={selected}
-            presentation
-          />
-        </span>
-        <div class="ds-choice-item__content ds-interaction-fill__content">
-          <ds-text
-            class="ds-choice-item__label"
-            as="span"
-            variant="text-body-medium"
-            color={selected ? 'primary' : 'secondary'}
-          >
-            {option.label}
-          </ds-text>
-          {option.subtext && (
-            <ds-text class="ds-choice-item__subtext" as="span" variant="text-body-small" color="secondary">
-              {option.subtext}
-            </ds-text>
-          )}
-        </div>
-      </div>
+        onSelect={() => this.toggleOption(option)}
+      />
     );
   }
 
@@ -506,6 +498,7 @@ export class SelectMulti {
     const count = this.resolvedValues.length;
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
+    const usesOptionSubtext = choiceListUsesSubtext(this.allOptions);
     const showError = this.error && Boolean(this.errorMessage);
     const describedBy = [this.ariaDescribedby, showError ? this.errorId : undefined]
       .filter(Boolean)
@@ -581,18 +574,8 @@ export class SelectMulti {
             color="inherit"
             lineTruncation={1}
           >
-            {this.placeholder}
+            {`${this.placeholder}${count > 0 ? ` · ${count}` : ''}`}
           </ds-text>
-          {count > 0 && (
-            <span class="trigger__count-box ds-interaction-fill__content" aria-hidden="true">
-              <ds-badge
-                class="trigger__count"
-                count={count}
-                max={99}
-                hasRing={false}
-              />
-            </span>
-          )}
           <span class="trigger__chevron ds-interaction-fill__content" aria-hidden="true">
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
           </span>
@@ -607,25 +590,20 @@ export class SelectMulti {
             style={popupStyle}
           >
             {this.searchable && (
-              <div class="select-search ds-control--md">
-                <ds-icon name="MagnifyingGlass" size="md" color="inherit" />
-                <input
-                  class="ds-text--body-medium ds-text--regular ds-focus-ring"
-                  ref={element => {
-                    this.searchEl = (element as HTMLInputElement) ?? null;
-                  }}
-                  type="search"
-                  value={this.searchTerm}
-                  placeholder={this.searchPlaceholder}
-                  aria-label={this.searchPlaceholder}
-                  aria-controls={this.listboxId}
-                  aria-activedescendant={this.activeOptionId}
-                  onInput={event => {
-                    this.searchTerm = (event.target as HTMLInputElement).value;
-                  }}
-                  onKeyDown={event => this.handleListKeyDown(event)}
-                />
-              </div>
+              <ChoiceSearch
+                value={this.searchTerm}
+                placeholder={this.searchPlaceholder}
+                controls={this.listboxId}
+                activeDescendant={this.activeOptionId}
+                inputRef={element => {
+                  this.searchEl = element;
+                }}
+                clearLabel={this.clearLabel}
+                onValueChange={value => {
+                  this.searchTerm = value;
+                }}
+                onKeyDown={event => this.handleListKeyDown(event)}
+              />
             )}
             <div
               id={this.listboxId}
@@ -640,9 +618,9 @@ export class SelectMulti {
                   <ds-loader size="md" color="inherit" label={this.loadingLabel} />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
-                <ds-text class="ds-choice-empty" as="div" variant="text-body-small" color="secondary">
-                  {this.noResultsText}
-                </ds-text>
+                <div class="ds-choice-empty">
+                  <ds-empty-state body={this.noResultsText} />
+                </div>
               ) : (
                 this.visibleSections.map(section => (
                   <div
@@ -665,26 +643,21 @@ export class SelectMulti {
                         {section.header}
                       </ds-text>
                     )}
-                    {section.options.map(option => this.renderOption(option, flatIndex++))}
+                    {section.options.map(option => this.renderOption(
+                      option,
+                      flatIndex++,
+                      usesOptionSubtext,
+                    ))}
                   </div>
                 ))
               )}
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
-              <div class="ds-choice-footer">
-                <ds-text class="ds-choice-footer__summary" as="span" variant="text-body-medium" color="secondary">
-                  {count} {this.selectedLabel}
-                </ds-text>
-                <button
-                  type="button"
-                  class="ds-choice-footer__clear ds-focus-ring"
-                  onClick={this.clearSelection}
-                >
-                  <ds-text as="span" variant="text-body-medium" color="inherit">
-                    {this.clearLabel}
-                  </ds-text>
-                </button>
-              </div>
+              <ChoiceFooter
+                summary={`${count} ${this.selectedLabel}`}
+                clearLabel={this.clearLabel}
+                onClear={this.clearSelection}
+              />
             )}
           </div>
         )}

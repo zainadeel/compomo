@@ -93,7 +93,7 @@ export class Checkbox {
   };
 
   private handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === ' ') {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.handleActivate();
     }

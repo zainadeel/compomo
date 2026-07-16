@@ -5,9 +5,9 @@ await Promise.all(['ds-select', 'ds-select-multi'].map(tag => customElements.whe
 
 const options = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
-  { label: 'Banana', value: 'banana', isInactive: true },
-  { label: 'Cherry', value: 'cherry', subtext: 'Dark red fruit' },
-  { label: 'Date', value: 'date' },
+  { label: 'Banana', value: 'banana', icon: 'Bell', isInactive: true },
+  { label: 'Cherry', value: 'cherry', icon: 'Bell', subtext: 'Dark red fruit' },
+  { label: 'Date', value: 'date', icon: 'Chart' },
 ];
 const sections = [
   { header: 'Common', divider: true, options: options.slice(0, 2) },

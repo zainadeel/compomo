@@ -129,6 +129,20 @@ ds-text.ds-choice-item__subtext {
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
+ds-text.ds-choice-item__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+ds-text.ds-choice-item__subtext {
+  display: -webkit-box;
+  overflow: hidden;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .ds-choice-item__icon,
 .ds-choice-item__suffix {
   display: inline-flex;
@@ -151,16 +165,32 @@ ds-text.ds-choice-item__subtext {
 }
 
 .ds-choice-footer {
+  position: relative;
+  box-sizing: border-box;
+  padding: var(--dimension-space-050);
+}
+
+.ds-choice-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--dimension-stroke-width-012);
+  background-color: var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+.ds-choice-footer__content {
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   height: var(--dimension-size-400);
-  padding: 0 calc(
-    var(--dimension-space-050) +
-      var(--ds-control-padding-inline, var(--dimension-space-075))
-  );
-  border-top: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
+  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+}
+
+.ds-choice-footer__summary,
+.ds-choice-footer__clear ds-text {
+  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
 .ds-choice-footer__clear {

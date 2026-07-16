@@ -20,8 +20,11 @@ import {
   type ControlWidth,
 } from '../../utils';
 import { computeAnchoredPopupPosition } from '../../utils/anchored-popup';
+import { ChoiceFooter, ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import {
   choiceBackgroundClassMap,
+  choiceListUsesIcons,
+  choiceListUsesSubtext,
   enabledChoiceIndexes,
   filterChoiceSections,
   findChoiceTypeaheadMatch,
@@ -77,8 +80,8 @@ export class Select {
   @Prop() placeholder: string = 'Select';
   /** Control density. */
   @Prop() size: SelectSize = 'md';
-  /** Width behavior: fill the parent or hug content. */
-  @Prop() width: SelectWidth = 'fill';
+  /** Width fit — hug content (default) or fill the parent. */
+  @Prop() width: SelectWidth = 'hug';
   /** Shared inactive treatment; removes interaction and form submission. */
   @Prop() isInactive: boolean = false;
   /** Replace the prefix with a loader and disable option interaction. */
@@ -93,7 +96,7 @@ export class Select {
   @Prop() allowClear: boolean = true;
   /** Localized clear action label. */
   @Prop() clearLabel: string = 'Clear';
-  /** Show immediate local filtering over option labels and subtext. */
+  /** Show immediate local filtering over option labels, subtext, and section headings. */
   @Prop() searchable: boolean = false;
   /** Localized search-field placeholder and accessible name. */
   @Prop() searchPlaceholder: string = 'Search';
@@ -188,6 +191,7 @@ export class Select {
       this.positionReady = false;
       requestAnimationFrame(() => {
         this.updatePosition();
+        this.scrollActiveOptionIntoView();
         if (this.searchable) this.searchEl?.focus();
       });
     } else {
@@ -201,7 +205,15 @@ export class Select {
   onSearchTermChange() {
     const enabled = enabledChoiceIndexes(this.visibleOptions);
     this.activeIndex = enabled[0] ?? -1;
-    requestAnimationFrame(() => this.updatePosition());
+    requestAnimationFrame(() => {
+      this.updatePosition();
+      this.scrollActiveOptionIntoView();
+    });
+  }
+
+  @Watch('activeIndex')
+  onActiveIndexChange() {
+    requestAnimationFrame(() => this.scrollActiveOptionIntoView());
   }
 
   formDisabledCallback(disabled: boolean) {
@@ -257,6 +269,13 @@ export class Select {
     return !this.isLoading && this.activeIndex >= 0
       ? `${this.generatedId}-option-${this.activeIndex}`
       : undefined;
+  }
+
+  private scrollActiveOptionIntoView() {
+    if (!this.open || !this.activeOptionId) return;
+    this.el
+      .querySelector<HTMLElement>(`#${this.activeOptionId}`)
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
   private bindPopupListeners() {
@@ -395,7 +414,9 @@ export class Select {
         this.focusRingVisible = true;
         this.setActiveEdge('last');
         break;
-      case 'Enter': {
+      case 'Enter':
+      case ' ': {
+        if (event.key === ' ' && this.searchable && event.target === this.searchEl) break;
         event.preventDefault();
         const option = this.visibleOptions[this.activeIndex];
         if (option) this.selectOption(option);
@@ -434,60 +455,33 @@ export class Select {
     this.handleListKeyDown(event);
   };
 
-  private handleSearchInput = (event: Event) => {
-    this.searchTerm = (event.target as HTMLInputElement).value;
-  };
-
-  private renderOption(option: SelectOption, index: number) {
+  private renderOption(
+    option: SelectOption,
+    index: number,
+    usesIcons: boolean,
+    usesSubtext: boolean,
+  ) {
     const selected = option.value === this.value;
     const active = index === this.activeIndex;
     return (
-      <div
+      <ChoiceOptionRow
         id={`${this.generatedId}-option-${index}`}
-        class={{
-          'select-option': true,
-          'ds-choice-item': true,
-          'ds-control--md': true,
-          'ds-focus-ring-inset': true,
-          'ds-focus-ring--visible': active && this.focusRingVisible,
-          'ds-interaction-fill': !option.isInactive,
-          'ds-interaction-fill--selected': selected && !option.isInactive,
-          'ds-control-inactive': !!option.isInactive,
-          'select-option--active': active,
-        }}
-        role="option"
-        aria-selected={String(selected)}
-        aria-disabled={option.isInactive ? 'true' : undefined}
-        onMouseDown={event => event.preventDefault()}
-        onMouseMove={() => {
-          if (!option.isInactive) {
-            this.focusRingVisible = false;
-            this.activeIndex = index;
-          }
-        }}
-        onClick={() => this.selectOption(option)}
-      >
-        {option.icon && (
+        option={option}
+        selected={selected}
+        active={active}
+        focusRingVisible={this.focusRingVisible}
+        usesSubtext={usesSubtext}
+        leading={usesIcons && option.icon ? (
           <span class="ds-choice-item__icon ds-interaction-fill__content" aria-hidden="true">
             <ds-icon name={option.icon} size="md" color="inherit" />
           </span>
-        )}
-        <div class="ds-choice-item__content ds-interaction-fill__content">
-          <ds-text
-            class="ds-choice-item__label"
-            as="span"
-            variant="text-body-medium"
-            color={selected ? 'primary' : 'secondary'}
-          >
-            {option.label}
-          </ds-text>
-          {option.subtext && (
-            <ds-text class="ds-choice-item__subtext" as="span" variant="text-body-small" color="secondary">
-              {option.subtext}
-            </ds-text>
-          )}
-        </div>
-      </div>
+        ) : undefined}
+        onHover={() => {
+            this.focusRingVisible = false;
+            this.activeIndex = index;
+        }}
+        onSelect={() => this.selectOption(option)}
+      />
     );
   }
 
@@ -497,6 +491,8 @@ export class Select {
     const label = showPlaceholder ? this.placeholder : this.selectedOption?.label;
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
+    const usesOptionIcons = choiceListUsesIcons(this.allOptions);
+    const usesOptionSubtext = choiceListUsesSubtext(this.allOptions);
     const showError = this.error && Boolean(this.errorMessage);
     const describedBy = [this.ariaDescribedby, showError ? this.errorId : undefined]
       .filter(Boolean)
@@ -589,23 +585,20 @@ export class Select {
             style={popupStyle}
           >
             {this.searchable && (
-              <div class="select-search ds-control--md">
-                <ds-icon name="MagnifyingGlass" size="md" color="inherit" />
-                <input
-                  class="ds-text--body-medium ds-text--regular ds-focus-ring"
-                  ref={element => {
-                    this.searchEl = (element as HTMLInputElement) ?? null;
-                  }}
-                  type="search"
-                  value={this.searchTerm}
-                  placeholder={this.searchPlaceholder}
-                  aria-label={this.searchPlaceholder}
-                  aria-controls={this.listboxId}
-                  aria-activedescendant={this.activeOptionId}
-                  onInput={this.handleSearchInput}
-                  onKeyDown={event => this.handleListKeyDown(event)}
-                />
-              </div>
+              <ChoiceSearch
+                value={this.searchTerm}
+                placeholder={this.searchPlaceholder}
+                controls={this.listboxId}
+                activeDescendant={this.activeOptionId}
+                inputRef={element => {
+                  this.searchEl = element;
+                }}
+                clearLabel={this.clearLabel}
+                onValueChange={value => {
+                  this.searchTerm = value;
+                }}
+                onKeyDown={event => this.handleListKeyDown(event)}
+              />
             )}
             <div
               id={this.listboxId}
@@ -619,9 +612,9 @@ export class Select {
                   <ds-loader size="md" color="inherit" label={this.loadingLabel} />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
-                <ds-text class="ds-choice-empty" as="div" variant="text-body-small" color="secondary">
-                  {this.noResultsText}
-                </ds-text>
+                <div class="ds-choice-empty">
+                  <ds-empty-state body={this.noResultsText} />
+                </div>
               ) : (
                 this.visibleSections.map(section => (
                   <div
@@ -644,23 +637,18 @@ export class Select {
                         {section.header}
                       </ds-text>
                     )}
-                    {section.options.map(option => this.renderOption(option, flatIndex++))}
+                    {section.options.map(option => this.renderOption(
+                      option,
+                      flatIndex++,
+                      usesOptionIcons,
+                      usesOptionSubtext,
+                    ))}
                   </div>
                 ))
               )}
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
-              <div class="ds-choice-footer">
-                <button
-                  type="button"
-                  class="ds-choice-footer__clear ds-focus-ring"
-                  onClick={this.clearSelection}
-                >
-                  <ds-text as="span" variant="text-body-medium" color="inherit">
-                    {this.clearLabel}
-                  </ds-text>
-                </button>
-              </div>
+              <ChoiceFooter clearLabel={this.clearLabel} onClear={this.clearSelection} />
             )}
           </div>
         )}

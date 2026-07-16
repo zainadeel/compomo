@@ -21,6 +21,7 @@ const meta: Meta = {
     placeholder: { control: 'text' },
     size: { control: 'select', options: ['md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
+    icon: { control: 'text' },
     searchable: { control: 'boolean' },
     isLoading: { control: 'boolean' },
     allowClear: { control: 'boolean' },
@@ -28,7 +29,8 @@ const meta: Meta = {
   args: {
     placeholder: 'Entities',
     size: 'md',
-    width: 'fill',
+    width: 'hug',
+    icon: 'Chart',
     searchable: true,
     isLoading: false,
     allowClear: true,
@@ -47,6 +49,7 @@ export const Playground: Story = {
         placeholder=${args['placeholder']}
         size=${args['size']}
         width=${args['width']}
+        icon=${args['icon']}
         ?searchable=${args['searchable']}
         ?is-loading=${args['isLoading']}
         .allowClear=${args['allowClear']}
@@ -135,9 +138,9 @@ export const SizesAndWidths: Story = {
       <ds-select-multi
         .options=${OPTIONS}
         .values=${['vehicles']}
-        width="hug"
-        placeholder="Hug entities"
-        aria-label="Hug entities"
+        width="fill"
+        placeholder="Fill entities"
+        aria-label="Fill entities"
       ></ds-select-multi>
     </div>
   `,

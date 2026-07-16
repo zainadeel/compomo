@@ -266,6 +266,7 @@ export class MyComponent {
 **Buttons (filled / unfilled)**
 
 - Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
+- Both support `rounded` for the half-radius treatment. Rounded changes shape only; it does not alter hierarchy, intent, size, or interaction semantics.
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
 - `isLoading` disables activation without applying inactive opacity and sets native busy semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
 - Keep the action's accessible name while loading. The owning workflow announces broader progress when needed.
@@ -281,12 +282,12 @@ export class MyComponent {
 
 **Select / SelectMulti**
 
-- `ds-select` owns one string value; `ds-select-multi` owns a JavaScript array of string values. Multi keeps the field label/placeholder visible and summarizes selection with a count badge rather than replacing the label or rendering tags.
+- `ds-select` owns one string value; `ds-select-multi` owns a JavaScript array of string values. Multi keeps the field label/placeholder visible and summarizes selection as plain inline text (`Label · count`) rather than replacing the label, rendering a badge, or rendering tags.
 - Select popups use listbox/option semantics. `ds-menu` remains an action menu even though all three share anchored-popup and choice-row visual foundations; never switch select rows back to menu/menuitem roles.
 - Single-select rows rely on the selected active fill and foreground change; do not add a trailing check icon. They may use prefix icons. Multi-select rows use a presentation-only `ds-checkbox` indicator while the owning option retains listbox semantics and interaction; their option contract excludes icons because a choice row must never combine a checkbox and prefix icon.
 - Options support label, value, subtext, and `isInactive`; single-select options additionally support a prefix icon. Use either flat `options` or grouped `sections`; sections take precedence. Arrays and objects must be assigned as JavaScript properties.
 - `searchable` is immediate local filtering over label and subtext. Server search, debounce, networking, virtualization, and hierarchical children are intentionally outside these components.
-- The popup search row always uses the md choice-row recipe: body-medium input text, a 20px md search icon, and the same outer plus row padding and label inset as popup options. It does not shrink with an sm or xs trigger.
+- The popup search row always uses the md choice-row recipe: body-medium input text, a 20px md search icon, and the same outer plus row padding and label inset as popup options. It does not shrink with an sm or xs trigger. Its placeholder is secondary at rest and quaternary while focused. Do not use the current `ds-input` implementation as a visual or behavioral reference until that component is refactored.
 - `isLoading` replaces or occupies the trigger prefix-icon zone, exposes busy state, and shows a centered loader while option interaction is unavailable.
 - Clear actions live in the popup footer. Single clear emits an empty string; multi clear emits an empty array. Both emit `dsClear`, keep the popup open, and preserve useful focus.
 - Omitted `background` is for primary and secondary surfaces. Pass `faint` explicitly on faint surfaces and use the matching medium, bold, strong, translucent, inverted, media, or always-dark context elsewhere.
@@ -298,8 +299,8 @@ export class MyComponent {
 - `ds-checkbox` owns independent selection, acknowledgment, and consent. Use `ds-radio-group` for mutually exclusive choices and `ds-switch` for settings that apply immediately.
 - Sizes are md with a 16px box centered in a 20px placement, sm with a 12px box in 16px, and xs with an 8px box in 12px. Labels map to body-medium, body-small, and caption respectively.
 - The box always has a 2px radius and a 1px inset secondary border, including when selected. Unchecked is empty; checked uses the canonical `Check` icon and indeterminate uses `Subtract` on a brand fill. The icon matches the visual box size at every density.
-- Space activates an interactive checkbox. Activation clears indeterminate before toggling checked; native form reset restores both initial states.
-- Use `presentation` only when a composite owner supplies selection semantics and interaction. Multi-select rows render a sm presentation checkbox centered inside the shared 20px option icon zone; never combine it with a prefix icon.
+- Enter and Space activate an interactive checkbox. Activation clears indeterminate before toggling checked; native form reset restores both initial states.
+- Use `presentation` only when a composite owner supplies selection semantics and interaction. Multi-select rows render an md presentation checkbox centered inside the shared 20px option icon zone; never combine it with a prefix icon.
 - Checkbox is for primary, secondary, and faint app surfaces and does not expose a background prop.
 
 **Chip**
@@ -327,7 +328,7 @@ export class MyComponent {
 - The owner provides the primary accessible name. Give an announced counter or dot contextual supplemental text, or mark a purely visual badge `aria-hidden`; never expose a bare count or generic “notification” name.
 - Non-positive counters hide. Counts above the compact limit render the limit plus a suffix (for example `9+`).
 - Badge keeps one brand treatment. Use Tag or normal content for semantic statuses and quantities that must stand alone.
-- Use the halo ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot such as a SelectMulti count or dedicated row suffix. When enabled, match it to the immediate backing surface; prefer typed surface presets and reserve direct overrides for component-local fills. Gradient rings align automatically inside active AppShell gradient chrome.
+- Use the halo ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot such as a dedicated row suffix. When enabled, match it to the immediate backing surface; prefer typed surface presets and reserve direct overrides for component-local fills. Gradient rings align automatically inside active AppShell gradient chrome.
 - The owner positions Badge and owns responsive visibility or condensation. Badge never receives focus or pointer interaction.
 
 **Divider**

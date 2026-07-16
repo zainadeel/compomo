@@ -4,9 +4,9 @@ import '../../../../dist/components/ds-select.js';
 
 const OPTIONS = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
-  { label: 'Banana', value: 'banana', subtext: 'Unavailable for this account', isInactive: true },
+  { label: 'Banana', value: 'banana', icon: 'Bell', subtext: 'Unavailable for this account', isInactive: true },
   { label: 'Cherry', value: 'cherry', icon: 'Bell' },
-  { label: 'Date', value: 'date', subtext: 'A longer secondary description' },
+  { label: 'Date', value: 'date', icon: 'Chart', subtext: 'A longer secondary description' },
 ];
 
 const SECTIONS = [
@@ -55,7 +55,7 @@ const meta: Meta = {
     value: '',
     placeholder: 'Select fruit',
     size: 'md',
-    width: 'fill',
+    width: 'hug',
     icon: 'Chart',
     searchable: false,
     isLoading: false,

@@ -65,6 +65,9 @@ export class ButtonFilled {
    */
   @Prop() contrast: ButtonFilledContrast = 'bold';
 
+  /** Use the half-radius treatment instead of the default control radius. */
+  @Prop() rounded: boolean = false;
+
   /** Disables interaction. */
   @Prop() isInactive: boolean = false;
 
@@ -125,6 +128,7 @@ export class ButtonFilled {
       'button-filled--icon': this.variant === 'icon',
       'button-filled--label': this.variant === 'label',
       'button-filled--icon-label': this.variant === 'icon-label',
+      'button-filled--rounded': this.rounded,
       [`button-filled--intent-${this.intent}`]: true,
       [`button-filled--contrast-${this.contrast}`]: this.contrast !== 'bold',
     };
