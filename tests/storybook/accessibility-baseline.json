@@ -428,19 +428,7 @@
       "#ds-select-15 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
       "#ds-select-16 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
       "#ds-select-17 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "#ds-select-18 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "ds-text[data-a11y-component-root=\"12\"] > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "color-contrast",
-    "storyId": "form-select--backgrounds",
-    "theme": "dark",
-    "targets": [
-      "ds-text[data-a11y-component-root=\"6\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "ds-text[data-a11y-component-root=\"8\"] > .ds-text__element.sc-ds-text.sc-ds-text-s"
+      "#ds-select-18 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
     ]
   },
   {
@@ -459,20 +447,6 @@
       "#ds-select-16 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
       "#ds-select-17 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s",
       "#ds-select-18 > .trigger__label.ds-text--inline-box.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "color-contrast",
-    "storyId": "form-select--backgrounds",
-    "theme": "light",
-    "targets": [
-      "ds-text[data-a11y-component-root=\"12\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "ds-text[data-a11y-component-root=\"14\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "ds-text[data-a11y-component-root=\"16\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "ds-text[data-a11y-component-root=\"6\"] > .ds-text__element.sc-ds-text.sc-ds-text-s",
-      "ds-text[data-a11y-component-root=\"8\"] > .ds-text__element.sc-ds-text.sc-ds-text-s"
     ]
   },
   {

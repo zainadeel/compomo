@@ -504,6 +504,13 @@ export const Default: Story = {
 };
 ```
 
+The automated accessibility audit normally scans every top-level `ds-*`
+component in a story. In a showcase story where design-system captions or
+annotations are siblings of the real component fixture, add
+`data-a11y-fixture` to each component under test. When any explicit fixture is
+present, only marked components are audited; never use the marker to exclude
+content rendered by the component itself.
+
 For components with complex JS-only props (arrays, objects), use `lit/directives/ref.js`:
 
 ```ts

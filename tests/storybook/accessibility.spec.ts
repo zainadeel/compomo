@@ -43,6 +43,7 @@ const themes: Theme[] = ['light', 'dark'];
 const blockingImpacts = new Set(['critical', 'serious']);
 const contrastRulesRequiringReview = new Set(['color-contrast', 'non-text-contrast']);
 const componentStoryPrefix = './src/wc/components/';
+const explicitFixtureAttribute = 'data-a11y-fixture';
 const componentRootAttribute = 'data-a11y-component-root';
 const componentRootSelector = `[${componentRootAttribute}]`;
 const impactRank: Record<AccessibilityImpact, number> = {
@@ -156,14 +157,20 @@ async function waitForStory(page: Page): Promise<void> {
 }
 
 async function markComponentRoots(page: Page): Promise<number> {
-  return page.evaluate((attribute) => {
+  return page.evaluate(({ explicitAttribute, rootAttribute }) => {
     const storyRoot = document.querySelector<HTMLElement>('#storybook-root');
     if (!storyRoot) return 0;
 
-    const componentElements = Array.from(storyRoot.querySelectorAll<HTMLElement>('*')).filter(
+    const explicitFixtures = Array.from(
+      storyRoot.querySelectorAll<HTMLElement>(`[${explicitAttribute}]`),
+    ).filter((element) => element.localName.startsWith('ds-'));
+
+    const componentElements = Array.from(
+      storyRoot.querySelectorAll<HTMLElement>('*'),
+    ).filter(
       (element) => element.localName.startsWith('ds-'),
     );
-    const componentRoots = componentElements.filter((element) => {
+    const inferredRoots = componentElements.filter((element) => {
       let ancestor = element.parentElement;
       while (ancestor && ancestor !== storyRoot) {
         if (ancestor.localName.startsWith('ds-')) return false;
@@ -171,13 +178,17 @@ async function markComponentRoots(page: Page): Promise<number> {
       }
       return true;
     });
+    const componentRoots = explicitFixtures.length > 0 ? explicitFixtures : inferredRoots;
 
     componentRoots.forEach((element, index) => {
-      element.setAttribute(attribute, String(index));
+      element.setAttribute(rootAttribute, String(index));
     });
 
     return componentRoots.length;
-  }, componentRootAttribute);
+  }, {
+    explicitAttribute: explicitFixtureAttribute,
+    rootAttribute: componentRootAttribute,
+  });
 }
 
 async function applyTheme(page: Page, theme: Theme): Promise<void> {
