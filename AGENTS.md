@@ -299,7 +299,7 @@ export class MyComponent {
 
 - `ds-checkbox` owns independent selection, acknowledgment, and consent. Use `ds-radio-group` for mutually exclusive choices and `ds-switch` for settings that apply immediately.
 - Sizes are md with a 16px box centered in a 20px placement, sm with a 12px box in 16px, and xs with an 8px box in 12px. Labels map to body-medium, body-small, and caption respectively.
-- The box always has a 2px radius and a 1px inset secondary border, including when selected. Unchecked is empty; checked uses the canonical `Check` icon and indeterminate uses `Subtract` on a brand fill. The icon matches the visual box size at every density.
+- The box always has a 2px radius. Unchecked uses an inset `--color-foreground-tertiary` stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked and indeterminate remove the border, use a brand fill, and draw their component-owned mark at the same density-specific stroke width.
 - Enter and Space activate an interactive checkbox. Activation clears indeterminate before toggling checked; native form reset restores both initial states.
 - Use `presentation` only when a composite owner supplies selection semantics and interaction. Multi-select rows render an md presentation checkbox centered inside the shared 20px option icon zone; never combine it with a prefix icon.
 - Checkbox is for primary, secondary, and faint app surfaces and does not expose a background prop.

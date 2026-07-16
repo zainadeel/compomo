@@ -63,6 +63,12 @@ restricted hierarchy. Prefer the owning component's `isInactive` API or native
 `disabled` state so semantics and visuals stay synchronized. `aria-hidden`
 alone does not make meaningful visible content decorative.
 
+Component-owned non-text recipes are a narrow exception. A control may resolve
+one of these tokens internally for a boundary or state mark only when that exact
+rendered treatment is verified to meet its 3:1 requirement on every supported
+surface. Checkbox does this for its unchecked outline. Product code should use
+the component API rather than copying that internal token choice.
+
 ### Intent and contrast
 
 The semantic intent set is `neutral`, `brand`, `ai`, `negative`, `warning`,
@@ -175,7 +181,8 @@ their named domain meaning; they are not substitute chart palettes.
   themes.
 - Restrict tertiary and quaternary foregrounds to genuinely inactive/disabled
   UI content or purely decorative content; never use them to quiet active
-  information.
+  information. Component-owned non-text contrast recipes are the documented,
+  measured exception.
 - Meaningful chart labels, data markers, icons, and status graphics still need
   sufficient rendered contrast even when hidden from assistive technology.
 - Use matching on-background families for colored surfaces.
