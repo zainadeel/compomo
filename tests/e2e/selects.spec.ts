@@ -101,6 +101,39 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('keeps single and multi popups visible and pointer-usable after repeated reopen cycles', async ({ page }) => {
+  const single = page.locator('#single');
+  const singleTrigger = single.getByRole('combobox');
+
+  for (const option of [
+    { label: 'Apple', value: 'apple' },
+    { label: /Cherry/, value: 'cherry' },
+    { label: 'Date', value: 'date' },
+  ]) {
+    await singleTrigger.click();
+    await expect(single.getByRole('listbox')).toBeVisible();
+    await single.getByRole('option', { name: option.label }).click();
+    await expect.poll(() =>
+      single.evaluate((element: HTMLDsSelectElement) => element.value),
+    ).toBe(option.value);
+    await expect(singleTrigger).toHaveAttribute('aria-expanded', 'false');
+  }
+
+  const multi = page.locator('#multi');
+  const multiTrigger = multi.getByRole('combobox');
+
+  for (let cycle = 0; cycle < 3; cycle += 1) {
+    await multiTrigger.click();
+    await expect(multi.getByRole('listbox')).toBeVisible();
+    await multi.getByRole('option', { name: 'Date' }).click();
+    await expect.poll(() =>
+      multi.evaluate((element: HTMLDsSelectMultiElement) => element.values.includes('date')),
+    ).toBe(cycle % 2 === 0);
+    await multiTrigger.press('Escape');
+    await expect(multiTrigger).toHaveAttribute('aria-expanded', 'false');
+  }
+});
+
 test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({ page }) => {
   const loading = page.locator('#loading');
   await loading.getByRole('combobox').click();

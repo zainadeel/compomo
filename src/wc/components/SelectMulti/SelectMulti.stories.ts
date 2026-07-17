@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-select-multi.js';
 
 const OPTIONS = [
@@ -18,6 +19,7 @@ const meta: Meta = {
   title: 'Form/Select Multi',
   tags: ['autodocs'],
   argTypes: {
+    values: { control: 'object' },
     placeholder: { control: 'text' },
     size: { control: 'select', options: ['md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
@@ -27,6 +29,7 @@ const meta: Meta = {
     allowClear: { control: 'boolean' },
   },
   args: {
+    values: ['vehicles', 'drivers'],
     placeholder: 'Entities',
     size: 'md',
     width: 'hug',
@@ -41,22 +44,26 @@ export default meta;
 type Story = StoryObj;
 
 export const Playground: Story = {
-  render: args => html`
-    <div style="width:260px;">
-      <ds-select-multi
-        .options=${OPTIONS}
-        .values=${['vehicles', 'drivers']}
-        placeholder=${args['placeholder']}
-        size=${args['size']}
-        width=${args['width']}
-        icon=${args['icon']}
-        ?searchable=${args['searchable']}
-        ?is-loading=${args['isLoading']}
-        .allowClear=${args['allowClear']}
-        aria-label="Entities"
-      ></ds-select-multi>
-    </div>
-  `,
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return html`
+      <div style="width:260px;">
+        <ds-select-multi
+          .options=${OPTIONS}
+          .values=${Array.isArray(args['values']) ? args['values'] : []}
+          placeholder=${args['placeholder']}
+          size=${args['size']}
+          width=${args['width']}
+          icon=${args['icon']}
+          ?searchable=${args['searchable']}
+          ?is-loading=${args['isLoading']}
+          .allowClear=${args['allowClear']}
+          aria-label="Entities"
+          @dsChange=${(event: CustomEvent<string[]>) => updateArgs({ values: [...event.detail] })}
+        ></ds-select-multi>
+      </div>
+    `;
+  },
 };
 
 export const OpenWithCount: Story = {
