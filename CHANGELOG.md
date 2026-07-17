@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.3.0](https://github.com/zainadeel/compomo/compare/v8.2.1...v8.3.0) (2026-07-17)
+
+
+### Added
+
+* refine forms and data visualization components ([#337](https://github.com/zainadeel/compomo/issues/337)) ([74fa452](https://github.com/zainadeel/compomo/commit/74fa4528ff274383698ab65d889b22fb06ac6dd1))
+
 ## [8.2.1](https://github.com/zainadeel/compomo/compare/v8.2.0...v8.2.1) (2026-07-17)
 
 
