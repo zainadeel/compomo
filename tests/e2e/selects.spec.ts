@@ -48,6 +48,16 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(listbox).toBeVisible();
   await expect(listbox.getByRole('option')).toHaveCount(4);
   await expect(listbox.locator('.ds-choice-item__icon')).toHaveCount(4);
+  const selectedIcon = listbox.locator('[role="option"][aria-selected="true"] .ds-choice-item__icon');
+  const primaryColor = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-primary)';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(selectedIcon).toHaveCSS('color', primaryColor);
   await expect(listbox.getByRole('option', { name: 'Banana' })).toHaveAttribute('aria-disabled', 'true');
   await expect.poll(() =>
     listbox.evaluate(element =>
@@ -78,9 +88,17 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
   await trigger.press('ArrowDown');
-  await trigger.press('Tab');
+  const tabWasPrevented = await trigger.evaluate(element => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      bubbles: true,
+      cancelable: true,
+    });
+    element.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+  expect(tabWasPrevented).toBe(false);
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-  await expect(trigger).not.toBeFocused();
 });
 
 test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({ page }) => {

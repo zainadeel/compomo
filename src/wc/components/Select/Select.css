@@ -92,6 +92,10 @@
   color: var(--color-foreground-secondary);
 }
 
+.select-option[aria-selected='true'] .ds-choice-item__icon {
+  color: var(--color-foreground-primary);
+}
+
 .select-search {
   position: relative;
   box-sizing: border-box;
