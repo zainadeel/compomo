@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.2.0](https://github.com/zainadeel/compomo/compare/v8.1.0...v8.2.0) (2026-07-17)
+
+
+### Added
+
+* improve Storybook accessibility and form controls ([#331](https://github.com/zainadeel/compomo/issues/331)) ([8b46eb7](https://github.com/zainadeel/compomo/commit/8b46eb704c04064c2809b2027b4e4349ea355a7d))
+
 ## [8.1.0](https://github.com/zainadeel/compomo/compare/v8.0.1...v8.1.0) (2026-07-16)
 
 
