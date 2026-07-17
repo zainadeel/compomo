@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.3.1](https://github.com/zainadeel/compomo/compare/v8.3.0...v8.3.1) (2026-07-17)
+
+
+### Fixed
+
+* keep select popups usable after reopening ([#339](https://github.com/zainadeel/compomo/issues/339)) ([522e1ad](https://github.com/zainadeel/compomo/commit/522e1ad50ffb7fe0ce1183bb44fbd5cce9d6f051))
+
 ## [8.3.0](https://github.com/zainadeel/compomo/compare/v8.2.1...v8.3.0) (2026-07-17)
 
 
