@@ -100,8 +100,41 @@ The exact automated baseline remains in
 `tests/storybook/accessibility-baseline.json`. It records Axe targets, but it is
 not a substitute for this non-text contrast review.
 
+For normal HTML text and controls, resolve CSS variables and inspect the computed
+foreground against the actual adjacent background. Those deterministic,
+non-SVG pairs can be calculated directly and do not require subjective visual
+judgment. Keep manual review for SVG content, gradients, translucent layers,
+animation, and interaction overlays where the final adjacent color cannot be
+reliably reduced to one computed pair.
+
 References: [WCAG 1.4.11 Non-text Contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast)
 and [WCAG 1.4.3 Contrast Minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum).
+
+## Compact target-size contract
+
+Extra-small controls retain their compact visual density only when the owning
+layout allocates at least 24×24 CSS pixels per operable target and preserves
+enough clearance that 24px circles centered on adjacent target bounds do not
+overlap. Use `sm` or `md` when that spacing cannot be guaranteed. This applies
+to xs buttons, checkbox and radio rows, Switch, Slider, and any other operable
+control; presentation-only indicators are not pointer targets.
+
+Reference: [WCAG 2.5.8 Target Size Minimum](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum).
+
+## Deliberately deferred audits
+
+The following checks remain valuable but are outside the current pass:
+
+- A manual VoiceOver and NVDA review of spoken names, states, changes, and focus
+  order. Automated tests continue to cover programmatic names, roles,
+  relationships, keyboard behavior, and focus movement, but do not certify the
+  quality of spoken output.
+- A systematic 400% zoom / 320 CSS-pixel reflow pass and WCAG text-spacing
+  override pass. Existing responsive, text-metric, and truncation tests remain
+  active, but they are not substitutes for these audits.
+- Windows High Contrast and `forced-colors` support. The implementation and
+  verification plan is tracked in
+  [GitHub issue #332](https://github.com/zainadeel/compomo/issues/332).
 
 ## Review matrix
 

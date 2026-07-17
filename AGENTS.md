@@ -78,7 +78,7 @@ npm run build            # Stencil compiler build → dist/
 npm run clean:framework-proxies # Remove generated Angular/React source proxies + barrels only
 npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, etc.)
 npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
-npm run test:e2e:install # One-time Chromium and WebKit install for Playwright
+npm run test:e2e:install # One-time Chromium, Firefox, and WebKit install for Playwright
 npm run dev              # Stencil watch using normal dist output (updates dist/ on source changes)
 npm run storybook        # Stencil watch + Storybook on :6006 (auto-reloads when dist/ rebuilds)
 npm run storybook:build  # Build static Storybook
@@ -430,6 +430,8 @@ Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNa
 | Rounded | `--dimension-radius-half` | same | same |
 
 CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Text line-height is not a density variable; the control's `size` maps internally to a complete `ds-text` variant via `CONTROL_TEXT_VARIANT`.
+
+The xs recipe is a compact **visual density**, not permission to crowd pointer targets. An owner that uses an operable xs control must place it within at least a 24×24 CSS-pixel allocation and preserve enough clearance that 24px circles centered on adjacent target bounds do not overlap. This contract also applies to compact Switch and Slider instances. Use sm or md whenever the layout cannot guarantee that spacing; presentation-only indicators are not pointer targets.
 
 **Switch density**
 
