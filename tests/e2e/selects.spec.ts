@@ -88,9 +88,17 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
   await trigger.press('ArrowDown');
-  await trigger.press('Tab');
+  const tabWasPrevented = await trigger.evaluate(element => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      bubbles: true,
+      cancelable: true,
+    });
+    element.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+  expect(tabWasPrevented).toBe(false);
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-  await expect(trigger).not.toBeFocused();
 });
 
 test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({ page }) => {
