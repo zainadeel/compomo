@@ -15,9 +15,13 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     direction: { control: 'select', options: ['vertical', 'horizontal'] },
+    percentageDecimals: { control: 'radio', options: [1, 2] },
+    showPercentage: { control: 'boolean' },
   },
   args: {
     direction: 'vertical',
+    percentageDecimals: 1,
+    showPercentage: true,
   },
 };
 export default meta;
@@ -31,6 +35,8 @@ export const Playground: Story = {
         (el as any).items = MOCK_DATA;
       })}
       direction=${args['direction']}
+      percentage-decimals=${args['percentageDecimals']}
+      ?show-percentage=${args['showPercentage']}
     ></ds-chart-legend>
   `,
 };
@@ -66,12 +72,13 @@ export const TruncateAndFormat: Story = {
     <div style="display:flex;gap:var(--dimension-space-400);align-items:flex-start;font-family:var(--typography-font-family, system-ui)">
       <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);width:220px">
         <p style="color:var(--color-foreground-tertiary);font-size:var(--typography-fontsize-xs);margin:0">
-          Number formatting — 1000→1k, 1500→1.5k, 10100→10.1k, 110100→110.1k, 1000000→1m
+          Number formatting with percentages fixed to 2 decimal places
         </p>
         <ds-chart-legend
           ${ref(el => {
             if (!el) return;
             (el as any).items = NUMBER_FORMAT_ITEMS;
+            (el as any).percentageDecimals = 2;
           })}
         ></ds-chart-legend>
       </div>

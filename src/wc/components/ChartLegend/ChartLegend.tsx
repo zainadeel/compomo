@@ -1,9 +1,10 @@
 import { Component, Prop, State, Event, EventEmitter, h, Host } from '@stencil/core';
 import { categoryColor } from '../../utils/chart-colors';
-import { formatCompactNumber } from '../../utils';
+import { formatCompactNumber, formatPercentage } from '../../utils';
 import type { ChartLegendItem } from '../../utils/chart-types';
 
 export type ChartLegendDirection = 'vertical' | 'horizontal';
+export type ChartLegendPercentageDecimals = 1 | 2;
 
 const DIMMED_OPACITY = 0.25;
 
@@ -26,6 +27,8 @@ export class ChartLegend {
   @Prop() direction: ChartLegendDirection = 'vertical';
   /** Show each item's share of the total (of items with a `value`) alongside its count. */
   @Prop() showPercentage: boolean = true;
+  /** Fixed number of decimal places shown for percentages. */
+  @Prop() percentageDecimals: ChartLegendPercentageDecimals = 1;
   /**
    * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling
    * chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other
@@ -59,7 +62,13 @@ export class ChartLegend {
     const highlightLabel = this.activeLabel ?? this.hoveredLabel;
 
     return (
-      <Host class={{ 'chart-legend': true, [`chart-legend--${this.direction}`]: true }}>
+      <Host
+        class={{
+          'chart-legend': true,
+          [`chart-legend--${this.direction}`]: true,
+          'chart-legend--show-percentage': this.showPercentage,
+        }}
+      >
         {/* mouseleave lives on the list, not each row — the row-gap between items is still
             inside the list's box, so crossing it while moving between rows never fires this.
             Only actually leaving the whole list does, and that clears with no delay. */}
@@ -67,6 +76,9 @@ export class ChartLegend {
           {this.items.map((item, i) => {
             const isDimmed = highlightLabel != null && item.label !== highlightLabel;
             const RowTag = item.href ? 'a' : 'div';
+            const percentage = item.value != null
+              ? formatPercentage(total ? item.value / total : 0, this.percentageDecimals, this.locale)
+              : '';
 
             return (
               <li class="chart-legend__list-item" key={item.label}>
@@ -105,14 +117,25 @@ export class ChartLegend {
                       variant="text-body-medium"
                       color="primary"
                       lineTruncation={1}
+                      align="right"
+                      fontFeature="tabular-nums"
                       title={String(item.value)}
                     >
                       {formatCompactNumber(item.value, this.locale)}
                     </ds-text>
                   )}
                   {item.value != null && this.showPercentage && (
-                    <ds-text class="chart-legend__percentage" as="span" variant="text-body-medium" color="primary">
-                      {(total ? (item.value / total) * 100 : 0).toFixed(1)}%
+                    <ds-text
+                      class="chart-legend__percentage"
+                      as="span"
+                      variant="text-body-medium"
+                      color="primary"
+                      lineTruncation={1}
+                      align="right"
+                      fontFeature="tabular-nums"
+                      title={percentage}
+                    >
+                      {percentage}
                     </ds-text>
                   )}
                 </RowTag>

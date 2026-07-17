@@ -1,7 +1,7 @@
 import { Component, Element, Event, EventEmitter, State, h, Host, Prop } from '@stencil/core';
-import type { CardWidth } from '../Card/Card';
+import type { CardShellDataVizWidth } from '../CardShellDataViz/CardShellDataViz';
 
-export type CardDataVizDonutWidth = CardWidth;
+export type CardDataVizDonutWidth = CardShellDataVizWidth;
 
 /** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */
 type HoveredDatum = { label: string } | null;
@@ -10,7 +10,7 @@ type HoveredDatum = { label: string } | null;
 type SyncableSlot = HTMLElement & { activeLabel?: string | null };
 
 /**
- * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+ * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
  * content-sized legend. Hover sync between chart and legend stays here.
  */
 @Component({
@@ -81,7 +81,7 @@ export class CardDataVizDonut {
   render() {
     return (
       <Host class="card-data-viz-donut">
-        <ds-card heading={this.heading} cardWidth={this.cardWidth}>
+        <ds-card-shell-data-viz heading={this.heading} cardWidth={this.cardWidth}>
           <ds-button-unfilled
             slot="actions"
             variant="icon"
@@ -102,7 +102,7 @@ export class CardDataVizDonut {
               </div>
             )}
           </div>
-        </ds-card>
+        </ds-card-shell-data-viz>
       </Host>
     );
   }

@@ -73,12 +73,19 @@ test('field associates one control with its label, guidance, error, and interact
   });
   await expect(field).toHaveAttribute('data-invalid', '');
   await expect(nativeInput).toHaveAttribute('aria-invalid', 'true');
-  await expect(nativeInput).toHaveAttribute(
-    'aria-describedby',
-    'email-control-description email-control-error',
-  );
+  await expect(description).toHaveCount(0);
+  await expect(nativeInput).toHaveAttribute('aria-describedby', 'email-control-error');
   await expect(field.getByRole('alert')).toHaveText('Enter a valid work email.');
   await expect(input.locator('.input-control')).toHaveClass(/input-control--error/);
+
+  await field.evaluate((element: HTMLDsFieldElement) => {
+    element.error = false;
+  });
+  await expect(field.getByRole('alert')).toHaveCount(0);
+  await expect(field.locator('.field__description .ds-text__element')).toHaveText(
+    'Use your work email address.',
+  );
+  await expect(nativeInput).toHaveAttribute('aria-describedby', 'email-control-description');
 });
 
 test('input read-only state remains focusable and submittable without a clear action', async ({ page }) => {
@@ -178,15 +185,26 @@ test('input follows shared control density, focus, and search-clear recipes', as
   for (const id of ['input-search', 'input-search-sm', 'input-search-xs']) {
     const clearAlignment = await page.locator(`#${id}`).evaluate(element => {
       const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
-      const clear = element.querySelector<HTMLElement>('ds-button-unfilled')!.getBoundingClientRect();
+      const clearAction = element.querySelector<HTMLElement>('ds-button-unfilled')!;
+      const clear = clearAction.getBoundingClientRect();
+      const glyph = clearAction.querySelector<HTMLElement>('ds-icon')!.getBoundingClientRect();
       return {
-        top: clear.top - control.top,
-        right: control.right - clear.right,
-        bottom: control.bottom - clear.bottom,
+        action: {
+          top: clear.top - control.top,
+          right: control.right - clear.right,
+          bottom: control.bottom - clear.bottom,
+        },
+        glyph: {
+          top: glyph.top - control.top,
+          right: control.right - glyph.right,
+          bottom: control.bottom - glyph.bottom,
+        },
       };
     });
-    expect(clearAlignment.right).toBe(clearAlignment.top);
-    expect(clearAlignment.right).toBe(clearAlignment.bottom);
+    expect(clearAlignment.action.right).toBe(clearAlignment.action.top);
+    expect(clearAlignment.action.right).toBe(clearAlignment.action.bottom);
+    expect(clearAlignment.glyph.right).toBe(clearAlignment.glyph.top);
+    expect(clearAlignment.glyph.right).toBe(clearAlignment.glyph.bottom);
   }
   await search.locator('ds-button-unfilled button').click();
   await expect(search.locator('input')).toHaveValue('');
@@ -358,7 +376,13 @@ test('switch sizes preserve density-specific thumb insets and an outset focus ri
     const switchControl = page.locator(`#switch-${size}`);
     const off = await switchControl.evaluate(element => {
       const host = element.getBoundingClientRect();
-      const thumb = element.shadowRoot!.querySelector('.thumb')!.getBoundingClientRect();
+      const thumbElement = element.shadowRoot!.querySelector<HTMLElement>('.thumb')!;
+      const thumb = thumbElement.getBoundingClientRect();
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-tertiary)';
+      element.shadowRoot!.append(probe);
+      const tertiary = getComputedStyle(probe).color;
+      probe.remove();
       return {
         width: Math.round(host.width),
         height: Math.round(host.height),
@@ -366,7 +390,9 @@ test('switch sizes preserve density-specific thumb insets and an outset focus ri
         inset: Math.round(thumb.left - host.left),
         blockInset: Math.round(thumb.top - host.top),
         border: getComputedStyle(element).boxShadow,
-        thumbBorder: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!).boxShadow,
+        thumbBackground: getComputedStyle(thumbElement).backgroundColor,
+        thumbBorder: getComputedStyle(thumbElement).boxShadow,
+        tertiary,
       };
     });
 
@@ -379,8 +405,8 @@ test('switch sizes preserve density-specific thumb insets and an outset focus ri
     });
     expect(off.border).toContain('inset');
     expect(off.border).toContain(dimensions.stroke);
-    expect(off.thumbBorder).toContain('inset');
-    expect(off.thumbBorder).toContain(dimensions.stroke);
+    expect(off.thumbBackground).toBe(off.tertiary);
+    expect(off.thumbBorder).toBe('none');
 
     await switchControl.click();
     await expect(switchControl).toHaveAttribute('aria-checked', 'true');
@@ -569,6 +595,7 @@ test('slider sizes align with the control density system', async ({ page }) => {
         trackBorder: getComputedStyle(rail).boxShadow,
         trackRadius: getComputedStyle(rail).borderRadius,
         thumbBorder: getComputedStyle(visual).boxShadow,
+        thumbRadius: getComputedStyle(visual).borderRadius,
         trackColor,
         thumbColor,
       };
@@ -587,6 +614,7 @@ test('slider sizes align with the control density system', async ({ page }) => {
     expect(actual.thumbBorder).toContain('inset');
     expect(actual.thumbBorder).toContain('1.5px');
     expect(actual.thumbBorder).toContain(actual.thumbColor);
+    expect(actual.thumbRadius).toBe('2px');
   }
 });
 

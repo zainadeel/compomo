@@ -5,8 +5,8 @@
   "artifactExceptions": {},
   "legacySummaries": {
     "component:ds-banner": "Intent-colored message bar. Supports floating toast mode with auto-dismiss and fade-out animation.",
-    "component:ds-card": "Shared card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space. Compose from settings and data-viz cards.",
-    "component:ds-card-data-viz-donut": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
+    "component:ds-card": "General and settings-compatible card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space.",
+    "component:ds-card-data-viz-donut": "Donut data-viz card on dedicated ds-card-shell-data-viz chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
     "component:ds-card-setting": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
     "component:ds-modal": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
     "component:ds-pagination": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",

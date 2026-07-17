@@ -13,6 +13,7 @@ export { DsButtonUnfilled } from './ds-button-unfilled';
 export { DsCard } from './ds-card';
 export { DsCardDataVizDonut } from './ds-card-data-viz-donut';
 export { DsCardSetting } from './ds-card-setting';
+export { DsCardShellDataViz } from './ds-card-shell-data-viz';
 export { DsChartBar } from './ds-chart-bar';
 export { DsChartDonut } from './ds-chart-donut';
 export { DsChartLegend } from './ds-chart-legend';

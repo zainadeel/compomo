@@ -21,7 +21,8 @@ const FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';
 
 /**
  * Shared card chrome — width + matching min-height tokens, header (title + actions),
- * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
+ * and a flex body that fills leftover space. Data-visualization cards use their
+ * dedicated `ds-card-shell-data-viz` boundary instead.
  */
 @Component({
   tag: 'ds-card',
