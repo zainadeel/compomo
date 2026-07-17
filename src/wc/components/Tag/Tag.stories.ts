@@ -119,26 +119,31 @@ export const WithIcon: Story = {
 export const InteractiveMenuTrigger: Story = {
   name: 'Interactive menu trigger',
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
-      <ds-tag
-        label="Vehicle status"
-        icon="Filters"
-        interactive
-        aria-controls="vehicle-status-menu"
-      ></ds-tag>
-      <ds-tag
-        label="Expanded"
-        icon="Filters"
-        interactive
-        expanded
-        aria-controls="expanded-menu"
-      ></ds-tag>
-      <ds-tag
-        label="Unavailable"
-        interactive
-        is-inactive
-        aria-controls="unavailable-menu"
-      ></ds-tag>
+    <div>
+      <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+        <ds-tag
+          label="Vehicle status"
+          icon="Filters"
+          interactive
+          aria-controls="vehicle-status-menu"
+        ></ds-tag>
+        <ds-tag
+          label="Expanded"
+          icon="Filters"
+          interactive
+          expanded
+          aria-controls="expanded-menu"
+        ></ds-tag>
+        <ds-tag
+          label="Unavailable"
+          interactive
+          is-inactive
+          aria-controls="unavailable-menu"
+        ></ds-tag>
+      </div>
+      <div id="vehicle-status-menu" hidden></div>
+      <div id="expanded-menu" hidden></div>
+      <div id="unavailable-menu" hidden></div>
     </div>
   `,
 };

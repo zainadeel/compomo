@@ -68,7 +68,7 @@ const preview: Preview = {
       storySort: {
         order: [
           'Docs',
-          ['Introduction', 'Typography Usage', 'Color Usage', 'Elevation Usage', 'Selection Patterns'],
+          ['Introduction', 'Accessibility Review', 'Typography Usage', 'Color Usage', 'Elevation Usage', 'Selection Patterns'],
           'Foundation',
           ['Colors Semantic', 'Colors Data', 'Iconography', 'Typography'],
           'Primitives',
@@ -100,6 +100,15 @@ const preview: Preview = {
       matchers: {
         color: /(^background$|color$)/i,
         date: /Date$/i,
+      },
+    },
+    a11y: {
+      // Keep the interactive panel focused on rendered Stencil components instead of
+      // Storybook captions. CI narrows this further to top-level component fixtures.
+      context: { include: '#storybook-root .hydrated' },
+      // The region rule is noisy for isolated components without page landmarks.
+      config: {
+        rules: [{ id: 'region', enabled: false }],
       },
     },
     backgrounds: { disable: true },

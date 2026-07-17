@@ -61,7 +61,7 @@ export class PanelSubNav {
     requestAnimationFrame(() => {
       const active = document.activeElement as HTMLElement | null;
       if (!active || !this.el.contains(active)) return;
-      this.focusItem(next);
+      this.focusItem(this.enabledItems.some(item => item.id === next) ? next : this.focusableId);
     });
   }
 
@@ -78,9 +78,15 @@ export class PanelSubNav {
   handleKeyDown(event: KeyboardEvent) {
     if (!this.enabledItems.length) return;
 
-    const selectedIndex = this.items.findIndex(item => item.id === this.value);
-    const currentIndex = selectedIndex >= 0
-      ? selectedIndex
+    const focusedId = (event.target as Element | null)
+      ?.closest<HTMLElement>('[data-panel-sub-nav-id]')
+      ?.dataset['panelSubNavId'];
+    const focusedIndex = this.items.findIndex(item => item.id === focusedId);
+    const selectedIndex = this.items.findIndex(item => item.id === this.value && !item.isInactive);
+    const currentIndex = focusedIndex >= 0
+      ? focusedIndex
+      : selectedIndex >= 0
+        ? selectedIndex
       : (event.key === 'ArrowUp' ? 0 : -1);
     let nextIndex: number | null = null;
 

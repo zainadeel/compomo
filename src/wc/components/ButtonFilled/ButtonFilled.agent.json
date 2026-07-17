@@ -40,7 +40,7 @@
     "Provide an explicit accessible name for icon-only buttons.",
     "Use inactive state only when the action must remain visible but unavailable.",
     "Do not encode the action meaning through color alone.",
-    "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when users need confirmation.",
+    "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when users need confirmation.",
     "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
   ],
   "states": [
@@ -48,7 +48,7 @@
     "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
     "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
     "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
-    "Loading prevents duplicate activation without applying inactive opacity.",
+    "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
   ],
   "responsiveBehavior": [

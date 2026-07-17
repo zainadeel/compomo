@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsInput } from '@ds-mo/ui/components/ds-in
 
 @ProxyCmp({
   defineCustomElementFn: defineDsInput,
-  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'clearLabel', 'disabled', 'error', 'errorMessage', 'inputId', 'isInactive', 'name', 'placeholder', 'required', 'requiredMessage', 'type', 'value'],
+  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoComplete', 'autoFocus', 'clearLabel', 'disabled', 'enterKeyHint', 'error', 'errorMessage', 'form', 'hasBorder', 'icon', 'inputId', 'inputMode', 'isInactive', 'name', 'placeholder', 'readOnly', 'required', 'requiredMessage', 'size', 'type', 'value', 'width'],
   methods: ['setFocus']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsInput } from '@ds-mo/ui/components/ds-in
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoFocus', 'clearLabel', 'disabled', 'error', 'errorMessage', 'inputId', 'isInactive', 'name', 'placeholder', 'required', 'requiredMessage', 'type', 'value'],
+  inputs: ['ariaDescribedby', 'ariaLabel', 'ariaLabelledby', 'autoComplete', 'autoFocus', 'clearLabel', 'disabled', 'enterKeyHint', 'error', 'errorMessage', 'form', 'hasBorder', 'icon', 'inputId', 'inputMode', 'isInactive', 'name', 'placeholder', 'readOnly', 'required', 'requiredMessage', 'size', 'type', 'value', 'width'],
   outputs: ['dsChange', 'dsClear'],
 })
 export class DsInput {

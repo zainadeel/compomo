@@ -7,6 +7,14 @@ import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
 
 /** rAF retries while the popup mounts or the anchor resolves. */
 const POSITION_RETRY_BUDGET = 8;
+const MENU_FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
 
 @Component({
   tag: 'ds-menu',
@@ -144,6 +152,50 @@ export class Menu {
     return null;
   }
 
+  private get anchorFocusTarget(): HTMLElement | null {
+    const anchor = this.resolvedAnchor;
+    if (!anchor) return null;
+    if (anchor.matches(MENU_FOCUSABLE_SELECTOR)) return anchor;
+    return anchor.querySelector<HTMLElement>(MENU_FOCUSABLE_SELECTOR) ?? anchor;
+  }
+
+  private focusAnchor() {
+    const anchor = this.resolvedAnchor as (HTMLElement & { setFocus?: () => Promise<void> | void }) | null;
+    if (anchor?.setFocus) {
+      anchor.setFocus();
+      return;
+    }
+    this.anchorFocusTarget?.focus();
+  }
+
+  private moveFocusAfterTab(backwards: boolean) {
+    const anchor = this.anchorFocusTarget;
+    if (!anchor) return;
+    if (backwards) {
+      anchor.focus();
+      return;
+    }
+
+    const candidates = Array.from(document.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR))
+      .filter(element => (
+        !element.closest('.menu-popup') &&
+        !element.closest('[inert]') &&
+        element.getClientRects().length > 0
+      ));
+    const index = candidates.indexOf(anchor);
+    (candidates[index + 1] ?? anchor).focus();
+  }
+
+  private compositeTabLeavesPopup(event: KeyboardEvent): boolean {
+    const popup = this.el.querySelector<HTMLElement>('.menu-popup');
+    if (!popup) return true;
+    const focusables = Array.from(popup.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR))
+      .filter(element => element.getClientRects().length > 0);
+    const currentIndex = focusables.indexOf(event.target as HTMLElement);
+    if (currentIndex < 0) return true;
+    return event.shiftKey ? currentIndex === 0 : currentIndex === focusables.length - 1;
+  }
+
   private get activeSections(): MenuSection[] {
     if (this.sections.length > 0) return this.sections;
     if (this.items.length > 0) return [{ items: this.items }];
@@ -154,6 +206,11 @@ export class Menu {
     return this.activeSections.flatMap(section =>
       isMenuGradientPickerSection(section) ? [] : section.items,
     );
+  }
+
+  /** Rich preference content is a non-modal dialog, not an ARIA action menu. */
+  private get hasCompositeSections(): boolean {
+    return this.activeSections.some(isMenuGradientPickerSection);
   }
 
   private cancelPositionRetry() {
@@ -215,6 +272,13 @@ export class Menu {
 
   /** Focus the selected item when present, otherwise the first enabled item. */
   private focusInitialItem() {
+    if (this.hasCompositeSections) {
+      requestAnimationFrame(() => {
+        this.el.querySelector<HTMLElement>('.menu-popup [tabindex="0"]')?.focus();
+      });
+      return;
+    }
+
     const flat = this.flatItems;
     const selectedIdx = flat.findIndex(it => it.isSelected && !it.isInactive);
     const firstEnabledIdx = flat.findIndex(it => !it.isInactive);
@@ -262,8 +326,8 @@ export class Menu {
     }
   }
 
-  private close() {
-    this.resolvedAnchor?.focus();
+  private close(restoreFocus = true) {
+    if (restoreFocus) this.focusAnchor();
     this.dsClose.emit();
     this.open = false;
     this.onOpenChange(false);
@@ -272,6 +336,23 @@ export class Menu {
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
     if (!this.shouldRender || this.closing) return;
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      this.close();
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      if (this.hasCompositeSections && !this.compositeTabLeavesPopup(e)) return;
+      e.preventDefault();
+      this.close(false);
+      this.moveFocusAfterTab(e.shiftKey);
+      return;
+    }
+
+    if (this.hasCompositeSections) return;
+
     const flat = this.flatItems;
     const enabled = flat.map((it, i) => ({ it, i })).filter(({ it }) => !it.isInactive).map(({ i }) => i);
     if (!enabled.length) return;
@@ -303,14 +384,6 @@ export class Menu {
         this.focusRingVisible = true;
         this.focusedIndex = enabled[enabled.length - 1];
         this.focusItem(this.focusedIndex);
-        break;
-      case 'Escape':
-        e.preventDefault();
-        this.close();
-        break;
-      case 'Tab':
-        e.preventDefault();
-        this.close();
         break;
     }
   }
@@ -357,9 +430,9 @@ export class Menu {
             'ds-choice-popup--closing': this.closing,
           }}
           style={popupStyle}
-          role="menu"
+          role={this.hasCompositeSections ? 'dialog' : 'menu'}
           aria-label={this.menuLabel}
-          aria-orientation="vertical"
+          aria-orientation={this.hasCompositeSections ? undefined : 'vertical'}
         >
           <div class="ds-choice-list">
           {sections.map((section, si) => (
@@ -416,11 +489,14 @@ export class Menu {
                       'menu-item--destructive': !!item.isDestructive,
                       'menu-item--focused': isFocused,
                     }}
-                    role={item.showSwitch ? 'menuitemcheckbox' : 'menuitem'}
-                    aria-checked={item.showSwitch ? String(!!item.switchValue) : undefined}
-                    aria-current={!item.showSwitch && item.isSelected ? 'true' : undefined}
+                    role={this.hasCompositeSections ? undefined : item.showSwitch ? 'menuitemcheckbox' : 'menuitem'}
+                    aria-checked={!this.hasCompositeSections && item.showSwitch ? String(!!item.switchValue) : undefined}
+                    aria-pressed={this.hasCompositeSections
+                      ? String(item.showSwitch ? !!item.switchValue : !!item.isSelected)
+                      : undefined}
+                    aria-current={!this.hasCompositeSections && !item.showSwitch && item.isSelected ? 'true' : undefined}
                     disabled={item.isInactive}
-                    tabIndex={isFocused ? 0 : -1}
+                    tabIndex={this.hasCompositeSections ? 0 : isFocused ? 0 : -1}
                     onMouseDown={() => { this.focusRingVisible = false; }}
                     onClick={() => this.handleItemClick(item)}
                     onFocus={() => { this.focusedIndex = idx; }}
@@ -453,7 +529,7 @@ export class Menu {
                     {item.showSwitch && (
                       <ds-switch
                         class="menu-item__switch ds-interaction-fill__content"
-                        size="sm"
+                        size="md"
                         checked={!!item.switchValue}
                         presentation
                       />

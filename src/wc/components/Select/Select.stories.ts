@@ -187,6 +187,7 @@ export const Backgrounds: Story = {
           <div style="padding:var(--dimension-space-200);background:${background.surface};">
             <ds-text as="div" variant="text-body-small" color="inherit">${background.label}</ds-text>
             <ds-select
+              data-a11y-fixture
               style="margin-top:var(--dimension-space-100);"
               .options=${OPTIONS}
               value="cherry"

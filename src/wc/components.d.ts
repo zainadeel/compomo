@@ -11,7 +11,7 @@ import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledBackground, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardAppearance, CardWidth } from "./components/Card/Card";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -21,7 +21,7 @@ import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 import { IconColor, IconSize } from "./components/Icon/Icon";
-import { InputType } from "./components/Input/Input";
+import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
@@ -31,7 +31,7 @@ import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
-import { RadioOption } from "./components/RadioGroup/RadioGroup";
+import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
@@ -39,6 +39,7 @@ import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skele
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
+import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
@@ -51,7 +52,7 @@ export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledBackground, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardAppearance, CardWidth } from "./components/Card/Card";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -61,7 +62,7 @@ export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 export { IconColor, IconSize } from "./components/Icon/Icon";
-export { InputType } from "./components/Input/Input";
+export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
@@ -71,7 +72,7 @@ export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
-export { RadioOption } from "./components/RadioGroup/RadioGroup";
+export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
@@ -79,6 +80,7 @@ export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skele
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
+export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
@@ -309,7 +311,7 @@ export namespace Components {
           * @default true
          */
         "hasBorder": boolean;
-        "haspopup": string | undefined;
+        "haspopup": ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -671,14 +673,30 @@ export namespace Components {
     }
     interface DsField {
         /**
-          * ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted.
+          * Optional guidance associated with the slotted control.
+         */
+        "description": string | undefined;
+        /**
+          * Invalid visual and accessible state forwarded to supported ds controls.
+          * @default false
+         */
+        "error": boolean;
+        /**
+          * Visible error associated with the slotted control while error is true.
+         */
+        "errorMessage": string | undefined;
+        /**
+          * Explicit ID for the slotted control; generated when omitted.
          */
         "fieldId": string | undefined;
+        /**
+          * Persistent visible label for the single slotted control.
+         */
         "label": string;
     }
     interface DsIcon {
         /**
-          * Semantic foreground color token, or a raw CSS var reference.
+          * Semantic foreground color token, or a raw CSS var reference. `tertiary` and the still-fainter `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
           * @default 'inherit'
          */
         "color": IconColor;
@@ -705,6 +723,10 @@ export namespace Components {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         /**
+          * Native browser autofill hint.
+         */
+        "autoComplete": string | undefined;
+        /**
           * @default false
          */
         "autoFocus": boolean;
@@ -717,20 +739,45 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Preferred virtual-keyboard action label.
+          * @default ''
+         */
+        "enterKeyHint": string;
+        /**
           * @default false
          */
         "error": boolean;
         "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * Show the standard inset border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Optional leading icon name.
+         */
+        "icon": string | undefined;
         /**
           * Associates the internal input with an external <label>.
          */
         "inputId": string | undefined;
+        /**
+          * Preferred virtual keyboard without changing the value semantics.
+          * @default ''
+         */
+        "inputMode": string;
         /**
           * @default false
          */
         "isInactive": boolean;
         "name": string | undefined;
         "placeholder": string | undefined;
+        /**
+          * Keeps the value focusable and submittable while preventing edits.
+          * @default false
+         */
+        "readOnly": boolean;
         /**
           * @default false
          */
@@ -741,6 +788,11 @@ export namespace Components {
         "requiredMessage": string;
         "setFocus": () => Promise<void>;
         /**
+          * Control density.
+          * @default 'md'
+         */
+        "size": InputSize;
+        /**
           * @default 'text'
          */
         "type": InputType;
@@ -748,10 +800,15 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+        /**
+          * Width fit — fill the parent (default) or hug the available content.
+          * @default 'fill'
+         */
+        "width": InputWidth;
     }
     interface DsLoader {
         /**
-          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. Do not use `tertiary` or `quaternary` for a standalone or informative Loader; inherit a readable color from the owning busy control or region.
           * @default 'inherit'
          */
         "color": LoaderColor;
@@ -916,6 +973,11 @@ export namespace Components {
          */
         "navStyle": NavChromeStyle;
         /**
+          * Localized name for the body when overflow makes it a keyboard-scrollable region.
+          * @default 'Navigation items'
+         */
+        "navigationItemsLabel": string;
+        /**
           * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
           * @default 'anchor'
          */
@@ -1012,38 +1074,61 @@ export namespace Components {
          */
         "toolsLabel": string;
     }
-    interface DsRadioGroup {
+    interface DsRadio {
         /**
+          * Accessible name when visible group labeling is unavailable.
           * @default null
          */
         "ariaLabel": string | null;
+        /**
+          * Id reference for a visible group label.
+         */
         "ariaLabelledby": string | undefined;
         /**
+          * Layout direction for the option set.
           * @default 'vertical'
          */
         "direction": 'vertical' | 'horizontal';
         /**
+          * Native disabled state for the complete set.
           * @default false
          */
         "disabled": boolean;
         /**
+          * Associates the radio set with a form by id when rendered outside that form.
+         */
+        "form": string | undefined;
+        /**
+          * Design-system inactive state for the complete set.
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Native form field name.
+         */
         "name": string | undefined;
         /**
+          * Visible choices in this one-of-many set.
           * @default []
          */
         "options": RadioOption[];
         /**
+          * Require one option to be selected for form validity.
           * @default false
          */
         "required": boolean;
         /**
+          * Validation message used when a required set has no selection.
           * @default 'This field is required.'
          */
         "requiredMessage": string;
         /**
+          * Visual and placement density for every option.
+          * @default 'md'
+         */
+        "size": RadioSize;
+        /**
+          * Selected option value.
           * @default ''
          */
         "value": string;
@@ -1407,14 +1492,48 @@ export namespace Components {
     }
     interface DsSlider {
         /**
-          * Associates with an external <label>. Defaults to an auto-generated ID.
+          * Id references for supporting guidance or error text.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * Direct accessible name for a single-thumb slider without a visible label.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Id references for a visible single-thumb slider label.
+         */
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Accessible label for the upper thumb in a range slider.
+          * @default 'Maximum value'
+         */
+        "endLabel": string;
+        "form": string | undefined;
+        /**
+          * Intl.NumberFormat options. Assign objects through the JavaScript property.
+         */
+        "formatOptions": Intl.NumberFormatOptions | undefined;
+        /**
+          * Id applied to the first native range input.
          */
         "inputId": string | undefined;
         /**
           * @default false
          */
         "isInactive": boolean;
-        "label": string;
+        /**
+          * Visible field label. Supply aria-label when the label is intentionally hidden.
+         */
+        "label": string | undefined;
+        /**
+          * Locale used by Intl.NumberFormat for the visible value.
+         */
+        "locale": string | undefined;
         /**
           * @default 100
          */
@@ -1424,14 +1543,70 @@ export namespace Components {
          */
         "min": number;
         /**
+          * Minimum number of steps kept between two range thumbs.
+          * @default 0
+         */
+        "minStepsBetweenValues": number;
+        "name": string | undefined;
+        /**
+          * @default 'horizontal'
+         */
+        "orientation": SliderOrientation;
+        /**
+          * @default '–'
+         */
+        "rangeSeparator": string;
+        /**
+          * Keep the value focusable and submittable while preventing changes.
+          * @default false
+         */
+        "readOnly": boolean;
+        "setFocus": (index?: number) => Promise<void>;
+        /**
+          * Show the formatted current value beside the visible label.
+          * @default true
+         */
+        "showValue": boolean;
+        /**
+          * @default 'md'
+         */
+        "size": SliderSize;
+        /**
+          * Accessible label for the lower thumb in a range slider.
+          * @default 'Minimum value'
+         */
+        "startLabel": string;
+        /**
           * @default 1
          */
         "step": number;
         /**
+          * Keep the complete thumb inside the rail bounds, or center it on the endpoints.
+          * @default 'edge'
+         */
+        "thumbAlignment": SliderThumbAlignment;
+        /**
+          * Current value. Assign a two-number array through the JavaScript property for a range slider.
           * @default 0
          */
-        "value": number;
+        "value": SliderValue;
+        /**
+          * @default ''
+         */
+        "valuePrefix": string;
+        /**
+          * @default ''
+         */
+        "valueSuffix": string;
+        /**
+          * Human-readable value text for a single slider or both range thumbs.
+         */
         "valueText": string | undefined;
+        /**
+          * Per-thumb human-readable value text for a range slider. Assign through the JavaScript property.
+          * @default []
+         */
+        "valueTexts": string[];
     }
     interface DsSwitch {
         /**
@@ -1600,6 +1775,7 @@ export namespace Components {
          */
         "as": TextElement;
         /**
+          * Semantic foreground color token or CSS variable. `tertiary` and the still-fainter `quaternary` are restricted to genuinely inactive/disabled UI content or purely decorative content; prefer the owning control's inactive state whenever one exists.
           * @default 'inherit'
          */
         "color": TextColor;
@@ -1794,9 +1970,9 @@ export interface DsPanelToolsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelToolsElement;
 }
-export interface DsRadioGroupCustomEvent<T> extends CustomEvent<T> {
+export interface DsRadioCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsRadioGroupElement;
+    target: HTMLDsRadioElement;
 }
 export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2219,22 +2395,22 @@ declare global {
         prototype: HTMLDsPanelToolsElement;
         new (): HTMLDsPanelToolsElement;
     };
-    interface HTMLDsRadioGroupElementEventMap {
+    interface HTMLDsRadioElementEventMap {
         "dsChange": string;
     }
-    interface HTMLDsRadioGroupElement extends Components.DsRadioGroup, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsRadioGroupElementEventMap>(type: K, listener: (this: HTMLDsRadioGroupElement, ev: DsRadioGroupCustomEvent<HTMLDsRadioGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsRadioElement extends Components.DsRadio, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsRadioElementEventMap>(type: K, listener: (this: HTMLDsRadioElement, ev: DsRadioCustomEvent<HTMLDsRadioElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsRadioGroupElementEventMap>(type: K, listener: (this: HTMLDsRadioGroupElement, ev: DsRadioGroupCustomEvent<HTMLDsRadioGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsRadioElementEventMap>(type: K, listener: (this: HTMLDsRadioElement, ev: DsRadioCustomEvent<HTMLDsRadioElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsRadioGroupElement: {
-        prototype: HTMLDsRadioGroupElement;
-        new (): HTMLDsRadioGroupElement;
+    var HTMLDsRadioElement: {
+        prototype: HTMLDsRadioElement;
+        new (): HTMLDsRadioElement;
     };
     interface HTMLDsSelectElementEventMap {
         "dsChange": string;
@@ -2315,7 +2491,8 @@ declare global {
         new (): HTMLDsSkeletonElement;
     };
     interface HTMLDsSliderElementEventMap {
-        "dsChange": number;
+        "dsChange": SliderValue;
+        "dsCommit": SliderValue;
     }
     interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2466,7 +2643,7 @@ declare global {
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
-        "ds-radio-group": HTMLDsRadioGroupElement;
+        "ds-radio": HTMLDsRadioElement;
         "ds-select": HTMLDsSelectElement;
         "ds-select-multi": HTMLDsSelectMultiElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
@@ -2713,7 +2890,7 @@ declare namespace LocalJSX {
           * @default true
          */
         "hasBorder"?: boolean;
-        "haspopup"?: string | undefined;
+        "haspopup"?: ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -3108,14 +3285,30 @@ declare namespace LocalJSX {
     }
     interface DsField {
         /**
-          * ID forwarded to the slotted control via the label's `for` attribute. Auto-generated if omitted.
+          * Optional guidance associated with the slotted control.
+         */
+        "description"?: string | undefined;
+        /**
+          * Invalid visual and accessible state forwarded to supported ds controls.
+          * @default false
+         */
+        "error"?: boolean;
+        /**
+          * Visible error associated with the slotted control while error is true.
+         */
+        "errorMessage"?: string | undefined;
+        /**
+          * Explicit ID for the slotted control; generated when omitted.
          */
         "fieldId"?: string | undefined;
+        /**
+          * Persistent visible label for the single slotted control.
+         */
         "label": string;
     }
     interface DsIcon {
         /**
-          * Semantic foreground color token, or a raw CSS var reference.
+          * Semantic foreground color token, or a raw CSS var reference. `tertiary` and the still-fainter `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
           * @default 'inherit'
          */
         "color"?: IconColor;
@@ -3142,6 +3335,10 @@ declare namespace LocalJSX {
         "ariaLabel"?: string | null;
         "ariaLabelledby"?: string | undefined;
         /**
+          * Native browser autofill hint.
+         */
+        "autoComplete"?: string | undefined;
+        /**
           * @default false
          */
         "autoFocus"?: boolean;
@@ -3154,18 +3351,34 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * Preferred virtual-keyboard action label.
+          * @default ''
+         */
+        "enterKeyHint"?: string;
+        /**
           * @default false
          */
         "error"?: boolean;
         "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
         /**
-          * The `id` of a `<form>` element to associate this element with.
+          * Show the standard inset border.
+          * @default true
          */
-        "form"?: string;
+        "hasBorder"?: boolean;
+        /**
+          * Optional leading icon name.
+         */
+        "icon"?: string | undefined;
         /**
           * Associates the internal input with an external <label>.
          */
         "inputId"?: string | undefined;
+        /**
+          * Preferred virtual keyboard without changing the value semantics.
+          * @default ''
+         */
+        "inputMode"?: string;
         /**
           * @default false
          */
@@ -3175,6 +3388,11 @@ declare namespace LocalJSX {
         "onDsClear"?: (event: DsInputCustomEvent<void>) => void;
         "placeholder"?: string | undefined;
         /**
+          * Keeps the value focusable and submittable while preventing edits.
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
           * @default false
          */
         "required"?: boolean;
@@ -3183,6 +3401,11 @@ declare namespace LocalJSX {
          */
         "requiredMessage"?: string;
         /**
+          * Control density.
+          * @default 'md'
+         */
+        "size"?: InputSize;
+        /**
           * @default 'text'
          */
         "type"?: InputType;
@@ -3190,10 +3413,15 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+        /**
+          * Width fit — fill the parent (default) or hug the available content.
+          * @default 'fill'
+         */
+        "width"?: InputWidth;
     }
     interface DsLoader {
         /**
-          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`.
+          * Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. Do not use `tertiary` or `quaternary` for a standalone or informative Loader; inherit a readable color from the owning busy control or region.
           * @default 'inherit'
          */
         "color"?: LoaderColor;
@@ -3365,6 +3593,11 @@ declare namespace LocalJSX {
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
+        /**
+          * Localized name for the body when overflow makes it a keyboard-scrollable region.
+          * @default 'Navigation items'
+         */
+        "navigationItemsLabel"?: string;
         "onDsChromeTransitionEnd"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
         /**
           * Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion.
@@ -3484,43 +3717,65 @@ declare namespace LocalJSX {
          */
         "toolsLabel"?: string;
     }
-    interface DsRadioGroup {
+    interface DsRadio {
         /**
+          * Accessible name when visible group labeling is unavailable.
           * @default null
          */
         "ariaLabel"?: string | null;
+        /**
+          * Id reference for a visible group label.
+         */
         "ariaLabelledby"?: string | undefined;
         /**
+          * Layout direction for the option set.
           * @default 'vertical'
          */
         "direction"?: 'vertical' | 'horizontal';
         /**
+          * Native disabled state for the complete set.
           * @default false
          */
         "disabled"?: boolean;
         /**
-          * The `id` of a `<form>` element to associate this element with.
+          * Associates the radio set with a form by id when rendered outside that form.
          */
-        "form"?: string;
+        "form"?: string | undefined;
         /**
+          * Design-system inactive state for the complete set.
           * @default false
          */
         "isInactive"?: boolean;
-        "name"?: string | undefined;
-        "onDsChange"?: (event: DsRadioGroupCustomEvent<string>) => void;
         /**
+          * Native form field name.
+         */
+        "name"?: string | undefined;
+        /**
+          * Emitted after user selection with the selected option value.
+         */
+        "onDsChange"?: (event: DsRadioCustomEvent<string>) => void;
+        /**
+          * Visible choices in this one-of-many set.
           * @default []
          */
         "options"?: RadioOption[];
         /**
+          * Require one option to be selected for form validity.
           * @default false
          */
         "required"?: boolean;
         /**
+          * Validation message used when a required set has no selection.
           * @default 'This field is required.'
          */
         "requiredMessage"?: string;
         /**
+          * Visual and placement density for every option.
+          * @default 'md'
+         */
+        "size"?: RadioSize;
+        /**
+          * Selected option value.
           * @default ''
          */
         "value"?: string;
@@ -3916,14 +4171,48 @@ declare namespace LocalJSX {
     }
     interface DsSlider {
         /**
-          * Associates with an external <label>. Defaults to an auto-generated ID.
+          * Id references for supporting guidance or error text.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * Direct accessible name for a single-thumb slider without a visible label.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Id references for a visible single-thumb slider label.
+         */
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Accessible label for the upper thumb in a range slider.
+          * @default 'Maximum value'
+         */
+        "endLabel"?: string;
+        "form"?: string | undefined;
+        /**
+          * Intl.NumberFormat options. Assign objects through the JavaScript property.
+         */
+        "formatOptions"?: Intl.NumberFormatOptions | undefined;
+        /**
+          * Id applied to the first native range input.
          */
         "inputId"?: string | undefined;
         /**
           * @default false
          */
         "isInactive"?: boolean;
-        "label": string;
+        /**
+          * Visible field label. Supply aria-label when the label is intentionally hidden.
+         */
+        "label"?: string | undefined;
+        /**
+          * Locale used by Intl.NumberFormat for the visible value.
+         */
+        "locale"?: string | undefined;
         /**
           * @default 100
          */
@@ -3932,16 +4221,78 @@ declare namespace LocalJSX {
           * @default 0
          */
         "min"?: number;
-        "onDsChange"?: (event: DsSliderCustomEvent<number>) => void;
+        /**
+          * Minimum number of steps kept between two range thumbs.
+          * @default 0
+         */
+        "minStepsBetweenValues"?: number;
+        "name"?: string | undefined;
+        /**
+          * Emitted continuously while the value changes.
+         */
+        "onDsChange"?: (event: DsSliderCustomEvent<SliderValue>) => void;
+        /**
+          * Emitted when a pointer or keyboard value change is committed.
+         */
+        "onDsCommit"?: (event: DsSliderCustomEvent<SliderValue>) => void;
+        /**
+          * @default 'horizontal'
+         */
+        "orientation"?: SliderOrientation;
+        /**
+          * @default '–'
+         */
+        "rangeSeparator"?: string;
+        /**
+          * Keep the value focusable and submittable while preventing changes.
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * Show the formatted current value beside the visible label.
+          * @default true
+         */
+        "showValue"?: boolean;
+        /**
+          * @default 'md'
+         */
+        "size"?: SliderSize;
+        /**
+          * Accessible label for the lower thumb in a range slider.
+          * @default 'Minimum value'
+         */
+        "startLabel"?: string;
         /**
           * @default 1
          */
         "step"?: number;
         /**
+          * Keep the complete thumb inside the rail bounds, or center it on the endpoints.
+          * @default 'edge'
+         */
+        "thumbAlignment"?: SliderThumbAlignment;
+        /**
+          * Current value. Assign a two-number array through the JavaScript property for a range slider.
           * @default 0
          */
-        "value"?: number;
+        "value"?: SliderValue;
+        /**
+          * @default ''
+         */
+        "valuePrefix"?: string;
+        /**
+          * @default ''
+         */
+        "valueSuffix"?: string;
+        /**
+          * Human-readable value text for a single slider or both range thumbs.
+         */
         "valueText"?: string | undefined;
+        /**
+          * Per-thumb human-readable value text for a range slider. Assign through the JavaScript property.
+          * @default []
+         */
+        "valueTexts"?: string[];
     }
     interface DsSwitch {
         /**
@@ -4119,6 +4470,7 @@ declare namespace LocalJSX {
          */
         "as"?: TextElement;
         /**
+          * Semantic foreground color token or CSS variable. `tertiary` and the still-fainter `quaternary` are restricted to genuinely inactive/disabled UI content or purely decorative content; prefer the owning control's inactive state whenever one exists.
           * @default 'inherit'
          */
         "color"?: TextColor;
@@ -4310,7 +4662,7 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "controls": string | undefined;
         "expanded": boolean | undefined;
-        "haspopup": string | undefined;
+        "haspopup": ButtonUnfilledPopup | undefined;
         "pressed": boolean | undefined;
         "focusTabIndex": number;
     }
@@ -4395,6 +4747,9 @@ declare namespace LocalJSX {
     interface DsFieldAttributes {
         "label": string;
         "fieldId": string | undefined;
+        "description": string | undefined;
+        "error": boolean;
+        "errorMessage": string | undefined;
     }
     interface DsIconAttributes {
         "name": string;
@@ -4405,12 +4760,21 @@ declare namespace LocalJSX {
     interface DsInputAttributes {
         "value": string;
         "name": string | undefined;
+        "form": string | undefined;
         "disabled": boolean;
+        "readOnly": boolean;
         "required": boolean;
         "requiredMessage": string;
         "clearLabel": string;
         "placeholder": string | undefined;
         "type": InputType;
+        "autoComplete": string | undefined;
+        "inputMode": string;
+        "enterKeyHint": string;
+        "size": InputSize;
+        "width": InputWidth;
+        "hasBorder": boolean;
+        "icon": string | undefined;
         "isInactive": boolean;
         "autoFocus": boolean;
         "error": boolean;
@@ -4471,6 +4835,7 @@ declare namespace LocalJSX {
         "settingsNavigationLabel": string;
         "expandNavigationLabel": string;
         "collapseNavigationLabel": string;
+        "navigationItemsLabel": string;
     }
     interface DsPanelSubNavAttributes {
         "value": string;
@@ -4486,9 +4851,11 @@ declare namespace LocalJSX {
         "toolShortcutsLabel": string;
         "storageKey": string;
     }
-    interface DsRadioGroupAttributes {
+    interface DsRadioAttributes {
         "value": string;
+        "size": RadioSize;
         "name": string | undefined;
+        "form": string | undefined;
         "disabled": boolean;
         "required": boolean;
         "requiredMessage": string;
@@ -4576,13 +4943,31 @@ declare namespace LocalJSX {
         "background": SkeletonBackground | undefined;
     }
     interface DsSliderAttributes {
-        "value": number;
+        "value": SliderValue;
         "min": number;
         "max": number;
         "step": number;
-        "label": string;
+        "minStepsBetweenValues": number;
+        "label": string | undefined;
+        "showValue": boolean;
+        "size": SliderSize;
+        "orientation": SliderOrientation;
+        "thumbAlignment": SliderThumbAlignment;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
         "isInactive": boolean;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+        "startLabel": string;
+        "endLabel": string;
         "valueText": string | undefined;
+        "locale": string | undefined;
+        "valuePrefix": string;
+        "valueSuffix": string;
+        "rangeSeparator": string;
         "inputId": string | undefined;
     }
     interface DsSwitchAttributes {
@@ -4692,13 +5077,13 @@ declare namespace LocalJSX {
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
-        "ds-radio-group": Omit<DsRadioGroup, keyof DsRadioGroupAttributes> & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes]?: DsRadioGroup[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `attr:${K}`]?: DsRadioGroupAttributes[K] } & { [K in keyof DsRadioGroup & keyof DsRadioGroupAttributes as `prop:${K}`]?: DsRadioGroup[K] };
+        "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-select-multi": Omit<DsSelectMulti, keyof DsSelectMultiAttributes> & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes]?: DsSelectMulti[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `attr:${K}`]?: DsSelectMultiAttributes[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `prop:${K}`]?: DsSelectMulti[K] };
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
-        "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] } & OneOf<"label", DsSlider["label"], DsSliderAttributes["label"]>;
+        "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
@@ -4759,7 +5144,7 @@ declare module "@stencil/core" {
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
-            "ds-radio-group": LocalJSX.IntrinsicElements["ds-radio-group"] & JSXBase.HTMLAttributes<HTMLDsRadioGroupElement>;
+            "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-select-multi": LocalJSX.IntrinsicElements["ds-select-multi"] & JSXBase.HTMLAttributes<HTMLDsSelectMultiElement>;
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;

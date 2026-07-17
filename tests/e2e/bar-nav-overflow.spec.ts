@@ -337,7 +337,7 @@ test.describe('BarNav responsive overflow', () => {
 
     await page.keyboard.press('Escape');
     await expect(page.locator('.menu-popup')).toHaveCount(0);
-    await expect(trigger).toBeFocused();
+    await expect(trigger.getByRole('button')).toBeFocused();
   });
 });
 

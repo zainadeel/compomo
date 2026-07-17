@@ -21,8 +21,8 @@
   "alternatives": [
     {
       "when": "Exactly one option must be chosen from a mutually exclusive set.",
-      "component": "component:ds-radio-group",
-      "reason": "RadioGroup communicates one-of-many selection."
+      "component": "component:ds-radio",
+      "reason": "Radio communicates one-of-many selection."
     },
     {
       "when": "A binary setting takes effect immediately.",
@@ -47,7 +47,7 @@
     "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
   ],
   "states": [
-    "Every box keeps a 1px inset secondary border and 2px radius, including when selected. Checked renders the box-sized Check icon and indeterminate renders the box-sized Subtract icon on a brand fill.",
+    "Unchecked boxes use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned check or subtract mark at the same density-specific stroke width.",
     "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
     "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
     "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",

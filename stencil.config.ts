@@ -31,7 +31,7 @@ export const config: Config = {
       valueAccessorConfigs: [
         { elementSelectors: 'ds-input', event: 'dsChange', targetAttr: 'value', type: 'text' },
         { elementSelectors: 'ds-select', event: 'dsChange', targetAttr: 'value', type: 'select' },
-        { elementSelectors: 'ds-radio-group', event: 'dsChange', targetAttr: 'value', type: 'radio' },
+        { elementSelectors: 'ds-radio', event: 'dsChange', targetAttr: 'value', type: 'radio' },
         { elementSelectors: ['ds-checkbox', 'ds-switch'], event: 'dsChange', targetAttr: 'checked', type: 'boolean' },
       ],
     }),

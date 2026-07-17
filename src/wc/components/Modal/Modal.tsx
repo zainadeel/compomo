@@ -22,6 +22,27 @@ const FOCUSABLE_SEL = [
 ].join(',');
 
 let modalIdCounter = 0;
+const activeModalStack: object[] = [];
+const modalInertState = new WeakMap<HTMLElement, { count: number; wasInert: boolean }>();
+
+function makeInert(element: HTMLElement) {
+  const state = modalInertState.get(element);
+  if (state) {
+    state.count += 1;
+    return;
+  }
+  modalInertState.set(element, { count: 1, wasInert: element.inert });
+  element.inert = true;
+}
+
+function releaseInert(element: HTMLElement) {
+  const state = modalInertState.get(element);
+  if (!state) return;
+  state.count -= 1;
+  if (state.count > 0) return;
+  element.inert = state.wasInert;
+  modalInertState.delete(element);
+}
 
 @Component({
   tag: 'ds-modal',
@@ -48,6 +69,7 @@ export class Modal {
   private escapeHandler: ((e: KeyboardEvent) => void) | null = null;
   private tabHandler: ((e: KeyboardEvent) => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+  private inertedElements: HTMLElement[] = [];
 
   componentDidLoad() {
     if (this.open) this.onOpenChange(true);
@@ -55,6 +77,7 @@ export class Modal {
 
   disconnectedCallback() {
     this.teardownListeners();
+    this.deactivateModal();
   }
 
   @Watch('open')
@@ -64,13 +87,13 @@ export class Modal {
       this.shouldRender = true;
       this.closing = false;
       this.previousFocus = document.activeElement as HTMLElement | null;
+      this.activateModal();
       requestAnimationFrame(() => {
         this.focusFirst();
         this.setupListeners();
       });
     } else if (this.shouldRender) {
       this.closing = true;
-      this.teardownListeners();
       const closeAnimationMs = this.closeAnimationMs;
       if (closeAnimationMs <= 0) {
         this.finishClose();
@@ -98,11 +121,11 @@ export class Modal {
 
   private setupListeners() {
     this.escapeHandler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { e.preventDefault(); this.close(); }
+      if (e.key === 'Escape' && this.isTopModal) { e.preventDefault(); this.close(); }
     };
 
     this.tabHandler = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab' || !this.isTopModal) return;
       const dialog = this.el.querySelector('.modal-dialog') as HTMLElement | null;
       if (!dialog) return;
       const focusables = this.getFocusables(dialog);
@@ -141,12 +164,43 @@ export class Modal {
   }
 
   private close() {
+    if (!this.open || this.closing || !this.isTopModal) return;
     this.dsClose.emit();
     this.open = false;
   }
 
   private handleBackdropMouseDown(e: MouseEvent) {
-    if (e.target === e.currentTarget) this.close();
+    if (e.target === e.currentTarget && this.isTopModal) this.close();
+  }
+
+  private get isTopModal(): boolean {
+    return activeModalStack[activeModalStack.length - 1] === this;
+  }
+
+  /** Inert every sibling branch outside the modal without assuming it is a body child. */
+  private activateModal() {
+    if (!activeModalStack.includes(this)) activeModalStack.push(this);
+    if (this.inertedElements.length) return;
+
+    let branch: HTMLElement = this.el;
+    let parent = branch.parentElement;
+    while (parent) {
+      for (const sibling of Array.from(parent.children)) {
+        if (sibling === branch || !(sibling instanceof HTMLElement)) continue;
+        makeInert(sibling);
+        this.inertedElements.push(sibling);
+      }
+      if (parent === document.body) break;
+      branch = parent;
+      parent = parent.parentElement;
+    }
+  }
+
+  private deactivateModal() {
+    const stackIndex = activeModalStack.lastIndexOf(this);
+    if (stackIndex >= 0) activeModalStack.splice(stackIndex, 1);
+    for (const element of this.inertedElements) releaseInert(element);
+    this.inertedElements = [];
   }
 
   private get resolvedWidth(): string {
@@ -163,6 +217,8 @@ export class Modal {
   private finishClose() {
     this.shouldRender = false;
     this.closing = false;
+    this.teardownListeners();
+    this.deactivateModal();
     this.previousFocus?.focus?.();
     this.previousFocus = null;
   }

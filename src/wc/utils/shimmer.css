@@ -86,16 +86,6 @@
   animation: ds-shimmer-surface-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing) infinite;
 }
 
-:where([dir='rtl'], [dir='rtl'] *) .ds-shimmer-text,
-:where([dir='rtl'], [dir='rtl'] *) .ds-shimmer-surface::after {
-  animation-direction: reverse;
-}
-
-:host-context([dir='rtl']) .ds-shimmer-text,
-:host-context([dir='rtl']) .ds-shimmer-surface::after {
-  animation-direction: reverse;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .ds-shimmer-text {
     animation: none;

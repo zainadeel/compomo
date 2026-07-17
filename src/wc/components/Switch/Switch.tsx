@@ -45,6 +45,8 @@ export class Switch {
 
   private initialChecked = false;
   @State() private formDisabled = false;
+  @State() private focused = false;
+  @State() private touched = false;
 
   componentWillLoad() {
     this.initialChecked = this.checked;
@@ -79,6 +81,8 @@ export class Switch {
 
   formResetCallback() {
     this.checked = this.initialChecked;
+    this.focused = false;
+    this.touched = false;
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
@@ -110,20 +114,41 @@ export class Switch {
     }
   };
 
+  private handleFocus = () => {
+    if (!this.presentation) this.focused = true;
+  };
+
+  private handleBlur = () => {
+    if (this.presentation) return;
+    this.focused = false;
+    this.touched = true;
+  };
+
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
+    const invalid = this.required && !inactive && !this.checked;
+    const dirty = this.checked !== this.initialChecked;
+    // Switch owns its structural track and thumb strokes so nested interaction layers cannot cover them.
     return (
       <Host
         role={this.presentation ? undefined : 'switch'}
         aria-checked={this.presentation ? undefined : String(this.checked)}
         aria-disabled={!this.presentation && inactive ? 'true' : undefined}
         aria-readonly={!this.presentation && this.readOnly ? 'true' : undefined}
+        aria-required={!this.presentation && this.required ? 'true' : undefined}
+        aria-invalid={!this.presentation && invalid ? 'true' : undefined}
         aria-hidden={this.presentation ? 'true' : undefined}
         data-checked={this.checked ? '' : undefined}
         data-unchecked={!this.checked ? '' : undefined}
         data-disabled={inactive ? '' : undefined}
         data-readonly={this.readOnly ? '' : undefined}
         data-required={this.required ? '' : undefined}
+        data-focused={!this.presentation && this.focused ? '' : undefined}
+        data-filled={!this.presentation && this.checked ? '' : undefined}
+        data-dirty={!this.presentation && dirty ? '' : undefined}
+        data-touched={!this.presentation && this.touched ? '' : undefined}
+        data-valid={!this.presentation && !inactive && !invalid ? '' : undefined}
+        data-invalid={!this.presentation && invalid ? '' : undefined}
         tabIndex={this.presentation || inactive ? -1 : 0}
         class={{
           switch: true,
@@ -134,14 +159,14 @@ export class Switch {
           'switch--readonly': this.readOnly,
           'switch--presentation': this.presentation,
           'ds-focus-ring': true,
-          'ds-interaction-fill': true,
-          'ds-interaction-fill--bordered': true,
           'ds-control-inactive': inactive,
         }}
         onClick={this.handleClick}
         onKeyDown={this.handleKeyDown}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
       >
-        <span class="thumb ds-interaction-fill__content" />
+        <span class="thumb" />
       </Host>
     );
   }

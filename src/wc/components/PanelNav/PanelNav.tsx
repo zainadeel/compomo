@@ -76,6 +76,8 @@ export class PanelNav {
   @Prop() settingsNavigationLabel: string = 'Settings navigation';
   @Prop() expandNavigationLabel: string = 'Expand navigation';
   @Prop() collapseNavigationLabel: string = 'Collapse navigation';
+  /** Localized name for the body when overflow makes it a keyboard-scrollable region. */
+  @Prop() navigationItemsLabel: string = 'Navigation items';
 
   /** Emitted when a nav item is clicked. Detail = the item's `id`. */
   @Event() dsNavSelect!: EventEmitter<string>;
@@ -104,10 +106,13 @@ export class PanelNav {
   @State() private rovingIndex: number = 0;
   @State() private viewportNarrow: boolean = false;
   @State() private urlDerivedActiveId: string = '';
+  @State() private bodyScrollable = false;
 
   private transitionCompletionHandler?: (e: TransitionEvent) => void;
   private transitionFallbackTimer: number | null = null;
   private resizeObserver?: ResizeObserver;
+  private scrollRegionObserver?: ResizeObserver;
+  private bodyEl?: HTMLElement;
 
   // Drag-to-resize state (not @State — no re-render needed)
   private isDragging = false;
@@ -195,10 +200,17 @@ export class PanelNav {
     this.syncHostPropsIfNeeded();
     this.scheduleDeferredHostPropSync();
     if (this.breakpoint > 0) this.connectResizeObserver();
+    this.connectScrollRegionObserver();
+    this.updateBodyScrollable();
+  }
+
+  componentDidRender() {
+    this.updateBodyScrollable();
   }
 
   disconnectedCallback() {
     this.disconnectResizeObserver();
+    this.disconnectScrollRegionObserver();
     this.clearCollapseAnimationCompletion(
       this.el.querySelector('.panel-nav') as HTMLElement | null,
     );
@@ -283,6 +295,23 @@ export class PanelNav {
     this.resizeObserver = undefined;
   }
 
+  private connectScrollRegionObserver() {
+    this.disconnectScrollRegionObserver();
+    if (!this.bodyEl || typeof ResizeObserver === 'undefined') return;
+    this.scrollRegionObserver = new ResizeObserver(() => this.updateBodyScrollable());
+    this.scrollRegionObserver.observe(this.bodyEl);
+  }
+
+  private disconnectScrollRegionObserver() {
+    this.scrollRegionObserver?.disconnect();
+    this.scrollRegionObserver = undefined;
+  }
+
+  private updateBodyScrollable() {
+    const next = Boolean(this.bodyEl && this.bodyEl.scrollHeight > this.bodyEl.clientHeight + 1);
+    if (next !== this.bodyScrollable) this.bodyScrollable = next;
+  }
+
   /** Derive active ID from the current URL by matching item `href` values.
    *  Uses longest segment-boundary prefix match. */
   private syncActiveFromUrl() {
@@ -354,7 +383,7 @@ export class PanelNav {
       return items[index - 1] ?? null;
     }
     if (index === this.getFooterRovingIndex()) {
-      return this.el.querySelector('.panel-nav__footer-btn .button-icon');
+      return this.el.querySelector('.panel-nav__footer-btn .button-unfilled');
     }
     if (index === this.getUserRovingIndex()) {
       return this.el.querySelector('.panel-nav__footer-user');
@@ -720,8 +749,18 @@ export class PanelNav {
           <div
             class={{
               'panel-nav__body': true,
+              'ds-focus-ring': this.bodyScrollable,
               ...scrollEdgeFadeClassMap({ edges: 'bottom' }),
             }}
+            ref={element => {
+              const next = (element as HTMLElement) ?? undefined;
+              if (next === this.bodyEl) return;
+              this.bodyEl = next;
+              this.connectScrollRegionObserver();
+            }}
+            role={this.bodyScrollable ? 'region' : undefined}
+            aria-label={this.bodyScrollable ? this.navigationItemsLabel : undefined}
+            tabIndex={this.bodyScrollable ? 0 : undefined}
           >
             {(() => {
               let flatIdx = 0;

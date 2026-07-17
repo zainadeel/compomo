@@ -78,7 +78,7 @@ npm run build            # Stencil compiler build → dist/
 npm run clean:framework-proxies # Remove generated Angular/React source proxies + barrels only
 npm run test             # Node unit tests (bar-nav overflow utils, panel-nav, etc.)
 npm run test:e2e         # Playwright — BarNav overflow collapse (builds first)
-npm run test:e2e:install # One-time Chromium, Firefox, and WebKit for Playwright
+npm run test:e2e:install # One-time Chromium, Firefox, and WebKit install for Playwright
 npm run dev              # Stencil watch using normal dist output (updates dist/ on source changes)
 npm run storybook        # Stencil watch + Storybook on :6006 (auto-reloads when dist/ rebuilds)
 npm run storybook:build  # Build static Storybook
@@ -233,6 +233,7 @@ export class MyComponent {
 **Styling rules (non-negotiable)**
 
 - **Never hardcode colors, spacing, radii, shadows, or typography values.** Always use CSS custom properties from `@ds-mo/tokens`. Hardcoded values break theming.
+- Components are authored for left-to-right interfaces. Do not add RTL-only selectors, direction branches, or RTL review stories.
 - Styles go in `<PascalName>.css` — one per component. Stencil scopes them automatically via `scoped: true`.
 - Use `:host` for component-level styles; use class selectors for internal elements.
 - Theming is driven by the `data-theme` attribute on a parent element (`@ds-mo/tokens` provides light/dark).
@@ -259,6 +260,7 @@ export class MyComponent {
 - One rendered line is exactly one variant line-height; N lines are N × that token. Width constraints determine wrapping.
 - Put layout classes (padding, flex/grid participation, truncation width, z-index) directly on `ds-text`. Do not add a wrapper whose only purpose is layout.
 - Choose `as` from native document semantics and heading hierarchy independently from visual `variant`. Omitted color inherits `currentColor`.
+- `tertiary` and `quaternary` are restricted to text inside genuinely inactive/disabled UI or to purely decorative content whose removal changes no meaning, status, hierarchy, or task understanding. Quaternary is the fainter tier. Prefer the owning component's `isInactive` or native `disabled` state; `aria-hidden` alone does not exempt meaningful visible text from contrast requirements.
 - Links are underlined by default. Brand-blue link text may omit the resting underline when color already provides the link affordance; an underline on hover remains appropriate. Dotted underline is required for hidden or supplemental interaction such as a tooltip, and the owning trigger supplies focus, keyboard behavior, and accessible semantics.
 - Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to a future prose/app renderer, not `ds-text`.
 - Native form values cannot contain a custom element. Native inputs use the internal `typography.css` recipe as the explicit exception.
@@ -268,7 +270,7 @@ export class MyComponent {
 - Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
 - Both support `rounded` for the half-radius treatment. Rounded changes shape only; it does not alter hierarchy, intent, size, or interaction semantics.
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
-- `isLoading` disables activation without applying inactive opacity and sets native busy semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
+- `isLoading` blocks activation without applying inactive opacity or dropping current keyboard focus, and exposes busy plus disabled semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
 - Keep the action's accessible name while loading. The owning workflow announces broader progress when needed.
 - For forms, use `type="submit"` and handle native form submission; reserve `dsClick` for non-submit commands.
 - Use only one filled action in a local decision area. Secondary actions use `ds-button-unfilled`; filled semantic intent must describe the action's consequence rather than decorate a surface.
@@ -284,24 +286,58 @@ export class MyComponent {
 
 - `ds-select` owns one string value; `ds-select-multi` owns a JavaScript array of string values. Multi keeps the field label/placeholder visible and summarizes selection as plain inline text (`Label · count`) rather than replacing the label, rendering a badge, or rendering tags.
 - Select popups use listbox/option semantics. `ds-menu` remains an action menu even though all three share anchored-popup and choice-row visual foundations; never switch select rows back to menu/menuitem roles.
+- A Menu containing the specialized shell gradient picker is a richer non-modal dialog popup: the picker keeps radio-group semantics, ordinary preference rows remain buttons, Escape restores trigger focus, and Tab moves between popup controls before closing and continuing through the page at the boundary. Plain Menu content retains menu/menuitem semantics and roving arrow-key focus.
 - Single-select rows rely on the selected active fill and foreground change; do not add a trailing check icon. They may use prefix icons. Multi-select rows use a presentation-only `ds-checkbox` indicator while the owning option retains listbox semantics and interaction; their option contract excludes icons because a choice row must never combine a checkbox and prefix icon.
 - Options support label, value, subtext, and `isInactive`; single-select options additionally support a prefix icon. Use either flat `options` or grouped `sections`; sections take precedence. Arrays and objects must be assigned as JavaScript properties.
 - `searchable` is immediate local filtering over label and subtext. Server search, debounce, networking, virtualization, and hierarchical children are intentionally outside these components.
-- The popup search row always uses the md choice-row recipe: body-medium input text, a 20px md search icon, and the same outer plus row padding and label inset as popup options. It does not shrink with an sm or xs trigger. Its placeholder is secondary at rest and quaternary while focused. Do not use the current `ds-input` implementation as a visual or behavioral reference until that component is refactored.
+- The popup search row always uses the md choice-row recipe: body-medium input text, a 20px md search icon, and the same outer plus row padding and label inset as popup options. It does not shrink with an sm or xs trigger. Its placeholder is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active. Its field chrome and clear action follow the shared Input recipe.
 - `isLoading` replaces or occupies the trigger prefix-icon zone, exposes busy state, and shows a centered loader while option interaction is unavailable.
 - Clear actions live in the popup footer. Single clear emits an empty string; multi clear emits an empty array. Both emit `dsClear`, keep the popup open, and preserve useful focus.
 - Omitted `background` is for primary and secondary surfaces. Pass `faint` explicitly on faint surfaces and use the matching medium, bold, strong, translucent, inverted, media, or always-dark context elsewhere.
 - Multi native forms submit one repeated entry per selected value. Angular forms import `SelectValueAccessor` or `SelectMultiValueAccessor` with the matching generated component proxy.
 - Hierarchical selection belongs to a future tree-select contract: single-select parents navigate, multi-select parents cascade with indeterminate state, and submitted values remain leaf-only by default.
 
+**Input**
+
+- `ds-input` owns single-line free text, email, telephone, URL, search, and password entry. Use Select for finite choices, Switch for immediate binary settings, and Slider for direct range adjustment.
+- Compose Input in `ds-field` for its persistent visible label, description, and form-level error. Placeholder text is guidance, not a replacement for the label; it is secondary at rest and intentionally quaternary while focused because it becomes decorative once the editable field is active.
+- Input shares Select's control recipe: md/sm/xs density, fill/hug width, transparent interaction fill, and an optional secondary inset border.
+- Entered values use primary foreground. Prefix icons, suffix content, and resting placeholders use secondary foreground. Prefix icons are decorative; suffix content is for compact units or decoration and must not be the only source of meaning.
+- Search fields show the standard borderless CrossCircle icon action only while a value exists. Clearing emits the empty value and returns focus to the native field.
+- Focus promotes the normal boundary to the thicker bold-brand inset stroke. Error uses the thicker bold-negative inset stroke without changing geometry. Validation timing and persistent help text belong to the form owner.
+- Use `readOnly` when a value must remain focusable and included in submission but cannot be edited. Use `isInactive` or `disabled` only when it is unavailable and should leave the tab order and form submission.
+- Forward browser text-entry hints with `autoComplete`, `inputMode`, and `enterKeyHint`; choose `type` from the value's actual semantics rather than its visual treatment.
+- Input exposes `data-focused`, `data-filled`, `data-dirty`, `data-touched`, `data-invalid`, `data-disabled`, `data-readonly`, and `data-required` state hooks. Do not style these into a second validation policy outside Field.
+- Input is restricted to primary and secondary application backgrounds and does not expose a `background` prop. Choose another composition for faint, bold, strong, translucent, inverted, media, or always-dark surfaces.
+- Use md in ordinary forms. Use sm or xs only when the containing toolbar or dense layout follows the same control-density recipe. Form fields normally fill their parent; hug width needs an explicit layout constraint.
+
+**Field**
+
+- `ds-field` composes exactly one Input, Select, or SelectMulti with a persistent visible label and optional description/error text. Checkbox, Radio, and Switch already own their label structure and do not belong inside Field.
+- Field generates or accepts one stable `fieldId`, applies it to the child control, and connects the label, description, and error with `for`, `aria-labelledby`, and `aria-describedby`. Authored ARIA references are preserved and merged.
+- Put `error` and `errorMessage` on Field when composed. Field forwards the invalid state and supported child control border treatment; do not also set a child `errorMessage`, which would render duplicate error text.
+- Description remains visible while an error is shown. Help text explains format or consequences; error text says what must be corrected. The form owner decides whether validation appears on change, blur, or submit.
+- Clicking a Field label focuses its design-system control without opening a Select. Several controls answering one question require a native `fieldset` and `legend`, not one Field.
+- Field exposes `data-focused`, `data-filled`, `data-dirty`, `data-touched`, `data-invalid`, `data-disabled`, and `data-required` hooks. The child remains the source of value, validity, and form submission.
+- Field and its child fill the width supplied by the form layout. The form owns columns, wrapping, and responsive placement.
+
 **Checkbox**
 
-- `ds-checkbox` owns independent selection, acknowledgment, and consent. Use `ds-radio-group` for mutually exclusive choices and `ds-switch` for settings that apply immediately.
+- `ds-checkbox` owns independent selection, acknowledgment, and consent. Use `ds-radio` for mutually exclusive choices and `ds-switch` for settings that apply immediately.
 - Sizes are md with a 16px box centered in a 20px placement, sm with a 12px box in 16px, and xs with an 8px box in 12px. Labels map to body-medium, body-small, and caption respectively.
-- The box always has a 2px radius and a 1px inset secondary border, including when selected. Unchecked is empty; checked uses the canonical `Check` icon and indeterminate uses `Subtract` on a brand fill. The icon matches the visual box size at every density.
+- The box always has a 2px radius. Unchecked uses an inset `--color-foreground-tertiary` stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked and indeterminate remove the border, use a brand fill, and draw their component-owned mark at the same density-specific stroke width.
 - Enter and Space activate an interactive checkbox. Activation clears indeterminate before toggling checked; native form reset restores both initial states.
 - Use `presentation` only when a composite owner supplies selection semantics and interaction. Multi-select rows render an md presentation checkbox centered inside the shared 20px option icon zone; never combine it with a prefix icon.
 - Checkbox is for primary, secondary, and faint app surfaces and does not expose a background prop.
+
+**Radio**
+
+- `ds-radio` owns one-of-many selection across a small visible option set. Although the public component name is singular, the host exposes `radiogroup` semantics and each option exposes `radio` semantics.
+- Sizes match Checkbox: md has a 16px circle in a 20px placement, sm has a 12px circle in 16px, and xs has an 8px circle in 12px. Labels map to body-medium, body-small, and caption respectively.
+- Unchecked circles use an inset `--color-foreground-tertiary` stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 8px, 6px, and 4px respectively.
+- Arrow keys move and select through active options; Home and End select the first and last active options. Roving tabindex prefers the selected option.
+- Use Checkbox for independent or multi-select choices, Switch for immediately applied binary settings, and Select when a longer choice set must remain compact.
+- Radio is for primary, secondary, and faint app surfaces and does not expose a background prop.
 
 **Chip**
 
@@ -344,6 +380,7 @@ export class MyComponent {
 - `ds-icon` renders canonical IcoMo system and `Flag*` glyphs. It is visual content, never the interactive target; compose it inside the owning button, link, or control.
 - Icons are decorative by default. Add a label only when the icon itself conveys otherwise unavailable meaning; nested control icons stay decorative because the owner provides the accessible name.
 - Omitted color inherits `currentColor`. Use semantic aliases or CSS-variable references only when the glyph needs an independent color role.
+- `tertiary` and `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons. Quaternary is the fainter tier. Prefer the owning control's inactive state; informative icons and meaningful status graphics retain sufficient rendered contrast even when `aria-hidden`.
 - Unknown names, failed loads, and rejected SVG markup leave an empty fixed-size box. Do not add a fallback glyph that could communicate the wrong meaning.
 - Lazy loading is the default. Pre-register only critical first-paint glyphs with `registerIcons`; render-boundary SVG validation and parsed-DOM injection remain mandatory.
 - Informative flags require explicit localized labels. The parent owns icon size and responsive changes.
@@ -353,6 +390,7 @@ export class MyComponent {
 - `ds-loader` communicates indeterminate progress for an operation. Use Skeleton for pending content with predictable structure; Loader does not represent determinate progress.
 - Nested Loader stays unnamed while the owning button, field, or region exposes its busy state. Standalone Loader requires contextual status text; avoid duplicate announcements.
 - Omitted color inherits `currentColor`. Explicit color aliases and CSS variables follow the Icon contract.
+- Loader is an informative progress graphic: do not use `tertiary` or `quaternary` for standalone or informative loading states. Nested Loader inherits a readable color from its owning busy control or region.
 - The owner decides whether to delay visibility for short operations, reserves space, supplies centering/overlay layout, and communicates completion or failure.
 - Reduced motion stops rotation but keeps the glyph and status semantics visible. The parent owns size and responsive changes.
 
@@ -393,15 +431,29 @@ Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNa
 
 CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Text line-height is not a density variable; the control's `size` maps internally to a complete `ds-text` variant via `CONTROL_TEXT_VARIANT`.
 
+The xs recipe is a compact **visual density**, not permission to crowd pointer targets. An owner that uses an operable xs control must place it within at least a 24×24 CSS-pixel allocation and preserve enough clearance that 24px circles centered on adjacent target bounds do not overlap. This contract also applies to compact Switch and Slider instances. Use sm or md whenever the layout cannot guarantee that spacing; presentation-only indicators are not pointer targets.
+
 **Switch density**
 
 - `ds-switch` is compact chrome placed inside menu, control, and form rows rather than a full-height control itself.
-- Sizes are `md` = 36×24 with a 16px thumb and 4px body inset, `sm` = 24×16 with a 12px thumb and 2px inset, and `xs` = 12×8 with a 6px thumb and 1px inset. The thumb's 1px outset tertiary stroke extends equally into that space on every side and does not consume its declared diameter.
-- Use the shared interaction-fill inset border and hover/press wash. Switch focus uses the shared **outset** `ds-focus-ring`, not the inset ring.
+- Sizes are `md` = 32×20 with a 12px thumb and 4px body inset, `sm` = 24×16 with a 10px thumb and 3px inset, and `xs` = 20×12 with an 8px thumb and 2px inset. Unchecked track and thumb are transparent and each uses an inset `--color-foreground-tertiary` stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked uses a brand track and primary-background thumb with both strokes removed.
+- The Switch host owns its structural unchecked inset stroke directly; do not put it on the shared interaction-fill pseudo-elements because a parent row may own those layers. Hover/press wash is confined to the thumb. Switch focus uses the shared **outset** `ds-focus-ring`, not the inset ring.
 - Track color and thumb position animate with `--effect-motion-short-3`, matching ShellGradientSwatch selection motion; do not add depressed/elevated shadows or press-scale transforms.
 - Every switch requires an accessible name. Use `aria-label` for standalone icon-like contexts or `aria-labelledby` to associate visible text; use `name`/`value` for form submission.
 - `readOnly` keeps the switch focusable and submitted but prevents state changes. `disabled` and `isInactive` remove it from keyboard interaction and form submission.
-- Composite controls may set `presentation` so the switch is an aria-hidden, non-focusable visual indicator. The owner must provide state semantics; Menu switch rows use `menuitemcheckbox` + `aria-checked`.
+- Switch exposes `data-focused`, `data-filled`, `data-dirty`, `data-touched`, `data-valid`, and `data-invalid` in addition to its checked, inactive, read-only, and required hooks. Required invalid state is also exposed through `aria-required` and `aria-invalid`; form owners decide when to show validation messaging.
+- Composite controls may set `presentation` so the switch is an aria-hidden, non-focusable visual indicator. The owner must provide state semantics; Menu switch rows use `menuitemcheckbox` + `aria-checked` and the default md switch size.
+
+**Slider**
+
+- `ds-slider` is direct manipulation for a bounded numeric value. Use Input when exact entry matters more, Radio for short named choices, and Switch for immediate binary settings.
+- Assign a number for a single thumb or a two-number array through the JavaScript `value` property for a range. Range values remain ordered, cannot cross, and may reserve `minStepsBetweenValues`; both thumbs remain in constant DOM/tab order.
+- Every thumb contains a native range input. A visible `label` names a single thumb; range sliders require localized `startLabel` and `endLabel`. Use `valueText` for one authored value description or assign `valueTexts` for per-thumb range descriptions when raw numbers are not understandable by themselves.
+- Pointer input chooses the nearest thumb and emits `dsChange` continuously; `dsCommit` is for expensive work after pointer, keyboard, or assistive-technology interaction settles.
+- Horizontal Slider fills its parent. Vertical Slider uses a token-based default length that layouts may override through `--ds-slider-vertical-length`. `thumbAlignment="edge"` keeps the full thumb inside the control; `center` aligns its center to the endpoints.
+- Sizes follow control density: md uses a 32px control, 16px thumb, and 4px rail; sm uses 24/12/3; xs uses 16/8/2. The rail and thumb outline use foreground tertiary for structural 3:1 contrast, while the selected indicator uses bold brand.
+- `readOnly` remains focusable and submitted but prevents changes. `disabled` and `isInactive` remove all thumbs from interaction and form submission. Form reset restores the initial normalized value; a range submits repeated entries under one name.
+- Slider exposes orientation, dragging, focus, filled, dirty, touched, valid, disabled, and read-only data hooks. Do not add a second validation or gesture policy in consuming CSS.
 
 **Interaction fill**
 
@@ -443,7 +495,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, `ds-slider`, `ds-radio-group`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, Select/SelectMulti options, TabGroup / PanelSubNav tabs, RadioGroup options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, `ds-slider`, `ds-radio`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, Select/SelectMulti options, TabGroup / PanelSubNav tabs, Radio options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 
@@ -500,6 +552,13 @@ export const Default: Story = {
   render: args => html`<ds-my-component label=${args['label']}></ds-my-component>`,
 };
 ```
+
+The automated accessibility audit normally scans every top-level `ds-*`
+component in a story. In a showcase story where design-system captions or
+annotations are siblings of the real component fixture, add
+`data-a11y-fixture` to each component under test. When any explicit fixture is
+present, only marked components are audited; never use the marker to exclude
+content rendered by the component itself.
 
 For components with complex JS-only props (arrays, objects), use `lit/directives/ref.js`:
 

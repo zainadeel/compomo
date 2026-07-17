@@ -30,7 +30,8 @@ test('loading preserves width, disables activation, and inherits foreground colo
   for (const id of BUTTON_IDS) {
     const host = page.locator(`#${id}`);
     const button = host.locator('button');
-    await expect(button).toBeDisabled();
+    await expect(button).not.toHaveAttribute('disabled');
+    await expect(button).toHaveAttribute('aria-disabled', 'true');
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).not.toHaveClass(/ds-control-inactive/);
     await expect(host.locator('ds-loader')).toHaveCount(1);
@@ -56,6 +57,24 @@ test('loading preserves width, disables activation, and inherits foreground colo
   expect(await page.evaluate(() => (
     window as typeof window & { __buttonClicks: number }
   ).__buttonClicks)).toBe(0);
+});
+
+test('loading preserves keyboard focus and blocks native form submission', async ({ page }) => {
+  const host = page.locator('#filled-submit');
+  const button = host.locator('button');
+  await button.focus();
+
+  await host.evaluate(element => {
+    (element as HTMLElement & { isLoading: boolean }).isLoading = true;
+  });
+
+  await expect(button).toBeFocused();
+  await expect(button).not.toHaveAttribute('disabled');
+  await expect(button).toHaveAttribute('aria-disabled', 'true');
+  await button.evaluate(element => (element as HTMLButtonElement).click());
+  expect(await page.evaluate(() => (
+    window as typeof window & { __formSubmits: number }
+  ).__formSubmits)).toBe(0);
 });
 
 test('loading swaps the correct content for each variant', async ({ page }) => {

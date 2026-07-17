@@ -231,10 +231,12 @@ export class ChartDonut {
             viewBox={`0 0 ${size} ${size}`}
             width={size}
             height={size}
+            role={isEmpty ? 'img' : undefined}
+            aria-label={isEmpty ? this.noDataLabel : undefined}
           >
             <g transform={`translate(${radius}, ${radius})`}>
               {isEmpty ? (
-                <path d={emptyRingPath ?? undefined} fill="var(--color-background-faint-neutral)" aria-label={this.noDataLabel} />
+                <path d={emptyRingPath ?? undefined} fill="var(--color-background-faint-neutral)" aria-hidden="true" />
               ) : (
                 slices.map((slice, i) => {
                   const datum = this.data[i];

@@ -1,0 +1,73 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-field",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-field",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Accessible form-field composition that gives one Input or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+  "useWhen": [
+    "An Input, Select, or SelectMulti needs a persistent visible label in a form.",
+    "Help text or an error message must be programmatically associated with one control.",
+    "A form layout needs one consistent label-control-message rhythm."
+  ],
+  "avoidWhen": [
+    "The component already owns its visible label and complete selection semantics, such as Checkbox, Radio, or Switch.",
+    "Several controls belong to one question; use a semantic fieldset and legend instead.",
+    "Text describes a region or group rather than one form control."
+  ],
+  "alternatives": [
+    {
+      "when": "Several related controls answer one question.",
+      "component": "component:ds-text",
+      "reason": "Use native fieldset and legend semantics, then compose Text only for supporting content."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-input",
+    "component:ds-select",
+    "component:ds-select-multi",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Slot exactly one form control. Field assigns its stable control ID and connects the visible label automatically.",
+    "Description and rendered error IDs are merged with any authored aria-describedby references rather than replacing them.",
+    "The error prop forwards aria-invalid and supported design-system control error styling; put visible error text on Field, not again on the child control.",
+    "Clicking the label focuses the slotted design-system control without opening a Select popup.",
+    "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
+  ],
+  "states": [
+    "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
+    "Description remains visible during error so guidance and validation do not replace each other.",
+    "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
+    "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
+  ],
+  "responsiveBehavior": [
+    "Field fills the width supplied by its parent and makes the slotted control fill that field width.",
+    "The form layout owns column count, wrapping, and responsive placement; Field keeps the vertical label-control-message composition intact."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set fieldId only when another element must reference a predictable control ID; otherwise use the generated association.",
+      "Assign child component values and option arrays through their normal JavaScript properties."
+    ],
+    "react": [
+      "Compose one DsInput, DsSelect, or DsSelectMulti child and control validation timing in the form owner."
+    ],
+    "angular": [
+      "Compose the generated Field adapter around the control adapter and its matching Angular value accessor."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Field/Field.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

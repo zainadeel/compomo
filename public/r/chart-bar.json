@@ -94,7 +94,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: data.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^3.1.0",
+          "@ds-mo/tokens ^3.1.1",
           "@ds-mo/icons ^6.2.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
@@ -109,7 +109,7 @@
   "files": [
     {
       "path": "src/wc/components/ChartBar/ChartBar.css",
-      "content": ":host {\n  display: inline-flex;\n  font-family: var(--typography-font-family);\n}\n\n.chart-bar__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-bar__axis-label {\n  fill: var(--color-foreground-tertiary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-bar__bar {\n  rx: var(--dimension-radius-050);\n}\n",
+      "content": ":host {\n  display: inline-flex;\n  font-family: var(--typography-font-family);\n}\n\n.chart-bar__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-bar__axis-label {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-bar__bar {\n  rx: var(--dimension-radius-050);\n}\n",
       "type": "registry:ui"
     },
     {

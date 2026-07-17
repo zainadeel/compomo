@@ -36,6 +36,12 @@ export class TabGroup {
     return getSelectableTabs(this.tabs);
   }
 
+  private get focusableTabId(): string {
+    return this.selectableTabs.some(tab => tab.id === this.value && !tab.isInactive)
+      ? this.value
+      : (this.selectableTabs.find(tab => !tab.isInactive)?.id ?? '');
+  }
+
   private selectTab(id: string, options?: { focus?: boolean }) {
     this.value = id;
     this.dsChange.emit(id);
@@ -61,7 +67,10 @@ export class TabGroup {
       const activeId = active.getAttribute('data-tab-id');
       if (activeId === next) return;
 
-      const nextTab = this.el.querySelector(`[data-tab-id="${next}"]`) as HTMLElement | null;
+      const focusId = this.selectableTabs.some(tab => tab.id === next && !tab.isInactive)
+        ? next
+        : this.focusableTabId;
+      const nextTab = this.el.querySelector(`[data-tab-id="${focusId}"]`) as HTMLElement | null;
       if (nextTab) {
         nextTab.focus({ preventScroll: true });
       } else {
@@ -89,7 +98,8 @@ export class TabGroup {
     const tabs = this.selectableTabs;
     if (!tabs.length) return;
 
-    const currentIdx = tabs.findIndex(t => t.id === this.value);
+    const focusedId = (e.target as Element | null)?.closest<HTMLElement>('[data-tab-id]')?.dataset['tabId'];
+    const currentIdx = tabs.findIndex(t => t.id === (focusedId ?? this.focusableTabId));
 
     let nextIdx: number | null = null;
 
@@ -122,6 +132,7 @@ export class TabGroup {
 
   render() {
     const bgClass = this.getBgClass();
+    const focusableTabId = this.focusableTabId;
 
     return (
       <Host
@@ -182,7 +193,7 @@ export class TabGroup {
                 aria-disabled={tab.isInactive ? 'true' : undefined}
                 aria-controls={tab.panelId ?? undefined}
                 disabled={tab.isInactive}
-                tabIndex={isSelected ? 0 : -1}
+                tabIndex={tab.id === focusableTabId ? 0 : -1}
                 onClick={() => !tab.isInactive && this.selectTab(tab.id)}
               >
                 <span class={{

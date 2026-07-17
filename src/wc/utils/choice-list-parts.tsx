@@ -49,7 +49,7 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
             class="select-search__clear"
             variant="icon"
             size="sm"
-            icon="Cross"
+            icon="CrossCircle"
             hasBorder={false}
             rounded
             ariaLabel={`${clearLabel} ${placeholder}`}

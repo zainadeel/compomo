@@ -53,7 +53,7 @@ export const Sizes: Story = {
       ${SIZES.map(size => html`
         <div style=${ROW}>
           <ds-text as="span" variant="text-body-medium" color="secondary">
-            ${size} · ${size === 'md' ? '36×24' : size === 'sm' ? '24×16' : '12×8'}px
+            ${size} · ${size === 'md' ? '32×20' : size === 'sm' ? '24×16' : '20×12'}px
           </ds-text>
           <div style=${PAIR}>
             <ds-switch size=${size} aria-label="${size} off"></ds-switch>
@@ -129,7 +129,7 @@ export const InContext: Story = {
           Menu setting
         </ds-text>
         <ds-switch
-          size=${args['size']}
+          size="md"
           ?checked=${args['checked']}
           ?read-only=${args['readOnly']}
           ?is-inactive=${args['isInactive']}

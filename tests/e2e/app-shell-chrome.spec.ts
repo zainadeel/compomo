@@ -16,6 +16,34 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('makes an overflowing destination body keyboard-scrollable and keeps footer roving focus working', async ({ page }) => {
+    const panel = page.locator('#panel');
+    await panel.evaluate(element => {
+      const control = element as HTMLElement & { groups: unknown[] };
+      control.groups = [{
+        label: 'Fleet',
+        items: Array.from({ length: 20 }, (_, index) => ({
+          id: `item-${index}`,
+          label: `Item ${index}`,
+          icon: 'Map',
+          href: `/item-${index}`,
+        })),
+      }];
+      element.querySelector<HTMLElement>('.panel-nav__body')!.style.maxHeight = '96px';
+    });
+
+    const scrollRegion = page.getByRole('region', { name: 'Navigation items' });
+    await expect(scrollRegion).toHaveAttribute('tabindex', '0');
+    await scrollRegion.focus();
+    await expect(scrollRegion).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Item 0' })).toHaveClass(/ds-focus-ring-inset/);
+
+    const user = page.locator('.panel-nav__footer-user');
+    await user.focus();
+    await user.press('ArrowLeft');
+    await expect(page.locator('.panel-nav__footer-btn .button-unfilled')).toBeFocused();
+  });
+
   test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts', async ({
     page,
   }) => {

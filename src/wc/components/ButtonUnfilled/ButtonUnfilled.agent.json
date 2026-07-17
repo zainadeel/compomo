@@ -45,7 +45,7 @@
     "Provide an explicit accessible name for every icon-only action.",
     "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
     "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
-    "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when needed.",
+    "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
     "Use inactive state only when an unavailable action must remain visible.",
     "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
   ],
@@ -54,7 +54,7 @@
     "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
     "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
     "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
-    "Loading prevents duplicate activation without applying inactive opacity.",
+    "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
     "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
   ],

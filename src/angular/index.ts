@@ -29,7 +29,7 @@ export const DIRECTIVES = [
   d.DsPanelNav,
   d.DsPanelSubNav,
   d.DsPanelTools,
-  d.DsRadioGroup,
+  d.DsRadio,
   d.DsSelect,
   d.DsSelectMulti,
   d.DsShellGradientPicker,

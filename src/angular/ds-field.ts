@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsField } from '@ds-mo/ui/components/ds-fi
 
 @ProxyCmp({
   defineCustomElementFn: defineDsField,
-  inputs: ['fieldId', 'label']
+  inputs: ['description', 'error', 'errorMessage', 'fieldId', 'label']
 })
 @Component({
   selector: 'ds-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['fieldId', { name: 'label', required: true }],
+  inputs: ['description', 'error', 'errorMessage', 'fieldId', { name: 'label', required: true }],
 })
 export class DsField {
   protected el: HTMLDsFieldElement;

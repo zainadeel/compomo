@@ -1,0 +1,86 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-slider",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-slider",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Form-associated single or two-thumb range input with native slider semantics, pointer dragging, keyboard operation, formatting, density, and orientation controls.",
+  "useWhen": [
+    "A person should choose or tune an approximate numeric value within known bounds.",
+    "A bounded minimum and maximum range needs two independently focusable thumbs.",
+    "A value benefits from direct manipulation, immediate preview, and native form submission."
+  ],
+  "avoidWhen": [
+    "The exact numeric value is more important than direct spatial adjustment.",
+    "The choices are categorical rather than ordered numeric values.",
+    "The value is progress, measurement, or read-only status rather than user input."
+  ],
+  "alternatives": [
+    {
+      "when": "People must enter or verify a precise numeric value.",
+      "component": "component:ds-input",
+      "reason": "A typed field supports exact entry and review more efficiently than spatial adjustment."
+    },
+    {
+      "when": "The available values are a short finite set with meaningful labels.",
+      "component": "component:ds-radio",
+      "reason": "Visible named choices communicate categorical meaning more clearly."
+    },
+    {
+      "when": "The setting is binary and applies immediately.",
+      "component": "component:ds-switch",
+      "reason": "Switch communicates an immediate on/off state without implying intermediate values."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-text",
+    "component:ds-input"
+  ],
+  "accessibility": [
+    "Each thumb contains a native range input and must have an accessible name; a visible label names a single thumb, while startLabel and endLabel distinguish a two-thumb range.",
+    "Arrow keys adjust one step, Home and End reach the allowed bounds, and browser-supported Page Up and Page Down make larger changes.",
+    "Every range thumb remains in a constant tab order and exposes dynamic minimum and maximum values when the other thumb constrains it.",
+    "Use valueText for one authored description or valueTexts for per-thumb range descriptions when numeric values are not understandable on their own, such as named levels, dates, durations, or units.",
+    "Read-only sliders remain focusable and submittable; inactive or disabled sliders leave the tab order and form submission."
+  ],
+  "states": [
+    "value is mutable: user pointer, keyboard, or assistive-technology input updates it and emits dsChange continuously.",
+    "dsCommit emits once a pointer interaction completes or the native range input commits a keyboard or assistive-technology change.",
+    "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",
+    "minStepsBetweenValues reserves a minimum stepped distance between range thumbs.",
+    "The initial normalized value is the native form-reset baseline and range values submit as repeated entries under the same name.",
+    "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract."
+  ],
+  "responsiveBehavior": [
+    "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
+    "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
+    "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
+    "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the thumb uses a 1.5px brand inset ring.",
+    "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign range arrays and formatOptions through JavaScript properties, not string attributes.",
+      "Listen for dsChange during adjustment and dsCommit for expensive work that should run after the interaction settles."
+    ],
+    "react": [
+      "Use DsSlider with a number or two-number value array and handle onDsChange and onDsCommit custom events."
+    ],
+    "angular": [
+      "Use DsSlider with property binding for range arrays; the generated number value accessor is appropriate only for a single numeric value."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook design review",
+      "path": "src/wc/components/Slider/Slider.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and interaction coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

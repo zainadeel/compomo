@@ -12,7 +12,12 @@ export type LoaderColor = IconColor;
 export class Loader {
   /** Iconography size token. Maps to `--dimension-iconography-{size}`. Default `md` = 20 px. */
   @Prop() size: LoaderSize = 'md';
-  /** Semantic foreground color token, or a raw CSS var reference. Same tokens as `ds-icon`. */
+  /**
+   * Semantic foreground color token, or a raw CSS var reference. Same tokens
+   * as `ds-icon`. Do not use `tertiary` or `quaternary` for a standalone or
+   * informative Loader; inherit a readable color from the owning busy control
+   * or region.
+   */
   @Prop() color: LoaderColor = 'inherit';
   /**
    * Accessible label for standalone usage. Wraps the spinner in a live region

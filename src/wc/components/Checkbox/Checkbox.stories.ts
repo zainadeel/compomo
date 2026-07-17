@@ -45,9 +45,13 @@ export const Playground: Story = {
 export const Sizes: Story = {
   render: () => html`
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--dimension-space-100);">
-      <ds-checkbox size="md" label="Medium — 16px box in a 20px placement" checked></ds-checkbox>
-      <ds-checkbox size="sm" label="Small — 12px box in a 16px placement" checked></ds-checkbox>
-      <ds-checkbox size="xs" label="Extra small — 8px box in a 12px placement" checked></ds-checkbox>
+      ${(['md', 'sm', 'xs'] as const).map(size => html`
+        <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
+          <ds-checkbox size=${size} label="${size.toUpperCase()} unchecked"></ds-checkbox>
+          <ds-checkbox size=${size} label="${size.toUpperCase()} checked" checked></ds-checkbox>
+          <ds-checkbox size=${size} label="${size.toUpperCase()} mixed" indeterminate></ds-checkbox>
+        </div>
+      `)}
     </div>
   `,
 };

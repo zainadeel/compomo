@@ -1,0 +1,87 @@
+@import '../../utils/control-inactive.css';
+@import '../../utils/control-density.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+}
+
+:host(.radio--horizontal) {
+  flex-direction: row;
+  gap: var(--dimension-space-100);
+}
+
+:host(.radio--md) {
+  --_radio-circle: var(--dimension-iconography-sm);
+  --_radio-dot: var(--dimension-size-100);
+  --_radio-stroke: var(--dimension-stroke-width-015);
+}
+
+:host(.radio--sm) {
+  --_radio-circle: var(--dimension-iconography-xs);
+  --_radio-dot: var(--dimension-size-075);
+  --_radio-stroke: var(--dimension-stroke-width-012);
+}
+
+:host(.radio--xs) {
+  --_radio-circle: var(--dimension-size-100);
+  --_radio-dot: var(--dimension-size-050);
+  --_radio-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);
+}
+
+.radio__item {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  gap: var(--ds-control-gap);
+  height: var(--ds-control-height);
+  padding: 0 var(--ds-control-padding-inline);
+  border-radius: var(--ds-control-radius);
+  cursor: pointer;
+  user-select: none;
+}
+
+.radio__placement {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-control-icon);
+  height: var(--ds-control-icon);
+}
+
+.radio__circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--_radio-circle);
+  height: var(--_radio-circle);
+  border: 0;
+  border-radius: var(--dimension-radius-half);
+  box-shadow: inset 0 0 0 var(--_radio-stroke) var(--color-foreground-tertiary);
+  transition:
+    background-color var(--effect-motion-short-2),
+    box-shadow var(--effect-motion-short-2);
+}
+
+.radio__circle--checked {
+  background-color: var(--color-background-bold-brand);
+  box-shadow: none;
+}
+
+.radio__dot {
+  width: var(--_radio-dot);
+  height: var(--_radio-dot);
+  border-radius: var(--dimension-radius-half);
+  background-color: var(--color-foreground-on-bold-background-primary);
+}
+
+.radio__label {
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--ds-control-label-inset);
+}

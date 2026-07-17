@@ -10,7 +10,7 @@
 
 /* Matches ds-text text-caption regular (SVG cannot host ds-text). */
 .chart-line__axis-label {
-  fill: var(--color-foreground-tertiary);
+  fill: var(--color-foreground-secondary);
   font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-xs);
   font-weight: var(--typography-weight-medium);

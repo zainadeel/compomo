@@ -552,7 +552,7 @@ export class SelectMulti {
           aria-label={this.ariaLabel}
           aria-labelledby={this.ariaLabelledby}
           aria-describedby={describedBy}
-          aria-invalid={this.error || undefined}
+          aria-invalid={this.error ? 'true' : undefined}
           aria-required={this.required || undefined}
           aria-busy={this.isLoading ? 'true' : undefined}
           onClick={() => (this.open ? this.closePopup() : this.openPopup(false))}
@@ -614,11 +614,25 @@ export class SelectMulti {
               aria-busy={this.isLoading ? 'true' : undefined}
             >
               {this.isLoading ? (
-                <div class="ds-choice-loading">
-                  <ds-loader size="md" color="inherit" label={this.loadingLabel} />
+                <div
+                  class="ds-choice-loading"
+                  role="option"
+                  aria-selected="false"
+                  aria-disabled="true"
+                  aria-label={this.loadingLabel}
+                  aria-live="polite"
+                >
+                  <ds-loader size="md" color="inherit" />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
-                <div class="ds-choice-empty">
+                <div
+                  class="ds-choice-empty"
+                  role="option"
+                  aria-selected="false"
+                  aria-disabled="true"
+                  aria-label={this.noResultsText}
+                  aria-live="polite"
+                >
                   <ds-empty-state body={this.noResultsText} />
                 </div>
               ) : (

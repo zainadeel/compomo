@@ -10,10 +10,20 @@ const VARIANTS = [
 ];
 
 const COLORS = [
-  'primary', 'secondary', 'tertiary',
+  'primary', 'secondary', 'tertiary', 'quaternary',
   'brand', 'negative', 'positive', 'warning', 'caution', 'ai',
   'on-strong', 'on-bold', 'inherit',
 ];
+
+const GENERAL_CONTENT_COLORS = [
+  'primary', 'secondary',
+  'brand', 'negative', 'positive', 'warning', 'caution', 'ai',
+] as const;
+
+const CONTEXTUAL_COLORS = [
+  { color: 'on-strong', background: 'var(--color-background-strong-neutral)' },
+  { color: 'on-bold', background: 'var(--color-background-bold-neutral)' },
+] as const;
 
 const meta: Meta = {
   title: 'Primitives/Text',
@@ -27,7 +37,7 @@ const meta: Meta = {
     },
     color: {
       control: 'text',
-      description: `Color token (${COLORS.join(', ')}) or CSS var, for example var(--color-foreground-bold-brand).`,
+      description: `Color token (${COLORS.join(', ')}) or CSS var. Tertiary and quaternary are restricted to genuinely inactive/disabled or purely decorative content; quaternary is the fainter tier. Prefer the owning control's inactive state.`,
     },
     as:            { control: 'select', options: ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label'] },
     align:         { control: 'select', options: ['left', 'center', 'right'] },
@@ -99,7 +109,7 @@ export const AllVariants: Story = {
     <div style="display: flex; flex-direction: column; gap: 8px">
       ${VARIANTS.map(v => html`
         <div style="display: flex; align-items: baseline; gap: 16px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0">${v}</span>
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0">${v}</span>
           <ds-text variant=${v}>The quick brown fox jumps over the lazy dog</ds-text>
           <ds-text variant=${v} emphasis>emphasis</ds-text>
         </div>
@@ -114,7 +124,7 @@ export const Emphasis: Story = {
     <div style="display: flex; flex-direction: column; gap: 8px">
       ${VARIANTS.map(v => html`
         <div style="display: flex; align-items: baseline; gap: 24px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0">${v}</span>
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0">${v}</span>
           <ds-text variant=${v} .emphasis=${false} as="span">regular</ds-text>
           <ds-text variant=${v} .emphasis=${true} as="span">emphasis</ds-text>
         </div>
@@ -126,11 +136,28 @@ export const Emphasis: Story = {
 export const Colors: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 8px">
-      ${COLORS.filter(c => c !== 'inherit').map(c => html`
+      ${GENERAL_CONTENT_COLORS.map(c => html`
         <div style="display: flex; align-items: center; gap: 16px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 120px; flex-shrink: 0">${c}</span>
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0">${c}</span>
           <ds-text color=${c}>Sample text in ${c}</ds-text>
         </div>
+      `)}
+
+      ${CONTEXTUAL_COLORS.map(({ color, background }) => html`
+        <div style="display: flex; align-items: center; gap: 16px; padding: var(--dimension-space-100); border-radius: var(--dimension-radius-075); background: ${background}">
+          <ds-text as="span" variant="text-caption" color=${color} style="min-width: 120px">${color}</ds-text>
+          <ds-text color=${color}>Sample text in ${color}</ds-text>
+        </div>
+      `)}
+
+      ${(['tertiary', 'quaternary'] as const).map(color => html`
+        <button
+          disabled
+          style="display: flex; align-items: center; gap: 16px; padding: 0; border: 0; background: transparent; text-align: left"
+        >
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0">${color} · restricted</span>
+          <ds-text as="span" color=${color}>Unavailable setting</ds-text>
+        </button>
       `)}
     </div>
   `,
@@ -153,7 +180,7 @@ export const Truncation: Story = {
 };
 
 const ROW = 'display: flex; align-items: baseline; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border-tertiary)';
-const LBL = 'font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary); min-width: 180px; flex-shrink: 0';
+const LBL = 'font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0';
 
 export const Decorations: Story = {
   render: () => html`
@@ -187,7 +214,7 @@ export const Alignment: Story = {
     <div style="display: flex; flex-direction: column; gap: 16px; max-width: 480px">
       ${(['left', 'center', 'right'] as const).map(a => html`
         <div style="display: flex; flex-direction: column; gap: 4px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-tertiary)">${a}</span>
+          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary)">${a}</span>
           <div style="border: 1px solid var(--color-border-tertiary); border-radius: 6px; padding: 12px">
             <ds-text variant="text-body-medium" align=${a}>
               The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.

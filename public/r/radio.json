@@ -1,0 +1,374 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio",
+  "title": "Radio",
+  "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio",
+    "source": "src/wc/components/Radio/Radio.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
+      "useWhen": [
+        "A user must select exactly one visible option from a small set.",
+        "All available choices should remain visible for comparison.",
+        "A form needs one selected string value with native validation, reset, or external form association."
+      ],
+      "avoidWhen": [
+        "A user may select zero or multiple independent choices.",
+        "A binary setting applies immediately rather than selecting from a set.",
+        "The option list is too long or space-constrained to remain visible."
+      ],
+      "alternatives": [
+        {
+          "when": "A user may select zero or multiple independent choices.",
+          "component": "component:ds-checkbox",
+          "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+        },
+        {
+          "when": "A binary setting applies immediately.",
+          "component": "component:ds-switch",
+          "reason": "Switch communicates an immediately applied on/off setting."
+        },
+        {
+          "when": "The option list is long or the available space is constrained.",
+          "component": "component:ds-select",
+          "reason": "Select keeps a larger one-of-many choice set compact."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
+        "Each visible option exposes radio semantics, its checked state, its label text, and any inactive state.",
+        "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
+        "Roving tabindex keeps one active option in the tab order, preferring the selected option."
+      ],
+      "states": [
+        "Unchecked circles use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs.",
+        "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 8px at md, 6px at sm, and 4px at xs.",
+        "Sizes are md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
+        "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected."
+      ],
+      "responsiveBehavior": [
+        "Choose size from the density of the containing form or settings row.",
+        "Prefer vertical layout when labels may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign options as a JavaScript property, set value as a property for application state updates, and listen for dsChange.",
+          "Use the form attribute on the host when associating a radio set rendered outside its owning form."
+        ],
+        "react": [
+          "Use DsRadio, pass options as an array, and handle onDsChange; value is mutable and updates after user selection."
+        ],
+        "angular": [
+          "Use DsRadio with options and value bindings plus dsChange, or import the generated radio value accessor with the component adapter."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Radio/Radio.stories.ts"
+        },
+        {
+          "label": "Cross-browser form and accessibility coverage",
+          "path": "tests/e2e/forms.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name when visible group labeling is unavailable."
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false,
+          "description": "Id reference for a visible group label."
+        },
+        "direction": {
+          "type": "'vertical' | 'horizontal'",
+          "resolvedType": "\"horizontal\" | \"vertical\"",
+          "attribute": "direction",
+          "default": "'vertical'",
+          "required": false,
+          "mutable": false,
+          "description": "Layout direction for the option set."
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Native disabled state for the complete set."
+        },
+        "form": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "form",
+          "required": false,
+          "mutable": false,
+          "description": "Associates the radio set with a form by id when rendered outside that form."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Design-system inactive state for the complete set."
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false,
+          "description": "Native form field name."
+        },
+        "options": {
+          "type": "RadioOption[]",
+          "resolvedType": "RadioOption[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Visible choices in this one-of-many set."
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Require one option to be selected for form validity."
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false,
+          "description": "Validation message used when a required set has no selection."
+        },
+        "size": {
+          "type": "RadioSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Visual and placement density for every option."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true,
+          "description": "Selected option value."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted after user selection with the selected option value."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name when visible group labeling is unavailable."
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false,
+        "description": "Id reference for a visible group label."
+      },
+      "direction": {
+        "type": "'vertical' | 'horizontal'",
+        "resolvedType": "\"horizontal\" | \"vertical\"",
+        "attribute": "direction",
+        "default": "'vertical'",
+        "required": false,
+        "mutable": false,
+        "description": "Layout direction for the option set."
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Native disabled state for the complete set."
+      },
+      "form": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "form",
+        "required": false,
+        "mutable": false,
+        "description": "Associates the radio set with a form by id when rendered outside that form."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Design-system inactive state for the complete set."
+      },
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false,
+        "description": "Native form field name."
+      },
+      "options": {
+        "type": "RadioOption[]",
+        "resolvedType": "RadioOption[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Visible choices in this one-of-many set."
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Require one option to be selected for form validity."
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false,
+        "description": "Validation message used when a required set has no selection."
+      },
+      "size": {
+        "type": "RadioSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Visual and placement density for every option."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true,
+        "description": "Selected option value."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted after user selection with the selected option value."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-radio",
+      "react": "DsRadio",
+      "angular": "DsRadio"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-radio.js';",
+        "example": "<ds-radio></ds-radio>"
+      },
+      "react": {
+        "import": "import { DsRadio } from '@ds-mo/ui/react';",
+        "example": "<DsRadio />"
+      },
+      "angular": {
+        "import": "import { DsRadio } from '@ds-mo/ui/angular/ds-radio';",
+        "example": "<ds-radio></ds-radio>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: options.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Radio/Radio.css",
+      "content": "@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-025);\n}\n\n:host(.radio--horizontal) {\n  flex-direction: row;\n  gap: var(--dimension-space-100);\n}\n\n:host(.radio--md) {\n  --_radio-circle: var(--dimension-iconography-sm);\n  --_radio-dot: var(--dimension-size-100);\n  --_radio-stroke: var(--dimension-stroke-width-015);\n}\n\n:host(.radio--sm) {\n  --_radio-circle: var(--dimension-iconography-xs);\n  --_radio-dot: var(--dimension-size-075);\n  --_radio-stroke: var(--dimension-stroke-width-012);\n}\n\n:host(.radio--xs) {\n  --_radio-circle: var(--dimension-size-100);\n  --_radio-dot: var(--dimension-size-050);\n  --_radio-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);\n}\n\n.radio__item {\n  display: inline-flex;\n  align-items: center;\n  box-sizing: border-box;\n  gap: var(--ds-control-gap);\n  height: var(--ds-control-height);\n  padding: 0 var(--ds-control-padding-inline);\n  border-radius: var(--ds-control-radius);\n  cursor: pointer;\n  user-select: none;\n}\n\n.radio__placement {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n\n.radio__circle {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: var(--_radio-circle);\n  height: var(--_radio-circle);\n  border: 0;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--_radio-stroke) var(--color-foreground-tertiary);\n  transition:\n    background-color var(--effect-motion-short-2),\n    box-shadow var(--effect-motion-short-2);\n}\n\n.radio__circle--checked {\n  background-color: var(--color-background-bold-brand);\n  box-shadow: none;\n}\n\n.radio__dot {\n  width: var(--_radio-dot);\n  height: var(--_radio-dot);\n  border-radius: var(--dimension-radius-half);\n  background-color: var(--color-foreground-on-bold-background-primary);\n}\n\n.radio__label {\n  flex: 1;\n  min-width: 0;\n  padding: 0 var(--ds-control-label-inset);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Radio/Radio.tsx",
+      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';\n\nexport interface RadioOption {\n  label: string;\n  value: string;\n  isInactive?: boolean;\n}\n\nexport type RadioSize = 'md' | 'sm' | 'xs';\n\nconst LABEL_VARIANT: Record<RadioSize, 'text-body-medium' | 'text-body-small' | 'text-caption'> = {\n  md: 'text-body-medium',\n  sm: 'text-body-small',\n  xs: 'text-caption',\n};\n\n@Component({\n  tag: 'ds-radio',\n  styleUrl: 'Radio.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Radio {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  /** Visible choices in this one-of-many set. */\n  @Prop() options: RadioOption[] = [];\n  /** Selected option value. */\n  @Prop({ mutable: true }) value: string = '';\n  /** Visual and placement density for every option. */\n  @Prop() size: RadioSize = 'md';\n  /** Native form field name. */\n  @Prop({ reflect: true }) name: string | undefined;\n  /** Associates the radio set with a form by id when rendered outside that form. */\n  @Prop({ reflect: true }) form: string | undefined;\n  /** Native disabled state for the complete set. */\n  @Prop({ reflect: true }) disabled: boolean = false;\n  /** Require one option to be selected for form validity. */\n  @Prop({ reflect: true }) required: boolean = false;\n  /** Validation message used when a required set has no selection. */\n  @Prop() requiredMessage: string = 'This field is required.';\n  /** Layout direction for the option set. */\n  @Prop() direction: 'vertical' | 'horizontal' = 'vertical';\n  /** Design-system inactive state for the complete set. */\n  @Prop() isInactive: boolean = false;\n  /** Accessible name when visible group labeling is unavailable. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Id reference for a visible group label. */\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n\n  /** Emitted after user selection with the selected option value. */\n  @Event() dsChange!: EventEmitter<string>;\n\n  private initialValue = '';\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(inactive ? null : this.value);\n    const missing = this.required && !inactive && this.value.length === 0;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = typeof state === 'string' ? state : '';\n  }\n\n  private get activeItems(): HTMLElement[] {\n    return Array.from(this.el.querySelectorAll<HTMLElement>('[data-radio-item]:not([data-inactive])'));\n  }\n\n  @Listen('keydown')\n  handleKeyDown(e: KeyboardEvent) {\n    const items = this.activeItems;\n    if (!items.length) return;\n\n    const focused = items.find(item => item === document.activeElement);\n    if (!focused) return;\n\n    const idx = items.indexOf(focused);\n    let next = -1;\n\n    switch (e.key) {\n      case 'ArrowDown':\n      case 'ArrowRight':\n        e.preventDefault();\n        next = (idx + 1) % items.length;\n        break;\n      case 'ArrowUp':\n      case 'ArrowLeft':\n        e.preventDefault();\n        next = (idx - 1 + items.length) % items.length;\n        break;\n      case 'Home':\n        e.preventDefault();\n        next = 0;\n        break;\n      case 'End':\n        e.preventDefault();\n        next = items.length - 1;\n        break;\n    }\n\n    if (next >= 0) {\n      items[next].focus();\n      const nextValue = items[next].dataset['value'];\n      if (nextValue && nextValue !== this.value) {\n        this.value = nextValue;\n        this.dsChange.emit(nextValue);\n      }\n    }\n  }\n\n  private selectItem(optValue: string) {\n    if (this.isInactive || this.disabled || this.formDisabled) return;\n    if (optValue !== this.value) {\n      this.value = optValue;\n      this.dsChange.emit(optValue);\n    }\n  }\n\n  render() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const invalid = this.required && !inactive && this.value.length === 0;\n    const selectedIdx = this.options.findIndex(option => option.value === this.value);\n    const firstActiveIdx = this.options.findIndex(option => !inactive && !option.isInactive);\n    const focusableIdx = selectedIdx >= 0 && !inactive && !this.options[selectedIdx]?.isInactive\n      ? selectedIdx\n      : firstActiveIdx;\n\n    return (\n      <Host\n        role=\"radiogroup\"\n        aria-label={this.ariaLabel}\n        aria-labelledby={this.ariaLabelledby}\n        aria-required={this.required ? 'true' : undefined}\n        aria-invalid={invalid ? 'true' : undefined}\n        class={{\n          radio: true,\n          'radio--horizontal': this.direction === 'horizontal',\n          [`radio--${this.size}`]: true,\n        }}\n      >\n        {this.options.map((option, index) => {\n          const isItemInactive = inactive || !!option.isInactive;\n          const isChecked = option.value === this.value;\n          const tabIdx = isItemInactive ? -1 : index === focusableIdx ? 0 : -1;\n\n          return (\n            <div\n              key={option.value}\n              role=\"radio\"\n              aria-checked={String(isChecked)}\n              aria-disabled={isItemInactive ? 'true' : undefined}\n              tabIndex={tabIdx}\n              data-radio-item\n              data-value={option.value}\n              data-inactive={isItemInactive || undefined}\n              class={{\n                radio__item: true,\n                [`ds-control--${this.size}`]: true,\n                'ds-control-inactive': isItemInactive,\n                'ds-focus-ring-inset': !isItemInactive,\n                'ds-interaction-fill': !isItemInactive,\n              }}\n              onClick={() => !isItemInactive && this.selectItem(option.value)}\n              onKeyDown={(e: KeyboardEvent) => {\n                if ((e.key === ' ' || e.key === 'Enter') && !isItemInactive) {\n                  e.preventDefault();\n                  this.selectItem(option.value);\n                }\n              }}\n            >\n              <span class=\"radio__placement ds-interaction-fill__content\" aria-hidden=\"true\">\n                <span class={{ radio__circle: true, 'radio__circle--checked': isChecked }}>\n                  {isChecked && <span class=\"radio__dot\" />}\n                </span>\n              </span>\n              <ds-text\n                class=\"radio__label ds-interaction-fill__content\"\n                as=\"span\"\n                variant={LABEL_VARIANT[this.size]}\n              >\n                {option.label}\n              </ds-text>\n            </div>\n          );\n        })}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

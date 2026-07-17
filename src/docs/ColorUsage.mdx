@@ -46,13 +46,28 @@ Choose semantic tokens by purpose rather than hue.
 | Secondary surface or card chrome | `--color-background-secondary` |
 | Primary content | `--color-foreground-primary` |
 | Supporting content | `--color-foreground-secondary` |
-| Low-emphasis content | `--color-foreground-tertiary` |
+| Inactive/disabled UI content | `--color-foreground-tertiary` |
+| Fainter inactive/disabled or purely decorative content | `--color-foreground-quaternary` |
 | Structural border | `--color-border-primary`, `secondary`, or `tertiary` |
 | Internal content rule | `--color-divider-divider` |
 
 Use border tokens for container and control edges. Use divider tokens only for
 rules that separate content inside a surface; prefer `ds-divider` when the rule
 is part of component composition.
+
+Tertiary and quaternary foregrounds are not general low-emphasis roles. Restrict
+both to content inside a genuinely inactive or disabled UI component, or to
+purely decorative content whose removal would not change information, status,
+hierarchy, or task understanding. Quaternary is the fainter tier within that
+restricted hierarchy. Prefer the owning component's `isInactive` API or native
+`disabled` state so semantics and visuals stay synchronized. `aria-hidden`
+alone does not make meaningful visible content decorative.
+
+Component-owned non-text recipes are a narrow exception. A control may resolve
+one of these tokens internally for a boundary or state mark only when that exact
+rendered treatment is verified to meet its 3:1 requirement on every supported
+surface. Checkbox does this for its unchecked outline. Product code should use
+the component API rather than copying that internal token choice.
 
 ### Intent and contrast
 
@@ -164,7 +179,12 @@ their named domain meaning; they are not substitute chart palettes.
 - Do not communicate status through color alone.
 - Verify text and essential icon contrast against the rendered surface in both
   themes.
-- Treat tertiary and quaternary foregrounds as nonessential low-emphasis roles.
+- Restrict tertiary and quaternary foregrounds to genuinely inactive/disabled
+  UI content or purely decorative content; never use them to quiet active
+  information. Component-owned non-text contrast recipes are the documented,
+  measured exception.
+- Meaningful chart labels, data markers, icons, and status graphics still need
+  sufficient rendered contrast even when hidden from assistive technology.
 - Use matching on-background families for colored surfaces.
 - Let semantic tokens adapt to theme; do not freeze their resolved values.
 
@@ -176,6 +196,8 @@ their named domain meaning; they are not substitute chart palettes.
 - Using data colors for interface chrome.
 - Painting hover or pressed state by replacing a component's base background.
 - Treating navigation tokens as a general dark-surface theme.
+- Using tertiary or quaternary foreground to reduce the prominence of active
+  content.
 
 See **Foundation → Colors Semantic** and **Foundation → Colors Data** for the
 complete live catalogs.

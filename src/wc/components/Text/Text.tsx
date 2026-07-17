@@ -25,6 +25,12 @@ export class Text {
    * `true`: display bold, title/caption semibold, body medium.
    */
   @Prop() emphasis: boolean = false;
+  /**
+   * Semantic foreground color token or CSS variable. `tertiary` and the
+   * still-fainter `quaternary` are restricted to genuinely inactive/disabled
+   * UI content or purely decorative content; prefer the owning control's
+   * inactive state whenever one exists.
+   */
   @Prop() color: TextColor = 'inherit';
   /** Link underline or dotted hidden-interaction affordance; does not add semantics. */
   @Prop() decoration: TextDecoration | undefined;
@@ -66,6 +72,7 @@ export class Text {
       'ds-text--color-primary':   this.color === 'primary',
       'ds-text--color-secondary': this.color === 'secondary',
       'ds-text--color-tertiary':  this.color === 'tertiary',
+      'ds-text--color-quaternary': this.color === 'quaternary',
       'ds-text--color-brand':     this.color === 'brand',
       'ds-text--color-negative':  this.color === 'negative',
       'ds-text--color-positive':  this.color === 'positive',

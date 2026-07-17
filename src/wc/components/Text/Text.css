@@ -111,6 +111,7 @@
 :host(.ds-text--color-primary)   { color: var(--color-foreground-primary); }
 :host(.ds-text--color-secondary) { color: var(--color-foreground-secondary); }
 :host(.ds-text--color-tertiary)  { color: var(--color-foreground-tertiary); }
+:host(.ds-text--color-quaternary) { color: var(--color-foreground-quaternary); }
 :host(.ds-text--color-brand)     { color: var(--color-foreground-bold-brand); }
 :host(.ds-text--color-negative)  { color: var(--color-foreground-bold-negative); }
 :host(.ds-text--color-positive)  { color: var(--color-foreground-bold-positive); }

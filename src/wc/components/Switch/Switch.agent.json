@@ -26,8 +26,8 @@
     },
     {
       "when": "The user must choose one option from a mutually exclusive group.",
-      "component": "component:ds-radio-group",
-      "reason": "RadioGroup communicates one-of-many selection."
+      "component": "component:ds-radio",
+      "reason": "Radio communicates one-of-many selection."
     },
     {
       "when": "The control triggers a one-time command or submission.",
@@ -44,17 +44,20 @@
     "Every standalone switch requires an accessible name from a native label, aria-label, or aria-labelledby.",
     "Checked state is exposed through switch semantics and thumb position, so state does not rely on color alone.",
     "Read-only switches remain focusable and submitted but cannot change; inactive or disabled switches leave the tab order and are omitted from form submission.",
+    "Required and invalid state are exposed explicitly on the switch role; focused, filled, dirty, touched, valid, and invalid data hooks support form diagnostics without imposing visual validation timing.",
     "Use presentation mode only when a composite owner such as a menuitemcheckbox provides the interaction and accessible state."
   ],
   "states": [
     "Activation updates checked immediately and emits dsChange with the new boolean value.",
     "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
-    "Sizes are md 36×24 with a 16px thumb and 4px body inset, sm 24×16 with a 12px thumb and 2px inset, and xs 12×8 with a 6px thumb and 1px inset.",
+    "Sizes are md 32×20 with a 12px thumb and 4px body inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
+    "Unchecked track and thumb are transparent and each uses a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked uses a brand track and primary-background thumb with both strokes removed.",
     "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing row; do not enlarge the switch to the full control height.",
-    "Keep the switch from shrinking when adjacent labels wrap."
+    "Keep the switch from shrinking when adjacent labels wrap.",
+    "Thumb movement is left-to-right; the design system does not author RTL-specific component behavior."
   ],
   "frameworkCaveats": {
     "customElements": [

@@ -8,12 +8,6 @@ const LABEL_VARIANT: Record<CheckboxSize, 'text-body-medium' | 'text-body-small'
   xs: 'text-caption',
 };
 
-const GLYPH_SIZE: Record<CheckboxSize, 'sm' | 'xs'> = {
-  md: 'sm',
-  sm: 'xs',
-  xs: 'xs',
-};
-
 let idCounter = 0;
 
 @Component({
@@ -102,13 +96,15 @@ export class Checkbox {
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     const isMarked = this.checked || this.indeterminate;
-    const icon = this.indeterminate ? 'Subtract' : 'Check';
+    const invalid = this.required && !inactive && !this.checked;
 
     return (
       <Host
         role={this.presentation ? undefined : 'checkbox'}
         aria-checked={this.presentation ? undefined : this.indeterminate ? 'mixed' : String(this.checked)}
         aria-disabled={!this.presentation && inactive ? 'true' : undefined}
+        aria-required={!this.presentation && this.required ? 'true' : undefined}
+        aria-invalid={!this.presentation && invalid ? 'true' : undefined}
         aria-labelledby={this.presentation ? undefined : this.labelId}
         aria-hidden={this.presentation ? 'true' : undefined}
         tabIndex={this.presentation || inactive ? -1 : 0}
@@ -127,15 +123,21 @@ export class Checkbox {
         <span class="checkbox__placement ds-interaction-fill__content" aria-hidden="true">
           <span class={{ box: true, 'box--marked': isMarked }}>
             {isMarked && (
-              <ds-icon
+              // eslint-disable-next-line local/prefer-ds-icon -- Checkbox owns this density-specific state mark and its optical stroke.
+              <svg
                 class={{
-                  checkmark: true,
-                  'checkmark--xs': this.size === 'xs',
+                  checkbox__mark: true,
+                  'checkbox__mark--checked': !this.indeterminate,
                 }}
-                name={icon}
-                size={GLYPH_SIZE[this.size]}
-                color="inherit"
-              />
+                viewBox="0 0 16 16"
+                fill="none"
+                focusable="false"
+              >
+                <path
+                  d={this.indeterminate ? 'M4 8H12' : 'M3.5 8.25L6.75 11.5L12.5 4.75'}
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
             )}
           </span>
         </span>

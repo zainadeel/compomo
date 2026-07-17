@@ -46,11 +46,13 @@
     "Icons are decorative by default and remain hidden from assistive technology when visible text or an owning control already communicates the meaning.",
     "The owning button, link, or composite control provides the accessible name; do not repeat that name on its nested Icon.",
     "Provide an explicit label only when the non-interactive icon itself communicates otherwise unavailable meaning.",
+    "Tertiary and quaternary foregrounds are restricted to icons inside genuinely inactive or disabled UI, or to purely decorative icons; quaternary is the fainter tier, and informative icons and meaningful status graphics retain sufficient rendered contrast even when aria-hidden.",
     "Informative flags require an explicit localized country or region label; never derive accessible text from the export name.",
     "Icon never receives focus or owns interaction."
   ],
   "states": [
     "Omitted color inherits currentColor from the owning context. Explicit semantic aliases and CSS-variable references are available when the icon has an independent color role.",
+    "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary or quaternary so visual treatment and inactive semantics remain synchronized.",
     "Built-in glyph lookup accepts exact canonical IcoMo export names only. Names beginning with Flag select the flag catalog automatically.",
     "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
     "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
