@@ -314,9 +314,9 @@ export class MyComponent {
 **Field**
 
 - `ds-field` composes exactly one Input, Select, or SelectMulti with a persistent visible label and optional description/error text. Checkbox, Radio, and Switch already own their label structure and do not belong inside Field.
-- Field generates or accepts one stable `fieldId`, applies it to the child control, and connects the label, description, and error with `for`, `aria-labelledby`, and `aria-describedby`. Authored ARIA references are preserved and merged.
+- Field generates or accepts one stable `fieldId`, applies it to the child control, and connects the label and current supporting message with `for`, `aria-labelledby`, and `aria-describedby`. Authored ARIA references are preserved and merged.
 - Put `error` and `errorMessage` on Field when composed. Field forwards the invalid state and supported child control border treatment; do not also set a child `errorMessage`, which would render duplicate error text.
-- Description remains visible while an error is shown. Help text explains format or consequences; error text says what must be corrected. The form owner decides whether validation appears on change, blur, or submit.
+- A visible error replaces the description. Error text must preserve any essential format or consequence guidance needed to correct the field. The form owner decides whether validation appears on change, blur, or submit.
 - Clicking a Field label focuses its design-system control without opening a Select. Several controls answering one question require a native `fieldset` and `legend`, not one Field.
 - Field exposes `data-focused`, `data-filled`, `data-dirty`, `data-touched`, `data-invalid`, `data-disabled`, and `data-required` hooks. The child remains the source of value, validity, and form submission.
 - Field and its child fill the width supplied by the form layout. The form owns columns, wrapping, and responsive placement.
@@ -436,7 +436,7 @@ The xs recipe is a compact **visual density**, not permission to crowd pointer t
 **Switch density**
 
 - `ds-switch` is compact chrome placed inside menu, control, and form rows rather than a full-height control itself.
-- Sizes are `md` = 32×20 with a 12px thumb and 4px body inset, `sm` = 24×16 with a 10px thumb and 3px inset, and `xs` = 20×12 with an 8px thumb and 2px inset. Unchecked track and thumb are transparent and each uses an inset `--color-foreground-tertiary` stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked uses a brand track and primary-background thumb with both strokes removed.
+- Sizes are `md` = 32×20 with a 12px thumb and 4px body inset, `sm` = 24×16 with a 10px thumb and 3px inset, and `xs` = 20×12 with an 8px thumb and 2px inset. Unchecked uses a transparent track with an inset `--color-foreground-tertiary` stroke (1.25px at md, 1px at sm, and 0.75px at xs) and a solid `--color-foreground-tertiary` thumb without a border. Checked keeps the brand track and primary-background thumb with no strokes.
 - The Switch host owns its structural unchecked inset stroke directly; do not put it on the shared interaction-fill pseudo-elements because a parent row may own those layers. Hover/press wash is confined to the thumb. Switch focus uses the shared **outset** `ds-focus-ring`, not the inset ring.
 - Track color and thumb position animate with `--effect-motion-short-3`, matching ShellGradientSwatch selection motion; do not add depressed/elevated shadows or press-scale transforms.
 - Every switch requires an accessible name. Use `aria-label` for standalone icon-like contexts or `aria-labelledby` to associate visible text; use `name`/`value` for form submission.
@@ -451,7 +451,7 @@ The xs recipe is a compact **visual density**, not permission to crowd pointer t
 - Every thumb contains a native range input. A visible `label` names a single thumb; range sliders require localized `startLabel` and `endLabel`. Use `valueText` for one authored value description or assign `valueTexts` for per-thumb range descriptions when raw numbers are not understandable by themselves.
 - Pointer input chooses the nearest thumb and emits `dsChange` continuously; `dsCommit` is for expensive work after pointer, keyboard, or assistive-technology interaction settles.
 - Horizontal Slider fills its parent. Vertical Slider uses a token-based default length that layouts may override through `--ds-slider-vertical-length`. `thumbAlignment="edge"` keeps the full thumb inside the control; `center` aligns its center to the endpoints.
-- Sizes follow control density: md uses a 32px control, 16px thumb, and 4px rail; sm uses 24/12/3; xs uses 16/8/2. The rail and thumb outline use foreground tertiary for structural 3:1 contrast, while the selected indicator uses bold brand.
+- Sizes follow control density: md uses a 32px control, 16px thumb, and 4px rail; sm uses 24/12/3; xs uses 16/8/2. The thumb is square with a 2px radius at every density. The rail and thumb outline use foreground tertiary for structural 3:1 contrast, while the selected indicator uses bold brand.
 - `readOnly` remains focusable and submitted but prevents changes. `disabled` and `isInactive` remove all thumbs from interaction and form submission. Form reset restores the initial normalized value; a range submits repeated entries under one name.
 - Slider exposes orientation, dragging, focus, filled, dirty, touched, valid, disabled, and read-only data hooks. Do not add a second validation or gesture policy in consuming CSS.
 
@@ -601,6 +601,12 @@ AppShell consumers such as BarNav pause layout measurement between `dsChromeTran
 
 **Hover lists: put the "clear" listener on the container, not on each row, to avoid gap-crossing flicker.**
 A list of hoverable rows with visual `gap`/`row-gap` between them has dead space that belongs to no row. If each row clears the highlight on its own `mouseleave`, moving the pointer from one row to the next (crossing that gap) causes a flicker: highlight → none → highlight. Fix: attach `mouseenter` per row (to set the highlight) but attach `mouseleave` once, on the container — the gap is still inside the container's box, so crossing it never fires the container's `mouseleave`; only actually leaving the whole list does, and that clears instantly with no timer/debounce needed. See `ChartLegend.tsx`.
+
+**ChartLegend numeric columns are stable and right-aligned.**
+In vertical legends, the label yields width first and truncates before the compact value or percentage columns. Values and percentages use tabular numerals and stay inside the row interaction fill. `percentageDecimals` accepts only `1` (default) or `2`; both the minimum and maximum fraction digits are locked to that value so every row uses the same precision while `locale` controls localized number punctuation.
+
+**Data-visualization cards use their own shell boundary.**
+Use `ds-card-shell-data-viz` for every chart, legend, or metric-visualization card; do not compose data-viz surfaces on `ds-card`. The shell owns only data-viz header/actions chrome, token-based width/min-height, and a flexible body. Dedicated compositions such as `ds-card-data-viz-donut` own chart regions, legends, hover synchronization, loading, empty, and error policy. General and settings cards remain on `ds-card`, allowing both shell families to evolve independently.
 
 ---
 

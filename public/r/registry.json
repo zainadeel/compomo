@@ -861,7 +861,7 @@
     {
       "name": "card",
       "title": "Card",
-      "description": "Shared card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space. Compose from settings and data-viz cards.",
+      "description": "General and settings-compatible card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -903,7 +903,7 @@
     {
       "name": "card-data-viz-donut",
       "title": "CardDataVizDonut",
-      "description": "Donut data-viz card on shared ds-card chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
+      "description": "Donut data-viz card on dedicated ds-card-shell-data-viz chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -945,7 +945,7 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "card"
+        "card-shell-data-viz"
       ]
     },
     {
@@ -1007,6 +1007,109 @@
         "button-filled",
         "button-unfilled",
         "card"
+      ]
+    },
+    {
+      "name": "card-shell-data-viz",
+      "title": "CardShellDataViz",
+      "description": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts will evolve independently from general and settings cards.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-shell-data-viz",
+        "source": "src/wc/components/CardShellDataViz/CardShellDataViz.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts will evolve independently from general and settings cards.",
+          "useWhen": [
+            "A card contains a chart, data-visualization legend, metric visualization, or a specialized data-viz composition.",
+            "A data-visualization card needs a heading and optional header actions while retaining a flexible body for its composing component.",
+            "Several chart-specific cards need one shell boundary that can evolve without changing general or settings cards."
+          ],
+          "avoidWhen": [
+            "The card contains settings or editable form content; use the settings card composition.",
+            "The surface is ordinary content without data visualization; use the general card shell.",
+            "The shell would own chart-specific layout, hover synchronization, legends, or empty-state policy; keep those in the composing data-viz card."
+          ],
+          "alternatives": [
+            {
+              "when": "The card contains general content rather than data visualization.",
+              "component": "component:ds-card",
+              "reason": "Card owns the existing general and settings-compatible chrome contract."
+            },
+            {
+              "when": "The composition is the standard donut chart plus synchronized legend.",
+              "component": "component:ds-card-data-viz-donut",
+              "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-chart-bar",
+            "component:ds-chart-donut",
+            "component:ds-chart-line",
+            "component:ds-chart-legend",
+            "component:ds-button-unfilled"
+          ],
+          "accessibility": [
+            "Provide a concise visible heading that identifies the visualization; the shell renders it as a section heading.",
+            "Header actions must provide their own accessible names and communicate any controlled state or popup relationship.",
+            "The shell does not add landmark or chart semantics; composing charts retain their own accessible names and descriptions.",
+            "Do not duplicate chart data in the heading. Provide an accessible summary through the chart or adjacent composition when visual encoding alone is insufficient."
+          ],
+          "states": [
+            "The shell owns default data-visualization surface chrome only; loading, empty, error, selected, and interactive states belong to the composing card or chart.",
+            "The actions slot collapses when empty so headings retain the available header width."
+          ],
+          "responsiveBehavior": [
+            "The selected sm, md, or lg width sets the matching token-based minimum height while max-width prevents overflow from a narrower parent.",
+            "The parent layout chooses card width, wrapping, stacking, and breakpoint changes; the shell does not switch sizes automatically.",
+            "The body is a flexible column so specialized data-viz cards can allocate remaining height between charts, legends, and supporting content."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Place header controls in the actions slot and data-visualization composition in the default slot."
+            ],
+            "react": [
+              "Pass header controls with slot=\"actions\" and keep chart state in the composing React component."
+            ],
+            "angular": [
+              "Project header controls with slot=\"actions\" and keep chart state in the composing Angular component."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/CardShellDataViz/CardShellDataViz.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "cardWidth": {
+            "type": "CardShellDataVizWidth",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-shell-data-viz",
+          "react": "DsCardShellDataViz",
+          "angular": "DsCardShellDataViz"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
       ]
     },
     {
@@ -1149,6 +1252,10 @@
           },
           "locale": {
             "type": "string | undefined",
+            "required": false
+          },
+          "percentageDecimals": {
+            "type": "ChartLegendPercentageDecimals",
             "required": false
           },
           "showPercentage": {
@@ -1786,14 +1893,14 @@
           ],
           "accessibility": [
             "Slot exactly one form control. Field assigns its stable control ID and connects the visible label automatically.",
-            "Description and rendered error IDs are merged with any authored aria-describedby references rather than replacing them.",
+            "The visible description or error ID is merged with any authored aria-describedby references; a rendered error replaces the description.",
             "The error prop forwards aria-invalid and supported design-system control error styling; put visible error text on Field, not again on the child control.",
             "Clicking the label focuses the slotted design-system control without opening a Select popup.",
             "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
           ],
           "states": [
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
-            "Description remains visible during error so guidance and validation do not replace each other.",
+            "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
             "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
             "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
           ],
@@ -4225,7 +4332,7 @@
             "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
             "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
             "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
-            "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the thumb uses a 1.5px brand inset ring.",
+            "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the square thumb uses a 2px radius with a 1.5px brand inset ring.",
             "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
           ],
           "frameworkCaveats": {
@@ -4448,7 +4555,7 @@
             "Activation updates checked immediately and emits dsChange with the new boolean value.",
             "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
             "Sizes are md 32×20 with a 12px thumb and 4px body inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
-            "Unchecked track and thumb are transparent and each uses a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked uses a brand track and primary-background thumb with both strokes removed.",
+            "Unchecked uses a transparent track with a density-specific tertiary-foreground inset stroke and a solid tertiary-foreground thumb without a border. Checked uses a brand track and primary-background thumb with no strokes.",
             "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
           ],
           "responsiveBehavior": [

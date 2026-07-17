@@ -33,14 +33,14 @@
   ],
   "accessibility": [
     "Slot exactly one form control. Field assigns its stable control ID and connects the visible label automatically.",
-    "Description and rendered error IDs are merged with any authored aria-describedby references rather than replacing them.",
+    "The visible description or error ID is merged with any authored aria-describedby references; a rendered error replaces the description.",
     "The error prop forwards aria-invalid and supported design-system control error styling; put visible error text on Field, not again on the child control.",
     "Clicking the label focuses the slotted design-system control without opening a Select popup.",
     "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
   ],
   "states": [
     "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
-    "Description remains visible during error so guidance and validation do not replace each other.",
+    "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
     "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
     "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
   ],

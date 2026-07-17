@@ -51,7 +51,7 @@
     "Activation updates checked immediately and emits dsChange with the new boolean value.",
     "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
     "Sizes are md 32×20 with a 12px thumb and 4px body inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
-    "Unchecked track and thumb are transparent and each uses a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked uses a brand track and primary-background thumb with both strokes removed.",
+    "Unchecked uses a transparent track with a density-specific tertiary-foreground inset stroke and a solid tertiary-foreground thumb without a border. Checked uses a brand track and primary-background thumb with no strokes.",
     "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
   ],
   "responsiveBehavior": [

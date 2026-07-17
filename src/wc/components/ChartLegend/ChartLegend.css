@@ -22,8 +22,13 @@
 
 :host(.chart-legend--vertical) .chart-legend__list {
   display: grid;
-  grid-template-columns: auto minmax(50%, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) var(--dimension-size-600);
+  column-gap: var(--dimension-space-075);
   row-gap: var(--dimension-space-050);
+}
+
+:host(.chart-legend--vertical.chart-legend--show-percentage) .chart-legend__list {
+  grid-template-columns: auto minmax(0, 1fr) var(--dimension-size-600) var(--dimension-size-800);
 }
 
 :host(.chart-legend--vertical) .chart-legend__item {
@@ -40,6 +45,7 @@
 
 :host(.chart-legend--horizontal) .chart-legend__item {
   display: flex;
+  gap: var(--dimension-space-100);
 }
 
 /*
@@ -80,7 +86,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-right: var(--dimension-space-075);
 }
 
 .chart-legend__swatch {
@@ -91,8 +96,6 @@
 }
 
 .chart-legend__label {
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
-  margin-right: var(--dimension-space-200);
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -100,13 +103,16 @@
 }
 
 .chart-legend__percentage {
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   text-align: right;
 }
 
 .chart-legend__value {
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
-  margin-right: var(--dimension-space-200);
+  width: 100%;
   text-align: right;
   min-width: 0;
   overflow: hidden;

@@ -23,7 +23,7 @@ const meta: Meta = {
     label: 'Vehicle name',
     description: 'Use the name shown in your fleet.',
     error: false,
-    errorMessage: 'Enter a vehicle name.',
+    errorMessage: 'Enter the vehicle name shown in your fleet.',
   },
 };
 
@@ -76,7 +76,7 @@ export const Error: Story = {
         label="Vehicle name"
         description="Use the name shown in your fleet."
         error
-        error-message="Enter a vehicle name."
+        error-message="Enter the vehicle name shown in your fleet."
       >
         <ds-input value="" placeholder="Enter vehicle name" required></ds-input>
       </ds-field>

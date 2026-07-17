@@ -28,8 +28,8 @@ const renderCard = (heading: string, cardWidth: string, appearance: string) => h
   <ds-card heading=${heading} card-width=${cardWidth} appearance=${appearance}>
     <div style="padding:var(--dimension-space-400);box-sizing:border-box;">
       <ds-text variant="text-body-medium" color="secondary">
-        Shared chrome — width + matching min-height, header, flex body. Header
-        actions belong on composing cards (settings edit, data-viz filter, …).
+        General and settings-compatible chrome — width + matching min-height,
+        header, and flex body. Data-visualization cards use CardShellDataViz.
       </ds-text>
     </div>
   </ds-card>

@@ -1,6 +1,8 @@
 export { registerIcons } from '../components/Icon/icon-cache';
 export { clearCssLengthPxCache, resolveCssLengthPx } from './resolve-css-length-px';
 export { formatCompactNumber } from './format-compact-number';
+export { formatPercentage } from './format-percentage';
+export type { PercentageDecimals } from './format-percentage';
 export { truncateSvgTextToWidth } from './truncate-svg-text';
 export {
   parseCssTimeMs,

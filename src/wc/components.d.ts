@@ -15,8 +15,9 @@ import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, Butt
 import { CardAppearance, CardWidth } from "./components/Card/Card";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
+import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
-import { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
+import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
@@ -56,8 +57,9 @@ export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, Butt
 export { CardAppearance, CardWidth } from "./components/Card/Card";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
+export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
-export { ChartLegendDirection } from "./components/ChartLegend/ChartLegend";
+export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
@@ -367,7 +369,8 @@ export namespace Components {
     }
     /**
      * Shared card chrome — width + matching min-height tokens, header (title + actions),
-     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
+     * and a flex body that fills leftover space. Data-visualization cards use their
+     * dedicated `ds-card-shell-data-viz` boundary instead.
      */
     interface DsCard {
         /**
@@ -386,7 +389,7 @@ export namespace Components {
         "heading": string;
     }
     /**
-     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
     interface DsCardDataVizDonut {
@@ -431,6 +434,21 @@ export namespace Components {
           * @default 'Save'
          */
         "saveLabel": string;
+    }
+    /**
+     * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
+     * legends, hover synchronization, and empty states belong to composing cards.
+     */
+    interface DsCardShellDataViz {
+        /**
+          * Width token with the matching data-visualization shell min-height.
+          * @default 'md'
+         */
+        "cardWidth": CardShellDataVizWidth;
+        /**
+          * Data-visualization heading shown in the shell header.
+         */
+        "heading": string;
     }
     interface DsChartBar {
         /**
@@ -514,6 +532,11 @@ export namespace Components {
          */
         "items": ChartLegendItem[];
         "locale": string | undefined;
+        /**
+          * Fixed number of decimal places shown for percentages.
+          * @default 1
+         */
+        "percentageDecimals": ChartLegendPercentageDecimals;
         /**
           * Show each item's share of the total (of items with a `value`) alongside its count.
           * @default true
@@ -673,7 +696,7 @@ export namespace Components {
     }
     interface DsField {
         /**
-          * Optional guidance associated with the slotted control.
+          * Optional guidance associated with the slotted control while no visible error is shown.
          */
         "description": string | undefined;
         /**
@@ -2094,7 +2117,8 @@ declare global {
     };
     /**
      * Shared card chrome — width + matching min-height tokens, header (title + actions),
-     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
+     * and a flex body that fills leftover space. Data-visualization cards use their
+     * dedicated `ds-card-shell-data-viz` boundary instead.
      */
     interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
     }
@@ -2106,7 +2130,7 @@ declare global {
         "dsFilterClick": void;
     }
     /**
-     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
     interface HTMLDsCardDataVizDonutElement extends Components.DsCardDataVizDonut, HTMLStencilElement {
@@ -2139,6 +2163,16 @@ declare global {
     var HTMLDsCardSettingElement: {
         prototype: HTMLDsCardSettingElement;
         new (): HTMLDsCardSettingElement;
+    };
+    /**
+     * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
+     * legends, hover synchronization, and empty states belong to composing cards.
+     */
+    interface HTMLDsCardShellDataVizElement extends Components.DsCardShellDataViz, HTMLStencilElement {
+    }
+    var HTMLDsCardShellDataVizElement: {
+        prototype: HTMLDsCardShellDataVizElement;
+        new (): HTMLDsCardShellDataVizElement;
     };
     interface HTMLDsChartBarElement extends Components.DsChartBar, HTMLStencilElement {
     }
@@ -2625,6 +2659,7 @@ declare global {
         "ds-card": HTMLDsCardElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
         "ds-card-setting": HTMLDsCardSettingElement;
+        "ds-card-shell-data-viz": HTMLDsCardShellDataVizElement;
         "ds-chart-bar": HTMLDsChartBarElement;
         "ds-chart-donut": HTMLDsChartDonutElement;
         "ds-chart-legend": HTMLDsChartLegendElement;
@@ -2947,7 +2982,8 @@ declare namespace LocalJSX {
     }
     /**
      * Shared card chrome — width + matching min-height tokens, header (title + actions),
-     * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
+     * and a flex body that fills leftover space. Data-visualization cards use their
+     * dedicated `ds-card-shell-data-viz` boundary instead.
      */
     interface DsCard {
         /**
@@ -2966,7 +3002,7 @@ declare namespace LocalJSX {
         "heading": string;
     }
     /**
-     * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+     * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
     interface DsCardDataVizDonut {
@@ -3019,6 +3055,21 @@ declare namespace LocalJSX {
           * @default 'Save'
          */
         "saveLabel"?: string;
+    }
+    /**
+     * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
+     * legends, hover synchronization, and empty states belong to composing cards.
+     */
+    interface DsCardShellDataViz {
+        /**
+          * Width token with the matching data-visualization shell min-height.
+          * @default 'md'
+         */
+        "cardWidth"?: CardShellDataVizWidth;
+        /**
+          * Data-visualization heading shown in the shell header.
+         */
+        "heading": string;
     }
     interface DsChartBar {
         /**
@@ -3114,6 +3165,11 @@ declare namespace LocalJSX {
           * Fires on row hover/focus with the item, or `null` on leave/blur.
          */
         "onDsItemHover"?: (event: DsChartLegendCustomEvent<ChartLegendItem | null>) => void;
+        /**
+          * Fixed number of decimal places shown for percentages.
+          * @default 1
+         */
+        "percentageDecimals"?: ChartLegendPercentageDecimals;
         /**
           * Show each item's share of the total (of items with a `value`) alongside its count.
           * @default true
@@ -3285,7 +3341,7 @@ declare namespace LocalJSX {
     }
     interface DsField {
         /**
-          * Optional guidance associated with the slotted control.
+          * Optional guidance associated with the slotted control while no visible error is shown.
          */
         "description"?: string | undefined;
         /**
@@ -4684,6 +4740,10 @@ declare namespace LocalJSX {
         "cancelLabel": string;
         "saveLabel": string;
     }
+    interface DsCardShellDataVizAttributes {
+        "heading": string;
+        "cardWidth": CardShellDataVizWidth;
+    }
     interface DsChartBarAttributes {
         "width": number;
         "height": number;
@@ -4703,6 +4763,7 @@ declare namespace LocalJSX {
         "locale": string | undefined;
         "direction": ChartLegendDirection;
         "showPercentage": boolean;
+        "percentageDecimals": ChartLegendPercentageDecimals;
         "activeLabel": string | null;
     }
     interface DsChartLineAttributes {
@@ -5059,6 +5120,7 @@ declare namespace LocalJSX {
         "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] } & OneOf<"heading", DsCard["heading"], DsCardAttributes["heading"]>;
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
+        "ds-card-shell-data-viz": Omit<DsCardShellDataViz, keyof DsCardShellDataVizAttributes> & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes]?: DsCardShellDataViz[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `attr:${K}`]?: DsCardShellDataVizAttributes[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `prop:${K}`]?: DsCardShellDataViz[K] } & OneOf<"heading", DsCardShellDataViz["heading"], DsCardShellDataVizAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
         "ds-chart-donut": Omit<DsChartDonut, keyof DsChartDonutAttributes> & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes]?: DsChartDonut[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `attr:${K}`]?: DsChartDonutAttributes[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `prop:${K}`]?: DsChartDonut[K] };
         "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
@@ -5105,15 +5167,21 @@ declare module "@stencil/core" {
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
              * Shared card chrome — width + matching min-height tokens, header (title + actions),
-             * and a flex body that fills leftover space. Compose this from settings / data-viz cards.
+             * and a flex body that fills leftover space. Data-visualization cards use their
+             * dedicated `ds-card-shell-data-viz` boundary instead.
              */
             "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             /**
-             * Donut data-viz card — shared `ds-card` chrome with a fill chart region and
+             * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
              * content-sized legend. Hover sync between chart and legend stays here.
              */
             "ds-card-data-viz-donut": LocalJSX.IntrinsicElements["ds-card-data-viz-donut"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizDonutElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
+            /**
+             * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
+             * legends, hover synchronization, and empty states belong to composing cards.
+             */
+            "ds-card-shell-data-viz": LocalJSX.IntrinsicElements["ds-card-shell-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardShellDataVizElement>;
             "ds-chart-bar": LocalJSX.IntrinsicElements["ds-chart-bar"] & JSXBase.HTMLAttributes<HTMLDsChartBarElement>;
             "ds-chart-donut": LocalJSX.IntrinsicElements["ds-chart-donut"] & JSXBase.HTMLAttributes<HTMLDsChartDonutElement>;
             /**

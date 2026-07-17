@@ -12,6 +12,7 @@ export { DsButtonFilled } from "./ds-button-filled.js";
 export { DsButtonUnfilled } from "./ds-button-unfilled.js";
 export { DsCardDataVizDonut } from "./ds-card-data-viz-donut.js";
 export { DsCardSetting } from "./ds-card-setting.js";
+export { DsCardShellDataViz } from "./ds-card-shell-data-viz.js";
 export { DsCard } from "./ds-card.js";
 export { DsChartBar } from "./ds-chart-bar.js";
 export { DsChartDonut } from "./ds-chart-donut.js";

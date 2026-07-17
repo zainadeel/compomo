@@ -34,7 +34,7 @@ export class Field {
   @Prop() label!: string;
   /** Explicit ID for the slotted control; generated when omitted. */
   @Prop() fieldId: string | undefined;
-  /** Optional guidance associated with the slotted control. */
+  /** Optional guidance associated with the slotted control while no visible error is shown. */
   @Prop() description: string | undefined;
   /** Invalid visual and accessible state forwarded to supported ds controls. */
   @Prop() error: boolean = false;
@@ -88,7 +88,7 @@ export class Field {
   }
 
   private get renderedDescription(): boolean {
-    return Boolean(this.description);
+    return Boolean(this.description) && !this.renderedError;
   }
 
   private get renderedError(): boolean {

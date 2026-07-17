@@ -1,0 +1,72 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-shell-data-viz",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-shell-data-viz",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts will evolve independently from general and settings cards.",
+  "useWhen": [
+    "A card contains a chart, data-visualization legend, metric visualization, or a specialized data-viz composition.",
+    "A data-visualization card needs a heading and optional header actions while retaining a flexible body for its composing component.",
+    "Several chart-specific cards need one shell boundary that can evolve without changing general or settings cards."
+  ],
+  "avoidWhen": [
+    "The card contains settings or editable form content; use the settings card composition.",
+    "The surface is ordinary content without data visualization; use the general card shell.",
+    "The shell would own chart-specific layout, hover synchronization, legends, or empty-state policy; keep those in the composing data-viz card."
+  ],
+  "alternatives": [
+    {
+      "when": "The card contains general content rather than data visualization.",
+      "component": "component:ds-card",
+      "reason": "Card owns the existing general and settings-compatible chrome contract."
+    },
+    {
+      "when": "The composition is the standard donut chart plus synchronized legend.",
+      "component": "component:ds-card-data-viz-donut",
+      "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-chart-bar",
+    "component:ds-chart-donut",
+    "component:ds-chart-line",
+    "component:ds-chart-legend",
+    "component:ds-button-unfilled"
+  ],
+  "accessibility": [
+    "Provide a concise visible heading that identifies the visualization; the shell renders it as a section heading.",
+    "Header actions must provide their own accessible names and communicate any controlled state or popup relationship.",
+    "The shell does not add landmark or chart semantics; composing charts retain their own accessible names and descriptions.",
+    "Do not duplicate chart data in the heading. Provide an accessible summary through the chart or adjacent composition when visual encoding alone is insufficient."
+  ],
+  "states": [
+    "The shell owns default data-visualization surface chrome only; loading, empty, error, selected, and interactive states belong to the composing card or chart.",
+    "The actions slot collapses when empty so headings retain the available header width."
+  ],
+  "responsiveBehavior": [
+    "The selected sm, md, or lg width sets the matching token-based minimum height while max-width prevents overflow from a narrower parent.",
+    "The parent layout chooses card width, wrapping, stacking, and breakpoint changes; the shell does not switch sizes automatically.",
+    "The body is a flexible column so specialized data-viz cards can allocate remaining height between charts, legends, and supporting content."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Place header controls in the actions slot and data-visualization composition in the default slot."
+    ],
+    "react": [
+      "Pass header controls with slot=\"actions\" and keep chart state in the composing React component."
+    ],
+    "angular": [
+      "Project header controls with slot=\"actions\" and keep chart state in the composing Angular component."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CardShellDataViz/CardShellDataViz.stories.ts"
+    }
+  ]
+}
