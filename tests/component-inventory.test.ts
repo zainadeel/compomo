@@ -11,7 +11,6 @@ import {
   validateRegistryCoverage,
 } from '../scripts/component-inventory.mjs';
 import { cleanFrameworkProxies } from '../scripts/clean-framework-proxies.mjs';
-import './registry-formatters.test.ts';
 
 const temporaryRoots: string[] = [];
 
@@ -113,13 +112,16 @@ describe('source-derived component inventory', () => {
     const root = fixtureRoot();
     writeComponent(root, 'NewWidget', 'ds-new-widget');
     writeFile(root, 'src/angular/ds-new-widget.ts');
+    writeFile(root, 'src/angular/ds-new-widget 2.ts');
     writeFile(root, 'src/angular/ds-deleted-widget.ts');
     writeFile(root, 'src/react/ds-deleted-widget.ts');
+    writeFile(root, 'src/react/ds-deleted-widget 2.ts');
 
     const errors = validateFrameworkAdapters({ root, components: discoverComponents(root) });
     assert.ok(errors.some(error => error.includes('missing generated framework adapter src/react/ds-new-widget.ts')));
     assert.ok(errors.some(error => error.includes('stale generated framework adapter src/angular/ds-deleted-widget.ts')));
     assert.ok(errors.some(error => error.includes('stale generated framework adapter src/react/ds-deleted-widget.ts')));
+    assert.equal(errors.some(error => error.includes(' 2.ts')), false);
   });
 
   it('cleans generated proxies and barrels while preserving Angular support files', () => {

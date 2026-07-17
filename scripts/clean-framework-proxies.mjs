@@ -27,13 +27,17 @@ function posix(relativePath) {
   return relativePath.split(path.sep).join('/');
 }
 
-export function listFrameworkComponentProxies(root = ROOT) {
+export function listFrameworkComponentProxies(root = ROOT, { includeCollisionCopies = false } = {}) {
   const proxies = [];
   for (const { directory } of FRAMEWORK_OUTPUTS) {
     const absoluteDirectory = path.join(root, directory);
     if (!fs.existsSync(absoluteDirectory)) continue;
     for (const entry of fs.readdirSync(absoluteDirectory, { withFileTypes: true })) {
-      if (entry.isFile() && COMPONENT_PROXY_FILENAME.test(entry.name)) {
+      if (
+        entry.isFile() &&
+        COMPONENT_PROXY_FILENAME.test(entry.name) &&
+        (includeCollisionCopies || !/ \d+\.ts$/.test(entry.name))
+      ) {
         proxies.push(posix(path.join(directory, entry.name)));
       }
     }
@@ -42,7 +46,9 @@ export function listFrameworkComponentProxies(root = ROOT) {
 }
 
 export function cleanFrameworkProxies(root = ROOT) {
-  const generatedArtifacts = [...listFrameworkComponentProxies(root)];
+  const generatedArtifacts = [
+    ...listFrameworkComponentProxies(root, { includeCollisionCopies: true }),
+  ];
   for (const { directory, barrels } of FRAMEWORK_OUTPUTS) {
     const absoluteDirectory = path.join(root, directory);
     if (!fs.existsSync(absoluteDirectory)) continue;

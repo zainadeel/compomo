@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const host = '127.0.0.1';
+const port = 5199;
+const baseURL = `http://${host}:${port}`;
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -8,7 +12,9 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:5199',
+    baseURL,
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
   },
   projects: [
     {
@@ -25,8 +31,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npx vite --config tests/e2e/vite.config.mts',
-    url: 'http://localhost:5199',
+    command: `npx vite --config tests/e2e/vite.config.mts --host ${host} --port ${port} --strictPort`,
+    url: baseURL,
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
   },

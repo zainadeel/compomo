@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test.describe('App shell chrome', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/app-shell-chrome.html');
-    await page.waitForSelector('ds-panel-nav .panel-nav');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   });
 
   test('panel nav collapse toggles collapsed state', async ({ page }) => {
@@ -156,7 +156,6 @@ test.describe('App shell chrome', () => {
   });
 
   test('cancelled breakpoint collapse still commits bar tabs', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
     const nav = page.locator('.panel-nav');
     const cancelledAnimations = await page.evaluate(async () => {
       const panel = document.getElementById('panel') as HTMLElement & { breakpoint: number };
@@ -228,6 +227,9 @@ test.describe('App shell chrome', () => {
       let ends = 0;
       shell.addEventListener('dsChromeTransitionStart', () => starts++);
       shell.addEventListener('dsChromeTransitionEnd', () => ends++);
+      const transitionEnded = new Promise<void>((resolve) => {
+        shell.addEventListener('dsChromeTransitionEnd', () => resolve(), { once: true });
+      });
 
       panel.collapsed = true;
       panel.collapsed = false;
@@ -242,7 +244,7 @@ test.describe('App shell chrome', () => {
         { id: 'health', label: 'Health' },
         { id: 'inspections', label: 'Inspections' },
       ];
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await transitionEnded;
 
       return { starts, ends };
     });
@@ -302,19 +304,19 @@ test.describe('App shell chrome', () => {
     const host = page.locator('ds-panel-tools');
     const drawer = page.locator('.panel-tools__drawer');
     const agents = page.getByRole('button', { name: 'Agents' });
+    const drawerWidth = () => drawer.evaluate(element => element.getBoundingClientRect().width);
+
     await agents.click();
-    await page.waitForTimeout(100);
-    const openingWidth = await drawer.evaluate(element => element.getBoundingClientRect().width);
+    await expect(host).toHaveClass(/panel-tools--motion-opening/);
+    await drawer.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+    const openingWidth = await drawerWidth();
     expect(openingWidth).toBeGreaterThan(0);
 
     await agents.click();
     await expect(host).toHaveClass(/panel-tools--motion-closing/);
-    await page.waitForTimeout(30);
-    const closingWidth = await drawer.evaluate(element => element.getBoundingClientRect().width);
+    const closingWidth = await drawerWidth();
     expect(closingWidth).toBeGreaterThan(0);
-    await page.waitForTimeout(100);
-    const laterClosingWidth = await drawer.evaluate(element => element.getBoundingClientRect().width);
-    expect(laterClosingWidth).toBeLessThan(closingWidth);
+    await expect.poll(drawerWidth).toBeLessThan(closingWidth);
 
     await expect(host).toHaveClass(/panel-tools--drawer-resting/, { timeout: 5000 });
     await expect(drawer).toHaveCSS('max-width', '0px');
@@ -340,7 +342,8 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('ds-panel-tools')).toHaveClass(/panel-tools--open/);
 
     await page.reload();
-    await page.waitForSelector('ds-panel-tools.panel-tools--drawer-resting');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    await expect(page.locator('ds-panel-tools')).toHaveClass(/panel-tools--drawer-resting/);
     await expect(page.locator('ds-panel-tools')).toHaveAttribute('active-tool', 'agents');
     await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--open/);
   });
