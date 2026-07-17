@@ -49,3 +49,4 @@ const tools = document.getElementById('tools');
 tools.items = toolsItems;
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+document.documentElement.dataset.ready = 'true';

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 type Theme = 'light' | 'dark';
@@ -39,6 +39,15 @@ type AccessibilityFinding = AccessibilityBaselineEntry & {
   url: string;
 };
 
+type ScanResult = {
+  axeRuns: number;
+  contrastEvaluations: number;
+  findings: AccessibilityFinding[];
+  scannedStoryFiles: Set<string>;
+  scannedStoryCount: number;
+  skippedStories: string[];
+};
+
 const themes: Theme[] = ['light', 'dark'];
 const blockingImpacts = new Set(['critical', 'serious']);
 const contrastRulesRequiringReview = new Set(['color-contrast', 'non-text-contrast']);
@@ -46,12 +55,16 @@ const componentStoryPrefix = './src/wc/components/';
 const explicitFixtureAttribute = 'data-a11y-fixture';
 const componentRootAttribute = 'data-a11y-component-root';
 const componentRootSelector = `[${componentRootAttribute}]`;
+const updateBaseline = process.env.STORYBOOK_A11Y_UPDATE === '1';
 const impactRank: Record<AccessibilityImpact, number> = {
   review: 0,
   serious: 1,
   critical: 2,
 };
 const baselinePath = fileURLToPath(new URL('./accessibility-baseline.json', import.meta.url));
+const storyIndexPath = fileURLToPath(
+  new URL('../../storybook-static/index.json', import.meta.url),
+);
 
 function normalizeTarget(target: readonly unknown[]): string {
   return target
@@ -98,6 +111,32 @@ function loadBaseline(): AccessibilityBaselineEntry[] {
   );
 }
 
+function loadComponentStories(): StoryIndexEntry[] {
+  if (!existsSync(storyIndexPath)) {
+    throw new Error(
+      'Storybook index is unavailable. Run npm run storybook:build before the accessibility suite.',
+    );
+  }
+  const index = JSON.parse(readFileSync(storyIndexPath, 'utf8')) as StoryIndex;
+
+  return Object.values(index.entries)
+    .filter(
+      (entry): entry is StoryIndexEntry =>
+        entry.type === 'story' && entry.importPath.startsWith(componentStoryPrefix),
+    )
+    .sort((left, right) => left.id.localeCompare(right.id));
+}
+
+function groupStoriesByFile(stories: StoryIndexEntry[]): Map<string, StoryIndexEntry[]> {
+  const grouped = new Map<string, StoryIndexEntry[]>();
+  for (const story of stories) {
+    const current = grouped.get(story.importPath) ?? [];
+    current.push(story);
+    grouped.set(story.importPath, current);
+  }
+  return new Map([...grouped].sort(([left], [right]) => left.localeCompare(right)));
+}
+
 function uniqueFindings(findings: AccessibilityFinding[]): AccessibilityFinding[] {
   return [...new Map(findings.map((finding) => [findingKey(finding), finding])).values()];
 }
@@ -124,6 +163,7 @@ function writeBaseline(findings: AccessibilityFinding[]): void {
 
 async function waitForStory(page: Page): Promise<void> {
   await page.locator('#storybook-root').waitFor({ state: 'attached' });
+  await page.locator('#storybook-root > *').first().waitFor({ state: 'attached' });
   await page.addStyleTag({
     // Theme changes can animate foreground/background colors. Freeze motion so Axe
     // always measures the settled token pair instead of a transition midpoint.
@@ -167,9 +207,7 @@ async function markComponentRoots(page: Page): Promise<number> {
 
     const componentElements = Array.from(
       storyRoot.querySelectorAll<HTMLElement>('*'),
-    ).filter(
-      (element) => element.localName.startsWith('ds-'),
-    );
+    ).filter((element) => element.localName.startsWith('ds-'));
     const inferredRoots = componentElements.filter((element) => {
       let ancestor = element.parentElement;
       while (ancestor && ancestor !== storyRoot) {
@@ -201,34 +239,18 @@ async function applyTheme(page: Page, theme: Theme): Promise<void> {
   );
 }
 
-test('component stories avoid serious and critical accessibility violations', async ({
-  page,
-  request,
-}) => {
-  const indexResponse = await request.get('/index.json');
-  expect(indexResponse.ok(), 'Storybook index should load').toBe(true);
-
-  const index = (await indexResponse.json()) as StoryIndex;
-  const stories = Object.values(index.entries)
-    .filter(
-      (entry): entry is StoryIndexEntry =>
-        entry.type === 'story' && entry.importPath.startsWith(componentStoryPrefix),
-    )
-    .sort((left, right) => left.id.localeCompare(right.id));
-
-  expect(stories.length, 'Storybook should expose component stories').toBeGreaterThan(0);
-
+async function scanStories(page: Page, stories: StoryIndexEntry[]): Promise<ScanResult> {
   const findings: AccessibilityFinding[] = [];
-  const componentStoryFiles = new Set(stories.map((story) => story.importPath));
   const scannedStoryFiles = new Set<string>();
   const skippedStories: string[] = [];
+  let axeRuns = 0;
   let contrastEvaluations = 0;
   let scannedStoryCount = 0;
 
   for (const story of stories) {
     await test.step(`${story.title} / ${story.name}`, async () => {
       const storyUrl = `/iframe.html?id=${encodeURIComponent(story.id)}&viewMode=story`;
-      const response = await page.goto(storyUrl, { waitUntil: 'networkidle' });
+      const response = await page.goto(storyUrl, { waitUntil: 'load' });
 
       expect(response?.ok(), `${story.id} should render`).toBe(true);
       await waitForStory(page);
@@ -247,12 +269,16 @@ test('component stories avoid serious and critical accessibility violations', as
           await applyTheme(page, theme);
 
           const results = await new AxeBuilder({ page })
+            // Storybook fixtures are same-origin. A single awaited axe.run() avoids
+            // axe-core's partial-run state occasionally leaking into the next story.
+            .setLegacyMode()
             // Scan rendered component fixtures only. Storybook captions and showcase annotations
             // remain useful documentation, but they are not part of the component contract.
             .include(componentRootSelector)
             // Isolated component stories are not full pages and do not need landmarks.
             .disableRules(['region'])
             .analyze();
+          axeRuns += 1;
 
           contrastEvaluations += [
             ...results.passes,
@@ -305,22 +331,21 @@ test('component stories avoid serious and critical accessibility violations', as
     });
   }
 
-  expect(
+  return {
+    axeRuns,
     contrastEvaluations,
-    'Axe should evaluate text/non-text contrast within the rendered component fixtures',
-  ).toBeGreaterThan(0);
-  expect(
-    [...componentStoryFiles].filter((importPath) => !scannedStoryFiles.has(importPath)),
-    'Every component story file should contribute at least one rendered ds-* fixture',
-  ).toEqual([]);
+    findings: uniqueFindings(findings),
+    scannedStoryFiles,
+    scannedStoryCount,
+    skippedStories,
+  };
+}
 
-  const currentFindings = uniqueFindings(findings);
-  if (process.env.STORYBOOK_A11Y_UPDATE === '1') {
-    writeBaseline(currentFindings);
-    return;
-  }
-
-  const baseline = new Map(loadBaseline().map((entry) => [findingKey(entry), entry]));
+function expectFindingsToMatchBaseline(
+  currentFindings: AccessibilityFinding[],
+  baselineEntries: AccessibilityBaselineEntry[],
+): void {
+  const baseline = new Map(baselineEntries.map((entry) => [findingKey(entry), entry]));
   const findingsByKey = new Map(
     currentFindings.map((finding) => [findingKey(finding), finding]),
   );
@@ -328,7 +353,6 @@ test('component stories avoid serious and critical accessibility violations', as
     const allowed = baseline.get(findingKey(finding));
     return !allowed || impactRank[finding.impact] > impactRank[allowed.impact];
   });
-
   const improvements = [...baseline.values()].filter((allowed) => {
     const finding = findingsByKey.get(findingKey(allowed));
     return !finding || impactRank[finding.impact] < impactRank[allowed.impact];
@@ -363,8 +387,59 @@ test('component stories avoid serious and critical accessibility violations', as
       `The component accessibility baseline improved. Run npm run storybook:test:a11y:update to lock in the improvement.\n${details.join('\n')}${omitted}`,
     );
   }
+}
 
-  process.stdout.write(
-    `Checked ${scannedStoryCount} component stories in ${themes.length} themes (${skippedStories.length} documentation-only exports skipped); no regressions beyond ${baseline.size} exact baselined findings.\n`,
-  );
-});
+const componentStories = loadComponentStories();
+const storiesByFile = groupStoriesByFile(componentStories);
+const baseline = loadBaseline();
+
+if (updateBaseline) {
+  test('update the complete component accessibility baseline', async ({ page }) => {
+    test.setTimeout(10 * 60_000);
+    expect(componentStories.length, 'Storybook should expose component stories').toBeGreaterThan(0);
+    const result = await scanStories(page, componentStories);
+
+    expect(result.contrastEvaluations).toBeGreaterThan(0);
+    expect(
+      [...storiesByFile.keys()].filter((importPath) => !result.scannedStoryFiles.has(importPath)),
+      'Every component story file should contribute at least one rendered ds-* fixture',
+    ).toEqual([]);
+
+    writeBaseline(result.findings);
+    process.stdout.write(
+      `Updated ${result.findings.length} exact findings after checking ${result.scannedStoryCount} component stories in ${themes.length} themes (${result.skippedStories.length} documentation-only exports skipped).\n`,
+    );
+  });
+} else {
+  test('baseline only references current component stories', () => {
+    expect(componentStories.length, 'Storybook should expose component stories').toBeGreaterThan(0);
+    const storyIds = new Set(componentStories.map((story) => story.id));
+    const staleStoryIds = [
+      ...new Set(baseline.map((entry) => entry.storyId).filter((storyId) => !storyIds.has(storyId))),
+    ].sort();
+
+    expect(
+      staleStoryIds,
+      'Remove or refresh findings for component stories that no longer exist',
+    ).toEqual([]);
+  });
+
+  for (const [importPath, stories] of storiesByFile) {
+    const storyIds = new Set(stories.map((story) => story.id));
+    const fileBaseline = baseline.filter((entry) => storyIds.has(entry.storyId));
+    const testName = importPath.slice(componentStoryPrefix.length);
+
+    test(testName, async ({ page }) => {
+      const result = await scanStories(page, stories);
+
+      expect(result.axeRuns, 'Every rendered fixture should be checked in both themes').toBe(
+        result.scannedStoryCount * themes.length,
+      );
+      expect(
+        result.scannedStoryFiles.has(importPath),
+        'The component story file should contribute at least one rendered ds-* fixture',
+      ).toBe(true);
+      expectFindingsToMatchBaseline(result.findings, fileBaseline);
+    });
+  }
+}
