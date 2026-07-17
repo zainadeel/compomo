@@ -2,15 +2,95 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "input",
   "title": "Input",
-  "description": "Text input supporting text, email, tel, url, search, and password types. Search type includes auto clear button.",
+  "description": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/input",
     "source": "src/wc/components/Input/Input.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
+      "useWhen": [
+        "A user must enter or edit one line of text, an email address, telephone number, URL, search query, or password.",
+        "The value must participate in native, Angular, or React form state.",
+        "A compact filter or toolbar needs a single-line search field that follows the shared control-density recipe."
+      ],
+      "avoidWhen": [
+        "The user chooses from a finite set of known values.",
+        "The user must enter multiple paragraphs or formatted content.",
+        "The value is adjusted primarily by dragging within a numeric range."
+      ],
+      "alternatives": [
+        {
+          "when": "The value comes from a finite set of known choices.",
+          "component": "component:ds-select",
+          "reason": "Select exposes the available values and owns listbox selection behavior."
+        },
+        {
+          "when": "The value is an immediate on/off setting.",
+          "component": "component:ds-switch",
+          "reason": "Switch communicates a binary setting instead of free text entry."
+        },
+        {
+          "when": "The value is chosen from a bounded numeric range.",
+          "component": "component:ds-slider",
+          "reason": "Slider supports direct range adjustment and communicates the current position."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-icon",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Provide a persistent visible label through the owning field or an external native label; placeholder text is guidance and must not be the field's only label.",
+        "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
+        "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+        "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+        "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
+      ],
+      "states": [
+        "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+        "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
+        "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
+        "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
+        "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
+        "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
+        "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+        "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+      ],
+      "responsiveBehavior": [
+        "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+        "Choose density from the containing layout: md for ordinary forms, sm or xs only where the surrounding controls use the same compact recipe.",
+        "The owner supplies layout constraints and decides when a compact field moves to its own row."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange for user edits and dsClear for the search clear action.",
+          "Use the form attribute on the host when associating an input rendered outside its owning form."
+        ],
+        "react": [
+          "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+        ],
+        "angular": [
+          "Import DsInput with TextValueAccessor when integrating with Angular Forms."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Input/Input.stories.ts"
+        },
+        {
+          "label": "Cross-browser form and accessibility coverage",
+          "path": "tests/e2e/forms.spec.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "ariaDescribedby": {
@@ -34,6 +114,14 @@
           "attribute": "aria-labelledby",
           "required": false,
           "mutable": false
+        },
+        "autoComplete": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "autocomplete",
+          "required": false,
+          "mutable": false,
+          "description": "Native browser autofill hint."
         },
         "autoFocus": {
           "type": "boolean",
@@ -59,6 +147,15 @@
           "required": false,
           "mutable": false
         },
+        "enterKeyHint": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "enterkeyhint",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Preferred virtual-keyboard action label."
+        },
         "error": {
           "type": "boolean",
           "resolvedType": "boolean",
@@ -74,6 +171,30 @@
           "required": false,
           "mutable": false
         },
+        "form": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "form",
+          "required": false,
+          "mutable": false
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the standard inset border."
+        },
+        "icon": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "icon",
+          "required": false,
+          "mutable": false,
+          "description": "Optional leading icon name."
+        },
         "inputId": {
           "type": "string | undefined",
           "resolvedType": "string | undefined",
@@ -81,6 +202,15 @@
           "required": false,
           "mutable": false,
           "description": "Associates the internal input with an external <label>."
+        },
+        "inputMode": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "inputmode",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Preferred virtual keyboard without changing the value semantics."
         },
         "isInactive": {
           "type": "boolean",
@@ -104,6 +234,15 @@
           "required": false,
           "mutable": false
         },
+        "readOnly": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "read-only",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Keeps the value focusable and submittable while preventing edits."
+        },
         "required": {
           "type": "boolean",
           "resolvedType": "boolean",
@@ -120,6 +259,15 @@
           "required": false,
           "mutable": false
         },
+        "size": {
+          "type": "InputSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density."
+        },
         "type": {
           "type": "InputType",
           "resolvedType": "\"email\" | \"password\" | \"search\" | \"tel\" | \"text\" | \"url\"",
@@ -135,6 +283,15 @@
           "default": "''",
           "required": false,
           "mutable": true
+        },
+        "width": {
+          "type": "InputWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'fill'",
+          "required": false,
+          "mutable": false,
+          "description": "Width fit — fill the parent (default) or hug the available content."
         }
       },
       "events": [
@@ -184,6 +341,14 @@
         "required": false,
         "mutable": false
       },
+      "autoComplete": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "autocomplete",
+        "required": false,
+        "mutable": false,
+        "description": "Native browser autofill hint."
+      },
       "autoFocus": {
         "type": "boolean",
         "resolvedType": "boolean",
@@ -208,6 +373,15 @@
         "required": false,
         "mutable": false
       },
+      "enterKeyHint": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "enterkeyhint",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Preferred virtual-keyboard action label."
+      },
       "error": {
         "type": "boolean",
         "resolvedType": "boolean",
@@ -223,6 +397,30 @@
         "required": false,
         "mutable": false
       },
+      "form": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "form",
+        "required": false,
+        "mutable": false
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the standard inset border."
+      },
+      "icon": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "icon",
+        "required": false,
+        "mutable": false,
+        "description": "Optional leading icon name."
+      },
       "inputId": {
         "type": "string | undefined",
         "resolvedType": "string | undefined",
@@ -230,6 +428,15 @@
         "required": false,
         "mutable": false,
         "description": "Associates the internal input with an external <label>."
+      },
+      "inputMode": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "inputmode",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Preferred virtual keyboard without changing the value semantics."
       },
       "isInactive": {
         "type": "boolean",
@@ -253,6 +460,15 @@
         "required": false,
         "mutable": false
       },
+      "readOnly": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "read-only",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Keeps the value focusable and submittable while preventing edits."
+      },
       "required": {
         "type": "boolean",
         "resolvedType": "boolean",
@@ -269,6 +485,15 @@
         "required": false,
         "mutable": false
       },
+      "size": {
+        "type": "InputSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density."
+      },
       "type": {
         "type": "InputType",
         "resolvedType": "\"email\" | \"password\" | \"search\" | \"tel\" | \"text\" | \"url\"",
@@ -284,6 +509,15 @@
         "default": "''",
         "required": false,
         "mutable": true
+      },
+      "width": {
+        "type": "InputWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'fill'",
+        "required": false,
+        "mutable": false,
+        "description": "Width fit — fill the parent (default) or hug the available content."
       }
     },
     "events": [
@@ -340,20 +574,23 @@
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens"
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
   ],
   "registryDependencies": [
+    "button-unfilled",
+    "icon",
     "text"
   ],
   "files": [
     {
       "path": "src/wc/components/Input/Input.css",
-      "content": "@import '../../utils/control-inactive.css';\n@import '../../utils/typography.css';\n\n.input-container {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  width: 100%;\n}\n\n.wrapper {\n  width: 100%;\n  height: var(--dimension-size-400);\n  display: flex;\n  align-items: center;\n  background-color: var(--color-background-primary);\n  border-radius: var(--dimension-radius-075);\n  box-shadow: var(--effect-elevation-depressed-sm);\n  box-sizing: border-box;\n}\n\n.wrapper:focus-within {\n  box-shadow: inset 0 0 0 1.25px var(--color-foreground-bold-brand);\n}\n\n.wrapper--error {\n  box-shadow: inset 0 0 0 1.25px var(--color-border-bold-negative);\n}\n\n.wrapper--error:focus-within {\n  box-shadow: inset 0 0 0 1.25px var(--color-border-bold-negative);\n}\n\n.row {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  height: 100%;\n  gap: var(--dimension-space-050);\n}\n\n.native-input {\n  flex: 1;\n  min-width: 0;\n  height: 100%;\n  padding: 0 var(--dimension-space-100);\n  background: transparent;\n  border: none;\n  outline: none;\n  font-family: inherit;\n  color: var(--color-foreground-primary);\n  border-radius: var(--dimension-radius-075);\n  -webkit-appearance: none;\n  appearance: none;\n}\n\n/* Inactive: host `.ds-control-inactive` (25% opacity). Native disabled still blocks input. */\n.native-input:disabled {\n  cursor: not-allowed;\n}\n\n.native-input::placeholder {\n  color: var(--color-foreground-secondary);\n}\n\n.native-input:focus::placeholder {\n  color: var(--color-foreground-tertiary);\n}\n\n.native-input[type='search']::-webkit-search-cancel-button,\n.native-input[type='search']::-webkit-search-decoration {\n  display: none;\n}\n\n.clear-btn {\n  flex-shrink: 0;\n  margin-right: var(--dimension-space-050);\n  padding: var(--dimension-space-050);\n  border: none;\n  background: none;\n  cursor: pointer;\n  color: var(--color-foreground-secondary);\n  border-radius: var(--dimension-radius-050);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n}\n\n.clear-btn:hover {\n  background-color: var(--color-interaction-hover);\n}\n\n.suffix {\n  display: flex;\n  align-items: center;\n  flex-shrink: 0;\n  margin-right: var(--dimension-space-050);\n}\n\n.suffix:empty {\n  display: none;\n}\n",
+      "content": "@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-width.css';\n@import '../../utils/typography.css';\n\n:host(.input-host) {\n  display: inline-flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  --ds-input-fg: var(--color-foreground-primary);\n  --ds-input-placeholder: var(--color-foreground-secondary);\n  --ds-input-placeholder-active: var(--color-foreground-quaternary);\n  --ds-input-adornment-fg: var(--color-foreground-secondary);\n  --ds-input-border: var(--color-border-secondary);\n}\n\n:host(.ds-control-width--fill),\n:host(.ds-control-width--fill) .input-control {\n  width: 100%;\n}\n\n.input-control {\n  display: inline-flex;\n  align-items: center;\n  box-sizing: border-box;\n  height: var(--ds-control-height, var(--dimension-size-400));\n  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));\n  gap: var(--ds-control-gap, var(--dimension-space-050));\n  overflow: hidden;\n  background: transparent;\n  border: none;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  color: var(--ds-input-fg);\n}\n\n.input-control--bordered {\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--ds-input-border);\n}\n\n.input-control--error {\n  --ds-interaction-border-width: var(--dimension-stroke-width-018);\n  --ds-interaction-border-color: var(--color-border-bold-negative);\n}\n\n.input-control:focus-within:not(.input-control--error) {\n  --ds-interaction-border-width: var(--dimension-stroke-width-018);\n  --ds-interaction-border-color: var(--color-border-bold-brand);\n}\n\n:host(.ds-control-inactive) .input-control::after {\n  background: transparent;\n}\n\n.native-input {\n  position: relative;\n  z-index: 2;\n  flex: 1 1 auto;\n  min-width: 0;\n  height: 100%;\n  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));\n  background: transparent;\n  border: none;\n  border-radius: inherit;\n  outline: none;\n  color: var(--ds-input-fg);\n  font-family: inherit;\n  -webkit-appearance: none;\n  appearance: none;\n}\n\n.native-input:disabled {\n  cursor: not-allowed;\n}\n\n.native-input:read-only:not(:disabled) {\n  cursor: default;\n}\n\n.native-input::placeholder {\n  color: var(--ds-input-placeholder);\n}\n\n.native-input:focus::placeholder {\n  color: var(--ds-input-placeholder-active);\n}\n\n.native-input[type='search']::-webkit-search-cancel-button,\n.native-input[type='search']::-webkit-search-decoration {\n  display: none;\n}\n\n.input-control__prefix,\n.input-control__suffix {\n  position: relative;\n  z-index: 2;\n  flex-shrink: 0;\n  width: var(--ds-control-icon, var(--dimension-iconography-md));\n  height: var(--ds-control-icon, var(--dimension-iconography-md));\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  color: var(--ds-input-adornment-fg);\n}\n\n.input-control__suffix--empty {\n  display: none;\n}\n\n.input-control__clear {\n  position: relative;\n  z-index: 2;\n  flex-shrink: 0;\n  align-self: center;\n}\n\n.input-control.ds-control--md:has(.input-control__clear),\n.input-control.ds-control--sm:has(.input-control__clear) {\n  padding-right: var(--dimension-space-050);\n}\n\n.input-control.ds-control--xs:has(.input-control__clear) {\n  padding-right: 0;\n}\n\n.error-text {\n  width: 100%;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Input/Input.tsx",
-      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';\n\nexport type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-input',\n  styleUrl: 'Input.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Input {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  private generatedId = `ds-input-${++idCounter}`;\n  private errorId = `${this.generatedId}-error`;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() clearLabel: string = 'Clear';\n  @Prop() placeholder: string | undefined;\n  @Prop() type: InputType = 'text';\n  @Prop() isInactive: boolean = false;\n  @Prop() autoFocus: boolean = false;\n  @Prop() error: boolean = false;\n  @Prop() errorMessage: string | undefined;\n  /** Associates the internal input with an external <label>. */\n  @Prop() inputId: string | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n  @Event() dsClear!: EventEmitter<void>;\n\n  private initialValue = '';\n  @State() private formDisabled = false;\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(inactive ? null : this.value);\n    const missing = this.required && !inactive && this.value.length === 0;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = typeof state === 'string' ? state : '';\n  }\n\n  @Method()\n  async setFocus() {\n    this.el.querySelector('input')?.focus();\n  }\n\n  private handleInput = (e: Event) => {\n    this.value = (e.target as HTMLInputElement).value;\n    this.dsChange.emit(this.value);\n  };\n\n  private handleClear = () => {\n    this.value = '';\n    this.dsChange.emit('');\n    this.dsClear.emit();\n    this.el.querySelector('input')?.focus();\n  };\n\n  render() {\n    const inputId = this.inputId ?? this.generatedId;\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const showClear = this.type === 'search' && this.value.length > 0 && !inactive;\n    const showError = this.error && Boolean(this.errorMessage);\n\n    const describedBy = [\n      this.ariaDescribedby,\n      showError ? this.errorId : undefined,\n    ].filter(Boolean).join(' ') || undefined;\n\n    return (\n      <Host class={{ 'input-container': true, 'ds-control-inactive': inactive }}>\n        <div class={{ wrapper: true, 'wrapper--error': this.error }}>\n          <div class=\"row\">\n            <input\n              type={this.type}\n              id={inputId}\n              value={this.value}\n              placeholder={this.placeholder}\n              disabled={inactive}\n              required={this.required}\n              autoFocus={this.autoFocus}\n              class=\"native-input ds-text--body-medium ds-text--regular\"\n              aria-label={this.ariaLabel}\n              aria-labelledby={this.ariaLabelledby}\n              aria-describedby={describedBy}\n              aria-invalid={this.error || undefined}\n              onInput={this.handleInput}\n            />\n            {showClear && (\n              <button\n                type=\"button\"\n                class=\"clear-btn\"\n                onClick={this.handleClear}\n                aria-label={this.clearLabel}\n              >\n                <span aria-hidden=\"true\">&times;</span>\n              </button>\n            )}\n            <span class=\"suffix\">\n              <slot name=\"suffix\" />\n            </span>\n          </div>\n        </div>\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';\nimport { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';\n\nexport type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';\nexport type InputSize = 'md' | 'sm' | 'xs';\nexport type InputWidth = ControlWidth;\n\nconst ICON_SIZE: Record<InputSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\nconst CLEAR_BUTTON_SIZE: Record<InputSize, 'sm' | 'xs'> = {\n  md: 'sm',\n  sm: 'xs',\n  xs: 'xs',\n};\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-input',\n  styleUrl: 'Input.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Input {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  private generatedId = `ds-input-${++idCounter}`;\n  private errorId = `${this.generatedId}-error`;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop({ reflect: true }) form: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  /** Keeps the value focusable and submittable while preventing edits. */\n  @Prop({ reflect: true }) readOnly: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = 'This field is required.';\n  @Prop() clearLabel: string = 'Clear';\n  @Prop() placeholder: string | undefined;\n  @Prop() type: InputType = 'text';\n  /** Native browser autofill hint. */\n  @Prop({ attribute: 'autocomplete' }) autoComplete: string | undefined;\n  /** Preferred virtual keyboard without changing the value semantics. */\n  @Prop({ attribute: 'inputmode' }) inputMode: string = '';\n  /** Preferred virtual-keyboard action label. */\n  @Prop({ attribute: 'enterkeyhint' }) enterKeyHint: string = '';\n  /** Control density. */\n  @Prop() size: InputSize = 'md';\n  /** Width fit — fill the parent (default) or hug the available content. */\n  @Prop() width: InputWidth = 'fill';\n  /** Show the standard inset border. */\n  @Prop() hasBorder: boolean = true;\n  /** Optional leading icon name. */\n  @Prop() icon: string | undefined;\n  @Prop() isInactive: boolean = false;\n  @Prop() autoFocus: boolean = false;\n  @Prop() error: boolean = false;\n  @Prop() errorMessage: string | undefined;\n  /** Associates the internal input with an external <label>. */\n  @Prop() inputId: string | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n  @Event() dsClear!: EventEmitter<void>;\n\n  private initialValue = '';\n  @State() private formDisabled = false;\n  @State() private hasSuffix = false;\n  @State() private focused = false;\n  @State() private touched = false;\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.hasSuffix = Boolean(this.el.querySelector('[slot=\"suffix\"]'));\n    this.syncFormValue();\n  }\n\n  componentDidRender() {\n    const hasSuffix = Boolean(this.el.querySelector('[slot=\"suffix\"]'));\n    if (hasSuffix !== this.hasSuffix) this.hasSuffix = hasSuffix;\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    this.internals.setFormValue(inactive ? null : this.value);\n    const missing = this.required && !inactive && this.value.length === 0;\n    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = typeof state === 'string' ? state : '';\n  }\n\n  @Method()\n  async setFocus() {\n    this.el.querySelector('input')?.focus();\n  }\n\n  private handleInput = (e: Event) => {\n    this.value = (e.target as HTMLInputElement).value;\n    this.dsChange.emit(this.value);\n  };\n\n  private handleFocus = () => {\n    this.focused = true;\n  };\n\n  private handleBlur = () => {\n    this.focused = false;\n    this.touched = true;\n  };\n\n  private handleClear = () => {\n    this.value = '';\n    this.dsChange.emit('');\n    this.dsClear.emit();\n    this.el.querySelector('input')?.focus();\n  };\n\n  render() {\n    const inputId = this.inputId ?? this.generatedId;\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const filled = this.value.length > 0;\n    const dirty = this.value !== this.initialValue;\n    const showClear = this.type === 'search' && filled && !inactive && !this.readOnly;\n    const showError = this.error && Boolean(this.errorMessage);\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const describedBy = [\n      this.ariaDescribedby,\n      showError ? this.errorId : undefined,\n    ].filter(Boolean).join(' ') || undefined;\n\n    return (\n      <Host\n        class={{\n          'input-host': true,\n          'ds-control-inactive': inactive,\n          [`ds-control--${this.size}`]: true,\n          ...controlWidthClass(this.width),\n        }}\n        data-disabled={inactive ? '' : undefined}\n        data-readonly={this.readOnly ? '' : undefined}\n        data-required={this.required ? '' : undefined}\n        data-invalid={this.error ? '' : undefined}\n        data-filled={filled ? '' : undefined}\n        data-focused={this.focused ? '' : undefined}\n        data-dirty={dirty ? '' : undefined}\n        data-touched={this.touched ? '' : undefined}\n      >\n        <div\n          class={{\n            'input-control': true,\n            'input-control--bordered': this.hasBorder || this.error,\n            'input-control--error': this.error,\n            'ds-interaction-fill': true,\n            [`ds-control--${this.size}`]: true,\n          }}\n        >\n          {this.icon && (\n            <span class=\"input-control__prefix ds-interaction-fill__content\" aria-hidden=\"true\">\n              <ds-icon name={this.icon} size={iconSize} color=\"inherit\" />\n            </span>\n          )}\n          <input\n            type={this.type}\n            id={inputId}\n            value={this.value}\n            placeholder={this.placeholder}\n            disabled={inactive}\n            readOnly={this.readOnly}\n            required={this.required}\n            autoFocus={this.autoFocus}\n            autoComplete={this.autoComplete}\n            inputMode={this.inputMode || undefined}\n            enterKeyHint={this.enterKeyHint || undefined}\n            class={`native-input ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}\n            aria-label={this.ariaLabel}\n            aria-labelledby={this.ariaLabelledby}\n            aria-describedby={describedBy}\n            aria-invalid={this.error ? 'true' : undefined}\n            onInput={this.handleInput}\n            onFocus={this.handleFocus}\n            onBlur={this.handleBlur}\n          />\n          <span class={{ 'input-control__suffix': true, 'input-control__suffix--empty': !this.hasSuffix }}>\n            <slot name=\"suffix\" />\n          </span>\n          {showClear && (\n            <ds-button-unfilled\n              class=\"input-control__clear\"\n              variant=\"icon\"\n              size={CLEAR_BUTTON_SIZE[this.size]}\n              icon=\"CrossCircle\"\n              hasBorder={false}\n              rounded\n              ariaLabel={this.clearLabel}\n              onDsClick={this.handleClear}\n            />\n          )}\n        </div>\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

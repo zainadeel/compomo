@@ -453,7 +453,7 @@ export class Menu {
                     {item.showSwitch && (
                       <ds-switch
                         class="menu-item__switch ds-interaction-fill__content"
-                        size="sm"
+                        size="md"
                         checked={!!item.switchValue}
                         presentation
                       />

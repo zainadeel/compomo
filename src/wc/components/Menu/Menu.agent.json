@@ -44,7 +44,7 @@
     "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
     "Open with visible initial focus only when the trigger was activated from the keyboard.",
     "Keep disabled items discoverable only when their unavailable state is meaningful.",
-    "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator.",
+    "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
     "Use notification dots only as supplemental status and not as the sole indication of important information."
   ],
   "states": [

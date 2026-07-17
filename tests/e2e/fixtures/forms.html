@@ -7,10 +7,17 @@
   </head>
   <body>
     <form id="profile">
-      <ds-input id="email" name="email" required aria-label="Email"></ds-input>
+      <ds-field
+        id="email-field"
+        label="Email address"
+        description="Use your work email address."
+        field-id="email-control"
+      >
+        <ds-input id="email" name="email" type="email" autocomplete="email" required></ds-input>
+      </ds-field>
       <ds-checkbox id="terms" name="terms" value="accepted" label="Terms" required></ds-checkbox>
       <ds-select id="region" required aria-label="Region"></ds-select>
-      <ds-radio-group id="tier" name="tier" required aria-label="Tier"></ds-radio-group>
+      <ds-radio id="tier" name="tier" required aria-label="Tier"></ds-radio>
       <fieldset id="alert-fieldset">
         <ds-switch id="alerts" name="alerts" value="enabled" aria-label="Alerts"></ds-switch>
       </fieldset>
@@ -29,6 +36,22 @@
       <ds-switch id="switch-md" size="md" aria-label="Medium switch"></ds-switch>
       <ds-switch id="switch-sm" size="sm" aria-label="Small switch"></ds-switch>
       <ds-switch id="switch-xs" size="xs" aria-label="Extra-small switch"></ds-switch>
+    </div>
+    <div id="radio-sizes">
+      <ds-radio id="radio-md" size="md" value="selected" aria-label="Medium radio"></ds-radio>
+      <ds-radio id="radio-sm" size="sm" value="selected" aria-label="Small radio"></ds-radio>
+      <ds-radio id="radio-xs" size="xs" value="selected" aria-label="Extra-small radio"></ds-radio>
+    </div>
+    <div id="input-sizes">
+      <ds-input id="input-md" size="md" value="Medium input" icon="MagnifyingGlass" aria-label="Medium input"></ds-input>
+      <ds-input id="input-sm" size="sm" value="Small input" icon="MagnifyingGlass" aria-label="Small input"></ds-input>
+      <ds-input id="input-xs" size="xs" value="Extra-small input" icon="MagnifyingGlass" aria-label="Extra-small input"></ds-input>
+      <ds-input id="input-search" type="search" value="Search query" icon="MagnifyingGlass" aria-label="Search input"></ds-input>
+      <ds-input id="input-search-sm" type="search" size="sm" value="Search query" icon="MagnifyingGlass" aria-label="Small search input"></ds-input>
+      <ds-input id="input-search-xs" type="search" size="xs" value="Search query" icon="MagnifyingGlass" aria-label="Extra-small search input"></ds-input>
+      <form id="readonly-input-form">
+        <ds-input id="input-readonly" name="readonly-input" value="Kept value" read-only aria-label="Read-only input"></ds-input>
+      </form>
     </div>
     <form id="switch-form">
       <span id="readonly-switch-label">Read-only switch</span>
@@ -69,6 +92,21 @@
     ></ds-switch>
     <label for="labeled-switch">Labeled switch</label>
     <ds-switch id="labeled-switch"></ds-switch>
+    <form id="slider-form">
+      <ds-slider id="slider-single" name="volume" value="40" label="Volume"></ds-slider>
+      <ds-slider id="slider-range" name="price" label="Price range"></ds-slider>
+      <ds-slider id="slider-readonly" name="locked" value="70" label="Read-only slider" read-only></ds-slider>
+      <button id="slider-reset" type="reset">Reset sliders</button>
+    </form>
+    <ds-slider id="slider-external" form="slider-form" name="external-slider" value="25" label="External slider"></ds-slider>
+    <label for="slider-external-label">Externally labeled slider</label>
+    <ds-slider id="slider-external-label" value="15" show-value="false"></ds-slider>
+    <div id="slider-sizes">
+      <ds-slider id="slider-md" size="md" value="40" label="Medium slider"></ds-slider>
+      <ds-slider id="slider-sm" size="sm" value="40" label="Small slider"></ds-slider>
+      <ds-slider id="slider-xs" size="xs" value="40" label="Extra-small slider"></ds-slider>
+    </div>
+    <ds-slider id="slider-vertical" orientation="vertical" value="35" label="Vertical slider"></ds-slider>
     <script type="module" src="/forms-setup.mjs"></script>
   </body>
 </html>

@@ -552,7 +552,7 @@ export class SelectMulti {
           aria-label={this.ariaLabel}
           aria-labelledby={this.ariaLabelledby}
           aria-describedby={describedBy}
-          aria-invalid={this.error || undefined}
+          aria-invalid={this.error ? 'true' : undefined}
           aria-required={this.required || undefined}
           aria-busy={this.isLoading ? 'true' : undefined}
           onClick={() => (this.open ? this.closePopup() : this.openPopup(false))}

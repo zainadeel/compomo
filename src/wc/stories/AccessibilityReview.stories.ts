@@ -4,7 +4,7 @@ import '../../../dist/components/ds-button-filled.js';
 import '../../../dist/components/ds-button-unfilled.js';
 import '../../../dist/components/ds-checkbox.js';
 import '../../../dist/components/ds-input.js';
-import '../../../dist/components/ds-radio-group.js';
+import '../../../dist/components/ds-radio.js';
 import '../../../dist/components/ds-select.js';
 import '../../../dist/components/ds-slider.js';
 import '../../../dist/components/ds-switch.js';
@@ -86,27 +86,27 @@ const REVIEWS: ReviewDefinition[] = [
   {
     id: 'radio',
     title: 'Radio',
-    storyId: 'form-radiogroup--with-inactive-item',
+    storyId: 'form-radio--with-inactive-item',
     requirement: 'Active ring, selected dot and focus cue: 3:1. Label text: 4.5:1. Inactive is exempt.',
     render: theme => html`
       ${reviewState('radio', theme, 'Unchecked', 'Ring identifies the available option.', html`
-        <ds-radio-group .options=${RADIO_UNCHECKED} aria-label="Unchecked radio"></ds-radio-group>
+        <ds-radio .options=${RADIO_UNCHECKED} aria-label="Unchecked radio"></ds-radio>
       `)}
       ${reviewState('radio', theme, 'Checked', 'Ring and dot communicate selection.', html`
-        <ds-radio-group .options=${RADIO_CHECKED} value="checked" aria-label="Checked radio"></ds-radio-group>
+        <ds-radio .options=${RADIO_CHECKED} value="checked" aria-label="Checked radio"></ds-radio>
       `)}
       ${reviewState('radio', theme, 'Focus', 'Forced visible for review.', html`
-        <ds-radio-group data-review-focus .options=${RADIO_FOCUSED} aria-label="Focused radio"></ds-radio-group>
+        <ds-radio data-review-focus .options=${RADIO_FOCUSED} aria-label="Focused radio"></ds-radio>
       `)}
       ${reviewState('radio', theme, 'Inactive', 'Must be genuinely non-operable.', html`
-        <ds-radio-group .options=${RADIO_INACTIVE} aria-label="Inactive radio"></ds-radio-group>
+        <ds-radio .options=${RADIO_INACTIVE} aria-label="Inactive radio"></ds-radio>
       `)}
     `,
   },
   {
     id: 'input',
     title: 'Input',
-    storyId: 'form-input--variants',
+    storyId: 'form-input--sizes-and-states',
     requirement: 'Required field boundary and focus cue: 3:1. Value, label and meaningful placeholder text: 4.5:1.',
     render: theme => html`
       ${reviewState('input', theme, 'Empty', 'Placeholder must not replace a persistent label.', html`
@@ -426,17 +426,18 @@ export const ReviewMatrix: Story = {
         margin: 0;
       }
 
-      ds-input[data-review-focus] .wrapper {
-        box-shadow: inset 0 0 0 1.25px var(--color-foreground-bold-brand);
+      ds-input[data-review-focus] .input-control::after {
+        box-shadow: inset 0 0 0 var(--dimension-stroke-width-018) var(--color-border-bold-brand);
       }
 
-      ds-radio-group[data-review-focus] [role='radio']:first-child {
+      ds-radio[data-review-focus] [role='radio']:first-child {
         outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
         outline-offset: var(--dimension-space-025);
       }
 
-      ds-slider[data-review-focus] .track-inner {
-        box-shadow: var(--effect-elevation-depressed-sm), inset 0 0 0 1.25px var(--color-interaction-focus);
+      ds-slider[data-review-focus] .slider__thumb[data-index='0'] .slider__thumb-visual {
+        outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+        outline-offset: var(--dimension-space-025);
       }
 
       @media (max-width: 1300px) {

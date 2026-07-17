@@ -11,17 +11,23 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsSliderCustomEvent } from "@ds-mo/ui";
+import { type DsSliderCustomEvent, type SliderValue } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsSlider as DsSliderElement, defineCustomElement as defineDsSlider } from "@ds-mo/ui/dist/components/ds-slider.js";
 
-export type DsSliderEvents = { onDsChange: EventName<DsSliderCustomEvent<number>> };
+export type DsSliderEvents = {
+    onDsChange: EventName<DsSliderCustomEvent<SliderValue>>,
+    onDsCommit: EventName<DsSliderCustomEvent<SliderValue>>
+};
 
-export const DsSlider: StencilReactComponent<DsSliderElement, DsSliderEvents, Components.DsSlider, 'label'> = /*@__PURE__*/ createComponent<DsSliderElement, DsSliderEvents, Components.DsSlider, 'label'>({
+export const DsSlider: StencilReactComponent<DsSliderElement, DsSliderEvents, Components.DsSlider> = /*@__PURE__*/ createComponent<DsSliderElement, DsSliderEvents, Components.DsSlider>({
     tagName: 'ds-slider',
     elementClass: DsSliderElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsChange: 'dsChange' } as DsSliderEvents,
+    events: {
+        onDsChange: 'dsChange',
+        onDsCommit: 'dsCommit'
+    } as DsSliderEvents,
     defineCustomElement: defineDsSlider
 });

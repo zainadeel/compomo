@@ -53,9 +53,9 @@ does not mean every edge-attached component should use it.
   `--effect-elevation-elevated-floating`.
 - `ds-menu` uses the floating shadow/highlight parts separately to preserve its
   rounded clipping behavior.
-- `ds-input` and the Slider track use
-  `--effect-elevation-depressed-sm`.
-- Slider thumbs use `--effect-elevation-elevated-sm`.
+- Slider uses flat structural foreground, brand, and focus tokens rather than
+  elevation; its track and thumbs must remain clear on primary, secondary, and
+  faint application surfaces.
 - Banner uses elevated-sm or elevated-floating according to presentation.
 - Cards primarily use surface and border hierarchy rather than elevation.
 

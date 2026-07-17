@@ -1,6 +1,21 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';
+import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
 
 export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
+export type InputSize = 'md' | 'sm' | 'xs';
+export type InputWidth = ControlWidth;
+
+const ICON_SIZE: Record<InputSize, 'md' | 'sm' | 'xs'> = {
+  md: 'md',
+  sm: 'sm',
+  xs: 'xs',
+};
+
+const CLEAR_BUTTON_SIZE: Record<InputSize, 'sm' | 'xs'> = {
+  md: 'sm',
+  sm: 'xs',
+  xs: 'xs',
+};
 
 let idCounter = 0;
 
@@ -19,12 +34,29 @@ export class Input {
 
   @Prop({ mutable: true }) value: string = '';
   @Prop({ reflect: true }) name: string | undefined;
+  @Prop({ reflect: true }) form: string | undefined;
   @Prop({ reflect: true }) disabled: boolean = false;
+  /** Keeps the value focusable and submittable while preventing edits. */
+  @Prop({ reflect: true }) readOnly: boolean = false;
   @Prop({ reflect: true }) required: boolean = false;
   @Prop() requiredMessage: string = 'This field is required.';
   @Prop() clearLabel: string = 'Clear';
   @Prop() placeholder: string | undefined;
   @Prop() type: InputType = 'text';
+  /** Native browser autofill hint. */
+  @Prop({ attribute: 'autocomplete' }) autoComplete: string | undefined;
+  /** Preferred virtual keyboard without changing the value semantics. */
+  @Prop({ attribute: 'inputmode' }) inputMode: string = '';
+  /** Preferred virtual-keyboard action label. */
+  @Prop({ attribute: 'enterkeyhint' }) enterKeyHint: string = '';
+  /** Control density. */
+  @Prop() size: InputSize = 'md';
+  /** Width fit — fill the parent (default) or hug the available content. */
+  @Prop() width: InputWidth = 'fill';
+  /** Show the standard inset border. */
+  @Prop() hasBorder: boolean = true;
+  /** Optional leading icon name. */
+  @Prop() icon: string | undefined;
   @Prop() isInactive: boolean = false;
   @Prop() autoFocus: boolean = false;
   @Prop() error: boolean = false;
@@ -40,10 +72,19 @@ export class Input {
 
   private initialValue = '';
   @State() private formDisabled = false;
+  @State() private hasSuffix = false;
+  @State() private focused = false;
+  @State() private touched = false;
 
   componentWillLoad() {
     this.initialValue = this.value;
+    this.hasSuffix = Boolean(this.el.querySelector('[slot="suffix"]'));
     this.syncFormValue();
+  }
+
+  componentDidRender() {
+    const hasSuffix = Boolean(this.el.querySelector('[slot="suffix"]'));
+    if (hasSuffix !== this.hasSuffix) this.hasSuffix = hasSuffix;
   }
 
   @Watch('value')
@@ -80,6 +121,15 @@ export class Input {
     this.dsChange.emit(this.value);
   };
 
+  private handleFocus = () => {
+    this.focused = true;
+  };
+
+  private handleBlur = () => {
+    this.focused = false;
+    this.touched = true;
+  };
+
   private handleClear = () => {
     this.value = '';
     this.dsChange.emit('');
@@ -90,8 +140,12 @@ export class Input {
   render() {
     const inputId = this.inputId ?? this.generatedId;
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    const showClear = this.type === 'search' && this.value.length > 0 && !inactive;
+    const filled = this.value.length > 0;
+    const dirty = this.value !== this.initialValue;
+    const showClear = this.type === 'search' && filled && !inactive && !this.readOnly;
     const showError = this.error && Boolean(this.errorMessage);
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
+    const iconSize = ICON_SIZE[this.size];
 
     const describedBy = [
       this.ariaDescribedby,
@@ -99,38 +153,72 @@ export class Input {
     ].filter(Boolean).join(' ') || undefined;
 
     return (
-      <Host class={{ 'input-container': true, 'ds-control-inactive': inactive }}>
-        <div class={{ wrapper: true, 'wrapper--error': this.error }}>
-          <div class="row">
-            <input
-              type={this.type}
-              id={inputId}
-              value={this.value}
-              placeholder={this.placeholder}
-              disabled={inactive}
-              required={this.required}
-              autoFocus={this.autoFocus}
-              class="native-input ds-text--body-medium ds-text--regular"
-              aria-label={this.ariaLabel}
-              aria-labelledby={this.ariaLabelledby}
-              aria-describedby={describedBy}
-              aria-invalid={this.error || undefined}
-              onInput={this.handleInput}
-            />
-            {showClear && (
-              <button
-                type="button"
-                class="clear-btn"
-                onClick={this.handleClear}
-                aria-label={this.clearLabel}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            )}
-            <span class="suffix">
-              <slot name="suffix" />
+      <Host
+        class={{
+          'input-host': true,
+          'ds-control-inactive': inactive,
+          [`ds-control--${this.size}`]: true,
+          ...controlWidthClass(this.width),
+        }}
+        data-disabled={inactive ? '' : undefined}
+        data-readonly={this.readOnly ? '' : undefined}
+        data-required={this.required ? '' : undefined}
+        data-invalid={this.error ? '' : undefined}
+        data-filled={filled ? '' : undefined}
+        data-focused={this.focused ? '' : undefined}
+        data-dirty={dirty ? '' : undefined}
+        data-touched={this.touched ? '' : undefined}
+      >
+        <div
+          class={{
+            'input-control': true,
+            'input-control--bordered': this.hasBorder || this.error,
+            'input-control--error': this.error,
+            'ds-interaction-fill': true,
+            [`ds-control--${this.size}`]: true,
+          }}
+        >
+          {this.icon && (
+            <span class="input-control__prefix ds-interaction-fill__content" aria-hidden="true">
+              <ds-icon name={this.icon} size={iconSize} color="inherit" />
             </span>
-          </div>
+          )}
+          <input
+            type={this.type}
+            id={inputId}
+            value={this.value}
+            placeholder={this.placeholder}
+            disabled={inactive}
+            readOnly={this.readOnly}
+            required={this.required}
+            autoFocus={this.autoFocus}
+            autoComplete={this.autoComplete}
+            inputMode={this.inputMode || undefined}
+            enterKeyHint={this.enterKeyHint || undefined}
+            class={`native-input ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
+            aria-label={this.ariaLabel}
+            aria-labelledby={this.ariaLabelledby}
+            aria-describedby={describedBy}
+            aria-invalid={this.error ? 'true' : undefined}
+            onInput={this.handleInput}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
+          />
+          <span class={{ 'input-control__suffix': true, 'input-control__suffix--empty': !this.hasSuffix }}>
+            <slot name="suffix" />
+          </span>
+          {showClear && (
+            <ds-button-unfilled
+              class="input-control__clear"
+              variant="icon"
+              size={CLEAR_BUTTON_SIZE[this.size]}
+              icon="CrossCircle"
+              hasBorder={false}
+              rounded
+              ariaLabel={this.clearLabel}
+              onDsClick={this.handleClear}
+            />
+          )}
         </div>
         {showError && (
           <ds-text

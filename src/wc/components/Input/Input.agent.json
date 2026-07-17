@@ -1,0 +1,87 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-input",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-input",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
+  "useWhen": [
+    "A user must enter or edit one line of text, an email address, telephone number, URL, search query, or password.",
+    "The value must participate in native, Angular, or React form state.",
+    "A compact filter or toolbar needs a single-line search field that follows the shared control-density recipe."
+  ],
+  "avoidWhen": [
+    "The user chooses from a finite set of known values.",
+    "The user must enter multiple paragraphs or formatted content.",
+    "The value is adjusted primarily by dragging within a numeric range."
+  ],
+  "alternatives": [
+    {
+      "when": "The value comes from a finite set of known choices.",
+      "component": "component:ds-select",
+      "reason": "Select exposes the available values and owns listbox selection behavior."
+    },
+    {
+      "when": "The value is an immediate on/off setting.",
+      "component": "component:ds-switch",
+      "reason": "Switch communicates a binary setting instead of free text entry."
+    },
+    {
+      "when": "The value is chosen from a bounded numeric range.",
+      "component": "component:ds-slider",
+      "reason": "Slider supports direct range adjustment and communicates the current position."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-icon",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Provide a persistent visible label through the owning field or an external native label; placeholder text is guidance and must not be the field's only label.",
+    "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
+    "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+    "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+    "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
+  ],
+  "states": [
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+    "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
+    "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
+    "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
+    "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
+    "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
+    "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+    "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+  ],
+  "responsiveBehavior": [
+    "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+    "Choose density from the containing layout: md for ordinary forms, sm or xs only where the surrounding controls use the same compact recipe.",
+    "The owner supplies layout constraints and decides when a compact field moves to its own row."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsChange for user edits and dsClear for the search clear action.",
+      "Use the form attribute on the host when associating an input rendered outside its owning form."
+    ],
+    "react": [
+      "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+    ],
+    "angular": [
+      "Import DsInput with TextValueAccessor when integrating with Angular Forms."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Input/Input.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

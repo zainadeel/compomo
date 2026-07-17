@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-radio",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-radio",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
+  "useWhen": [
+    "A user must select exactly one visible option from a small set.",
+    "All available choices should remain visible for comparison.",
+    "A form needs one selected string value with native validation, reset, or external form association."
+  ],
+  "avoidWhen": [
+    "A user may select zero or multiple independent choices.",
+    "A binary setting applies immediately rather than selecting from a set.",
+    "The option list is too long or space-constrained to remain visible."
+  ],
+  "alternatives": [
+    {
+      "when": "A user may select zero or multiple independent choices.",
+      "component": "component:ds-checkbox",
+      "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+    },
+    {
+      "when": "A binary setting applies immediately.",
+      "component": "component:ds-switch",
+      "reason": "Switch communicates an immediately applied on/off setting."
+    },
+    {
+      "when": "The option list is long or the available space is constrained.",
+      "component": "component:ds-select",
+      "reason": "Select keeps a larger one-of-many choice set compact."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
+    "Each visible option exposes radio semantics, its checked state, its label text, and any inactive state.",
+    "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
+    "Roving tabindex keeps one active option in the tab order, preferring the selected option."
+  ],
+  "states": [
+    "Unchecked circles use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs.",
+    "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 8px at md, 6px at sm, and 4px at xs.",
+    "Sizes are md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
+    "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected."
+  ],
+  "responsiveBehavior": [
+    "Choose size from the density of the containing form or settings row.",
+    "Prefer vertical layout when labels may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign options as a JavaScript property, set value as a property for application state updates, and listen for dsChange.",
+      "Use the form attribute on the host when associating a radio set rendered outside its owning form."
+    ],
+    "react": [
+      "Use DsRadio, pass options as an array, and handle onDsChange; value is mutable and updates after user selection."
+    ],
+    "angular": [
+      "Use DsRadio with options and value bindings plus dsChange, or import the generated radio value accessor with the component adapter."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Radio/Radio.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

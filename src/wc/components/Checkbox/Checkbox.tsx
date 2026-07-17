@@ -121,7 +121,15 @@ export class Checkbox {
           <span class={{ box: true, 'box--marked': isMarked }}>
             {isMarked && (
               // eslint-disable-next-line local/prefer-ds-icon -- Checkbox owns this density-specific state mark and its optical stroke.
-              <svg class="checkbox__mark" viewBox="0 0 16 16" fill="none" focusable="false">
+              <svg
+                class={{
+                  checkbox__mark: true,
+                  'checkbox__mark--checked': !this.indeterminate,
+                }}
+                viewBox="0 0 16 16"
+                fill="none"
+                focusable="false"
+              >
                 <path
                   d={this.indeterminate ? 'M4 8H12' : 'M3.5 8.25L6.75 11.5L12.5 4.75'}
                   vector-effect="non-scaling-stroke"

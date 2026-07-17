@@ -59,7 +59,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Tag** (static metadata or compact menu trigger), **Chip** (removable metadata on primary surfaces), **Badge**
 
 ### Controls
-- **Toggle**, **Checkbox**, **RadioGroup**, **Input**, **Slider**, **Field**
+- **Toggle**, **Checkbox**, **Radio**, **Input**, **Slider**, **Field**
 
 ### Data display
 - **Table**, **Pagination**

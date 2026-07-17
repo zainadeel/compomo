@@ -21,8 +21,8 @@
   "alternatives": [
     {
       "when": "Exactly one option must be chosen from a mutually exclusive set.",
-      "component": "component:ds-radio-group",
-      "reason": "RadioGroup communicates one-of-many selection."
+      "component": "component:ds-radio",
+      "reason": "Radio communicates one-of-many selection."
     },
     {
       "when": "A binary setting takes effect immediately.",

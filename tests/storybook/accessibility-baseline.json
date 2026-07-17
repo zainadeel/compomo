@@ -394,26 +394,6 @@
     ]
   },
   {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "select-name",
-    "storyId": "form-field--with-select",
-    "theme": "dark",
-    "targets": [
-      "#status"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "select-name",
-    "storyId": "form-field--with-select",
-    "theme": "light",
-    "targets": [
-      "#status"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",

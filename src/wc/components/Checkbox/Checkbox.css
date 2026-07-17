@@ -76,8 +76,12 @@
   flex-shrink: 0;
   stroke: currentColor;
   stroke-width: var(--_checkbox-stroke);
-  stroke-linecap: round;
+  stroke-linecap: butt;
   stroke-linejoin: round;
+}
+
+.checkbox__mark--checked {
+  transform: translateY(-0.5px);
 }
 
 .checkbox__label {

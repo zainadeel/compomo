@@ -1257,8 +1257,8 @@
           "alternatives": [
             {
               "when": "Exactly one option must be chosen from a mutually exclusive set.",
-              "component": "component:ds-radio-group",
-              "reason": "RadioGroup communicates one-of-many selection."
+              "component": "component:ds-radio",
+              "reason": "Radio communicates one-of-many selection."
             },
             {
               "when": "A binary setting takes effect immediately.",
@@ -1749,16 +1749,94 @@
     {
       "name": "field",
       "title": "Field",
-      "description": "Simple label wrapper that links to child input via htmlFor.",
+      "description": "Accessible form-field composition that gives one Input or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/field",
         "source": "src/wc/components/Field/Field.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Accessible form-field composition that gives one Input or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+          "useWhen": [
+            "An Input, Select, or SelectMulti needs a persistent visible label in a form.",
+            "Help text or an error message must be programmatically associated with one control.",
+            "A form layout needs one consistent label-control-message rhythm."
+          ],
+          "avoidWhen": [
+            "The component already owns its visible label and complete selection semantics, such as Checkbox, Radio, or Switch.",
+            "Several controls belong to one question; use a semantic fieldset and legend instead.",
+            "Text describes a region or group rather than one form control."
+          ],
+          "alternatives": [
+            {
+              "when": "Several related controls answer one question.",
+              "component": "component:ds-text",
+              "reason": "Use native fieldset and legend semantics, then compose Text only for supporting content."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-input",
+            "component:ds-select",
+            "component:ds-select-multi",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Slot exactly one form control. Field assigns its stable control ID and connects the visible label automatically.",
+            "Description and rendered error IDs are merged with any authored aria-describedby references rather than replacing them.",
+            "The error prop forwards aria-invalid and supported design-system control error styling; put visible error text on Field, not again on the child control.",
+            "Clicking the label focuses the slotted design-system control without opening a Select popup.",
+            "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
+          ],
+          "states": [
+            "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
+            "Description remains visible during error so guidance and validation do not replace each other.",
+            "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
+            "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
+          ],
+          "responsiveBehavior": [
+            "Field fills the width supplied by its parent and makes the slotted control fill that field width.",
+            "The form layout owns column count, wrapping, and responsive placement; Field keeps the vertical label-control-message composition intact."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set fieldId only when another element must reference a predictable control ID; otherwise use the generated association.",
+              "Assign child component values and option arrays through their normal JavaScript properties."
+            ],
+            "react": [
+              "Compose one DsInput, DsSelect, or DsSelectMulti child and control validation timing in the form owner."
+            ],
+            "angular": [
+              "Compose the generated Field adapter around the control adapter and its matching Angular value accessor."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Field/Field.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
         "props": {
+          "description": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
           "fieldId": {
             "type": "string | undefined",
             "required": false
@@ -1911,15 +1989,95 @@
     {
       "name": "input",
       "title": "Input",
-      "description": "Text input supporting text, email, tel, url, search, and password types. Search type includes auto clear button.",
+      "description": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/input",
         "source": "src/wc/components/Input/Input.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
+          "useWhen": [
+            "A user must enter or edit one line of text, an email address, telephone number, URL, search query, or password.",
+            "The value must participate in native, Angular, or React form state.",
+            "A compact filter or toolbar needs a single-line search field that follows the shared control-density recipe."
+          ],
+          "avoidWhen": [
+            "The user chooses from a finite set of known values.",
+            "The user must enter multiple paragraphs or formatted content.",
+            "The value is adjusted primarily by dragging within a numeric range."
+          ],
+          "alternatives": [
+            {
+              "when": "The value comes from a finite set of known choices.",
+              "component": "component:ds-select",
+              "reason": "Select exposes the available values and owns listbox selection behavior."
+            },
+            {
+              "when": "The value is an immediate on/off setting.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates a binary setting instead of free text entry."
+            },
+            {
+              "when": "The value is chosen from a bounded numeric range.",
+              "component": "component:ds-slider",
+              "reason": "Slider supports direct range adjustment and communicates the current position."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-icon",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Provide a persistent visible label through the owning field or an external native label; placeholder text is guidance and must not be the field's only label.",
+            "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
+            "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+            "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+            "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
+          ],
+          "states": [
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+            "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
+            "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
+            "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
+            "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
+            "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
+            "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+            "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+          ],
+          "responsiveBehavior": [
+            "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+            "Choose density from the containing layout: md for ordinary forms, sm or xs only where the surrounding controls use the same compact recipe.",
+            "The owner supplies layout constraints and decides when a compact field moves to its own row."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange for user edits and dsClear for the search clear action.",
+              "Use the form attribute on the host when associating an input rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+            ],
+            "angular": [
+              "Import DsInput with TextValueAccessor when integrating with Angular Forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Input/Input.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
         "props": {
           "ariaDescribedby": {
             "type": "string | undefined",
@@ -1930,6 +2088,10 @@
             "required": false
           },
           "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "autoComplete": {
             "type": "string | undefined",
             "required": false
           },
@@ -1945,6 +2107,10 @@
             "type": "boolean",
             "required": false
           },
+          "enterKeyHint": {
+            "type": "string",
+            "required": false
+          },
           "error": {
             "type": "boolean",
             "required": false
@@ -1953,8 +2119,24 @@
             "type": "string | undefined",
             "required": false
           },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "string | undefined",
+            "required": false
+          },
           "inputId": {
             "type": "string | undefined",
+            "required": false
+          },
+          "inputMode": {
+            "type": "string",
             "required": false
           },
           "isInactive": {
@@ -1969,6 +2151,10 @@
             "type": "string | undefined",
             "required": false
           },
+          "readOnly": {
+            "type": "boolean",
+            "required": false
+          },
           "required": {
             "type": "boolean",
             "required": false
@@ -1977,12 +2163,20 @@
             "type": "string",
             "required": false
           },
+          "size": {
+            "type": "InputSize",
+            "required": false
+          },
           "type": {
             "type": "InputType",
             "required": false
           },
           "value": {
             "type": "string",
+            "required": false
+          },
+          "width": {
+            "type": "InputWidth",
             "required": false
           }
         },
@@ -2005,9 +2199,12 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "button-unfilled",
+        "icon",
         "text"
       ]
     },
@@ -2170,7 +2367,7 @@
             "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
-            "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator.",
+            "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
           ],
           "states": [
@@ -2933,17 +3130,90 @@
       ]
     },
     {
-      "name": "radio-group",
-      "title": "RadioGroup",
-      "description": "Radio selection group with vertical/horizontal layout, per-option inactive state, and keyboard navigation.",
+      "name": "radio",
+      "title": "Radio",
+      "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-group",
-        "source": "src/wc/components/RadioGroup/RadioGroup.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio",
+        "source": "src/wc/components/Radio/Radio.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
+          "useWhen": [
+            "A user must select exactly one visible option from a small set.",
+            "All available choices should remain visible for comparison.",
+            "A form needs one selected string value with native validation, reset, or external form association."
+          ],
+          "avoidWhen": [
+            "A user may select zero or multiple independent choices.",
+            "A binary setting applies immediately rather than selecting from a set.",
+            "The option list is too long or space-constrained to remain visible."
+          ],
+          "alternatives": [
+            {
+              "when": "A user may select zero or multiple independent choices.",
+              "component": "component:ds-checkbox",
+              "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+            },
+            {
+              "when": "A binary setting applies immediately.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates an immediately applied on/off setting."
+            },
+            {
+              "when": "The option list is long or the available space is constrained.",
+              "component": "component:ds-select",
+              "reason": "Select keeps a larger one-of-many choice set compact."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
+            "Each visible option exposes radio semantics, its checked state, its label text, and any inactive state.",
+            "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
+            "Roving tabindex keeps one active option in the tab order, preferring the selected option."
+          ],
+          "states": [
+            "Unchecked circles use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs.",
+            "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 8px at md, 6px at sm, and 4px at xs.",
+            "Sizes are md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
+            "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected."
+          ],
+          "responsiveBehavior": [
+            "Choose size from the density of the containing form or settings row.",
+            "Prefer vertical layout when labels may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign options as a JavaScript property, set value as a property for application state updates, and listen for dsChange.",
+              "Use the form attribute on the host when associating a radio set rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsRadio, pass options as an array, and handle onDsChange; value is mutable and updates after user selection."
+            ],
+            "angular": [
+              "Use DsRadio with options and value bindings plus dsChange, or import the generated radio value accessor with the component adapter."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Radio/Radio.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
         "props": {
           "ariaLabel": {
             "type": "string | null",
@@ -2959,6 +3229,10 @@
           },
           "disabled": {
             "type": "boolean",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
             "required": false
           },
           "isInactive": {
@@ -2981,6 +3255,10 @@
             "type": "string",
             "required": false
           },
+          "size": {
+            "type": "RadioSize",
+            "required": false
+          },
           "value": {
             "type": "string",
             "required": false
@@ -2994,9 +3272,9 @@
         ],
         "slots": [],
         "exports": {
-          "customElement": "ds-radio-group",
-          "react": "DsRadioGroup",
-          "angular": "DsRadioGroup"
+          "customElement": "ds-radio",
+          "react": "DsRadio",
+          "angular": "DsRadio"
         }
       },
       "dependencies": [
@@ -3046,8 +3324,8 @@
             },
             {
               "when": "A small set of choices should remain visible.",
-              "component": "component:ds-radio-group",
-              "reason": "Prefer RadioGroup for roughly two to five mutually exclusive choices when the available space allows all choices to remain visible."
+              "component": "component:ds-radio",
+              "reason": "Prefer Radio for roughly two to five mutually exclusive choices when the available space allows all choices to remain visible."
             }
           ],
           "commonlyComposedWith": [
@@ -3078,7 +3356,7 @@
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
             "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
-            "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+            "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the CrossCircle icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
             "The shared clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
             "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
@@ -3879,16 +4157,121 @@
     {
       "name": "slider",
       "title": "Slider",
-      "description": "Range input with visual fill track, label, and current value display.",
+      "description": "Form-associated single or two-thumb range input with native slider semantics, pointer dragging, keyboard operation, formatting, density, and orientation controls.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/slider",
         "source": "src/wc/components/Slider/Slider.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Form-associated single or two-thumb range input with native slider semantics, pointer dragging, keyboard operation, formatting, density, and orientation controls.",
+          "useWhen": [
+            "A person should choose or tune an approximate numeric value within known bounds.",
+            "A bounded minimum and maximum range needs two independently focusable thumbs.",
+            "A value benefits from direct manipulation, immediate preview, and native form submission."
+          ],
+          "avoidWhen": [
+            "The exact numeric value is more important than direct spatial adjustment.",
+            "The choices are categorical rather than ordered numeric values.",
+            "The value is progress, measurement, or read-only status rather than user input."
+          ],
+          "alternatives": [
+            {
+              "when": "People must enter or verify a precise numeric value.",
+              "component": "component:ds-input",
+              "reason": "A typed field supports exact entry and review more efficiently than spatial adjustment."
+            },
+            {
+              "when": "The available values are a short finite set with meaningful labels.",
+              "component": "component:ds-radio",
+              "reason": "Visible named choices communicate categorical meaning more clearly."
+            },
+            {
+              "when": "The setting is binary and applies immediately.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates an immediate on/off state without implying intermediate values."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-input"
+          ],
+          "accessibility": [
+            "Each thumb contains a native range input and must have an accessible name; a visible label names a single thumb, while startLabel and endLabel distinguish a two-thumb range.",
+            "Arrow keys adjust one step, Home and End reach the allowed bounds, and browser-supported Page Up and Page Down make larger changes.",
+            "Every range thumb remains in a constant tab order and exposes dynamic minimum and maximum values when the other thumb constrains it.",
+            "Use valueText for one authored description or valueTexts for per-thumb range descriptions when numeric values are not understandable on their own, such as named levels, dates, durations, or units.",
+            "Read-only sliders remain focusable and submittable; inactive or disabled sliders leave the tab order and form submission."
+          ],
+          "states": [
+            "value is mutable: user pointer, keyboard, or assistive-technology input updates it and emits dsChange continuously.",
+            "dsCommit emits once a pointer interaction completes or the native range input commits a keyboard or assistive-technology change.",
+            "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",
+            "minStepsBetweenValues reserves a minimum stepped distance between range thumbs.",
+            "The initial normalized value is the native form-reset baseline and range values submit as repeated entries under the same name.",
+            "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract."
+          ],
+          "responsiveBehavior": [
+            "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
+            "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
+            "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign range arrays and formatOptions through JavaScript properties, not string attributes.",
+              "Listen for dsChange during adjustment and dsCommit for expensive work that should run after the interaction settles."
+            ],
+            "react": [
+              "Use DsSlider with a number or two-number value array and handle onDsChange and onDsCommit custom events."
+            ],
+            "angular": [
+              "Use DsSlider with property binding for range arrays; the generated number value accessor is appropriate only for a single numeric value."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook design review",
+              "path": "src/wc/components/Slider/Slider.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and interaction coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
         "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "endLabel": {
+            "type": "string",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "formatOptions": {
+            "type": "Intl.NumberFormatOptions | undefined",
+            "required": false
+          },
           "inputId": {
             "type": "string | undefined",
             "required": false
@@ -3898,8 +4281,12 @@
             "required": false
           },
           "label": {
-            "type": "string",
-            "required": true
+            "type": "string | undefined",
+            "required": false
+          },
+          "locale": {
+            "type": "string | undefined",
+            "required": false
           },
           "max": {
             "type": "number",
@@ -3909,23 +4296,75 @@
             "type": "number",
             "required": false
           },
+          "minStepsBetweenValues": {
+            "type": "number",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "orientation": {
+            "type": "SliderOrientation",
+            "required": false
+          },
+          "rangeSeparator": {
+            "type": "string",
+            "required": false
+          },
+          "readOnly": {
+            "type": "boolean",
+            "required": false
+          },
+          "showValue": {
+            "type": "boolean",
+            "required": false
+          },
+          "size": {
+            "type": "SliderSize",
+            "required": false
+          },
+          "startLabel": {
+            "type": "string",
+            "required": false
+          },
           "step": {
             "type": "number",
             "required": false
           },
+          "thumbAlignment": {
+            "type": "SliderThumbAlignment",
+            "required": false
+          },
           "value": {
-            "type": "number",
+            "type": "SliderValue",
+            "required": false
+          },
+          "valuePrefix": {
+            "type": "string",
+            "required": false
+          },
+          "valueSuffix": {
+            "type": "string",
             "required": false
           },
           "valueText": {
             "type": "string | undefined",
+            "required": false
+          },
+          "valueTexts": {
+            "type": "string[]",
             "required": false
           }
         },
         "events": [
           {
             "name": "dsChange",
-            "detail": "number"
+            "detail": "SliderValue"
+          },
+          {
+            "name": "dsCommit",
+            "detail": "SliderValue"
           }
         ],
         "slots": [],
@@ -3976,8 +4415,8 @@
             },
             {
               "when": "The user must choose one option from a mutually exclusive group.",
-              "component": "component:ds-radio-group",
-              "reason": "RadioGroup communicates one-of-many selection."
+              "component": "component:ds-radio",
+              "reason": "Radio communicates one-of-many selection."
             },
             {
               "when": "The control triggers a one-time command or submission.",
@@ -3994,12 +4433,14 @@
             "Every standalone switch requires an accessible name from a native label, aria-label, or aria-labelledby.",
             "Checked state is exposed through switch semantics and thumb position, so state does not rely on color alone.",
             "Read-only switches remain focusable and submitted but cannot change; inactive or disabled switches leave the tab order and are omitted from form submission.",
+            "Required and invalid state are exposed explicitly on the switch role; focused, filled, dirty, touched, valid, and invalid data hooks support form diagnostics without imposing visual validation timing.",
             "Use presentation mode only when a composite owner such as a menuitemcheckbox provides the interaction and accessible state."
           ],
           "states": [
             "Activation updates checked immediately and emits dsChange with the new boolean value.",
             "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
-            "Sizes are md 36×24 with a 16px thumb and 4px body inset, sm 24×16 with a 12px thumb and 2px inset, and xs 12×8 with a 6px thumb and 1px inset.",
+            "Sizes are md 32×20 with a 12px thumb and 4px body inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
+            "Unchecked track and thumb are transparent and each uses a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Checked uses a brand track and primary-background thumb with both strokes removed.",
             "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
           ],
           "responsiveBehavior": [

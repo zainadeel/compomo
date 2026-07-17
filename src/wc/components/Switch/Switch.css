@@ -1,23 +1,19 @@
 @import '../../utils/focus-ring.css';
-@import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
 
 :host {
-  --ds-switch-width: calc(var(--dimension-size-400) + var(--dimension-size-050));
-  --ds-switch-height: var(--dimension-size-300);
-  --ds-switch-thumb-size: var(--dimension-size-200);
+  --ds-switch-width: var(--dimension-size-400);
+  --ds-switch-height: var(--dimension-size-250);
+  --ds-switch-thumb-size: var(--dimension-size-150);
   --ds-switch-gap: var(--dimension-space-050);
-  --ds-switch-thumb-stroke: var(--dimension-stroke-width-012);
+  --ds-switch-stroke: var(--dimension-stroke-width-015);
   --ds-switch-inset: var(--ds-switch-gap);
-  --ds-switch-thumb-border-color: var(--color-border-tertiary);
   --ds-switch-thumb-hover: var(--color-interaction-hover);
   --ds-switch-thumb-pressed: var(--color-interaction-pressed);
   --ds-switch-travel: calc(
     var(--ds-switch-width) - var(--ds-switch-thumb-size) - var(--ds-switch-inset) -
       var(--ds-switch-inset)
   );
-  --ds-interaction-border-color: var(--color-border-secondary);
-
   position: relative;
   display: inline-flex;
   width: var(--ds-switch-width);
@@ -31,41 +27,36 @@
   cursor: pointer;
   user-select: none;
   outline: none;
-  background-color: var(--color-background-medium-neutral);
-  transition: background-color var(--effect-motion-short-3);
-}
-
-:host(.switch.ds-interaction-fill) {
-  /* The host owns the hit target; interaction washes paint on the thumb. */
-  --ds-interaction-hover: transparent;
-  --ds-interaction-pressed: transparent;
+  background-color: transparent;
+  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-foreground-tertiary);
+  transition:
+    background-color var(--effect-motion-short-3),
+    box-shadow var(--effect-motion-short-3);
 }
 
 :host(.switch--sm) {
   --ds-switch-width: var(--dimension-size-300);
   --ds-switch-height: var(--dimension-size-200);
-  --ds-switch-thumb-size: var(--dimension-size-150);
-  --ds-switch-gap: var(--dimension-space-025);
+  --ds-switch-thumb-size: calc(var(--dimension-size-base) * 5 / 4);
+  --ds-switch-gap: calc(var(--dimension-space-025) + var(--dimension-space-012));
+  --ds-switch-stroke: var(--dimension-stroke-width-012);
 }
 
 :host(.switch--xs) {
-  --ds-switch-width: var(--dimension-size-150);
-  --ds-switch-height: var(--dimension-size-100);
-  --ds-switch-thumb-size: var(--dimension-size-075);
-  --ds-switch-gap: var(--dimension-space-012);
+  --ds-switch-width: var(--dimension-size-250);
+  --ds-switch-height: var(--dimension-size-150);
+  --ds-switch-thumb-size: var(--dimension-size-100);
+  --ds-switch-gap: var(--dimension-space-025);
+  --ds-switch-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);
 }
 
 :host(.checked) {
   background-color: var(--color-background-bold-brand);
+  box-shadow: none;
 }
 
 :host(.switch--readonly),
 :host(.switch--presentation) {
-  --ds-interaction-hover: transparent;
-  --ds-interaction-pressed: transparent;
-}
-
-:host(.switch--readonly) {
   cursor: default;
 }
 
@@ -82,13 +73,13 @@
   width: var(--ds-switch-thumb-size);
   height: var(--ds-switch-thumb-size);
   border-radius: var(--dimension-radius-half);
-  background-color: var(--color-background-primary);
-  /* Outset stroke: does not consume the thumb's declared diameter. */
-  box-shadow:
-    0 0 0 var(--ds-switch-thumb-stroke)
-    var(--ds-switch-thumb-border-color);
+  background-color: transparent;
+  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-foreground-tertiary);
   transform: translateY(-50%);
-  transition: transform var(--effect-motion-short-3);
+  transition:
+    background-color var(--effect-motion-short-3),
+    box-shadow var(--effect-motion-short-3),
+    transform var(--effect-motion-short-3);
   pointer-events: none;
 }
 
@@ -112,6 +103,8 @@
 }
 
 :host(.checked) .thumb {
+  background-color: var(--color-background-primary);
+  box-shadow: none;
   transform: translate3d(var(--ds-switch-travel), -50%, 0);
 }
 
@@ -125,6 +118,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+
   .thumb {
     transition: none;
   }
