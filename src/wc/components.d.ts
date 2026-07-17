@@ -44,7 +44,6 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
-import { SortState, TableColumn } from "./components/Table/Table";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { NavChromeStyle } from "./shell/nav-chrome";
@@ -86,7 +85,6 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
-export { SortState, TableColumn } from "./components/Table/Table";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
@@ -909,36 +907,6 @@ export namespace Components {
         "open": boolean;
         "subtitle": string | undefined;
     }
-    interface DsPagination {
-        /**
-          * @default false
-         */
-        "isInactive": boolean;
-        /**
-          * @default 'Next page'
-         */
-        "nextPageLabel": string;
-        /**
-          * @default 1
-         */
-        "page": number;
-        /**
-          * @default 'Pagination'
-         */
-        "paginationLabel": string;
-        /**
-          * @default 'Previous page'
-         */
-        "previousPageLabel": string;
-        /**
-          * @default 1
-         */
-        "siblingCount": number;
-        /**
-          * @default 1
-         */
-        "totalPages": number;
-    }
     interface DsPanelNav {
         /**
           * @default 'Account'
@@ -1697,56 +1665,6 @@ export namespace Components {
          */
         "value": string;
     }
-    interface DsTable {
-        /**
-          * @default []
-         */
-        "columns": TableColumn[];
-        /**
-          * @default []
-         */
-        "data": unknown[];
-        /**
-          * @default 'No results found.'
-         */
-        "emptyMessage": string;
-        /**
-          * @default false
-         */
-        "loading": boolean;
-        /**
-          * @default 'Loading'
-         */
-        "loadingLabel": string;
-        "locale": string | undefined;
-        /**
-          * @default 'Next'
-         */
-        "nextPageLabel": string;
-        /**
-          * Page index (0-based). Enables built-in pagination when set alongside pageSize.
-         */
-        "pageIndex": number | undefined;
-        /**
-          * @default 20
-         */
-        "pageSize": number;
-        /**
-          * Use `{page}` and `{total}` placeholders.
-          * @default 'Page {page} of {total}'
-         */
-        "pageStatusLabel": string;
-        /**
-          * @default 'Previous'
-         */
-        "previousPageLabel": string;
-        /**
-          * Comma-separated zero-based row indices that are selected.
-          * @default ''
-         */
-        "selectedRows": string;
-        "sortState": SortState | undefined;
-    }
     interface DsTag {
         /**
           * ID of the menu controlled by an interactive Tag.
@@ -1977,10 +1895,6 @@ export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
 }
-export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsPaginationElement;
-}
 export interface DsPanelNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelNavElement;
@@ -2024,10 +1938,6 @@ export interface DsSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTabGroupElement;
-}
-export interface DsTableCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTableElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2351,23 +2261,6 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
-    interface HTMLDsPaginationElementEventMap {
-        "dsPageChange": number;
-    }
-    interface HTMLDsPaginationElement extends Components.DsPagination, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsPaginationElement: {
-        prototype: HTMLDsPaginationElement;
-        new (): HTMLDsPaginationElement;
-    };
     interface HTMLDsPanelNavElementEventMap {
         "dsNavSelect": string;
         "dsNavToggle": boolean;
@@ -2576,25 +2469,6 @@ declare global {
         prototype: HTMLDsTabGroupElement;
         new (): HTMLDsTabGroupElement;
     };
-    interface HTMLDsTableElementEventMap {
-        "dsSort": { columnId: string };
-        "dsRowClick": { row: unknown; rowIndex: number };
-        "dsPageChange": { pageIndex: number };
-    }
-    interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTableElement: {
-        prototype: HTMLDsTableElement;
-        new (): HTMLDsTableElement;
-    };
     interface HTMLDsTagElementEventMap {
         "dsClick": MouseEvent;
     }
@@ -2674,7 +2548,6 @@ declare global {
         "ds-loader": HTMLDsLoaderElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-modal": HTMLDsModalElement;
-        "ds-pagination": HTMLDsPaginationElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
@@ -2687,7 +2560,6 @@ declare global {
         "ds-slider": HTMLDsSliderElement;
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
-        "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-tooltip": HTMLDsTooltipElement;
@@ -3562,37 +3434,6 @@ declare namespace LocalJSX {
         "open"?: boolean;
         "subtitle"?: string | undefined;
     }
-    interface DsPagination {
-        /**
-          * @default false
-         */
-        "isInactive"?: boolean;
-        /**
-          * @default 'Next page'
-         */
-        "nextPageLabel"?: string;
-        "onDsPageChange"?: (event: DsPaginationCustomEvent<number>) => void;
-        /**
-          * @default 1
-         */
-        "page"?: number;
-        /**
-          * @default 'Pagination'
-         */
-        "paginationLabel"?: string;
-        /**
-          * @default 'Previous page'
-         */
-        "previousPageLabel"?: string;
-        /**
-          * @default 1
-         */
-        "siblingCount"?: number;
-        /**
-          * @default 1
-         */
-        "totalPages"?: number;
-    }
     interface DsPanelNav {
         /**
           * @default 'Account'
@@ -4418,59 +4259,6 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
-    interface DsTable {
-        /**
-          * @default []
-         */
-        "columns"?: TableColumn[];
-        /**
-          * @default []
-         */
-        "data"?: unknown[];
-        /**
-          * @default 'No results found.'
-         */
-        "emptyMessage"?: string;
-        /**
-          * @default false
-         */
-        "loading"?: boolean;
-        /**
-          * @default 'Loading'
-         */
-        "loadingLabel"?: string;
-        "locale"?: string | undefined;
-        /**
-          * @default 'Next'
-         */
-        "nextPageLabel"?: string;
-        "onDsPageChange"?: (event: DsTableCustomEvent<{ pageIndex: number }>) => void;
-        "onDsRowClick"?: (event: DsTableCustomEvent<{ row: unknown; rowIndex: number }>) => void;
-        "onDsSort"?: (event: DsTableCustomEvent<{ columnId: string }>) => void;
-        /**
-          * Page index (0-based). Enables built-in pagination when set alongside pageSize.
-         */
-        "pageIndex"?: number | undefined;
-        /**
-          * @default 20
-         */
-        "pageSize"?: number;
-        /**
-          * Use `{page}` and `{total}` placeholders.
-          * @default 'Page {page} of {total}'
-         */
-        "pageStatusLabel"?: string;
-        /**
-          * @default 'Previous'
-         */
-        "previousPageLabel"?: string;
-        /**
-          * Comma-separated zero-based row indices that are selected.
-          * @default ''
-         */
-        "selectedRows"?: string;
-        "sortState"?: SortState | undefined;
-    }
     interface DsTag {
         /**
           * ID of the menu controlled by an interactive Tag.
@@ -4868,15 +4656,6 @@ declare namespace LocalJSX {
         "subtitle": string | undefined;
         "modalWidth": ModalWidth | string;
     }
-    interface DsPaginationAttributes {
-        "page": number;
-        "totalPages": number;
-        "siblingCount": number;
-        "isInactive": boolean;
-        "paginationLabel": string;
-        "previousPageLabel": string;
-        "nextPageLabel": string;
-    }
     interface DsPanelNavAttributes {
         "navStyle": NavChromeStyle;
         "disableViewTransition": boolean;
@@ -5051,18 +4830,6 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
-    interface DsTableAttributes {
-        "loading": boolean;
-        "emptyMessage": string;
-        "loadingLabel": string;
-        "previousPageLabel": string;
-        "nextPageLabel": string;
-        "pageStatusLabel": string;
-        "locale": string | undefined;
-        "selectedRows": string;
-        "pageIndex": number | undefined;
-        "pageSize": number;
-    }
     interface DsTagAttributes {
         "label": string;
         "icon": string;
@@ -5135,7 +4902,6 @@ declare namespace LocalJSX {
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
-        "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
@@ -5148,7 +4914,6 @@ declare namespace LocalJSX {
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
-        "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
@@ -5208,7 +4973,6 @@ declare module "@stencil/core" {
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
-            "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
@@ -5221,7 +4985,6 @@ declare module "@stencil/core" {
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
-            "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             /**

@@ -2649,69 +2649,6 @@
       ]
     },
     {
-      "name": "pagination",
-      "title": "Pagination",
-      "description": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
-        "source": "src/wc/components/Pagination/Pagination.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "nextPageLabel": {
-            "type": "string",
-            "required": false
-          },
-          "page": {
-            "type": "number",
-            "required": false
-          },
-          "paginationLabel": {
-            "type": "string",
-            "required": false
-          },
-          "previousPageLabel": {
-            "type": "string",
-            "required": false
-          },
-          "siblingCount": {
-            "type": "number",
-            "required": false
-          },
-          "totalPages": {
-            "type": "number",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsPageChange",
-            "detail": "number"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-pagination",
-          "react": "DsPagination",
-          "angular": "DsPagination"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "panel-nav",
       "title": "PanelNav",
       "description": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
@@ -4179,7 +4116,6 @@
           ],
           "commonlyComposedWith": [
             "component:ds-card",
-            "component:ds-table",
             "component:ds-text",
             "component:ds-icon"
           ],
@@ -4796,102 +4732,6 @@
       ]
     },
     {
-      "name": "table",
-      "title": "Table",
-      "description": "Data table with CSS grid layout, sorting, pagination, loading skeleton, row selection, and custom cell rendering.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
-        "source": "src/wc/components/Table/Table.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "columns": {
-            "type": "TableColumn[]",
-            "required": false
-          },
-          "data": {
-            "type": "unknown[]",
-            "required": false
-          },
-          "emptyMessage": {
-            "type": "string",
-            "required": false
-          },
-          "loading": {
-            "type": "boolean",
-            "required": false
-          },
-          "loadingLabel": {
-            "type": "string",
-            "required": false
-          },
-          "locale": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "nextPageLabel": {
-            "type": "string",
-            "required": false
-          },
-          "pageIndex": {
-            "type": "number | undefined",
-            "required": false
-          },
-          "pageSize": {
-            "type": "number",
-            "required": false
-          },
-          "pageStatusLabel": {
-            "type": "string",
-            "required": false
-          },
-          "previousPageLabel": {
-            "type": "string",
-            "required": false
-          },
-          "selectedRows": {
-            "type": "string",
-            "required": false
-          },
-          "sortState": {
-            "type": "SortState | undefined",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsPageChange",
-            "detail": "{ pageIndex: number }"
-          },
-          {
-            "name": "dsRowClick",
-            "detail": "{ row: unknown; rowIndex: number }"
-          },
-          {
-            "name": "dsSort",
-            "detail": "{ columnId: string }"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-table",
-          "react": "DsTable",
-          "angular": "DsTable"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "skeleton",
-        "text"
-      ]
-    },
-    {
       "name": "tag",
       "title": "Tag",
       "description": "Compact metadata or semantic-status label on primary surfaces, optionally rendered as a controlled menu trigger with leading and fixed suffix icons.",
@@ -4938,7 +4778,6 @@
           ],
           "commonlyComposedWith": [
             "component:ds-card",
-            "component:ds-table",
             "component:ds-text",
             "component:ds-icon"
           ],

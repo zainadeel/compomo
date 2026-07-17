@@ -8,9 +8,7 @@
     "component:ds-card": "General and settings-compatible card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space.",
     "component:ds-card-data-viz-donut": "Donut data-viz card on dedicated ds-card-shell-data-viz chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
     "component:ds-card-setting": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
-    "component:ds-modal": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
-    "component:ds-pagination": "Standalone page navigation with ellipsis for large ranges, sibling count control, and keyboard-accessible buttons.",
-    "component:ds-table": "Data table with CSS grid layout, sorting, pagination, loading skeleton, row selection, and custom cell rendering."
+    "component:ds-modal": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations."
   },
   "metadataRefactors": {},
   "missingAgentMetadata": [
@@ -23,8 +21,6 @@
     "component:ds-chart-legend",
     "component:ds-chart-line",
     "component:ds-modal",
-    "component:ds-pagination",
-    "component:ds-table",
     "component:ds-tooltip-data-viz"
   ]
 }

@@ -5,10 +5,9 @@ import '/dist/components/ds-select.js';
 import '/dist/components/ds-radio.js';
 import '/dist/components/ds-switch.js';
 import '/dist/components/ds-slider.js';
-import '/dist/components/ds-pagination.js';
 
 await Promise.all([
-  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-radio', 'ds-switch', 'ds-slider', 'ds-pagination',
+  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-radio', 'ds-switch', 'ds-slider',
 ].map(tag => customElements.whenDefined(tag)));
 
 document.getElementById('region').name = 'region';
@@ -26,11 +25,6 @@ for (const size of ['md', 'sm', 'xs']) {
     { label: `${size} unselected`, value: 'unselected' },
   ];
 }
-const pagination = document.getElementById('pagination');
-pagination.paginationLabel = 'Paginación';
-pagination.previousPageLabel = 'Página anterior';
-pagination.nextPageLabel = 'Página siguiente';
-
 const rangeSlider = document.getElementById('slider-range');
 rangeSlider.value = [20, 80];
 rangeSlider.step = 2;

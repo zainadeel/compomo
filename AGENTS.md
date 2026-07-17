@@ -495,7 +495,7 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 Rules:
 
-- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, `ds-slider`, `ds-radio`, `ds-pagination`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, Select/SelectMulti options, TabGroup / PanelSubNav tabs, Radio options, PanelTools rail items).
+- Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, `ds-slider`, `ds-radio`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, Select/SelectMulti options, TabGroup / PanelSubNav tabs, Radio options, PanelTools rail items).
 - Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 
@@ -566,11 +566,10 @@ For components with complex JS-only props (arrays, objects), use `lit/directives
 import { ref } from 'lit/directives/ref.js';
 
 render: () => html`
-  <ds-table ${ref(el => {
+  <ds-select ${ref(el => {
     if (!el) return;
-    (el as any).columns = columns;
-    (el as any).data = data;
-  })}></ds-table>
+    (el as HTMLDsSelectElement).options = options;
+  })}></ds-select>
 `
 ```
 
