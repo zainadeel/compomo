@@ -29,11 +29,7 @@
       "if": { "properties": { "package": { "const": "@ds-mo/ui" } }, "required": ["package"] },
       "then": {
         "properties": {
-          "kind": { "const": "components" },
-          "entries": {
-            "type": "array",
-            "items": { "$ref": "#/$defs/componentIntent" }
-          }
+          "kind": { "enum": ["components", "patterns"] }
         }
       }
     },
@@ -55,6 +51,28 @@
           "entries": {
             "type": "array",
             "items": { "$ref": "#/$defs/iconIntent" }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "components" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/componentIntent" }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "patterns" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/patternIntent" }
           }
         }
       }
@@ -134,6 +152,93 @@
         },
         "dependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
         "componentDependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } }
+      }
+    },
+    "patternIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "summary", "useWhen", "avoidWhen", "components", "stateOwnership", "accessibility", "responsiveBehavior", "implementations"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^pattern:[a-z0-9-]+$" },
+        "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
+        "summary": { "type": "string", "minLength": 1 },
+        "useWhen": { "$ref": "#/$defs/guidance" },
+        "avoidWhen": { "$ref": "#/$defs/guidance" },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["component", "role", "required"],
+            "properties": {
+              "component": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
+              "role": { "type": "string", "minLength": 1 },
+              "required": { "type": "boolean" }
+            }
+          }
+        },
+        "stateOwnership": { "$ref": "#/$defs/guidance" },
+        "accessibility": { "$ref": "#/$defs/guidance" },
+        "responsiveBehavior": { "$ref": "#/$defs/guidance" },
+        "implementations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["customElements", "react", "angular"],
+          "properties": {
+            "customElements": { "$ref": "#/$defs/patternImplementation" },
+            "react": { "$ref": "#/$defs/patternImplementation" },
+            "angular": { "$ref": "#/$defs/patternImplementation" }
+          }
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "patternImplementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "references"],
+      "properties": {
+        "status": { "enum": ["planned", "verified"] },
+        "recipes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/patternRecipe" }
+        },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "patternRecipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "summary", "files"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "language", "content"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "language": { "enum": ["html", "typescript", "tsx"] },
+              "content": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "notes": { "$ref": "#/$defs/guidance" }
       }
     }
   }

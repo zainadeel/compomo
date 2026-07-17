@@ -38,14 +38,17 @@
     "component:ds-button-unfilled",
     "component:ds-panel-nav",
     "component:ds-switch",
-    "component:ds-shell-gradient-picker"
+    "component:ds-swatch-picker"
+  ],
+  "patterns": [
+    "pattern:menu-trigger"
   ],
   "accessibility": [
     "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
     "Open with visible initial focus only when the trigger was activated from the keyboard.",
     "Keep disabled items discoverable only when their unavailable state is meaningful.",
     "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
-    "A gradient-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
+    "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
     "Use notification dots only as supplemental status and not as the sole indication of important information."
   ],
   "states": [
@@ -53,9 +56,10 @@
     "Use either flat items or sections, not both.",
     "After dsSelect from a switch row, update switchValue in the items property so the controlled indicator reflects the new state.",
     "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
-    "Use one gradient-picker section in the user or account Appearance or Theme popup for the global AppShell wash preference; apply dsGradientSelect immediately without closing the popup."
+    "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only."
   ],
   "responsiveBehavior": [
+    "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
     "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
     "Avoid fixed widths that exceed narrow viewports."
   ],

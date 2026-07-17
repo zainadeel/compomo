@@ -41,7 +41,8 @@
   "commonlyComposedWith": [
     "component:ds-card",
     "component:ds-text",
-    "component:ds-icon"
+    "component:ds-icon",
+    "component:ds-menu"
   ],
   "accessibility": [
     "The visible label provides Tag's accessible name; a separate aria-label is normally unnecessary.",

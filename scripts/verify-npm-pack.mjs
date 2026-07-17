@@ -17,6 +17,10 @@ const REQUIRED_PATHS = [
   'dist/framework/angular.js',
   'dist/framework/angular.d.ts',
   'dist/agent.json',
+  'dist/agent-patterns.json',
+  'dist/mcp/cli.js',
+  'dist/mcp-data/registry/registry.json',
+  'dist/mcp-data/registry/menu.json',
 ];
 
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };

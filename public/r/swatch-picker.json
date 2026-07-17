@@ -1,0 +1,231 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "swatch-picker",
+  "title": "SwatchPicker",
+  "description": "Compact one-of-many picker for curated flat-color, gradient, or visually absent presets with optional section separators and roving radio-group interaction.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/swatch-picker",
+    "source": "src/wc/components/SwatchPicker/SwatchPicker.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Compact one-of-many picker for curated flat-color, gradient, or visually absent presets with optional section separators and roving radio-group interaction.",
+      "useWhen": [
+        "Users choose exactly one visual preset from a small curated set.",
+        "Options are best compared through compact flat-color or gradient previews.",
+        "A settings surface or richer menu needs an immediately applied visual preference."
+      ],
+      "avoidWhen": [
+        "Users need an unrestricted spectrum, numeric channels, opacity editing, or custom CSS gradient construction.",
+        "Text labels are the primary distinction between choices; use Radio instead.",
+        "The choice is a submitted form value with validation or a long compact list; use Radio or Select.",
+        "Color or gradient is the only indication of status, meaning, or required action."
+      ],
+      "alternatives": [
+        {
+          "when": "The user needs an arbitrary color rather than a curated preset.",
+          "component": "component:ds-input",
+          "reason": "SwatchPicker intentionally does not provide spectrum, channel, or free-form value editing."
+        },
+        {
+          "when": "Visible text labels are more important than visual previews.",
+          "component": "component:ds-radio",
+          "reason": "Radio presents explicit one-of-many option labels and native form behavior."
+        },
+        {
+          "when": "The option set is long or must remain compact.",
+          "component": "component:ds-select",
+          "reason": "Select scales a larger named choice set into an anchored listbox."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-menu",
+        "component:ds-app-shell"
+      ],
+      "accessibility": [
+        "Provide a localized groupLabel describing the complete choice.",
+        "Give every option a meaningful label because its visual preview is never its accessible name.",
+        "The options form one radio group with one Tab stop; Arrow keys wrap across active options while Home and End select the boundaries.",
+        "Inactive options remain named and disabled, and keyboard movement skips them."
+      ],
+      "states": [
+        "value is the selected option value and updates when the user chooses an active option.",
+        "options provides one flat list; sections takes precedence and adds visual separators while preserving one radio group.",
+        "A preview may use a token-based backgroundColor, a CSS gradient backgroundImage, and an optional opacity from zero through one.",
+        "The parent owns persistence and application of the selected value; SwatchPicker owns only choice interaction and dsChange."
+      ],
+      "responsiveBehavior": [
+        "Options wrap within the width supplied by the parent while retaining compact fixed swatch geometry.",
+        "Keep the set small enough for direct visual comparison; switch to a named list when wrapping harms comprehension."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign options or sections as JavaScript properties, bind value, and listen for dsChange."
+        ],
+        "react": [
+          "Use DsSwatchPicker, pass option arrays as props, and handle onDsChange."
+        ],
+        "angular": [
+          "Use property bindings for options or sections and handle dsChange to update application state."
+        ]
+      },
+      "references": [
+        {
+          "label": "Executable stories",
+          "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "groupLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "group-label",
+          "default": "'Swatch options'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the complete one-of-many choice."
+        },
+        "options": {
+          "type": "SwatchPickerOption[]",
+          "resolvedType": "SwatchPickerOption[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Flat option list. Sections take precedence when supplied. Assign as a JavaScript property."
+        },
+        "sections": {
+          "type": "SwatchPickerSection[]",
+          "resolvedType": "SwatchPickerSection[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Visually separated option groups that remain one radio group. Assign as a JavaScript property."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true,
+          "description": "Selected option value."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "groupLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "group-label",
+        "default": "'Swatch options'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the complete one-of-many choice."
+      },
+      "options": {
+        "type": "SwatchPickerOption[]",
+        "resolvedType": "SwatchPickerOption[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Flat option list. Sections take precedence when supplied. Assign as a JavaScript property."
+      },
+      "sections": {
+        "type": "SwatchPickerSection[]",
+        "resolvedType": "SwatchPickerSection[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Visually separated option groups that remain one radio group. Assign as a JavaScript property."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true,
+        "description": "Selected option value."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-swatch-picker",
+      "react": "DsSwatchPicker",
+      "angular": "DsSwatchPicker"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-swatch-picker.js';",
+        "example": "<ds-swatch-picker></ds-swatch-picker>"
+      },
+      "react": {
+        "import": "import { DsSwatchPicker } from '@ds-mo/ui/react';",
+        "example": "<DsSwatchPicker />"
+      },
+      "angular": {
+        "import": "import { DsSwatchPicker } from '@ds-mo/ui/angular/ds-swatch-picker';",
+        "example": "<ds-swatch-picker></ds-swatch-picker>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: options, sections.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/SwatchPicker/SwatchPicker.css",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/control-inactive.css';\n\n:host {\n  box-sizing: border-box;\n  display: block;\n  width: 100%;\n  --_swatch-inner-inset: calc(\n    var(--dimension-stroke-width-025) + var(--dimension-space-025)\n  );\n  --_swatch-ring-bg: var(--color-background-primary);\n  --_swatch-select-motion: var(--effect-motion-short-3);\n}\n\n.swatch-picker {\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  width: 100%;\n  min-height: var(--dimension-size-400);\n  gap: var(--dimension-space-100);\n  padding: var(--dimension-space-100);\n}\n\n.swatch-picker__option {\n  position: relative;\n  box-sizing: border-box;\n  flex: 0 0 auto;\n  width: var(--dimension-size-300);\n  height: var(--dimension-size-300);\n  padding: 0;\n  border: none;\n  border-radius: var(--dimension-radius-half);\n  background: transparent;\n  cursor: pointer;\n  isolation: isolate;\n}\n\n.swatch-picker__fill,\n.swatch-picker__border,\n.swatch-picker__interaction,\n.swatch-picker__halo,\n.swatch-picker__stroke {\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  pointer-events: none;\n}\n\n.swatch-picker__fill {\n  z-index: 1;\n  background-color: var(--_swatch-preview-color);\n  background-image: var(--_swatch-preview-image);\n  background-repeat: no-repeat;\n  background-position: center;\n  background-size: cover;\n  opacity: var(--_swatch-preview-opacity);\n  transition:\n    inset var(--_swatch-select-motion);\n}\n\n.swatch-picker__border {\n  z-index: 2;\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-secondary);\n  transition:\n    inset var(--_swatch-select-motion);\n}\n\n.swatch-picker__interaction {\n  z-index: 3;\n  background-color: transparent;\n  transition:\n    inset var(--_swatch-select-motion),\n    background-color 0s;\n}\n\n.swatch-picker__option:hover:not(:disabled) .swatch-picker__interaction {\n  background-color: var(--color-interaction-hover);\n}\n\n.swatch-picker__option:active:not(:disabled) .swatch-picker__interaction {\n  background-color: var(--color-interaction-pressed);\n}\n\n.swatch-picker__halo,\n.swatch-picker__stroke {\n  opacity: 0;\n  transform: scale(1.2);\n  transform-origin: center;\n  transition:\n    opacity var(--_swatch-select-motion),\n    transform var(--_swatch-select-motion);\n}\n\n.swatch-picker__halo {\n  z-index: 4;\n  box-shadow: inset 0 0 0 var(--_swatch-inner-inset) var(--_swatch-ring-bg);\n}\n\n.swatch-picker__stroke {\n  z-index: 5;\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);\n}\n\n.swatch-picker__option--selected .swatch-picker__fill,\n.swatch-picker__option--selected .swatch-picker__border,\n.swatch-picker__option--selected .swatch-picker__interaction {\n  inset: var(--_swatch-inner-inset);\n}\n\n.swatch-picker__option--selected .swatch-picker__halo,\n.swatch-picker__option--selected .swatch-picker__stroke {\n  opacity: 1;\n  transform: scale(1);\n}\n\n.swatch-picker__divider {\n  flex: 0 0 auto;\n  align-self: center;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-size-300);\n  background-color: var(--color-border-tertiary);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .swatch-picker__fill,\n  .swatch-picker__border,\n  .swatch-picker__interaction,\n  .swatch-picker__halo,\n  .swatch-picker__stroke {\n    transition: none;\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SwatchPicker/SwatchPicker.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, Prop, h, Host } from '@stencil/core';\nimport {\n  flattenSwatchPickerOptions,\n  normalizeSwatchPickerOpacity,\n  resolveSwatchPickerNavigationIndex,\n  resolveSwatchPickerTabIndex,\n  type SwatchPickerNavigationKey,\n  type SwatchPickerOption,\n  type SwatchPickerSection,\n} from './swatch-picker-types';\n\n@Component({\n  tag: 'ds-swatch-picker',\n  styleUrl: 'SwatchPicker.css',\n  scoped: true,\n})\nexport class SwatchPicker {\n  @Element() el!: HTMLElement;\n\n  /** Selected option value. */\n  @Prop({ mutable: true, reflect: true }) value: string = '';\n\n  /** Flat option list. Sections take precedence when supplied. Assign as a JavaScript property. */\n  @Prop() options: SwatchPickerOption[] = [];\n\n  /** Visually separated option groups that remain one radio group. Assign as a JavaScript property. */\n  @Prop() sections: SwatchPickerSection[] = [];\n\n  /** Accessible name for the complete one-of-many choice. */\n  @Prop() groupLabel: string = 'Swatch options';\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private get activeOptions(): SwatchPickerOption[] {\n    return flattenSwatchPickerOptions(this.options, this.sections);\n  }\n\n  private selectOption(option: SwatchPickerOption) {\n    if (option.isInactive || option.value === this.value) return;\n    this.value = option.value;\n    this.dsChange.emit(option.value);\n  }\n\n  private focusOption(index: number) {\n    requestAnimationFrame(() => {\n      const optionButtons = this.el\n        .querySelectorAll<HTMLButtonElement>('.swatch-picker__option');\n      optionButtons[index]?.focus();\n    });\n  }\n\n  private handleOptionKeyDown(\n    event: KeyboardEvent,\n    currentIndex: number,\n  ) {\n    const key = event.key as SwatchPickerNavigationKey;\n    if (!['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'Home', 'End'].includes(key)) {\n      return;\n    }\n\n    const nextIndex = resolveSwatchPickerNavigationIndex(\n      this.activeOptions,\n      currentIndex,\n      key,\n    );\n    if (nextIndex === null) return;\n\n    event.preventDefault();\n    const nextOption = this.activeOptions[nextIndex];\n    this.selectOption(nextOption);\n    this.focusOption(nextIndex);\n  }\n\n  private renderOption(\n    option: SwatchPickerOption,\n    index: number,\n    tabIndex: number,\n  ) {\n    const selected = option.value === this.value;\n    const opacity = normalizeSwatchPickerOpacity(option.preview.opacity);\n\n    return (\n      <button\n        key={option.value}\n        type=\"button\"\n        class={{\n          'swatch-picker__option': true,\n          'swatch-picker__option--selected': selected,\n          'ds-focus-ring-inset': true,\n          'ds-control-inactive': !!option.isInactive,\n        }}\n        style={{\n          '--_swatch-preview-color': option.preview.backgroundColor ?? 'var(--color-background-secondary)',\n          '--_swatch-preview-image': option.preview.backgroundImage ?? 'none',\n          '--_swatch-preview-opacity': String(opacity),\n        }}\n        role=\"radio\"\n        aria-label={option.label}\n        aria-checked={selected ? 'true' : 'false'}\n        tabIndex={index === tabIndex ? 0 : -1}\n        disabled={option.isInactive}\n        onClick={() => this.selectOption(option)}\n        onKeyDown={(event: KeyboardEvent) => this.handleOptionKeyDown(event, index)}\n      >\n        <span class=\"swatch-picker__fill\" aria-hidden=\"true\" />\n        <span class=\"swatch-picker__border\" aria-hidden=\"true\" />\n        <span class=\"swatch-picker__interaction\" aria-hidden=\"true\" />\n        <span class=\"swatch-picker__halo\" aria-hidden=\"true\" />\n        <span class=\"swatch-picker__stroke\" aria-hidden=\"true\" />\n      </button>\n    );\n  }\n\n  render() {\n    const activeOptions = this.activeOptions;\n    const tabIndex = resolveSwatchPickerTabIndex(activeOptions, this.value);\n    let optionIndex = 0;\n\n    return (\n      <Host>\n        <div\n          class=\"swatch-picker\"\n          role=\"radiogroup\"\n          aria-label={this.groupLabel}\n        >\n          {(this.sections.length > 0 ? this.sections : [{ options: this.options }]).map((section, sectionIndex) => [\n            section.options.map(option => {\n              const currentIndex = optionIndex++;\n              return this.renderOption(option, currentIndex, tabIndex);\n            }),\n            sectionIndex < (this.sections.length > 0 ? this.sections.length : 1) - 1 && (\n              <span class=\"swatch-picker__divider\" aria-hidden=\"true\" />\n            ),\n          ])}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SwatchPicker/swatch-picker-types.ts",
+      "content": "export interface SwatchPickerPreview {\n  /** CSS color used as the swatch base or as a complete flat-color preview. */\n  backgroundColor?: string;\n  /** CSS gradient used as the swatch image. */\n  backgroundImage?: string;\n  /** Optional preview-layer opacity, clamped to the inclusive 0–1 range. */\n  opacity?: number;\n}\n\nexport interface SwatchPickerOption {\n  /** Stable value emitted when this option is selected. */\n  value: string;\n  /** Accessible option name; the visual preview never replaces this label. */\n  label: string;\n  preview: SwatchPickerPreview;\n  isInactive?: boolean;\n}\n\nexport interface SwatchPickerSection {\n  /** Sections remain one radio group and are separated visually. */\n  options: SwatchPickerOption[];\n}\n\nexport type SwatchPickerNavigationKey =\n  | 'ArrowDown'\n  | 'ArrowLeft'\n  | 'ArrowRight'\n  | 'ArrowUp'\n  | 'Home'\n  | 'End';\n\nexport function flattenSwatchPickerOptions(\n  options: readonly SwatchPickerOption[],\n  sections: readonly SwatchPickerSection[],\n): SwatchPickerOption[] {\n  return sections.length > 0\n    ? sections.flatMap(section => section.options)\n    : [...options];\n}\n\nexport function resolveSwatchPickerTabIndex(\n  options: readonly SwatchPickerOption[],\n  value: string,\n): number {\n  const selectedIndex = options.findIndex(option => (\n    option.value === value && !option.isInactive\n  ));\n  if (selectedIndex >= 0) return selectedIndex;\n  return options.findIndex(option => !option.isInactive);\n}\n\nexport function resolveSwatchPickerNavigationIndex(\n  options: readonly SwatchPickerOption[],\n  currentIndex: number,\n  key: SwatchPickerNavigationKey,\n): number | null {\n  const enabledIndexes = options\n    .map((option, index) => ({ option, index }))\n    .filter(({ option }) => !option.isInactive)\n    .map(({ index }) => index);\n\n  if (enabledIndexes.length === 0) return null;\n  if (key === 'Home') return enabledIndexes[0];\n  if (key === 'End') return enabledIndexes[enabledIndexes.length - 1];\n\n  const direction = key === 'ArrowRight' || key === 'ArrowDown' ? 1 : -1;\n  const currentEnabledIndex = enabledIndexes.indexOf(currentIndex);\n  if (currentEnabledIndex < 0) {\n    return direction > 0\n      ? enabledIndexes[0]\n      : enabledIndexes[enabledIndexes.length - 1];\n  }\n\n  return enabledIndexes[\n    (currentEnabledIndex + direction + enabledIndexes.length) % enabledIndexes.length\n  ];\n}\n\nexport function normalizeSwatchPickerOpacity(opacity: number | undefined): number {\n  if (opacity === undefined || !Number.isFinite(opacity)) return 1;\n  return Math.min(1, Math.max(0, opacity));\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -73,12 +73,43 @@
       "required": ["status", "references"],
       "properties": {
         "status": { "enum": ["planned", "verified"] },
+        "recipes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/recipe" }
+        },
         "references": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
           "items": { "type": "string", "minLength": 1 }
         }
+      }
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "summary", "files"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "language", "content"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "language": { "enum": ["html", "typescript", "tsx"] },
+              "content": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "notes": { "$ref": "#/$defs/guidance" }
       }
     }
   }

@@ -48,7 +48,6 @@
 
 .slider__value {
   flex-shrink: 0;
-  color: var(--color-foreground-secondary);
 }
 
 .slider__control {
@@ -164,7 +163,8 @@
   background-color: var(--color-interaction-hover);
 }
 
-:host([data-dragging]) .slider__thumb--active .slider__thumb-wash {
+:host([data-dragging]:not(.slider--readonly):not(.ds-control-inactive))
+  .slider__thumb--active .slider__thumb-wash {
   background-color: var(--color-interaction-pressed);
 }
 

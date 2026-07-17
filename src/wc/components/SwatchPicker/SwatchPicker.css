@@ -1,0 +1,134 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
+
+:host {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  --_swatch-inner-inset: calc(
+    var(--dimension-stroke-width-025) + var(--dimension-space-025)
+  );
+  --_swatch-ring-bg: var(--color-background-primary);
+  --_swatch-select-motion: var(--effect-motion-short-3);
+}
+
+.swatch-picker {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: var(--dimension-size-400);
+  gap: var(--dimension-space-100);
+  padding: var(--dimension-space-100);
+}
+
+.swatch-picker__option {
+  position: relative;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: var(--dimension-size-300);
+  height: var(--dimension-size-300);
+  padding: 0;
+  border: none;
+  border-radius: var(--dimension-radius-half);
+  background: transparent;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.swatch-picker__fill,
+.swatch-picker__border,
+.swatch-picker__interaction,
+.swatch-picker__halo,
+.swatch-picker__stroke {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.swatch-picker__fill {
+  z-index: 1;
+  background-color: var(--_swatch-preview-color);
+  background-image: var(--_swatch-preview-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: var(--_swatch-preview-opacity);
+  transition:
+    inset var(--_swatch-select-motion);
+}
+
+.swatch-picker__border {
+  z-index: 2;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-secondary);
+  transition:
+    inset var(--_swatch-select-motion);
+}
+
+.swatch-picker__interaction {
+  z-index: 3;
+  background-color: transparent;
+  transition:
+    inset var(--_swatch-select-motion),
+    background-color 0s;
+}
+
+.swatch-picker__option:hover:not(:disabled) .swatch-picker__interaction {
+  background-color: var(--color-interaction-hover);
+}
+
+.swatch-picker__option:active:not(:disabled) .swatch-picker__interaction {
+  background-color: var(--color-interaction-pressed);
+}
+
+.swatch-picker__halo,
+.swatch-picker__stroke {
+  opacity: 0;
+  transform: scale(1.2);
+  transform-origin: center;
+  transition:
+    opacity var(--_swatch-select-motion),
+    transform var(--_swatch-select-motion);
+}
+
+.swatch-picker__halo {
+  z-index: 4;
+  box-shadow: inset 0 0 0 var(--_swatch-inner-inset) var(--_swatch-ring-bg);
+}
+
+.swatch-picker__stroke {
+  z-index: 5;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
+}
+
+.swatch-picker__option--selected .swatch-picker__fill,
+.swatch-picker__option--selected .swatch-picker__border,
+.swatch-picker__option--selected .swatch-picker__interaction {
+  inset: var(--_swatch-inner-inset);
+}
+
+.swatch-picker__option--selected .swatch-picker__halo,
+.swatch-picker__option--selected .swatch-picker__stroke {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.swatch-picker__divider {
+  flex: 0 0 auto;
+  align-self: center;
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-size-300);
+  background-color: var(--color-border-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swatch-picker__fill,
+  .swatch-picker__border,
+  .swatch-picker__interaction,
+  .swatch-picker__halo,
+  .swatch-picker__stroke {
+    transition: none;
+  }
+}

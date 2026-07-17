@@ -36,6 +36,7 @@ export const DIRECTIVES = [
   d.DsShellGradientSwatch,
   d.DsSkeleton,
   d.DsSlider,
+  d.DsSwatchPicker,
   d.DsSwitch,
   d.DsTabGroup,
   d.DsTag,

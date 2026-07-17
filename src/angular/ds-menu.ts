@@ -10,21 +10,22 @@ import { defineCustomElement as defineDsMenu } from '@ds-mo/ui/components/ds-men
 
 @ProxyCmp({
   defineCustomElementFn: defineDsMenu,
-  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset']
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset']
 })
 @Component({
   selector: 'ds-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'alignOffset', 'anchor', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
-  outputs: ['dsClose', 'dsSelect', 'dsGradientSelect'],
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
+  outputs: ['dsClose', 'dsSelect', 'dsGradientSelect', 'dsSwatchSelect'],
 })
 export class DsMenu {
   protected el: HTMLDsMenuElement;
   @Output() dsClose = new EventEmitter<DsMenuCustomEvent<void>>();
   @Output() dsSelect = new EventEmitter<DsMenuCustomEvent<IDsMenuMenuItemData>>();
   @Output() dsGradientSelect = new EventEmitter<DsMenuCustomEvent<IDsMenuShellGradientPreset>>();
+  @Output() dsSwatchSelect = new EventEmitter<DsMenuCustomEvent<string>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -45,6 +46,10 @@ export declare interface DsMenu extends Components.DsMenu {
    * Emitted when a `gradient-picker` section swatch is chosen.
    */
   dsGradientSelect: EventEmitter<DsMenuCustomEvent<IDsMenuShellGradientPreset>>;
+  /**
+   * Emitted when a generic `swatch-picker` section option is chosen.
+   */
+  dsSwatchSelect: EventEmitter<DsMenuCustomEvent<string>>;
 }
 
 

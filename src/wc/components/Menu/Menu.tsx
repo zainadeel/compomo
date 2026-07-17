@@ -1,9 +1,24 @@
 import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
-import { resolveCssLengthPx, resolveMotionTimeMs, TOKEN_CSS_LENGTHS, TOKEN_DEFAULTS } from '../../utils';
+import {
+  choicePopupMinWidth,
+  resolveChoicePopupAlignOffset,
+  resolveCssLengthPx,
+  resolveMotionTimeMs,
+  TOKEN_CSS_LENGTHS,
+  TOKEN_DEFAULTS,
+  type ChoicePopupAnchorAlignment,
+} from '../../utils';
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
-import { isMenuGradientPickerSection } from './menu-types';
-import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
+import {
+  isMenuGradientPickerSection,
+  isMenuPickerSection,
+  isMenuSwatchPickerSection,
+} from './menu-types';
+import {
+  shellGradientPickerSections,
+  type ShellGradientPreset,
+} from '../../shell/shell-gradient-presets';
 
 /** rAF retries while the popup mounts or the anchor resolves. */
 const POSITION_RETRY_BUDGET = 8;
@@ -29,6 +44,8 @@ export class Menu {
   @Prop() sections: MenuSection[] = [];
   @Prop() side: MenuSide = 'bottom';
   @Prop() align: MenuAlign = 'start';
+  /** Align choice-row edges to the anchor by default; use `popup-frame` only for custom frame geometry. */
+  @Prop() anchorAlignment: ChoicePopupAnchorAlignment = 'choice-cell';
   /** Gap between anchor and menu — number (px) or TokoMo length (`var(--dimension-space-050)`, etc.). */
   @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number (px) or TokoMo length. */
@@ -55,6 +72,8 @@ export class Menu {
   @Event() dsSelect!: EventEmitter<MenuItemData>;
   /** Emitted when a `gradient-picker` section swatch is chosen. */
   @Event() dsGradientSelect!: EventEmitter<ShellGradientPreset>;
+  /** Emitted when a generic `swatch-picker` section option is chosen. */
+  @Event() dsSwatchSelect!: EventEmitter<string>;
 
   private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
   private scrollResizeHandler: (() => void) | null = null;
@@ -111,6 +130,7 @@ export class Menu {
 
   @Watch('side')
   @Watch('align')
+  @Watch('anchorAlignment')
   @Watch('sideOffset')
   @Watch('alignOffset')
   onPositionPropsChange() {
@@ -204,13 +224,13 @@ export class Menu {
 
   private get flatItems(): MenuItemData[] {
     return this.activeSections.flatMap(section =>
-      isMenuGradientPickerSection(section) ? [] : section.items,
+      isMenuPickerSection(section) ? [] : section.items,
     );
   }
 
   /** Rich preference content is a non-modal dialog, not an ARIA action menu. */
   private get hasCompositeSections(): boolean {
-    return this.activeSections.some(isMenuGradientPickerSection);
+    return this.activeSections.some(isMenuPickerSection);
   }
 
   private cancelPositionRetry() {
@@ -255,14 +275,29 @@ export class Menu {
     const popup = this.el.querySelector('.menu-popup') as HTMLElement | null;
     if (!popup) return false;
 
+    const anchorRect = anchorEl.getBoundingClientRect();
+    const sectionInsetPx = this.viewportPadPx;
+    if (!this.minWidth) {
+      if (this.anchorAlignment === 'choice-cell' && (this.side === 'top' || this.side === 'bottom')) {
+        popup.style.minWidth = `max(var(--dimension-menu-width-xs), ${choicePopupMinWidth(anchorRect.width, sectionInsetPx)}px)`;
+      } else {
+        popup.style.removeProperty('min-width');
+      }
+    }
+
     this.pos = computeMenuPosition({
-      anchorRect: anchorEl.getBoundingClientRect(),
+      anchorRect,
       popupWidth: popup.offsetWidth || this.popupFallbackWidthPx,
       popupHeight: popup.offsetHeight || this.popupFallbackHeightPx,
       side: this.side,
       align: this.align,
       sideOffsetPx: this.sideOffsetPx,
-      alignOffsetPx: this.alignOffsetPx,
+      alignOffsetPx: resolveChoicePopupAlignOffset({
+        align: this.align,
+        alignOffsetPx: this.alignOffsetPx,
+        sectionInsetPx,
+        anchorAlignment: this.anchorAlignment,
+      }),
       viewportPadPx: this.viewportPadPx,
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,
@@ -402,6 +437,10 @@ export class Menu {
     this.dsGradientSelect.emit(preset);
   }
 
+  private handleSwatchSelect(value: string) {
+    this.dsSwatchSelect.emit(value);
+  }
+
   render() {
     if (!this.shouldRender) return <Host style={{ display: 'contents' }} />;
 
@@ -441,7 +480,7 @@ export class Menu {
               class={{
                 'menu-section': true,
                 'menu-section--divided': si < sections.length - 1,
-                'menu-section--gradient-picker': isMenuGradientPickerSection(section),
+                'menu-section--gradient-picker': isMenuPickerSection(section),
                 'ds-choice-section': true,
                 'ds-choice-section--divided': si < sections.length - 1,
               }}
@@ -461,11 +500,24 @@ export class Menu {
                 </ds-text>
               )}
               {isMenuGradientPickerSection(section) ? (
-                <ds-shell-gradient-picker
+                <ds-swatch-picker
                   value={section.value}
-                  onDsChange={(e: CustomEvent<ShellGradientPreset>) => {
+                  groupLabel={section.header ?? 'Shell gradient theme'}
+                  sections={shellGradientPickerSections()}
+                  onDsChange={(e: CustomEvent<string>) => {
                     e.stopPropagation();
-                    this.handleGradientSelect(e.detail);
+                    this.handleGradientSelect(e.detail as ShellGradientPreset);
+                  }}
+                />
+              ) : isMenuSwatchPickerSection(section) ? (
+                <ds-swatch-picker
+                  value={section.value}
+                  groupLabel={section.groupLabel ?? section.header ?? 'Swatch options'}
+                  options={section.options ?? []}
+                  sections={section.sections ?? []}
+                  onDsChange={(e: CustomEvent<string>) => {
+                    e.stopPropagation();
+                    this.handleSwatchSelect(e.detail);
                   }}
                 />
               ) : (

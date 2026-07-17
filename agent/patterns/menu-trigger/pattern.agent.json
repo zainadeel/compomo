@@ -1,0 +1,141 @@
+{
+  "$schema": "../../schemas/pattern.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "pattern:menu-trigger",
+  "kind": "pattern",
+  "status": "stable",
+  "summary": "Connect a ButtonUnfilled trigger to an anchored Menu for a compact command or view-selection popup without application-authored positioning.",
+  "useWhen": [
+    "A button should reveal a short contextual collection of commands.",
+    "A compact button should show the current view or mode and let the user choose another one from a menu."
+  ],
+  "avoidWhen": [
+    "The choice is a submitted form value with a field label or validation; use Select.",
+    "The available local views can remain visible; use TabGroup.",
+    "The choices are primary or secondary application destinations; use the matching navigation component.",
+    "The popup contains substantial content, confirmation, or a form; use Modal."
+  ],
+  "components": [
+    {
+      "component": "component:ds-button-unfilled",
+      "role": "Provides the visible trigger, popup relationship attributes, and focus target.",
+      "required": true
+    },
+    {
+      "component": "component:ds-menu",
+      "role": "Owns anchored placement, menu semantics, keyboard navigation, viewport clamping, selection, and close behavior.",
+      "required": true
+    }
+  ],
+  "stateOwnership": [
+    "The application owns the selected command or view value and derives the trigger label and each item's isSelected state from it.",
+    "The application synchronizes one open boolean to ButtonUnfilled.expanded and Menu.open.",
+    "Menu owns popup placement and keyboard navigation; the application never calculates popup coordinates or applies positional CSS.",
+    "On dsSelect, update the selected value, close the Menu, and restore focus to the trigger.",
+    "On dsClose, synchronize the application open state to false."
+  ],
+  "accessibility": [
+    "Set ButtonUnfilled.haspopup to menu, controls to the Menu id, and expanded from the same open state passed to Menu.",
+    "Give Menu a concise menuLabel describing the available commands or views.",
+    "Set Menu.initialFocusVisible only when the trigger MouseEvent detail is zero, indicating keyboard activation.",
+    "Keep visible selected styling synchronized with the application's selected value; Menu exposes the selected command through aria-current.",
+    "Return focus to the trigger after selection; Menu already restores it for Escape and outside dismissal."
+  ],
+  "responsiveBehavior": [
+    "Keep Menu's default choice-cell anchor alignment unless deliberate custom frame geometry is required.",
+    "Let Menu clamp to the viewport and avoid application-authored fixed or absolute positioning.",
+    "Use a concise trigger label that can fit the owning layout without hiding the selected meaning."
+  ],
+  "implementations": {
+    "customElements": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "selected-view-menu",
+          "title": "Selected view menu",
+          "summary": "A ButtonUnfilled displays the active view and opens a Menu whose selected row updates that view.",
+          "files": [
+            {
+              "path": "view-menu.html",
+              "language": "html",
+              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  label=\"View · Overview\"\n  haspopup=\"menu\"\n  controls=\"view-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchor-id=\"view-menu-trigger\"\n  menu-label=\"Choose view\"\n></ds-menu>"
+            },
+            {
+              "path": "view-menu.ts",
+              "language": "typescript",
+              "content": "import '@ds-mo/ui/components/ds-button-unfilled.js'\nimport '@ds-mo/ui/components/ds-menu.js'\nimport type { MenuItemData } from '@ds-mo/ui'\n\nconst choices: MenuItemData[] = [\n  { label: 'Overview', value: 'overview' },\n  { label: 'Map', value: 'map' },\n  { label: 'Timeline', value: 'timeline' },\n]\n\nconst trigger = document.querySelector<HTMLDsButtonUnfilledElement>('#view-menu-trigger')!\nconst menu = document.querySelector<HTMLDsMenuElement>('#view-menu')!\nlet selectedValue = 'overview'\n\nfunction render() {\n  const selected = choices.find(item => item.value === selectedValue) ?? choices[0]\n  trigger.label = `View · ${selected.label}`\n  menu.items = choices.map(item => ({ ...item, isSelected: item.value === selectedValue }))\n}\n\nfunction setOpen(open: boolean) {\n  trigger.expanded = open\n  menu.open = open\n}\n\ntrigger.addEventListener('dsClick', event => {\n  const mouseEvent = (event as CustomEvent<MouseEvent>).detail\n  menu.initialFocusVisible = mouseEvent.detail === 0\n  setOpen(!menu.open)\n})\nmenu.addEventListener('dsClose', () => setOpen(false))\nmenu.addEventListener('dsSelect', event => {\n  selectedValue = (event as CustomEvent<MenuItemData>).detail.value ?? selectedValue\n  render()\n  setOpen(false)\n  requestAnimationFrame(() => trigger.setFocus())\n})\n\nrender()"
+            }
+          ],
+          "notes": [
+            "Assign Menu.items as a JavaScript property; complex arrays cannot be expressed as an HTML attribute.",
+            "Do not add positioning styles to either element."
+          ]
+        }
+      ],
+      "references": [
+        "src/wc/components/Tag/Tag.stories.ts",
+        "src/wc/components/Menu/Menu.stories.ts"
+      ]
+    },
+    "react": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "selected-view-menu",
+          "title": "Selected view menu",
+          "summary": "A controlled React composition using generated ButtonUnfilled and Menu wrappers.",
+          "files": [
+            {
+              "path": "ViewMenu.tsx",
+              "language": "tsx",
+              "content": "import { useState } from 'react'\nimport type { HTMLDsButtonUnfilledElement, MenuItemData } from '@ds-mo/ui'\nimport { DsButtonUnfilled, DsMenu } from '@ds-mo/ui/react'\n\nconst choices: MenuItemData[] = [\n  { label: 'Overview', value: 'overview' },\n  { label: 'Map', value: 'map' },\n  { label: 'Timeline', value: 'timeline' },\n]\n\nexport function ViewMenu() {\n  const [selectedValue, setSelectedValue] = useState('overview')\n  const [open, setOpen] = useState(false)\n  const [initialFocusVisible, setInitialFocusVisible] = useState(false)\n  const selected = choices.find(item => item.value === selectedValue) ?? choices[0]\n  const items = choices.map(item => ({ ...item, isSelected: item.value === selectedValue }))\n\n  function focusTrigger() {\n    requestAnimationFrame(() => {\n      const trigger = document.querySelector<HTMLDsButtonUnfilledElement>('#view-menu-trigger')\n      trigger?.setFocus()\n    })\n  }\n\n  return (\n    <>\n      <DsButtonUnfilled\n        id=\"view-menu-trigger\"\n        label={`View · ${selected.label}`}\n        haspopup=\"menu\"\n        controls=\"view-menu\"\n        expanded={open}\n        onDsClick={event => {\n          setInitialFocusVisible(event.detail.detail === 0)\n          setOpen(current => !current)\n        }}\n      />\n      <DsMenu\n        id=\"view-menu\"\n        anchorId=\"view-menu-trigger\"\n        menuLabel=\"Choose view\"\n        items={items}\n        open={open}\n        initialFocusVisible={initialFocusVisible}\n        onDsClose={() => setOpen(false)}\n        onDsSelect={event => {\n          setSelectedValue(event.detail.value ?? selectedValue)\n          setOpen(false)\n          focusTrigger()\n        }}\n      />\n    </>\n  )\n}"
+            }
+          ],
+          "notes": [
+            "Use one React state value for both the trigger expanded prop and Menu open prop.",
+            "Keep the stable trigger and menu ids unique when rendering more than one composition."
+          ]
+        }
+      ],
+      "references": [
+        "src/react/ds-button-unfilled.ts",
+        "src/react/ds-menu.ts"
+      ]
+    },
+    "angular": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "selected-view-menu",
+          "title": "Selected view menu",
+          "summary": "A controlled Angular composition using generated standalone ButtonUnfilled and Menu adapters.",
+          "files": [
+            {
+              "path": "view-menu.component.html",
+              "language": "html",
+              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  [label]=\"'View · ' + selectedLabel\"\n  haspopup=\"menu\"\n  controls=\"view-menu\"\n  [expanded]=\"open\"\n  (dsClick)=\"toggleMenu($event)\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchorId=\"view-menu-trigger\"\n  menuLabel=\"Choose view\"\n  [items]=\"menuItems\"\n  [open]=\"open\"\n  [initialFocusVisible]=\"initialFocusVisible\"\n  (dsClose)=\"open = false\"\n  (dsSelect)=\"selectView($event)\"\n></ds-menu>"
+            },
+            {
+              "path": "view-menu.component.ts",
+              "language": "typescript",
+              "content": "import { Component } from '@angular/core'\nimport type { HTMLDsButtonUnfilledElement, MenuItemData } from '@ds-mo/ui'\nimport { DsButtonUnfilled } from '@ds-mo/ui/angular/ds-button-unfilled'\nimport { DsMenu } from '@ds-mo/ui/angular/ds-menu'\n\nconst choices: MenuItemData[] = [\n  { label: 'Overview', value: 'overview' },\n  { label: 'Map', value: 'map' },\n  { label: 'Timeline', value: 'timeline' },\n]\n\n@Component({\n  selector: 'app-view-menu',\n  standalone: true,\n  imports: [DsButtonUnfilled, DsMenu],\n  templateUrl: './view-menu.component.html',\n})\nexport class ViewMenuComponent {\n  selectedValue = 'overview'\n  open = false\n  initialFocusVisible = false\n\n  get selectedLabel() {\n    return choices.find(item => item.value === this.selectedValue)?.label ?? choices[0].label\n  }\n\n  get menuItems() {\n    return choices.map(item => ({ ...item, isSelected: item.value === this.selectedValue }))\n  }\n\n  toggleMenu(event: CustomEvent<MouseEvent>) {\n    this.initialFocusVisible = event.detail.detail === 0\n    this.open = !this.open\n  }\n\n  selectView(event: CustomEvent<MenuItemData>) {\n    this.selectedValue = event.detail.value ?? this.selectedValue\n    this.open = false\n    requestAnimationFrame(() => {\n      const trigger = document.querySelector<HTMLDsButtonUnfilledElement>('#view-menu-trigger')\n      trigger?.setFocus()\n    })\n  }\n}"
+            }
+          ],
+          "notes": [
+            "Bind items as a property and import both generated standalone adapters.",
+            "Keep the stable trigger and menu ids unique when rendering more than one composition."
+          ]
+        }
+      ],
+      "references": [
+        "src/angular/ds-button-unfilled.ts",
+        "src/angular/ds-menu.ts"
+      ]
+    }
+  },
+  "references": [
+    "src/wc/components/Tag/Tag.stories.ts",
+    "src/wc/components/Menu/Menu.agent.json",
+    "docs/framework-integration.md"
+  ]
+}

@@ -3,9 +3,10 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-switch.js';
-import '../../../../dist/components/ds-shell-gradient-picker.js';
+import '../../../../dist/components/ds-swatch-picker.js';
 import { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
+import { shellGradientPickerSections } from '../../shell/shell-gradient-presets';
 
 const items = [
   { label: 'Edit', value: 'edit' },
@@ -159,14 +160,17 @@ export const AppearanceAndTheme: Story = {
         ?open=${true}
         side=${PANEL_NAV_USER_MENU_PLACEMENT.side}
         align=${PANEL_NAV_USER_MENU_PLACEMENT.align}
+        anchorAlignment=${PANEL_NAV_USER_MENU_PLACEMENT.anchorAlignment}
         sideOffset=${PANEL_NAV_USER_MENU_PLACEMENT.sideOffset}
         alignOffset=${PANEL_NAV_USER_MENU_PLACEMENT.alignOffset}
         anchor-id="menu-anchor-user"
         .sections=${[
           {
             header: 'Theme',
-            variant: 'gradient-picker',
+            variant: 'swatch-picker',
             value: 'neutral',
+            groupLabel: 'Shell gradient theme',
+            sections: shellGradientPickerSections(),
           },
           {
             header: 'Appearance',

@@ -38,6 +38,22 @@ export interface ShellGradientRecipe {
   stops: readonly ShellGradientStop[];
 }
 
+export interface ShellGradientPickerPreview {
+  backgroundColor: string;
+  backgroundImage?: string;
+  opacity?: number;
+}
+
+export interface ShellGradientPickerOption {
+  value: ShellGradientPreset;
+  label: string;
+  preview: ShellGradientPickerPreview;
+}
+
+export interface ShellGradientPickerSection {
+  options: ShellGradientPickerOption[];
+}
+
 const SHELL_GRADIENT_RECIPES: Record<Exclude<ShellGradientPreset, 'none'>, ShellGradientRecipe> = {
   cool: {
     opacity: 0.1,
@@ -118,4 +134,30 @@ export function buildShellRadialGradientForPreset(preset: ShellGradientPreset): 
 export function buildShellRadialGradientFromStops(stops: readonly ShellGradientStop[]): string {
   const serialized = stops.map(stop => `${stop.color} ${stop.position}%`).join(', ');
   return `radial-gradient(${GRADIENT_GEOMETRY}, ${serialized})`;
+}
+
+/** Generic SwatchPicker sections for the fixed shell appearance presets. */
+export function shellGradientPickerSections(): ShellGradientPickerSection[] {
+  return [
+    {
+      options: [{
+        value: 'none',
+        label: SHELL_GRADIENT_PRESET_LABELS.none,
+        preview: {
+          backgroundColor: 'var(--color-background-secondary)',
+        },
+      }],
+    },
+    {
+      options: SHELL_GRADIENT_WASH_PRESETS.map(preset => ({
+        value: preset,
+        label: SHELL_GRADIENT_PRESET_LABELS[preset],
+        preview: {
+          backgroundColor: 'var(--color-background-secondary)',
+          backgroundImage: buildShellRadialGradientForPreset(preset),
+          opacity: Number(shellGradientPresetOpacity(preset)),
+        },
+      })),
+    },
+  ];
 }

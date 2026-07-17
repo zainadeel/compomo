@@ -22,7 +22,7 @@
     "component:ds-panel-nav",
     "component:ds-bar-nav",
     "component:ds-panel-tools",
-    "component:ds-shell-gradient-picker"
+    "component:ds-swatch-picker"
   ],
   "patterns": [
     "pattern:application-shell"

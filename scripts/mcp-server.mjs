@@ -17,9 +17,12 @@
  *   get_component       — Detailed component info (props, usage, source)
  *   get_setup_guide     — Project setup instructions for @ds-mo/ui
  *   get_component_source — Full source code for AI reference
+ *   list_patterns       — Browse supported multi-component compositions
+ *   get_pattern         — Retrieve executable framework recipes for a composition
  *
- * Registry data is re-read from disk on every call so the MCP server always
- * reflects the latest registry:build output without needing a restart.
+ * In a source checkout, registry data is re-read on every call so the server
+ * reflects the latest registry:build output without a restart. The published
+ * executable reads the generated snapshot bundled into dist/.
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -33,20 +36,31 @@ import {
   formatComponentDetail,
   formatComponentList,
   formatComponentSourceHeader,
+  formatPatternDetail,
+  formatPatternList,
 } from './registry-formatters.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
-const REGISTRY_DIR = path.resolve(ROOT, 'public', 'r');
+const SOURCE_ROOT = path.resolve(__dirname, '..');
+const IS_SOURCE_CHECKOUT = fs.existsSync(path.join(SOURCE_ROOT, 'scripts', 'build-registry.mjs'));
+const REGISTRY_DIR = IS_SOURCE_CHECKOUT
+  ? path.resolve(SOURCE_ROOT, 'public', 'r')
+  : path.resolve(__dirname, '..', 'mcp-data', 'registry');
+const PATTERN_DIR = path.resolve(SOURCE_ROOT, 'agent', 'patterns');
+const PATTERN_MANIFEST = path.resolve(__dirname, '..', 'agent-patterns.json');
 
 // ─── Load registry (fresh read every call) ──────────────────────────────────────
 
 function ensureRegistry() {
   const registryPath = path.join(REGISTRY_DIR, 'registry.json');
   if (!fs.existsSync(registryPath)) {
-    // Auto-build if missing
+    if (!IS_SOURCE_CHECKOUT) {
+      throw new Error('The published @ds-mo/ui MCP registry snapshot is missing. Reinstall the package.');
+    }
+
+    // Auto-build if missing in a source checkout.
     try {
-      execSync('node scripts/build-registry.mjs', { cwd: ROOT, stdio: 'pipe' });
+      execSync('node scripts/build-registry.mjs', { cwd: SOURCE_ROOT, stdio: 'pipe' });
     } catch {
       throw new Error(
         `Registry not found and auto-build failed. Run "npm run registry:build" manually.`
@@ -62,9 +76,34 @@ function loadRegistry() {
 
 function loadComponent(name) {
   ensureRegistry();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name)) return null;
   const filePath = path.join(REGISTRY_DIR, `${name}.json`);
   if (!fs.existsSync(filePath)) return null;
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+}
+
+function patternPaths(directory = PATTERN_DIR) {
+  if (!fs.existsSync(directory)) return [];
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const child = path.join(directory, entry.name);
+    if (entry.isDirectory()) return patternPaths(child);
+    return entry.name.endsWith('.agent.json') ? [child] : [];
+  }).sort();
+}
+
+function loadPatterns() {
+  if (IS_SOURCE_CHECKOUT) {
+    return patternPaths().map(patternPath => JSON.parse(fs.readFileSync(patternPath, 'utf8')));
+  }
+  if (!fs.existsSync(PATTERN_MANIFEST)) {
+    throw new Error('The published @ds-mo/ui MCP pattern snapshot is missing. Reinstall the package.');
+  }
+  return JSON.parse(fs.readFileSync(PATTERN_MANIFEST, 'utf8')).entries;
+}
+
+function loadPattern(name) {
+  const normalized = name.replace(/^pattern:/, '').toLowerCase();
+  return loadPatterns().find(pattern => pattern.id === `pattern:${normalized}`) ?? null;
 }
 
 function formatSetupGuide() {
@@ -266,6 +305,62 @@ server.registerTool(
     const header = formatComponentSourceHeader(comp);
 
     return { content: [{ type: 'text', text: `${header}\n\n${sections.join('\n\n')}` }] };
+  }
+);
+
+// Tool 5: List composition patterns
+server.registerTool(
+  'list_patterns',
+  {
+    title: 'List Patterns',
+    description: 'List supported @ds-mo/ui multi-component composition patterns with executable framework recipes.',
+    inputSchema: {
+      search: z.string().optional().describe('Optional text to filter patterns by id, summary, or use case.'),
+    },
+  },
+  async ({ search }) => {
+    let patterns = loadPatterns();
+    if (search) {
+      const query = search.toLowerCase();
+      patterns = patterns.filter(pattern => [
+        pattern.id,
+        pattern.summary,
+        ...(pattern.useWhen ?? []),
+        ...(pattern.avoidWhen ?? []),
+      ].some(value => value.toLowerCase().includes(query)));
+    }
+    if (!patterns.length) {
+      return {
+        content: [{ type: 'text', text: `No composition patterns found${search ? ` matching "${search}"` : ''}.` }],
+      };
+    }
+    return {
+      content: [{ type: 'text', text: `# @ds-mo/ui — ${patterns.length} composition pattern${patterns.length === 1 ? '' : 's'}\n\n${formatPatternList(patterns)}` }],
+    };
+  }
+);
+
+// Tool 6: Get an executable composition pattern
+server.registerTool(
+  'get_pattern',
+  {
+    title: 'Get Pattern',
+    description: 'Get design intent, state ownership, accessibility requirements, and executable Custom Elements, React, or Angular recipes for an @ds-mo/ui composition.',
+    inputSchema: {
+      name: z.string().describe('Pattern id or name, for example "menu-trigger" or "pattern:menu-trigger".'),
+      framework: z.enum(['customElements', 'react', 'angular']).optional().describe('Return recipes only for this framework. Omit to return every implementation.'),
+    },
+  },
+  async ({ name, framework }) => {
+    const pattern = loadPattern(name);
+    if (!pattern) {
+      const available = loadPatterns().map(item => item.id).join(', ');
+      return {
+        content: [{ type: 'text', text: `Pattern "${name}" not found. Available: ${available}` }],
+        isError: true,
+      };
+    }
+    return { content: [{ type: 'text', text: formatPatternDetail(pattern, framework) }] };
   }
 );
 

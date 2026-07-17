@@ -24,6 +24,9 @@
   "main": "./dist/components/index.js",
   "module": "./dist/components/index.js",
   "types": "./dist/types/components.d.ts",
+  "bin": {
+    "compomo-mcp": "./dist/mcp/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/types/components.d.ts",
@@ -58,6 +61,7 @@
       "import": "./dist/lib/utils/index.js"
     },
     "./agent": "./dist/agent.json",
+    "./agent/patterns": "./dist/agent-patterns.json",
     "./dist/components/*": "./dist/components/*",
     "./components/*": "./dist/components/*"
   },
@@ -68,7 +72,7 @@
     "prebuild": "npm run clean && npm run clean:framework-proxies && node scripts/generate-icon-catalog.mjs",
     "pretypecheck": "node scripts/generate-icon-catalog.mjs",
     "pretest": "node scripts/generate-icon-catalog.mjs",
-    "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/write-build-stamp.mjs && node scripts/build-lib-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/verify-framework-proxies.mjs",
+    "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/write-build-stamp.mjs && node scripts/build-lib-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/build-mcp.mjs && node scripts/verify-framework-proxies.mjs",
     "verify:pack": "node scripts/verify-framework-proxies.mjs && node scripts/verify-npm-pack.mjs && node scripts/verify-package-imports.mjs",
     "test": "node --import tsx/esm --test tests/*.test.ts",
     "test:e2e": "npm run build && playwright test",
