@@ -55,6 +55,7 @@
     "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract."
   ],
   "responsiveBehavior": [
+    "The visible label uses the same primary emphasized text-body-small recipe as Field at every density; the value uses the same primary metric without emphasis.",
     "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
     "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
     "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",

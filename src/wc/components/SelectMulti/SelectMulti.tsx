@@ -14,8 +14,10 @@ import {
 import {
   controlWidthClass,
   CONTROL_TEXT_VARIANT,
+  choicePopupMinWidth,
   resolveCssLengthPx,
   resolveCssTimeMs,
+  resolveChoicePopupAlignOffset,
   TOKEN_DEFAULTS,
   type ControlWidth,
 } from '../../utils';
@@ -371,7 +373,7 @@ export class SelectMulti {
       !this.el.contains(this.popupEl)
     ) return false;
     const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
-    this.popupEl.style.minWidth = `${this.triggerEl.offsetWidth + sectionPadding * 2}px`;
+    this.popupEl.style.minWidth = `${choicePopupMinWidth(this.triggerEl.offsetWidth, sectionPadding)}px`;
     this.position = computeAnchoredPopupPosition({
       anchorRect: this.triggerEl.getBoundingClientRect(),
       popupWidth: this.popupEl.offsetWidth,
@@ -379,7 +381,11 @@ export class SelectMulti {
       side: 'bottom',
       align: 'start',
       sideOffsetPx: sectionPadding,
-      alignOffsetPx: -sectionPadding,
+      alignOffsetPx: resolveChoicePopupAlignOffset({
+        align: 'start',
+        alignOffsetPx: 0,
+        sectionInsetPx: sectionPadding,
+      }),
       viewportPadPx: sectionPadding,
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,

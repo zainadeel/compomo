@@ -48,6 +48,34 @@ There is **no** published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` bundle â€
 
 **SPA hosts (Angular / React):** `ds-panel-nav` and `ds-bar-nav` need a [first-paint integration contract](docs/framework-integration.md) on hard reload â€” seed bar-nav state and stamp `data-nav-style` before custom elements upgrade.
 
+## Agent recipes through MCP
+
+The package includes a local stdio MCP server that exposes component metadata and
+executable Custom Elements, React, and Angular composition recipes. It runs on the
+developer's machine; no hosted MCP service or API key is required.
+
+When `@ds-mo/ui` is installed in the consuming project, point Codex at the package binary:
+
+```toml
+# .codex/config.toml
+[mcp_servers.compomo]
+command = "./node_modules/.bin/compomo-mcp"
+```
+
+Or let npm obtain the latest public package when the MCP client starts:
+
+```toml
+[mcp_servers.compomo]
+command = "npx"
+args = ["-y", "--package", "@ds-mo/ui@latest", "compomo-mcp"]
+```
+
+The server provides `list_components`, `get_component`, `get_setup_guide`,
+`get_component_source`, `list_patterns`, and `get_pattern`. Add a repository
+instruction telling agents to retrieve the applicable pattern before composing
+multiple design-system components; connecting the MCP makes recipes available,
+while the instruction makes their use consistent.
+
 ## Components
 
 All tags are `ds-*` custom elements. Grouped by role (see Storybook for props and stories):

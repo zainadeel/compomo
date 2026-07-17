@@ -1,11 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-tag.js';
 import '../../../../dist/components/ds-icon.js';
+import '../../../../dist/components/ds-menu.js';
 
 const INTENTS   = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
 const CONTRASTS = ['strong', 'bold', 'medium', 'faint'];
 const SIZES     = ['md', 'sm', 'xs'] as const;
+const STATUS_ITEMS = [
+  { label: 'All vehicles', value: 'all' },
+  { label: 'Active', value: 'active' },
+  { label: 'Needs attention', value: 'attention' },
+  { label: 'Out of service', value: 'out-of-service' },
+];
 
 const meta: Meta = {
   title: 'Primitives/Tag',
@@ -118,32 +126,59 @@ export const WithIcon: Story = {
 
 export const InteractiveMenuTrigger: Story = {
   name: 'Interactive menu trigger',
-  render: () => html`
-    <div>
-      <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+  args: {
+    expanded: false,
+    initialFocusVisible: false,
+    selectedStatus: 'all',
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const selectedStatus = String(args['selectedStatus'] ?? 'all');
+    const selectedItem = STATUS_ITEMS.find(item => item.value === selectedStatus) ?? STATUS_ITEMS[0];
+    const items = STATUS_ITEMS.map(item => ({
+      ...item,
+      isSelected: item.value === selectedStatus,
+    }));
+    const restoreTriggerFocus = () => {
+      document
+        .getElementById('vehicle-status-tag')
+        ?.querySelector<HTMLButtonElement>('button')
+        ?.focus();
+    };
+
+    return html`
+      <div style="min-height: 240px; padding: var(--dimension-space-100)">
         <ds-tag
-          label="Vehicle status"
+          id="vehicle-status-tag"
+          label=${`Status · ${selectedItem.label}`}
           icon="Filters"
           interactive
+          ?expanded=${Boolean(args['expanded'])}
           aria-controls="vehicle-status-menu"
+          @dsClick=${(event: CustomEvent<MouseEvent>) => updateArgs({
+            expanded: !args['expanded'],
+            initialFocusVisible: event.detail.detail === 0,
+          })}
         ></ds-tag>
-        <ds-tag
-          label="Expanded"
-          icon="Filters"
-          interactive
-          expanded
-          aria-controls="expanded-menu"
-        ></ds-tag>
-        <ds-tag
-          label="Unavailable"
-          interactive
-          is-inactive
-          aria-controls="unavailable-menu"
-        ></ds-tag>
+        <ds-menu
+          id="vehicle-status-menu"
+          anchor-id="vehicle-status-tag"
+          menu-label="Vehicle status"
+          side="bottom"
+          align="start"
+          ?initial-focus-visible=${Boolean(args['initialFocusVisible'])}
+          ?open=${Boolean(args['expanded'])}
+          .items=${items}
+          @dsClose=${() => updateArgs({ expanded: false })}
+          @dsSelect=${(event: CustomEvent<{ value?: string }>) => {
+            updateArgs({
+              expanded: false,
+              selectedStatus: event.detail.value ?? selectedStatus,
+            });
+            requestAnimationFrame(restoreTriggerFocus);
+          }}
+        ></ds-menu>
       </div>
-      <div id="vehicle-status-menu" hidden></div>
-      <div id="expanded-menu" hidden></div>
-      <div id="unavailable-menu" hidden></div>
-    </div>
-  `,
+    `;
+  },
 };

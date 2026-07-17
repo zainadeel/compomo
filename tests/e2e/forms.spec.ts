@@ -478,6 +478,38 @@ test('slider uses native range semantics with complete labels and dynamic range 
   await expect(externallyLabeledInput).toBeFocused();
 });
 
+test('slider label matches Field while its value keeps the same primary metric without emphasis', async ({ page }) => {
+  const textRecipe = async (selector: string) => page.locator(selector).evaluate(text => {
+    const element = text.querySelector<HTMLElement>('.ds-text__element');
+    if (!element) throw new Error(`Missing rendered text element for ${selector}`);
+    const style = getComputedStyle(element);
+    return {
+      variant: (text as HTMLElement & { variant?: string }).variant,
+      emphasis: (text as HTMLElement & { emphasis?: boolean }).emphasis,
+      color: style.color,
+      fontSize: style.fontSize,
+      lineHeight: style.lineHeight,
+      fontWeight: style.fontWeight,
+      letterSpacing: style.letterSpacing,
+    };
+  });
+  const [fieldLabel, sliderLabel, sliderValue] = await Promise.all([
+    textRecipe('#email-field .field__label'),
+    textRecipe('#slider-single .slider__label'),
+    textRecipe('#slider-single .slider__value'),
+  ]);
+
+  expect(sliderLabel).toEqual(fieldLabel);
+  expect(sliderValue).toMatchObject({
+    variant: sliderLabel.variant,
+    emphasis: false,
+    color: sliderLabel.color,
+    fontSize: sliderLabel.fontSize,
+    lineHeight: sliderLabel.lineHeight,
+  });
+  expect(sliderValue.fontWeight).not.toBe(sliderLabel.fontWeight);
+});
+
 test('slider keyboard updates continuously, commits, constrains ranges, and preserves read-only values', async ({ page }) => {
   const single = page.locator('#slider-single input[type="range"]');
   await single.focus();
@@ -525,6 +557,38 @@ test('slider pointer press selects the nearest thumb and emits one committed val
   if (!rangeBox) return;
   await page.mouse.click(rangeBox.x + rangeBox.width * 0.3, rangeBox.y + rangeBox.height / 2);
   await expect.poll(() => range.evaluate((element: HTMLDsSliderElement) => element.value)).toEqual([30, 80]);
+});
+
+test('slider thumb promotes hover to pressed while the pointer is held', async ({ page }) => {
+  const slider = page.locator('#slider-single');
+  const thumb = slider.locator('.slider__thumb--active');
+  const wash = thumb.locator('.slider__thumb-wash');
+  await thumb.scrollIntoViewIfNeeded();
+
+  const colors = await slider.evaluate(element => {
+    const probe = document.createElement('span');
+    element.append(probe);
+    probe.style.backgroundColor = 'var(--color-interaction-hover)';
+    const hover = getComputedStyle(probe).backgroundColor;
+    probe.style.backgroundColor = 'var(--color-interaction-pressed)';
+    const pressed = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return { hover, pressed };
+  });
+
+  const box = await thumb.boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) return;
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(wash).toHaveCSS('background-color', colors.hover);
+
+  await page.mouse.down();
+  await expect(slider).toHaveAttribute('data-dragging', '');
+  await expect(wash).toHaveCSS('background-color', colors.pressed);
+
+  await page.mouse.up();
+  await expect(slider).not.toHaveAttribute('data-dragging');
 });
 
 test('slider drag paint stays locked to the pointer without positional easing', async ({ page }) => {

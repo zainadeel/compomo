@@ -32,3 +32,8 @@ export { controlWidthClass } from './control-width';
 export type { ControlWidth } from './control-width';
 export { CONTROL_TEXT_VARIANT } from './control-text';
 export type { ControlSize } from './control-text';
+export {
+  choicePopupMinWidth,
+  resolveChoicePopupAlignOffset,
+} from './choice-popup-alignment';
+export type { ChoicePopupAnchorAlignment } from './choice-popup-alignment';

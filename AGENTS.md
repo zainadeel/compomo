@@ -110,7 +110,8 @@ The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 5. Runs Angular output target → regenerates `src/angular/`, verifies the proxy inventory, and compiles it to `dist/angular/`
 6. Runs React output target → regenerates `src/react/`, verifies the proxy inventory, and compiles it to `dist/react/`; the inventory is verified again at the end of the build
 7. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
-8. Regenerates `public/r/` from compiler facts + component intent and emits the package manifest at `dist/agent.json`
+8. Regenerates `public/r/` from compiler facts + component intent and emits component and executable-pattern manifests at `dist/agent.json` and `dist/agent-patterns.json`
+9. Bundles the local stdio MCP executable and its generated registry snapshot into `dist/mcp/` and `dist/mcp-data/`; consumers run it through the published `compomo-mcp` binary
 
 There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
@@ -123,6 +124,7 @@ Package `exports`:
   "./angular/*":     { "import": "./dist/angular/*.js", "types": "./dist/angular/*.d.ts" },
   "./react":         { "import": "./dist/react/components.js", "types": "./dist/react/components.d.ts" },
   "./agent":         "./dist/agent.json",
+  "./agent/patterns": "./dist/agent-patterns.json",
   "./dist/components": { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
   "./shell":         { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
   "./utils":         { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
@@ -184,6 +186,13 @@ alternatives, compositions, accessibility, state ownership, responsive behavior,
 and irreducible framework caveats. Do not duplicate tags, props, defaults, events,
 methods, slots, package versions, token values, or framework bindings; those are
 generated from Stencil and package sources.
+
+Cross-component compositions live in `agent/patterns/<name>/pattern.agent.json`.
+Patterns may include validated, executable Custom Elements, React, and Angular
+recipes. Keep recipes complete enough to paste into a consumer, reference only
+public package entry points, and update them whenever the composition contract
+changes. The MCP `list_patterns` and `get_pattern` tools are the agent-facing
+discovery surface; component intent should reference applicable pattern IDs.
 
 **Stencil component skeleton**
 
@@ -339,6 +348,14 @@ export class MyComponent {
 - Use Checkbox for independent or multi-select choices, Switch for immediately applied binary settings, and Select when a longer choice set must remain compact.
 - Radio is for primary, secondary, and faint app surfaces and does not expose a background prop.
 
+**SwatchPicker**
+
+- `ds-swatch-picker` owns one-of-many selection from a small curated set of visual presets. It supports token-based flat colors, CSS gradients, optional preview opacity, inactive options, and visually separated sections that remain one radio group.
+- Assign `options` or `sections` as JavaScript properties. Sections take precedence. Every option requires a stable value, an accessible label, and preview data; color alone never supplies meaning or the accessible name.
+- The selected active option owns the single Tab stop. Arrow keys wrap while skipping inactive options; Home and End select the first and last active options. `dsChange` emits the selected string value.
+- SwatchPicker is not an unrestricted color editor. Use it for curated presets, Radio for primarily textual choices, and Select for longer compact choice sets.
+- `ds-shell-gradient-picker` and `ds-shell-gradient-swatch` are deprecated compatibility components. New shell appearance UI maps the fixed shell preset recipes into SwatchPicker options; do not publish another single-swatch component.
+
 **Chip**
 
 - `ds-chip` is an always-removable metadata value for primary surfaces, such as a user-applied filter, recipient, or tokenized input entry. Use `ds-tag` for static labels.
@@ -438,7 +455,7 @@ The xs recipe is a compact **visual density**, not permission to crowd pointer t
 - `ds-switch` is compact chrome placed inside menu, control, and form rows rather than a full-height control itself.
 - Sizes are `md` = 32×20 with a 12px thumb and 4px body inset, `sm` = 24×16 with a 10px thumb and 3px inset, and `xs` = 20×12 with an 8px thumb and 2px inset. Unchecked uses a transparent track with an inset `--color-foreground-tertiary` stroke (1.25px at md, 1px at sm, and 0.75px at xs) and a solid `--color-foreground-tertiary` thumb without a border. Checked keeps the brand track and primary-background thumb with no strokes.
 - The Switch host owns its structural unchecked inset stroke directly; do not put it on the shared interaction-fill pseudo-elements because a parent row may own those layers. Hover/press wash is confined to the thumb. Switch focus uses the shared **outset** `ds-focus-ring`, not the inset ring.
-- Track color and thumb position animate with `--effect-motion-short-3`, matching ShellGradientSwatch selection motion; do not add depressed/elevated shadows or press-scale transforms.
+- Track color and thumb position animate with `--effect-motion-short-3`, matching SwatchPicker selection motion; do not add depressed/elevated shadows or press-scale transforms.
 - Every switch requires an accessible name. Use `aria-label` for standalone icon-like contexts or `aria-labelledby` to associate visible text; use `name`/`value` for form submission.
 - `readOnly` keeps the switch focusable and submitted but prevents state changes. `disabled` and `isInactive` remove it from keyboard interaction and form submission.
 - Switch exposes `data-focused`, `data-filled`, `data-dirty`, `data-touched`, `data-valid`, and `data-invalid` in addition to its checked, inactive, read-only, and required hooks. Required invalid state is also exposed through `aria-required` and `aria-invalid`; form owners decide when to show validation messaging.
@@ -447,6 +464,7 @@ The xs recipe is a compact **visual density**, not permission to crowd pointer t
 **Slider**
 
 - `ds-slider` is direct manipulation for a bounded numeric value. Use Input when exact entry matters more, Radio for short named choices, and Switch for immediate binary settings.
+- Its visible label matches Field: primary emphasized `text-body-small` at every control density. The value on the opposite side uses the same primary `text-body-small` metric without emphasis and keeps tabular numerals.
 - Assign a number for a single thumb or a two-number array through the JavaScript `value` property for a range. Range values remain ordered, cannot cross, and may reserve `minStepsBetweenValues`; both thumbs remain in constant DOM/tab order.
 - Every thumb contains a native range input. A visible `label` names a single thumb; range sliders require localized `startLabel` and `endLabel`. Use `valueText` for one authored value description or assign `valueTexts` for per-thumb range descriptions when raw numbers are not understandable by themselves.
 - Pointer input chooses the nearest thumb and emits `dsChange` continuously; `dsCommit` is for expensive work after pointer, keyboard, or assistive-technology interaction settles.
@@ -525,6 +543,12 @@ Rules:
 - For scroll affordances that should reflect available content, pass `scrollAware: true`. CSS scroll-driven animations reveal/hide configured edges from the container's own scroll position without JavaScript; unsupported browsers retain the configured static fades.
 - Multiple physical edges (`top`, `bottom`, `left`, `right`) compose into one mask. When scroll state already exists in JavaScript, an `atEnd` edge map suppresses only the flush edges; boolean `true` removes the complete mask.
 - Keep overflow on the same element that receives the fade classes. Make standalone scroll regions keyboard-reachable when their off-screen content would otherwise be inaccessible.
+
+**Anchored choice-popup alignment**
+
+- `ds-menu`, Select, and SelectMulti share `choice-popup-alignment.ts`. The default `choice-cell` contract extends the popup frame by the section inset so the first/last interactive row edge—not the popup frame—aligns with the trigger.
+- Leave `ds-menu.anchorAlignment` at `choice-cell` for ordinary menus. Use `popup-frame` only when a deliberately custom layout must align the popup's outer frame, and treat `alignOffset` as an additional nudge after that policy.
+- Do not copy section-padding offsets into stories or host components. New anchored choice popups must use `resolveChoicePopupAlignOffset` and `choicePopupMinWidth` instead of hand-tuned alignment math.
 
 **TypeScript**
 
@@ -757,9 +781,10 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | Token-showcase stories | `src/stories/*.stories.tsx` |
 | Usage docs (MDX) | `src/docs/*.mdx` |
 | Component registry logic | `scripts/build-registry.mjs` |
+| Agent composition recipes | `agent/patterns/*/pattern.agent.json` |
 | BarNav overflow + SPA/HMR integration | `docs/framework-integration.md` |
 | BarNav overflow e2e tests | `tests/e2e/bar-nav-overflow.spec.ts` |
-| MCP server | `scripts/mcp-server.mjs` |
+| MCP server | `scripts/mcp-server.mjs`; packaged build: `scripts/build-mcp.mjs` |
 | Stencil build config | `stencil.config.ts` |
 | Release changelog sections | `release-please-config.json` |
 | PR title rules | `.github/workflows/pr-title.yml` |

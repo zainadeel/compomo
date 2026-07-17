@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-swatch-picker",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-swatch-picker",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact one-of-many picker for curated flat-color, gradient, or visually absent presets with optional section separators and roving radio-group interaction.",
+  "useWhen": [
+    "Users choose exactly one visual preset from a small curated set.",
+    "Options are best compared through compact flat-color or gradient previews.",
+    "A settings surface or richer menu needs an immediately applied visual preference."
+  ],
+  "avoidWhen": [
+    "Users need an unrestricted spectrum, numeric channels, opacity editing, or custom CSS gradient construction.",
+    "Text labels are the primary distinction between choices; use Radio instead.",
+    "The choice is a submitted form value with validation or a long compact list; use Radio or Select.",
+    "Color or gradient is the only indication of status, meaning, or required action."
+  ],
+  "alternatives": [
+    {
+      "when": "The user needs an arbitrary color rather than a curated preset.",
+      "component": "component:ds-input",
+      "reason": "SwatchPicker intentionally does not provide spectrum, channel, or free-form value editing."
+    },
+    {
+      "when": "Visible text labels are more important than visual previews.",
+      "component": "component:ds-radio",
+      "reason": "Radio presents explicit one-of-many option labels and native form behavior."
+    },
+    {
+      "when": "The option set is long or must remain compact.",
+      "component": "component:ds-select",
+      "reason": "Select scales a larger named choice set into an anchored listbox."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-menu",
+    "component:ds-app-shell"
+  ],
+  "accessibility": [
+    "Provide a localized groupLabel describing the complete choice.",
+    "Give every option a meaningful label because its visual preview is never its accessible name.",
+    "The options form one radio group with one Tab stop; Arrow keys wrap across active options while Home and End select the boundaries.",
+    "Inactive options remain named and disabled, and keyboard movement skips them."
+  ],
+  "states": [
+    "value is the selected option value and updates when the user chooses an active option.",
+    "options provides one flat list; sections takes precedence and adds visual separators while preserving one radio group.",
+    "A preview may use a token-based backgroundColor, a CSS gradient backgroundImage, and an optional opacity from zero through one.",
+    "The parent owns persistence and application of the selected value; SwatchPicker owns only choice interaction and dsChange."
+  ],
+  "responsiveBehavior": [
+    "Options wrap within the width supplied by the parent while retaining compact fixed swatch geometry.",
+    "Keep the set small enough for direct visual comparison; switch to a named list when wrapping harms comprehension."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign options or sections as JavaScript properties, bind value, and listen for dsChange."
+    ],
+    "react": [
+      "Use DsSwatchPicker, pass option arrays as props, and handle onDsChange."
+    ],
+    "angular": [
+      "Use property bindings for options or sections and handle dsChange to update application state."
+    ]
+  },
+  "references": [
+    {
+      "label": "Executable stories",
+      "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
+    }
+  ]
+}

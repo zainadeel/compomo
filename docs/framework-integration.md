@@ -183,7 +183,10 @@ Host apps render **external** `ds-menu` instances (not bundled inside `ds-panel-
 2. Bind the external menu:
 
 ```ts
-import { PANEL_NAV_USER_MENU_PLACEMENT } from '@ds-mo/ui/shell';
+import {
+  PANEL_NAV_USER_MENU_PLACEMENT,
+  shellGradientPickerSections,
+} from '@ds-mo/ui/shell';
 import type { MenuSection, ShellGradientPreset } from '@ds-mo/ui';
 ```
 
@@ -194,11 +197,12 @@ import type { MenuSection, ShellGradientPreset } from '@ds-mo/ui';
   [sections]="userMenuSections"
   [side]="userMenuPlacement.side"
   [align]="userMenuPlacement.align"
+  [anchorAlignment]="userMenuPlacement.anchorAlignment"
   [sideOffset]="userMenuPlacement.sideOffset"
   [alignOffset]="userMenuPlacement.alignOffset"
   (dsClose)="onUserMenuClose()"
   (dsSelect)="onUserMenuSelect($event)"
-  (dsGradientSelect)="onUserMenuGradientSelect($event)"
+  (dsSwatchSelect)="onUserMenuSwatchSelect($event)"
 ></ds-menu>
 ```
 
@@ -207,13 +211,13 @@ On `dsNavUserAction`, set `userMenuAnchor = detail.anchor` and `userMenuPlacemen
 **Sections pattern** (see Storybook **Menu → Appearance and theme**):
 
 - `Appearance` — System / Dark / Light rows (`dsSelect` closes menu)
-- `Theme` — `{ header: 'Theme', variant: 'gradient-picker', value }` (`dsGradientSelect`; menu stays open)
+- `Theme` — `{ header: 'Theme', variant: 'swatch-picker', value, sections: shellGradientPickerSections() }` (`dsSwatchSelect`; menu stays open)
 
-**Do not** pass `minWidth` unless a product needs a fixed width — `.menu-popup` uses `min-width: var(--dimension-menu-width-xs)` (200px). The gradient-picker row fits at that token width.
+**Do not** pass `minWidth` unless a product needs a fixed width — `.menu-popup` uses `min-width: var(--dimension-menu-width-xs)` (200px). The swatch-picker row fits at that token width.
 
 **Do not** copy BarNav overflow menu offsets (`side="bottom"`, `align="end"`, `space100+space050`) for the panel-nav user menu — different anchor and axis.
 
-`ds-menu` still accepts `side`, `align`, `sideOffset`, `alignOffset`, `menuWidth`, and `minWidth` as escape hatches when a host needs custom placement.
+`ds-menu` aligns its first or last choice-row edge to the trigger by default, matching Select. Keep `anchorAlignment="choice-cell"` for ordinary menus; `popup-frame` is the escape hatch for deliberate outer-frame geometry. `side`, `align`, `sideOffset`, `alignOffset`, `menuWidth`, and `minWidth` remain available for custom placement.
 
 **Offset strings must be valid CSS lengths** when binding from host apps — use `var(--dimension-space-050)` or `calc(...)`, not bare custom-property names like `--dimension-space-050`. `PANEL_NAV_USER_MENU_PLACEMENT` and `ds-menu` defaults use `TOKEN_CSS_LENGTHS` (`var(--dimension-*)`) for this reason. BarNav overflow menus follow the same pattern.
 

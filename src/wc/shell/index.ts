@@ -40,7 +40,12 @@ export type { MenuPlacement } from '../components/Menu/menu-placement';
 export {
   PANEL_NAV_USER_MENU_PLACEMENT,
 } from '../components/Menu/menu-placement';
-export type { ShellGradientPreset } from './shell-gradient-presets';
+export type {
+  ShellGradientPickerOption,
+  ShellGradientPickerPreview,
+  ShellGradientPickerSection,
+  ShellGradientPreset,
+} from './shell-gradient-presets';
 export {
   DEFAULT_SHELL_GRADIENT_PRESET,
   SHELL_GRADIENT_PRESETS,
@@ -48,6 +53,7 @@ export {
   buildShellRadialGradientForPreset,
   isShellGradientPreset,
   normalizeShellGradientPreset,
+  shellGradientPickerSections,
   shellGradientPresetStopToken,
 } from './shell-gradient-presets';
 export type { ChromeTransitionDetail, ChromeTransitionSource } from './chrome-transition';

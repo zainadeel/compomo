@@ -17,12 +17,6 @@ export type SliderSize = 'md' | 'sm' | 'xs';
 export type SliderOrientation = 'horizontal' | 'vertical';
 export type SliderThumbAlignment = 'edge' | 'center';
 
-const LABEL_VARIANT: Record<SliderSize, 'text-body-medium' | 'text-body-small' | 'text-caption'> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
-
 let sliderId = 0;
 let sliderExternalLabelId = 0;
 
@@ -503,7 +497,8 @@ export class Slider {
               <ds-text
                 class="slider__label"
                 as="label"
-                variant={LABEL_VARIANT[this.size]}
+                variant="text-body-small"
+                color="primary"
                 emphasis
                 for={firstInputId}
                 textId={this.labelId}
@@ -515,8 +510,8 @@ export class Slider {
               <ds-text
                 class="slider__value"
                 as="span"
-                variant={LABEL_VARIANT[this.size]}
-                emphasis
+                variant="text-body-small"
+                color="primary"
                 fontFeature="tabular-nums"
               >
                 {valueDisplay}

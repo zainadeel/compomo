@@ -6,8 +6,10 @@
   "package": "@ds-mo/ui",
   "tag": "ds-shell-gradient-swatch",
   "audience": "internal",
-  "status": "stable",
-  "summary": "Internal radio swatch used by ShellGradientPicker to preview one fixed AppShell chrome preset.",
+  "status": "deprecated",
+  "replacedBy": "component:ds-swatch-picker",
+  "replacementReason": "SwatchPicker renders its option buttons internally so an individually published radio swatch is no longer needed.",
+  "summary": "Deprecated internal compatibility component for one legacy AppShell gradient swatch.",
   "useWhen": ["Maintaining or extending ShellGradientPicker inside CompoMo."],
   "avoidWhen": [
     "Building application UI directly; use ShellGradientPicker instead.",
@@ -16,10 +18,10 @@
   ],
   "alternatives": [{
     "when": "An application needs the supported global shell appearance control.",
-    "component": "component:ds-shell-gradient-picker",
-    "reason": "The picker provides the complete preset set, radio semantics, keyboard behavior, and selection event."
+    "component": "component:ds-swatch-picker",
+    "reason": "SwatchPicker provides the complete radio-group semantics, keyboard behavior, generic previews, and selection event."
   }],
-  "commonlyComposedWith": ["component:ds-shell-gradient-picker"],
+  "commonlyComposedWith": ["component:ds-swatch-picker"],
   "accessibility": [
     "Keep radio semantics, aria-checked state, and a preset-specific accessible name on the internal button.",
     "Let ShellGradientPicker manage the roving tab stop and group keyboard navigation.",

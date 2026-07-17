@@ -863,7 +863,6 @@ export class BarNav {
             side="bottom"
             align="end"
             sideOffset="calc(var(--dimension-space-100) + var(--dimension-space-050))"
-            alignOffset="var(--dimension-space-050)"
             initialFocusVisible={this.menuInitialFocusVisible}
             onDsSelect={(e: Event) => this.handleMenuSelect(e)}
             onDsClose={() => this.handleMenuClose()}

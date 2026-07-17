@@ -9,6 +9,7 @@ import {
   normalizeShellGradientPreset,
   buildShellRadialGradientFromStops,
   shellGradientPresetOpacity,
+  shellGradientPickerSections,
   shellGradientPresetStopToken,
 } from '../src/wc/shell/shell-gradient-presets';
 
@@ -50,6 +51,16 @@ describe('shell gradient recipes', () => {
     assert.equal(shellGradientPresetOpacity('none'), '0');
     assert.equal(shellGradientPresetOpacity('cool'), '0.1');
     assert.equal(shellGradientPresetOpacity('fresh'), '0.4');
+  });
+
+  it('maps every preset into generic SwatchPicker sections', () => {
+    const sections = shellGradientPickerSections();
+    const options = sections.flatMap(section => section.options);
+
+    assert.deepEqual(options.map(option => option.value), SHELL_GRADIENT_PRESETS);
+    assert.equal(options[0].preview.backgroundImage, undefined);
+    assert.match(options[1].preview.backgroundImage ?? '', /radial-gradient/);
+    assert.equal(options[4].preview.opacity, 0.4);
   });
 });
 

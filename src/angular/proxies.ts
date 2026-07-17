@@ -38,6 +38,7 @@ export { DsShellGradientPicker } from './ds-shell-gradient-picker';
 export { DsShellGradientSwatch } from './ds-shell-gradient-swatch';
 export { DsSkeleton } from './ds-skeleton';
 export { DsSlider } from './ds-slider';
+export { DsSwatchPicker } from './ds-swatch-picker';
 export { DsSwitch } from './ds-switch';
 export { DsTabGroup } from './ds-tab-group';
 export { DsTag } from './ds-tag';

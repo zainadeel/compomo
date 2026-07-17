@@ -6,8 +6,10 @@
   "package": "@ds-mo/ui",
   "tag": "ds-shell-gradient-picker",
   "audience": "specialized",
-  "status": "stable",
-  "summary": "The canonical compact control for selecting the single global AppShell chrome wash preference from fixed token-based presets.",
+  "status": "deprecated",
+  "replacedBy": "component:ds-swatch-picker",
+  "replacementReason": "SwatchPicker now owns the same accessible interaction with a generic option model that supports both flat colors and gradients.",
+  "summary": "Deprecated compatibility wrapper that maps the fixed AppShell wash presets into SwatchPicker.",
   "useWhen": [
     "Adding the Appearance or Theme section to the application's user or account menu.",
     "Users must choose the global AppShell chrome treatment from none, cool, neutral, warm, or fresh."
@@ -47,7 +49,7 @@
     "angular": ["Bind value to the resolved preference and handle dsChange to update application state."]
   },
   "references": [
-    {"label": "Executable stories", "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.stories.ts"},
+    {"label": "Replacement stories", "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"},
     {"label": "AppShell gradient contract", "path": "src/wc/components/AppShell/AppShell.mdx"},
     {"label": "Application shell composition", "path": "agent/patterns/application-shell/pattern.agent.json"}
   ]

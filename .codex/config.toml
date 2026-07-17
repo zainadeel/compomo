@@ -1,0 +1,3 @@
+[mcp_servers.compomo]
+command = "node"
+args = ["./scripts/mcp-server.mjs"]

@@ -41,6 +41,9 @@
     "component:ds-menu",
     "component:ds-panel-tools"
   ],
+  "patterns": [
+    "pattern:menu-trigger"
+  ],
   "accessibility": [
     "Provide an explicit accessible name for every icon-only action.",
     "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",

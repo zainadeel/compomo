@@ -26,6 +26,7 @@ import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
+import { ChoicePopupAnchorAlignment } from "./utils";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
@@ -41,6 +42,7 @@ import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
+import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
@@ -67,6 +69,7 @@ export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
+export { ChoicePopupAnchorAlignment } from "./utils";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
@@ -82,6 +85,7 @@ export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
+export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
@@ -858,6 +862,11 @@ export namespace Components {
          */
         "anchor": HTMLElement | undefined;
         /**
+          * Align choice-row edges to the anchor by default; use `popup-frame` only for custom frame geometry.
+          * @default 'choice-cell'
+         */
+        "anchorAlignment": ChoicePopupAnchorAlignment;
+        /**
           * ID of the external trigger element for positioning
          */
         "anchorId": string | undefined;
@@ -1411,6 +1420,9 @@ export namespace Components {
          */
         "width": SelectMultiWidth;
     }
+    /**
+     * @deprecated Use `ds-swatch-picker` with shell preset options.
+     */
     interface DsShellGradientPicker {
         /**
           * @default 'Shell gradient theme'
@@ -1422,6 +1434,9 @@ export namespace Components {
          */
         "value": ShellGradientPreset1;
     }
+    /**
+     * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
+     */
     interface DsShellGradientSwatch {
         /**
           * @default null
@@ -1598,6 +1613,28 @@ export namespace Components {
           * @default []
          */
         "valueTexts": string[];
+    }
+    interface DsSwatchPicker {
+        /**
+          * Accessible name for the complete one-of-many choice.
+          * @default 'Swatch options'
+         */
+        "groupLabel": string;
+        /**
+          * Flat option list. Sections take precedence when supplied. Assign as a JavaScript property.
+          * @default []
+         */
+        "options": SwatchPickerOption[];
+        /**
+          * Visually separated option groups that remain one radio group. Assign as a JavaScript property.
+          * @default []
+         */
+        "sections": SwatchPickerSection[];
+        /**
+          * Selected option value.
+          * @default ''
+         */
+        "value": string;
     }
     interface DsSwitch {
         /**
@@ -1931,6 +1968,10 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
 }
+export interface DsSwatchPickerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSwatchPickerElement;
+}
 export interface DsSwitchCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSwitchElement;
@@ -2229,6 +2270,7 @@ declare global {
         "dsClose": void;
         "dsSelect": MenuItemData;
         "dsGradientSelect": ShellGradientPreset;
+        "dsSwatchSelect": string;
     }
     interface HTMLDsMenuElement extends Components.DsMenu, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsMenuElementEventMap>(type: K, listener: (this: HTMLDsMenuElement, ev: DsMenuCustomEvent<HTMLDsMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2380,6 +2422,9 @@ declare global {
     interface HTMLDsShellGradientPickerElementEventMap {
         "dsChange": ShellGradientPreset1;
     }
+    /**
+     * @deprecated Use `ds-swatch-picker` with shell preset options.
+     */
     interface HTMLDsShellGradientPickerElement extends Components.DsShellGradientPicker, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsShellGradientPickerElementEventMap>(type: K, listener: (this: HTMLDsShellGradientPickerElement, ev: DsShellGradientPickerCustomEvent<HTMLDsShellGradientPickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2397,6 +2442,9 @@ declare global {
     interface HTMLDsShellGradientSwatchElementEventMap {
         "dsSelect": ShellGradientPreset1;
     }
+    /**
+     * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
+     */
     interface HTMLDsShellGradientSwatchElement extends Components.DsShellGradientSwatch, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsShellGradientSwatchElementEventMap>(type: K, listener: (this: HTMLDsShellGradientSwatchElement, ev: DsShellGradientSwatchCustomEvent<HTMLDsShellGradientSwatchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2434,6 +2482,23 @@ declare global {
     var HTMLDsSliderElement: {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
+    };
+    interface HTMLDsSwatchPickerElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsSwatchPickerElement extends Components.DsSwatchPicker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSwatchPickerElementEventMap>(type: K, listener: (this: HTMLDsSwatchPickerElement, ev: DsSwatchPickerCustomEvent<HTMLDsSwatchPickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSwatchPickerElementEventMap>(type: K, listener: (this: HTMLDsSwatchPickerElement, ev: DsSwatchPickerCustomEvent<HTMLDsSwatchPickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSwatchPickerElement: {
+        prototype: HTMLDsSwatchPickerElement;
+        new (): HTMLDsSwatchPickerElement;
     };
     interface HTMLDsSwitchElementEventMap {
         "dsChange": boolean;
@@ -2558,6 +2623,7 @@ declare global {
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
+        "ds-swatch-picker": HTMLDsSwatchPickerElement;
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tag": HTMLDsTagElement;
@@ -3378,6 +3444,11 @@ declare namespace LocalJSX {
          */
         "anchor"?: HTMLElement | undefined;
         /**
+          * Align choice-row edges to the anchor by default; use `popup-frame` only for custom frame geometry.
+          * @default 'choice-cell'
+         */
+        "anchorAlignment"?: ChoicePopupAnchorAlignment;
+        /**
           * ID of the external trigger element for positioning
          */
         "anchorId"?: string | undefined;
@@ -3403,6 +3474,10 @@ declare namespace LocalJSX {
          */
         "onDsGradientSelect"?: (event: DsMenuCustomEvent<ShellGradientPreset>) => void;
         "onDsSelect"?: (event: DsMenuCustomEvent<MenuItemData>) => void;
+        /**
+          * Emitted when a generic `swatch-picker` section option is chosen.
+         */
+        "onDsSwatchSelect"?: (event: DsMenuCustomEvent<string>) => void;
         /**
           * @default false
          */
@@ -3994,6 +4069,9 @@ declare namespace LocalJSX {
          */
         "width"?: SelectMultiWidth;
     }
+    /**
+     * @deprecated Use `ds-swatch-picker` with shell preset options.
+     */
     interface DsShellGradientPicker {
         /**
           * @default 'Shell gradient theme'
@@ -4006,6 +4084,9 @@ declare namespace LocalJSX {
          */
         "value"?: ShellGradientPreset1;
     }
+    /**
+     * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
+     */
     interface DsShellGradientSwatch {
         /**
           * @default null
@@ -4190,6 +4271,29 @@ declare namespace LocalJSX {
           * @default []
          */
         "valueTexts"?: string[];
+    }
+    interface DsSwatchPicker {
+        /**
+          * Accessible name for the complete one-of-many choice.
+          * @default 'Swatch options'
+         */
+        "groupLabel"?: string;
+        "onDsChange"?: (event: DsSwatchPickerCustomEvent<string>) => void;
+        /**
+          * Flat option list. Sections take precedence when supplied. Assign as a JavaScript property.
+          * @default []
+         */
+        "options"?: SwatchPickerOption[];
+        /**
+          * Visually separated option groups that remain one radio group. Assign as a JavaScript property.
+          * @default []
+         */
+        "sections"?: SwatchPickerSection[];
+        /**
+          * Selected option value.
+          * @default ''
+         */
+        "value"?: string;
     }
     interface DsSwitch {
         /**
@@ -4642,6 +4746,7 @@ declare namespace LocalJSX {
         "open": boolean;
         "side": MenuSide;
         "align": MenuAlign;
+        "anchorAlignment": ChoicePopupAnchorAlignment;
         "sideOffset": string;
         "alignOffset": string;
         "menuWidth": string | undefined;
@@ -4810,6 +4915,10 @@ declare namespace LocalJSX {
         "rangeSeparator": string;
         "inputId": string | undefined;
     }
+    interface DsSwatchPickerAttributes {
+        "value": string;
+        "groupLabel": string;
+    }
     interface DsSwitchAttributes {
         "checked": boolean;
         "name": string | undefined;
@@ -4912,6 +5021,7 @@ declare namespace LocalJSX {
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
+        "ds-swatch-picker": Omit<DsSwatchPicker, keyof DsSwatchPickerAttributes> & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes]?: DsSwatchPicker[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `attr:${K}`]?: DsSwatchPickerAttributes[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `prop:${K}`]?: DsSwatchPicker[K] };
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
@@ -4979,10 +5089,17 @@ declare module "@stencil/core" {
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-select-multi": LocalJSX.IntrinsicElements["ds-select-multi"] & JSXBase.HTMLAttributes<HTMLDsSelectMultiElement>;
+            /**
+             * @deprecated Use `ds-swatch-picker` with shell preset options.
+             */
             "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
+            /**
+             * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
+             */
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
+            "ds-swatch-picker": LocalJSX.IntrinsicElements["ds-swatch-picker"] & JSXBase.HTMLAttributes<HTMLDsSwatchPickerElement>;
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;

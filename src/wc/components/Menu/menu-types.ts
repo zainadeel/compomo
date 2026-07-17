@@ -1,4 +1,5 @@
 import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
+import type { SwatchPickerOption, SwatchPickerSection } from '../SwatchPicker/swatch-picker-types';
 
 export type { MenuAlign, MenuSide } from './menu-position';
 export {
@@ -27,11 +28,24 @@ export interface MenuItemsSection {
 
 export interface MenuGradientPickerSection {
   header?: string;
+  /** @deprecated Use the generic `swatch-picker` section. */
   variant: 'gradient-picker';
   value: ShellGradientPreset;
 }
 
-export type MenuSection = MenuItemsSection | MenuGradientPickerSection;
+export interface MenuSwatchPickerSection {
+  header?: string;
+  variant: 'swatch-picker';
+  value: string;
+  options?: SwatchPickerOption[];
+  sections?: SwatchPickerSection[];
+  groupLabel?: string;
+}
+
+export type MenuSection =
+  | MenuItemsSection
+  | MenuGradientPickerSection
+  | MenuSwatchPickerSection;
 
 export function isMenuGradientPickerSection(
   section: MenuSection,
@@ -39,4 +53,17 @@ export function isMenuGradientPickerSection(
   return 'variant' in section && section.variant === 'gradient-picker';
 }
 
+export function isMenuSwatchPickerSection(
+  section: MenuSection,
+): section is MenuSwatchPickerSection {
+  return 'variant' in section && section.variant === 'swatch-picker';
+}
+
+export function isMenuPickerSection(
+  section: MenuSection,
+): section is MenuGradientPickerSection | MenuSwatchPickerSection {
+  return isMenuGradientPickerSection(section) || isMenuSwatchPickerSection(section);
+}
+
 export type { ShellGradientPreset };
+export type { SwatchPickerOption, SwatchPickerSection };

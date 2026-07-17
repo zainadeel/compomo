@@ -38,6 +38,7 @@ export { DsShellGradientPicker } from "./ds-shell-gradient-picker.js";
 export { DsShellGradientSwatch } from "./ds-shell-gradient-swatch.js";
 export { DsSkeleton } from "./ds-skeleton.js";
 export { DsSlider } from "./ds-slider.js";
+export { DsSwatchPicker } from "./ds-swatch-picker.js";
 export { DsSwitch } from "./ds-switch.js";
 export { DsTabGroup } from "./ds-tab-group.js";
 export { DsTag } from "./ds-tag.js";

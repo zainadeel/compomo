@@ -7,6 +7,7 @@ import {
 } from './shell-gradient-swatch-types';
 import { shellGradientPresetOpacity } from '../../shell/shell-gradient-presets';
 
+/** @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail. */
 @Component({
   tag: 'ds-shell-gradient-swatch',
   styleUrl: 'ShellGradientSwatch.css',
