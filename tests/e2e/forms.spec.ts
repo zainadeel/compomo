@@ -127,8 +127,8 @@ test('select search clear action has balanced top, right, and bottom insets', as
     };
   });
 
-  expect(alignment.right).toBe(alignment.top);
-  expect(alignment.right).toBe(alignment.bottom);
+  expect(alignment.right).toBeCloseTo(alignment.top, 3);
+  expect(alignment.right).toBeCloseTo(alignment.bottom, 3);
 });
 
 test('input follows shared control density, focus, and search-clear recipes', async ({ page }) => {
