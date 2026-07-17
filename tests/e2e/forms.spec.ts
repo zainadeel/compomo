@@ -34,12 +34,6 @@ test('submits, validates, and resets form-associated controls', async ({ page })
   await expect(page.locator('#terms')).toHaveAttribute('aria-checked', 'false');
 });
 
-test('exposes overridable localized accessibility labels', async ({ page }) => {
-  await expect(page.locator('ds-pagination nav')).toHaveAttribute('aria-label', 'Paginación');
-  await expect(page.locator('ds-pagination button').first()).toHaveAttribute('aria-label', 'Página anterior');
-  await expect(page.locator('ds-pagination button').last()).toHaveAttribute('aria-label', 'Página siguiente');
-});
-
 test('field associates one control with its label, guidance, error, and interaction state', async ({ page }) => {
   const field = page.locator('#email-field');
   const input = page.locator('#email');

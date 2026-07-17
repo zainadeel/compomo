@@ -46,7 +46,6 @@
       ],
       "commonlyComposedWith": [
         "component:ds-card",
-        "component:ds-table",
         "component:ds-text",
         "component:ds-icon"
       ],

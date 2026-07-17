@@ -61,9 +61,6 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 ### Controls
 - **Toggle**, **Checkbox**, **Radio**, **Input**, **Slider**, **Field**
 
-### Data display
-- **Table**, **Pagination**
-
 ### Overlays
 - **Modal**, **Menu**, **Tooltip**, **Select**, **Banner**
 
