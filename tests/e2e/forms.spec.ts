@@ -228,6 +228,12 @@ test('checkbox sizes center owned marks with density-specific strokes', async ({
 });
 
 test('checkbox supports Enter and Space activation with mixed-state and presentation semantics', async ({ page }) => {
+  const required = page.locator('#terms');
+  await expect(required).toHaveAttribute('aria-required', 'true');
+  await expect(required).toHaveAttribute('aria-invalid', 'true');
+  await required.click();
+  await expect(required).not.toHaveAttribute('aria-invalid');
+
   const mixed = page.locator('#checkbox-mixed');
   await expect(mixed).toHaveAttribute('aria-checked', 'mixed');
   await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M4 8H12');
@@ -288,7 +294,10 @@ test('radio uses roving focus and arrow-key selection', async ({ page }) => {
   const standard = radio.getByRole('radio', { name: 'Standard' });
   const premium = radio.getByRole('radio', { name: 'Premium' });
 
+  await expect(radio).toHaveAttribute('aria-required', 'true');
+  await expect(radio).toHaveAttribute('aria-invalid', 'true');
   await standard.click();
+  await expect(radio).not.toHaveAttribute('aria-invalid');
   await expect(standard).toHaveAttribute('aria-checked', 'true');
   await standard.press('ArrowDown');
   await expect(premium).toHaveAttribute('aria-checked', 'true');
@@ -498,11 +507,45 @@ test('slider pointer press selects the nearest thumb and emits one committed val
   await expect.poll(() => range.evaluate((element: HTMLDsSliderElement) => element.value)).toEqual([30, 80]);
 });
 
+test('slider drag paint stays locked to the pointer without positional easing', async ({ page }) => {
+  const slider = page.locator('#slider-single');
+  const control = slider.locator('.slider__control');
+  const thumb = slider.locator('.slider__thumb');
+  await control.scrollIntoViewIfNeeded();
+
+  const motion = await slider.evaluate(element => ({
+    indicatorDuration: getComputedStyle(element.querySelector('.slider__indicator')!).transitionDuration,
+    thumbDuration: getComputedStyle(element.querySelector('.slider__thumb')!).transitionDuration,
+  }));
+  expect(motion).toEqual({ indicatorDuration: '0s', thumbDuration: '0s' });
+
+  const controlBox = await control.boundingBox();
+  const thumbBox = await thumb.boundingBox();
+  expect(controlBox).not.toBeNull();
+  expect(thumbBox).not.toBeNull();
+  if (!controlBox || !thumbBox) return;
+
+  const targetPercentage = 0.82;
+  const targetX = controlBox.x + thumbBox.width / 2
+    + (controlBox.width - thumbBox.width) * targetPercentage;
+  const targetY = controlBox.y + controlBox.height / 2;
+  await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(targetX, targetY);
+
+  await expect.poll(async () => {
+    const box = await thumb.boundingBox();
+    return box ? Math.abs(box.x + box.width / 2 - targetX) : Number.POSITIVE_INFINITY;
+  }).toBeLessThan(1);
+  await page.mouse.up();
+  await expect.poll(() => slider.evaluate((element: HTMLDsSliderElement) => element.value)).toBe(82);
+});
+
 test('slider sizes align with the control density system', async ({ page }) => {
   const expected = {
-    md: { control: 32, thumb: 16, track: 4, stroke: '1.25px' },
-    sm: { control: 24, thumb: 12, track: 3, stroke: '1px' },
-    xs: { control: 16, thumb: 8, track: 2, stroke: '0.75px' },
+    md: { control: 32, thumb: 16, track: 8, trackStroke: '1.25px' },
+    sm: { control: 24, thumb: 12, track: 6, trackStroke: '1px' },
+    xs: { control: 16, thumb: 8, track: 4, trackStroke: '0.75px' },
   } as const;
 
   for (const [size, dimensions] of Object.entries(expected)) {
@@ -511,11 +554,23 @@ test('slider sizes align with the control density system', async ({ page }) => {
       const thumb = element.querySelector<HTMLElement>('.slider__thumb')!;
       const rail = element.querySelector<HTMLElement>('.slider__rail')!;
       const visual = element.querySelector<HTMLElement>('.slider__thumb-visual')!;
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-tertiary)';
+      element.append(probe);
+      const trackColor = getComputedStyle(probe).color;
+      probe.style.color = 'var(--color-border-bold-brand)';
+      const thumbColor = getComputedStyle(probe).color;
+      probe.remove();
       return {
         control: Math.round(control.getBoundingClientRect().height),
         thumb: Math.round(thumb.getBoundingClientRect().width),
         track: Math.round(rail.getBoundingClientRect().height),
-        border: getComputedStyle(visual).boxShadow,
+        trackBackground: getComputedStyle(rail).backgroundColor,
+        trackBorder: getComputedStyle(rail).boxShadow,
+        trackRadius: getComputedStyle(rail).borderRadius,
+        thumbBorder: getComputedStyle(visual).boxShadow,
+        trackColor,
+        thumbColor,
       };
     });
 
@@ -524,8 +579,14 @@ test('slider sizes align with the control density system', async ({ page }) => {
       thumb: dimensions.thumb,
       track: dimensions.track,
     });
-    expect(actual.border).toContain('inset');
-    expect(actual.border).toContain(dimensions.stroke);
+    expect(actual.trackBackground).toBe('rgba(0, 0, 0, 0)');
+    expect(actual.trackRadius).toBe('2px');
+    expect(actual.trackBorder).toContain('inset');
+    expect(actual.trackBorder).toContain(dimensions.trackStroke);
+    expect(actual.trackBorder).toContain(actual.trackColor);
+    expect(actual.thumbBorder).toContain('inset');
+    expect(actual.thumbBorder).toContain('1.5px');
+    expect(actual.thumbBorder).toContain(actual.thumbColor);
   }
 });
 

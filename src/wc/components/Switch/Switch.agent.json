@@ -56,7 +56,8 @@
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing row; do not enlarge the switch to the full control height.",
-    "Keep the switch from shrinking when adjacent labels wrap."
+    "Keep the switch from shrinking when adjacent labels wrap.",
+    "Thumb movement is left-to-right; the design system does not author RTL-specific component behavior."
   ],
   "frameworkCaveats": {
     "customElements": [

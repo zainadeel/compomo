@@ -44,6 +44,21 @@ test('arrow navigation skips inactive items, activates panels, and emits change'
   await expect(settings).toBeFocused();
 });
 
+test('keeps an enabled tab reachable when value points to an inactive item', async ({ page }) => {
+  const host = page.locator('#sub-nav');
+  await host.evaluate(element => {
+    (element as HTMLElement & { value: string }).value = 'activity-tab';
+  });
+
+  const overview = page.getByRole('tab', { name: 'Overview' });
+  const activity = page.getByRole('tab', { name: 'Activity' });
+  await expect(overview).toHaveAttribute('tabindex', '0');
+  await expect(activity).toHaveAttribute('tabindex', '-1');
+  await overview.focus();
+  await overview.press('ArrowDown');
+  await expect(page.getByRole('tab', { name: 'Settings' })).toBeFocused();
+});
+
 test('selected fill does not change label weight', async ({ page }) => {
   const overview = page.getByRole('tab', { name: 'Overview' });
   const settings = page.getByRole('tab', { name: 'Settings' });

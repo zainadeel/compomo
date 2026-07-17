@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Overlay accessibility</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <button id="before">Before</button>
+    <button id="menu-anchor" aria-haspopup="menu" aria-controls="action-menu" aria-expanded="false">Actions</button>
+    <ds-menu id="action-menu" anchor-id="menu-anchor" menu-label="Actions"></ds-menu>
+    <button id="after-menu">After menu</button>
+
+    <button id="rich-anchor" aria-haspopup="dialog" aria-controls="rich-menu" aria-expanded="false">Appearance</button>
+    <ds-menu id="rich-menu" anchor-id="rich-anchor" menu-label="Appearance"></ds-menu>
+
+    <button id="modal-trigger">Open modal</button>
+    <div id="page-content"><button id="outside-action">Outside action</button></div>
+    <ds-modal id="modal" heading="Confirm changes">
+      <button id="inside-first">First action</button>
+      <button id="inside-last">Last action</button>
+    </ds-modal>
+    <button id="after-modal">After modal</button>
+
+    <script type="module" src="/accessibility-overlays-setup.mjs"></script>
+  </body>
+</html>

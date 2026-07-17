@@ -108,7 +108,7 @@ export const Sizes: Story = {
   render: () => html`
     <div style=${STACK}>
       ${SIZES.map(size => html`
-        <ds-slider size=${size} value="40" label=${`${size} · ${size === 'md' ? '32 / 16 / 4' : size === 'sm' ? '24 / 12 / 3' : '16 / 8 / 2'}px control / thumb / track`}></ds-slider>
+        <ds-slider size=${size} value="40" label=${`${size} · ${size === 'md' ? '32 / 16 / 8' : size === 'sm' ? '24 / 12 / 6' : '16 / 8 / 4'}px control / thumb / track`}></ds-slider>
       `)}
     </div>
   `,
@@ -196,17 +196,6 @@ export const InteractionStates: Story = {
       <ds-slider data-review-focus value="45" label="Keyboard focus"></ds-slider>
       <ds-slider value="60" label="Read-only" read-only></ds-slider>
       <ds-slider value="75" label="Inactive" is-inactive></ds-slider>
-    </div>
-  `,
-};
-
-export const Rtl: Story = {
-  name: 'RTL',
-  parameters: { controls: { disable: true } },
-  render: () => html`
-    <div dir="rtl" style=${STACK}>
-      <ds-slider value="25" label="Single value"></ds-slider>
-      <ds-slider .value=${[20, 70]} label="Range" start-label="Lower value" end-label="Upper value"></ds-slider>
     </div>
   `,
 };

@@ -90,7 +90,11 @@ export class ButtonFilled {
   }
 
   private handleClick = (event: MouseEvent) => {
-    if (this.isInactive || this.isLoading) return;
+    if (this.isInactive || this.isLoading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     this.dsClick.emit(event);
   };
 
@@ -151,9 +155,10 @@ export class ButtonFilled {
           }}
           type={this.type}
           class={cls}
-          disabled={this.isInactive || this.isLoading}
+          disabled={this.isInactive}
           aria-label={this.accessibleName}
           aria-busy={this.isLoading ? 'true' : undefined}
+          aria-disabled={this.isLoading ? 'true' : undefined}
           onClick={this.handleClick}
         >
           {this.showIcon && (

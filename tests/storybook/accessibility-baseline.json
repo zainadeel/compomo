@@ -217,16 +217,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "aria-prohibited-attr",
-    "storyId": "data-viz-chart-donut--empty",
-    "theme": "dark",
-    "targets": [
-      "path"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -235,16 +225,6 @@
     "targets": [
       ".chart-donut__center-caption",
       ".chart-donut__center-value"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "aria-prohibited-attr",
-    "storyId": "data-viz-chart-donut--empty",
-    "theme": "light",
-    "targets": [
-      "path"
     ]
   },
   {
@@ -478,46 +458,6 @@
     ]
   },
   {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select--loading",
-    "theme": "dark",
-    "targets": [
-      "#ds-select-4-listbox"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select--loading",
-    "theme": "light",
-    "targets": [
-      "#ds-select-4-listbox"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select--no-results",
-    "theme": "dark",
-    "targets": [
-      "#ds-select-2-listbox"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select--no-results",
-    "theme": "light",
-    "targets": [
-      "#ds-select-2-listbox"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -612,16 +552,6 @@
     ]
   },
   {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select-multi--loading",
-    "theme": "dark",
-    "targets": [
-      "#ds-select-multi-4-listbox"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -632,16 +562,6 @@
     ]
   },
   {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select-multi--loading",
-    "theme": "light",
-    "targets": [
-      "#ds-select-multi-4-listbox"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -692,26 +612,6 @@
     ]
   },
   {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select-multi--search-no-results",
-    "theme": "dark",
-    "targets": [
-      "#ds-select-multi-2-listbox"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "form-select-multi--search-no-results",
-    "theme": "light",
-    "targets": [
-      "#ds-select-multi-2-listbox"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -749,16 +649,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--angular-host-timing",
-    "theme": "dark",
-    "targets": [
-      ".panel-nav__body"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -770,16 +660,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--angular-host-timing",
-    "theme": "light",
-    "targets": [
-      ".panel-nav__body"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -788,16 +668,6 @@
     "targets": [
       ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
       ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--breakpoint-locked",
-    "theme": "dark",
-    "targets": [
-      ".panel-nav__body"
     ]
   },
   {
@@ -812,16 +682,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--breakpoint-locked",
-    "theme": "light",
-    "targets": [
-      ".panel-nav__body"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -830,16 +690,6 @@
     "targets": [
       ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
       ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--dashboard",
-    "theme": "dark",
-    "targets": [
-      ".panel-nav__body"
     ]
   },
   {
@@ -854,16 +704,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--dashboard",
-    "theme": "light",
-    "targets": [
-      ".panel-nav__body"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -875,16 +715,6 @@
     ]
   },
   {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--router-mode-event",
-    "theme": "dark",
-    "targets": [
-      ".panel-nav__body"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -893,16 +723,6 @@
     "targets": [
       ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(6) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s",
       ".panel-nav__group:nth-child(3) > ds-tooltip:nth-child(7) > .panel-nav__item.ds-focus-ring-inset.ds-interaction-fill > .ds-text--regular.panel-nav__item-label.panel-nav__item-label-text > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "serious",
-    "kind": "violation",
-    "ruleId": "scrollable-region-focusable",
-    "storyId": "navigation-panelnav--router-mode-event",
-    "theme": "light",
-    "targets": [
-      ".panel-nav__body"
     ]
   },
   {
@@ -1042,16 +862,6 @@
     ]
   },
   {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "overlay-menu--appearance-and-theme",
-    "theme": "dark",
-    "targets": [
-      ".menu-popup"
-    ]
-  },
-  {
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
@@ -1059,16 +869,6 @@
     "theme": "light",
     "targets": [
       ".ds-interaction-fill--selected > .menu-item__content.ds-choice-item__content.ds-interaction-fill__content > .menu-item__label.ds-choice-item__label.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-required-children",
-    "storyId": "overlay-menu--appearance-and-theme",
-    "theme": "light",
-    "targets": [
-      ".menu-popup"
     ]
   },
   {
@@ -1119,30 +919,6 @@
     "theme": "dark",
     "targets": [
       ".ds-text__element"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-valid-attr-value",
-    "storyId": "primitives-tag--interactive-menu-trigger",
-    "theme": "dark",
-    "targets": [
-      ".ds-control-inactive",
-      "ds-tag[label=\"Expanded\"]",
-      "ds-tag[label=\"Vehicle status\"]"
-    ]
-  },
-  {
-    "impact": "critical",
-    "kind": "violation",
-    "ruleId": "aria-valid-attr-value",
-    "storyId": "primitives-tag--interactive-menu-trigger",
-    "theme": "light",
-    "targets": [
-      ".ds-control-inactive",
-      "ds-tag[label=\"Expanded\"]",
-      "ds-tag[label=\"Vehicle status\"]"
     ]
   },
   {

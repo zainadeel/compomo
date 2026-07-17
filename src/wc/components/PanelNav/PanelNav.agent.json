@@ -51,6 +51,7 @@
     "Provide localized dashboard, settings, account, navigation, collapse, and expand labels.",
     "Preserve accessible destination names when the panel is collapsed to icon-only presentation.",
     "Use notification dots as supplemental status and never as the only indication of important information.",
+    "When the destination body overflows, it becomes a localized keyboard-focusable scroll region in addition to the roving destination controls.",
     "Keep the standard dashboard/settings switch and user/account entry available in the footer."
   ],
   "states": [

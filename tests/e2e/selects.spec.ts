@@ -83,6 +83,21 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).not.toBeFocused();
 });
 
+test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({ page }) => {
+  const loading = page.locator('#loading');
+  await loading.getByRole('combobox').click();
+  const loadingOption = loading.getByRole('option', { name: 'Loading' });
+  await expect(loadingOption).toHaveAttribute('aria-disabled', 'true');
+  await expect(loadingOption).toHaveAttribute('aria-selected', 'false');
+
+  const searchable = page.locator('#searchable');
+  await searchable.getByRole('combobox').click();
+  await searchable.getByRole('searchbox').fill('does not exist');
+  const emptyOption = searchable.getByRole('option', { name: 'No results found' });
+  await expect(emptyOption).toHaveAttribute('aria-disabled', 'true');
+  await expect(emptyOption).toHaveAttribute('aria-selected', 'false');
+});
+
 test('falls back to one text-only option layout when icon data is mixed', async ({ page }) => {
   const select = page.locator('#single');
   await select.evaluate((element: HTMLDsSelectElement) => {
@@ -245,7 +260,7 @@ test('shares a rounded sm search clear button across single and multi selects', 
     const clear = select.getByRole('button', { name: 'Clear Search' });
     await expect(clearHost).toHaveJSProperty('variant', 'icon');
     await expect(clearHost).toHaveJSProperty('size', 'sm');
-    await expect(clearHost).toHaveJSProperty('icon', 'Cross');
+    await expect(clearHost).toHaveJSProperty('icon', 'CrossCircle');
     await expect(clearHost).toHaveJSProperty('hasBorder', false);
     await expect(clearHost).toHaveJSProperty('rounded', true);
     await expect(clear).toHaveCSS('border-radius', '9999px');
@@ -293,8 +308,9 @@ test('shows busy state in the trigger and popup', async ({ page }) => {
   await expect(trigger).toHaveAttribute('aria-busy', 'true');
   await expect(trigger.locator('ds-loader')).toHaveCount(1);
   await trigger.click();
-  await expect(select.getByRole('status')).toContainText('Loading');
-  await expect(select.getByRole('option')).toHaveCount(0);
+  const loadingOption = select.getByRole('option', { name: 'Loading' });
+  await expect(loadingOption).toHaveCount(1);
+  await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
 });
 
 test('uses a thicker inset stroke for error without changing control geometry', async ({ page }) => {

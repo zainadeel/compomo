@@ -233,6 +233,7 @@ export class MyComponent {
 **Styling rules (non-negotiable)**
 
 - **Never hardcode colors, spacing, radii, shadows, or typography values.** Always use CSS custom properties from `@ds-mo/tokens`. Hardcoded values break theming.
+- Components are authored for left-to-right interfaces. Do not add RTL-only selectors, direction branches, or RTL review stories.
 - Styles go in `<PascalName>.css` — one per component. Stencil scopes them automatically via `scoped: true`.
 - Use `:host` for component-level styles; use class selectors for internal elements.
 - Theming is driven by the `data-theme` attribute on a parent element (`@ds-mo/tokens` provides light/dark).
@@ -269,7 +270,7 @@ export class MyComponent {
 - Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`, and `size`: `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
 - Both support `rounded` for the half-radius treatment. Rounded changes shape only; it does not alter hierarchy, intent, size, or interaction semantics.
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
-- `isLoading` disables activation without applying inactive opacity and sets native busy semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
+- `isLoading` blocks activation without applying inactive opacity or dropping current keyboard focus, and exposes busy plus disabled semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
 - Keep the action's accessible name while loading. The owning workflow announces broader progress when needed.
 - For forms, use `type="submit"` and handle native form submission; reserve `dsClick` for non-submit commands.
 - Use only one filled action in a local decision area. Secondary actions use `ds-button-unfilled`; filled semantic intent must describe the action's consequence rather than decorate a surface.
@@ -285,6 +286,7 @@ export class MyComponent {
 
 - `ds-select` owns one string value; `ds-select-multi` owns a JavaScript array of string values. Multi keeps the field label/placeholder visible and summarizes selection as plain inline text (`Label · count`) rather than replacing the label, rendering a badge, or rendering tags.
 - Select popups use listbox/option semantics. `ds-menu` remains an action menu even though all three share anchored-popup and choice-row visual foundations; never switch select rows back to menu/menuitem roles.
+- A Menu containing the specialized shell gradient picker is a richer non-modal dialog popup: the picker keeps radio-group semantics, ordinary preference rows remain buttons, Escape restores trigger focus, and Tab moves between popup controls before closing and continuing through the page at the boundary. Plain Menu content retains menu/menuitem semantics and roving arrow-key focus.
 - Single-select rows rely on the selected active fill and foreground change; do not add a trailing check icon. They may use prefix icons. Multi-select rows use a presentation-only `ds-checkbox` indicator while the owning option retains listbox semantics and interaction; their option contract excludes icons because a choice row must never combine a checkbox and prefix icon.
 - Options support label, value, subtext, and `isInactive`; single-select options additionally support a prefix icon. Use either flat `options` or grouped `sections`; sections take precedence. Arrays and objects must be assigned as JavaScript properties.
 - `searchable` is immediate local filtering over label and subtext. Server search, debounce, networking, virtualization, and hierarchical children are intentionally outside these components.

@@ -57,7 +57,9 @@
   "responsiveBehavior": [
     "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
     "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
-    "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe."
+    "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
+    "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the thumb uses a 1.5px brand inset ring.",
+    "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
   ],
   "frameworkCaveats": {
     "customElements": [

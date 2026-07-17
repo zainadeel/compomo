@@ -130,3 +130,24 @@ test('renders one accessible label, icon, or icon-label variant across the group
   await expect(host.locator('.tab__icon')).toHaveCount(0);
   await expect(host.locator('.tab__label')).toHaveCount(3);
 });
+
+test('keeps one enabled tab reachable when value is missing or points to an inactive tab', async ({ page }) => {
+  const host = page.locator('#tabs');
+  await host.evaluate(element => {
+    const group = element as HTMLElement & { value: string; tabs: unknown[] };
+    group.tabs = [
+      { id: 'overview', label: 'Overview' },
+      { id: 'activity', label: 'Activity', isInactive: true },
+      { id: 'settings', label: 'Settings' },
+    ];
+    group.value = 'activity';
+  });
+
+  await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute('tabindex', '0');
+  await expect(page.getByRole('tab', { name: 'Activity' })).toHaveAttribute('tabindex', '-1');
+
+  await host.evaluate(element => {
+    (element as HTMLElement & { value: string }).value = 'missing';
+  });
+  await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute('tabindex', '0');
+});

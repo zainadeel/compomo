@@ -16,6 +16,7 @@ export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
 export type ButtonUnfilledSize = 'md' | 'sm' | 'xs';
 
 export type ButtonUnfilledWidth = ControlWidth;
+export type ButtonUnfilledPopup = 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
 
 /**
  * `ds-icon` size prop matching control-density icon metrics
@@ -88,7 +89,7 @@ export class ButtonUnfilled {
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop() controls: string | undefined;
   @Prop() expanded: boolean | undefined;
-  @Prop() haspopup: string | undefined;
+  @Prop() haspopup: ButtonUnfilledPopup | undefined;
   @Prop() pressed: boolean | undefined;
 
   /**
@@ -108,7 +109,11 @@ export class ButtonUnfilled {
   }
 
   private handleClick = (event: MouseEvent) => {
-    if (this.isInactive || this.isLoading) return;
+    if (this.isInactive || this.isLoading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     this.dsClick.emit(event);
     this.dsChange.emit(!this.isActive);
   };
@@ -195,10 +200,11 @@ export class ButtonUnfilled {
           }}
           type={this.type}
           class={cls}
-          disabled={this.isInactive || this.isLoading}
+          disabled={this.isInactive}
           tabIndex={this.focusTabIndex ?? 0}
           aria-label={this.accessibleName}
           aria-busy={this.isLoading ? 'true' : undefined}
+          aria-disabled={this.isLoading ? 'true' : undefined}
           aria-controls={this.controls}
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
           aria-haspopup={this.haspopup}

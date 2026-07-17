@@ -11,7 +11,7 @@ import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
-import { ButtonUnfilledBackground, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardAppearance, CardWidth } from "./components/Card/Card";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -52,7 +52,7 @@ export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
-export { ButtonUnfilledBackground, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardAppearance, CardWidth } from "./components/Card/Card";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -311,7 +311,7 @@ export namespace Components {
           * @default true
          */
         "hasBorder": boolean;
-        "haspopup": string | undefined;
+        "haspopup": ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -972,6 +972,11 @@ export namespace Components {
           * @default 'dashboard'
          */
         "navStyle": NavChromeStyle;
+        /**
+          * Localized name for the body when overflow makes it a keyboard-scrollable region.
+          * @default 'Navigation items'
+         */
+        "navigationItemsLabel": string;
         /**
           * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
           * @default 'anchor'
@@ -2885,7 +2890,7 @@ declare namespace LocalJSX {
           * @default true
          */
         "hasBorder"?: boolean;
-        "haspopup"?: string | undefined;
+        "haspopup"?: ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -3588,6 +3593,11 @@ declare namespace LocalJSX {
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
+        /**
+          * Localized name for the body when overflow makes it a keyboard-scrollable region.
+          * @default 'Navigation items'
+         */
+        "navigationItemsLabel"?: string;
         "onDsChromeTransitionEnd"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
         /**
           * Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion.
@@ -4652,7 +4662,7 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "controls": string | undefined;
         "expanded": boolean | undefined;
-        "haspopup": string | undefined;
+        "haspopup": ButtonUnfilledPopup | undefined;
         "pressed": boolean | undefined;
         "focusTabIndex": number;
     }
@@ -4825,6 +4835,7 @@ declare namespace LocalJSX {
         "settingsNavigationLabel": string;
         "expandNavigationLabel": string;
         "collapseNavigationLabel": string;
+        "navigationItemsLabel": string;
     }
     interface DsPanelSubNavAttributes {
         "value": string;

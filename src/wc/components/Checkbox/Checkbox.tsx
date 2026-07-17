@@ -96,12 +96,15 @@ export class Checkbox {
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     const isMarked = this.checked || this.indeterminate;
+    const invalid = this.required && !inactive && !this.checked;
 
     return (
       <Host
         role={this.presentation ? undefined : 'checkbox'}
         aria-checked={this.presentation ? undefined : this.indeterminate ? 'mixed' : String(this.checked)}
         aria-disabled={!this.presentation && inactive ? 'true' : undefined}
+        aria-required={!this.presentation && this.required ? 'true' : undefined}
+        aria-invalid={!this.presentation && invalid ? 'true' : undefined}
         aria-labelledby={this.presentation ? undefined : this.labelId}
         aria-hidden={this.presentation ? 'true' : undefined}
         tabIndex={this.presentation || inactive ? -1 : 0}

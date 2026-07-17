@@ -140,6 +140,7 @@ export class Radio {
 
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
+    const invalid = this.required && !inactive && this.value.length === 0;
     const selectedIdx = this.options.findIndex(option => option.value === this.value);
     const firstActiveIdx = this.options.findIndex(option => !inactive && !option.isInactive);
     const focusableIdx = selectedIdx >= 0 && !inactive && !this.options[selectedIdx]?.isInactive
@@ -151,6 +152,8 @@ export class Radio {
         role="radiogroup"
         aria-label={this.ariaLabel}
         aria-labelledby={this.ariaLabelledby}
+        aria-required={this.required ? 'true' : undefined}
+        aria-invalid={invalid ? 'true' : undefined}
         class={{
           radio: true,
           'radio--horizontal': this.direction === 'horizontal',

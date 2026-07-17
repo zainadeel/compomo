@@ -553,7 +553,7 @@
             "Provide an explicit accessible name for icon-only buttons.",
             "Use inactive state only when the action must remain visible but unavailable.",
             "Do not encode the action meaning through color alone.",
-            "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when users need confirmation.",
+            "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when users need confirmation.",
             "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
           ],
           "states": [
@@ -561,7 +561,7 @@
             "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
             "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
-            "Loading prevents duplicate activation without applying inactive opacity.",
+            "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
           ],
           "responsiveBehavior": [
@@ -711,7 +711,7 @@
             "Provide an explicit accessible name for every icon-only action.",
             "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
             "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
-            "Loading keeps the action's accessible name and exposes busy state; announce broader operation progress from the owning workflow when needed.",
+            "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
             "Use inactive state only when an unavailable action must remain visible.",
             "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
           ],
@@ -720,7 +720,7 @@
             "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
             "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
-            "Loading prevents duplicate activation without applying inactive opacity.",
+            "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
           ],
@@ -781,7 +781,7 @@
             "required": false
           },
           "haspopup": {
-            "type": "string | undefined",
+            "type": "ButtonUnfilledPopup | undefined",
             "required": false
           },
           "icon": {
@@ -2368,6 +2368,7 @@
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
             "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
+            "A gradient-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
           ],
           "states": [
@@ -2375,7 +2376,7 @@
             "Use either flat items or sections, not both.",
             "After dsSelect from a switch row, update switchValue in the items property so the controlled indicator reflects the new state.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
-            "Use one gradient-picker section in the user or account Appearance or Theme menu for the global AppShell wash preference; apply dsGradientSelect immediately without closing the menu."
+            "Use one gradient-picker section in the user or account Appearance or Theme popup for the global AppShell wash preference; apply dsGradientSelect immediately without closing the popup."
           ],
           "responsiveBehavior": [
             "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
@@ -2661,6 +2662,7 @@
             "Provide localized dashboard, settings, account, navigation, collapse, and expand labels.",
             "Preserve accessible destination names when the panel is collapsed to icon-only presentation.",
             "Use notification dots as supplemental status and never as the only indication of important information.",
+            "When the destination body overflows, it becomes a localized keyboard-focusable scroll region in addition to the roving destination controls.",
             "Keep the standard dashboard/settings switch and user/account entry available in the footer."
           ],
           "states": [
@@ -2758,6 +2760,10 @@
           },
           "navStyle": {
             "type": "NavChromeStyle",
+            "required": false
+          },
+          "navigationItemsLabel": {
+            "type": "string",
             "required": false
           },
           "routerMode": {
@@ -4218,7 +4224,9 @@
           "responsiveBehavior": [
             "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
             "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
-            "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe."
+            "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
+            "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the thumb uses a 1.5px brand inset ring.",
+            "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -4445,7 +4453,8 @@
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing row; do not enlarge the switch to the full control height.",
-            "Keep the switch from shrinking when adjacent labels wrap."
+            "Keep the switch from shrinking when adjacent labels wrap.",
+            "Thumb movement is left-to-right; the design system does not author RTL-specific component behavior."
           ],
           "frameworkCaveats": {
             "customElements": [

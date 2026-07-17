@@ -370,8 +370,7 @@ export class Slider {
     }
 
     const travel = Math.max(1, rect.width - inset * 2);
-    let percent = (event.clientX - rect.left - inset) / travel;
-    if (getComputedStyle(this.el).direction === 'rtl') percent = 1 - percent;
+    const percent = (event.clientX - rect.left - inset) / travel;
     return Math.min(1, Math.max(0, percent));
   }
 
