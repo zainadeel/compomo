@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/zainadeel/compomo/compare/v9.0.0...v9.1.0) (2026-07-17)
+
+
+### Added
+
+* add swatch picker and publish agent recipes ([#343](https://github.com/zainadeel/compomo/issues/343)) ([63ec6d8](https://github.com/zainadeel/compomo/commit/63ec6d8ebb2a8f11546947d04e4d382311450dd5))
+
 ## [9.0.0](https://github.com/zainadeel/compomo/compare/v8.3.1...v9.0.0) (2026-07-17)
 
 
