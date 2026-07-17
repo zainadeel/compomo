@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.0.0](https://github.com/zainadeel/compomo/compare/v8.3.1...v9.0.0) (2026-07-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove table and pagination ([#341](https://github.com/zainadeel/compomo/issues/341))
+
+### Added
+
+* remove table and pagination ([#341](https://github.com/zainadeel/compomo/issues/341)) ([cf7a8cb](https://github.com/zainadeel/compomo/commit/cf7a8cbbd8b355adc0bf68f0f9f4df51ccab8429))
+
 ## [8.3.1](https://github.com/zainadeel/compomo/compare/v8.3.0...v8.3.1) (2026-07-17)
 
 
