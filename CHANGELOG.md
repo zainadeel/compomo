@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.2.1](https://github.com/zainadeel/compomo/compare/v8.2.0...v8.2.1) (2026-07-17)
+
+
+### Fixed
+
+* clean up accessibility review and select icons ([#334](https://github.com/zainadeel/compomo/issues/334)) ([9a6b523](https://github.com/zainadeel/compomo/commit/9a6b5233f060b2fe812fb049a46a3fe4e4e68c11))
+
 ## [8.2.0](https://github.com/zainadeel/compomo/compare/v8.1.0...v8.2.0) (2026-07-17)
 
 
