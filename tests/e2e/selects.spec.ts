@@ -48,6 +48,16 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(listbox).toBeVisible();
   await expect(listbox.getByRole('option')).toHaveCount(4);
   await expect(listbox.locator('.ds-choice-item__icon')).toHaveCount(4);
+  const selectedIcon = listbox.locator('[role="option"][aria-selected="true"] .ds-choice-item__icon');
+  const primaryColor = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-primary)';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(selectedIcon).toHaveCSS('color', primaryColor);
   await expect(listbox.getByRole('option', { name: 'Banana' })).toHaveAttribute('aria-disabled', 'true');
   await expect.poll(() =>
     listbox.evaluate(element =>
