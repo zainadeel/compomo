@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-select.js';
 
 const OPTIONS = [
@@ -68,24 +69,28 @@ export default meta;
 type Story = StoryObj;
 
 export const Playground: Story = {
-  render: args => html`
-    <div style="width:240px;">
-      <ds-select
-        .options=${OPTIONS}
-        value=${args['value']}
-        placeholder=${args['placeholder']}
-        size=${args['size']}
-        width=${args['width']}
-        icon=${args['icon']}
-        background=${args['background']}
-        ?searchable=${args['searchable']}
-        ?is-loading=${args['isLoading']}
-        .allowClear=${args['allowClear']}
-        ?is-inactive=${args['isInactive']}
-        aria-label="Fruit"
-      ></ds-select>
-    </div>
-  `,
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return html`
+      <div style="width:240px;">
+        <ds-select
+          .options=${OPTIONS}
+          value=${args['value']}
+          placeholder=${args['placeholder']}
+          size=${args['size']}
+          width=${args['width']}
+          icon=${args['icon']}
+          background=${args['background']}
+          ?searchable=${args['searchable']}
+          ?is-loading=${args['isLoading']}
+          .allowClear=${args['allowClear']}
+          ?is-inactive=${args['isInactive']}
+          aria-label="Fruit"
+          @dsChange=${(event: CustomEvent<string>) => updateArgs({ value: event.detail })}
+        ></ds-select>
+      </div>
+    `;
+  },
 };
 
 export const RichOptions: Story = {

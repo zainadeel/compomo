@@ -49,6 +49,8 @@ const ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
 };
 
 let selectId = 0;
+/** rAF retries while the conditionally rendered popup mounts. */
+const POSITION_RETRY_BUDGET = 8;
 
 @Component({
   tag: 'ds-select',
@@ -144,6 +146,7 @@ export class Select {
   private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
   private outsideHandler: ((event: MouseEvent) => void) | null = null;
   private repositionHandler: (() => void) | null = null;
+  private positionRetryRaf: number | null = null;
 
   componentWillLoad() {
     this.initialValue = this.value;
@@ -155,6 +158,7 @@ export class Select {
   }
 
   disconnectedCallback() {
+    this.cancelPositionRetry();
     this.unbindPopupListeners();
     if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);
   }
@@ -188,13 +192,12 @@ export class Select {
     this.dsOpenChange.emit(open);
     if (open) {
       this.bindPopupListeners();
-      this.positionReady = false;
-      requestAnimationFrame(() => {
-        this.updatePosition();
+      this.schedulePositionUpdate(() => {
         this.scrollActiveOptionIntoView();
         if (this.searchable) this.searchEl?.focus();
       });
     } else {
+      this.cancelPositionRetry();
       this.unbindPopupListeners();
       this.searchTerm = '';
       this.positionReady = false;
@@ -303,8 +306,48 @@ export class Select {
     }
   }
 
-  private updatePosition() {
-    if (!this.open || !this.triggerEl || !this.popupEl) return;
+  private cancelPositionRetry() {
+    if (this.positionRetryRaf !== null) {
+      cancelAnimationFrame(this.positionRetryRaf);
+      this.positionRetryRaf = null;
+    }
+  }
+
+  /** Retry until the conditionally rendered popup is mounted and measurable. */
+  private schedulePositionUpdate(onReady?: () => void) {
+    if (!this.open) return;
+
+    this.cancelPositionRetry();
+    this.positionReady = false;
+    let remaining = POSITION_RETRY_BUDGET;
+
+    const attempt = () => {
+      this.positionRetryRaf = null;
+      if (!this.open) return;
+
+      if (this.updatePosition()) {
+        onReady?.();
+        return;
+      }
+
+      if (remaining > 0) {
+        remaining -= 1;
+        this.positionRetryRaf = requestAnimationFrame(attempt);
+      }
+    };
+
+    this.positionRetryRaf = requestAnimationFrame(attempt);
+  }
+
+  /** @returns `true` when the current popup was found and positioned. */
+  private updatePosition(): boolean {
+    if (
+      !this.open ||
+      !this.triggerEl ||
+      !this.popupEl ||
+      !this.popupEl.isConnected ||
+      !this.el.contains(this.popupEl)
+    ) return false;
     const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
     this.popupEl.style.minWidth = `${this.triggerEl.offsetWidth + sectionPadding * 2}px`;
     this.position = computeAnchoredPopupPosition({
@@ -320,6 +363,7 @@ export class Select {
       viewportHeight: window.innerHeight,
     });
     this.positionReady = true;
+    return true;
   }
 
   private openPopup(focusVisible: boolean, edge?: 'first' | 'last') {
