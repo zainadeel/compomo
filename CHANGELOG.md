@@ -1,5 +1,20 @@
 # Changelog
 
+## [9.2.0](https://github.com/zainadeel/compomo/compare/v9.1.0...v9.2.0) (2026-07-19)
+
+
+### Added
+
+* add reusable agent conversation foundation ([beaf9af](https://github.com/zainadeel/compomo/commit/beaf9af70b476d1e71980e241dd0c041c2f19a6c))
+* refine reusable conversation tools ([d9608c2](https://github.com/zainadeel/compomo/commit/d9608c28de7afddf4b639441d3f0c3b6ee9ef91c))
+* refine reusable conversation tools ([a670b51](https://github.com/zainadeel/compomo/commit/a670b519cb3b79b9a62073f3926770e0d11a97b1))
+
+
+### Fixed
+
+* inherit text selection behavior ([07054f9](https://github.com/zainadeel/compomo/commit/07054f98237e5ff0403fd09d1ac36b7daf0625dc))
+* keep markdown package imports server safe ([e00295b](https://github.com/zainadeel/compomo/commit/e00295b33bd9b85988f3fcfea59a6524e8d730ae))
+
 ## [9.1.0](https://github.com/zainadeel/compomo/compare/v9.0.0...v9.1.0) (2026-07-17)
 
 
