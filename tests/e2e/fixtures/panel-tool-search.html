@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Panel tool search e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body style="margin: 0; font-size: 32px">
+    <ds-panel-tool-search
+      id="search"
+      aria-label="Search chats"
+      placeholder="Search chats"
+    ></ds-panel-tool-search>
+    <div id="filter-frame" style="width: 300px">
+      <ds-panel-tool-search
+        id="search-with-filter"
+        aria-label="Search messages"
+        placeholder="Search messages"
+        show-filter
+        filter-trigger-id="message-filter-trigger"
+        filter-controls="message-filter-menu"
+        filter-aria-label="Filter messages"
+      ></ds-panel-tool-search>
+    </div>
+    <script type="module" src="/panel-tool-search-setup.mjs"></script>
+  </body>
+</html>

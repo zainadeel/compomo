@@ -119,15 +119,21 @@ Package `exports`:
 
 ```jsonc
 {
-  ".":               { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
-  "./angular":       { "import": "./dist/framework/angular.js", "types": "./dist/framework/angular.d.ts" },
-  "./angular/*":     { "import": "./dist/angular/*.js", "types": "./dist/angular/*.d.ts" },
-  "./react":         { "import": "./dist/react/components.js", "types": "./dist/react/components.d.ts" },
-  "./agent":         "./dist/agent.json",
+  ".": { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
+  "./angular": {
+    "import": "./dist/framework/angular.js",
+    "types": "./dist/framework/angular.d.ts"
+  },
+  "./angular/*": { "import": "./dist/angular/*.js", "types": "./dist/angular/*.d.ts" },
+  "./react": { "import": "./dist/react/components.js", "types": "./dist/react/components.d.ts" },
+  "./agent": "./dist/agent.json",
   "./agent/patterns": "./dist/agent-patterns.json",
-  "./dist/components": { "import": "./dist/components/index.js", "types": "./dist/types/components.d.ts" },
-  "./shell":         { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
-  "./utils":         { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
+  "./dist/components": {
+    "import": "./dist/components/index.js",
+    "types": "./dist/types/components.d.ts"
+  },
+  "./shell": { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
+  "./utils": { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
 }
 ```
@@ -202,7 +208,7 @@ import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
 @Component({
   tag: 'ds-my-component',
   styleUrl: 'MyComponent.css',
-  scoped: true,               // always scoped: true (light DOM, tokens penetrate naturally)
+  scoped: true, // always scoped: true (light DOM, tokens penetrate naturally)
 })
 export class MyComponent {
   @Prop() label: string = '';
@@ -224,20 +230,20 @@ export class MyComponent {
 
 **Key Stencil patterns**
 
-| Pattern | How |
-|---|---|
-| Reactive prop | `@Prop() value: string = ''` |
-| Mutable prop (component can self-update) | `@Prop({ mutable: true }) open = false` |
-| Derived/computed | getter `private get resolved()` |
-| Internal state (triggers re-render) | `@State() private foo: T` |
-| Side-effect on prop change | `@Watch('propName') onPropChange(next, prev)` |
-| Custom event | `@Event() dsChange: EventEmitter<T>; this.dsChange.emit(val)` |
-| DOM element reference | `@Element() el: HTMLElement` |
-| Lifecycle | `componentDidLoad()`, `disconnectedCallback()` |
-| Cross-element keyboard | `@Listen('keydown')` |
-| Children API | `<slot />` (named: `<slot name="footer" />`) |
-| Polymorphic element | `const Tag = this.href ? 'a' : 'button'; return <Tag>…</Tag>` |
-| Icon | `<slot name="icon" />` — consumer provides any SVG or `ds-*` element |
+| Pattern                                  | How                                                                  |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| Reactive prop                            | `@Prop() value: string = ''`                                         |
+| Mutable prop (component can self-update) | `@Prop({ mutable: true }) open = false`                              |
+| Derived/computed                         | getter `private get resolved()`                                      |
+| Internal state (triggers re-render)      | `@State() private foo: T`                                            |
+| Side-effect on prop change               | `@Watch('propName') onPropChange(next, prev)`                        |
+| Custom event                             | `@Event() dsChange: EventEmitter<T>; this.dsChange.emit(val)`        |
+| DOM element reference                    | `@Element() el: HTMLElement`                                         |
+| Lifecycle                                | `componentDidLoad()`, `disconnectedCallback()`                       |
+| Cross-element keyboard                   | `@Listen('keydown')`                                                 |
+| Children API                             | `<slot />` (named: `<slot name="footer" />`)                         |
+| Polymorphic element                      | `const Tag = this.href ? 'a' : 'button'; return <Tag>…</Tag>`        |
+| Icon                                     | `<slot name="icon" />` — consumer provides any SVG or `ds-*` element |
 
 **Styling rules (non-negotiable)**
 
@@ -290,6 +296,27 @@ export class MyComponent {
 - **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
 - Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
+
+**PanelTools tool views**
+
+- `ds-panel-tools` owns the single visible header for Search, Agents, Messages, Stacks, Activity, and Help in both drawer and fullscreen presentations. It composes the canonical left-aligned `ds-panel-tool-header` internally. Never render that header, a page header, or another title bar inside a `*-view` slot.
+- Bind the `headers` object with one `PanelToolsHeaderConfig` per tool and replace its object identity whenever a tool changes title, navigation depth, menu state, or available actions.
+- A base tool view omits `showBack`. A deeper view sets `showBack`, updates the same header title, and handles `dsHeaderBack` by returning to its parent view without unmounting the tool.
+- Put right-side icon actions in the active tool's header config. PanelTools keeps the final action's control edge exactly 8px from the drawer edge in both base and detail headers. Handle `dsHeaderAction` in the tool owner; PanelTools owns placement, interaction styling, accessible button semantics, and menu-trigger anchoring.
+- When fullscreen and overflow coexist, author fullscreen first and Ellipses second so the overflow menu remains the rightmost header action in drawer and fullscreen presentations.
+- A menu opened by a right-side tool-header action uses `PANEL_TOOLS_HEADER_MENU_PLACEMENT`: bottom/end choice-cell alignment with a 12px side offset. The trigger is 8px inside the 48px header, so 12px places the popup 4px below the header edge, matching BarNav overflow. The shared section-inset offset aligns the final menu item's right edge with the trigger while the popup frame extends by its own padding. Do not substitute `popup-frame` or the Menu default 4px side offset. Apply the same placement to base-view and deeper-view menus.
+- Slotted tool content starts directly below the shared header and owns only its body, empty/loading/error states, scrolling, composer/footer, and product behavior.
+- Do not make a full-view slot hide, replace, or visually duplicate PanelTools chrome. Fullscreen changes presentation and available width; it does not create a second header hierarchy.
+- When a tool has search, place `ds-panel-tool-search` directly below the shared header. Its contract is a transparent 48px row with 8px outer padding around the standard 32px **md** search control; never default a tool search to sm or xs.
+- Panel-tool search keeps its 1px tertiary row divider unchanged while the input is focused. The divider belongs to the 48px container, not the 32px input, so it must not be promoted as an input focus boundary.
+- When a tool search also filters its results, enable its optional filter trigger and pair it with an application-owned `ds-menu`. The 32px search control, 16px vertical divider, and borderless 32px Filter action keep 8px gaps; the product owns filter labels, selected state, matching policy, and result-empty copy.
+- Panel-tool search is a shrinkable grid/flex item (`min-width: 0`) inside the fixed 300px drawer. A one-column grid that owns it must declare `grid-template-columns: minmax(0, 1fr)`; an implicit `auto` track can expand to the search row's intrinsic width and clip the filter action beneath the tool rail. Its filter trigger must remain fully inside the row with an 8px trailing inset; a long placeholder or inherited min-content width must never push the button under the tool rail. Verify the rendered SVG box, not only the trigger's accessible name or `icon` prop.
+- Conversation history uses the same md choice-row label/subtext padding recipe as Menu. The scroll container changes from Menu's 4px section inset to an 8px outer inset; do not also give conversation rows an 8px bespoke padding. Rows retain the shared 6px md row padding plus the 2px label/subtext inset. Conversation titles are body-medium emphasis—not title-small—and previews are body-small truncated to one line. A positive `unreadCount` renders one dot on the title's right-side action track rather than a visible counter; unread titles use primary foreground and read titles use secondary.
+- Put contextual row controls in `ds-conversation-list-item`'s `actions` slot so they remain sibling controls rather than invalid buttons nested inside the row button. A standard chat-options action is a borderless rounded md ButtonUnfilled with the Ellipses icon. The component overlays it at a stable 8px right inset and reveals it on row hover or focus-within; touch layouts keep it visible. The application owns menu items, open state, focus return, pinning, and other product consequences.
+- `ds-message-bubble` owns the default typography for plain incoming and outgoing conversation copy: body-medium regular (14px/20px). Applications compose raw message text inside the bubble and must not add a body-large override. Rich descendants such as `ds-markdown` may own their complete internal type hierarchy, but their ordinary paragraph baseline remains body-medium.
+- Tool drawer, fullscreen, and slotted product root surfaces remain transparent so AppShell's chrome wash shows through. Add a background only to a specifically designed child surface; do not give an entire tool view an implicit primary or secondary fill.
+- The PanelTools drawer uses `--dimension-panel-width-xs` (300px) on desktop and tablet. Do not introduce a wider desktop override; fullscreen remains viewport-wide.
+- Drawer open/close is a clipped reveal of the already-rendered fixed-width surface. Keep the header and tool content fully opaque throughout width motion; only skip paint once the drawer is fully closed and inert.
 
 **Select / SelectMulti**
 
@@ -433,18 +460,24 @@ export class MyComponent {
 
 **Control density recipes**
 
-Shared metrics for md / sm / xs interactive controls (Tag, PanelNav items, BarNav tabs, Menu items, Chip, …). Import `src/wc/utils/control-density.css` and apply `.ds-control--md|sm|xs` on the host (or set the same `--ds-control-*` vars from your size class).
+Shared metrics for md / sm / xs control-like rows (Tag, PanelNav items, BarNav tabs, Menu items, Chip, read-only header titles, …). Import `src/wc/utils/control-density.css` and apply `.ds-control--md|sm|xs` on the host or inner row. A row may use the recipe for consistent geometry even when it is presentational rather than interactive.
 
-| | **md** | **sm** | **xs** |
-|---|---|---|---|
-| Height | `--dimension-size-400` (32) | `--dimension-size-300` (24) | `--dimension-size-200` (16) |
-| Icon | `--dimension-iconography-md` (20) | `--dimension-iconography-sm` (16) | `--dimension-iconography-xs` (12) |
-| Text | `text-body-medium` (14/20) | `text-body-small` (12/16) | `text-caption` (9/12) |
-| Row padding-inline | `--dimension-space-075` (6) | `--dimension-space-050` (4) | `--dimension-space-025` (2) |
-| Label inset | `--dimension-space-025` (2) | `--dimension-space-025` (2) | `--dimension-space-025` (2) |
-| Icon↔label gap | `--dimension-space-050` (4) | `--dimension-space-025` (2) | `0` |
-| Default radius | `--dimension-radius-025` (2) | same | same |
-| Rounded | `--dimension-radius-half` | same | same |
+**Default to md.** New controls and control-like rows use md unless their component contract explicitly requires sm or xs. A dense location such as shell chrome, a panel tool, a toolbar, or a popup is not by itself a reason to downsize content. For md, the complete content recipe is a 32px control, `text-body-medium` (14px/20px), and a 20px md icon. Do not choose these three values independently.
+
+Applying `.ds-control--md|sm|xs` provides geometry variables only. A native input or button that uses internal `ds-text--*` utility classes must also import `src/wc/utils/typography.css`; otherwise it can silently inherit an application or Storybook font size. Prefer `ds-text` where native element constraints do not prevent it. Every new or changed control must have a rendered test for computed font size, line height, and icon box—not only a source assertion that the intended class and prop are present.
+
+The density utility is the single source of truth for a row's height, inline padding, icon box, icon↔label gap, label inset, and default radius. Consume the `--ds-control-*` variables instead of repeating their current TokoMo token values in component CSS. Keep structural container padding separate: for example, a panel header may own an 8px outer inset while its read-only title and adjacent buttons use the md row/label metrics. Support `label`, `icon-label`, `label-icon`, and `icon-label-icon` compositions from the same variables so changing one density recipe propagates to every composition.
+
+|                    | **md**                            | **sm**                            | **xs**                            |
+| ------------------ | --------------------------------- | --------------------------------- | --------------------------------- |
+| Height             | `--dimension-size-400` (32)       | `--dimension-size-300` (24)       | `--dimension-size-200` (16)       |
+| Icon               | `--dimension-iconography-md` (20) | `--dimension-iconography-sm` (16) | `--dimension-iconography-xs` (12) |
+| Text               | `text-body-medium` (14/20)        | `text-body-small` (12/16)         | `text-caption` (9/12)             |
+| Row padding-inline | `--dimension-space-075` (6)       | `--dimension-space-050` (4)       | `--dimension-space-025` (2)       |
+| Label inset        | `--dimension-space-025` (2)       | `--dimension-space-025` (2)       | `--dimension-space-025` (2)       |
+| Icon↔label gap     | `--dimension-space-050` (4)       | `--dimension-space-025` (2)       | `0`                               |
+| Default radius     | `--dimension-radius-025` (2)      | same                              | same                              |
+| Rounded            | `--dimension-radius-half`         | same                              | same                              |
 
 CSS vars set by the helper classes: `--ds-control-height`, `--ds-control-icon`, `--ds-control-padding-inline`, `--ds-control-label-inset`, `--ds-control-gap`, `--ds-control-radius`. Text line-height is not a density variable; the control's `size` maps internally to a complete `ds-text` variant via `CONTROL_TEXT_VARIANT`.
 
@@ -479,18 +512,19 @@ Shared layer recipe for interactive controls (buttons, Chip, PanelNav items, Men
 
 Paint order (bottom → top): element background → `::before` (selected/active, opt-in) → label/icon/badge content → `::after` (hover/press wash + optional inset border + inset focus).
 
-| Class / var | Role |
-|---|---|
-| `.ds-interaction-fill` | Stacking context + `::before`/`::after` shells |
-| `.ds-interaction-fill--selected` | Fills `::before` with `--ds-interaction-active` |
-| `.ds-interaction-fill--bordered` | Inset secondary stroke on `::after` (above selected / hover) |
-| `.ds-interaction-fill--on-faint\|medium\|bold\|strong\|translucent\|inverted\|media\|always-dark\|navigation` | Remap interaction tokens for the parent surface |
-| `--ds-interaction-hover\|pressed\|active` | Overridable token hooks |
-| `--ds-interaction-border-width\|color` | Inset stroke on `::after` (default off) |
-| `--ds-interaction-dot-ring` | Set under `--selected` to `--ds-interaction-active` — badge halo matches selected fill |
+| Class / var                                                                                                   | Role                                                                                   |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `.ds-interaction-fill`                                                                                        | Stacking context + `::before`/`::after` shells                                         |
+| `.ds-interaction-fill--selected`                                                                              | Fills `::before` with `--ds-interaction-active`                                        |
+| `.ds-interaction-fill--bordered`                                                                              | Inset secondary stroke on `::after` (above selected / hover)                           |
+| `.ds-interaction-fill--on-faint\|medium\|bold\|strong\|translucent\|inverted\|media\|always-dark\|navigation` | Remap interaction tokens for the parent surface                                        |
+| `--ds-interaction-hover\|pressed\|active`                                                                     | Overridable token hooks                                                                |
+| `--ds-interaction-border-width\|color`                                                                        | Inset stroke on `::after` (default off)                                                |
+| `--ds-interaction-dot-ring`                                                                                   | Set under `--selected` to `--ds-interaction-active` — badge halo matches selected fill |
 
 Rules:
 
+- Hover, pressed, and selected/active are three different states. Hover must use `--color-interaction-hover`, press must use `--color-interaction-pressed`, and only persistent product selection may use `--color-interaction-active*` through `.ds-interaction-fill--selected`. Never use an active/selected token to approximate hover or press.
 - Never swap the control’s own `background-color` for hover/press. Never use `color-mix(bg, fg)` (or `mix-blend-mode`) for control hover — paint contrast-aware `--color-interaction-*` tokens on `::after`.
 - Tokens are surface-aware: default app hover vs `--color-interaction-on-bold-background-hover`, etc. Map filled-button `contrast` → `--on-bold|strong|medium` (faint → default).
 - `::before` = selected/active only. Default primary/secondary surfaces use `--color-interaction-active-brand`; explicit faint uses `--color-interaction-active`; stronger/specialized surfaces use their matching active token. Omit `--selected` when chrome wants foreground-only selection (`activeFill={false}` on `ds-button-unfilled`, PanelNav/BarNav) — primary fg still applies.
@@ -500,15 +534,15 @@ Rules:
 - Fills use **positive** z-index so they sit above an opaque host background. Place label/icon with `.ds-interaction-fill__content` (or `position: relative; z-index: 2` on children) — never above `::after` (z-index: 3).
 - If a control uses `all: unset`, re-assert `position: relative; z-index: 0` afterward so the util’s stacking context still applies (see PanelNav items).
 - Omit `.ds-interaction-fill` when `isInactive`, or rely on `:disabled` (util skips hover/press on `:disabled`).
-- Persistent selected *product* state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only, has no select/toggle state, and is used only on primary surfaces.
-- **Inset borders on interaction targets:** paint the stroke on `::after` via `--ds-interaction-border-*` or `.ds-interaction-fill--bordered` so it stays visible **above** selected and hover washes. Do **not** put an inset `box-shadow` on the element itself (that layer sits under `::before` and gets covered when selected). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are *not* interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use the util stroke.
+- Persistent selected _product_ state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only, has no select/toggle state, and is used only on primary surfaces.
+- **Inset borders on interaction targets:** paint the stroke on `::after` via `--ds-interaction-border-*` or `.ds-interaction-fill--bordered` so it stays visible **above** selected and hover washes. Do **not** put an inset `box-shadow` on the element itself (that layer sits under `::before` and gets covered when selected). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are _not_ interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use the util stroke.
 
 **Control inactive**
 
 Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/control-inactive.css` and apply `.ds-control-inactive` when inactive.
 
-| Class | Role |
-|---|---|
+| Class                  | Role                                                           |
+| ---------------------- | -------------------------------------------------------------- |
 | `.ds-control-inactive` | `opacity: 0.25`, `pointer-events: none`, `cursor: not-allowed` |
 
 Rules:
@@ -562,7 +596,7 @@ Rules:
 ```ts
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../../../dist/components/ds-my-component.js';  // import from dist
+import '../../../../dist/components/ds-my-component.js'; // import from dist
 
 const meta: Meta = {
   title: 'Category/MyComponent',
@@ -590,17 +624,19 @@ For components with complex JS-only props (arrays, objects), use `lit/directives
 import { ref } from 'lit/directives/ref.js';
 
 render: () => html`
-  <ds-select ${ref(el => {
-    if (!el) return;
-    (el as HTMLDsSelectElement).options = options;
-  })}></ds-select>
-`
+  <ds-select
+    ${ref(el => {
+      if (!el) return;
+      (el as HTMLDsSelectElement).options = options;
+    })}
+  ></ds-select>
+`;
 ```
 
 For overlay components that need `?open=${true}` in stories (no `<script>` tags — they don't execute in Storybook):
 
 ```ts
-render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`
+render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`;
 ```
 
 ---
@@ -608,7 +644,7 @@ render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`
 ## Common gotchas
 
 **Fixed-height rows/controls: use `height` + `align-items: center`, not padding + line-height math.**
-`PanelNav`'s and `BarNav`'s items both size to 32px (`--dimension-size-400`) via a *fixed* `height` on a flex/grid container with `align-items: center`, `box-sizing: border-box`, plus **horizontal-only** padding. Do not calculate outer height by adding text leading + vertical padding + border. The 20px body-medium `ds-text` box centers inside 32px, leaving 6px geometric space per side. Symmetric real borders (border-box) or shared inset interaction strokes must not change the declared outer height.
+`PanelNav`'s and `BarNav`'s items both size to 32px (`--dimension-size-400`) via a _fixed_ `height` on a flex/grid container with `align-items: center`, `box-sizing: border-box`, plus **horizontal-only** padding. Do not calculate outer height by adding text leading + vertical padding + border. The 20px body-medium `ds-text` box centers inside 32px, leaving 6px geometric space per side. Symmetric real borders (border-box) or shared inset interaction strokes must not change the declared outer height.
 
 **`ds-text` is the layout box — don't wrap it just to style it.**
 Apply padding, flex/grid sizing, overflow width, z-index, and component classes directly to `<ds-text>`. Its inner native element exists only for semantics (`label`, headings, paragraph, IDs/`for`) and inherits the host's complete typography recipe. A neutral wrapper around only `ds-text` recreates the old split-box problem and is flagged by `local/prefer-direct-ds-text`. Keep a wrapper only when it owns real structure (mixed icon/dot/badge content, animation masks, semantic interaction targets).
@@ -617,7 +653,7 @@ Apply padding, flex/grid sizing, overflow width, z-index, and component classes 
 `.ds-interaction-fill` sets `z-index: 0` on the control so its `::before`/`::after` fills stay inside that stacking context. Paint order: selected (`::before` z-index 1) → content (z-index 2) → hover/press (`::after` z-index 3, topmost — covers badge dots). Place label/icon with `.ds-interaction-fill__content` or `position: relative; z-index: 2` on children — never above `::after`. For genuinely floating elements that must sit above unrelated siblings (tooltips, popovers), use the `--dimension-z-index-*` token scale (`base` 0, `raised` 50, `overlay` 250, `modal` 450, `floating` 500, `tooltip` 750) rather than a magic number — see `TooltipDataViz.css`.
 
 **Cross-component hover-sync: keep "external highlight" and "own hover" as separate state, don't collapse them into one prop.**
-When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong *only* to a genuine pointer/keyboard interaction on that specific element (a hover-fill affordance implying "you can click here", or a data-viz tooltip on bar/line) and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did *this* element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. Donut skips the tooltip entirely — the legend already shows label/value. See `ChartDonut`/`ChartLegend`.
+When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong _only_ to a genuine pointer/keyboard interaction on that specific element (a hover-fill affordance implying "you can click here", or a data-viz tooltip on bar/line) and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did _this_ element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. Donut skips the tooltip entirely — the legend already shows label/value. See `ChartDonut`/`ChartLegend`.
 
 **Paired chrome transition events must always settle, including cancellation.**
 AppShell consumers such as BarNav pause layout measurement between `dsChromeTransitionStart` and `dsChromeTransitionEnd`. A CSS `transitionend` listener alone is not a completion guarantee: framework hydration, responsive class churn, reduced motion, or a replacement transition can emit `transitioncancel` or no terminal event. Components that publish this lifecycle must handle both `transitionend` and `transitioncancel` and keep a watchdog derived from the element's computed transition duration/delay. Every emitted start must have exactly one matching end; otherwise sibling chrome can remain permanently hidden or inert. See `PanelNav.startCollapseAnimation` and the cancellation case in `app-shell-chrome.spec.ts`.
@@ -646,6 +682,7 @@ types: feat | fix | perf | revert | docs | style | refactor | test | build | ci 
 Subject must **start with a lowercase letter** (workflow enforced). Scope is optional — common ones here: component names (`Button`, `Modal`), `docs`, `build`, `storybook`.
 
 **Version-bumping types** (trigger a release PR via release-please):
+
 - `feat:` → minor bump
 - `fix:` / `perf:` → patch bump
 - `feat!:` or `BREAKING CHANGE:` footer → major bump (pre-1.0: bump minor instead)
@@ -664,6 +701,7 @@ See `release-please-config.json` for the type → changelog section mapping.
 Follow semver: breaking API changes require a **major** bump (`@ds-mo/ui` is post-1.0).
 
 Current version lives in two places — kept in sync by release-please:
+
 - `package.json` `"version"`
 - `.release-please-manifest.json` `"."`
 
@@ -708,15 +746,15 @@ Release-please will open a release PR at that exact version. Useful when only `c
 
 ## CI workflows
 
-| Workflow | Trigger | Purpose |
-|---|---|---|
-| `build.yml` | PR to main | `npm ci` + typecheck + build + verify `dist/` artifacts + verify `src/` not mutated |
-| `pr-title.yml` | PR opened/edited | Enforce conventional-commit PR titles (lowercase subject) |
-| `codeql.yml` | Push/PR to main, weekly Sunday | GitHub CodeQL JS/TS security scan |
-| `release-please.yml` | Push to main | Open release PR on feat/fix; publish to npm via OIDC when release PR merges |
-| `deploy-storybook.yml` | After successful npm publish (release-please), manual | Build + deploy Storybook to GitHub Pages |
-| `figma-code-connect.yml` | Push to `main` when `code-connect/` or figma config changes; manual | Publish Code Connect to Figma (`secrets.FIGMA_ACCESS_TOKEN`) |
-| `dependabot.yml` | Monthly | Bump github-actions + npm devDependencies |
+| Workflow                 | Trigger                                                             | Purpose                                                                             |
+| ------------------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `build.yml`              | PR to main                                                          | `npm ci` + typecheck + build + verify `dist/` artifacts + verify `src/` not mutated |
+| `pr-title.yml`           | PR opened/edited                                                    | Enforce conventional-commit PR titles (lowercase subject)                           |
+| `codeql.yml`             | Push/PR to main, weekly Sunday                                      | GitHub CodeQL JS/TS security scan                                                   |
+| `release-please.yml`     | Push to main                                                        | Open release PR on feat/fix; publish to npm via OIDC when release PR merges         |
+| `deploy-storybook.yml`   | After successful npm publish (release-please), manual               | Build + deploy Storybook to GitHub Pages                                            |
+| `figma-code-connect.yml` | Push to `main` when `code-connect/` or figma config changes; manual | Publish Code Connect to Figma (`secrets.FIGMA_ACCESS_TOKEN`)                        |
+| `dependabot.yml`         | Monthly                                                             | Bump github-actions + npm devDependencies                                           |
 
 ---
 
@@ -747,18 +785,19 @@ Release-please will open a release PR at that exact version. Useful when only `c
 
 Read `node_modules/@ds-mo/tokens/dist/tokens-index.json` — one file, no grep. It's a flat object keyed by CSS custom-property name with `{$type, $value}` entries, plus a top-level `categories` map that groups names by category:
 
-| Category key | What's in it |
-|---|---|
-| `colors.reference` | Raw palette (`--color-reference-*`) |
-| `colors.semantic` | Semantic surface/border/foreground colors (`--color-background-*`, `--color-border-*`, `--color-foreground-*`, etc.) |
-| `colors.data` | Data-viz palettes |
-| `dimensions` | Spacing, sizing, radius, stroke (`--dimension-*`) |
-| `typography` | Font size, weight, line-height (`--typography-*`) |
-| `effects` | Animation duration/easing, motion shorthands, blur, shadow, elevation (`--effect-*`) |
+| Category key       | What's in it                                                                                                         |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `colors.reference` | Raw palette (`--color-reference-*`)                                                                                  |
+| `colors.semantic`  | Semantic surface/border/foreground colors (`--color-background-*`, `--color-border-*`, `--color-foreground-*`, etc.) |
+| `colors.data`      | Data-viz palettes                                                                                                    |
+| `dimensions`       | Spacing, sizing, radius, stroke (`--dimension-*`)                                                                    |
+| `typography`       | Font size, weight, line-height (`--typography-*`)                                                                    |
+| `effects`          | Animation duration/easing, motion shorthands, blur, shadow, elevation (`--effect-*`)                                 |
 
 To find the right token: read the file, access the `categories.<key>` array for names, then look up the value. Single read, no grep.
 
 **Motion tokens quick reference:**
+
 - `--effect-motion-short-1` = 50 ms ease-in-out
 - `--effect-motion-short-2` = 100 ms ease-in-out
 - `--effect-motion-short-3` = 200 ms ease-in-out (default interaction speed)
@@ -770,23 +809,23 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 
 ## Quick reference: where things live
 
-| Need to change... | Edit this |
-|---|---|
-| A component's behavior | `src/wc/components/<Name>/<Name>.tsx` |
-| A component's styling | `src/wc/components/<Name>/<Name>.css` (tokens only — no hardcoded values) |
-| A component's Storybook stories | `src/wc/components/<Name>/<Name>.stories.ts` |
-| Shared CSS util demos (Storybook) | `src/wc/stories/Utility/*.stories.ts` |
-| Angular adapter output | Auto-generated: `src/angular/`; public barrel: `src/framework/angular.ts` |
-| React wrapper output | Auto-generated: `src/react/` — do not hand-edit |
-| Token-showcase stories | `src/stories/*.stories.tsx` |
-| Usage docs (MDX) | `src/docs/*.mdx` |
-| Component registry logic | `scripts/build-registry.mjs` |
-| Agent composition recipes | `agent/patterns/*/pattern.agent.json` |
-| BarNav overflow + SPA/HMR integration | `docs/framework-integration.md` |
-| BarNav overflow e2e tests | `tests/e2e/bar-nav-overflow.spec.ts` |
-| MCP server | `scripts/mcp-server.mjs`; packaged build: `scripts/build-mcp.mjs` |
-| Stencil build config | `stencil.config.ts` |
-| Release changelog sections | `release-please-config.json` |
-| PR title rules | `.github/workflows/pr-title.yml` |
-| Storybook deploy | `.github/workflows/deploy-storybook.yml` |
-| Figma Code Connect templates | `code-connect/published/*.figma.ts`, `figma.config.json` — see README |
+| Need to change...                     | Edit this                                                                 |
+| ------------------------------------- | ------------------------------------------------------------------------- |
+| A component's behavior                | `src/wc/components/<Name>/<Name>.tsx`                                     |
+| A component's styling                 | `src/wc/components/<Name>/<Name>.css` (tokens only — no hardcoded values) |
+| A component's Storybook stories       | `src/wc/components/<Name>/<Name>.stories.ts`                              |
+| Shared CSS util demos (Storybook)     | `src/wc/stories/Utility/*.stories.ts`                                     |
+| Angular adapter output                | Auto-generated: `src/angular/`; public barrel: `src/framework/angular.ts` |
+| React wrapper output                  | Auto-generated: `src/react/` — do not hand-edit                           |
+| Token-showcase stories                | `src/stories/*.stories.tsx`                                               |
+| Usage docs (MDX)                      | `src/docs/*.mdx`                                                          |
+| Component registry logic              | `scripts/build-registry.mjs`                                              |
+| Agent composition recipes             | `agent/patterns/*/pattern.agent.json`                                     |
+| BarNav overflow + SPA/HMR integration | `docs/framework-integration.md`                                           |
+| BarNav overflow e2e tests             | `tests/e2e/bar-nav-overflow.spec.ts`                                      |
+| MCP server                            | `scripts/mcp-server.mjs`; packaged build: `scripts/build-mcp.mjs`         |
+| Stencil build config                  | `stencil.config.ts`                                                       |
+| Release changelog sections            | `release-please-config.json`                                              |
+| PR title rules                        | `.github/workflows/pr-title.yml`                                          |
+| Storybook deploy                      | `.github/workflows/deploy-storybook.yml`                                  |
+| Figma Code Connect templates          | `code-connect/published/*.figma.ts`, `figma.config.json` — see README     |

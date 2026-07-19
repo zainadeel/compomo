@@ -1,3 +1,4 @@
+@import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/control-inactive.css';
 
@@ -111,13 +112,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--dimension-space-050);
-  height: var(--dimension-size-400);
-  min-width: var(--dimension-size-400);
-  padding: var(--dimension-space-075);
+  gap: var(--ds-control-gap);
+  height: var(--ds-control-height);
+  min-width: var(--ds-control-height);
+  padding: 0 var(--ds-control-padding-inline);
   box-sizing: border-box;
   border: none;
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--ds-control-radius);
   background-color: transparent;
   color: var(--_bar-nav-fg-secondary);
   cursor: pointer;
@@ -132,7 +133,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--ds-control-radius);
   background: transparent;
   pointer-events: none;
 }
@@ -153,12 +154,12 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--dimension-space-025);
+  padding: 0 var(--ds-control-label-inset);
   white-space: nowrap;
 }
 
 .bar-nav__tab-label--dot {
-  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
+  padding-right: calc(var(--ds-control-label-inset) + var(--ds-control-gap));
 }
 
 .bar-nav__tab-dot {
@@ -174,8 +175,8 @@
   justify-content: center;
   box-sizing: border-box;
   width: var(--dimension-space-100);
-  height: var(--dimension-size-400);
-  padding-block: var(--dimension-space-075);
+  height: var(--ds-control-height);
+  padding-block: var(--ds-control-padding-inline);
   flex-shrink: 0;
   pointer-events: none;
 }
@@ -190,7 +191,7 @@
 .bar-nav__tabs-pending {
   flex: 1;
   min-width: 0;
-  height: var(--dimension-size-400);
+  height: var(--ds-control-height);
   visibility: hidden;
   pointer-events: none;
 }
@@ -212,8 +213,8 @@
 ds-text.bar-nav__heading {
   display: inline-flex;
   align-items: center;
-  height: var(--dimension-size-400);
-  padding-inline: var(--dimension-space-100);
+  height: var(--ds-control-height);
+  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -47,6 +47,27 @@ bar.tabs = [
 
 const tools = document.getElementById('tools');
 tools.items = toolsItems;
+tools.headers = {
+  agents: {
+    title: 'Agents',
+    showBack: true,
+    backAriaLabel: 'Back to agent chats',
+    actions: [
+      {
+        id: 'fullscreen',
+        icon: 'PanelExpand',
+        ariaLabel: 'Enter fullscreen',
+      },
+      {
+        id: 'menu',
+        icon: 'Ellipses',
+        ariaLabel: 'Agents options',
+        triggerId: 'agents-options-trigger',
+        haspopup: 'menu',
+      },
+    ],
+  },
+};
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 document.documentElement.dataset.ready = 'true';

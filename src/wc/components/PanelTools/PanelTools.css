@@ -1,3 +1,5 @@
+@import '../../utils/control-density.css';
+
 :host {
   display: block;
   flex: 0 0 auto;
@@ -8,10 +10,9 @@
   --_panel-tools-rail-width: var(--dimension-size-600);
   --_panel-tools-drawer-width: var(
     --ds-shell-panel-tools-width,
-    var(--dimension-panel-width-sm)
+    var(--dimension-panel-width-xs)
   );
   --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
-  --_panel-tools-surface-bg: var(--color-background-secondary);
   /* Match panel-nav expand timing (medium-1); easing differs by direction. */
   --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 300ms);
 }
@@ -60,7 +61,7 @@
   border-left: var(--_panel-tools-border);
 }
 
-/* Fixed-width surface — AppShell supplies 400px desktop / 300px tablet tokens. */
+/* Fixed-width surface — AppShell supplies the standard 300px tools width. */
 .panel-tools__drawer-surface {
   display: flex;
   flex-direction: column;
@@ -68,75 +69,37 @@
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
-  background-color: var(--_panel-tools-surface-bg);
-}
-
-/* Shell-owned chrome (bg + wash) — drawer + rail are transparent frames. */
-:host-context(ds-app-shell:not([gradient-preset='none'])) .panel-tools__drawer-surface,
-:host-context(ds-app-shell:not([gradient-preset='none'])) .panel-tools__rail {
   background-color: transparent;
 }
 
-/* Aligns with ds-bar-nav row — same height, inset, border, and title token. */
-.panel-tools__header {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  height: var(--dimension-size-600);
-  padding: var(--dimension-space-100);
-  border-bottom: var(--_panel-tools-border);
-  color: var(--color-foreground-primary);
-  box-sizing: border-box;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/*
- * Drawer title — match rail action height (size-400) and BarNav heading inset.
- * Use `ds-text.` so scoped specificity beats Text's `:host(.ds-text--inline-box)`
- * (class-only `.panel-tools__title` ties and loses when Text CSS loads later).
- */
-ds-text.panel-tools__title {
-  display: inline-flex;
-  align-items: center;
-  height: var(--dimension-size-400);
-  padding-inline: var(--dimension-space-100);
-  white-space: nowrap;
+.panel-tools__full-views,
+.panel-tools__full-view {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/*
- * Fade title + slot body with the drawer slide (same dur/easing).
- * Header border stays opaque — only inner content opacity animates.
- */
-ds-text.panel-tools__title,
-.panel-tools__body {
-  opacity: 0;
-  transition: none;
+.panel-tools__full-view { height: 100%; }
+
+.panel-tools__full-view { display: none; }
+.panel-tools__full-view--active { display: block; }
+
+:host([presentation='fullscreen']) {
+  height: 100vh;
+  inset: 0;
+  position: fixed;
+  width: 100vw;
+  z-index: var(--dimension-z-index-modal);
 }
 
-:host(.panel-tools--ready) ds-text.panel-tools__title,
-:host(.panel-tools--ready) .panel-tools__body {
-  transition: opacity var(--_panel-tools-expand-dur)
-    var(--effect-animation-easing-ease-in-out, ease);
+:host([presentation='fullscreen']) .panel-tools__rail { display: none; }
+:host([presentation='fullscreen']) .panel-tools__drawer {
+  max-width: 100vw;
+  width: 100vw;
 }
-
-:host(.panel-tools--ready.panel-tools--motion-opening) ds-text.panel-tools__title,
-:host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__body {
-  transition: opacity var(--_panel-tools-expand-dur)
-    var(--effect-animation-easing-ease-out, ease-out);
-}
-
-:host(.panel-tools--ready.panel-tools--motion-closing) ds-text.panel-tools__title,
-:host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__body {
-  transition: opacity var(--_panel-tools-expand-dur)
-    var(--effect-animation-easing-ease-in, ease-in);
-}
-
-:host(.panel-tools--open) ds-text.panel-tools__title,
-:host(.panel-tools--open) .panel-tools__body {
-  opacity: 1;
+:host([presentation='fullscreen']) .panel-tools__drawer-surface {
+  background-color: transparent;
+  width: 100vw;
 }
 
 .panel-tools__body {
@@ -191,7 +154,7 @@ ds-text.panel-tools__title,
   height: 100%;
   min-height: 0;
   border-left: var(--_panel-tools-border);
-  background-color: var(--_panel-tools-surface-bg);
+  background-color: transparent;
 }
 
 .panel-tools__rail-header {
@@ -238,17 +201,13 @@ ds-text.panel-tools__title,
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: var(--dimension-size-400);
+  height: var(--ds-control-height);
   flex-shrink: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__drawer,
-  :host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__drawer,
-  :host(.panel-tools--ready.panel-tools--motion-opening) ds-text.panel-tools__title,
-  :host(.panel-tools--ready.panel-tools--motion-opening) .panel-tools__body,
-  :host(.panel-tools--ready.panel-tools--motion-closing) ds-text.panel-tools__title,
-  :host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__body {
+  :host(.panel-tools--ready.panel-tools--motion-closing) .panel-tools__drawer {
     transition: none;
   }
 }

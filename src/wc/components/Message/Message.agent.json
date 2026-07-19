@@ -1,0 +1,34 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-message",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-message",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+  "useWhen": [
+    "A transcript contains messages that need consistent incoming, outgoing, or system layout."
+  ],
+  "avoidWhen": ["Content is not an authored message in a conversation."],
+  "commonlyComposedWith": ["component:ds-message-bubble", "component:ds-message-scroller"],
+  "patterns": ["pattern:conversation"],
+  "accessibility": [
+    "Author and time metadata remain textual when they are necessary to interpret the transcript.",
+    "Delivery failure must be expressed in text rather than color alone."
+  ],
+  "states": [
+    "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+    "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label."
+  ],
+  "responsiveBehavior": [
+    "Outgoing and incoming rows adapt to available width while preserving their directional alignment."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+    }
+  ]
+}

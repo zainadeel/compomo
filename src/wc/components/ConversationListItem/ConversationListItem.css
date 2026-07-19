@@ -1,0 +1,114 @@
+@import '../../utils/choice-list.css';
+
+:host {
+  display: block;
+  box-sizing: border-box;
+}
+
+.conversation-list-item__row {
+  position: relative;
+}
+
+.conversation-list-item {
+  color: var(--color-foreground-primary);
+}
+
+.conversation-list-item--error {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--color-border-bold-negative);
+}
+
+.conversation-list-item__leading:empty,
+.conversation-list-item__trailing:empty {
+  display: none;
+}
+
+.conversation-list-item__leading,
+.conversation-list-item__trailing,
+.conversation-list-item__preview-row {
+  display: flex;
+  align-items: center;
+}
+
+.conversation-list-item__content {
+  min-width: 0;
+}
+
+.conversation-list-item__title-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.conversation-list-item__preview-row {
+  min-width: 0;
+  gap: var(--dimension-space-050);
+}
+
+ds-text.conversation-list-item__title,
+ds-text.conversation-list-item__preview {
+  display: block;
+  min-width: 0;
+}
+
+ds-text.conversation-list-item__title {
+  flex: 1;
+}
+
+.conversation-list-item__unread {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--dimension-size-400);
+  margin-inline-end: var(--dimension-space-025);
+}
+
+ds-text.conversation-list-item__preview.ds-choice-item__subtext {
+  -webkit-line-clamp: 1;
+}
+
+.conversation-list-item__actions {
+  position: absolute;
+  top: 50%;
+  right: var(--dimension-space-100);
+  z-index: var(--dimension-z-index-floating);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.conversation-list-item__row:hover .conversation-list-item__actions,
+.conversation-list-item__row:focus-within .conversation-list-item__actions {
+  opacity: 1;
+}
+
+:host(.conversation-list-item--has-actions)
+  .conversation-list-item__row:hover
+  .conversation-list-item__unread,
+:host(.conversation-list-item--has-actions)
+  .conversation-list-item__row:focus-within
+  .conversation-list-item__unread {
+  opacity: 0;
+}
+
+@media (hover: none) {
+  .conversation-list-item__actions {
+    opacity: 1;
+  }
+
+  :host(.conversation-list-item--has-actions) .conversation-list-item__title-row {
+    padding-inline-end: var(--dimension-size-400);
+  }
+}
+
+.conversation-list-item__time {
+  position: absolute;
+  width: var(--dimension-size-050);
+  height: var(--dimension-size-050);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

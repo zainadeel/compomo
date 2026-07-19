@@ -39,6 +39,7 @@ export type { ShellGradientLayout, ShellViewportDimensions } from './shell-gradi
 export type { MenuPlacement } from '../components/Menu/menu-placement';
 export {
   PANEL_NAV_USER_MENU_PLACEMENT,
+  PANEL_TOOLS_HEADER_MENU_PLACEMENT,
 } from '../components/Menu/menu-placement';
 export type {
   ShellGradientPickerOption,

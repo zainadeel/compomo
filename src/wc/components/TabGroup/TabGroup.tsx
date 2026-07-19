@@ -175,6 +175,7 @@ export class TabGroup {
                 class={{
                   tab: true,
                   'tab--selected': isSelected,
+                  'ds-control--sm': true,
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': !tab.isInactive,
                   'ds-interaction-fill--on-faint': bgClass === 'on-faint',

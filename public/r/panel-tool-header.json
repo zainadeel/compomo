@@ -1,0 +1,324 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "panel-tool-header",
+  "title": "PanelToolHeader",
+  "description": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-tool-header",
+    "source": "src/wc/components/PanelToolHeader/PanelToolHeader.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+      "useWhen": [
+        "PanelTools needs its one shared root or detail header.",
+        "A tool header needs a title with optional Back, menu, fullscreen, or other compact icon actions."
+      ],
+      "avoidWhen": [
+        "Rendering inside a PanelTools tool body; PanelTools already composes this canonical header above the body.",
+        "The header belongs to page content."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-button-unfilled"
+      ],
+      "accessibility": [
+        "Back and trailing icon actions require concise localized names.",
+        "The visible heading names the active panel or subview."
+      ],
+      "states": [
+        "The title remains left aligned whether the header has no actions, Back, one trailing action, or several trailing actions.",
+        "Leading and trailing control zones never shrink; only the title consumes and truncates within the remaining width, with a fixed 4px gap between zones.",
+        "Header chrome text is not selectable; actions remain keyboard focusable and interactive.",
+        "Adjacent trailing actions keep the shared 4px control gap in drawer and fullscreen presentations.",
+        "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
+        "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event."
+      ],
+      "responsiveBehavior": [
+        "The title truncates between optional leading navigation and trailing action zones."
+      ],
+      "references": [
+        {
+          "label": "Standalone examples",
+          "path": "src/wc/components/PanelToolHeader/PanelToolHeader.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "actions": {
+          "type": "PanelToolsHeaderAction[]",
+          "resolvedType": "PanelToolsHeaderAction[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Trailing application-owned icon actions. When present, these replace the legacy menu action."
+        },
+        "backAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "back-aria-label",
+          "default": "'Back'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the Back action."
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Visible heading for the active tool view."
+        },
+        "menuAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "menu-aria-label",
+          "default": "'More options'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the options-menu trigger."
+        },
+        "menuControls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "menu-controls",
+          "required": false,
+          "mutable": false,
+          "description": "Id of the menu controlled by the trigger."
+        },
+        "menuExpanded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "menu-expanded",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the controlled menu is open."
+        },
+        "menuTriggerId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "menu-trigger-id",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Stable id placed on the menu trigger host for ds-menu anchoring."
+        },
+        "showBack": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-back",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show the leading Back action."
+        },
+        "showMenu": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-menu",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the trailing options-menu trigger."
+        }
+      },
+      "events": [
+        {
+          "name": "dsAction",
+          "detail": "{ id: string; originalEvent: MouseEvent }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsBack",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsMenuToggle",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "focusMenuTrigger",
+          "signature": "focusMenuTrigger() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "actions": {
+        "type": "PanelToolsHeaderAction[]",
+        "resolvedType": "PanelToolsHeaderAction[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Trailing application-owned icon actions. When present, these replace the legacy menu action."
+      },
+      "backAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "back-aria-label",
+        "default": "'Back'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the Back action."
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Visible heading for the active tool view."
+      },
+      "menuAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "menu-aria-label",
+        "default": "'More options'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the options-menu trigger."
+      },
+      "menuControls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "menu-controls",
+        "required": false,
+        "mutable": false,
+        "description": "Id of the menu controlled by the trigger."
+      },
+      "menuExpanded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "menu-expanded",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the controlled menu is open."
+      },
+      "menuTriggerId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "menu-trigger-id",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Stable id placed on the menu trigger host for ds-menu anchoring."
+      },
+      "showBack": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-back",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show the leading Back action."
+      },
+      "showMenu": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-menu",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the trailing options-menu trigger."
+      }
+    },
+    "events": [
+      {
+        "name": "dsAction",
+        "detail": "{ id: string; originalEvent: MouseEvent }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsBack",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsMenuToggle",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "focusMenuTrigger",
+        "signature": "focusMenuTrigger() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-panel-tool-header",
+      "react": "DsPanelToolHeader",
+      "angular": "DsPanelToolHeader"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-panel-tool-header.js';",
+        "example": "<ds-panel-tool-header></ds-panel-tool-header>"
+      },
+      "react": {
+        "import": "import { DsPanelToolHeader } from '@ds-mo/ui/react';",
+        "example": "<DsPanelToolHeader />"
+      },
+      "angular": {
+        "import": "import { DsPanelToolHeader } from '@ds-mo/ui/angular/ds-panel-tool-header';",
+        "example": "<ds-panel-tool-header></ds-panel-tool-header>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: actions.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/PanelToolHeader/PanelToolHeader.css",
+      "content": "@import '../../utils/control-density.css';\n\n:host {\n  display: block;\n  flex: 0 0 auto;\n  box-sizing: border-box;\n}\n\n.panel-tool-header {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  height: var(--dimension-size-600);\n  padding: var(--dimension-space-100);\n  box-sizing: border-box;\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  color: var(--color-foreground-primary);\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.panel-tool-header__leading,\n.panel-tool-header__trailing {\n  display: flex;\n  align-items: center;\n  min-width: 0;\n}\n\n.panel-tool-header__leading:empty,\n.panel-tool-header__trailing:empty {\n  display: none;\n}\n\n.panel-tool-header__leading {\n  flex: 0 0 auto;\n}\n\n.panel-tool-header__trailing {\n  flex: 0 0 auto;\n  gap: var(--dimension-space-050);\n  justify-content: flex-end;\n}\n\nds-text.panel-tool-header__heading {\n  display: inline-flex;\n  flex: 1 1 0;\n  align-items: center;\n  width: auto;\n  min-width: 0;\n  height: var(--ds-control-height);\n  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));\n  box-sizing: border-box;\n  text-align: left;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/PanelToolHeader/PanelToolHeader.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\nimport type { PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';\n\n@Component({\n  tag: 'ds-panel-tool-header',\n  styleUrl: 'PanelToolHeader.css',\n  scoped: true,\n})\nexport class PanelToolHeader {\n  @Element() el!: HTMLElement;\n\n  /** Visible heading for the active tool view. */\n  @Prop() heading: string = '';\n  /** Show the leading Back action. */\n  @Prop() showBack: boolean = false;\n  /** Accessible name for the Back action. */\n  @Prop() backAriaLabel: string = 'Back';\n  /** Show the trailing options-menu trigger. */\n  @Prop() showMenu: boolean = true;\n  /** Accessible name for the options-menu trigger. */\n  @Prop() menuAriaLabel: string = 'More options';\n  /** Stable id placed on the menu trigger host for ds-menu anchoring. */\n  @Prop() menuTriggerId: string = '';\n  /** Id of the menu controlled by the trigger. */\n  @Prop() menuControls: string | undefined;\n  /** Whether the controlled menu is open. */\n  @Prop() menuExpanded: boolean = false;\n  /** Trailing application-owned icon actions. When present, these replace the legacy menu action. */\n  @Prop() actions: PanelToolsHeaderAction[] = [];\n\n  @Event() dsBack!: EventEmitter<MouseEvent>;\n  @Event() dsMenuToggle!: EventEmitter<MouseEvent>;\n  @Event() dsAction!: EventEmitter<{ id: string; originalEvent: MouseEvent }>;\n\n  @Method()\n  async focusMenuTrigger() {\n    const trigger = this.el.querySelector(\n      'ds-button-unfilled.panel-tool-header__menu, ds-button-unfilled[data-header-action-id=\"menu\"]',\n    ) as\n      | (HTMLElement & { setFocus?: () => Promise<void> })\n      | null;\n    await trigger?.setFocus?.();\n  }\n\n  render() {\n    const authoredActions = this.actions.length > 0;\n    const actions: PanelToolsHeaderAction[] = authoredActions\n      ? this.actions\n      : this.showMenu\n        ? [{\n            id: 'menu',\n            icon: 'Ellipses',\n            ariaLabel: this.menuAriaLabel,\n            triggerId: this.menuTriggerId,\n            controls: this.menuControls,\n            expanded: this.menuExpanded,\n            haspopup: 'menu',\n          }]\n        : [];\n\n    return (\n      <Host>\n        <header class=\"panel-tool-header\">\n          <div class=\"panel-tool-header__leading\">\n            {this.showBack ? (\n              <ds-button-unfilled\n                class=\"panel-tool-header__back\"\n                variant=\"icon\"\n                icon=\"ChevronLeft\"\n                size=\"md\"\n                aria-label={this.backAriaLabel}\n                activeFill={false}\n                hasBorder={false}\n                onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}\n              />\n            ) : null}\n          </div>\n          <ds-text\n            class=\"panel-tool-header__heading ds-control--md\"\n            as=\"h2\"\n            variant=\"text-body-medium\"\n            emphasis\n            color=\"primary\"\n            lineTruncation={1}\n          >\n            {this.heading}\n          </ds-text>\n          <div class=\"panel-tool-header__trailing\">\n            {actions.map(action => (\n              <ds-button-unfilled\n                key={action.id}\n                id={action.triggerId || undefined}\n                data-header-action-id={action.id}\n                class={{\n                  'panel-tool-header__action': true,\n                  'panel-tool-header__menu': action.id === 'menu',\n                }}\n                variant=\"icon\"\n                icon={action.icon}\n                size=\"md\"\n                aria-label={action.ariaLabel}\n                haspopup={action.haspopup}\n                controls={action.controls}\n                expanded={action.expanded}\n                pressed={action.pressed}\n                isInactive={action.isInactive}\n                activeFill={false}\n                hasBorder={false}\n                onDsClick={(event: CustomEvent<MouseEvent>) => {\n                  if (!authoredActions && action.id === 'menu') this.dsMenuToggle.emit(event.detail);\n                  this.dsAction.emit({ id: action.id, originalEvent: event.detail });\n                }}\n              />\n            ))}\n          </div>\n        </header>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

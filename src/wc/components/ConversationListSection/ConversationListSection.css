@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+}
+
+:host(:not(:first-child)) {
+  /* Match the 16px separation between PanelNav groups. */
+  margin-top: var(--dimension-space-200);
+}
+
+.conversation-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+}
+
+ds-text.conversation-list-section__heading {
+  display: block;
+  padding: var(--dimension-space-050) var(--dimension-space-100);
+}
+
+.conversation-list-section__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+}

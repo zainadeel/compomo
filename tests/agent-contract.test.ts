@@ -21,12 +21,12 @@ const migration = JSON.parse(fs.readFileSync(
 test('prototype agent metadata is schema-valid and references source components', () => {
   const result = validateAgentContract();
 
-  assert.equal(result.sourceComponents, 41);
+  assert.equal(result.sourceComponents, 57);
   assert.equal(
     result.componentDocuments,
     result.sourceComponents - migration.missingAgentMetadata.length,
   );
-  assert.equal(result.patternDocuments, 2);
+  assert.equal(result.patternDocuments, 4);
 });
 
 test('menu trigger pattern provides executable recipes for every framework', () => {

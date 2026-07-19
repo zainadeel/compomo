@@ -4,7 +4,12 @@
  * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
+export { DsAgentActivity } from './ds-agent-activity';
+export { DsAgentResponse } from './ds-agent-response';
+export { DsAgentSourceList } from './ds-agent-source-list';
+export { DsAgentToolCall } from './ds-agent-tool-call';
 export { DsAppShell } from './ds-app-shell';
+export { DsAttachmentList } from './ds-attachment-list';
 export { DsBadge } from './ds-badge';
 export { DsBanner } from './ds-banner';
 export { DsBarNav } from './ds-bar-nav';
@@ -20,16 +25,27 @@ export { DsChartLegend } from './ds-chart-legend';
 export { DsChartLine } from './ds-chart-line';
 export { DsCheckbox } from './ds-checkbox';
 export { DsChip } from './ds-chip';
+export { DsCodeBlock } from './ds-code-block';
+export { DsConversationList } from './ds-conversation-list';
+export { DsConversationListItem } from './ds-conversation-list-item';
+export { DsConversationListSection } from './ds-conversation-list-section';
 export { DsDivider } from './ds-divider';
 export { DsEmptyState } from './ds-empty-state';
 export { DsField } from './ds-field';
 export { DsIcon } from './ds-icon';
 export { DsInput } from './ds-input';
 export { DsLoader } from './ds-loader';
+export { DsMarkdown } from './ds-markdown';
 export { DsMenu } from './ds-menu';
+export { DsMessage } from './ds-message';
+export { DsMessageBubble } from './ds-message-bubble';
+export { DsMessageComposer } from './ds-message-composer';
+export { DsMessageScroller } from './ds-message-scroller';
 export { DsModal } from './ds-modal';
 export { DsPanelNav } from './ds-panel-nav';
 export { DsPanelSubNav } from './ds-panel-sub-nav';
+export { DsPanelToolHeader } from './ds-panel-tool-header';
+export { DsPanelToolSearch } from './ds-panel-tool-search';
 export { DsPanelTools } from './ds-panel-tools';
 export { DsRadio } from './ds-radio';
 export { DsSelect } from './ds-select';

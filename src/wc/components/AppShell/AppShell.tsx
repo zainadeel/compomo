@@ -1,4 +1,4 @@
-import { Component, Prop, Element, Watch, Listen, h, Host } from '@stencil/core';
+import { Component, Prop, Element, State, Watch, Listen, h, Host } from '@stencil/core';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
 import {
   isEditableShortcutTarget,
@@ -57,6 +57,7 @@ export class AppShell {
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
   @Element() el!: HTMLElement;
+  @State() private toolsFullscreen = false;
 
   private resizeObserver: ResizeObserver | null = null;
   private readonly panelNavTransition = new ChromeTransitionDepth();
@@ -83,6 +84,13 @@ export class AppShell {
       this.cachePanelWidthTokens();
       this.scheduleChromeSync();
     });
+    const tools = this.el.querySelector('ds-panel-tools');
+    this.toolsFullscreen = tools?.getAttribute('presentation') === 'fullscreen';
+  }
+
+  @Listen('dsPresentationChange')
+  handleToolsPresentation(event: CustomEvent<{ presentation?: string }>) {
+    this.toolsFullscreen = event.detail?.presentation === 'fullscreen';
   }
 
   disconnectedCallback() {
@@ -339,23 +347,24 @@ export class AppShell {
       'app-shell': true,
       'app-shell--gradient': chromeActive,
       [`app-shell--${this.navStyle}`]: true,
+      'app-shell--tools-fullscreen': this.toolsFullscreen,
     };
 
     return (
       <Host class={shellCls}>
         <div class="app-shell__row">
           <div class="app-shell__chrome" aria-hidden="true" />
-          <div class="app-shell__panel">
+          <div class="app-shell__panel" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
             <slot name="panel" />
           </div>
           <div class="app-shell__main">
-            <div class="app-shell__bar">
+            <div class="app-shell__bar" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
               <slot name="bar" />
             </div>
             <div class="app-shell__tools">
               <slot name="tools" />
             </div>
-            <div class="app-shell__content">
+            <div class="app-shell__content" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
               <slot />
             </div>
           </div>

@@ -1,0 +1,39 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-panel-tool-header",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-panel-tool-header",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+  "useWhen": [
+    "PanelTools needs its one shared root or detail header.",
+    "A tool header needs a title with optional Back, menu, fullscreen, or other compact icon actions."
+  ],
+  "avoidWhen": [
+    "Rendering inside a PanelTools tool body; PanelTools already composes this canonical header above the body.",
+    "The header belongs to page content."
+  ],
+  "commonlyComposedWith": ["component:ds-button-unfilled"],
+  "accessibility": [
+    "Back and trailing icon actions require concise localized names.",
+    "The visible heading names the active panel or subview."
+  ],
+  "states": [
+    "The title remains left aligned whether the header has no actions, Back, one trailing action, or several trailing actions.",
+    "Leading and trailing control zones never shrink; only the title consumes and truncates within the remaining width, with a fixed 4px gap between zones.",
+    "Header chrome text is not selectable; actions remain keyboard focusable and interactive.",
+    "Adjacent trailing actions keep the shared 4px control gap in drawer and fullscreen presentations.",
+    "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
+    "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event."
+  ],
+  "responsiveBehavior": ["The title truncates between optional leading navigation and trailing action zones."],
+  "references": [
+    {
+      "label": "Standalone examples",
+      "path": "src/wc/components/PanelToolHeader/PanelToolHeader.stories.ts"
+    }
+  ]
+}

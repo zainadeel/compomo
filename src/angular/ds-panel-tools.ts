@@ -10,20 +10,23 @@ import { defineCustomElement as defineDsPanelTools } from '@ds-mo/ui/components/
 
 @ProxyCmp({
   defineCustomElementFn: defineDsPanelTools,
-  inputs: ['activeTool', 'items', 'itemsJson', 'open', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
-  methods: ['activateTool', 'closeDrawer']
+  inputs: ['activeTool', 'headers', 'headersJson', 'items', 'itemsJson', 'open', 'presentation', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
+  methods: ['activateTool', 'closeDrawer', 'focusHeaderAction']
 })
 @Component({
   selector: 'ds-panel-tools',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeTool', 'items', 'itemsJson', 'open', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
-  outputs: ['dsToolChange', 'dsChromeTransitionStart', 'dsChromeTransitionEnd'],
+  inputs: ['activeTool', 'headers', 'headersJson', 'items', 'itemsJson', 'open', 'presentation', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
+  outputs: ['dsToolChange', 'dsPresentationChange', 'dsHeaderBack', 'dsHeaderAction', 'dsChromeTransitionStart', 'dsChromeTransitionEnd'],
 })
 export class DsPanelTools {
   protected el: HTMLDsPanelToolsElement;
   @Output() dsToolChange = new EventEmitter<DsPanelToolsCustomEvent<{ id: IDsPanelToolsPanelToolsToolId; selected: boolean; }>>();
+  @Output() dsPresentationChange = new EventEmitter<DsPanelToolsCustomEvent<{ presentation: 'drawer' | 'fullscreen'; }>>();
+  @Output() dsHeaderBack = new EventEmitter<DsPanelToolsCustomEvent<{ tool: IDsPanelToolsPanelToolsToolId; }>>();
+  @Output() dsHeaderAction = new EventEmitter<DsPanelToolsCustomEvent<{ tool: IDsPanelToolsPanelToolsToolId; id: string; }>>();
   @Output() dsChromeTransitionStart = new EventEmitter<DsPanelToolsCustomEvent<IDsPanelToolsChromeTransitionDetail>>();
   @Output() dsChromeTransitionEnd = new EventEmitter<DsPanelToolsCustomEvent<IDsPanelToolsChromeTransitionDetail>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
@@ -42,6 +45,18 @@ export declare interface DsPanelTools extends Components.DsPanelTools {
    * Emitted when a rail button is toggled. Detail = { id, selected }.
    */
   dsToolChange: EventEmitter<DsPanelToolsCustomEvent<{ id: IDsPanelToolsPanelToolsToolId; selected: boolean; }>>;
+  /**
+   * Emitted when fullscreen changes, including Escape-initiated exits.
+   */
+  dsPresentationChange: EventEmitter<DsPanelToolsCustomEvent<{ presentation: 'drawer' | 'fullscreen'; }>>;
+  /**
+   * Requests navigation to the active tool's parent view.
+   */
+  dsHeaderBack: EventEmitter<DsPanelToolsCustomEvent<{ tool: IDsPanelToolsPanelToolsToolId; }>>;
+  /**
+   * Requests one application-owned action from the active tool header.
+   */
+  dsHeaderAction: EventEmitter<DsPanelToolsCustomEvent<{ tool: IDsPanelToolsPanelToolsToolId; id: string; }>>;
   /**
    * Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion.
    */

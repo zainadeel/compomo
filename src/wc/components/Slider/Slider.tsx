@@ -43,7 +43,7 @@ export class Slider {
   @Prop() showValue: boolean = true;
   @Prop() size: SliderSize = 'md';
   @Prop() orientation: SliderOrientation = 'horizontal';
-  /** Keep the complete thumb inside the rail bounds, or center it on the endpoints. */
+  /** Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints. */
   @Prop() thumbAlignment: SliderThumbAlignment = 'edge';
   @Prop({ reflect: true }) name: string | undefined;
   @Prop({ reflect: true }) form: string | undefined;
@@ -356,7 +356,10 @@ export class Slider {
     const thumbSize = thumb
       ? this.orientation === 'horizontal' ? thumb.offsetWidth : thumb.offsetHeight
       : 0;
-    const inset = this.thumbAlignment === 'edge' ? thumbSize / 2 : 0;
+    // Both alignment modes keep the complete thumb inside the control. Edge
+    // alignment lets the rail span the control while center alignment insets
+    // the rail to the same thumb-center travel.
+    const inset = thumbSize / 2;
 
     if (this.orientation === 'vertical') {
       const travel = Math.max(1, rect.height - inset * 2);

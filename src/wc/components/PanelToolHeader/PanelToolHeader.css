@@ -1,0 +1,56 @@
+@import '../../utils/control-density.css';
+
+:host {
+  display: block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.panel-tool-header {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  height: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+  box-sizing: border-box;
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  color: var(--color-foreground-primary);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.panel-tool-header__leading,
+.panel-tool-header__trailing {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.panel-tool-header__leading:empty,
+.panel-tool-header__trailing:empty {
+  display: none;
+}
+
+.panel-tool-header__leading {
+  flex: 0 0 auto;
+}
+
+.panel-tool-header__trailing {
+  flex: 0 0 auto;
+  gap: var(--dimension-space-050);
+  justify-content: flex-end;
+}
+
+ds-text.panel-tool-header__heading {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  width: auto;
+  min-width: 0;
+  height: var(--ds-control-height);
+  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
+  box-sizing: border-box;
+  text-align: left;
+  -webkit-user-select: none;
+  user-select: none;
+}

@@ -1,0 +1,236 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message",
+  "title": "Message",
+  "description": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/message",
+    "source": "src/wc/components/Message/Message.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+      "useWhen": [
+        "A transcript contains messages that need consistent incoming, outgoing, or system layout."
+      ],
+      "avoidWhen": [
+        "Content is not an authored message in a conversation."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message-bubble",
+        "component:ds-message-scroller"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Author and time metadata remain textual when they are necessary to interpret the transcript.",
+        "Delivery failure must be expressed in text rather than color alone."
+      ],
+      "states": [
+        "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+        "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label."
+      ],
+      "responsiveBehavior": [
+        "Outgoing and incoming rows adapt to available width while preserving their directional alignment."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "author": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "author",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "deliveryState": {
+          "type": "MessageDeliveryState | undefined",
+          "resolvedType": "\"delivered\" | \"failed\" | \"read\" | \"sending\" | \"sent\" | undefined",
+          "attribute": "delivery-state",
+          "required": false,
+          "mutable": false
+        },
+        "direction": {
+          "type": "MessageDirection",
+          "resolvedType": "\"incoming\" | \"outgoing\" | \"system\"",
+          "attribute": "direction",
+          "default": "'incoming'",
+          "required": false,
+          "mutable": false
+        },
+        "groupPosition": {
+          "type": "MessageGroupPosition",
+          "resolvedType": "\"first\" | \"last\" | \"middle\" | \"single\"",
+          "attribute": "group-position",
+          "default": "'single'",
+          "required": false,
+          "mutable": false
+        },
+        "messageId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "message-id",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "scrollAnchor": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "scroll-anchor",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "streaming": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "streaming",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "timestamp": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "timestamp",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "ISO timestamp."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "author": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "author",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "deliveryState": {
+        "type": "MessageDeliveryState | undefined",
+        "resolvedType": "\"delivered\" | \"failed\" | \"read\" | \"sending\" | \"sent\" | undefined",
+        "attribute": "delivery-state",
+        "required": false,
+        "mutable": false
+      },
+      "direction": {
+        "type": "MessageDirection",
+        "resolvedType": "\"incoming\" | \"outgoing\" | \"system\"",
+        "attribute": "direction",
+        "default": "'incoming'",
+        "required": false,
+        "mutable": false
+      },
+      "groupPosition": {
+        "type": "MessageGroupPosition",
+        "resolvedType": "\"first\" | \"last\" | \"middle\" | \"single\"",
+        "attribute": "group-position",
+        "default": "'single'",
+        "required": false,
+        "mutable": false
+      },
+      "messageId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "message-id",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "scrollAnchor": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "scroll-anchor",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "streaming": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "streaming",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "timestamp": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "timestamp",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "ISO timestamp."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-message",
+      "react": "DsMessage",
+      "angular": "DsMessage"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-message.js';",
+        "example": "<ds-message></ds-message>"
+      },
+      "react": {
+        "import": "import { DsMessage } from '@ds-mo/ui/react';",
+        "example": "<DsMessage />"
+      },
+      "angular": {
+        "import": "import { DsMessage } from '@ds-mo/ui/angular/ds-message';",
+        "example": "<ds-message></ds-message>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Message/Message.css",
+      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n  content-visibility: auto;\n  contain-intrinsic-size: auto var(--dimension-size-800);\n}\n\n:host(.message-host--group-middle),\n:host(.message-host--group-last) {\n  margin-block-start: calc(-1 * var(--dimension-space-100));\n}\n\n.message {\n  display: grid;\n  grid-template-columns: auto minmax(0, 1fr) auto;\n  align-items: end;\n  gap: var(--dimension-space-075);\n  width: 100%;\n  box-sizing: border-box;\n}\n\n.message--outgoing {\n  grid-template-columns: auto minmax(0, 1fr);\n}\n\n.message--outgoing .message__avatar {\n  display: none;\n}\n\n.message__avatar:empty,\n.message__header:empty,\n.message__footer:empty,\n.message__actions:empty {\n  display: none;\n}\n\n.message__body {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-025);\n}\n\n.message--outgoing .message__body {\n  align-items: flex-end;\n}\n\n.message--outgoing .message__header {\n  display: none;\n}\n\n.message--system .message__body {\n  align-items: center;\n}\n\n.message__header,\n.message__footer,\n.message__actions {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n}\n\n.message__content {\n  width: 100%;\n  min-width: 0;\n}\n\n.message--outgoing .message__content {\n  display: flex;\n  justify-content: flex-end;\n}\n\n.message__footer time {\n  display: inline-flex;\n}\n\n.message--group-middle .message__header,\n.message--group-last .message__header {\n  display: none;\n}\n\n.message--group-first .message__footer,\n.message--group-middle .message__footer {\n  display: none;\n}\n\n.message--incoming.message--group-first .message__content ::slotted(ds-message-bubble) {\n  --ds-message-bubble-radius-end-start: var(--dimension-radius-025);\n}\n\n.message--incoming.message--group-middle .message__content ::slotted(ds-message-bubble) {\n  --ds-message-bubble-radius-start-start: var(--dimension-radius-025);\n  --ds-message-bubble-radius-end-start: var(--dimension-radius-025);\n}\n\n.message--incoming.message--group-last .message__content ::slotted(ds-message-bubble) {\n  --ds-message-bubble-radius-start-start: var(--dimension-radius-025);\n}\n\n.message--outgoing.message--group-first .message__content ::slotted(ds-message-bubble) {\n  --ds-message-bubble-radius-end-end: var(--dimension-radius-025);\n}\n\n.message--outgoing.message--group-middle .message__content ::slotted(ds-message-bubble) {\n  --ds-message-bubble-radius-start-end: var(--dimension-radius-025);\n  --ds-message-bubble-radius-end-end: var(--dimension-radius-025);\n}\n\n.message--outgoing.message--group-last .message__content ::slotted(ds-message-bubble) {\n  --ds-message-bubble-radius-start-end: var(--dimension-radius-025);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Message/Message.tsx",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\nimport type {\n  MessageDeliveryState,\n  MessageDirection,\n  MessageGroupPosition,\n} from '../conversation-types';\n\nconst DELIVERY_LABELS: Record<MessageDeliveryState, string> = {\n  sending: 'Sending',\n  sent: 'Sent',\n  delivered: 'Delivered',\n  read: 'Read',\n  failed: 'Failed to send',\n};\n\n@Component({\n  tag: 'ds-message',\n  styleUrl: 'Message.css',\n  scoped: true,\n})\nexport class Message {\n  @Prop({ reflect: true }) messageId: string = '';\n  @Prop({ reflect: true }) direction: MessageDirection = 'incoming';\n  @Prop() groupPosition: MessageGroupPosition = 'single';\n  @Prop() author: string = '';\n  /** ISO timestamp. */\n  @Prop() timestamp: string = '';\n  @Prop() deliveryState: MessageDeliveryState | undefined;\n  @Prop() streaming: boolean = false;\n  @Prop({ reflect: true }) scrollAnchor: boolean = false;\n\n  private formattedTimestamp(): string {\n    if (!this.timestamp) return '';\n    const parsed = Date.parse(this.timestamp);\n    if (Number.isNaN(parsed)) return this.timestamp;\n    return new Intl.DateTimeFormat(undefined, {\n      hour: 'numeric',\n      minute: '2-digit',\n    }).format(new Date(parsed));\n  }\n\n  render() {\n    const delivery = this.deliveryState ? DELIVERY_LABELS[this.deliveryState] : '';\n    const formattedTimestamp = this.formattedTimestamp();\n    return (\n      <Host\n        class={`message-host--group-${this.groupPosition}`}\n        data-message-id={this.messageId || undefined}\n        data-scroll-anchor={this.scrollAnchor ? 'true' : undefined}\n        aria-busy={this.streaming ? 'true' : undefined}\n      >\n        <article\n          class={{\n            message: true,\n            [`message--${this.direction}`]: true,\n            [`message--group-${this.groupPosition}`]: true,\n          }}\n          aria-label={this.author ? `Message from ${this.author}` : 'Message'}\n        >\n          <div class=\"message__avatar\">\n            <slot name=\"avatar\" />\n          </div>\n          <div class=\"message__body\">\n            <div class=\"message__header\">\n              <slot name=\"header\" />\n              {this.author ? (\n                <ds-text as=\"span\" variant=\"text-caption\" emphasis color=\"secondary\">\n                  {this.author}\n                </ds-text>\n              ) : null}\n            </div>\n            <div class=\"message__content\">\n              <slot />\n            </div>\n            <div class=\"message__footer\">\n              <slot name=\"footer\" />\n              {delivery ? (\n                <ds-text\n                  as=\"span\"\n                  variant=\"text-caption\"\n                  color={this.deliveryState === 'failed' ? 'negative' : 'secondary'}\n                >\n                  {delivery}\n                </ds-text>\n              ) : null}\n              {formattedTimestamp ? (\n                <time dateTime={this.timestamp}>\n                  <ds-text as=\"span\" variant=\"text-caption\" color=\"secondary\">\n                    {formattedTimestamp}\n                  </ds-text>\n                </time>\n              ) : null}\n            </div>\n          </div>\n          <div class=\"message__actions\">\n            <slot name=\"actions\" />\n          </div>\n        </article>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

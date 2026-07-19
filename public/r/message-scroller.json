@@ -1,0 +1,216 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message-scroller",
+  "title": "MessageScroller",
+  "description": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-scroller",
+    "source": "src/wc/components/MessageScroller/MessageScroller.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+      "useWhen": [
+        "Messages can append or stream and transcript position must remain respectful of reader intent."
+      ],
+      "avoidWhen": [
+        "Content is static prose without message navigation or live updates."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message",
+        "component:ds-message-composer"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Give each transcript a concise localized label.",
+        "New content is exposed through log semantics without stealing focus.",
+        "The scroll-to-latest control remains keyboard accessible when follow behavior is released."
+      ],
+      "states": [
+        "Selection and transcript interaction release automatic following.",
+        "Opening saved history, message jumps, and prepended history preserve deliberate position.",
+        "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message."
+      ],
+      "responsiveBehavior": [
+        "Transcript width is readable while the scroll region fills available height."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "autoFollow": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "auto-follow",
+          "default": "true",
+          "required": false,
+          "mutable": false
+        },
+        "busy": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "busy",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "defaultPosition": {
+          "type": "MessageScrollerPosition",
+          "resolvedType": "\"end\" | \"last-anchor\" | \"start\"",
+          "attribute": "default-position",
+          "default": "'last-anchor'",
+          "required": false,
+          "mutable": false
+        },
+        "messagesLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "messages-label",
+          "default": "'Messages'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsReachStart",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "scrollToEnd",
+          "signature": "scrollToEnd() => Promise<void>"
+        },
+        {
+          "name": "scrollToMessage",
+          "signature": "scrollToMessage(id: string) => Promise<boolean>"
+        },
+        {
+          "name": "scrollToStart",
+          "signature": "scrollToStart() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "autoFollow": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "auto-follow",
+        "default": "true",
+        "required": false,
+        "mutable": false
+      },
+      "busy": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "busy",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "defaultPosition": {
+        "type": "MessageScrollerPosition",
+        "resolvedType": "\"end\" | \"last-anchor\" | \"start\"",
+        "attribute": "default-position",
+        "default": "'last-anchor'",
+        "required": false,
+        "mutable": false
+      },
+      "messagesLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "messages-label",
+        "default": "'Messages'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsReachStart",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "scrollToEnd",
+        "signature": "scrollToEnd() => Promise<void>"
+      },
+      {
+        "name": "scrollToMessage",
+        "signature": "scrollToMessage(id: string) => Promise<boolean>"
+      },
+      {
+        "name": "scrollToStart",
+        "signature": "scrollToStart() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-message-scroller",
+      "react": "DsMessageScroller",
+      "angular": "DsMessageScroller"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-message-scroller.js';",
+        "example": "<ds-message-scroller></ds-message-scroller>"
+      },
+      "react": {
+        "import": "import { DsMessageScroller } from '@ds-mo/ui/react';",
+        "example": "<DsMessageScroller />"
+      },
+      "angular": {
+        "import": "import { DsMessageScroller } from '@ds-mo/ui/angular/ds-message-scroller';",
+        "example": "<ds-message-scroller></ds-message-scroller>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/MessageScroller/MessageScroller.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  height: 100%;\n  min-height: 0;\n  box-sizing: border-box;\n}\n\n.message-scroller {\n  position: relative;\n  width: 100%;\n  height: 100%;\n  min-height: 0;\n}\n\n.message-scroller__viewport {\n  width: 100%;\n  height: 100%;\n  min-height: 0;\n  overflow: auto;\n  overscroll-behavior: contain;\n  box-sizing: border-box;\n}\n\n.message-scroller__viewport:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);\n  outline-offset: calc(-1 * var(--dimension-stroke-width-025));\n}\n\n.message-scroller__content {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-150);\n  width: 100%;\n  max-width: var(--dimension-panel-width-2xl);\n  min-height: 100%;\n  margin-inline: auto;\n  padding: var(--dimension-space-200);\n  box-sizing: border-box;\n}\n\n.message-scroller__control {\n  position: absolute;\n  right: var(--dimension-space-100);\n  bottom: var(--dimension-space-100);\n  z-index: var(--dimension-z-index-floating);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MessageScroller/MessageScroller.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  State,\n} from '@stencil/core';\nimport type { MessageScrollerPosition } from '../conversation-types';\n\nconst LIVE_EDGE_THRESHOLD = 24;\n\n@Component({\n  tag: 'ds-message-scroller',\n  styleUrl: 'MessageScroller.css',\n  scoped: true,\n})\nexport class MessageScroller {\n  @Element() el!: HTMLElement;\n\n  @Prop() busy: boolean = false;\n  @Prop() autoFollow: boolean = true;\n  @Prop() defaultPosition: MessageScrollerPosition = 'last-anchor';\n  @Prop() messagesLabel: string = 'Messages';\n\n  @Event() dsReachStart!: EventEmitter<void>;\n\n  @State() private showScrollToLatest = false;\n\n  private viewport?: HTMLElement;\n  private content?: HTMLElement;\n  private resizeObserver?: ResizeObserver;\n  private mutationObserver?: MutationObserver;\n  private following = true;\n  private atStart = false;\n  private programmatic = false;\n  private previousScrollHeight = 0;\n\n  componentDidLoad() {\n    this.connectObservers();\n    requestAnimationFrame(() => this.applyDefaultPosition());\n    document.addEventListener('selectionchange', this.handleSelectionChange);\n  }\n\n  disconnectedCallback() {\n    this.resizeObserver?.disconnect();\n    this.mutationObserver?.disconnect();\n    document.removeEventListener('selectionchange', this.handleSelectionChange);\n  }\n\n  @Method()\n  async scrollToMessage(id: string): Promise<boolean> {\n    const message = Array.from(\n      this.el.querySelectorAll<HTMLElement & { messageId?: string }>('ds-message')\n    ).find(item => item.messageId === id || item.getAttribute('message-id') === id);\n    if (!message) return false;\n    this.following = false;\n    this.showScrollToLatest = true;\n    message.scrollIntoView({ block: 'start', behavior: this.motionBehavior() });\n    return true;\n  }\n\n  @Method()\n  async scrollToStart() {\n    this.scrollTo(0);\n    this.following = false;\n    this.showScrollToLatest = Boolean(\n      this.viewport && this.viewport.scrollHeight > this.viewport.clientHeight\n    );\n  }\n\n  @Method()\n  async scrollToEnd() {\n    this.following = true;\n    this.showScrollToLatest = false;\n    this.scrollTo(this.viewport?.scrollHeight ?? 0);\n  }\n\n  private motionBehavior(): ScrollBehavior {\n    return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';\n  }\n\n  private scrollTo(top: number) {\n    if (!this.viewport) return;\n    this.programmatic = true;\n    this.viewport.scrollTo({ top, behavior: this.motionBehavior() });\n    requestAnimationFrame(() => {\n      this.programmatic = false;\n    });\n  }\n\n  private connectObservers() {\n    if (!this.viewport || !this.content) return;\n    this.previousScrollHeight = this.viewport.scrollHeight;\n    this.resizeObserver = new ResizeObserver(() => this.handleContentGrowth());\n    this.resizeObserver.observe(this.content);\n    this.mutationObserver = new MutationObserver(() => this.handleContentGrowth());\n    this.mutationObserver.observe(this.content, {\n      childList: true,\n      subtree: true,\n      characterData: true,\n    });\n  }\n\n  private handleContentGrowth() {\n    if (!this.viewport) return;\n    const nextHeight = this.viewport.scrollHeight;\n    const delta = nextHeight - this.previousScrollHeight;\n    if (delta > 0 && this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD && !this.following) {\n      this.viewport.scrollTop += delta;\n    } else if (this.autoFollow && this.following) {\n      this.viewport.scrollTop = nextHeight;\n    }\n    this.previousScrollHeight = nextHeight;\n    this.showScrollToLatest = !this.following && !this.isAtLiveEdge();\n  }\n\n  private applyDefaultPosition() {\n    if (!this.viewport) return;\n    if (this.defaultPosition === 'start') {\n      this.viewport.scrollTop = 0;\n      this.following = false;\n      this.showScrollToLatest = this.viewport.scrollHeight > this.viewport.clientHeight;\n      return;\n    }\n    if (this.defaultPosition === 'last-anchor') {\n      const anchors = this.el.querySelectorAll<HTMLElement>('ds-message[scroll-anchor]');\n      const last = anchors.item(anchors.length - 1);\n      if (last) {\n        last.scrollIntoView({ block: 'start' });\n        this.following = this.isAtLiveEdge();\n        this.showScrollToLatest = !this.following;\n        return;\n      }\n    }\n    this.viewport.scrollTop = this.viewport.scrollHeight;\n    this.following = true;\n    this.showScrollToLatest = false;\n  }\n\n  private isAtLiveEdge(): boolean {\n    if (!this.viewport) return true;\n    return (\n      this.viewport.scrollHeight - this.viewport.clientHeight - this.viewport.scrollTop <=\n      LIVE_EDGE_THRESHOLD\n    );\n  }\n\n  private handleScroll = () => {\n    if (!this.viewport || this.programmatic) return;\n    this.following = this.isAtLiveEdge();\n    this.showScrollToLatest = !this.following;\n    const nextAtStart = this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD;\n    if (nextAtStart && !this.atStart) this.dsReachStart.emit();\n    this.atStart = nextAtStart;\n  };\n\n  private releaseFollow = () => {\n    this.following = false;\n    this.showScrollToLatest = !this.isAtLiveEdge();\n  };\n\n  private handleSelectionChange = () => {\n    const selection = document.getSelection();\n    if (\n      selection &&\n      !selection.isCollapsed &&\n      selection.anchorNode &&\n      this.el.contains(selection.anchorNode)\n    ) {\n      this.following = false;\n      this.showScrollToLatest = !this.isAtLiveEdge();\n    }\n  };\n\n  render() {\n    return (\n      <Host>\n        <div class=\"message-scroller\">\n          <div\n            class=\"message-scroller__viewport\"\n            ref={element => {\n              this.viewport = element;\n            }}\n            role=\"region\"\n            aria-label={this.messagesLabel}\n            tabIndex={0}\n            onScroll={this.handleScroll}\n            onPointerDown={this.releaseFollow}\n            onKeyDown={(event: KeyboardEvent) => {\n              if (['ArrowUp', 'PageUp', 'Home'].includes(event.key)) this.releaseFollow();\n            }}\n          >\n            <div\n              class=\"message-scroller__content\"\n              ref={element => {\n                this.content = element;\n              }}\n              role=\"log\"\n              aria-live=\"polite\"\n              aria-relevant=\"additions\"\n              aria-busy={this.busy ? 'true' : undefined}\n            >\n              <slot />\n            </div>\n          </div>\n          {this.showScrollToLatest ? (\n            <div class=\"message-scroller__control\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                icon=\"ChevronDown\"\n                size=\"md\"\n                rounded\n                aria-label=\"Scroll to latest message\"\n                onDsClick={() => void this.scrollToEnd()}\n              />\n            </div>\n          ) : null}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

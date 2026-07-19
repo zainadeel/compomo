@@ -1,0 +1,387 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "panel-tool-search",
+  "title": "PanelToolSearch",
+  "description": "Transparent search row for the top of a PanelTools product view, with a fixed 48px allocation around the standard md search control and an optional filter-menu trigger.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-tool-search",
+    "source": "src/wc/components/PanelToolSearch/PanelToolSearch.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Transparent search row for the top of a PanelTools product view, with a fixed 48px allocation around the standard md search control and an optional filter-menu trigger.",
+      "useWhen": [
+        "A PanelTools base view filters or searches the tool's own content.",
+        "Several tool products need the same search-row geometry directly below the shared PanelTools header.",
+        "The product needs a compact filter menu next to search while keeping its filter choices and matching policy application-owned."
+      ],
+      "avoidWhen": [
+        "The search belongs inside a Select or SelectMulti popup; use that component's searchable behavior.",
+        "A form needs a labelled standalone field; compose ds-input inside ds-field instead."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-panel-tools",
+        "component:ds-conversation-list",
+        "component:ds-input"
+      ],
+      "accessibility": [
+        "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
+        "The standard search clear action restores focus and emits both the empty query and dsClear.",
+        "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection."
+      ],
+      "states": [
+        "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px, and a 20px md search icon.",
+        "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
+        "The row and control surface remain transparent so the AppShell chrome wash is visible behind them.",
+        "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
+        "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
+      ],
+      "responsiveBehavior": [
+        "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange to receive the current string query and dsClear when the clear action is used.",
+          "Listen for dsFilterToggle and pair the trigger with an externally controlled ds-menu; product-specific filter labels and filtering remain outside this component."
+        ],
+        "react": [
+          "Use DsPanelToolSearch, bind value for controlled state, and handle onDsChange.",
+          "Bind the optional filter trigger state and connect onDsFilterToggle to a controlled DsMenu."
+        ],
+        "angular": [
+          "Import DsPanelToolSearch and bind value as a property; this search composition is not a form value accessor.",
+          "Bind showFilter, filterExpanded, and filterActive, then connect dsFilterToggle to a product-owned ds-menu."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/PanelToolSearch/PanelToolSearch.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "aria-label",
+          "default": "'Search'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the search field."
+        },
+        "controls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "controls",
+          "required": false,
+          "mutable": false,
+          "description": "Optional ID of the results region filtered by this search."
+        },
+        "filterActive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "filter-active",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Promote the trigger foreground when one or more filters are applied."
+        },
+        "filterAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "filter-aria-label",
+          "default": "'Filter'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the filter-menu trigger."
+        },
+        "filterControls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "filter-controls",
+          "required": false,
+          "mutable": false,
+          "description": "Id of the menu controlled by the filter trigger."
+        },
+        "filterExpanded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "filter-expanded",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the controlled filter menu is open."
+        },
+        "filterTriggerId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "filter-trigger-id",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Stable id placed on the filter trigger for ds-menu anchoring."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Prevents search interaction while keeping the row visible."
+        },
+        "placeholder": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "placeholder",
+          "default": "'Search'",
+          "required": false,
+          "mutable": false,
+          "description": "Search guidance shown while the query is empty."
+        },
+        "showFilter": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-filter",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show the optional trailing filter-menu trigger."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true,
+          "description": "Current search query."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsClear",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsFilterToggle",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "focusFilterTrigger",
+          "signature": "focusFilterTrigger() => Promise<void>"
+        },
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "aria-label",
+        "default": "'Search'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the search field."
+      },
+      "controls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "controls",
+        "required": false,
+        "mutable": false,
+        "description": "Optional ID of the results region filtered by this search."
+      },
+      "filterActive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "filter-active",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Promote the trigger foreground when one or more filters are applied."
+      },
+      "filterAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "filter-aria-label",
+        "default": "'Filter'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the filter-menu trigger."
+      },
+      "filterControls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "filter-controls",
+        "required": false,
+        "mutable": false,
+        "description": "Id of the menu controlled by the filter trigger."
+      },
+      "filterExpanded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "filter-expanded",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the controlled filter menu is open."
+      },
+      "filterTriggerId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "filter-trigger-id",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Stable id placed on the filter trigger for ds-menu anchoring."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Prevents search interaction while keeping the row visible."
+      },
+      "placeholder": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "placeholder",
+        "default": "'Search'",
+        "required": false,
+        "mutable": false,
+        "description": "Search guidance shown while the query is empty."
+      },
+      "showFilter": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-filter",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show the optional trailing filter-menu trigger."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true,
+        "description": "Current search query."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsClear",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsFilterToggle",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "focusFilterTrigger",
+        "signature": "focusFilterTrigger() => Promise<void>"
+      },
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-panel-tool-search",
+      "react": "DsPanelToolSearch",
+      "angular": "DsPanelToolSearch"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-panel-tool-search.js';",
+        "example": "<ds-panel-tool-search></ds-panel-tool-search>"
+      },
+      "react": {
+        "import": "import { DsPanelToolSearch } from '@ds-mo/ui/react';",
+        "example": "<DsPanelToolSearch />"
+      },
+      "angular": {
+        "import": "import { DsPanelToolSearch } from '@ds-mo/ui/angular/ds-panel-tool-search';",
+        "example": "<ds-panel-tool-search></ds-panel-tool-search>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "divider",
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/PanelToolSearch/PanelToolSearch.css",
+      "content": "@import '../../utils/control-density.css';\n@import '../../utils/search-control.css';\n@import '../../utils/typography.css';\n\n:host {\n  display: block;\n  flex: 0 0 var(--dimension-size-600);\n  width: 100%;\n  min-width: 0;\n  height: var(--dimension-size-600);\n  box-sizing: border-box;\n  background: transparent;\n}\n\n.panel-tool-search {\n  position: relative;\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  width: 100%;\n  height: 100%;\n  padding: var(--dimension-space-100);\n  box-sizing: border-box;\n  background: transparent;\n}\n\n.panel-tool-search::after {\n  content: '';\n  position: absolute;\n  inset: auto 0 0;\n  height: var(--dimension-stroke-width-012);\n  background-color: var(--color-border-tertiary);\n  pointer-events: none;\n}\n\n.select-search {\n  flex: 1 1 auto;\n  width: auto;\n  min-width: 0;\n  height: var(--dimension-size-400);\n  padding: 0;\n}\n\n.select-search::after {\n  display: none;\n}\n\n.panel-tool-search__filter-group {\n  display: flex;\n  flex: 0 0 auto;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n\n.panel-tool-search__divider,\n.panel-tool-search__filter {\n  flex: 0 0 auto;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/PanelToolSearch/PanelToolSearch.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n} from '@stencil/core';\nimport { ChoiceSearch } from '../../utils/choice-list-parts';\n\n@Component({\n  tag: 'ds-panel-tool-search',\n  styleUrl: 'PanelToolSearch.css',\n  scoped: true,\n})\nexport class PanelToolSearch {\n  @Element() el!: HTMLElement;\n\n  /** Current search query. */\n  @Prop({ mutable: true }) value: string = '';\n  /** Search guidance shown while the query is empty. */\n  @Prop() placeholder: string = 'Search';\n  /** Accessible name for the search field. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string = 'Search';\n  /** Optional ID of the results region filtered by this search. */\n  @Prop() controls: string | undefined;\n  /** Prevents search interaction while keeping the row visible. */\n  @Prop() isInactive: boolean = false;\n  /** Show the optional trailing filter-menu trigger. */\n  @Prop() showFilter: boolean = false;\n  /** Accessible name for the filter-menu trigger. */\n  @Prop() filterAriaLabel: string = 'Filter';\n  /** Stable id placed on the filter trigger for ds-menu anchoring. */\n  @Prop() filterTriggerId: string = '';\n  /** Id of the menu controlled by the filter trigger. */\n  @Prop() filterControls: string | undefined;\n  /** Whether the controlled filter menu is open. */\n  @Prop() filterExpanded: boolean = false;\n  /** Promote the trigger foreground when one or more filters are applied. */\n  @Prop() filterActive: boolean = false;\n\n  @Event() dsChange!: EventEmitter<string>;\n  @Event() dsClear!: EventEmitter<void>;\n  @Event() dsFilterToggle!: EventEmitter<MouseEvent>;\n\n  componentDidRender() {\n    const input = this.el.querySelector('input');\n    if (input && input.value !== this.value) input.value = this.value;\n  }\n\n  @Method()\n  async setFocus() {\n    this.el.querySelector('input')?.focus();\n  }\n\n  @Method()\n  async focusFilterTrigger() {\n    const trigger = this.el.querySelector('ds-button-unfilled.panel-tool-search__filter') as\n      | (HTMLElement & { setFocus?: () => Promise<void> })\n      | null;\n    await trigger?.setFocus?.();\n  }\n\n  private handleChange = (value: string) => {\n    this.value = value;\n    this.dsChange.emit(value);\n  };\n\n  render() {\n    return (\n      <Host>\n        <div class=\"panel-tool-search\">\n          <ChoiceSearch\n            value={this.value}\n            placeholder={this.placeholder}\n            ariaLabel={this.ariaLabel}\n            controls={this.controls}\n            disabled={this.isInactive}\n            inputRef={() => undefined}\n            clearLabel=\"Clear\"\n            onValueChange={this.handleChange}\n            onClear={() => this.dsClear.emit()}\n            onKeyDown={() => undefined}\n          />\n          {this.showFilter ? (\n            <div class=\"panel-tool-search__filter-group\">\n              <ds-divider\n                class=\"panel-tool-search__divider\"\n                orientation=\"vertical\"\n                length=\"var(--dimension-size-200)\"\n              />\n              <ds-button-unfilled\n                id={this.filterTriggerId || undefined}\n                class=\"panel-tool-search__filter\"\n                variant=\"icon\"\n                icon=\"Filters\"\n                size=\"md\"\n                aria-label={this.filterAriaLabel}\n                haspopup=\"menu\"\n                controls={this.filterControls}\n                expanded={this.filterExpanded}\n                isActive={this.filterActive}\n                isInactive={this.isInactive}\n                activeFill={false}\n                hasBorder={false}\n                onDsChange={(event: CustomEvent<boolean>) => {\n                  event.stopPropagation();\n                }}\n                onDsClick={(event: CustomEvent<MouseEvent>) => {\n                  event.stopPropagation();\n                  this.dsFilterToggle.emit(event.detail);\n                }}\n              />\n            </div>\n          ) : null}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

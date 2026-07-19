@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-panel-tool-search",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-panel-tool-search",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Transparent search row for the top of a PanelTools product view, with a fixed 48px allocation around the standard md search control and an optional filter-menu trigger.",
+  "useWhen": [
+    "A PanelTools base view filters or searches the tool's own content.",
+    "Several tool products need the same search-row geometry directly below the shared PanelTools header.",
+    "The product needs a compact filter menu next to search while keeping its filter choices and matching policy application-owned."
+  ],
+  "avoidWhen": [
+    "The search belongs inside a Select or SelectMulti popup; use that component's searchable behavior.",
+    "A form needs a labelled standalone field; compose ds-input inside ds-field instead."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-panel-tools",
+    "component:ds-conversation-list",
+    "component:ds-input"
+  ],
+  "accessibility": [
+    "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
+    "The standard search clear action restores focus and emits both the empty query and dsClear.",
+    "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection."
+  ],
+  "states": [
+    "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px, and a 20px md search icon.",
+    "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
+    "The row and control surface remain transparent so the AppShell chrome wash is visible behind them.",
+    "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
+    "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
+  ],
+  "responsiveBehavior": [
+    "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsChange to receive the current string query and dsClear when the clear action is used.",
+      "Listen for dsFilterToggle and pair the trigger with an externally controlled ds-menu; product-specific filter labels and filtering remain outside this component."
+    ],
+    "react": [
+      "Use DsPanelToolSearch, bind value for controlled state, and handle onDsChange.",
+      "Bind the optional filter trigger state and connect onDsFilterToggle to a controlled DsMenu."
+    ],
+    "angular": [
+      "Import DsPanelToolSearch and bind value as a property; this search composition is not a form value accessor.",
+      "Bind showFilter, filterExpanded, and filterActive, then connect dsFilterToggle to a product-owned ds-menu."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/PanelToolSearch/PanelToolSearch.stories.ts"
+    }
+  ]
+}

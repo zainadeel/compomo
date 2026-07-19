@@ -1,0 +1,259 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message-composer",
+  "title": "MessageComposer",
+  "description": "Auto-growing conversation textarea with submit, stop, error, and extensible attachment or channel-tool regions.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-composer",
+    "source": "src/wc/components/MessageComposer/MessageComposer.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Auto-growing conversation textarea with submit, stop, error, and extensible attachment or channel-tool regions.",
+      "useWhen": [
+        "A conversation accepts multi-line text and needs Enter-to-submit with a streaming stop action."
+      ],
+      "avoidWhen": [
+        "The text is a conventional form field submitted with unrelated fields."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message-scroller",
+        "component:ds-button-filled"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Always provide a localized textarea label and submit or stop action names.",
+        "Shift plus Enter inserts a newline while Enter submits non-empty content.",
+        "Streaming and error states remain perceivable without relying on icon shape alone."
+      ],
+      "states": [
+        "The owner controls draft value and transport state; the composer emits intent without performing transport.",
+        "The channel owner selects submitIntent when brand is not appropriate; agent experiences may opt into ai while person-to-person messaging keeps the brand default."
+      ],
+      "responsiveBehavior": [
+        "The field grows to a bounded height and then scrolls internally."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Message'",
+          "required": false,
+          "mutable": false
+        },
+        "placeholder": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "placeholder",
+          "default": "'Write a message'",
+          "required": false,
+          "mutable": false
+        },
+        "status": {
+          "type": "MessageComposerStatus",
+          "resolvedType": "\"error\" | \"ready\" | \"streaming\" | \"submitted\"",
+          "attribute": "status",
+          "default": "'ready'",
+          "required": false,
+          "mutable": false
+        },
+        "submitIntent": {
+          "type": "ButtonFilledIntent",
+          "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"guide\" | \"negative\" | \"neutral\" | \"positive\" | \"walkthrough\" | \"warning\"",
+          "attribute": "submit-intent",
+          "default": "'brand'",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true
+        }
+      },
+      "events": [
+        {
+          "name": "dsInput",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsStop",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsSubmit",
+          "detail": "{ text: string }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Message'",
+        "required": false,
+        "mutable": false
+      },
+      "placeholder": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "placeholder",
+        "default": "'Write a message'",
+        "required": false,
+        "mutable": false
+      },
+      "status": {
+        "type": "MessageComposerStatus",
+        "resolvedType": "\"error\" | \"ready\" | \"streaming\" | \"submitted\"",
+        "attribute": "status",
+        "default": "'ready'",
+        "required": false,
+        "mutable": false
+      },
+      "submitIntent": {
+        "type": "ButtonFilledIntent",
+        "resolvedType": "\"ai\" | \"brand\" | \"caution\" | \"guide\" | \"negative\" | \"neutral\" | \"positive\" | \"walkthrough\" | \"warning\"",
+        "attribute": "submit-intent",
+        "default": "'brand'",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true
+      }
+    },
+    "events": [
+      {
+        "name": "dsInput",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsStop",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsSubmit",
+        "detail": "{ text: string }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-message-composer",
+      "react": "DsMessageComposer",
+      "angular": "DsMessageComposer"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-message-composer.js';",
+        "example": "<ds-message-composer></ds-message-composer>"
+      },
+      "react": {
+        "import": "import { DsMessageComposer } from '@ds-mo/ui/react';",
+        "example": "<DsMessageComposer />"
+      },
+      "angular": {
+        "import": "import { DsMessageComposer } from '@ds-mo/ui/angular/ds-message-composer';",
+        "example": "<ds-message-composer></ds-message-composer>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-filled"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/MessageComposer/MessageComposer.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  box-sizing: border-box;\n}\n\n.message-composer {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  width: 100%;\n  margin: 0;\n}\n\n.message-composer__attachments:empty,\n.message-composer__tools:empty {\n  display: none;\n}\n\n.message-composer__field {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto auto;\n  align-items: end;\n  gap: var(--dimension-space-050);\n  padding: var(--dimension-space-050);\n  border-radius: var(--dimension-radius-100);\n  background: var(--color-background-primary);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-secondary);\n  overflow: hidden;\n}\n\n.message-composer:focus-within .message-composer__field {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);\n}\n\n.message-composer--error .message-composer__field {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-negative);\n}\n\ntextarea {\n  width: 100%;\n  min-height: var(--dimension-size-400);\n  max-height: calc(var(--dimension-size-800) * 2);\n  padding: var(--dimension-space-075);\n  border: none;\n  outline: none;\n  resize: none;\n  overflow-y: auto;\n  box-sizing: border-box;\n  background: transparent;\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n}\n\ntextarea::placeholder {\n  color: var(--color-foreground-secondary);\n}\n\ntextarea:focus::placeholder {\n  color: var(--color-foreground-quaternary);\n}\n\n.message-composer__tools {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  min-height: var(--dimension-size-400);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MessageComposer/MessageComposer.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  Watch,\n} from '@stencil/core';\nimport type { ButtonFilledIntent } from '../ButtonFilled/ButtonFilled';\nimport type { MessageComposerStatus } from '../conversation-types';\n\n@Component({\n  tag: 'ds-message-composer',\n  styleUrl: 'MessageComposer.css',\n  scoped: true,\n})\nexport class MessageComposer {\n  @Element() el!: HTMLElement;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop() placeholder: string = 'Write a message';\n  @Prop() label: string = 'Message';\n  @Prop() status: MessageComposerStatus = 'ready';\n  @Prop() isInactive: boolean = false;\n  @Prop() submitIntent: ButtonFilledIntent = 'brand';\n\n  @Event() dsInput!: EventEmitter<string>;\n  @Event() dsSubmit!: EventEmitter<{ text: string }>;\n  @Event() dsStop!: EventEmitter<void>;\n\n  private textarea?: HTMLTextAreaElement;\n\n  componentDidLoad() {\n    this.resize();\n  }\n\n  @Watch('value')\n  onValueChange() {\n    requestAnimationFrame(() => this.resize());\n  }\n\n  @Method()\n  async setFocus() {\n    this.textarea?.focus();\n  }\n\n  private get streaming(): boolean {\n    return this.status === 'submitted' || this.status === 'streaming';\n  }\n\n  private resize() {\n    if (!this.textarea) return;\n    this.textarea.style.height = 'auto';\n    this.textarea.style.height = `${this.textarea.scrollHeight}px`;\n  }\n\n  private handleInput = (event: Event) => {\n    this.value = (event.target as HTMLTextAreaElement).value;\n    this.resize();\n    this.dsInput.emit(this.value);\n  };\n\n  private submit() {\n    const text = this.value.trim();\n    if (!text || this.isInactive || this.streaming) return;\n    this.dsSubmit.emit({ text });\n  }\n\n  private handleKeyDown = (event: KeyboardEvent) => {\n    if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;\n    event.preventDefault();\n    this.submit();\n  };\n\n  private handleAction = () => {\n    if (this.streaming) this.dsStop.emit();\n    else this.submit();\n  };\n\n  render() {\n    const error = this.status === 'error';\n    return (\n      <Host>\n        <form\n          class={{ 'message-composer': true, 'message-composer--error': error }}\n          aria-busy={this.streaming ? 'true' : undefined}\n          onSubmit={(event: Event) => {\n            event.preventDefault();\n            this.submit();\n          }}\n        >\n          <div class=\"message-composer__attachments\">\n            <slot name=\"attachments\" />\n          </div>\n          <div class=\"message-composer__field\">\n            <textarea\n              ref={element => {\n                this.textarea = element;\n              }}\n              value={this.value}\n              placeholder={this.placeholder}\n              aria-label={this.label}\n              aria-invalid={error ? 'true' : undefined}\n              disabled={this.isInactive}\n              rows={1}\n              onInput={this.handleInput}\n              onKeyDown={this.handleKeyDown}\n            />\n            <div class=\"message-composer__tools\">\n              <slot name=\"tools\" />\n            </div>\n            <ds-button-filled\n              class=\"message-composer__action\"\n              variant=\"icon\"\n              icon={this.streaming ? 'Pause' : 'PaperplaneSend'}\n              intent={this.streaming ? 'neutral' : this.submitIntent}\n              size=\"md\"\n              aria-label={this.streaming ? 'Stop response' : 'Send message'}\n              isInactive={this.isInactive || (!this.streaming && !this.value.trim())}\n              onDsClick={this.handleAction}\n            />\n          </div>\n        </form>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

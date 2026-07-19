@@ -1,0 +1,2 @@
+:host { display: block; }
+.agent-response { display: grid; gap: var(--dimension-space-100); min-width: 0; }

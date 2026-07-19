@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-icon.js';
+import '../../../../dist/components/ds-text.js';
 import './utility-demo.css';
 
 const meta: Meta = {
@@ -21,9 +24,9 @@ export default meta;
 type Story = StoryObj;
 
 const SIZES = [
-  { cls: 'ds-control--md', label: 'md', text: 'text-body-medium' },
-  { cls: 'ds-control--sm', label: 'sm', text: 'text-body-small' },
-  { cls: 'ds-control--xs', label: 'xs', text: 'text-caption' },
+  { cls: 'ds-control--md', label: 'md', text: 'text-body-medium', icon: 'md' },
+  { cls: 'ds-control--sm', label: 'sm', text: 'text-body-small', icon: 'sm' },
+  { cls: 'ds-control--xs', label: 'xs', text: 'text-caption', icon: 'xs' },
 ] as const;
 
 export const Overview: Story = {
@@ -43,12 +46,83 @@ export const Overview: Story = {
                   type="button"
                   class="util-demo-control ${cls} ds-interaction-fill ds-focus-ring-inset"
                 >
-                  <span class="ds-interaction-fill__content ${text}">Label</span>
+                  <ds-text
+                    class="util-demo-control__label ds-interaction-fill__content"
+                    as="span"
+                    variant=${text}
+                    color="inherit"
+                  >Label</ds-text>
                 </button>
                 <span class="util-demo-code">.${cls}</span>
               </div>
             `,
           )}
+        </div>
+      </div>
+    </div>
+  `,
+};
+
+export const Compositions: Story = {
+  render: () => html`
+    <div class="util-demo-page">
+      <div class="util-demo-section">
+        <h2 class="util-demo-h2">One recipe, every composition</h2>
+        <p class="util-demo-sub">
+          Every row below resolves height, outer inset, label inset, icon box, and gap from the same size class.
+        </p>
+        <div class="util-demo-density-compositions">
+          ${SIZES.map(
+            ({ cls, label, text, icon }) => html`
+              <div class="util-demo-density-composition-row">
+                <span class="util-demo-label">${label}</span>
+
+                <button type="button" class="util-demo-control ${cls}">
+                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Text</ds-text>
+                </button>
+
+                <button type="button" class="util-demo-control ${cls}">
+                  <ds-icon class="util-demo-control__icon" name="Bookmark" size=${icon} color="inherit"></ds-icon>
+                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Icon + text</ds-text>
+                </button>
+
+                <button type="button" class="util-demo-control ${cls}">
+                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Text + icon</ds-text>
+                  <ds-icon class="util-demo-control__icon" name="ChevronDown" size=${icon} color="inherit"></ds-icon>
+                </button>
+
+                <button type="button" class="util-demo-control ${cls}">
+                  <ds-icon class="util-demo-control__icon" name="Bookmark" size=${icon} color="inherit"></ds-icon>
+                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Both icons</ds-text>
+                  <ds-icon class="util-demo-control__icon" name="ChevronDown" size=${icon} color="inherit"></ds-icon>
+                </button>
+              </div>
+            `,
+          )}
+        </div>
+      </div>
+
+      <div class="util-demo-section">
+        <h2 class="util-demo-h2">Read-only row inside structural chrome</h2>
+        <p class="util-demo-sub">
+          The header owns its 8px structural inset. Its title and action both use md density even though only the action is interactive.
+        </p>
+        <div class="util-demo-density-header">
+          <ds-text
+            class="util-demo-density-header__title ds-control--md"
+            as="span"
+            variant="text-body-medium"
+            emphasis
+            color="primary"
+          >Panel title</ds-text>
+          <ds-button-unfilled
+            variant="icon"
+            icon="Ellipses"
+            size="md"
+            aria-label="Panel options"
+            .activeFill=${false}
+            .hasBorder=${false}
+          ></ds-button-unfilled>
         </div>
       </div>
     </div>

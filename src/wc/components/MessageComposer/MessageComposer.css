@@ -1,0 +1,72 @@
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.message-composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  width: 100%;
+  margin: 0;
+}
+
+.message-composer__attachments:empty,
+.message-composer__tools:empty {
+  display: none;
+}
+
+.message-composer__field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: var(--dimension-space-050);
+  padding: var(--dimension-space-050);
+  border-radius: var(--dimension-radius-100);
+  background: var(--color-background-primary);
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-secondary);
+  overflow: hidden;
+}
+
+.message-composer:focus-within .message-composer__field {
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
+}
+
+.message-composer--error .message-composer__field {
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-negative);
+}
+
+textarea {
+  width: 100%;
+  min-height: var(--dimension-size-400);
+  max-height: calc(var(--dimension-size-800) * 2);
+  padding: var(--dimension-space-075);
+  border: none;
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: transparent;
+  color: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+textarea::placeholder {
+  color: var(--color-foreground-secondary);
+}
+
+textarea:focus::placeholder {
+  color: var(--color-foreground-quaternary);
+}
+
+.message-composer__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  min-height: var(--dimension-size-400);
+}

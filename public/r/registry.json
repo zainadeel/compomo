@@ -21,6 +21,344 @@
   },
   "items": [
     {
+      "name": "agent-activity",
+      "title": "AgentActivity",
+      "description": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-activity",
+        "source": "src/wc/components/AgentActivity/AgentActivity.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+          "useWhen": [
+            "An agent response benefits from concise progress or completion summaries."
+          ],
+          "avoidWhen": [
+            "The content would reveal private chain-of-thought, hidden prompts, secrets, or raw internal traces."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-agent-response",
+            "component:ds-loader"
+          ],
+          "patterns": [
+            "pattern:agent-chat"
+          ],
+          "accessibility": [
+            "Each step has textual state and description; animation and color are supplementary.",
+            "The disclosure uses native keyboard and expanded-state semantics."
+          ],
+          "states": [
+            "Pending, active, complete, and error describe user-safe workflow progress."
+          ],
+          "responsiveBehavior": [
+            "Steps wrap within the response width."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "items": {
+            "type": "AgentActivityItem[]",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-agent-activity",
+          "react": "DsAgentActivity",
+          "angular": "DsAgentActivity"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "loader",
+        "text"
+      ]
+    },
+    {
+      "name": "agent-response",
+      "title": "AgentResponse",
+      "description": "Ordered renderer for normalized immutable agent response parts inside a generic incoming message.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-response",
+        "source": "src/wc/components/AgentResponse/AgentResponse.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Ordered renderer for normalized immutable agent response parts inside a generic incoming message.",
+          "useWhen": [
+            "An agent response combines Markdown, user-safe activity, display-only tools, attachments, and sources in authored order."
+          ],
+          "avoidWhen": [
+            "The component would be expected to own a model, transport, persistence, title generation, approval policy, or private reasoning."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message",
+            "component:ds-markdown",
+            "component:ds-agent-activity",
+            "component:ds-agent-tool-call",
+            "component:ds-agent-source-list"
+          ],
+          "patterns": [
+            "pattern:agent-chat"
+          ],
+          "accessibility": [
+            "Part order matches authored reading order and remains inside generic message semantics.",
+            "Streaming state supplements rather than replaces meaningful textual status."
+          ],
+          "states": [
+            "The owner replaces immutable part arrays as scripted or live output changes."
+          ],
+          "responsiveBehavior": [
+            "Rich content uses the wider ghost message treatment while respecting transcript constraints."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "author": {
+            "type": "string",
+            "required": false
+          },
+          "messageId": {
+            "type": "string",
+            "required": false
+          },
+          "parts": {
+            "type": "AgentResponsePart[]",
+            "required": false
+          },
+          "streaming": {
+            "type": "boolean",
+            "required": false
+          },
+          "timestamp": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-agent-response",
+          "react": "DsAgentResponse",
+          "angular": "DsAgentResponse"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "agent-activity",
+        "agent-source-list",
+        "agent-tool-call",
+        "attachment-list",
+        "markdown",
+        "message",
+        "message-bubble"
+      ]
+    },
+    {
+      "name": "agent-source-list",
+      "title": "AgentSourceList",
+      "description": "Collapsible list of agent response sources with title, description, and validated external links.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-source-list",
+        "source": "src/wc/components/AgentSourceList/AgentSourceList.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Collapsible list of agent response sources with title, description, and validated external links.",
+          "useWhen": [
+            "An agent response cites external material readers may inspect."
+          ],
+          "avoidWhen": [
+            "The links are ordinary body links or are not sources for the response."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-agent-response",
+            "component:ds-markdown"
+          ],
+          "patterns": [
+            "pattern:agent-chat"
+          ],
+          "accessibility": [
+            "Each source uses descriptive linked text and visible supporting context.",
+            "Unsafe link schemes remain non-interactive text."
+          ],
+          "responsiveBehavior": [
+            "Source titles and descriptions wrap within the response width."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "items": {
+            "type": "AgentSource[]",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-agent-source-list",
+          "react": "DsAgentSourceList",
+          "angular": "DsAgentSourceList"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "agent-tool-call",
+      "title": "AgentToolCall",
+      "description": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-tool-call",
+        "source": "src/wc/components/AgentToolCall/AgentToolCall.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+          "useWhen": [
+            "A prototype or agent product needs to expose user-safe tool execution detail."
+          ],
+          "avoidWhen": [
+            "A participant must approve, deny, edit, or retry the tool call; those are product controls outside this component."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-agent-response",
+            "component:ds-code-block"
+          ],
+          "patterns": [
+            "pattern:agent-chat"
+          ],
+          "accessibility": [
+            "Queued, running, success, error, and denied states are available as text.",
+            "The disclosure uses native keyboard and expanded-state semantics."
+          ],
+          "states": [
+            "This component presents state but never executes a tool or owns approval policy."
+          ],
+          "responsiveBehavior": [
+            "Structured detail wraps and scrolls without widening the transcript."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "error": {
+            "type": "string",
+            "required": false
+          },
+          "input": {
+            "type": "unknown",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "name": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "output": {
+            "type": "unknown",
+            "required": false
+          },
+          "state": {
+            "type": "AgentToolState",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-agent-tool-call",
+          "react": "DsAgentToolCall",
+          "angular": "DsAgentToolCall"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "loader",
+        "text"
+      ]
+    },
+    {
       "name": "app-shell",
       "title": "AppShell",
       "description": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
@@ -143,6 +481,76 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
+    },
+    {
+      "name": "attachment-list",
+      "title": "AttachmentList",
+      "description": "Channel-neutral list of message attachments with name, media type, size, and optional safe link.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/attachment-list",
+        "source": "src/wc/components/AttachmentList/AttachmentList.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Channel-neutral list of message attachments with name, media type, size, and optional safe link.",
+          "useWhen": [
+            "A conversation message needs to display already-known attachment metadata."
+          ],
+          "avoidWhen": [
+            "Users need to choose, upload, remove, or edit files; those controls belong to the product workflow."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message",
+            "component:ds-message-bubble"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Attachment name remains visible and is the link text when a safe URL is available.",
+            "Media type and size are supporting metadata, never the only identifier."
+          ],
+          "responsiveBehavior": [
+            "Long names wrap or truncate without overflowing the message surface."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "items": {
+            "type": "ConversationAttachment[]",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-attachment-list",
+          "react": "DsAttachmentList",
+          "angular": "DsAttachmentList"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
     },
     {
       "name": "badge",
@@ -1629,6 +2037,310 @@
       ]
     },
     {
+      "name": "code-block",
+      "title": "CodeBlock",
+      "description": "Scrollable monospace code surface with optional language or filename context and copy action.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/code-block",
+        "source": "src/wc/components/CodeBlock/CodeBlock.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Scrollable monospace code surface with optional language or filename context and copy action.",
+          "useWhen": [
+            "A message or document displays fenced code that readers may copy."
+          ],
+          "avoidWhen": [
+            "A live editor, terminal, diff viewer, or syntax-highlighting environment is required."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-markdown",
+            "component:ds-button-unfilled"
+          ],
+          "accessibility": [
+            "The copy action has explicit status wording and the code remains selectable text.",
+            "Language and filename labels supplement rather than replace the code content."
+          ],
+          "responsiveBehavior": [
+            "Long lines scroll horizontally and do not widen the owning transcript."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "code": {
+            "type": "string",
+            "required": false
+          },
+          "filename": {
+            "type": "string",
+            "required": false
+          },
+          "language": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-code-block",
+          "react": "DsCodeBlock",
+          "angular": "DsCodeBlock"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text"
+      ]
+    },
+    {
+      "name": "conversation-list",
+      "title": "ConversationList",
+      "description": "Scrollable conversation-list region with dedicated empty and floating-action placement.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/conversation-list",
+        "source": "src/wc/components/ConversationList/ConversationList.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Scrollable conversation-list region with dedicated empty and floating-action placement.",
+          "useWhen": [
+            "A messaging-like surface needs a reusable history list with empty and action regions."
+          ],
+          "avoidWhen": [
+            "The content is not a collection of conversations or threads."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-conversation-list-section",
+            "component:ds-conversation-list-item",
+            "component:ds-empty-state"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Provide an accessible list label through the surrounding heading or region.",
+            "Keep the empty message descriptive and the floating action explicitly named."
+          ],
+          "responsiveBehavior": [
+            "The list fills its owner, scrolls independently, and keeps its action at the lower end corner."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+            }
+          ]
+        },
+        "props": {},
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-conversation-list",
+          "react": "DsConversationList",
+          "angular": "DsConversationList"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "conversation-list-item",
+      "title": "ConversationListItem",
+      "description": "Selectable conversation row with one-line preview, recency, unread presence, generic busy or error status, and channel-owned accessory slots.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/conversation-list-item",
+        "source": "src/wc/components/ConversationListItem/ConversationListItem.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Selectable conversation row with one-line preview, recency, unread presence, generic busy or error status, and channel-owned accessory slots.",
+          "useWhen": [
+            "A conversation history needs a compact row that opens one thread."
+          ],
+          "avoidWhen": [
+            "The row represents a command rather than a persisted conversation."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-conversation-list-section",
+            "component:ds-badge",
+            "component:ds-loader"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "The conversation surface is one button with its title as the primary accessible name; actions are sibling controls so buttons are never nested.",
+            "An action in the actions slot remains keyboard-focusable and appears on row focus as well as pointer hover; touch layouts keep it visible.",
+            "Status copy must make busy or error meaning available without relying on motion or color."
+          ],
+          "states": [
+            "Rows reuse the md choice-item label/subtext recipe used by Menu, including 6px row padding, 2px text inset, and the shared content gap. The enclosing conversation-list scroll region supplies the larger 8px outer container padding.",
+            "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording.",
+            "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
+            "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
+            "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
+            "The actions slot overlays the row at an 8px right inset without changing title or preview measure."
+          ],
+          "responsiveBehavior": [
+            "Long titles and previews truncate without displacing trailing status."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "conversationId": {
+            "type": "string",
+            "required": false
+          },
+          "conversationTitle": {
+            "type": "string",
+            "required": false
+          },
+          "preview": {
+            "type": "string",
+            "required": false
+          },
+          "selected": {
+            "type": "boolean",
+            "required": false
+          },
+          "state": {
+            "type": "ConversationItemState",
+            "required": false
+          },
+          "statusLabel": {
+            "type": "string",
+            "required": false
+          },
+          "unreadCount": {
+            "type": "number",
+            "required": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsSelect",
+            "detail": "{ id: string }"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-conversation-list-item",
+          "react": "DsConversationListItem",
+          "angular": "DsConversationListItem"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "badge",
+        "loader",
+        "text"
+      ]
+    },
+    {
+      "name": "conversation-list-section",
+      "title": "ConversationListSection",
+      "description": "Semantically labelled section for grouping conversation rows by meaningful chronology or category.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/conversation-list-section",
+        "source": "src/wc/components/ConversationListSection/ConversationListSection.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Semantically labelled section for grouping conversation rows by meaningful chronology or category.",
+          "useWhen": [
+            "A conversation list needs visible groups such as Today, Yesterday, or Older."
+          ],
+          "avoidWhen": [
+            "A flat list is clearer or the proposed grouping has no meaning to readers."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-conversation-list",
+            "component:ds-conversation-list-item"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "The visible heading labels the section and must describe the relationship shared by its rows."
+          ],
+          "responsiveBehavior": [
+            "Rows remain full width while the heading stays visible in document order."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "sectionId": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-conversation-list-section",
+          "react": "DsConversationListSection",
+          "angular": "DsConversationListSection"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "divider",
       "title": "Divider",
       "description": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
@@ -2427,6 +3139,79 @@
       "registryDependencies": []
     },
     {
+      "name": "markdown",
+      "title": "Markdown",
+      "description": "Safe CommonMark and GFM renderer built from parsed nodes without raw HTML injection.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/markdown",
+        "source": "src/wc/components/Markdown/Markdown.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Safe CommonMark and GFM renderer built from parsed nodes without raw HTML injection.",
+          "useWhen": [
+            "Trusted or untrusted message text needs headings, lists, links, tables, tasks, quotes, and code."
+          ],
+          "avoidWhen": [
+            "The application needs arbitrary HTML, custom plugins, or a full document CMS renderer."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-code-block",
+            "component:ds-message-bubble"
+          ],
+          "patterns": [
+            "pattern:conversation",
+            "pattern:agent-chat"
+          ],
+          "accessibility": [
+            "Semantic parsed elements preserve heading, list, table, quote, and code relationships.",
+            "Raw HTML is ignored and unsafe link schemes are not made interactive.",
+            "Link text must remain descriptive in authored content."
+          ],
+          "states": [
+            "Streaming updates are coalesced to one parse and render per animation frame."
+          ],
+          "responsiveBehavior": [
+            "Tables and code scroll horizontally instead of forcing the transcript wider."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "content": {
+            "type": "string",
+            "required": false
+          },
+          "streaming": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-markdown",
+          "react": "DsMarkdown",
+          "angular": "DsMarkdown"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "code-block"
+      ]
+    },
+    {
       "name": "menu",
       "title": "Menu",
       "description": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
@@ -2610,6 +3395,354 @@
         "swatch-picker",
         "switch",
         "text"
+      ]
+    },
+    {
+      "name": "message",
+      "title": "Message",
+      "description": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/message",
+        "source": "src/wc/components/Message/Message.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+          "useWhen": [
+            "A transcript contains messages that need consistent incoming, outgoing, or system layout."
+          ],
+          "avoidWhen": [
+            "Content is not an authored message in a conversation."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message-bubble",
+            "component:ds-message-scroller"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Author and time metadata remain textual when they are necessary to interpret the transcript.",
+            "Delivery failure must be expressed in text rather than color alone."
+          ],
+          "states": [
+            "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+            "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label."
+          ],
+          "responsiveBehavior": [
+            "Outgoing and incoming rows adapt to available width while preserving their directional alignment."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "author": {
+            "type": "string",
+            "required": false
+          },
+          "deliveryState": {
+            "type": "MessageDeliveryState | undefined",
+            "required": false
+          },
+          "direction": {
+            "type": "MessageDirection",
+            "required": false
+          },
+          "groupPosition": {
+            "type": "MessageGroupPosition",
+            "required": false
+          },
+          "messageId": {
+            "type": "string",
+            "required": false
+          },
+          "scrollAnchor": {
+            "type": "boolean",
+            "required": false
+          },
+          "streaming": {
+            "type": "boolean",
+            "required": false
+          },
+          "timestamp": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-message",
+          "react": "DsMessage",
+          "angular": "DsMessage"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "message-bubble",
+      "title": "MessageBubble",
+      "description": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-bubble",
+        "source": "src/wc/components/MessageBubble/MessageBubble.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+          "useWhen": [
+            "Message content needs a primary, secondary, ghost, or error surface within a Message row.",
+            "Plain incoming or outgoing message copy should use the shared body-medium regular typography recipe without application styling."
+          ],
+          "avoidWhen": [
+            "The surface is a general card, callout, or form container.",
+            "The application wants to promote ordinary conversation copy to body-large; message typography stays body-medium unless a distinct authored rich-content element owns its own complete type recipe."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message",
+            "component:ds-markdown"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Surface styling does not add semantics; meaningful error or status copy belongs in message content or metadata."
+          ],
+          "responsiveBehavior": [
+            "The bubble wraps content and allows wide ghost responses to use more transcript width."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "variant": {
+            "type": "MessageBubbleVariant",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-message-bubble",
+          "react": "DsMessageBubble",
+          "angular": "DsMessageBubble"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "message-composer",
+      "title": "MessageComposer",
+      "description": "Auto-growing conversation textarea with submit, stop, error, and extensible attachment or channel-tool regions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-composer",
+        "source": "src/wc/components/MessageComposer/MessageComposer.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Auto-growing conversation textarea with submit, stop, error, and extensible attachment or channel-tool regions.",
+          "useWhen": [
+            "A conversation accepts multi-line text and needs Enter-to-submit with a streaming stop action."
+          ],
+          "avoidWhen": [
+            "The text is a conventional form field submitted with unrelated fields."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message-scroller",
+            "component:ds-button-filled"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Always provide a localized textarea label and submit or stop action names.",
+            "Shift plus Enter inserts a newline while Enter submits non-empty content.",
+            "Streaming and error states remain perceivable without relying on icon shape alone."
+          ],
+          "states": [
+            "The owner controls draft value and transport state; the composer emits intent without performing transport.",
+            "The channel owner selects submitIntent when brand is not appropriate; agent experiences may opt into ai while person-to-person messaging keeps the brand default."
+          ],
+          "responsiveBehavior": [
+            "The field grows to a bounded height and then scrolls internally."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string",
+            "required": false
+          },
+          "status": {
+            "type": "MessageComposerStatus",
+            "required": false
+          },
+          "submitIntent": {
+            "type": "ButtonFilledIntent",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsInput",
+            "detail": "string"
+          },
+          {
+            "name": "dsStop",
+            "detail": "void"
+          },
+          {
+            "name": "dsSubmit",
+            "detail": "{ text: string }"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-message-composer",
+          "react": "DsMessageComposer",
+          "angular": "DsMessageComposer"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-filled"
+      ]
+    },
+    {
+      "name": "message-scroller",
+      "title": "MessageScroller",
+      "description": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-scroller",
+        "source": "src/wc/components/MessageScroller/MessageScroller.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+          "useWhen": [
+            "Messages can append or stream and transcript position must remain respectful of reader intent."
+          ],
+          "avoidWhen": [
+            "Content is static prose without message navigation or live updates."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message",
+            "component:ds-message-composer"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Give each transcript a concise localized label.",
+            "New content is exposed through log semantics without stealing focus.",
+            "The scroll-to-latest control remains keyboard accessible when follow behavior is released."
+          ],
+          "states": [
+            "Selection and transcript interaction release automatic following.",
+            "Opening saved history, message jumps, and prepended history preserve deliberate position.",
+            "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message."
+          ],
+          "responsiveBehavior": [
+            "Transcript width is readable while the scroll region fills available height."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "autoFollow": {
+            "type": "boolean",
+            "required": false
+          },
+          "busy": {
+            "type": "boolean",
+            "required": false
+          },
+          "defaultPosition": {
+            "type": "MessageScrollerPosition",
+            "required": false
+          },
+          "messagesLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsReachStart",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-message-scroller",
+          "react": "DsMessageScroller",
+          "angular": "DsMessageScroller"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled"
       ]
     },
     {
@@ -3025,6 +4158,266 @@
       ]
     },
     {
+      "name": "panel-tool-header",
+      "title": "PanelToolHeader",
+      "description": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-tool-header",
+        "source": "src/wc/components/PanelToolHeader/PanelToolHeader.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+          "useWhen": [
+            "PanelTools needs its one shared root or detail header.",
+            "A tool header needs a title with optional Back, menu, fullscreen, or other compact icon actions."
+          ],
+          "avoidWhen": [
+            "Rendering inside a PanelTools tool body; PanelTools already composes this canonical header above the body.",
+            "The header belongs to page content."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-unfilled"
+          ],
+          "accessibility": [
+            "Back and trailing icon actions require concise localized names.",
+            "The visible heading names the active panel or subview."
+          ],
+          "states": [
+            "The title remains left aligned whether the header has no actions, Back, one trailing action, or several trailing actions.",
+            "Leading and trailing control zones never shrink; only the title consumes and truncates within the remaining width, with a fixed 4px gap between zones.",
+            "Header chrome text is not selectable; actions remain keyboard focusable and interactive.",
+            "Adjacent trailing actions keep the shared 4px control gap in drawer and fullscreen presentations.",
+            "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
+            "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event."
+          ],
+          "responsiveBehavior": [
+            "The title truncates between optional leading navigation and trailing action zones."
+          ],
+          "references": [
+            {
+              "label": "Standalone examples",
+              "path": "src/wc/components/PanelToolHeader/PanelToolHeader.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "actions": {
+            "type": "PanelToolsHeaderAction[]",
+            "required": false
+          },
+          "backAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "menuAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "menuControls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "menuExpanded": {
+            "type": "boolean",
+            "required": false
+          },
+          "menuTriggerId": {
+            "type": "string",
+            "required": false
+          },
+          "showBack": {
+            "type": "boolean",
+            "required": false
+          },
+          "showMenu": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAction",
+            "detail": "{ id: string; originalEvent: MouseEvent }"
+          },
+          {
+            "name": "dsBack",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsMenuToggle",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-panel-tool-header",
+          "react": "DsPanelToolHeader",
+          "angular": "DsPanelToolHeader"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text"
+      ]
+    },
+    {
+      "name": "panel-tool-search",
+      "title": "PanelToolSearch",
+      "description": "Transparent search row for the top of a PanelTools product view, with a fixed 48px allocation around the standard md search control and an optional filter-menu trigger.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/panel-tool-search",
+        "source": "src/wc/components/PanelToolSearch/PanelToolSearch.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Transparent search row for the top of a PanelTools product view, with a fixed 48px allocation around the standard md search control and an optional filter-menu trigger.",
+          "useWhen": [
+            "A PanelTools base view filters or searches the tool's own content.",
+            "Several tool products need the same search-row geometry directly below the shared PanelTools header.",
+            "The product needs a compact filter menu next to search while keeping its filter choices and matching policy application-owned."
+          ],
+          "avoidWhen": [
+            "The search belongs inside a Select or SelectMulti popup; use that component's searchable behavior.",
+            "A form needs a labelled standalone field; compose ds-input inside ds-field instead."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-panel-tools",
+            "component:ds-conversation-list",
+            "component:ds-input"
+          ],
+          "accessibility": [
+            "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
+            "The standard search clear action restores focus and emits both the empty query and dsClear.",
+            "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection."
+          ],
+          "states": [
+            "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px, and a 20px md search icon.",
+            "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
+            "The row and control surface remain transparent so the AppShell chrome wash is visible behind them.",
+            "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
+            "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
+          ],
+          "responsiveBehavior": [
+            "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange to receive the current string query and dsClear when the clear action is used.",
+              "Listen for dsFilterToggle and pair the trigger with an externally controlled ds-menu; product-specific filter labels and filtering remain outside this component."
+            ],
+            "react": [
+              "Use DsPanelToolSearch, bind value for controlled state, and handle onDsChange.",
+              "Bind the optional filter trigger state and connect onDsFilterToggle to a controlled DsMenu."
+            ],
+            "angular": [
+              "Import DsPanelToolSearch and bind value as a property; this search composition is not a form value accessor.",
+              "Bind showFilter, filterExpanded, and filterActive, then connect dsFilterToggle to a product-owned ds-menu."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/PanelToolSearch/PanelToolSearch.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "controls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "filterActive": {
+            "type": "boolean",
+            "required": false
+          },
+          "filterAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "filterControls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "filterExpanded": {
+            "type": "boolean",
+            "required": false
+          },
+          "filterTriggerId": {
+            "type": "string",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string",
+            "required": false
+          },
+          "showFilter": {
+            "type": "boolean",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsFilterToggle",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-panel-tool-search",
+          "react": "DsPanelToolSearch",
+          "angular": "DsPanelToolSearch"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "divider",
+        "icon",
+        "text"
+      ]
+    },
+    {
       "name": "panel-tools",
       "title": "PanelTools",
       "description": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
@@ -3092,14 +4485,21 @@
             "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
             "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
             "The application owns unread state; opening Messages, Agents, Stacks, or Activity does not automatically clear its notification dot.",
+            "PanelTools owns the one visible header above every tool view. Slotted tool content must never render a second tool header.",
+            "PanelTools composes ds-panel-tool-header as its canonical left-aligned header implementation so standalone header stories and shell rendering cannot diverge.",
+            "Each tool supplies its current header title, base-versus-detail Back state, and right-side actions through the headers property. Base views omit Back; deeper views expose Back and update the same header in place.",
+            "Header Back and action events express intent only; the owning tool changes product navigation, menus, and data state. PanelTools keeps the final header action exactly 8px from the drawer edge.",
+            "Menus opened from a right-side header action use PANEL_TOOLS_HEADER_MENU_PLACEMENT: bottom/end choice-cell alignment and a 12px side offset, placing the popup 4px below the 48px header while aligning the final menu item edge with the trigger.",
+            "Tool view roots stay transparent so AppShell's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
+            "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
-            "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events."
+            "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
+            "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque during width motion and only become inert or paint-skipped after the drawer is fully closed."
           ],
           "responsiveBehavior": [
-            "On desktop at 1200px and wider, the open drawer reduces main-content width and uses --dimension-panel-width-sm (400px).",
-            "On tablet from 768px through 1199px, the open drawer also reduces main-content width and uses --dimension-panel-width-xs (300px).",
-            "AppShell owns the responsive drawer-width variable and fixed breakpoint policy; consumers must not hardcode alternate drawer widths.",
+            "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
+            "AppShell owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
             "Below 768px, do not reuse desktop PanelTools: future AppShell mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
             "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
             "Use fixed drawer widths for now; do not add user resizing or width persistence."
@@ -3107,6 +4507,7 @@
           "frameworkCaveats": {
             "customElements": [
               "Assign items as a JavaScript property for structured data; items-json is the string fallback.",
+              "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
               "Keep PanelTools mounted at AppShell scope across route changes and provide each product through its matching named slot."
             ],
             "react": [
@@ -3115,6 +4516,7 @@
             ],
             "angular": [
               "Import DsPanelTools from @ds-mo/ui/angular/ds-panel-tools and bind items as a property.",
+              "Bind headers as a replaced object and route dsHeaderBack and dsHeaderAction to the active tool owner.",
               "Keep the component in the persistent shell layout rather than recreating it in routed page components."
             ]
           },
@@ -3138,6 +4540,14 @@
             "type": "PanelToolsToolId | ''",
             "required": false
           },
+          "headers": {
+            "type": "PanelToolsHeaders",
+            "required": false
+          },
+          "headersJson": {
+            "type": "string",
+            "required": false
+          },
           "items": {
             "type": "PanelToolsItem[]",
             "required": false
@@ -3148,6 +4558,10 @@
           },
           "open": {
             "type": "boolean",
+            "required": false
+          },
+          "presentation": {
+            "type": "'drawer' | 'fullscreen'",
             "required": false
           },
           "storageKey": {
@@ -3173,6 +4587,18 @@
             "detail": "ChromeTransitionDetail"
           },
           {
+            "name": "dsHeaderAction",
+            "detail": "{\n    tool: PanelToolsToolId;\n    id: string;\n  }"
+          },
+          {
+            "name": "dsHeaderBack",
+            "detail": "{\n    tool: PanelToolsToolId;\n  }"
+          },
+          {
+            "name": "dsPresentationChange",
+            "detail": "{\n    presentation: 'drawer' | 'fullscreen';\n  }"
+          },
+          {
             "name": "dsToolChange",
             "detail": "{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }"
           }
@@ -3190,7 +4616,7 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "text",
+        "panel-tool-header",
         "tooltip"
       ]
     },

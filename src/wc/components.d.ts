@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -27,12 +28,14 @@ import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment } from "./utils";
+import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
+import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-import { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
@@ -48,6 +51,7 @@ import { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
+export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -70,12 +74,14 @@ export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment } from "./utils";
+export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
+export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-export { PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
@@ -92,6 +98,77 @@ export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
+    interface DsAgentActivity {
+        /**
+          * @default 'Activity'
+         */
+        "heading": string;
+        /**
+          * @default []
+         */
+        "items": AgentActivityItem[];
+        /**
+          * @default false
+         */
+        "open": boolean;
+    }
+    interface DsAgentResponse {
+        /**
+          * @default ''
+         */
+        "author": string;
+        /**
+          * @default ''
+         */
+        "messageId": string;
+        /**
+          * @default []
+         */
+        "parts": AgentResponsePart[];
+        /**
+          * @default false
+         */
+        "streaming": boolean;
+        /**
+          * @default ''
+         */
+        "timestamp": string;
+    }
+    interface DsAgentSourceList {
+        /**
+          * @default 'Sources'
+         */
+        "heading": string;
+        /**
+          * @default []
+         */
+        "items": AgentSource[];
+        /**
+          * @default false
+         */
+        "open": boolean;
+    }
+    interface DsAgentToolCall {
+        "error"?: string;
+        "input"?: unknown;
+        /**
+          * @default ''
+         */
+        "label": string;
+        /**
+          * @default ''
+         */
+        "name": string;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        "output"?: unknown;
+        /**
+          * @default 'queued'
+         */
+        "state": AgentToolState;
+    }
     interface DsAppShell {
         /**
           * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
@@ -108,6 +185,16 @@ export namespace Components {
           * @default true
          */
         "shortcutsEnabled": boolean;
+    }
+    interface DsAttachmentList {
+        /**
+          * @default []
+         */
+        "items": ConversationAttachment[];
+        /**
+          * @default 'Attachments'
+         */
+        "label": string;
     }
     interface DsBadge {
         /**
@@ -655,6 +742,70 @@ export namespace Components {
          */
         "state": ChipState;
     }
+    interface DsCodeBlock {
+        /**
+          * @default ''
+         */
+        "code": string;
+        /**
+          * @default ''
+         */
+        "filename": string;
+        /**
+          * @default ''
+         */
+        "language": string;
+    }
+    interface DsConversationList {
+    }
+    interface DsConversationListItem {
+        /**
+          * @default ''
+         */
+        "conversationId": string;
+        /**
+          * Visible conversation title. Named to avoid the native HTMLElement.title contract.
+          * @default ''
+         */
+        "conversationTitle": string;
+        /**
+          * @default ''
+         */
+        "preview": string;
+        /**
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * @default 'default'
+         */
+        "state": ConversationItemState;
+        /**
+          * @default ''
+         */
+        "statusLabel": string;
+        /**
+          * @default 0
+         */
+        "unreadCount": number;
+        /**
+          * ISO timestamp for semantic activity metadata.
+          * @default ''
+         */
+        "updatedAt": string;
+    }
+    interface DsConversationListSection {
+        /**
+          * Visible section heading.
+          * @default ''
+         */
+        "heading": string;
+        /**
+          * Optional stable id used for the section heading.
+          * @default ''
+         */
+        "sectionId": string;
+    }
     interface DsDivider {
         /**
           * Actual parent surface context. Omit on primary and secondary surfaces.
@@ -847,6 +998,16 @@ export namespace Components {
          */
         "size": LoaderSize;
     }
+    interface DsMarkdown {
+        /**
+          * @default ''
+         */
+        "content": string;
+        /**
+          * @default false
+         */
+        "streaming": boolean;
+    }
     interface DsMenu {
         /**
           * @default 'start'
@@ -903,6 +1064,92 @@ export namespace Components {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset": number | string;
+    }
+    interface DsMessage {
+        /**
+          * @default ''
+         */
+        "author": string;
+        "deliveryState": MessageDeliveryState | undefined;
+        /**
+          * @default 'incoming'
+         */
+        "direction": MessageDirection;
+        /**
+          * @default 'single'
+         */
+        "groupPosition": MessageGroupPosition;
+        /**
+          * @default ''
+         */
+        "messageId": string;
+        /**
+          * @default false
+         */
+        "scrollAnchor": boolean;
+        /**
+          * @default false
+         */
+        "streaming": boolean;
+        /**
+          * ISO timestamp.
+          * @default ''
+         */
+        "timestamp": string;
+    }
+    interface DsMessageBubble {
+        /**
+          * @default 'secondary'
+         */
+        "variant": MessageBubbleVariant;
+    }
+    interface DsMessageComposer {
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * @default 'Message'
+         */
+        "label": string;
+        /**
+          * @default 'Write a message'
+         */
+        "placeholder": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'ready'
+         */
+        "status": MessageComposerStatus;
+        /**
+          * @default 'brand'
+         */
+        "submitIntent": ButtonFilledIntent1;
+        /**
+          * @default ''
+         */
+        "value": string;
+    }
+    interface DsMessageScroller {
+        /**
+          * @default true
+         */
+        "autoFollow": boolean;
+        /**
+          * @default false
+         */
+        "busy": boolean;
+        /**
+          * @default 'last-anchor'
+         */
+        "defaultPosition": MessageScrollerPosition;
+        /**
+          * @default 'Messages'
+         */
+        "messagesLabel": string;
+        "scrollToEnd": () => Promise<void>;
+        "scrollToMessage": (id: string) => Promise<boolean>;
+        "scrollToStart": () => Promise<void>;
     }
     interface DsModal {
         "heading": string;
@@ -1031,6 +1278,110 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsPanelToolHeader {
+        /**
+          * Trailing application-owned icon actions. When present, these replace the legacy menu action.
+          * @default []
+         */
+        "actions": PanelToolsHeaderAction[];
+        /**
+          * Accessible name for the Back action.
+          * @default 'Back'
+         */
+        "backAriaLabel": string;
+        "focusMenuTrigger": () => Promise<void>;
+        /**
+          * Visible heading for the active tool view.
+          * @default ''
+         */
+        "heading": string;
+        /**
+          * Accessible name for the options-menu trigger.
+          * @default 'More options'
+         */
+        "menuAriaLabel": string;
+        /**
+          * Id of the menu controlled by the trigger.
+         */
+        "menuControls": string | undefined;
+        /**
+          * Whether the controlled menu is open.
+          * @default false
+         */
+        "menuExpanded": boolean;
+        /**
+          * Stable id placed on the menu trigger host for ds-menu anchoring.
+          * @default ''
+         */
+        "menuTriggerId": string;
+        /**
+          * Show the leading Back action.
+          * @default false
+         */
+        "showBack": boolean;
+        /**
+          * Show the trailing options-menu trigger.
+          * @default true
+         */
+        "showMenu": boolean;
+    }
+    interface DsPanelToolSearch {
+        /**
+          * Accessible name for the search field.
+          * @default 'Search'
+         */
+        "ariaLabel": string;
+        /**
+          * Optional ID of the results region filtered by this search.
+         */
+        "controls": string | undefined;
+        /**
+          * Promote the trigger foreground when one or more filters are applied.
+          * @default false
+         */
+        "filterActive": boolean;
+        /**
+          * Accessible name for the filter-menu trigger.
+          * @default 'Filter'
+         */
+        "filterAriaLabel": string;
+        /**
+          * Id of the menu controlled by the filter trigger.
+         */
+        "filterControls": string | undefined;
+        /**
+          * Whether the controlled filter menu is open.
+          * @default false
+         */
+        "filterExpanded": boolean;
+        /**
+          * Stable id placed on the filter trigger for ds-menu anchoring.
+          * @default ''
+         */
+        "filterTriggerId": string;
+        "focusFilterTrigger": () => Promise<void>;
+        /**
+          * Prevents search interaction while keeping the row visible.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Search guidance shown while the query is empty.
+          * @default 'Search'
+         */
+        "placeholder": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * Show the optional trailing filter-menu trigger.
+          * @default false
+         */
+        "showFilter": boolean;
+        /**
+          * Current search query.
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsPanelTools {
         /**
           * Toggle any rail tool open/closed — shell shortcuts K/A/S/M/N call this.
@@ -1046,6 +1397,20 @@ export namespace Components {
          */
         "closeDrawer": () => Promise<void>;
         /**
+          * Focus an active tool-header action by its application-owned id.
+         */
+        "focusHeaderAction": (id: string) => Promise<void>;
+        /**
+          * Active header state per tool. Replace the object when title, depth, or actions change.
+          * @default {}
+         */
+        "headers": PanelToolsHeaders;
+        /**
+          * JSON fallback for `headers`. The `headers` property takes precedence when non-empty.
+          * @default ''
+         */
+        "headersJson": string;
+        /**
           * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
           * @default []
          */
@@ -1060,6 +1425,11 @@ export namespace Components {
           * @default false
          */
         "open": boolean;
+        /**
+          * Drawer presentation or viewport-covering presentation for the active tool.
+          * @default 'drawer'
+         */
+        "presentation": 'drawer' | 'fullscreen';
         /**
           * Optional localStorage key for the last active tool. The drawer always starts closed; only the tool identity is restored for continuity within this browser.
           * @default ''
@@ -1587,7 +1957,7 @@ export namespace Components {
          */
         "step": number;
         /**
-          * Keep the complete thumb inside the rail bounds, or center it on the endpoints.
+          * Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints.
           * @default 'edge'
          */
         "thumbAlignment": SliderThumbAlignment;
@@ -1920,6 +2290,10 @@ export interface DsChipCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsChipElement;
 }
+export interface DsConversationListItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsConversationListItemElement;
+}
 export interface DsInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputElement;
@@ -1927,6 +2301,14 @@ export interface DsInputCustomEvent<T> extends CustomEvent<T> {
 export interface DsMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsMenuElement;
+}
+export interface DsMessageComposerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsMessageComposerElement;
+}
+export interface DsMessageScrollerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsMessageScrollerElement;
 }
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1939,6 +2321,14 @@ export interface DsPanelNavCustomEvent<T> extends CustomEvent<T> {
 export interface DsPanelSubNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelSubNavElement;
+}
+export interface DsPanelToolHeaderCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelToolHeaderElement;
+}
+export interface DsPanelToolSearchCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelToolSearchElement;
 }
 export interface DsPanelToolsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1985,11 +2375,41 @@ export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     target: HTMLDsTagElement;
 }
 declare global {
+    interface HTMLDsAgentActivityElement extends Components.DsAgentActivity, HTMLStencilElement {
+    }
+    var HTMLDsAgentActivityElement: {
+        prototype: HTMLDsAgentActivityElement;
+        new (): HTMLDsAgentActivityElement;
+    };
+    interface HTMLDsAgentResponseElement extends Components.DsAgentResponse, HTMLStencilElement {
+    }
+    var HTMLDsAgentResponseElement: {
+        prototype: HTMLDsAgentResponseElement;
+        new (): HTMLDsAgentResponseElement;
+    };
+    interface HTMLDsAgentSourceListElement extends Components.DsAgentSourceList, HTMLStencilElement {
+    }
+    var HTMLDsAgentSourceListElement: {
+        prototype: HTMLDsAgentSourceListElement;
+        new (): HTMLDsAgentSourceListElement;
+    };
+    interface HTMLDsAgentToolCallElement extends Components.DsAgentToolCall, HTMLStencilElement {
+    }
+    var HTMLDsAgentToolCallElement: {
+        prototype: HTMLDsAgentToolCallElement;
+        new (): HTMLDsAgentToolCallElement;
+    };
     interface HTMLDsAppShellElement extends Components.DsAppShell, HTMLStencilElement {
     }
     var HTMLDsAppShellElement: {
         prototype: HTMLDsAppShellElement;
         new (): HTMLDsAppShellElement;
+    };
+    interface HTMLDsAttachmentListElement extends Components.DsAttachmentList, HTMLStencilElement {
+    }
+    var HTMLDsAttachmentListElement: {
+        prototype: HTMLDsAttachmentListElement;
+        new (): HTMLDsAttachmentListElement;
     };
     interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
     }
@@ -2218,6 +2638,41 @@ declare global {
         prototype: HTMLDsChipElement;
         new (): HTMLDsChipElement;
     };
+    interface HTMLDsCodeBlockElement extends Components.DsCodeBlock, HTMLStencilElement {
+    }
+    var HTMLDsCodeBlockElement: {
+        prototype: HTMLDsCodeBlockElement;
+        new (): HTMLDsCodeBlockElement;
+    };
+    interface HTMLDsConversationListElement extends Components.DsConversationList, HTMLStencilElement {
+    }
+    var HTMLDsConversationListElement: {
+        prototype: HTMLDsConversationListElement;
+        new (): HTMLDsConversationListElement;
+    };
+    interface HTMLDsConversationListItemElementEventMap {
+        "dsSelect": { id: string };
+    }
+    interface HTMLDsConversationListItemElement extends Components.DsConversationListItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsConversationListItemElementEventMap>(type: K, listener: (this: HTMLDsConversationListItemElement, ev: DsConversationListItemCustomEvent<HTMLDsConversationListItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsConversationListItemElementEventMap>(type: K, listener: (this: HTMLDsConversationListItemElement, ev: DsConversationListItemCustomEvent<HTMLDsConversationListItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsConversationListItemElement: {
+        prototype: HTMLDsConversationListItemElement;
+        new (): HTMLDsConversationListItemElement;
+    };
+    interface HTMLDsConversationListSectionElement extends Components.DsConversationListSection, HTMLStencilElement {
+    }
+    var HTMLDsConversationListSectionElement: {
+        prototype: HTMLDsConversationListSectionElement;
+        new (): HTMLDsConversationListSectionElement;
+    };
     interface HTMLDsDividerElement extends Components.DsDivider, HTMLStencilElement {
     }
     var HTMLDsDividerElement: {
@@ -2266,6 +2721,12 @@ declare global {
         prototype: HTMLDsLoaderElement;
         new (): HTMLDsLoaderElement;
     };
+    interface HTMLDsMarkdownElement extends Components.DsMarkdown, HTMLStencilElement {
+    }
+    var HTMLDsMarkdownElement: {
+        prototype: HTMLDsMarkdownElement;
+        new (): HTMLDsMarkdownElement;
+    };
     interface HTMLDsMenuElementEventMap {
         "dsClose": void;
         "dsSelect": MenuItemData;
@@ -2285,6 +2746,54 @@ declare global {
     var HTMLDsMenuElement: {
         prototype: HTMLDsMenuElement;
         new (): HTMLDsMenuElement;
+    };
+    interface HTMLDsMessageElement extends Components.DsMessage, HTMLStencilElement {
+    }
+    var HTMLDsMessageElement: {
+        prototype: HTMLDsMessageElement;
+        new (): HTMLDsMessageElement;
+    };
+    interface HTMLDsMessageBubbleElement extends Components.DsMessageBubble, HTMLStencilElement {
+    }
+    var HTMLDsMessageBubbleElement: {
+        prototype: HTMLDsMessageBubbleElement;
+        new (): HTMLDsMessageBubbleElement;
+    };
+    interface HTMLDsMessageComposerElementEventMap {
+        "dsInput": string;
+        "dsSubmit": { text: string };
+        "dsStop": void;
+    }
+    interface HTMLDsMessageComposerElement extends Components.DsMessageComposer, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsMessageComposerElementEventMap>(type: K, listener: (this: HTMLDsMessageComposerElement, ev: DsMessageComposerCustomEvent<HTMLDsMessageComposerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsMessageComposerElementEventMap>(type: K, listener: (this: HTMLDsMessageComposerElement, ev: DsMessageComposerCustomEvent<HTMLDsMessageComposerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsMessageComposerElement: {
+        prototype: HTMLDsMessageComposerElement;
+        new (): HTMLDsMessageComposerElement;
+    };
+    interface HTMLDsMessageScrollerElementEventMap {
+        "dsReachStart": void;
+    }
+    interface HTMLDsMessageScrollerElement extends Components.DsMessageScroller, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsMessageScrollerElementEventMap>(type: K, listener: (this: HTMLDsMessageScrollerElement, ev: DsMessageScrollerCustomEvent<HTMLDsMessageScrollerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsMessageScrollerElementEventMap>(type: K, listener: (this: HTMLDsMessageScrollerElement, ev: DsMessageScrollerCustomEvent<HTMLDsMessageScrollerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsMessageScrollerElement: {
+        prototype: HTMLDsMessageScrollerElement;
+        new (): HTMLDsMessageScrollerElement;
     };
     interface HTMLDsModalElementEventMap {
         "dsClose": void;
@@ -2342,10 +2851,58 @@ declare global {
         prototype: HTMLDsPanelSubNavElement;
         new (): HTMLDsPanelSubNavElement;
     };
+    interface HTMLDsPanelToolHeaderElementEventMap {
+        "dsBack": MouseEvent;
+        "dsMenuToggle": MouseEvent;
+        "dsAction": { id: string; originalEvent: MouseEvent };
+    }
+    interface HTMLDsPanelToolHeaderElement extends Components.DsPanelToolHeader, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPanelToolHeaderElementEventMap>(type: K, listener: (this: HTMLDsPanelToolHeaderElement, ev: DsPanelToolHeaderCustomEvent<HTMLDsPanelToolHeaderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPanelToolHeaderElementEventMap>(type: K, listener: (this: HTMLDsPanelToolHeaderElement, ev: DsPanelToolHeaderCustomEvent<HTMLDsPanelToolHeaderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPanelToolHeaderElement: {
+        prototype: HTMLDsPanelToolHeaderElement;
+        new (): HTMLDsPanelToolHeaderElement;
+    };
+    interface HTMLDsPanelToolSearchElementEventMap {
+        "dsChange": string;
+        "dsClear": void;
+        "dsFilterToggle": MouseEvent;
+    }
+    interface HTMLDsPanelToolSearchElement extends Components.DsPanelToolSearch, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPanelToolSearchElementEventMap>(type: K, listener: (this: HTMLDsPanelToolSearchElement, ev: DsPanelToolSearchCustomEvent<HTMLDsPanelToolSearchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPanelToolSearchElementEventMap>(type: K, listener: (this: HTMLDsPanelToolSearchElement, ev: DsPanelToolSearchCustomEvent<HTMLDsPanelToolSearchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPanelToolSearchElement: {
+        prototype: HTMLDsPanelToolSearchElement;
+        new (): HTMLDsPanelToolSearchElement;
+    };
     interface HTMLDsPanelToolsElementEventMap {
         "dsToolChange": {
     id: PanelToolsToolId;
     selected: boolean;
+  };
+        "dsPresentationChange": {
+    presentation: 'drawer' | 'fullscreen';
+  };
+        "dsHeaderBack": {
+    tool: PanelToolsToolId;
+  };
+        "dsHeaderAction": {
+    tool: PanelToolsToolId;
+    id: string;
   };
         "dsChromeTransitionStart": ChromeTransitionDetail;
         "dsChromeTransitionEnd": ChromeTransitionDetail;
@@ -2589,7 +3146,12 @@ declare global {
         new (): HTMLDsTooltipDataVizElement;
     };
     interface HTMLElementTagNameMap {
+        "ds-agent-activity": HTMLDsAgentActivityElement;
+        "ds-agent-response": HTMLDsAgentResponseElement;
+        "ds-agent-source-list": HTMLDsAgentSourceListElement;
+        "ds-agent-tool-call": HTMLDsAgentToolCallElement;
         "ds-app-shell": HTMLDsAppShellElement;
+        "ds-attachment-list": HTMLDsAttachmentListElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
@@ -2605,16 +3167,27 @@ declare global {
         "ds-chart-line": HTMLDsChartLineElement;
         "ds-checkbox": HTMLDsCheckboxElement;
         "ds-chip": HTMLDsChipElement;
+        "ds-code-block": HTMLDsCodeBlockElement;
+        "ds-conversation-list": HTMLDsConversationListElement;
+        "ds-conversation-list-item": HTMLDsConversationListItemElement;
+        "ds-conversation-list-section": HTMLDsConversationListSectionElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-field": HTMLDsFieldElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
+        "ds-markdown": HTMLDsMarkdownElement;
         "ds-menu": HTMLDsMenuElement;
+        "ds-message": HTMLDsMessageElement;
+        "ds-message-bubble": HTMLDsMessageBubbleElement;
+        "ds-message-composer": HTMLDsMessageComposerElement;
+        "ds-message-scroller": HTMLDsMessageScrollerElement;
         "ds-modal": HTMLDsModalElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
+        "ds-panel-tool-header": HTMLDsPanelToolHeaderElement;
+        "ds-panel-tool-search": HTMLDsPanelToolSearchElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-radio": HTMLDsRadioElement;
         "ds-select": HTMLDsSelectElement;
@@ -2635,6 +3208,77 @@ declare global {
 declare namespace LocalJSX {
     type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}` | `prop:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K | `prop:${K}`]?: never } | { [P in `prop:${K}`]: PropT } & { [P in K | `attr:${K}`]?: never };
 
+    interface DsAgentActivity {
+        /**
+          * @default 'Activity'
+         */
+        "heading"?: string;
+        /**
+          * @default []
+         */
+        "items"?: AgentActivityItem[];
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+    }
+    interface DsAgentResponse {
+        /**
+          * @default ''
+         */
+        "author"?: string;
+        /**
+          * @default ''
+         */
+        "messageId"?: string;
+        /**
+          * @default []
+         */
+        "parts"?: AgentResponsePart[];
+        /**
+          * @default false
+         */
+        "streaming"?: boolean;
+        /**
+          * @default ''
+         */
+        "timestamp"?: string;
+    }
+    interface DsAgentSourceList {
+        /**
+          * @default 'Sources'
+         */
+        "heading"?: string;
+        /**
+          * @default []
+         */
+        "items"?: AgentSource[];
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+    }
+    interface DsAgentToolCall {
+        "error"?: string;
+        "input"?: unknown;
+        /**
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * @default ''
+         */
+        "name"?: string;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        "output"?: unknown;
+        /**
+          * @default 'queued'
+         */
+        "state"?: AgentToolState;
+    }
     interface DsAppShell {
         /**
           * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
@@ -2651,6 +3295,16 @@ declare namespace LocalJSX {
           * @default true
          */
         "shortcutsEnabled"?: boolean;
+    }
+    interface DsAttachmentList {
+        /**
+          * @default []
+         */
+        "items"?: ConversationAttachment[];
+        /**
+          * @default 'Attachments'
+         */
+        "label"?: string;
     }
     interface DsBadge {
         /**
@@ -3236,6 +3890,71 @@ declare namespace LocalJSX {
          */
         "state"?: ChipState;
     }
+    interface DsCodeBlock {
+        /**
+          * @default ''
+         */
+        "code"?: string;
+        /**
+          * @default ''
+         */
+        "filename"?: string;
+        /**
+          * @default ''
+         */
+        "language"?: string;
+    }
+    interface DsConversationList {
+    }
+    interface DsConversationListItem {
+        /**
+          * @default ''
+         */
+        "conversationId"?: string;
+        /**
+          * Visible conversation title. Named to avoid the native HTMLElement.title contract.
+          * @default ''
+         */
+        "conversationTitle"?: string;
+        "onDsSelect"?: (event: DsConversationListItemCustomEvent<{ id: string }>) => void;
+        /**
+          * @default ''
+         */
+        "preview"?: string;
+        /**
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * @default 'default'
+         */
+        "state"?: ConversationItemState;
+        /**
+          * @default ''
+         */
+        "statusLabel"?: string;
+        /**
+          * @default 0
+         */
+        "unreadCount"?: number;
+        /**
+          * ISO timestamp for semantic activity metadata.
+          * @default ''
+         */
+        "updatedAt"?: string;
+    }
+    interface DsConversationListSection {
+        /**
+          * Visible section heading.
+          * @default ''
+         */
+        "heading"?: string;
+        /**
+          * Optional stable id used for the section heading.
+          * @default ''
+         */
+        "sectionId"?: string;
+    }
     interface DsDivider {
         /**
           * Actual parent surface context. Omit on primary and secondary surfaces.
@@ -3429,6 +4148,16 @@ declare namespace LocalJSX {
          */
         "size"?: LoaderSize;
     }
+    interface DsMarkdown {
+        /**
+          * @default ''
+         */
+        "content"?: string;
+        /**
+          * @default false
+         */
+        "streaming"?: boolean;
+    }
     interface DsMenu {
         /**
           * @default 'start'
@@ -3495,6 +4224,92 @@ declare namespace LocalJSX {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset"?: number | string;
+    }
+    interface DsMessage {
+        /**
+          * @default ''
+         */
+        "author"?: string;
+        "deliveryState"?: MessageDeliveryState | undefined;
+        /**
+          * @default 'incoming'
+         */
+        "direction"?: MessageDirection;
+        /**
+          * @default 'single'
+         */
+        "groupPosition"?: MessageGroupPosition;
+        /**
+          * @default ''
+         */
+        "messageId"?: string;
+        /**
+          * @default false
+         */
+        "scrollAnchor"?: boolean;
+        /**
+          * @default false
+         */
+        "streaming"?: boolean;
+        /**
+          * ISO timestamp.
+          * @default ''
+         */
+        "timestamp"?: string;
+    }
+    interface DsMessageBubble {
+        /**
+          * @default 'secondary'
+         */
+        "variant"?: MessageBubbleVariant;
+    }
+    interface DsMessageComposer {
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * @default 'Message'
+         */
+        "label"?: string;
+        "onDsInput"?: (event: DsMessageComposerCustomEvent<string>) => void;
+        "onDsStop"?: (event: DsMessageComposerCustomEvent<void>) => void;
+        "onDsSubmit"?: (event: DsMessageComposerCustomEvent<{ text: string }>) => void;
+        /**
+          * @default 'Write a message'
+         */
+        "placeholder"?: string;
+        /**
+          * @default 'ready'
+         */
+        "status"?: MessageComposerStatus;
+        /**
+          * @default 'brand'
+         */
+        "submitIntent"?: ButtonFilledIntent1;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+    }
+    interface DsMessageScroller {
+        /**
+          * @default true
+         */
+        "autoFollow"?: boolean;
+        /**
+          * @default false
+         */
+        "busy"?: boolean;
+        /**
+          * @default 'last-anchor'
+         */
+        "defaultPosition"?: MessageScrollerPosition;
+        /**
+          * @default 'Messages'
+         */
+        "messagesLabel"?: string;
+        "onDsReachStart"?: (event: DsMessageScrollerCustomEvent<void>) => void;
     }
     interface DsModal {
         "heading": string;
@@ -3642,12 +4457,129 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsPanelToolHeader {
+        /**
+          * Trailing application-owned icon actions. When present, these replace the legacy menu action.
+          * @default []
+         */
+        "actions"?: PanelToolsHeaderAction[];
+        /**
+          * Accessible name for the Back action.
+          * @default 'Back'
+         */
+        "backAriaLabel"?: string;
+        /**
+          * Visible heading for the active tool view.
+          * @default ''
+         */
+        "heading"?: string;
+        /**
+          * Accessible name for the options-menu trigger.
+          * @default 'More options'
+         */
+        "menuAriaLabel"?: string;
+        /**
+          * Id of the menu controlled by the trigger.
+         */
+        "menuControls"?: string | undefined;
+        /**
+          * Whether the controlled menu is open.
+          * @default false
+         */
+        "menuExpanded"?: boolean;
+        /**
+          * Stable id placed on the menu trigger host for ds-menu anchoring.
+          * @default ''
+         */
+        "menuTriggerId"?: string;
+        "onDsAction"?: (event: DsPanelToolHeaderCustomEvent<{ id: string; originalEvent: MouseEvent }>) => void;
+        "onDsBack"?: (event: DsPanelToolHeaderCustomEvent<MouseEvent>) => void;
+        "onDsMenuToggle"?: (event: DsPanelToolHeaderCustomEvent<MouseEvent>) => void;
+        /**
+          * Show the leading Back action.
+          * @default false
+         */
+        "showBack"?: boolean;
+        /**
+          * Show the trailing options-menu trigger.
+          * @default true
+         */
+        "showMenu"?: boolean;
+    }
+    interface DsPanelToolSearch {
+        /**
+          * Accessible name for the search field.
+          * @default 'Search'
+         */
+        "ariaLabel"?: string;
+        /**
+          * Optional ID of the results region filtered by this search.
+         */
+        "controls"?: string | undefined;
+        /**
+          * Promote the trigger foreground when one or more filters are applied.
+          * @default false
+         */
+        "filterActive"?: boolean;
+        /**
+          * Accessible name for the filter-menu trigger.
+          * @default 'Filter'
+         */
+        "filterAriaLabel"?: string;
+        /**
+          * Id of the menu controlled by the filter trigger.
+         */
+        "filterControls"?: string | undefined;
+        /**
+          * Whether the controlled filter menu is open.
+          * @default false
+         */
+        "filterExpanded"?: boolean;
+        /**
+          * Stable id placed on the filter trigger for ds-menu anchoring.
+          * @default ''
+         */
+        "filterTriggerId"?: string;
+        /**
+          * Prevents search interaction while keeping the row visible.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "onDsChange"?: (event: DsPanelToolSearchCustomEvent<string>) => void;
+        "onDsClear"?: (event: DsPanelToolSearchCustomEvent<void>) => void;
+        "onDsFilterToggle"?: (event: DsPanelToolSearchCustomEvent<MouseEvent>) => void;
+        /**
+          * Search guidance shown while the query is empty.
+          * @default 'Search'
+         */
+        "placeholder"?: string;
+        /**
+          * Show the optional trailing filter-menu trigger.
+          * @default false
+         */
+        "showFilter"?: boolean;
+        /**
+          * Current search query.
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsPanelTools {
         /**
           * Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`.
           * @default ''
          */
         "activeTool"?: PanelToolsToolId | '';
+        /**
+          * Active header state per tool. Replace the object when title, depth, or actions change.
+          * @default {}
+         */
+        "headers"?: PanelToolsHeaders;
+        /**
+          * JSON fallback for `headers`. The `headers` property takes precedence when non-empty.
+          * @default ''
+         */
+        "headersJson"?: string;
         /**
           * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
           * @default []
@@ -3664,6 +4596,25 @@ declare namespace LocalJSX {
          */
         "onDsChromeTransitionStart"?: (event: DsPanelToolsCustomEvent<ChromeTransitionDetail>) => void;
         /**
+          * Requests one application-owned action from the active tool header.
+         */
+        "onDsHeaderAction"?: (event: DsPanelToolsCustomEvent<{
+    tool: PanelToolsToolId;
+    id: string;
+  }>) => void;
+        /**
+          * Requests navigation to the active tool's parent view.
+         */
+        "onDsHeaderBack"?: (event: DsPanelToolsCustomEvent<{
+    tool: PanelToolsToolId;
+  }>) => void;
+        /**
+          * Emitted when fullscreen changes, including Escape-initiated exits.
+         */
+        "onDsPresentationChange"?: (event: DsPanelToolsCustomEvent<{
+    presentation: 'drawer' | 'fullscreen';
+  }>) => void;
+        /**
           * Emitted when a rail button is toggled. Detail = { id, selected }.
          */
         "onDsToolChange"?: (event: DsPanelToolsCustomEvent<{
@@ -3675,6 +4626,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "open"?: boolean;
+        /**
+          * Drawer presentation or viewport-covering presentation for the active tool.
+          * @default 'drawer'
+         */
+        "presentation"?: 'drawer' | 'fullscreen';
         /**
           * Optional localStorage key for the last active tool. The drawer always starts closed; only the tool identity is restored for continuity within this browser.
           * @default ''
@@ -4245,7 +5201,7 @@ declare namespace LocalJSX {
          */
         "step"?: number;
         /**
-          * Keep the complete thumb inside the rail bounds, or center it on the endpoints.
+          * Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints.
           * @default 'edge'
          */
         "thumbAlignment"?: SliderThumbAlignment;
@@ -4545,10 +5501,34 @@ declare namespace LocalJSX {
         "y"?: number;
     }
 
+    interface DsAgentActivityAttributes {
+        "heading": string;
+        "open": boolean;
+    }
+    interface DsAgentResponseAttributes {
+        "messageId": string;
+        "author": string;
+        "timestamp": string;
+        "streaming": boolean;
+    }
+    interface DsAgentSourceListAttributes {
+        "heading": string;
+        "open": boolean;
+    }
+    interface DsAgentToolCallAttributes {
+        "name": string;
+        "label": string;
+        "state": AgentToolState;
+        "error": string;
+        "open": boolean;
+    }
     interface DsAppShellAttributes {
         "navStyle": NavChromeStyle;
         "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
+    }
+    interface DsAttachmentListAttributes {
+        "label": string;
     }
     interface DsBadgeAttributes {
         "variant": BadgeVariant;
@@ -4685,6 +5665,25 @@ declare namespace LocalJSX {
         "isInactive": boolean;
         "removeLabel": string;
     }
+    interface DsCodeBlockAttributes {
+        "code": string;
+        "language": string;
+        "filename": string;
+    }
+    interface DsConversationListItemAttributes {
+        "conversationId": string;
+        "conversationTitle": string;
+        "preview": string;
+        "updatedAt": string;
+        "selected": boolean;
+        "state": ConversationItemState;
+        "statusLabel": string;
+        "unreadCount": number;
+    }
+    interface DsConversationListSectionAttributes {
+        "heading": string;
+        "sectionId": string;
+    }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
         "background": DividerBackground | undefined;
@@ -4742,6 +5741,10 @@ declare namespace LocalJSX {
         "color": LoaderColor;
         "label": string | undefined;
     }
+    interface DsMarkdownAttributes {
+        "content": string;
+        "streaming": boolean;
+    }
     interface DsMenuAttributes {
         "open": boolean;
         "side": MenuSide;
@@ -4754,6 +5757,33 @@ declare namespace LocalJSX {
         "anchorId": string | undefined;
         "initialFocusVisible": boolean;
         "menuLabel": string;
+    }
+    interface DsMessageAttributes {
+        "messageId": string;
+        "direction": MessageDirection;
+        "groupPosition": MessageGroupPosition;
+        "author": string;
+        "timestamp": string;
+        "deliveryState": MessageDeliveryState | undefined;
+        "streaming": boolean;
+        "scrollAnchor": boolean;
+    }
+    interface DsMessageBubbleAttributes {
+        "variant": MessageBubbleVariant;
+    }
+    interface DsMessageComposerAttributes {
+        "value": string;
+        "placeholder": string;
+        "label": string;
+        "status": MessageComposerStatus;
+        "isInactive": boolean;
+        "submitIntent": ButtonFilledIntent;
+    }
+    interface DsMessageScrollerAttributes {
+        "busy": boolean;
+        "autoFollow": boolean;
+        "defaultPosition": MessageScrollerPosition;
+        "messagesLabel": string;
     }
     interface DsModalAttributes {
         "open": boolean;
@@ -4788,12 +5818,37 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
+    interface DsPanelToolHeaderAttributes {
+        "heading": string;
+        "showBack": boolean;
+        "backAriaLabel": string;
+        "showMenu": boolean;
+        "menuAriaLabel": string;
+        "menuTriggerId": string;
+        "menuControls": string | undefined;
+        "menuExpanded": boolean;
+    }
+    interface DsPanelToolSearchAttributes {
+        "value": string;
+        "placeholder": string;
+        "ariaLabel": string;
+        "controls": string | undefined;
+        "isInactive": boolean;
+        "showFilter": boolean;
+        "filterAriaLabel": string;
+        "filterTriggerId": string;
+        "filterControls": string | undefined;
+        "filterExpanded": boolean;
+        "filterActive": boolean;
+    }
     interface DsPanelToolsAttributes {
         "open": boolean;
+        "presentation": 'drawer' | 'fullscreen';
         "activeTool": PanelToolsToolId | '';
         "itemsJson": string;
         "toolsLabel": string;
         "toolShortcutsLabel": string;
+        "headersJson": string;
         "storageKey": string;
     }
     interface DsRadioAttributes {
@@ -4987,7 +6042,12 @@ declare namespace LocalJSX {
     }
 
     interface IntrinsicElements {
+        "ds-agent-activity": Omit<DsAgentActivity, keyof DsAgentActivityAttributes> & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes]?: DsAgentActivity[K] } & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes as `attr:${K}`]?: DsAgentActivityAttributes[K] } & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes as `prop:${K}`]?: DsAgentActivity[K] };
+        "ds-agent-response": Omit<DsAgentResponse, keyof DsAgentResponseAttributes> & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes]?: DsAgentResponse[K] } & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes as `attr:${K}`]?: DsAgentResponseAttributes[K] } & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes as `prop:${K}`]?: DsAgentResponse[K] };
+        "ds-agent-source-list": Omit<DsAgentSourceList, keyof DsAgentSourceListAttributes> & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes]?: DsAgentSourceList[K] } & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes as `attr:${K}`]?: DsAgentSourceListAttributes[K] } & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes as `prop:${K}`]?: DsAgentSourceList[K] };
+        "ds-agent-tool-call": Omit<DsAgentToolCall, keyof DsAgentToolCallAttributes> & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes]?: DsAgentToolCall[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `attr:${K}`]?: DsAgentToolCallAttributes[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `prop:${K}`]?: DsAgentToolCall[K] };
         "ds-app-shell": Omit<DsAppShell, keyof DsAppShellAttributes> & { [K in keyof DsAppShell & keyof DsAppShellAttributes]?: DsAppShell[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `attr:${K}`]?: DsAppShellAttributes[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `prop:${K}`]?: DsAppShell[K] };
+        "ds-attachment-list": Omit<DsAttachmentList, keyof DsAttachmentListAttributes> & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes]?: DsAttachmentList[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `attr:${K}`]?: DsAttachmentListAttributes[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `prop:${K}`]?: DsAttachmentList[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
@@ -5003,16 +6063,27 @@ declare namespace LocalJSX {
         "ds-chart-line": Omit<DsChartLine, keyof DsChartLineAttributes> & { [K in keyof DsChartLine & keyof DsChartLineAttributes]?: DsChartLine[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `attr:${K}`]?: DsChartLineAttributes[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `prop:${K}`]?: DsChartLine[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
+        "ds-code-block": Omit<DsCodeBlock, keyof DsCodeBlockAttributes> & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes]?: DsCodeBlock[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `attr:${K}`]?: DsCodeBlockAttributes[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `prop:${K}`]?: DsCodeBlock[K] };
+        "ds-conversation-list": DsConversationList;
+        "ds-conversation-list-item": Omit<DsConversationListItem, keyof DsConversationListItemAttributes> & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes]?: DsConversationListItem[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `attr:${K}`]?: DsConversationListItemAttributes[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `prop:${K}`]?: DsConversationListItem[K] };
+        "ds-conversation-list-section": Omit<DsConversationListSection, keyof DsConversationListSectionAttributes> & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes]?: DsConversationListSection[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `attr:${K}`]?: DsConversationListSectionAttributes[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `prop:${K}`]?: DsConversationListSection[K] };
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
+        "ds-markdown": Omit<DsMarkdown, keyof DsMarkdownAttributes> & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes]?: DsMarkdown[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `attr:${K}`]?: DsMarkdownAttributes[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `prop:${K}`]?: DsMarkdown[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
+        "ds-message": Omit<DsMessage, keyof DsMessageAttributes> & { [K in keyof DsMessage & keyof DsMessageAttributes]?: DsMessage[K] } & { [K in keyof DsMessage & keyof DsMessageAttributes as `attr:${K}`]?: DsMessageAttributes[K] } & { [K in keyof DsMessage & keyof DsMessageAttributes as `prop:${K}`]?: DsMessage[K] };
+        "ds-message-bubble": Omit<DsMessageBubble, keyof DsMessageBubbleAttributes> & { [K in keyof DsMessageBubble & keyof DsMessageBubbleAttributes]?: DsMessageBubble[K] } & { [K in keyof DsMessageBubble & keyof DsMessageBubbleAttributes as `attr:${K}`]?: DsMessageBubbleAttributes[K] } & { [K in keyof DsMessageBubble & keyof DsMessageBubbleAttributes as `prop:${K}`]?: DsMessageBubble[K] };
+        "ds-message-composer": Omit<DsMessageComposer, keyof DsMessageComposerAttributes> & { [K in keyof DsMessageComposer & keyof DsMessageComposerAttributes]?: DsMessageComposer[K] } & { [K in keyof DsMessageComposer & keyof DsMessageComposerAttributes as `attr:${K}`]?: DsMessageComposerAttributes[K] } & { [K in keyof DsMessageComposer & keyof DsMessageComposerAttributes as `prop:${K}`]?: DsMessageComposer[K] };
+        "ds-message-scroller": Omit<DsMessageScroller, keyof DsMessageScrollerAttributes> & { [K in keyof DsMessageScroller & keyof DsMessageScrollerAttributes]?: DsMessageScroller[K] } & { [K in keyof DsMessageScroller & keyof DsMessageScrollerAttributes as `attr:${K}`]?: DsMessageScrollerAttributes[K] } & { [K in keyof DsMessageScroller & keyof DsMessageScrollerAttributes as `prop:${K}`]?: DsMessageScroller[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
+        "ds-panel-tool-header": Omit<DsPanelToolHeader, keyof DsPanelToolHeaderAttributes> & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes]?: DsPanelToolHeader[K] } & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes as `attr:${K}`]?: DsPanelToolHeaderAttributes[K] } & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes as `prop:${K}`]?: DsPanelToolHeader[K] };
+        "ds-panel-tool-search": Omit<DsPanelToolSearch, keyof DsPanelToolSearchAttributes> & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes]?: DsPanelToolSearch[K] } & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes as `attr:${K}`]?: DsPanelToolSearchAttributes[K] } & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes as `prop:${K}`]?: DsPanelToolSearch[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
@@ -5034,7 +6105,12 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ds-agent-activity": LocalJSX.IntrinsicElements["ds-agent-activity"] & JSXBase.HTMLAttributes<HTMLDsAgentActivityElement>;
+            "ds-agent-response": LocalJSX.IntrinsicElements["ds-agent-response"] & JSXBase.HTMLAttributes<HTMLDsAgentResponseElement>;
+            "ds-agent-source-list": LocalJSX.IntrinsicElements["ds-agent-source-list"] & JSXBase.HTMLAttributes<HTMLDsAgentSourceListElement>;
+            "ds-agent-tool-call": LocalJSX.IntrinsicElements["ds-agent-tool-call"] & JSXBase.HTMLAttributes<HTMLDsAgentToolCallElement>;
             "ds-app-shell": LocalJSX.IntrinsicElements["ds-app-shell"] & JSXBase.HTMLAttributes<HTMLDsAppShellElement>;
+            "ds-attachment-list": LocalJSX.IntrinsicElements["ds-attachment-list"] & JSXBase.HTMLAttributes<HTMLDsAttachmentListElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
@@ -5075,16 +6151,27 @@ declare module "@stencil/core" {
              * action is remove.
              */
             "ds-chip": LocalJSX.IntrinsicElements["ds-chip"] & JSXBase.HTMLAttributes<HTMLDsChipElement>;
+            "ds-code-block": LocalJSX.IntrinsicElements["ds-code-block"] & JSXBase.HTMLAttributes<HTMLDsCodeBlockElement>;
+            "ds-conversation-list": LocalJSX.IntrinsicElements["ds-conversation-list"] & JSXBase.HTMLAttributes<HTMLDsConversationListElement>;
+            "ds-conversation-list-item": LocalJSX.IntrinsicElements["ds-conversation-list-item"] & JSXBase.HTMLAttributes<HTMLDsConversationListItemElement>;
+            "ds-conversation-list-section": LocalJSX.IntrinsicElements["ds-conversation-list-section"] & JSXBase.HTMLAttributes<HTMLDsConversationListSectionElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
+            "ds-markdown": LocalJSX.IntrinsicElements["ds-markdown"] & JSXBase.HTMLAttributes<HTMLDsMarkdownElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
+            "ds-message": LocalJSX.IntrinsicElements["ds-message"] & JSXBase.HTMLAttributes<HTMLDsMessageElement>;
+            "ds-message-bubble": LocalJSX.IntrinsicElements["ds-message-bubble"] & JSXBase.HTMLAttributes<HTMLDsMessageBubbleElement>;
+            "ds-message-composer": LocalJSX.IntrinsicElements["ds-message-composer"] & JSXBase.HTMLAttributes<HTMLDsMessageComposerElement>;
+            "ds-message-scroller": LocalJSX.IntrinsicElements["ds-message-scroller"] & JSXBase.HTMLAttributes<HTMLDsMessageScrollerElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
+            "ds-panel-tool-header": LocalJSX.IntrinsicElements["ds-panel-tool-header"] & JSXBase.HTMLAttributes<HTMLDsPanelToolHeaderElement>;
+            "ds-panel-tool-search": LocalJSX.IntrinsicElements["ds-panel-tool-search"] & JSXBase.HTMLAttributes<HTMLDsPanelToolSearchElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;

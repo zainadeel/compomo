@@ -1,5 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { PANEL_TOOLS_FOOTER_TOOL_ID, PANEL_TOOLS_LABELS, PANEL_TOOLS_PRIMARY_TOOL_ID, PANEL_TOOLS_SHORTCUTS, PANEL_TOOLS_TOOL_IDS } from '../src/wc/components/PanelTools/panel-tools-types';
 import {
   isPanelToolsToolId,
@@ -180,5 +181,74 @@ describe('resolvePanelToolActivation', () => {
         selected: true,
       });
     }
+  });
+});
+
+describe('tool view composition contract', () => {
+  it('composes the canonical tool header in PanelTools instead of slotted full-view content', () => {
+    const source = fs.readFileSync(
+      new URL('../src/wc/components/PanelTools/PanelTools.tsx', import.meta.url),
+      'utf8',
+    );
+    const stories = fs.readFileSync(
+      new URL('../src/wc/components/PanelTools/PanelTools.stories.ts', import.meta.url),
+      'utf8',
+    );
+
+    assert.match(source, /<ds-panel-tool-header/);
+    assert.match(source, /class="panel-tools__header"/);
+    assert.match(source, /dsHeaderBack/);
+    assert.match(source, /dsHeaderAction/);
+    assert.doesNotMatch(stories, /slot="[^"]+-view"[\s\S]*?<ds-panel-tool-header/);
+  });
+
+  it('keeps base and detail header actions at the shared 8px outer inset', () => {
+    const styles = fs.readFileSync(
+      new URL('../src/wc/components/PanelToolHeader/PanelToolHeader.css', import.meta.url),
+      'utf8',
+    );
+
+    assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?display: flex;/);
+    assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?padding: var\(--dimension-space-100\);/);
+    assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?user-select: none;/);
+    assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?flex: 1 1 0;/);
+    assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?width: auto;/);
+    assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?user-select: none;/);
+    assert.match(styles, /\.panel-tool-header__leading\s*{[\s\S]*?flex: 0 0 auto;/);
+    assert.match(styles, /\.panel-tool-header__trailing\s*{[\s\S]*?flex: 0 0 auto;/);
+    assert.doesNotMatch(styles, /grid-template-columns:/);
+  });
+
+  it('keeps 4px between adjacent header actions in every presentation', () => {
+    const styles = fs.readFileSync(
+      new URL('../src/wc/components/PanelToolHeader/PanelToolHeader.css', import.meta.url),
+      'utf8',
+    );
+
+    assert.match(
+      styles,
+      /\.panel-tool-header__trailing\s*\{[\s\S]*?gap: var\(--dimension-space-050\);/,
+    );
+  });
+
+  it('keeps transient conversation row states separate from selection', () => {
+    const source = fs.readFileSync(
+      new URL('../src/wc/components/ConversationListItem/ConversationListItem.tsx', import.meta.url),
+      'utf8',
+    );
+    const styles = fs.readFileSync(
+      new URL('../src/wc/components/ConversationListItem/ConversationListItem.css', import.meta.url),
+      'utf8',
+    );
+
+    assert.match(source, /'ds-interaction-fill--selected': this\.selected/);
+    assert.match(styles, /choice-list\.css/);
+    assert.match(source, /'ds-choice-item': true/);
+    assert.match(source, /'ds-control--md': true/);
+    assert.match(source, /conversation-list-item__content ds-choice-item__content/);
+    assert.match(source, /conversation-list-item__title ds-choice-item__label/);
+    assert.match(source, /conversation-list-item__preview ds-choice-item__subtext/);
+    assert.doesNotMatch(styles, /padding: var\(--dimension-space-100\);/);
+    assert.doesNotMatch(styles, /\.conversation-list-item:hover[\s\S]*background:/);
   });
 });

@@ -1,0 +1,157 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent-activity",
+  "title": "AgentActivity",
+  "description": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-activity",
+    "source": "src/wc/components/AgentActivity/AgentActivity.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+      "useWhen": [
+        "An agent response benefits from concise progress or completion summaries."
+      ],
+      "avoidWhen": [
+        "The content would reveal private chain-of-thought, hidden prompts, secrets, or raw internal traces."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-agent-response",
+        "component:ds-loader"
+      ],
+      "patterns": [
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Each step has textual state and description; animation and color are supplementary.",
+        "The disclosure uses native keyboard and expanded-state semantics."
+      ],
+      "states": [
+        "Pending, active, complete, and error describe user-safe workflow progress."
+      ],
+      "responsiveBehavior": [
+        "Steps wrap within the response width."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "default": "'Activity'",
+          "required": false,
+          "mutable": false
+        },
+        "items": {
+          "type": "AgentActivityItem[]",
+          "resolvedType": "AgentActivityItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "default": "'Activity'",
+        "required": false,
+        "mutable": false
+      },
+      "items": {
+        "type": "AgentActivityItem[]",
+        "resolvedType": "AgentActivityItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-agent-activity",
+      "react": "DsAgentActivity",
+      "angular": "DsAgentActivity"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-agent-activity.js';",
+        "example": "<ds-agent-activity></ds-agent-activity>"
+      },
+      "react": {
+        "import": "import { DsAgentActivity } from '@ds-mo/ui/react';",
+        "example": "<DsAgentActivity />"
+      },
+      "angular": {
+        "import": "import { DsAgentActivity } from '@ds-mo/ui/angular/ds-agent-activity';",
+        "example": "<ds-agent-activity></ds-agent-activity>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "loader",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AgentActivity/AgentActivity.css",
+      "content": ":host { display: block; }\n.agent-activity { border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); border-radius: var(--dimension-radius-050); }\nsummary { align-items: center; cursor: pointer; display: flex; gap: var(--dimension-space-050); list-style: none; padding: var(--dimension-space-075) var(--dimension-space-100); }\nsummary::-webkit-details-marker { display: none; }\ndetails[open] summary ds-icon { transform: rotate(90deg); }\nol { display: grid; gap: var(--dimension-space-075); list-style: none; margin: 0; padding: 0 var(--dimension-space-100) var(--dimension-space-100); }\n.agent-activity__item { align-items: start; display: grid; gap: var(--dimension-space-050); grid-template-columns: auto minmax(0, 1fr); }\n.agent-activity__marker { align-items: center; color: var(--color-foreground-faint-neutral); display: flex; padding-block-start: var(--dimension-space-025); }\n.agent-activity__item--active .agent-activity__marker { color: var(--color-foreground-faint-brand); }\n.agent-activity__item--error .agent-activity__marker { color: var(--color-foreground-bold-negative); }\n.agent-activity__item span:last-child { display: grid; gap: var(--dimension-space-025); }\n\n@media (prefers-reduced-motion: no-preference) { summary ds-icon { transition: transform var(--effect-motion-short-2); } }\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentActivity/AgentActivity.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { AgentActivityItem } from '../conversation-types';\n\n@Component({\n  tag: 'ds-agent-activity',\n  styleUrl: 'AgentActivity.css',\n  scoped: true,\n})\nexport class AgentActivity {\n  @Prop() items: AgentActivityItem[] = [];\n  @Prop() heading: string = 'Activity';\n  @Prop() open: boolean = false;\n\n  render() {\n    return (\n      <Host>\n        <details class=\"agent-activity\" open={this.open}>\n          <summary>\n            <ds-icon name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n            <ds-text variant=\"text-body-small\" emphasis>{this.heading}</ds-text>\n          </summary>\n          <ol>\n            {this.items.map(item => (\n              <li class={`agent-activity__item agent-activity__item--${item.state}`}>\n                <span class=\"agent-activity__marker\" aria-hidden=\"true\">\n                  {item.state === 'active'\n                    ? <ds-loader size=\"xs\" color=\"inherit\" />\n                    : <ds-icon name={item.state === 'error' ? 'ErrorTriangle' : 'Check'} size=\"xs\" color=\"inherit\" />}\n                </span>\n                <span>\n                  <ds-text variant=\"text-body-small\" emphasis={item.state === 'active'}>{item.label}</ds-text>\n                  {item.detail ? <ds-text variant=\"text-caption\" color=\"secondary\">{item.detail}</ds-text> : null}\n                </span>\n              </li>\n            ))}\n          </ol>\n        </details>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

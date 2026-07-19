@@ -1,9 +1,11 @@
 /**
- * Control density recipes — shared metrics for md / sm / xs interactive controls
- * (Tag, PanelNav items, BarNav tabs, Menu items, Chip, etc.).
+ * Control density recipes — shared metrics for md / sm / xs control-like rows
+ * (Tag, PanelNav items, BarNav tabs, Menu items, Chip, read-only header titles,
+ * etc.). A row does not need to be interactive to use this geometry.
  *
- * Apply `.ds-control--md|sm|xs` on the control (host or inner row). Then use the
- * `--ds-control-*` vars for height, padding, icon box, label inset, gap, and radius.
+ * Apply `.ds-control--md|sm|xs` on the control or presentational row (host or
+ * inner element). Then use the `--ds-control-*` vars for height, padding, icon
+ * box, label inset, gap, and radius.
  * Text line-height belongs exclusively to the selected `ds-text` variant.
  *
  * Both `:host(.ds-control--*)` and `.ds-control--*` are listed so Stencil scoped

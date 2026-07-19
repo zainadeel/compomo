@@ -167,7 +167,7 @@ ds-text.ds-choice-item__subtext {
 .ds-choice-footer {
   position: relative;
   box-sizing: border-box;
-  padding: var(--dimension-space-050);
+  padding-block: var(--dimension-space-050);
 }
 
 .ds-choice-footer::before {
@@ -185,12 +185,15 @@ ds-text.ds-choice-item__subtext {
   justify-content: space-between;
   box-sizing: border-box;
   height: var(--dimension-size-400);
-  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
 }
 
 .ds-choice-footer__summary,
 .ds-choice-footer__clear ds-text {
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  padding-inline: calc(
+    var(--dimension-space-050) +
+      var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
 }
 
 .ds-choice-footer__clear {

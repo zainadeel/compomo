@@ -599,7 +599,7 @@ export class PanelNav {
         onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
       >
         <ds-text
-          class="panel-nav__item-label panel-nav__footer-user-label panel-nav__item-label-text"
+          class="panel-nav__item-label panel-nav__footer-user-label panel-nav__item-label-text ds-control--md"
           as="span"
           variant="text-body-medium"
           emphasis
@@ -644,7 +644,7 @@ export class PanelNav {
         <ds-icon name={item.icon} size="md" color="inherit" />
       </span>,
       <ds-text
-        class="panel-nav__item-label panel-nav__item-label-text"
+        class="panel-nav__item-label panel-nav__item-label-text ds-control--md"
         as="span"
         variant="text-body-medium"
         emphasis={isActive}
@@ -768,7 +768,7 @@ export class PanelNav {
                 <div class="panel-nav__group">
                   {group.label && (
                     <ds-text
-                      class="panel-nav__group-label"
+                      class="panel-nav__group-label ds-control--md"
                       as="span"
                       variant="text-caption"
                       emphasis

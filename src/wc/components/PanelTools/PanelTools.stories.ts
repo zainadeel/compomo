@@ -3,7 +3,9 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-panel-tools.js';
 import '../../../../dist/components/ds-app-shell.js';
-import type { PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
+import '../../../../dist/components/ds-message-scroller.js';
+import '../../../../dist/components/ds-message-composer.js';
+import type { PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
 
 const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
@@ -121,6 +123,68 @@ export const RailOnly: Story = {
   render: () => toolsShell(false, 'agents'),
 };
 
+function agentsFullView(presentation: 'drawer' | 'fullscreen') {
+  const headers: PanelToolsHeaders = {
+    agents: {
+      title: 'New agent chat',
+      showBack: true,
+      actions: [
+        {
+          id: 'menu',
+          icon: 'Ellipses',
+          ariaLabel: 'Chat options',
+          triggerId: 'storybook-agent-menu',
+          haspopup: 'menu',
+        },
+      ],
+    },
+  };
+  return html`
+    <div style="height:100vh; background:var(--color-background-primary);">
+      <ds-app-shell style="height:100%;">
+        <div style="padding:var(--dimension-space-400);">
+          Page content becomes inert in fullscreen.
+        </div>
+        <ds-panel-tools
+          slot="tools"
+          open
+          active-tool="agents"
+          presentation=${presentation}
+          .items=${RAIL_ITEMS}
+          .headers=${headers}
+        >
+          <section
+            slot="agents-view"
+            style="display:grid; grid-template-rows:minmax(0,1fr) auto; height:100%;"
+          >
+            <ds-message-scroller messages-label="Agent conversation">
+              <ds-empty-state
+                heading="What can I help with?"
+                body="This prototype uses scripted responses."
+              ></ds-empty-state>
+            </ds-message-scroller>
+            <ds-message-composer
+              label="Message agent"
+              placeholder="Ask the agent"
+              submit-intent="ai"
+            ></ds-message-composer>
+          </section>
+        </ds-panel-tools>
+      </ds-app-shell>
+    </div>
+  `;
+}
+
+export const AgentsFullViewDrawer: Story = {
+  name: 'Agents full view · drawer',
+  render: () => agentsFullView('drawer'),
+};
+
+export const AgentsFullViewFullscreen: Story = {
+  name: 'Agents full view · fullscreen',
+  render: () => agentsFullView('fullscreen'),
+};
+
 export const Interactive: Story = {
   name: 'Interactive rail',
   parameters: {
@@ -141,11 +205,13 @@ export const Interactive: Story = {
       "
       ${ref(root => {
         if (!root) return;
-        const tools = root.querySelector('ds-panel-tools') as HTMLElement & {
-          open: boolean;
-          activeTool: PanelToolsToolId | '';
-          items: PanelToolsItem[];
-        } | null;
+        const tools = root.querySelector('ds-panel-tools') as
+          | (HTMLElement & {
+              open: boolean;
+              activeTool: PanelToolsToolId | '';
+              items: PanelToolsItem[];
+            })
+          | null;
         const status = root.querySelector('#panel-tools-status');
         if (!tools || !status) return;
 
@@ -154,7 +220,8 @@ export const Interactive: Story = {
         tools.activeTool = '';
 
         tools.addEventListener('dsToolChange', (e: Event) => {
-          const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>).detail;
+          const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>)
+            .detail;
           tools.open = selected;
           if (selected) tools.activeTool = id;
           status.textContent = selected
@@ -163,7 +230,9 @@ export const Interactive: Story = {
         });
       })}
     >
-      <div style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
+      <div
+        style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);"
+      >
         <p style="margin: 0 0 8px;">Click a rail icon — drawer opens beside the 48px column.</p>
         <p style="margin: 0; font-size: 12px;" id="panel-tools-status">closed</p>
       </div>
@@ -201,17 +270,20 @@ export const InGradientShell: Story = {
         if (!root || wiredGradientTools.has(root)) return;
         wiredGradientTools.add(root);
         const shell = root.querySelector('ds-app-shell');
-        const tools = root.querySelector('ds-panel-tools') as HTMLElement & {
-          open: boolean;
-          activeTool: PanelToolsToolId | '';
-          items: PanelToolsItem[];
-        } | null;
+        const tools = root.querySelector('ds-panel-tools') as
+          | (HTMLElement & {
+              open: boolean;
+              activeTool: PanelToolsToolId | '';
+              items: PanelToolsItem[];
+            })
+          | null;
         if (!tools) return;
         tools.items = RAIL_ITEMS;
         tools.open = false;
         tools.activeTool = '';
         tools.addEventListener('dsToolChange', (e: Event) => {
-          const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>).detail;
+          const { id, selected } = (e as CustomEvent<{ id: PanelToolsToolId; selected: boolean }>)
+            .detail;
           tools.open = selected;
           if (selected) tools.activeTool = id;
         });
@@ -219,8 +291,11 @@ export const InGradientShell: Story = {
       })}
     >
       <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
-        <div style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);">
-          Page content beside the tools rail. Shell shortcuts: K search, A agents, S stacks, M messages, N activity — repeat toggles closed.
+        <div
+          style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);"
+        >
+          Page content beside the tools rail. Shell shortcuts: K search, A agents, S stacks, M
+          messages, N activity — repeat toggles closed.
         </div>
         <ds-panel-tools slot="tools">
           <p slot="search">Search drawer over shell chrome</p>

@@ -724,6 +724,7 @@ export class BarNav {
               class={{
                 'bar-nav__tab': true,
                 'bar-nav__tab--selected': isSelected,
+                'ds-control--md': true,
                 'ds-focus-ring-inset': true,
                 'ds-control-inactive': !!tab.isInactive,
               }}
@@ -783,6 +784,7 @@ export class BarNav {
         <header
           class={{
             'bar-nav': true,
+            'ds-control--md': true,
             'bar-nav--dashboard': this.navStyle === 'dashboard',
             'bar-nav--settings': this.navStyle === 'settings',
             'bar-nav--tabs-collapsed':

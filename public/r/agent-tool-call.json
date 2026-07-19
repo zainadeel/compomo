@@ -1,0 +1,213 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent-tool-call",
+  "title": "AgentToolCall",
+  "description": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-tool-call",
+    "source": "src/wc/components/AgentToolCall/AgentToolCall.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+      "useWhen": [
+        "A prototype or agent product needs to expose user-safe tool execution detail."
+      ],
+      "avoidWhen": [
+        "A participant must approve, deny, edit, or retry the tool call; those are product controls outside this component."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-agent-response",
+        "component:ds-code-block"
+      ],
+      "patterns": [
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Queued, running, success, error, and denied states are available as text.",
+        "The disclosure uses native keyboard and expanded-state semantics."
+      ],
+      "states": [
+        "This component presents state but never executes a tool or owns approval policy."
+      ],
+      "responsiveBehavior": [
+        "Structured detail wraps and scrolls without widening the transcript."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "error": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "error",
+          "required": false,
+          "mutable": false
+        },
+        "input": {
+          "type": "unknown",
+          "resolvedType": "unknown",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "name": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "name",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "output": {
+          "type": "unknown",
+          "resolvedType": "unknown",
+          "required": false,
+          "mutable": false
+        },
+        "state": {
+          "type": "AgentToolState",
+          "resolvedType": "\"denied\" | \"error\" | \"queued\" | \"running\" | \"success\"",
+          "attribute": "state",
+          "default": "'queued'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "error": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "error",
+        "required": false,
+        "mutable": false
+      },
+      "input": {
+        "type": "unknown",
+        "resolvedType": "unknown",
+        "required": false,
+        "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "name": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "name",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "output": {
+        "type": "unknown",
+        "resolvedType": "unknown",
+        "required": false,
+        "mutable": false
+      },
+      "state": {
+        "type": "AgentToolState",
+        "resolvedType": "\"denied\" | \"error\" | \"queued\" | \"running\" | \"success\"",
+        "attribute": "state",
+        "default": "'queued'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-agent-tool-call",
+      "react": "DsAgentToolCall",
+      "angular": "DsAgentToolCall"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-agent-tool-call.js';",
+        "example": "<ds-agent-tool-call></ds-agent-tool-call>"
+      },
+      "react": {
+        "import": "import { DsAgentToolCall } from '@ds-mo/ui/react';",
+        "example": "<DsAgentToolCall />"
+      },
+      "angular": {
+        "import": "import { DsAgentToolCall } from '@ds-mo/ui/angular/ds-agent-tool-call';",
+        "example": "<ds-agent-tool-call></ds-agent-tool-call>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: input, output.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "loader",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AgentToolCall/AgentToolCall.css",
+      "content": ":host { display: block; }\n.agent-tool { border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); border-radius: var(--dimension-radius-050); }\nsummary { align-items: center; cursor: pointer; display: grid; gap: var(--dimension-space-050); grid-template-columns: auto minmax(0, 1fr) auto; list-style: none; padding: var(--dimension-space-075) var(--dimension-space-100); }\nsummary::-webkit-details-marker { display: none; }\n.agent-tool__status { align-items: center; color: var(--color-foreground-faint-neutral); display: flex; }\n.agent-tool--running .agent-tool__status, .agent-tool--queued .agent-tool__status { color: var(--color-foreground-faint-brand); }\n.agent-tool--error .agent-tool__status, .agent-tool--denied .agent-tool__status { color: var(--color-foreground-bold-negative); }\n.agent-tool__title { display: grid; gap: var(--dimension-space-025); }\ndetails[open] .agent-tool__chevron { transform: rotate(90deg); }\n.agent-tool__details { display: grid; gap: var(--dimension-space-075); padding: 0 var(--dimension-space-100) var(--dimension-space-100); }\nsection { display: grid; gap: var(--dimension-space-025); }\npre { background: var(--color-background-secondary); border-radius: var(--dimension-radius-050); margin: 0; overflow: auto; padding: var(--dimension-space-075); white-space: pre-wrap; }\n\n@media (prefers-reduced-motion: no-preference) { .agent-tool__chevron { transition: transform var(--effect-motion-short-2); } }\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentToolCall/AgentToolCall.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { AgentToolState } from '../conversation-types';\n\n@Component({ tag: 'ds-agent-tool-call', styleUrl: 'AgentToolCall.css', scoped: true })\nexport class AgentToolCall {\n  @Prop() name: string = '';\n  @Prop() label: string = '';\n  @Prop() state: AgentToolState = 'queued';\n  @Prop() input?: unknown;\n  @Prop() output?: unknown;\n  @Prop() error?: string;\n  @Prop() open: boolean = false;\n\n  private serialize(value: unknown) {\n    if (value === undefined) return '';\n    if (typeof value === 'string') return value;\n    try { return JSON.stringify(value, null, 2); } catch { return String(value); }\n  }\n\n  render() {\n    const active = this.state === 'queued' || this.state === 'running';\n    const status = this.state.charAt(0).toUpperCase() + this.state.slice(1);\n    return (\n      <Host>\n        <details class={`agent-tool agent-tool--${this.state}`} open={this.open}>\n          <summary>\n            <span class=\"agent-tool__status\" aria-hidden=\"true\">\n              {active ? <ds-loader size=\"xs\" color=\"inherit\" /> : <ds-icon name={this.state === 'success' ? 'Check' : 'ErrorTriangle'} size=\"xs\" color=\"inherit\" />}\n            </span>\n            <span class=\"agent-tool__title\">\n              <ds-text variant=\"text-body-small\" emphasis>{this.label || this.name}</ds-text>\n              <ds-text variant=\"text-caption\" color=\"secondary\">{status}</ds-text>\n            </span>\n            <ds-icon class=\"agent-tool__chevron\" name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n          </summary>\n          <div class=\"agent-tool__details\">\n            {this.input !== undefined ? <section><ds-text variant=\"text-caption\" emphasis>Input</ds-text><pre>{this.serialize(this.input)}</pre></section> : null}\n            {this.output !== undefined ? <section><ds-text variant=\"text-caption\" emphasis>Output</ds-text><pre>{this.serialize(this.output)}</pre></section> : null}\n            {this.error ? <section><ds-text variant=\"text-caption\" emphasis>Error</ds-text><pre>{this.error}</pre></section> : null}\n          </div>\n        </details>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

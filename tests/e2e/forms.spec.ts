@@ -559,6 +559,81 @@ test('slider pointer press selects the nearest thumb and emits one committed val
   await expect.poll(() => range.evaluate((element: HTMLDsSliderElement) => element.value)).toEqual([30, 80]);
 });
 
+test('slider thumb alignment keeps edge and center rail endpoints geometrically consistent', async ({ page }) => {
+  const horizontal = page.locator('#slider-single');
+  const vertical = page.locator('#slider-vertical');
+
+  const horizontalGeometry = async (alignment: 'edge' | 'center', value: number) => {
+    await horizontal.evaluate((element: HTMLDsSliderElement, input) => {
+      element.thumbAlignment = input.alignment;
+      element.value = input.value;
+    }, { alignment, value });
+    await expect(horizontal).toHaveClass(new RegExp(`slider--thumb-${alignment}`));
+    await expect(horizontal.locator('input[type="range"]')).toHaveValue(String(value));
+    return horizontal.evaluate((element: HTMLDsSliderElement) => {
+      const control = element.querySelector<HTMLElement>('.slider__control')!.getBoundingClientRect();
+      const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
+      const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
+      const indicator = element.querySelector<HTMLElement>('.slider__indicator')!.getBoundingClientRect();
+      return {
+        control: { left: control.left, right: control.right },
+        rail: { left: rail.left, right: rail.right },
+        thumb: { left: thumb.left, right: thumb.right, center: thumb.left + thumb.width / 2, width: thumb.width },
+        indicator: { left: indicator.left, right: indicator.right },
+      };
+    });
+  };
+
+  const edgeMin = await horizontalGeometry('edge', 0);
+  expect(edgeMin.rail.left).toBeCloseTo(edgeMin.control.left, 3);
+  expect(edgeMin.rail.right).toBeCloseTo(edgeMin.control.right, 3);
+  expect(edgeMin.thumb.left).toBeCloseTo(edgeMin.control.left, 3);
+  expect(edgeMin.indicator.left).toBeCloseTo(edgeMin.control.left, 3);
+  expect(edgeMin.indicator.right).toBeCloseTo(edgeMin.thumb.center, 3);
+
+  const edgeMax = await horizontalGeometry('edge', 100);
+  expect(edgeMax.thumb.right).toBeCloseTo(edgeMax.control.right, 3);
+  expect(edgeMax.indicator.right).toBeCloseTo(edgeMax.thumb.center, 3);
+
+  const centerMin = await horizontalGeometry('center', 0);
+  expect(centerMin.rail.left).toBeCloseTo(centerMin.control.left + centerMin.thumb.width / 2, 3);
+  expect(centerMin.rail.right).toBeCloseTo(centerMin.control.right - centerMin.thumb.width / 2, 3);
+  expect(centerMin.thumb.center).toBeCloseTo(centerMin.rail.left, 3);
+
+  const centerMax = await horizontalGeometry('center', 100);
+  expect(centerMax.thumb.center).toBeCloseTo(centerMax.rail.right, 3);
+  expect(centerMax.thumb.right).toBeCloseTo(centerMax.control.right, 3);
+
+  const verticalGeometry = async (alignment: 'edge' | 'center', value: number) => {
+    await vertical.evaluate((element: HTMLDsSliderElement, input) => {
+      element.thumbAlignment = input.alignment;
+      element.value = input.value;
+    }, { alignment, value });
+    await expect(vertical).toHaveClass(new RegExp(`slider--thumb-${alignment}`));
+    await expect(vertical.locator('input[type="range"]')).toHaveValue(String(value));
+    return vertical.evaluate((element: HTMLDsSliderElement) => {
+      const control = element.querySelector<HTMLElement>('.slider__control')!.getBoundingClientRect();
+      const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
+      const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
+      return {
+        control: { top: control.top, bottom: control.bottom },
+        rail: { top: rail.top, bottom: rail.bottom },
+        thumb: { top: thumb.top, bottom: thumb.bottom, center: thumb.top + thumb.height / 2, height: thumb.height },
+      };
+    });
+  };
+
+  const verticalEdgeMin = await verticalGeometry('edge', 0);
+  expect(verticalEdgeMin.rail.top).toBeCloseTo(verticalEdgeMin.control.top, 3);
+  expect(verticalEdgeMin.rail.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
+  expect(verticalEdgeMin.thumb.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
+
+  const verticalCenterMax = await verticalGeometry('center', 100);
+  expect(verticalCenterMax.rail.top).toBeCloseTo(verticalCenterMax.control.top + verticalCenterMax.thumb.height / 2, 3);
+  expect(verticalCenterMax.rail.bottom).toBeCloseTo(verticalCenterMax.control.bottom - verticalCenterMax.thumb.height / 2, 3);
+  expect(verticalCenterMax.thumb.center).toBeCloseTo(verticalCenterMax.rail.top, 3);
+});
+
 test('slider thumb promotes hover to pressed while the pointer is held', async ({ page }) => {
   const slider = page.locator('#slider-single');
   const thumb = slider.locator('.slider__thumb--active');
