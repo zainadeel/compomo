@@ -53,6 +53,7 @@
             "The disclosure uses native keyboard and expanded-state semantics."
           ],
           "states": [
+            "While collapsed, the summary follows the current user-safe activity and shimmers only while active; while expanded, the heading becomes Activity and the ordered list exposes every step.",
             "Pending, active, complete, and error describe user-safe workflow progress."
           ],
           "responsiveBehavior": [
@@ -157,6 +158,10 @@
           },
           "parts": {
             "type": "AgentResponsePart[]",
+            "required": false
+          },
+          "showAuthor": {
+            "type": "boolean",
             "required": false
           },
           "streaming": {
@@ -550,6 +555,72 @@
       "registryDependencies": [
         "icon",
         "text"
+      ]
+    },
+    {
+      "name": "avatar",
+      "title": "Avatar",
+      "description": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/avatar",
+        "source": "src/wc/components/Avatar/Avatar.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
+          "useWhen": [
+            "A list or message composition needs a consistent 32px circular identity marker represented by an icon."
+          ],
+          "avoidWhen": [
+            "The identity has a supplied photograph, initials, presence state, or editable profile behavior; those variants are not part of this primitive."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-conversation-list-item",
+            "component:ds-message"
+          ],
+          "accessibility": [
+            "Provide label only when the icon communicates meaning that surrounding text does not already convey.",
+            "Omit label when the owning row or message already provides an equivalent accessible name."
+          ],
+          "responsiveBehavior": [
+            "The avatar keeps its fixed 32px circle and 20px icon at every viewport size."
+          ],
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Avatar/Avatar.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string | undefined",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-avatar",
+          "react": "DsAvatar",
+          "angular": "DsAvatar"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon"
       ]
     },
     {
@@ -2187,6 +2258,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-conversation-list-section",
+            "component:ds-avatar",
             "component:ds-badge",
             "component:ds-loader"
           ],
@@ -2204,7 +2276,7 @@
             "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
             "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
             "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
-            "The actions slot overlays the row at an 8px right inset without changing title or preview measure."
+            "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
           ],
           "responsiveBehavior": [
             "Long titles and previews truncate without displacing trailing status."
@@ -3214,7 +3286,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
+      "description": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3225,10 +3297,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
+          "summary": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
           "useWhen": [
             "A trigger reveals a short contextual list of commands or state-changing actions.",
-            "Actions need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
+            "Actions need grouping, mutually exclusive selected state, supplemental notification dots, switch rows, or destructive treatment."
           ],
           "avoidWhen": [
             "The user is selecting a value for a form field.",
@@ -3266,6 +3338,7 @@
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
             "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
+            "Single-selection menus use menuitemradio semantics and aria-checked on each row; the leading radio mark is presentation-only.",
             "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
           ],
@@ -3273,6 +3346,7 @@
             "The host owns open state and responds to selection and close events.",
             "Use either flat items or sections, not both.",
             "After dsSelect from a switch row, update switchValue in the items property so the controlled indicator reflects the new state.",
+            "For selectionMode single, keep exactly one item isSelected and update the items property after dsSelect.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
             "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only."
           ],
@@ -3350,6 +3424,10 @@
           },
           "sections": {
             "type": "MenuSection[]",
+            "required": false
+          },
+          "selectionMode": {
+            "type": "MenuSelectionMode",
             "required": false
           },
           "side": {
@@ -3431,7 +3509,8 @@
           ],
           "states": [
             "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
-            "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label."
+            "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label.",
+            "Set showAuthor false only when the product makes participant and assistant roles visually self-evident; continue passing author so the accessible message label remains specific."
           ],
           "responsiveBehavior": [
             "Outgoing and incoming rows adapt to available width while preserving their directional alignment."
@@ -3465,6 +3544,10 @@
             "required": false
           },
           "scrollAnchor": {
+            "type": "boolean",
+            "required": false
+          },
+          "showAuthor": {
             "type": "boolean",
             "required": false
           },
@@ -3559,7 +3642,7 @@
     {
       "name": "message-composer",
       "title": "MessageComposer",
-      "description": "Auto-growing conversation textarea with submit, stop, error, and extensible attachment or channel-tool regions.",
+      "description": "Two-line auto-growing conversation textarea with submit, stop, error, and extensible leading-tool or trailing-action regions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3570,7 +3653,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Auto-growing conversation textarea with submit, stop, error, and extensible attachment or channel-tool regions.",
+          "summary": "Two-line auto-growing conversation textarea with submit, stop, error, and extensible leading-tool or trailing-action regions.",
           "useWhen": [
             "A conversation accepts multi-line text and needs Enter-to-submit with a streaming stop action."
           ],
@@ -3579,7 +3662,8 @@
           ],
           "commonlyComposedWith": [
             "component:ds-message-scroller",
-            "component:ds-button-filled"
+            "component:ds-button-filled",
+            "component:ds-button-unfilled"
           ],
           "patterns": [
             "pattern:conversation"
@@ -3591,14 +3675,19 @@
           ],
           "states": [
             "The owner controls draft value and transport state; the composer emits intent without performing transport.",
-            "The channel owner selects submitIntent when brand is not appropriate; agent experiences may opt into ai while person-to-person messaging keeps the brand default."
+            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last.",
+            "The submit action defaults to brand for both agent and person-to-person conversations; change submitIntent only when the action consequence has a different semantic intent."
           ],
           "responsiveBehavior": [
-            "The field grows to a bounded height and then scrolls internally."
+            "The textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally."
           ],
           "references": [
             {
               "label": "Storybook examples",
+              "path": "src/wc/components/MessageComposer/MessageComposer.stories.ts"
+            },
+            {
+              "label": "Scroller overlay composition",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
           ]
@@ -3694,7 +3783,8 @@
           "states": [
             "Selection and transcript interaction release automatic following.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
-            "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message."
+            "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
+            "Place a composer container in the overlay slot so messages scroll behind it; the scroller measures its live height, reserves matching transcript clearance, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
             "Transcript width is readable while the scroll region fills available height."
@@ -4160,7 +4250,7 @@
     {
       "name": "panel-tool-header",
       "title": "PanelToolHeader",
-      "description": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+      "description": "Canonical left-aligned PanelTools header with an optional leading navigation or dismiss action and application-owned trailing icon actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4171,10 +4261,10 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+          "summary": "Canonical left-aligned PanelTools header with an optional leading navigation or dismiss action and application-owned trailing icon actions.",
           "useWhen": [
             "PanelTools needs its one shared root or detail header.",
-            "A tool header needs a title with optional Back, menu, fullscreen, or other compact icon actions."
+            "A tool header needs a title with optional Back or Close navigation, menu, fullscreen, or other compact icon actions."
           ],
           "avoidWhen": [
             "Rendering inside a PanelTools tool body; PanelTools already composes this canonical header above the body.",
@@ -4184,7 +4274,7 @@
             "component:ds-button-unfilled"
           ],
           "accessibility": [
-            "Back and trailing icon actions require concise localized names.",
+            "Leading navigation or dismiss actions and trailing icon actions require concise localized names.",
             "The visible heading names the active panel or subview."
           ],
           "states": [
@@ -4211,6 +4301,10 @@
             "required": false
           },
           "backAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "backIcon": {
             "type": "string",
             "required": false
           },
@@ -4485,7 +4579,7 @@
             "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
             "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
             "The application owns unread state; opening Messages, Agents, Stacks, or Activity does not automatically clear its notification dot.",
-            "PanelTools owns the one visible header above every tool view. Slotted tool content must never render a second tool header.",
+            "PanelTools owns the one visible header above every drawer tool view and above fullscreen views using the default shared header mode. Slotted tool content must not render a second header unless the conversation product explicitly opts into split fullscreen headers.",
             "PanelTools composes ds-panel-tool-header as its canonical left-aligned header implementation so standalone header stories and shell rendering cannot diverge.",
             "Each tool supplies its current header title, base-versus-detail Back state, and right-side actions through the headers property. Base views omit Back; deeper views expose Back and update the same header in place.",
             "Header Back and action events express intent only; the owning tool changes product navigation, menus, and data state. PanelTools keeps the final header action exactly 8px from the drawer edge.",
@@ -4495,13 +4589,16 @@
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
             "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
-            "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque during width motion and only become inert or paint-skipped after the drawer is fully closed."
+            "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
+            "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
+            "When fullscreenHeaderMode is split, PanelTools suppresses only its fullscreen shared header. The application renders exactly two canonical ds-panel-tool-header instances: a tool-title/list-actions header over the 300px history pane and a chat-title/Exit-fullscreen/chat-actions header over the detail pane. The detail header omits Back because the list remains visible."
           ],
           "responsiveBehavior": [
             "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
             "AppShell owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
             "Below 768px, do not reuse desktop PanelTools: future AppShell mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
             "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
+            "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
             "Use fixed drawer widths for now; do not add user resizing or width persistence."
           ],
           "frameworkCaveats": {
@@ -4538,6 +4635,10 @@
         "props": {
           "activeTool": {
             "type": "PanelToolsToolId | ''",
+            "required": false
+          },
+          "fullscreenHeaderMode": {
+            "type": "'shared' | 'split'",
             "required": false
           },
           "headers": {

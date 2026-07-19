@@ -23,6 +23,8 @@ export class Message {
   @Prop({ reflect: true }) direction: MessageDirection = 'incoming';
   @Prop() groupPosition: MessageGroupPosition = 'single';
   @Prop() author: string = '';
+  /** Keep author semantics while allowing products with self-evident roles to hide the visible label. */
+  @Prop() showAuthor: boolean = true;
   /** ISO timestamp. */
   @Prop() timestamp: string = '';
   @Prop() deliveryState: MessageDeliveryState | undefined;
@@ -63,7 +65,7 @@ export class Message {
           <div class="message__body">
             <div class="message__header">
               <slot name="header" />
-              {this.author ? (
+              {this.author && this.showAuthor ? (
                 <ds-text as="span" variant="text-caption" emphasis color="secondary">
                   {this.author}
                 </ds-text>

@@ -3,6 +3,66 @@
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
+    "storyId": "agent-activity--expanded",
+    "theme": "dark",
+    "targets": [
+      ".ds-shimmer-text"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "agent-activity--expanded",
+    "theme": "light",
+    "targets": [
+      ".ds-shimmer-text"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "agent-activity--playground",
+    "theme": "dark",
+    "targets": [
+      ".agent-activity__summary-label > .ds-shimmer-text.ds-text__element.sc-ds-text"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "agent-activity--playground",
+    "theme": "light",
+    "targets": [
+      ".agent-activity__summary-label > .ds-shimmer-text.ds-text__element.sc-ds-text"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "conversation-message-scroller--person-to-person-reuse",
+    "theme": "dark",
+    "targets": [
+      ".ds-shimmer-text"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "conversation-message-scroller--person-to-person-reuse",
+    "theme": "light",
+    "targets": [
+      ".ds-shimmer-text"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
     "storyId": "data-viz-carddatavizdonut--view",
     "theme": "dark",
     "targets": [
@@ -767,6 +827,26 @@
     "impact": "review",
     "kind": "manual-review",
     "ruleId": "color-contrast",
+    "storyId": "navigation-paneltoolssearch--transparent-on-shell-wash",
+    "theme": "dark",
+    "targets": [
+      "input"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "navigation-paneltoolssearch--transparent-on-shell-wash",
+    "theme": "light",
+    "targets": [
+      "input"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
     "storyId": "navigation-tabgroup--backgrounds",
     "theme": "dark",
     "targets": [
@@ -803,6 +883,26 @@
     "theme": "light",
     "targets": [
       ".ds-interaction-fill--selected > .menu-item__content.ds-choice-item__content.ds-interaction-fill__content > .menu-item__label.ds-choice-item__label.ds-text--body-medium > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--single-selection",
+    "theme": "dark",
+    "targets": [
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s"
+    ]
+  },
+  {
+    "impact": "review",
+    "kind": "manual-review",
+    "ruleId": "color-contrast",
+    "storyId": "overlay-menu--single-selection",
+    "theme": "light",
+    "targets": [
+      ".ds-text--color-primary > .ds-text__element.sc-ds-text.sc-ds-text-s"
     ]
   },
   {

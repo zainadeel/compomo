@@ -10,6 +10,7 @@ export { DsAgentSourceList } from "./ds-agent-source-list.js";
 export { DsAgentToolCall } from "./ds-agent-tool-call.js";
 export { DsAppShell } from "./ds-app-shell.js";
 export { DsAttachmentList } from "./ds-attachment-list.js";
+export { DsAvatar } from "./ds-avatar.js";
 export { DsBadge } from "./ds-badge.js";
 export { DsBanner } from "./ds-banner.js";
 export { DsBarNav } from "./ds-bar-nav.js";

@@ -14,13 +14,13 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: end;
-  gap: var(--dimension-space-075);
+  gap: 0;
   width: 100%;
   box-sizing: border-box;
 }
 
 .message--outgoing {
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .message--outgoing .message__avatar {
@@ -34,11 +34,23 @@
   display: none;
 }
 
+.message__avatar:not(:empty) {
+  margin-inline-end: var(--dimension-space-075);
+}
+
+.message__actions:not(:empty) {
+  margin-inline-start: var(--dimension-space-075);
+}
+
 .message__body {
   display: flex;
   flex-direction: column;
   min-width: 0;
   gap: var(--dimension-space-025);
+}
+
+.message--incoming .message__body {
+  width: 100%;
 }
 
 .message--outgoing .message__body {

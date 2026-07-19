@@ -32,7 +32,9 @@ export class MessageScroller {
 
   private viewport?: HTMLElement;
   private content?: HTMLElement;
+  private overlay?: HTMLElement;
   private resizeObserver?: ResizeObserver;
+  private overlayResizeObserver?: ResizeObserver;
   private mutationObserver?: MutationObserver;
   private following = true;
   private atStart = false;
@@ -47,6 +49,7 @@ export class MessageScroller {
 
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
+    this.overlayResizeObserver?.disconnect();
     this.mutationObserver?.disconnect();
     document.removeEventListener('selectionchange', this.handleSelectionChange);
   }
@@ -97,6 +100,14 @@ export class MessageScroller {
     this.previousScrollHeight = this.viewport.scrollHeight;
     this.resizeObserver = new ResizeObserver(() => this.handleContentGrowth());
     this.resizeObserver.observe(this.content);
+    if (this.overlay) {
+      this.overlayResizeObserver = new ResizeObserver(entries => {
+        const blockSize = Math.ceil(entries[0]?.contentRect.height ?? 0);
+        this.el.style.setProperty('--ds-message-scroller-overlay-block-size', `${blockSize}px`);
+        this.handleContentGrowth();
+      });
+      this.overlayResizeObserver.observe(this.overlay);
+    }
     this.mutationObserver = new MutationObserver(() => this.handleContentGrowth());
     this.mutationObserver.observe(this.content, {
       childList: true,
@@ -207,6 +218,14 @@ export class MessageScroller {
               <slot />
             </div>
           </div>
+          <div
+            class="message-scroller__overlay"
+            ref={element => {
+              this.overlay = element;
+            }}
+          >
+            <slot name="overlay" />
+          </div>
           {this.showScrollToLatest ? (
             <div class="message-scroller__control">
               <ds-button-unfilled
@@ -214,6 +233,7 @@ export class MessageScroller {
                 icon="ChevronDown"
                 size="md"
                 rounded
+                hasBorder={false}
                 aria-label="Scroll to latest message"
                 onDsClick={() => void this.scrollToEnd()}
               />

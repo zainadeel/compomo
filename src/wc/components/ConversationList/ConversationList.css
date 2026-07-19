@@ -32,8 +32,8 @@
 
 .conversation-list__actions {
   position: absolute;
-  right: var(--dimension-space-200);
-  bottom: var(--dimension-space-200);
+  right: var(--dimension-space-100);
+  bottom: var(--dimension-space-100);
   z-index: var(--dimension-z-index-floating);
 }
 

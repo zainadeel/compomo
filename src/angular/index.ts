@@ -8,6 +8,7 @@ export const DIRECTIVES = [
   d.DsAgentToolCall,
   d.DsAppShell,
   d.DsAttachmentList,
+  d.DsAvatar,
   d.DsBadge,
   d.DsBanner,
   d.DsBarNav,

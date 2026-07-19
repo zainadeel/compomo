@@ -43,6 +43,8 @@ test('renders one unread dot centered on the title action track', async ({ page 
 
   await expect(badge).toHaveClass(/badge--dot/);
   await expect(mark).toHaveText('');
+  await rowButton.hover();
+  await expect(item.locator('.conversation-list-item__unread')).toHaveCSS('opacity', '1');
 
   const [rowBox, titleBox, badgeBox] = await Promise.all([
     rowButton.boundingBox(),
@@ -55,7 +57,7 @@ test('renders one unread dot centered on the title action track', async ({ page 
   expect(
     Math.abs(titleBox!.y + titleBox!.height / 2 - (badgeBox!.y + badgeBox!.height / 2))
   ).toBeLessThanOrEqual(1);
-  expect(Math.round(rowBox!.x + rowBox!.width - (badgeBox!.x + badgeBox!.width / 2))).toBe(24);
+  expect(Math.round(rowBox!.x + rowBox!.width - (badgeBox!.x + badgeBox!.width / 2))).toBe(16);
 });
 
 test('overlays a centered rounded action at the 8px right inset', async ({ page }) => {
@@ -67,6 +69,30 @@ test('overlays a centered rounded action at the 8px right inset', async ({ page 
   await expect(actions).toHaveCSS('opacity', '0');
   await row.hover();
   await expect(actions).toHaveCSS('opacity', '1');
+
+  const actionBlur = await actions.evaluate(element => {
+    const styles = getComputedStyle(element);
+    const blurToken = styles.getPropertyValue('--effect-blur-sm').trim();
+    return { actual: styles.backdropFilter, expected: `blur(${blurToken})` };
+  });
+  expect(actionBlur.actual).toBe(actionBlur.expected);
+
+  const actionBackground = await actions.evaluate(
+    element => getComputedStyle(element).backgroundColor
+  );
+  expect(actionBackground).toMatch(/^rgba\(.*,[ ]?0\)$/);
+
+  const layers = await item.evaluate(element => ({
+    action: Number.parseInt(
+      getComputedStyle(element.querySelector('.conversation-list-item__actions')!).zIndex,
+      10
+    ),
+    hover: Number.parseInt(
+      getComputedStyle(element.querySelector('.conversation-list-item')!, '::after').zIndex,
+      10
+    ),
+  }));
+  expect(layers.action).toBeGreaterThan(layers.hover);
 
   const [rowBox, triggerBox] = await Promise.all([row.boundingBox(), trigger.boundingBox()]);
   expect(rowBox).not.toBeNull();

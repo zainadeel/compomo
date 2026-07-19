@@ -4,4 +4,17 @@ import '../../../../dist/components/ds-markdown.js';
 
 export default { title: 'Conversation/Markdown', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
-export const Gfm: Story = { render: () => html`<ds-markdown content=${'# Summary\n\n- [x] Reviewed records\n- [ ] Share report\n\n| Item | Count |\n| --- | ---: |\n| Records | 12 |'}></ds-markdown>` };
+export const Gfm: Story = {
+  render: () => html`
+    <ds-markdown
+      content=${`# Summary
+
+- [x] Reviewed records
+- [ ] Share report
+
+| Item | Count |
+| --- | ---: |
+| Records | 12 |`}
+    ></ds-markdown>
+  `,
+};

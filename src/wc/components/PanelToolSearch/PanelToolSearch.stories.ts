@@ -45,12 +45,11 @@ export const TransparentOnShellWash: Story = {
 };
 
 const agentFilterItems: MenuItemData[] = [
-  { label: 'Unread', value: 'unread', showSwitch: true, switchValue: true },
+  { label: 'All chats', value: 'all', isSelected: true },
+  { label: 'Unread', value: 'unread' },
   {
     label: 'Current page relevance',
     value: 'current-page',
-    showSwitch: true,
-    switchValue: false,
   },
 ];
 
@@ -88,6 +87,7 @@ export const WithFilterMenu: Story = {
           id="agent-filter-menu"
           anchor-id="agent-filter-trigger"
           menu-label="Filter agent chats"
+          selection-mode="single"
           side="bottom"
           align="end"
           anchor-alignment="choice-cell"

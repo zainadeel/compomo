@@ -23,7 +23,7 @@
   gap: var(--dimension-space-100);
   min-height: var(--dimension-size-400);
   padding: var(--dimension-space-050) var(--dimension-space-100);
-  background: var(--color-background-bold-neutral);
+  background: var(--color-background-strong-neutral);
   box-sizing: border-box;
 }
 

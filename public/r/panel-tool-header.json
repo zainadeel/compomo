@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "panel-tool-header",
   "title": "PanelToolHeader",
-  "description": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+  "description": "Canonical left-aligned PanelTools header with an optional leading navigation or dismiss action and application-owned trailing icon actions.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,10 +13,10 @@
     "intent": {
       "audience": "general",
       "status": "experimental",
-      "summary": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+      "summary": "Canonical left-aligned PanelTools header with an optional leading navigation or dismiss action and application-owned trailing icon actions.",
       "useWhen": [
         "PanelTools needs its one shared root or detail header.",
-        "A tool header needs a title with optional Back, menu, fullscreen, or other compact icon actions."
+        "A tool header needs a title with optional Back or Close navigation, menu, fullscreen, or other compact icon actions."
       ],
       "avoidWhen": [
         "Rendering inside a PanelTools tool body; PanelTools already composes this canonical header above the body.",
@@ -26,7 +26,7 @@
         "component:ds-button-unfilled"
       ],
       "accessibility": [
-        "Back and trailing icon actions require concise localized names.",
+        "Leading navigation or dismiss actions and trailing icon actions require concise localized names.",
         "The visible heading names the active panel or subview."
       ],
       "states": [
@@ -64,7 +64,16 @@
           "default": "'Back'",
           "required": false,
           "mutable": false,
-          "description": "Accessible name for the Back action."
+          "description": "Accessible name for the leading navigation or dismiss action."
+        },
+        "backIcon": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "back-icon",
+          "default": "'ChevronLeft'",
+          "required": false,
+          "mutable": false,
+          "description": "Canonical icon for the leading navigation or dismiss action."
         },
         "heading": {
           "type": "string",
@@ -176,7 +185,16 @@
         "default": "'Back'",
         "required": false,
         "mutable": false,
-        "description": "Accessible name for the Back action."
+        "description": "Accessible name for the leading navigation or dismiss action."
+      },
+      "backIcon": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "back-icon",
+        "default": "'ChevronLeft'",
+        "required": false,
+        "mutable": false,
+        "description": "Canonical icon for the leading navigation or dismiss action."
       },
       "heading": {
         "type": "string",
@@ -317,7 +335,7 @@
     },
     {
       "path": "src/wc/components/PanelToolHeader/PanelToolHeader.tsx",
-      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\nimport type { PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';\n\n@Component({\n  tag: 'ds-panel-tool-header',\n  styleUrl: 'PanelToolHeader.css',\n  scoped: true,\n})\nexport class PanelToolHeader {\n  @Element() el!: HTMLElement;\n\n  /** Visible heading for the active tool view. */\n  @Prop() heading: string = '';\n  /** Show the leading Back action. */\n  @Prop() showBack: boolean = false;\n  /** Accessible name for the Back action. */\n  @Prop() backAriaLabel: string = 'Back';\n  /** Show the trailing options-menu trigger. */\n  @Prop() showMenu: boolean = true;\n  /** Accessible name for the options-menu trigger. */\n  @Prop() menuAriaLabel: string = 'More options';\n  /** Stable id placed on the menu trigger host for ds-menu anchoring. */\n  @Prop() menuTriggerId: string = '';\n  /** Id of the menu controlled by the trigger. */\n  @Prop() menuControls: string | undefined;\n  /** Whether the controlled menu is open. */\n  @Prop() menuExpanded: boolean = false;\n  /** Trailing application-owned icon actions. When present, these replace the legacy menu action. */\n  @Prop() actions: PanelToolsHeaderAction[] = [];\n\n  @Event() dsBack!: EventEmitter<MouseEvent>;\n  @Event() dsMenuToggle!: EventEmitter<MouseEvent>;\n  @Event() dsAction!: EventEmitter<{ id: string; originalEvent: MouseEvent }>;\n\n  @Method()\n  async focusMenuTrigger() {\n    const trigger = this.el.querySelector(\n      'ds-button-unfilled.panel-tool-header__menu, ds-button-unfilled[data-header-action-id=\"menu\"]',\n    ) as\n      | (HTMLElement & { setFocus?: () => Promise<void> })\n      | null;\n    await trigger?.setFocus?.();\n  }\n\n  render() {\n    const authoredActions = this.actions.length > 0;\n    const actions: PanelToolsHeaderAction[] = authoredActions\n      ? this.actions\n      : this.showMenu\n        ? [{\n            id: 'menu',\n            icon: 'Ellipses',\n            ariaLabel: this.menuAriaLabel,\n            triggerId: this.menuTriggerId,\n            controls: this.menuControls,\n            expanded: this.menuExpanded,\n            haspopup: 'menu',\n          }]\n        : [];\n\n    return (\n      <Host>\n        <header class=\"panel-tool-header\">\n          <div class=\"panel-tool-header__leading\">\n            {this.showBack ? (\n              <ds-button-unfilled\n                class=\"panel-tool-header__back\"\n                variant=\"icon\"\n                icon=\"ChevronLeft\"\n                size=\"md\"\n                aria-label={this.backAriaLabel}\n                activeFill={false}\n                hasBorder={false}\n                onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}\n              />\n            ) : null}\n          </div>\n          <ds-text\n            class=\"panel-tool-header__heading ds-control--md\"\n            as=\"h2\"\n            variant=\"text-body-medium\"\n            emphasis\n            color=\"primary\"\n            lineTruncation={1}\n          >\n            {this.heading}\n          </ds-text>\n          <div class=\"panel-tool-header__trailing\">\n            {actions.map(action => (\n              <ds-button-unfilled\n                key={action.id}\n                id={action.triggerId || undefined}\n                data-header-action-id={action.id}\n                class={{\n                  'panel-tool-header__action': true,\n                  'panel-tool-header__menu': action.id === 'menu',\n                }}\n                variant=\"icon\"\n                icon={action.icon}\n                size=\"md\"\n                aria-label={action.ariaLabel}\n                haspopup={action.haspopup}\n                controls={action.controls}\n                expanded={action.expanded}\n                pressed={action.pressed}\n                isInactive={action.isInactive}\n                activeFill={false}\n                hasBorder={false}\n                onDsClick={(event: CustomEvent<MouseEvent>) => {\n                  if (!authoredActions && action.id === 'menu') this.dsMenuToggle.emit(event.detail);\n                  this.dsAction.emit({ id: action.id, originalEvent: event.detail });\n                }}\n              />\n            ))}\n          </div>\n        </header>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\nimport type { PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';\n\n@Component({\n  tag: 'ds-panel-tool-header',\n  styleUrl: 'PanelToolHeader.css',\n  scoped: true,\n})\nexport class PanelToolHeader {\n  @Element() el!: HTMLElement;\n\n  /** Visible heading for the active tool view. */\n  @Prop() heading: string = '';\n  /** Show the leading Back action. */\n  @Prop() showBack: boolean = false;\n  /** Canonical icon for the leading navigation or dismiss action. */\n  @Prop() backIcon: string = 'ChevronLeft';\n  /** Accessible name for the leading navigation or dismiss action. */\n  @Prop() backAriaLabel: string = 'Back';\n  /** Show the trailing options-menu trigger. */\n  @Prop() showMenu: boolean = true;\n  /** Accessible name for the options-menu trigger. */\n  @Prop() menuAriaLabel: string = 'More options';\n  /** Stable id placed on the menu trigger host for ds-menu anchoring. */\n  @Prop() menuTriggerId: string = '';\n  /** Id of the menu controlled by the trigger. */\n  @Prop() menuControls: string | undefined;\n  /** Whether the controlled menu is open. */\n  @Prop() menuExpanded: boolean = false;\n  /** Trailing application-owned icon actions. When present, these replace the legacy menu action. */\n  @Prop() actions: PanelToolsHeaderAction[] = [];\n\n  @Event() dsBack!: EventEmitter<MouseEvent>;\n  @Event() dsMenuToggle!: EventEmitter<MouseEvent>;\n  @Event() dsAction!: EventEmitter<{ id: string; originalEvent: MouseEvent }>;\n\n  @Method()\n  async focusMenuTrigger() {\n    const trigger = this.el.querySelector(\n      'ds-button-unfilled.panel-tool-header__menu, ds-button-unfilled[data-header-action-id=\"menu\"]'\n    ) as (HTMLElement & { setFocus?: () => Promise<void> }) | null;\n    await trigger?.setFocus?.();\n  }\n\n  render() {\n    const authoredActions = this.actions.length > 0;\n    const actions: PanelToolsHeaderAction[] = authoredActions\n      ? this.actions\n      : this.showMenu\n      ? [\n          {\n            id: 'menu',\n            icon: 'Ellipses',\n            ariaLabel: this.menuAriaLabel,\n            triggerId: this.menuTriggerId,\n            controls: this.menuControls,\n            expanded: this.menuExpanded,\n            haspopup: 'menu',\n          },\n        ]\n      : [];\n\n    return (\n      <Host>\n        <header class=\"panel-tool-header\">\n          <div class=\"panel-tool-header__leading\">\n            {this.showBack ? (\n              <ds-button-unfilled\n                class=\"panel-tool-header__back\"\n                variant=\"icon\"\n                icon={this.backIcon}\n                size=\"md\"\n                aria-label={this.backAriaLabel}\n                activeFill={false}\n                hasBorder={false}\n                onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}\n              />\n            ) : null}\n          </div>\n          <ds-text\n            class=\"panel-tool-header__heading ds-control--md\"\n            as=\"h2\"\n            variant=\"text-body-medium\"\n            emphasis\n            color=\"primary\"\n            lineTruncation={1}\n          >\n            {this.heading}\n          </ds-text>\n          <div class=\"panel-tool-header__trailing\">\n            {actions.map(action => (\n              <ds-button-unfilled\n                key={action.id}\n                id={action.triggerId || undefined}\n                data-header-action-id={action.id}\n                class={{\n                  'panel-tool-header__action': true,\n                  'panel-tool-header__menu': action.id === 'menu',\n                }}\n                variant=\"icon\"\n                icon={action.icon}\n                size=\"md\"\n                aria-label={action.ariaLabel}\n                haspopup={action.haspopup}\n                controls={action.controls}\n                expanded={action.expanded}\n                pressed={action.pressed}\n                isInactive={action.isInactive}\n                activeFill={false}\n                hasBorder={false}\n                onDsClick={(event: CustomEvent<MouseEvent>) => {\n                  if (!authoredActions && action.id === 'menu')\n                    this.dsMenuToggle.emit(event.detail);\n                  this.dsAction.emit({ id: action.id, originalEvent: event.detail });\n                }}\n              />\n            ))}\n          </div>\n        </header>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

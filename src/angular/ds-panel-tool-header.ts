@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsPanelToolHeader } from '@ds-mo/ui/compon
 
 @ProxyCmp({
   defineCustomElementFn: defineDsPanelToolHeader,
-  inputs: ['actions', 'backAriaLabel', 'heading', 'menuAriaLabel', 'menuControls', 'menuExpanded', 'menuTriggerId', 'showBack', 'showMenu'],
+  inputs: ['actions', 'backAriaLabel', 'backIcon', 'heading', 'menuAriaLabel', 'menuControls', 'menuExpanded', 'menuTriggerId', 'showBack', 'showMenu'],
   methods: ['focusMenuTrigger']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsPanelToolHeader } from '@ds-mo/ui/compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['actions', 'backAriaLabel', 'heading', 'menuAriaLabel', 'menuControls', 'menuExpanded', 'menuTriggerId', 'showBack', 'showMenu'],
+  inputs: ['actions', 'backAriaLabel', 'backIcon', 'heading', 'menuAriaLabel', 'menuControls', 'menuExpanded', 'menuTriggerId', 'showBack', 'showMenu'],
   outputs: ['dsBack', 'dsMenuToggle', 'dsAction'],
 })
 export class DsPanelToolHeader {

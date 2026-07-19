@@ -42,9 +42,7 @@
     "component:ds-panel-nav",
     "component:ds-bar-nav"
   ],
-  "patterns": [
-    "pattern:application-shell"
-  ],
+  "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
     "Keep Search first in the rail header and Help last in the rail footer so keyboard and visual order remain predictable.",
@@ -61,7 +59,7 @@
     "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
     "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
     "The application owns unread state; opening Messages, Agents, Stacks, or Activity does not automatically clear its notification dot.",
-    "PanelTools owns the one visible header above every tool view. Slotted tool content must never render a second tool header.",
+    "PanelTools owns the one visible header above every drawer tool view and above fullscreen views using the default shared header mode. Slotted tool content must not render a second header unless the conversation product explicitly opts into split fullscreen headers.",
     "PanelTools composes ds-panel-tool-header as its canonical left-aligned header implementation so standalone header stories and shell rendering cannot diverge.",
     "Each tool supplies its current header title, base-versus-detail Back state, and right-side actions through the headers property. Base views omit Back; deeper views expose Back and update the same header in place.",
     "Header Back and action events express intent only; the owning tool changes product navigation, menus, and data state. PanelTools keeps the final header action exactly 8px from the drawer edge.",
@@ -71,13 +69,16 @@
     "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
     "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
     "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
-    "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque during width motion and only become inert or paint-skipped after the drawer is fully closed."
+    "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
+    "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
+    "When fullscreenHeaderMode is split, PanelTools suppresses only its fullscreen shared header. The application renders exactly two canonical ds-panel-tool-header instances: a tool-title/list-actions header over the 300px history pane and a chat-title/Exit-fullscreen/chat-actions header over the detail pane. The detail header omits Back because the list remains visible."
   ],
   "responsiveBehavior": [
     "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
     "AppShell owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
     "Below 768px, do not reuse desktop PanelTools: future AppShell mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
     "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
+    "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
     "Use fixed drawer widths for now; do not add user resizing or width persistence."
   ],
   "frameworkCaveats": {

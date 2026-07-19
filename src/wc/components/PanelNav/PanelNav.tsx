@@ -1,4 +1,15 @@
-import { Component, Prop, Event, EventEmitter, Watch, State, Element, Method, h, Host } from '@stencil/core';
+import {
+  Component,
+  Prop,
+  Event,
+  EventEmitter,
+  Watch,
+  State,
+  Element,
+  Method,
+  h,
+  Host,
+} from '@stencil/core';
 import type { ChromeTransitionDetail } from '../../shell/chrome-transition';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
 import {
@@ -113,6 +124,7 @@ export class PanelNav {
   private resizeObserver?: ResizeObserver;
   private scrollRegionObserver?: ResizeObserver;
   private bodyEl?: HTMLElement;
+  private initialRenderComplete = false;
 
   // Drag-to-resize state (not @State — no re-render needed)
   private isDragging = false;
@@ -136,19 +148,19 @@ export class PanelNav {
   private get effectiveDisableViewTransition(): boolean {
     return resolvePanelNavDisableVt(
       this.disableViewTransition,
-      this.el.getAttribute('disable-view-transition'),
+      this.el.getAttribute('disable-view-transition')
     );
   }
 
   @Watch('collapsed')
   onCollapsedChange(_next: boolean, prev: boolean | undefined) {
-    if (prev === undefined) return;
+    if (prev === undefined || !this.initialRenderComplete) return;
     this.startCollapseAnimation();
   }
 
   @Watch('viewportNarrow')
   onViewportNarrowChange(next: boolean, prev: boolean | undefined) {
-    if (prev === undefined) return;
+    if (prev === undefined || !this.initialRenderComplete) return;
     if (next && this.rovingIndex === 0) {
       this.rovingIndex = this.getFirstRovingIndex();
     }
@@ -158,7 +170,7 @@ export class PanelNav {
   @Watch('breakpoint')
   onBreakpointChange() {
     this.disconnectResizeObserver();
-    if (this.breakpoint > 0) this.connectResizeObserver();
+    if (this.effectiveBreakpoint() > 0) this.connectResizeObserver();
   }
 
   @Watch('groups')
@@ -186,11 +198,14 @@ export class PanelNav {
 
   componentWillLoad() {
     this.renderedStyle = resolvePanelNavStyle(this.navStyle, this.el.getAttribute('nav-style'));
+    this.viewportNarrow = this.isViewportNarrow();
     if (this.storageKey) {
       try {
         const stored = localStorage.getItem(this.storageKey);
         if (stored !== null) this.collapsed = stored === 'true';
-      } catch { /* localStorage unavailable */ }
+      } catch {
+        /* localStorage unavailable */
+      }
     }
     this.onGroupsChange(this.groups);
     this.syncActiveFromUrl();
@@ -199,9 +214,10 @@ export class PanelNav {
   componentDidLoad() {
     this.syncHostPropsIfNeeded();
     this.scheduleDeferredHostPropSync();
-    if (this.breakpoint > 0) this.connectResizeObserver();
+    if (this.effectiveBreakpoint() > 0) this.connectResizeObserver();
     this.connectScrollRegionObserver();
     this.updateBodyScrollable();
+    this.initialRenderComplete = true;
   }
 
   componentDidRender() {
@@ -212,7 +228,7 @@ export class PanelNav {
     this.disconnectResizeObserver();
     this.disconnectScrollRegionObserver();
     this.clearCollapseAnimationCompletion(
-      this.el.querySelector('.panel-nav') as HTMLElement | null,
+      this.el.querySelector('.panel-nav') as HTMLElement | null
     );
     this.clearEdgeOverlayTimer();
     if (this.globalMouseMoveHandler) {
@@ -282,10 +298,21 @@ export class PanelNav {
     }
   }
 
+  private effectiveBreakpoint(): number {
+    if (this.breakpoint > 0) return this.breakpoint;
+    const attributeValue = Number(this.el.getAttribute('breakpoint') ?? 0);
+    return Number.isFinite(attributeValue) && attributeValue > 0 ? attributeValue : 0;
+  }
+
+  private isViewportNarrow(): boolean {
+    const breakpoint = this.effectiveBreakpoint();
+    return typeof window !== 'undefined' && breakpoint > 0 && window.innerWidth < breakpoint;
+  }
+
   private connectResizeObserver() {
-    this.viewportNarrow = window.innerWidth < this.breakpoint;
+    this.viewportNarrow = this.isViewportNarrow();
     this.resizeObserver = new ResizeObserver(() => {
-      this.viewportNarrow = window.innerWidth < this.breakpoint;
+      this.viewportNarrow = this.isViewportNarrow();
     });
     this.resizeObserver.observe(document.documentElement);
   }
@@ -352,7 +379,11 @@ export class PanelNav {
     if (this.viewportNarrow) return;
     this.collapsed = next;
     if (this.storageKey) {
-      try { localStorage.setItem(this.storageKey, String(next)); } catch { /* unavailable */ }
+      try {
+        localStorage.setItem(this.storageKey, String(next));
+      } catch {
+        /* unavailable */
+      }
     }
     this.dsNavToggle.emit(next);
   }
@@ -412,8 +443,11 @@ export class PanelNav {
       return;
     }
     if (index === this.getUserRovingIndex()) {
-      const anchor = this.el.querySelector(`#${PANEL_NAV_USER_MENU_ANCHOR_ID}`) as HTMLElement | null;
-      if (anchor) this.dsNavUserAction.emit({ anchor, menuPlacement: PANEL_NAV_USER_MENU_PLACEMENT });
+      const anchor = this.el.querySelector(
+        `#${PANEL_NAV_USER_MENU_ANCHOR_ID}`
+      ) as HTMLElement | null;
+      if (anchor)
+        this.dsNavUserAction.emit({ anchor, menuPlacement: PANEL_NAV_USER_MENU_PLACEMENT });
     }
   }
 
@@ -568,7 +602,8 @@ export class PanelNav {
     const footerLabel = isDashboardChrome ? this.settingsLabel : this.dashboardLabel;
     return (
       <ds-tooltip label={footerLabel} side="right" size="sm">
-        <ds-button-unfilled variant="icon"
+        <ds-button-unfilled
+          variant="icon"
           class="panel-nav__footer-btn"
           icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
           activeFill={false}
@@ -577,7 +612,9 @@ export class PanelNav {
           aria-label={footerLabel}
           onDsClick={() => this.handleFooterAction()}
           onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getFooterRovingIndex())}
-          onFocusin={() => { this.rovingIndex = this.getFooterRovingIndex(); }}
+          onFocusin={() => {
+            this.rovingIndex = this.getFooterRovingIndex();
+          }}
         />
       </ds-tooltip>
     );
@@ -594,9 +631,11 @@ export class PanelNav {
         class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset ds-interaction-fill"
         tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
         aria-label={this.accountLabel}
-        onClick={(e) => this.handleUserAction(e)}
+        onClick={e => this.handleUserAction(e)}
         onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
-        onFocus={() => { this.rovingIndex = this.getUserRovingIndex(); }}
+        onFocus={() => {
+          this.rovingIndex = this.getUserRovingIndex();
+        }}
       >
         <ds-text
           class="panel-nav__item-label panel-nav__footer-user-label panel-nav__item-label-text ds-control--md"
@@ -654,12 +693,7 @@ export class PanelNav {
       </ds-text>,
       item.dot && (
         <span class="panel-nav__item-dot-box" aria-hidden="true">
-          <ds-badge
-            class="panel-nav__item-dot"
-            variant="dot"
-            hasRing={collapsed}
-            label=""
-          />
+          <ds-badge class="panel-nav__item-dot" variant="dot" hasRing={collapsed} label="" />
         </span>
       ),
     ];
@@ -675,13 +709,21 @@ export class PanelNav {
       tabIndex: rovingPosition === this.rovingIndex ? 0 : -1,
       onClick: () => this.handleItemClick(item.id),
       onKeyDown: (e: KeyboardEvent) => this.handleRovingKeyDown(e, rovingPosition),
-      onFocus: () => { this.rovingIndex = rovingPosition; },
+      onFocus: () => {
+        this.rovingIndex = rovingPosition;
+      },
     };
 
     const useAnchor = this.routerMode === 'anchor' && item.href;
-    const control = useAnchor
-      ? <a {...sharedProps} href={item.href}>{itemContent}</a>
-      : <button {...sharedProps} type="button">{itemContent}</button>;
+    const control = useAnchor ? (
+      <a {...sharedProps} href={item.href}>
+        {itemContent}
+      </a>
+    ) : (
+      <button {...sharedProps} type="button">
+        {itemContent}
+      </button>
+    );
 
     // Always wrap so label fade CSS can transition on a stable item node.
     // Tip only when collapsed (empty label → ds-tooltip skips show).
@@ -712,9 +754,10 @@ export class PanelNav {
       <Host style={{ display: 'block', position: 'relative' }}>
         <nav
           class={navCls}
-          aria-label={isDashboardChrome ? this.dashboardNavigationLabel : this.settingsNavigationLabel}
+          aria-label={
+            isDashboardChrome ? this.dashboardNavigationLabel : this.settingsNavigationLabel
+          }
         >
-
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
           <div class="panel-nav__header">
             <button
@@ -724,14 +767,26 @@ export class PanelNav {
               tabIndex={!this.viewportNarrow && this.rovingIndex === 0 ? 0 : -1}
               onClick={() => this.handleToggle()}
               onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, 0)}
-              onFocus={() => { this.rovingIndex = 0; }}
+              onFocus={() => {
+                this.rovingIndex = 0;
+              }}
               aria-label={collapsed ? this.expandNavigationLabel : this.collapseNavigationLabel}
               aria-expanded={collapsed ? 'false' : 'true'}
             >
               {/* Motive M mark — fades out on hover to reveal collapse toggle */}
               <span class="panel-nav__header-logo" aria-hidden="true">
-                <svg class="panel-nav__m-mark" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
-                  <path d="M11.1159 4.31537H7.67021L2.53401 13.0703H0V15.6875H4.02716L8.24319 8.49978V15.6846H11.6342L15.8289 8.47829V15.6846H18.7122V4.3125H15.2559L11.1159 11.3648V4.31537Z" fill="currentColor"/>
+                <svg
+                  class="panel-nav__m-mark"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  focusable="false"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M11.1159 4.31537H7.67021L2.53401 13.0703H0V15.6875H4.02716L8.24319 8.49978V15.6846H11.6342L15.8289 8.47829V15.6846H18.7122V4.3125H15.2559L11.1159 11.3648V4.31537Z"
+                    fill="currentColor"
+                  />
                 </svg>
               </span>
               {/* Collapse / expand icon — revealed on hover via CSS */}
@@ -788,7 +843,6 @@ export class PanelNav {
             {this.renderFooterAction(isDashboardChrome)}
             {this.renderFooterUser(collapsed, userName, userInitial)}
           </div>
-
         </nav>
 
         {/* Drag-to-resize handle — always rendered, hidden only when auto-collapsed by breakpoint */}

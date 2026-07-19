@@ -26,6 +26,7 @@ import {
 import {
   isPanelToolsToolId,
   orderPanelToolsItems,
+  panelToolsDrawerAtTerminal,
   parsePanelToolsItems,
   panelToolsDrawerResting,
   panelToolsDrawerTransitionMs,
@@ -46,6 +47,10 @@ export class PanelTools {
 
   /** Drawer presentation or viewport-covering presentation for the active tool. */
   @Prop({ mutable: true, reflect: true }) presentation: 'drawer' | 'fullscreen' = 'drawer';
+
+  /** Let a fullscreen product supply independent master/detail headers inside its view. */
+  @Prop({ attribute: 'fullscreen-header-mode', reflect: true })
+  fullscreenHeaderMode: 'shared' | 'split' = 'shared';
 
   /** Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`. */
   @Prop({ mutable: true, attribute: 'active-tool', reflect: true })
@@ -106,13 +111,20 @@ export class PanelTools {
   /** Arms open vs close easing for the in-flight width transition. */
   @State() private motion: 'opening' | 'closing' | 'idle' = 'idle';
 
+  /** Keeps header and slotted content painted until the closing clip transition completes. */
+  @State() private drawerSurfaceRetained = false;
+
   /** Suppresses width transition until the host has painted its initial open state. */
   @State() private readyForMotion = false;
+
+  /** Fullscreen presentation changes snap without borrowing drawer width motion. */
+  @State() private presentationMotionSuppressed = false;
 
   @State() private rovingIndex = 0;
   @State() private fullViewToolIds: PanelToolsToolId[] = [];
 
   private motionEnableGeneration = 0;
+  private presentationMotionGeneration = 0;
   private transitionGeneration = 0;
   private transitionFallbackTimer: number | null = null;
   /** Ignores the old transition's terminal event when reversing direction. */
@@ -151,6 +163,14 @@ export class PanelTools {
   @Watch('presentation')
   presentationChanged(next: 'drawer' | 'fullscreen', previous?: 'drawer' | 'fullscreen') {
     if (next === previous) return;
+    const presentationGeneration = ++this.presentationMotionGeneration;
+    this.presentationMotionSuppressed = true;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (presentationGeneration !== this.presentationMotionGeneration) return;
+        this.presentationMotionSuppressed = false;
+      });
+    });
     if (next === 'fullscreen') {
       this.focusBeforeFullscreen =
         document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -208,12 +228,16 @@ export class PanelTools {
 
   componentWillLoad() {
     this.restoreLastActiveTool();
+    this.drawerSurfaceRetained = this.open;
   }
 
   @Watch('open')
   openChanged(isOpen: boolean, wasOpen?: boolean) {
+    if (isOpen) this.drawerSurfaceRetained = true;
     if (this.readyForMotion && wasOpen !== undefined && wasOpen !== isOpen) {
       this.startDrawerTransition(isOpen ? 'opening' : 'closing');
+    } else if (!isOpen) {
+      this.drawerSurfaceRetained = false;
     }
     this.deferMotionEnable();
   }
@@ -287,7 +311,6 @@ export class PanelTools {
 
   private startDrawerTransition(phase: 'opening' | 'closing') {
     const drawer = this.el.querySelector('.panel-tools__drawer') as HTMLElement | null;
-    const widthBefore = drawer?.getBoundingClientRect().width ?? 0;
     if (this.motion !== 'idle') {
       this.finishDrawerTransition();
       this.ignoreReplacementTerminal = true;
@@ -304,8 +327,7 @@ export class PanelTools {
           return;
         }
 
-        const widthAfter = drawer.getBoundingClientRect().width;
-        if (Math.abs(widthAfter - widthBefore) < 1) {
+        if (this.drawerTransitionAtTerminal(drawer, phase)) {
           this.finishDrawerTransition();
           return;
         }
@@ -323,7 +345,8 @@ export class PanelTools {
   }
 
   private handleTransitionEnd = (event: TransitionEvent) => {
-    if (event.target !== this.el.querySelector('.panel-tools__drawer')) return;
+    const drawer = this.el.querySelector('.panel-tools__drawer') as HTMLElement | null;
+    if (event.target !== drawer) return;
     if (event.propertyName !== 'max-width') return;
     if (this.ignoreReplacementTerminal) {
       this.ignoreReplacementTerminal = false;
@@ -334,15 +357,30 @@ export class PanelTools {
     // The replacement transition and its watchdog still own completion; ending
     // motion here would hide the fixed-width tool surface while it is visible.
     if (event.type === 'transitioncancel') return;
+    if (drawer && !this.drawerTransitionAtTerminal(drawer, this.motion)) return;
     this.finishDrawerTransition();
   };
 
+  private drawerTransitionAtTerminal(
+    drawer: HTMLElement,
+    phase: 'opening' | 'closing' | 'idle'
+  ): boolean {
+    const width = drawer.getBoundingClientRect().width;
+    const surface = drawer.querySelector('.panel-tools__drawer-surface') as HTMLElement | null;
+    const targetWidth = surface?.getBoundingClientRect().width ?? 0;
+    return panelToolsDrawerAtTerminal(width, targetWidth, phase);
+  }
+
   private finishDrawerTransition() {
-    const wasTransitioning = this.motion !== 'idle';
+    const completedPhase = this.motion;
+    const wasTransitioning = completedPhase !== 'idle';
     this.clearTransitionCompletion();
     if (!wasTransitioning) return;
     this.ignoreReplacementTerminal = false;
     this.motion = 'idle';
+    if (completedPhase === 'closing' && !this.open) {
+      this.drawerSurfaceRetained = false;
+    }
     this.dsChromeTransitionEnd.emit({ source: 'panel-tools' });
   }
 
@@ -361,7 +399,7 @@ export class PanelTools {
 
   /** Drawer body stays mounted while the clip frame animates closed. */
   private isDrawerPresent(): boolean {
-    return this.open || this.motion === 'closing';
+    return this.open || this.drawerSurfaceRetained;
   }
 
   private isViewActive(id: PanelToolsToolId): boolean {
@@ -518,7 +556,9 @@ export class PanelTools {
     const footerIndex = footerItem ? (headerItem ? 1 : 0) + bodyItems.length : -1;
     const showDrawerChrome = this.isDrawerPresent();
     const drawerResting = panelToolsDrawerResting(this.open, this.motion);
-    const activeFullView = Boolean(this.activeTool && this.hasFullView(this.activeTool));
+    const activeFullView = Boolean(
+      showDrawerChrome && this.activeTool && this.hasFullView(this.activeTool)
+    );
     const toolIds: PanelToolsToolId[] = [
       'search',
       'messages',
@@ -538,6 +578,7 @@ export class PanelTools {
           'panel-tools--motion-closing': this.motion === 'closing',
           'panel-tools--drawer-resting': drawerResting,
           'panel-tools--fullscreen': this.presentation === 'fullscreen',
+          'panel-tools--presentation-snap': this.presentationMotionSuppressed,
         }}
         role={this.presentation === 'fullscreen' ? 'dialog' : 'complementary'}
         aria-modal={this.presentation === 'fullscreen' ? 'true' : undefined}
@@ -569,79 +610,42 @@ export class PanelTools {
             inert={showDrawerChrome ? undefined : true}
           >
             <div class="panel-tools__drawer-surface">
-              <ds-panel-tool-header
-                class="panel-tools__header"
-                heading={headerTitle}
-                showBack={header.showBack ?? false}
-                backAriaLabel={header.backAriaLabel || 'Back'}
-                showMenu={false}
-                ref={element => {
-                  const toolHeader = element as
-                    | (HTMLDsPanelToolHeaderElement & {
-                        actions: PanelToolsHeaderAction[];
-                      })
-                    | undefined;
-                  if (toolHeader) toolHeader.actions = headerActions;
-                }}
-                onDsBack={() => {
-                  if (this.activeTool) this.dsHeaderBack.emit({ tool: this.activeTool });
-                }}
-              />
+              {this.presentation !== 'fullscreen' || this.fullscreenHeaderMode === 'shared' ? (
+                <ds-panel-tool-header
+                  class="panel-tools__header"
+                  heading={headerTitle}
+                  showBack={header.showBack ?? false}
+                  backIcon={header.backIcon || 'ChevronLeft'}
+                  backAriaLabel={header.backAriaLabel || 'Back'}
+                  showMenu={false}
+                  ref={element => {
+                    const toolHeader = element as
+                      | (HTMLDsPanelToolHeaderElement & {
+                          actions: PanelToolsHeaderAction[];
+                        })
+                      | undefined;
+                    if (toolHeader) toolHeader.actions = headerActions;
+                  }}
+                  onDsBack={() => {
+                    if (this.activeTool) this.dsHeaderBack.emit({ tool: this.activeTool });
+                  }}
+                />
+              ) : null}
               <div class="panel-tools__body" hidden={activeFullView}>
-                <div
-                  class={{
-                    'panel-tools__view': true,
-                    'panel-tools__view--active': this.isViewActive('search'),
-                  }}
-                  hidden={!this.isViewActive('search')}
-                >
-                  <slot name="search" />
-                </div>
-                <div
-                  class={{
-                    'panel-tools__view': true,
-                    'panel-tools__view--active': this.isViewActive('messages'),
-                  }}
-                  hidden={!this.isViewActive('messages')}
-                >
-                  <slot name="messages" />
-                </div>
-                <div
-                  class={{
-                    'panel-tools__view': true,
-                    'panel-tools__view--active': this.isViewActive('stacks'),
-                  }}
-                  hidden={!this.isViewActive('stacks')}
-                >
-                  <slot name="stacks" />
-                </div>
-                <div
-                  class={{
-                    'panel-tools__view': true,
-                    'panel-tools__view--active': this.isViewActive('activity'),
-                  }}
-                  hidden={!this.isViewActive('activity')}
-                >
-                  <slot name="activity" />
-                </div>
-                <div
-                  class={{
-                    'panel-tools__view': true,
-                    'panel-tools__view--active': this.isViewActive('agents'),
-                  }}
-                  hidden={!this.isViewActive('agents')}
-                >
-                  <slot name="agents" />
-                </div>
-                <div
-                  class={{
-                    'panel-tools__view': true,
-                    'panel-tools__view--active': this.isViewActive('help'),
-                  }}
-                  hidden={!this.isViewActive('help')}
-                >
-                  <slot name="help" />
-                </div>
+                {toolIds.map(id => {
+                  const active = this.isViewActive(id);
+                  return (
+                    <div
+                      class={{
+                        'panel-tools__view': true,
+                        'panel-tools__view--active': active,
+                      }}
+                      hidden={!active}
+                    >
+                      <slot name={id} />
+                    </div>
+                  );
+                })}
               </div>
               <div class="panel-tools__full-views" hidden={!activeFullView}>
                 {toolIds.map(id => (

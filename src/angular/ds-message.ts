@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsMessage } from '@ds-mo/ui/components/ds-
 
 @ProxyCmp({
   defineCustomElementFn: defineDsMessage,
-  inputs: ['author', 'deliveryState', 'direction', 'groupPosition', 'messageId', 'scrollAnchor', 'streaming', 'timestamp']
+  inputs: ['author', 'deliveryState', 'direction', 'groupPosition', 'messageId', 'scrollAnchor', 'showAuthor', 'streaming', 'timestamp']
 })
 @Component({
   selector: 'ds-message',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['author', 'deliveryState', 'direction', 'groupPosition', 'messageId', 'scrollAnchor', 'streaming', 'timestamp'],
+  inputs: ['author', 'deliveryState', 'direction', 'groupPosition', 'messageId', 'scrollAnchor', 'showAuthor', 'streaming', 'timestamp'],
 })
 export class DsMessage {
   protected el: HTMLDsMessageElement;

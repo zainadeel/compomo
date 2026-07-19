@@ -13,7 +13,9 @@ export class PanelToolHeader {
   @Prop() heading: string = '';
   /** Show the leading Back action. */
   @Prop() showBack: boolean = false;
-  /** Accessible name for the Back action. */
+  /** Canonical icon for the leading navigation or dismiss action. */
+  @Prop() backIcon: string = 'ChevronLeft';
+  /** Accessible name for the leading navigation or dismiss action. */
   @Prop() backAriaLabel: string = 'Back';
   /** Show the trailing options-menu trigger. */
   @Prop() showMenu: boolean = true;
@@ -35,10 +37,8 @@ export class PanelToolHeader {
   @Method()
   async focusMenuTrigger() {
     const trigger = this.el.querySelector(
-      'ds-button-unfilled.panel-tool-header__menu, ds-button-unfilled[data-header-action-id="menu"]',
-    ) as
-      | (HTMLElement & { setFocus?: () => Promise<void> })
-      | null;
+      'ds-button-unfilled.panel-tool-header__menu, ds-button-unfilled[data-header-action-id="menu"]'
+    ) as (HTMLElement & { setFocus?: () => Promise<void> }) | null;
     await trigger?.setFocus?.();
   }
 
@@ -47,7 +47,8 @@ export class PanelToolHeader {
     const actions: PanelToolsHeaderAction[] = authoredActions
       ? this.actions
       : this.showMenu
-        ? [{
+      ? [
+          {
             id: 'menu',
             icon: 'Ellipses',
             ariaLabel: this.menuAriaLabel,
@@ -55,8 +56,9 @@ export class PanelToolHeader {
             controls: this.menuControls,
             expanded: this.menuExpanded,
             haspopup: 'menu',
-          }]
-        : [];
+          },
+        ]
+      : [];
 
     return (
       <Host>
@@ -66,7 +68,7 @@ export class PanelToolHeader {
               <ds-button-unfilled
                 class="panel-tool-header__back"
                 variant="icon"
-                icon="ChevronLeft"
+                icon={this.backIcon}
                 size="md"
                 aria-label={this.backAriaLabel}
                 activeFill={false}
@@ -107,7 +109,8 @@ export class PanelToolHeader {
                 activeFill={false}
                 hasBorder={false}
                 onDsClick={(event: CustomEvent<MouseEvent>) => {
-                  if (!authoredActions && action.id === 'menu') this.dsMenuToggle.emit(event.detail);
+                  if (!authoredActions && action.id === 'menu')
+                    this.dsMenuToggle.emit(event.detail);
                   this.dsAction.emit({ id: action.id, originalEvent: event.detail });
                 }}
               />

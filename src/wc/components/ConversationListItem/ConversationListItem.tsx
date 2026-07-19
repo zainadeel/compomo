@@ -105,9 +105,9 @@ export class ConversationListItem {
               <slot name="trailing" />
             </span>
           </button>
-          <span class="conversation-list-item__actions">
+          <div class="conversation-list-item__actions">
             <slot name="actions" onSlotchange={this.handleActionsSlotChange} />
-          </span>
+          </div>
         </div>
       </Host>
     );

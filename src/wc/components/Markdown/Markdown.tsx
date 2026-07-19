@@ -67,62 +67,114 @@ export class Markdown {
       case 'root':
         return this.children(node);
       case 'text':
-        return node.value;
+        // Keep prose text on an element boundary. Besides giving streaming updates a
+        // stable render target, this avoids axe-core treating a bare Stencil text
+        // vnode as an element while it generates a contrast-result selector.
+        return <span class="markdown__text">{node.value}</span>;
       case 'paragraph':
-        return <p>{this.children(node)}</p>;
+        return <p class="markdown__paragraph">{this.children(node)}</p>;
       case 'heading': {
         const Tag = `h${node.depth}`;
-        return <Tag>{this.children(node)}</Tag>;
+        return <Tag class="markdown__heading">{this.children(node)}</Tag>;
       }
       case 'strong':
-        return <strong>{this.children(node)}</strong>;
+        return <strong class="markdown__strong">{this.children(node)}</strong>;
       case 'emphasis':
-        return <em>{this.children(node)}</em>;
+        return <em class="markdown__emphasis">{this.children(node)}</em>;
       case 'delete':
-        return <del>{this.children(node)}</del>;
+        return <del class="markdown__delete">{this.children(node)}</del>;
       case 'blockquote':
-        return <blockquote>{this.children(node)}</blockquote>;
+        return <blockquote class="markdown__blockquote">{this.children(node)}</blockquote>;
       case 'break':
-        return <br />;
+        return <br class="markdown__break" />;
       case 'thematicBreak':
-        return <hr />;
+        return <hr class="markdown__thematic-break" />;
       case 'inlineCode':
-        return <code>{node.value}</code>;
+        return <code class="markdown__inline-code">{node.value}</code>;
       case 'code':
-        return <ds-code-block code={node.value} language={node.lang ?? ''} filename={node.meta ?? ''} />;
+        return (
+          <ds-code-block
+            class="markdown__code-block"
+            code={node.value}
+            language={node.lang ?? ''}
+            filename={node.meta ?? ''}
+          />
+        );
       case 'link': {
         const href = safeHref(node.url);
-        return href ? <a href={href} target="_blank" rel="noopener noreferrer">{this.children(node)}</a> : this.children(node);
+        return href ? (
+          <a class="markdown__link" href={href} target="_blank" rel="noopener noreferrer">
+            {this.children(node)}
+          </a>
+        ) : (
+          this.children(node)
+        );
       }
       case 'list': {
         const Tag = node.ordered ? 'ol' : 'ul';
-        return <Tag start={node.ordered && node.start ? node.start : undefined}>{this.children(node)}</Tag>;
+        return (
+          <Tag class="markdown__list" start={node.ordered && node.start ? node.start : undefined}>
+            {this.children(node)}
+          </Tag>
+        );
       }
       case 'listItem':
         return (
-          <li>
+          <li class="markdown__list-item">
             {typeof node.checked === 'boolean' ? (
-              <input type="checkbox" checked={node.checked} disabled aria-hidden="true" tabIndex={-1} />
+              <input
+                class="markdown__task-indicator"
+                type="checkbox"
+                checked={node.checked}
+                disabled
+                aria-hidden="true"
+                tabIndex={-1}
+              />
             ) : null}
             {this.children(node)}
           </li>
         );
-      case 'table':
-        return <div class="markdown__table-wrap"><table><tbody>{this.children(node)}</tbody></table></div>;
+      case 'table': {
+        const [heading, ...rows] = node.children;
+        return (
+          <div class="markdown__table-wrap">
+            <table class="markdown__table">
+              {heading ? (
+                <thead class="markdown__table-head">
+                  <tr class="markdown__table-row">
+                    {heading.children.map(cell => (
+                      <th class="markdown__table-heading" scope="col">
+                        {this.children(cell)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              ) : null}
+              <tbody class="markdown__table-body">{rows.map(row => this.renderNode(row))}</tbody>
+            </table>
+          </div>
+        );
+      }
       case 'tableRow':
-        return <tr>{this.children(node)}</tr>;
+        return <tr class="markdown__table-row">{this.children(node)}</tr>;
       case 'tableCell':
-        return <td>{this.children(node)}</td>;
+        return <td class="markdown__table-cell">{this.children(node)}</td>;
       case 'image': {
         const href = safeHref(node.url);
-        return href ? <a href={href} target="_blank" rel="noopener noreferrer">{node.alt || 'View image'}</a> : node.alt || null;
+        return href ? (
+          <a class="markdown__image-link" href={href} target="_blank" rel="noopener noreferrer">
+            {node.alt || 'View image'}
+          </a>
+        ) : (
+          node.alt || null
+        );
       }
       case 'html':
       case 'definition':
       case 'footnoteDefinition':
         return null;
       case 'footnoteReference':
-        return <sup>{node.label}</sup>;
+        return <sup class="markdown__footnote">{node.label}</sup>;
       default:
         return this.children(node);
     }
@@ -132,7 +184,13 @@ export class Markdown {
     return (
       <Host aria-busy={this.streaming ? 'true' : undefined}>
         <div class="markdown">
-          {this.tree ? this.renderNode(this.tree) : <p>{this.content}</p>}
+          {this.tree ? (
+            this.renderNode(this.tree)
+          ) : (
+            <p class="markdown__paragraph">
+              <span class="markdown__text">{this.content}</span>
+            </p>
+          )}
         </div>
       </Host>
     );

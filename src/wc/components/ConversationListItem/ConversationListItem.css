@@ -7,6 +7,7 @@
 
 .conversation-list-item__row {
   position: relative;
+  isolation: isolate;
 }
 
 .conversation-list-item {
@@ -28,6 +29,14 @@
 .conversation-list-item__preview-row {
   display: flex;
   align-items: center;
+}
+
+.conversation-list-item__leading {
+  align-self: center;
+  width: auto;
+  height: auto;
+  margin-inline-start: var(--ds-control-label-inset, var(--dimension-space-025));
+  margin-inline-end: var(--dimension-space-050);
 }
 
 .conversation-list-item__content {
@@ -60,7 +69,7 @@ ds-text.conversation-list-item__title {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: var(--dimension-size-400);
+  width: var(--dimension-size-200);
   margin-inline-end: var(--dimension-space-025);
 }
 
@@ -76,27 +85,35 @@ ds-text.conversation-list-item__preview.ds-choice-item__subtext {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-background-transparent);
+  box-shadow: var(--effect-elevation-elevated-md);
+  -webkit-backdrop-filter: blur(var(--effect-blur-sm));
+  backdrop-filter: blur(var(--effect-blur-sm));
   opacity: 0;
+  pointer-events: none;
   transform: translateY(-50%);
 }
 
 .conversation-list-item__row:hover .conversation-list-item__actions,
-.conversation-list-item__row:focus-within .conversation-list-item__actions {
+.conversation-list-item__row:has(:focus-visible) .conversation-list-item__actions {
   opacity: 1;
+  pointer-events: auto;
 }
 
-:host(.conversation-list-item--has-actions)
-  .conversation-list-item__row:hover
-  .conversation-list-item__unread,
-:host(.conversation-list-item--has-actions)
-  .conversation-list-item__row:focus-within
-  .conversation-list-item__unread {
-  opacity: 0;
+/* Keep the row wash continuous while the pointer moves onto its sibling action. */
+.conversation-list-item__row:hover .conversation-list-item::after {
+  background: var(--ds-interaction-hover);
+}
+
+.conversation-list-item__row:active .conversation-list-item::after {
+  background: var(--ds-interaction-pressed);
 }
 
 @media (hover: none) {
   .conversation-list-item__actions {
     opacity: 1;
+    pointer-events: auto;
   }
 
   :host(.conversation-list-item--has-actions) .conversation-list-item__title-row {

@@ -1,1 +1,32 @@
-{"$schema":"../../../../agent/schemas/component-agent.schema.json","schemaVersion":"1.0.0","id":"component:ds-agent-activity","kind":"component","package":"@ds-mo/ui","tag":"ds-agent-activity","audience":"specialized","status":"experimental","summary":"Collapsible, user-safe summary of agent work steps without private reasoning.","useWhen":["An agent response benefits from concise progress or completion summaries."],"avoidWhen":["The content would reveal private chain-of-thought, hidden prompts, secrets, or raw internal traces."],"commonlyComposedWith":["component:ds-agent-response","component:ds-loader"],"patterns":["pattern:agent-chat"],"accessibility":["Each step has textual state and description; animation and color are supplementary.","The disclosure uses native keyboard and expanded-state semantics."],"states":["Pending, active, complete, and error describe user-safe workflow progress."],"responsiveBehavior":["Steps wrap within the response width."],"references":[{"label":"Storybook examples","path":"src/wc/components/MessageScroller/MessageScroller.stories.ts"}]}
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-agent-activity",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-agent-activity",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+  "useWhen": ["An agent response benefits from concise progress or completion summaries."],
+  "avoidWhen": [
+    "The content would reveal private chain-of-thought, hidden prompts, secrets, or raw internal traces."
+  ],
+  "commonlyComposedWith": ["component:ds-agent-response", "component:ds-loader"],
+  "patterns": ["pattern:agent-chat"],
+  "accessibility": [
+    "Each step has textual state and description; animation and color are supplementary.",
+    "The disclosure uses native keyboard and expanded-state semantics."
+  ],
+  "states": [
+    "While collapsed, the summary follows the current user-safe activity and shimmers only while active; while expanded, the heading becomes Activity and the ordered list exposes every step.",
+    "Pending, active, complete, and error describe user-safe workflow progress."
+  ],
+  "responsiveBehavior": ["Steps wrap within the response width."],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+    }
+  ]
+}

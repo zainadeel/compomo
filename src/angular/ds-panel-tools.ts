@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsPanelTools } from '@ds-mo/ui/components/
 
 @ProxyCmp({
   defineCustomElementFn: defineDsPanelTools,
-  inputs: ['activeTool', 'headers', 'headersJson', 'items', 'itemsJson', 'open', 'presentation', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
+  inputs: ['activeTool', 'fullscreenHeaderMode', 'headers', 'headersJson', 'items', 'itemsJson', 'open', 'presentation', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
   methods: ['activateTool', 'closeDrawer', 'focusHeaderAction']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsPanelTools } from '@ds-mo/ui/components/
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeTool', 'headers', 'headersJson', 'items', 'itemsJson', 'open', 'presentation', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
+  inputs: ['activeTool', 'fullscreenHeaderMode', 'headers', 'headersJson', 'items', 'itemsJson', 'open', 'presentation', 'storageKey', 'toolShortcutsLabel', 'toolsLabel'],
   outputs: ['dsToolChange', 'dsPresentationChange', 'dsHeaderBack', 'dsHeaderAction', 'dsChromeTransitionStart', 'dsChromeTransitionEnd'],
 })
 export class DsPanelTools {

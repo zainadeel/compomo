@@ -6,10 +6,7 @@ import {
   type PanelToolsToolId,
 } from './panel-tools-types';
 
-export function parsePanelToolsItems(
-  items: PanelToolsItem[],
-  itemsJson: string,
-): PanelToolsItem[] {
+export function parsePanelToolsItems(items: PanelToolsItem[], itemsJson: string): PanelToolsItem[] {
   if (itemsJson) {
     return parseJsonArrayProp<PanelToolsItem>(itemsJson, []);
   }
@@ -34,7 +31,7 @@ export function isPanelToolsToolId(value: string | null): value is PanelToolsToo
 export function reconcilePanelToolsAvailability(
   items: PanelToolsItem[],
   open: boolean,
-  activeTool: PanelToolsToolId | '',
+  activeTool: PanelToolsToolId | ''
 ): { open: boolean; activeTool: PanelToolsToolId | ''; removedTool: PanelToolsToolId | '' } {
   if (!activeTool || items.some(item => item.id === activeTool)) {
     return { open, activeTool, removedTool: '' };
@@ -44,7 +41,7 @@ export function reconcilePanelToolsAvailability(
 
 export function shouldResyncPanelToolsItems(
   prev: PanelToolsItem[],
-  next: PanelToolsItem[],
+  next: PanelToolsItem[]
 ): boolean {
   if (prev.length !== next.length) return true;
   return next.some((item, index) => {
@@ -88,11 +85,22 @@ export function panelToolsDrawerResting(open: boolean, motion: PanelToolsMotion)
   return !open && motion === 'idle';
 }
 
+/** True only when the animated clip has reached the terminal width for its motion phase. */
+export function panelToolsDrawerAtTerminal(
+  width: number,
+  targetWidth: number,
+  motion: PanelToolsMotion
+): boolean {
+  if (motion === 'closing') return width <= 0.5;
+  if (motion === 'opening') return targetWidth > 0 && width >= targetWidth - 0.5;
+  return true;
+}
+
 /** Toggle or switch rail tool selection — repeat activation closes the active tool. */
 export function resolvePanelToolActivation(
   open: boolean,
   activeTool: PanelToolsToolId | '',
-  id: PanelToolsToolId,
+  id: PanelToolsToolId
 ): { open: boolean; activeTool: PanelToolsToolId; selected: boolean } {
   if (open && activeTool === id) {
     return { open: false, activeTool: id, selected: false };

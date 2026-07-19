@@ -22,7 +22,8 @@
   "states": [
     "Selection and transcript interaction release automatic following.",
     "Opening saved history, message jumps, and prepended history preserve deliberate position.",
-    "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message."
+    "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
+    "Place a composer container in the overlay slot so messages scroll behind it; the scroller measures its live height, reserves matching transcript clearance, and keeps scroll-to-latest above it."
   ],
   "responsiveBehavior": [
     "Transcript width is readable while the scroll region fills available height."

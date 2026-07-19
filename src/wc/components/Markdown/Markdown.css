@@ -105,9 +105,14 @@ table {
   border-collapse: collapse;
 }
 
+th,
 td {
   padding: var(--dimension-space-075);
   border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   text-align: left;
   vertical-align: top;
+}
+
+th {
+  font-weight: var(--typography-weight-semibold);
 }

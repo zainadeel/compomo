@@ -6,6 +6,7 @@ import '../../../../dist/components/ds-message-scroller.js';
 import '../../../../dist/components/ds-message.js';
 import '../../../../dist/components/ds-message-bubble.js';
 import '../../../../dist/components/ds-message-composer.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 
 export default { title: 'Agent/Response', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
@@ -13,6 +14,7 @@ export const Playground: Story = {
   render: () =>
     html`<ds-agent-response
       author="Agent"
+      .showAuthor=${false}
       .parts=${[
         {
           id: 'answer',
@@ -81,9 +83,7 @@ const richParts: AgentResponsePart[] = [
 
 export const Conversation: Story = {
   render: () => html`
-    <div
-      style="display:grid; grid-template-rows:minmax(0,1fr) auto; height:720px; width:min(880px, 90vw); background:var(--color-background-primary);"
-    >
+    <div style="height:720px; width:min(880px, 90vw);">
       <ds-message-scroller messages-label="Agent conversation" default-position="end">
         <ds-message
           message-id="u1"
@@ -99,15 +99,33 @@ export const Conversation: Story = {
         <ds-agent-response
           message-id="a1"
           author="Agent"
+          .showAuthor=${false}
           timestamp="2:15 PM"
           .parts=${richParts}
         ></ds-agent-response>
+        <div slot="overlay" style="padding:var(--dimension-space-200);">
+          <ds-message-composer label="Message agent" placeholder="Ask a follow-up">
+            <ds-button-unfilled
+              slot="tools"
+              variant="icon"
+              icon="Plus"
+              size="md"
+              rounded
+              .hasBorder=${false}
+              aria-label="Add to message"
+            ></ds-button-unfilled>
+            <ds-button-unfilled
+              slot="actions"
+              variant="icon"
+              icon="Mic"
+              size="md"
+              rounded
+              .hasBorder=${false}
+              aria-label="Dictate message"
+            ></ds-button-unfilled>
+          </ds-message-composer>
+        </div>
       </ds-message-scroller>
-      <ds-message-composer
-        label="Message agent"
-        placeholder="Ask a follow-up"
-        submit-intent="ai"
-      ></ds-message-composer>
     </div>
   `,
 };

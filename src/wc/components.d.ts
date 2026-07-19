@@ -26,6 +26,7 @@ import { IconColor, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
+import { MenuSelectionMode } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment } from "./utils";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
@@ -72,6 +73,7 @@ export { IconColor, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
+export { MenuSelectionMode } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment } from "./utils";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
@@ -125,6 +127,10 @@ export namespace Components {
           * @default []
          */
         "parts": AgentResponsePart[];
+        /**
+          * @default true
+         */
+        "showAuthor": boolean;
         /**
           * @default false
          */
@@ -195,6 +201,17 @@ export namespace Components {
           * @default 'Attachments'
          */
         "label": string;
+    }
+    interface DsAvatar {
+        /**
+          * Canonical IcoMo icon name displayed inside the avatar.
+          * @default ''
+         */
+        "icon": string;
+        /**
+          * Optional accessible label. Omit when the surrounding content already conveys the meaning.
+         */
+        "label": string | undefined;
     }
     interface DsBadge {
         /**
@@ -1056,6 +1073,11 @@ export namespace Components {
          */
         "sections": MenuSection[];
         /**
+          * Give ordinary rows mutually-exclusive radio-menu semantics using isSelected.
+          * @default 'none'
+         */
+        "selectionMode": MenuSelectionMode;
+        /**
           * @default 'bottom'
          */
         "side": MenuSide;
@@ -1087,6 +1109,11 @@ export namespace Components {
           * @default false
          */
         "scrollAnchor": boolean;
+        /**
+          * Keep author semantics while allowing products with self-evident roles to hide the visible label.
+          * @default true
+         */
+        "showAuthor": boolean;
         /**
           * @default false
          */
@@ -1285,10 +1312,15 @@ export namespace Components {
          */
         "actions": PanelToolsHeaderAction[];
         /**
-          * Accessible name for the Back action.
+          * Accessible name for the leading navigation or dismiss action.
           * @default 'Back'
          */
         "backAriaLabel": string;
+        /**
+          * Canonical icon for the leading navigation or dismiss action.
+          * @default 'ChevronLeft'
+         */
+        "backIcon": string;
         "focusMenuTrigger": () => Promise<void>;
         /**
           * Visible heading for the active tool view.
@@ -1400,6 +1432,11 @@ export namespace Components {
           * Focus an active tool-header action by its application-owned id.
          */
         "focusHeaderAction": (id: string) => Promise<void>;
+        /**
+          * Let a fullscreen product supply independent master/detail headers inside its view.
+          * @default 'shared'
+         */
+        "fullscreenHeaderMode": 'shared' | 'split';
         /**
           * Active header state per tool. Replace the object when title, depth, or actions change.
           * @default {}
@@ -2411,6 +2448,12 @@ declare global {
         prototype: HTMLDsAttachmentListElement;
         new (): HTMLDsAttachmentListElement;
     };
+    interface HTMLDsAvatarElement extends Components.DsAvatar, HTMLStencilElement {
+    }
+    var HTMLDsAvatarElement: {
+        prototype: HTMLDsAvatarElement;
+        new (): HTMLDsAvatarElement;
+    };
     interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
     }
     var HTMLDsBadgeElement: {
@@ -3152,6 +3195,7 @@ declare global {
         "ds-agent-tool-call": HTMLDsAgentToolCallElement;
         "ds-app-shell": HTMLDsAppShellElement;
         "ds-attachment-list": HTMLDsAttachmentListElement;
+        "ds-avatar": HTMLDsAvatarElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
@@ -3236,6 +3280,10 @@ declare namespace LocalJSX {
          */
         "parts"?: AgentResponsePart[];
         /**
+          * @default true
+         */
+        "showAuthor"?: boolean;
+        /**
           * @default false
          */
         "streaming"?: boolean;
@@ -3305,6 +3353,17 @@ declare namespace LocalJSX {
           * @default 'Attachments'
          */
         "label"?: string;
+    }
+    interface DsAvatar {
+        /**
+          * Canonical IcoMo icon name displayed inside the avatar.
+          * @default ''
+         */
+        "icon"?: string;
+        /**
+          * Optional accessible label. Omit when the surrounding content already conveys the meaning.
+         */
+        "label"?: string | undefined;
     }
     interface DsBadge {
         /**
@@ -4216,6 +4275,11 @@ declare namespace LocalJSX {
          */
         "sections"?: MenuSection[];
         /**
+          * Give ordinary rows mutually-exclusive radio-menu semantics using isSelected.
+          * @default 'none'
+         */
+        "selectionMode"?: MenuSelectionMode;
+        /**
           * @default 'bottom'
          */
         "side"?: MenuSide;
@@ -4247,6 +4311,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "scrollAnchor"?: boolean;
+        /**
+          * Keep author semantics while allowing products with self-evident roles to hide the visible label.
+          * @default true
+         */
+        "showAuthor"?: boolean;
         /**
           * @default false
          */
@@ -4464,10 +4533,15 @@ declare namespace LocalJSX {
          */
         "actions"?: PanelToolsHeaderAction[];
         /**
-          * Accessible name for the Back action.
+          * Accessible name for the leading navigation or dismiss action.
           * @default 'Back'
          */
         "backAriaLabel"?: string;
+        /**
+          * Canonical icon for the leading navigation or dismiss action.
+          * @default 'ChevronLeft'
+         */
+        "backIcon"?: string;
         /**
           * Visible heading for the active tool view.
           * @default ''
@@ -4570,6 +4644,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "activeTool"?: PanelToolsToolId | '';
+        /**
+          * Let a fullscreen product supply independent master/detail headers inside its view.
+          * @default 'shared'
+         */
+        "fullscreenHeaderMode"?: 'shared' | 'split';
         /**
           * Active header state per tool. Replace the object when title, depth, or actions change.
           * @default {}
@@ -5508,6 +5587,7 @@ declare namespace LocalJSX {
     interface DsAgentResponseAttributes {
         "messageId": string;
         "author": string;
+        "showAuthor": boolean;
         "timestamp": string;
         "streaming": boolean;
     }
@@ -5529,6 +5609,10 @@ declare namespace LocalJSX {
     }
     interface DsAttachmentListAttributes {
         "label": string;
+    }
+    interface DsAvatarAttributes {
+        "icon": string;
+        "label": string | undefined;
     }
     interface DsBadgeAttributes {
         "variant": BadgeVariant;
@@ -5747,6 +5831,7 @@ declare namespace LocalJSX {
     }
     interface DsMenuAttributes {
         "open": boolean;
+        "selectionMode": MenuSelectionMode;
         "side": MenuSide;
         "align": MenuAlign;
         "anchorAlignment": ChoicePopupAnchorAlignment;
@@ -5763,6 +5848,7 @@ declare namespace LocalJSX {
         "direction": MessageDirection;
         "groupPosition": MessageGroupPosition;
         "author": string;
+        "showAuthor": boolean;
         "timestamp": string;
         "deliveryState": MessageDeliveryState | undefined;
         "streaming": boolean;
@@ -5821,6 +5907,7 @@ declare namespace LocalJSX {
     interface DsPanelToolHeaderAttributes {
         "heading": string;
         "showBack": boolean;
+        "backIcon": string;
         "backAriaLabel": string;
         "showMenu": boolean;
         "menuAriaLabel": string;
@@ -5844,6 +5931,7 @@ declare namespace LocalJSX {
     interface DsPanelToolsAttributes {
         "open": boolean;
         "presentation": 'drawer' | 'fullscreen';
+        "fullscreenHeaderMode": 'shared' | 'split';
         "activeTool": PanelToolsToolId | '';
         "itemsJson": string;
         "toolsLabel": string;
@@ -6048,6 +6136,7 @@ declare namespace LocalJSX {
         "ds-agent-tool-call": Omit<DsAgentToolCall, keyof DsAgentToolCallAttributes> & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes]?: DsAgentToolCall[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `attr:${K}`]?: DsAgentToolCallAttributes[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `prop:${K}`]?: DsAgentToolCall[K] };
         "ds-app-shell": Omit<DsAppShell, keyof DsAppShellAttributes> & { [K in keyof DsAppShell & keyof DsAppShellAttributes]?: DsAppShell[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `attr:${K}`]?: DsAppShellAttributes[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `prop:${K}`]?: DsAppShell[K] };
         "ds-attachment-list": Omit<DsAttachmentList, keyof DsAttachmentListAttributes> & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes]?: DsAttachmentList[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `attr:${K}`]?: DsAttachmentListAttributes[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `prop:${K}`]?: DsAttachmentList[K] };
+        "ds-avatar": Omit<DsAvatar, keyof DsAvatarAttributes> & { [K in keyof DsAvatar & keyof DsAvatarAttributes]?: DsAvatar[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `attr:${K}`]?: DsAvatarAttributes[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `prop:${K}`]?: DsAvatar[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
@@ -6111,6 +6200,7 @@ declare module "@stencil/core" {
             "ds-agent-tool-call": LocalJSX.IntrinsicElements["ds-agent-tool-call"] & JSXBase.HTMLAttributes<HTMLDsAgentToolCallElement>;
             "ds-app-shell": LocalJSX.IntrinsicElements["ds-app-shell"] & JSXBase.HTMLAttributes<HTMLDsAppShellElement>;
             "ds-attachment-list": LocalJSX.IntrinsicElements["ds-attachment-list"] & JSXBase.HTMLAttributes<HTMLDsAttachmentListElement>;
+            "ds-avatar": LocalJSX.IntrinsicElements["ds-avatar"] & JSXBase.HTMLAttributes<HTMLDsAvatarElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;

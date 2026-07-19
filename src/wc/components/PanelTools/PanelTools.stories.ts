@@ -3,9 +3,17 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-panel-tools.js';
 import '../../../../dist/components/ds-app-shell.js';
+import '../../../../dist/components/ds-panel-tool-header.js';
 import '../../../../dist/components/ds-message-scroller.js';
 import '../../../../dist/components/ds-message-composer.js';
-import type { PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
+import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-empty-state.js';
+import type {
+  PanelToolsHeaderAction,
+  PanelToolsHeaders,
+  PanelToolsItem,
+  PanelToolsToolId,
+} from './panel-tools-types';
 
 const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
@@ -24,7 +32,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Tool rail + sliding drawer. Each tool has a **named slot** (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) for its own composed UI. Search sits in the rail header; **Help & Support** is flush to the rail footer. The component shows the active tool’s slot while the drawer is open; closing slides the drawer shut without unmounting slotted content.',
+          'Tool rail + sliding 300px drawer. Each tool supports a backward-compatible body slot (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) and a full-view slot (`search-view`, `agents-view`, and so on). PanelTools owns the shared drawer header; split fullscreen layouts may compose one header per visible pane. Closing uses a clipped reveal and keeps slotted content mounted.',
       },
     },
   },
@@ -139,6 +147,29 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
       ],
     },
   };
+  const listActions: PanelToolsHeaderAction[] = [
+    {
+      id: 'menu',
+      icon: 'Ellipses',
+      ariaLabel: 'Agents options',
+      haspopup: 'menu',
+    },
+  ];
+  const chatActions: PanelToolsHeaderAction[] = [
+    {
+      id: 'fullscreen',
+      icon: 'PanelCollapse',
+      ariaLabel: 'Exit fullscreen',
+      pressed: true,
+    },
+    {
+      id: 'menu',
+      icon: 'Ellipses',
+      ariaLabel: 'Chat options',
+      haspopup: 'menu',
+    },
+  ];
+  const fullscreen = presentation === 'fullscreen';
   return html`
     <div style="height:100vh; background:var(--color-background-primary);">
       <ds-app-shell style="height:100%;">
@@ -150,25 +181,97 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
           open
           active-tool="agents"
           presentation=${presentation}
+          fullscreen-header-mode=${fullscreen ? 'split' : 'shared'}
           .items=${RAIL_ITEMS}
           .headers=${headers}
         >
-          <section
-            slot="agents-view"
-            style="display:grid; grid-template-rows:minmax(0,1fr) auto; height:100%;"
-          >
-            <ds-message-scroller messages-label="Agent conversation">
-              <ds-empty-state
-                heading="What can I help with?"
-                body="This prototype uses scripted responses."
-              ></ds-empty-state>
-            </ds-message-scroller>
-            <ds-message-composer
-              label="Message agent"
-              placeholder="Ask the agent"
-              submit-intent="ai"
-            ></ds-message-composer>
-          </section>
+          ${fullscreen
+            ? html`
+                <section
+                  slot="agents-view"
+                  style="display:grid; grid-template-columns:var(--dimension-panel-width-xs) minmax(0,1fr); height:100%;"
+                >
+                  <div
+                    style="display:grid; grid-template-rows:auto minmax(0,1fr); min-width:0; border-right:var(--dimension-stroke-width-012) solid var(--color-border-tertiary); background:var(--color-background-primary);"
+                  >
+                    <ds-panel-tool-header
+                      heading="Agents"
+                      .showMenu=${false}
+                      .actions=${listActions}
+                    ></ds-panel-tool-header>
+                    <div style="padding:var(--dimension-space-200);">
+                      Chat history remains visible here.
+                    </div>
+                  </div>
+                  <div style="display:grid; grid-template-rows:auto minmax(0,1fr); min-width:0;">
+                    <ds-panel-tool-header
+                      heading="Plan a service route"
+                      .showMenu=${false}
+                      .actions=${chatActions}
+                    ></ds-panel-tool-header>
+                    <ds-message-scroller messages-label="Agent conversation">
+                      <ds-empty-state
+                        heading="What can I help with?"
+                        body="This prototype uses scripted responses."
+                      ></ds-empty-state>
+                      <div slot="overlay" style="padding:var(--dimension-space-200);">
+                        <ds-message-composer label="Message agent" placeholder="Ask the agent">
+                          <ds-button-unfilled
+                            slot="tools"
+                            variant="icon"
+                            icon="Plus"
+                            size="md"
+                            rounded
+                            .hasBorder=${false}
+                            aria-label="Add to message"
+                          ></ds-button-unfilled>
+                          <ds-button-unfilled
+                            slot="actions"
+                            variant="icon"
+                            icon="Mic"
+                            size="md"
+                            rounded
+                            .hasBorder=${false}
+                            aria-label="Dictate message"
+                          ></ds-button-unfilled>
+                        </ds-message-composer>
+                      </div>
+                    </ds-message-scroller>
+                  </div>
+                </section>
+              `
+            : html`
+                <section slot="agents-view" style="height:100%;">
+                  <ds-message-scroller messages-label="Agent conversation">
+                    <ds-empty-state
+                      heading="What can I help with?"
+                      body="This prototype uses scripted responses."
+                    ></ds-empty-state>
+                    <div slot="overlay" style="padding:var(--dimension-space-200);">
+                      <ds-message-composer label="Message agent" placeholder="Ask the agent">
+                        <ds-button-unfilled
+                          slot="tools"
+                          variant="icon"
+                          icon="Plus"
+                          size="md"
+                          rounded
+                          .hasBorder=${false}
+                          aria-label="Add to message"
+                        ></ds-button-unfilled>
+                        <ds-button-unfilled
+                          slot="actions"
+                          variant="icon"
+                          icon="Mic"
+                          size="md"
+                          rounded
+                          .hasBorder=${false}
+                          aria-label="Dictate message"
+                        ></ds-button-unfilled>
+                      </ds-message-composer>
+                    </div>
+                  </ds-message-scroller>
+                </section>
+              `}
         </ds-panel-tools>
       </ds-app-shell>
     </div>

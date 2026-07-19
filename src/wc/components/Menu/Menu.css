@@ -23,3 +23,38 @@
 .menu-item__switch {
   flex-shrink: 0;
 }
+
+/* ── Single-selection radio indicator ───────────────────────────────────── */
+
+.menu-item__radio-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  pointer-events: none;
+}
+
+.menu-item__radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--dimension-iconography-sm);
+  height: var(--dimension-iconography-sm);
+  border-radius: var(--dimension-radius-half);
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) var(--color-foreground-tertiary);
+}
+
+.menu-item__radio--checked {
+  background-color: var(--color-background-bold-brand);
+  box-shadow: none;
+}
+
+.menu-item__radio-dot {
+  width: var(--dimension-size-100);
+  height: var(--dimension-size-100);
+  border-radius: var(--dimension-radius-half);
+  background-color: var(--color-foreground-on-bold-background-primary);
+}

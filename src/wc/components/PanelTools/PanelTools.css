@@ -8,10 +8,7 @@
   min-height: 0;
   overflow: hidden;
   --_panel-tools-rail-width: var(--dimension-size-600);
-  --_panel-tools-drawer-width: var(
-    --ds-shell-panel-tools-width,
-    var(--dimension-panel-width-xs)
-  );
+  --_panel-tools-drawer-width: var(--ds-shell-panel-tools-width, var(--dimension-panel-width-xs));
   --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
   /* Match panel-nav expand timing (medium-1); easing differs by direction. */
   --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 300ms);
@@ -79,10 +76,16 @@
   overflow: hidden;
 }
 
-.panel-tools__full-view { height: 100%; }
+.panel-tools__full-view {
+  height: 100%;
+}
 
-.panel-tools__full-view { display: none; }
-.panel-tools__full-view--active { display: block; }
+.panel-tools__full-view {
+  display: none;
+}
+.panel-tools__full-view--active {
+  display: block;
+}
 
 :host([presentation='fullscreen']) {
   height: 100vh;
@@ -92,14 +95,21 @@
   z-index: var(--dimension-z-index-modal);
 }
 
-:host([presentation='fullscreen']) .panel-tools__rail { display: none; }
+:host([presentation='fullscreen']) .panel-tools__rail {
+  display: none;
+}
 :host([presentation='fullscreen']) .panel-tools__drawer {
   max-width: 100vw;
+  transition: none;
   width: 100vw;
 }
 :host([presentation='fullscreen']) .panel-tools__drawer-surface {
   background-color: transparent;
   width: 100vw;
+}
+
+:host(.panel-tools--presentation-snap) .panel-tools__drawer {
+  transition: none;
 }
 
 .panel-tools__body {

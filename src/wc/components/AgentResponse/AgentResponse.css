@@ -1,2 +1,10 @@
-:host { display: block; }
-.agent-response { display: grid; gap: var(--dimension-space-100); min-width: 0; }
+:host {
+  display: block;
+  width: 100%;
+}
+.agent-response {
+  display: grid;
+  gap: var(--dimension-space-150);
+  min-width: 0;
+  width: 100%;
+}

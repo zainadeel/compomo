@@ -22,7 +22,9 @@ export class CodeBlock {
     await navigator.clipboard.writeText(this.code);
     this.copied = true;
     if (this.copiedTimer) clearTimeout(this.copiedTimer);
-    this.copiedTimer = setTimeout(() => { this.copied = false; }, 2000);
+    this.copiedTimer = setTimeout(() => {
+      this.copied = false;
+    }, 2000);
   };
 
   render() {
@@ -31,7 +33,9 @@ export class CodeBlock {
       <Host>
         <figure class="code-block">
           <figcaption class="code-block__header">
-            <ds-text as="span" variant="text-caption" emphasis color="secondary">{label}</ds-text>
+            <ds-text as="span" variant="text-caption" emphasis color="on-strong">
+              {label}
+            </ds-text>
             <ds-button-unfilled
               variant="icon"
               icon={this.copied ? 'Check' : 'Copy'}
@@ -41,7 +45,9 @@ export class CodeBlock {
               onDsClick={this.copy}
             />
           </figcaption>
-          <pre><code>{this.code}</code></pre>
+          <pre>
+            <code>{this.code}</code>
+          </pre>
         </figure>
       </Host>
     );

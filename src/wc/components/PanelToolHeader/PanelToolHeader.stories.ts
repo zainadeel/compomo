@@ -17,13 +17,30 @@ const CHILD_ACTIONS: PanelToolsHeaderAction[] = [
 ];
 
 export const RootView: Story = {
-  render: () => html`<ds-panel-tool-header heading="Agents" .actions=${ROOT_ACTIONS}></ds-panel-tool-header>`,
+  render: () =>
+    html`<ds-panel-tool-header heading="Agents" .actions=${ROOT_ACTIONS}></ds-panel-tool-header>`,
 };
 export const ChildView: Story = {
   render: () => html`
-    <ds-panel-tool-header heading="New agent chat" show-back .actions=${CHILD_ACTIONS}></ds-panel-tool-header>
+    <ds-panel-tool-header
+      heading="New agent chat"
+      show-back
+      .actions=${CHILD_ACTIONS}
+    ></ds-panel-tool-header>
+  `,
+};
+export const DismissView: Story = {
+  render: () => html`
+    <ds-panel-tool-header
+      heading="New chat"
+      show-back
+      back-icon="Cross"
+      back-aria-label="Close new chat"
+      .showMenu=${false}
+    ></ds-panel-tool-header>
   `,
 };
 export const TitleOnly: Story = {
-  render: () => html`<ds-panel-tool-header heading="Help & Support" .showMenu=${false}></ds-panel-tool-header>`,
+  render: () =>
+    html`<ds-panel-tool-header heading="Help & Support" .showMenu=${false}></ds-panel-tool-header>`,
 };

@@ -105,23 +105,29 @@ export class MessageComposer {
               aria-label={this.label}
               aria-invalid={error ? 'true' : undefined}
               disabled={this.isInactive}
-              rows={1}
+              rows={2}
               onInput={this.handleInput}
               onKeyDown={this.handleKeyDown}
             />
-            <div class="message-composer__tools">
-              <slot name="tools" />
+            <div class="message-composer__controls">
+              <div class="message-composer__tools">
+                <slot name="tools" />
+              </div>
+              <div class="message-composer__actions">
+                <slot name="actions" />
+                <ds-button-filled
+                  class="message-composer__action"
+                  variant="icon"
+                  icon={this.streaming ? 'Pause' : 'PaperplaneSend'}
+                  intent={this.streaming ? 'neutral' : this.submitIntent}
+                  size="md"
+                  rounded
+                  aria-label={this.streaming ? 'Stop response' : 'Send message'}
+                  isInactive={this.isInactive || (!this.streaming && !this.value.trim())}
+                  onDsClick={this.handleAction}
+                />
+              </div>
             </div>
-            <ds-button-filled
-              class="message-composer__action"
-              variant="icon"
-              icon={this.streaming ? 'Pause' : 'PaperplaneSend'}
-              intent={this.streaming ? 'neutral' : this.submitIntent}
-              size="md"
-              aria-label={this.streaming ? 'Stop response' : 'Send message'}
-              isInactive={this.isInactive || (!this.streaming && !this.value.trim())}
-              onDsClick={this.handleAction}
-            />
           </div>
         </form>
       </Host>

@@ -7,10 +7,10 @@
   "tag": "ds-panel-tool-header",
   "audience": "general",
   "status": "experimental",
-  "summary": "Canonical left-aligned PanelTools header with optional Back navigation and application-owned trailing icon actions.",
+  "summary": "Canonical left-aligned PanelTools header with an optional leading navigation or dismiss action and application-owned trailing icon actions.",
   "useWhen": [
     "PanelTools needs its one shared root or detail header.",
-    "A tool header needs a title with optional Back, menu, fullscreen, or other compact icon actions."
+    "A tool header needs a title with optional Back or Close navigation, menu, fullscreen, or other compact icon actions."
   ],
   "avoidWhen": [
     "Rendering inside a PanelTools tool body; PanelTools already composes this canonical header above the body.",
@@ -18,7 +18,7 @@
   ],
   "commonlyComposedWith": ["component:ds-button-unfilled"],
   "accessibility": [
-    "Back and trailing icon actions require concise localized names.",
+    "Leading navigation or dismiss actions and trailing icon actions require concise localized names.",
     "The visible heading names the active panel or subview."
   ],
   "states": [
@@ -29,7 +29,9 @@
     "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
     "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event."
   ],
-  "responsiveBehavior": ["The title truncates between optional leading navigation and trailing action zones."],
+  "responsiveBehavior": [
+    "The title truncates between optional leading navigation and trailing action zones."
+  ],
   "references": [
     {
       "label": "Standalone examples",
