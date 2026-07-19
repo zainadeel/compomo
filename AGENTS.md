@@ -54,9 +54,6 @@ docs/                   # Framework integration reference (not Storybook source)
 dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + patched index.d.ts
 stencil.config.ts       # Stencil build config (output targets, namespace, srcDir)
-figma.config.json       # Figma Code Connect — include globs, Dev Mode snippet label/language
-tsconfig.figma.json     # TypeScript for Code Connect templates only (editor / npm run typecheck:figma)
-code-connect/           # Code Connect: examples/ (unpublished) + published/*.figma.ts (published via CLI)
 .github/
   workflows/
     build.yml              # PR: npm ci, build (stencil), verify dist artifacts + src unchanged
@@ -82,6 +79,7 @@ npm run test:e2e:install # One-time Chromium, Firefox, and WebKit install for Pl
 npm run dev              # Stencil watch using normal dist output (updates dist/ on source changes)
 npm run storybook        # Stencil watch + Storybook on :6006 (auto-reloads when dist/ rebuilds)
 npm run storybook:build  # Build static Storybook
+npm run storybook:test:a11y # Vitest browser stories + component-scoped Axe gate in light/dark themes
 npm run typecheck        # tsc --noEmit (Stencil source in src/wc)
 npm run lint             # eslint src/ + stylelint component/utils CSS (warnings)
 npm run lint:css         # stylelint TokoMo token category + disallow rules (warnings)
@@ -89,9 +87,6 @@ npm run registry:build   # Regenerate public/r/ (component registry)
 npm run agent:validate   # Validate agent schemas, component intent, patterns, and references
 npm run agent:validate:trilogy -- <tokens-agent.json> <icons-agent.json> # Validate assembled package manifests
 npm run mcp              # Run the in-repo MCP server
-npm run figma:connect:publish:dry-run # Figma Code Connect — dry-run publish (set FIGMA_ACCESS_TOKEN or --token)
-npm run figma:connect:publish         # Publish Code Connect mappings to Figma
-npm run typecheck:figma               # tsc for code-connect published + examples templates only
 npm run clean            # Remove dist/
 ```
 
@@ -753,13 +748,16 @@ Release-please will open a release PR at that exact version. Useful when only `c
 
 | Workflow                 | Trigger                                                             | Purpose                                                                             |
 | ------------------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `build.yml`              | PR to main                                                          | `npm ci` + typecheck + build + verify `dist/` artifacts + verify `src/` not mutated |
+| `build.yml`              | PR to main                                                          | Build/package checks plus sharded cross-browser E2E and sharded Vitest Storybook accessibility |
 | `pr-title.yml`           | PR opened/edited                                                    | Enforce conventional-commit PR titles (lowercase subject)                           |
 | `codeql.yml`             | Push/PR to main, weekly Sunday                                      | GitHub CodeQL JS/TS security scan                                                   |
 | `release-please.yml`     | Push to main                                                        | Open release PR on feat/fix; publish to npm via OIDC when release PR merges         |
 | `deploy-storybook.yml`   | After successful npm publish (release-please), manual               | Build + deploy Storybook to GitHub Pages                                            |
-| `figma-code-connect.yml` | Push to `main` when `code-connect/` or figma config changes; manual | Publish Code Connect to Figma (`secrets.FIGMA_ACCESS_TOKEN`)                        |
 | `dependabot.yml`         | Monthly                                                             | Bump github-actions + npm devDependencies                                           |
+
+`build.yml` runs the browser suites for component, CSS, story, dependency, build, test, and workflow changes. Documentation-only and generated agent-metadata-only changes skip browser work through `scripts/ci-browser-scope.mjs`; the build/package gate still runs. Playwright E2E is split across three CI shards while retaining Chromium, Firefox, and WebKit coverage. Storybook component and accessibility tests use the free `@storybook/addon-vitest` browser integration, run in Chromium for both light and dark themes, and are split across two CI shards. Release Please PRs continue to skip browser suites.
+
+CI must remain zero-cost on this public repository: use only standard GitHub-hosted runners such as `ubuntu-latest`, never GitHub larger runners. Failure artifacts are uploaded only on failure and retained for seven days; browser caches use GitHub's repository cache allowance.
 
 ---
 
@@ -833,4 +831,3 @@ Use `--effect-motion-*` (duration + easing combined) in `transition:` values. If
 | Release changelog sections            | `release-please-config.json`                                              |
 | PR title rules                        | `.github/workflows/pr-title.yml`                                          |
 | Storybook deploy                      | `.github/workflows/deploy-storybook.yml`                                  |
-| Figma Code Connect templates          | `code-connect/published/*.figma.ts`, `figma.config.json` — see README     |

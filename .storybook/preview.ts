@@ -103,12 +103,10 @@ const preview: Preview = {
       },
     },
     a11y: {
-      // The baselined Playwright suite owns automated scans. Keep the addon panel
-      // available for manual inspection without racing a second after-story Axe run.
-      test: 'off',
-      // Keep the interactive panel focused on rendered Stencil components instead of
-      // Storybook captions. CI narrows this further to top-level component fixtures.
-      context: { include: '#storybook-root .hydrated' },
+      // Existing lower-severity findings remain visible in the addon panel as
+      // TODOs. The Vitest browser setup preserves the release gate's established
+      // serious/critical threshold.
+      test: 'todo',
       // The region rule is noisy for isolated components without page landmarks.
       config: {
         rules: [{ id: 'region', enabled: false }],

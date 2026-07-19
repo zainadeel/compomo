@@ -4,11 +4,12 @@
     "declaration": false,
     "declarationMap": false,
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node", "vitest/globals"]
   },
   "include": [
-    "playwright.storybook.config.ts",
-    "tests/storybook/**/*.ts"
+    ".storybook/vitest.setup.ts",
+    "vitest.config.ts",
+    "tests/ci-browser-scope.test.ts"
   ],
   "exclude": ["node_modules", "dist", "storybook-static"]
 }
