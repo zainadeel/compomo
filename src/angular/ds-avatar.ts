@@ -27,4 +27,7 @@ export class DsAvatar {
   }
 }
 
+
 export declare interface DsAvatar extends Components.DsAvatar {}
+
+

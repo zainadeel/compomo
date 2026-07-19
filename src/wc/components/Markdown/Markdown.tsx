@@ -1,10 +1,27 @@
 import { Component, h, Host, Prop, State, VNode, Watch } from '@stencil/core';
-import { fromMarkdown } from 'mdast-util-from-markdown';
-import { gfmFromMarkdown } from 'mdast-util-gfm';
-import { gfm } from 'micromark-extension-gfm';
 import type { Nodes, Root } from 'mdast';
 
 type MarkdownRender = VNode | string | null | MarkdownRender[];
+type MarkdownParser = {
+  fromMarkdown: typeof import('mdast-util-from-markdown').fromMarkdown;
+  gfmFromMarkdown: typeof import('mdast-util-gfm').gfmFromMarkdown;
+  gfm: typeof import('micromark-extension-gfm').gfm;
+};
+
+let parserPromise: Promise<MarkdownParser> | undefined;
+
+function loadParser(): Promise<MarkdownParser> {
+  parserPromise ??= Promise.all([
+    import('mdast-util-from-markdown'),
+    import('mdast-util-gfm'),
+    import('micromark-extension-gfm'),
+  ]).then(([fromMarkdownModule, gfmFromMarkdownModule, gfmModule]) => ({
+    fromMarkdown: fromMarkdownModule.fromMarkdown,
+    gfmFromMarkdown: gfmFromMarkdownModule.gfmFromMarkdown,
+    gfm: gfmModule.gfm,
+  }));
+  return parserPromise;
+}
 
 function safeHref(value: string | null | undefined): string | undefined {
   if (!value) return undefined;
@@ -28,32 +45,43 @@ export class Markdown {
 
   @State() private tree: Root | null = null;
   private parseFrame?: number;
+  private parseRevision = 0;
 
   componentWillLoad() {
-    this.parse();
+    // The browser-targeted named-character decoder used by the Markdown parser
+    // creates a DOM element when its module is evaluated. Keep public package
+    // imports server-safe by loading that parser only in a browser context.
+    if (typeof document !== 'undefined') return this.parse();
   }
 
   disconnectedCallback() {
-    if (this.parseFrame) cancelAnimationFrame(this.parseFrame);
+    this.parseRevision += 1;
+    if (this.parseFrame && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this.parseFrame);
+    }
   }
 
   @Watch('content')
   scheduleParse() {
+    if (typeof requestAnimationFrame !== 'function') return;
     if (this.parseFrame) cancelAnimationFrame(this.parseFrame);
     this.parseFrame = requestAnimationFrame(() => {
       this.parseFrame = undefined;
-      this.parse();
+      void this.parse();
     });
   }
 
-  private parse() {
+  private async parse() {
+    const revision = ++this.parseRevision;
     try {
-      this.tree = fromMarkdown(this.content, {
+      const { fromMarkdown, gfmFromMarkdown, gfm } = await loadParser();
+      const tree = fromMarkdown(this.content, {
         extensions: [gfm()],
         mdastExtensions: [gfmFromMarkdown()],
       });
+      if (revision === this.parseRevision) this.tree = tree;
     } catch {
-      this.tree = null;
+      if (revision === this.parseRevision) this.tree = null;
     }
   }
 
