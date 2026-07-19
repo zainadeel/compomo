@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schemas/pattern.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "pattern:agent-chat",
+  "kind": "pattern",
+  "status": "experimental",
+  "summary": "Extend the generic conversation pattern with ordered agent response parts while keeping transport and product behavior outside the design system.",
+  "useWhen": ["A chat presents rich agent output including Markdown, safe activity, display-only tool calls, attachments, or sources."],
+  "avoidWhen": ["The channel is person-to-person or the component would be expected to execute models, tools, approvals, or persistence."],
+  "components": [
+    {"component":"component:ds-message-scroller","role":"Provides generic transcript movement and live-edge behavior.","required":true},
+    {"component":"component:ds-message","role":"Renders participant turns with channel-neutral semantics.","required":true},
+    {"component":"component:ds-message-bubble","role":"Renders participant copy with the shared body-medium regular message baseline.","required":true},
+    {"component":"component:ds-agent-response","role":"Renders ordered normalized agent response parts.","required":true},
+    {"component":"component:ds-message-composer","role":"Emits participant submission and stop intent.","required":true}
+  ],
+  "stateOwnership": [
+    "The application owns scripted or real transport, immutable response parts, retry, stop, generated titles, and persistence.",
+    "Participant turns use MessageBubble's body-medium regular default; the application does not promote ordinary sent-message copy to body-large.",
+    "AgentResponse owns ordered display only and never reveals private reasoning.",
+    "Tool-call components display execution state but do not request participant approval."
+  ],
+  "accessibility": [
+    "Agent activity must be concise user-safe summaries, never hidden chain-of-thought.",
+    "Sources use descriptive external links and unsafe schemes remain non-interactive.",
+    "Streaming and tool states remain available as text without relying on animation."
+  ],
+  "responsiveBehavior": ["Use wider ghost responses for rich content while retaining readable text measure and horizontal scrolling for code or tables."],
+  "implementations": {
+    "customElements":{"status":"planned","references":["src/wc/components/MessageScroller/MessageScroller.stories.ts"]},
+    "react":{"status":"planned","references":["src/react/components.ts"]},
+    "angular":{"status":"planned","references":["src/angular/index.ts"]}
+  },
+  "references": ["agent/patterns/conversation/pattern.agent.json","src/wc/components/AgentResponse/AgentResponse.tsx"]
+}

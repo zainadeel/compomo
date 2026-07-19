@@ -1,0 +1,265 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "conversation-list-item",
+  "title": "ConversationListItem",
+  "description": "Selectable conversation row with one-line preview, recency, unread presence, generic busy or error status, and channel-owned accessory slots.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/conversation-list-item",
+    "source": "src/wc/components/ConversationListItem/ConversationListItem.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Selectable conversation row with one-line preview, recency, unread presence, generic busy or error status, and channel-owned accessory slots.",
+      "useWhen": [
+        "A conversation history needs a compact row that opens one thread."
+      ],
+      "avoidWhen": [
+        "The row represents a command rather than a persisted conversation."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-conversation-list-section",
+        "component:ds-avatar",
+        "component:ds-badge",
+        "component:ds-loader"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "The conversation surface is one button with its title as the primary accessible name; actions are sibling controls so buttons are never nested.",
+        "An action in the actions slot remains keyboard-focusable and appears on row focus as well as pointer hover; touch layouts keep it visible.",
+        "Status copy must make busy or error meaning available without relying on motion or color."
+      ],
+      "states": [
+        "Rows reuse the md choice-item label/subtext recipe used by Menu, including 6px row padding, 2px text inset, and the shared content gap. The enclosing conversation-list scroll region supplies the larger 8px outer container padding.",
+        "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording.",
+        "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
+        "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
+        "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
+        "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
+      ],
+      "responsiveBehavior": [
+        "Long titles and previews truncate without displacing trailing status."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "conversationId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "conversation-id",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "conversationTitle": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "conversation-title",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Visible conversation title. Named to avoid the native HTMLElement.title contract."
+        },
+        "preview": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "preview",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "selected": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "selected",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "state": {
+          "type": "ConversationItemState",
+          "resolvedType": "\"busy\" | \"default\" | \"error\"",
+          "attribute": "state",
+          "default": "'default'",
+          "required": false,
+          "mutable": false
+        },
+        "statusLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "status-label",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "unreadCount": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "unread-count",
+          "default": "0",
+          "required": false,
+          "mutable": false
+        },
+        "updatedAt": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "updated-at",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "ISO timestamp for semantic activity metadata."
+        }
+      },
+      "events": [
+        {
+          "name": "dsSelect",
+          "detail": "{ id: string }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "conversationId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "conversation-id",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "conversationTitle": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "conversation-title",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Visible conversation title. Named to avoid the native HTMLElement.title contract."
+      },
+      "preview": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "preview",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "selected": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "selected",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "state": {
+        "type": "ConversationItemState",
+        "resolvedType": "\"busy\" | \"default\" | \"error\"",
+        "attribute": "state",
+        "default": "'default'",
+        "required": false,
+        "mutable": false
+      },
+      "statusLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "status-label",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "unreadCount": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "unread-count",
+        "default": "0",
+        "required": false,
+        "mutable": false
+      },
+      "updatedAt": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "updated-at",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "ISO timestamp for semantic activity metadata."
+      }
+    },
+    "events": [
+      {
+        "name": "dsSelect",
+        "detail": "{ id: string }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-conversation-list-item",
+      "react": "DsConversationListItem",
+      "angular": "DsConversationListItem"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-conversation-list-item.js';",
+        "example": "<ds-conversation-list-item></ds-conversation-list-item>"
+      },
+      "react": {
+        "import": "import { DsConversationListItem } from '@ds-mo/ui/react';",
+        "example": "<DsConversationListItem />"
+      },
+      "angular": {
+        "import": "import { DsConversationListItem } from '@ds-mo/ui/angular/ds-conversation-list-item';",
+        "example": "<ds-conversation-list-item></ds-conversation-list-item>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "badge",
+    "loader",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ConversationListItem/ConversationListItem.css",
+      "content": "@import '../../utils/choice-list.css';\n\n:host {\n  display: block;\n  box-sizing: border-box;\n}\n\n.conversation-list-item__row {\n  position: relative;\n  isolation: isolate;\n}\n\n.conversation-list-item {\n  color: var(--color-foreground-primary);\n}\n\n.conversation-list-item--error {\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--color-border-bold-negative);\n}\n\n.conversation-list-item__leading:empty,\n.conversation-list-item__trailing:empty {\n  display: none;\n}\n\n.conversation-list-item__leading,\n.conversation-list-item__trailing,\n.conversation-list-item__preview-row {\n  display: flex;\n  align-items: center;\n}\n\n.conversation-list-item__leading {\n  align-self: center;\n  width: auto;\n  height: auto;\n  margin-inline-start: var(--ds-control-label-inset, var(--dimension-space-025));\n  margin-inline-end: var(--dimension-space-050);\n}\n\n.conversation-list-item__content {\n  min-width: 0;\n}\n\n.conversation-list-item__title-row {\n  display: flex;\n  align-items: center;\n  min-width: 0;\n}\n\n.conversation-list-item__preview-row {\n  min-width: 0;\n  gap: var(--dimension-space-050);\n}\n\nds-text.conversation-list-item__title,\nds-text.conversation-list-item__preview {\n  display: block;\n  min-width: 0;\n}\n\nds-text.conversation-list-item__title {\n  flex: 1;\n}\n\n.conversation-list-item__unread {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  width: var(--dimension-size-200);\n  margin-inline-end: var(--dimension-space-025);\n}\n\nds-text.conversation-list-item__preview.ds-choice-item__subtext {\n  -webkit-line-clamp: 1;\n}\n\n.conversation-list-item__actions {\n  position: absolute;\n  top: 50%;\n  right: var(--dimension-space-100);\n  z-index: var(--dimension-z-index-floating);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: var(--dimension-radius-half);\n  background: var(--color-background-transparent);\n  box-shadow: var(--effect-elevation-elevated-md);\n  -webkit-backdrop-filter: blur(var(--effect-blur-sm));\n  backdrop-filter: blur(var(--effect-blur-sm));\n  opacity: 0;\n  pointer-events: none;\n  transform: translateY(-50%);\n}\n\n.conversation-list-item__row:hover .conversation-list-item__actions,\n.conversation-list-item__row:has(:focus-visible) .conversation-list-item__actions {\n  opacity: 1;\n  pointer-events: auto;\n}\n\n/* Keep the row wash continuous while the pointer moves onto its sibling action. */\n.conversation-list-item__row:hover .conversation-list-item::after {\n  background: var(--ds-interaction-hover);\n}\n\n.conversation-list-item__row:active .conversation-list-item::after {\n  background: var(--ds-interaction-pressed);\n}\n\n@media (hover: none) {\n  .conversation-list-item__actions {\n    opacity: 1;\n    pointer-events: auto;\n  }\n\n  :host(.conversation-list-item--has-actions) .conversation-list-item__title-row {\n    padding-inline-end: var(--dimension-size-400);\n  }\n}\n\n.conversation-list-item__time {\n  position: absolute;\n  width: var(--dimension-size-050);\n  height: var(--dimension-size-050);\n  overflow: hidden;\n  clip-path: inset(50%);\n  white-space: nowrap;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ConversationListItem/ConversationListItem.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type { ConversationItemState } from '../conversation-types';\n\n@Component({\n  tag: 'ds-conversation-list-item',\n  styleUrl: 'ConversationListItem.css',\n  scoped: true,\n})\nexport class ConversationListItem {\n  @Element() el!: HTMLElement;\n\n  @Prop() conversationId: string = '';\n  /** Visible conversation title. Named to avoid the native HTMLElement.title contract. */\n  @Prop() conversationTitle: string = '';\n  @Prop() preview: string = '';\n  /** ISO timestamp for semantic activity metadata. */\n  @Prop() updatedAt: string = '';\n  @Prop() selected: boolean = false;\n  @Prop() state: ConversationItemState = 'default';\n  @Prop() statusLabel: string = '';\n  @Prop() unreadCount: number = 0;\n\n  @Event() dsSelect!: EventEmitter<{ id: string }>;\n\n  private handleClick = () => this.dsSelect.emit({ id: this.conversationId });\n\n  private handleActionsSlotChange = (event: Event) => {\n    const slot = event.target as HTMLSlotElement;\n    this.el.classList.toggle(\n      'conversation-list-item--has-actions',\n      slot.assignedElements({ flatten: true }).length > 0\n    );\n  };\n\n  render() {\n    const busy = this.state === 'busy';\n    const subtext = busy && this.statusLabel ? this.statusLabel : this.preview;\n    const accessibleName = [\n      this.conversationTitle,\n      subtext,\n      this.unreadCount > 0 ? `${this.unreadCount} unread` : '',\n    ]\n      .filter(Boolean)\n      .join('. ');\n\n    return (\n      <Host role=\"listitem\">\n        <div class=\"conversation-list-item__row\">\n          <button\n            type=\"button\"\n            class={{\n              'conversation-list-item': true,\n              'ds-choice-item': true,\n              'ds-control--md': true,\n              'ds-focus-ring-inset': true,\n              'ds-interaction-fill': true,\n              'ds-interaction-fill--selected': this.selected,\n              'conversation-list-item--error': this.state === 'error',\n            }}\n            aria-label={accessibleName}\n            aria-current={this.selected ? 'true' : undefined}\n            aria-busy={busy ? 'true' : undefined}\n            onClick={this.handleClick}\n          >\n            <span class=\"conversation-list-item__leading ds-choice-item__icon ds-interaction-fill__content\">\n              <slot name=\"leading\" />\n            </span>\n            <span class=\"conversation-list-item__content ds-choice-item__content ds-interaction-fill__content\">\n              <span class=\"conversation-list-item__title-row\">\n                <ds-text\n                  class=\"conversation-list-item__title ds-choice-item__label\"\n                  as=\"span\"\n                  variant=\"text-body-medium\"\n                  emphasis\n                  color={this.unreadCount > 0 ? 'primary' : 'secondary'}\n                  lineTruncation={1}\n                >\n                  {this.conversationTitle}\n                </ds-text>\n                {this.unreadCount > 0 ? (\n                  <span class=\"conversation-list-item__unread\">\n                    <ds-badge variant=\"dot\" surface=\"secondary\" />\n                  </span>\n                ) : null}\n              </span>\n              <span class=\"conversation-list-item__preview-row\">\n                {busy ? <ds-loader size=\"xs\" color=\"secondary\" /> : null}\n                <ds-text\n                  class=\"conversation-list-item__preview ds-choice-item__subtext\"\n                  as=\"span\"\n                  variant=\"text-body-small\"\n                  color={this.state === 'error' ? 'negative' : 'secondary'}\n                  lineTruncation={1}\n                >\n                  {subtext}\n                </ds-text>\n              </span>\n              {this.updatedAt ? (\n                <time class=\"conversation-list-item__time\" dateTime={this.updatedAt}>\n                  {this.updatedAt}\n                </time>\n              ) : null}\n            </span>\n            <span class=\"conversation-list-item__trailing ds-interaction-fill__content\">\n              <slot name=\"trailing\" />\n            </span>\n          </button>\n          <div class=\"conversation-list-item__actions\">\n            <slot name=\"actions\" onSlotchange={this.handleActionsSlotChange} />\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

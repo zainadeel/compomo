@@ -26,3 +26,17 @@ export const PANEL_NAV_USER_MENU_PLACEMENT = {
   sideOffset: 'calc(var(--dimension-space-100) + var(--dimension-space-050))',
   alignOffset: 0,
 } as const satisfies MenuPlacement;
+
+/**
+ * Canonical placement for a menu opened by a PanelTools header action.
+ * Matches BarNav overflow: the 32px trigger is 8px inside the 48px header, so
+ * a 12px side offset places the popup 4px below the header edge. Choice-cell
+ * alignment keeps the final menu item edge aligned with the trigger.
+ */
+export const PANEL_TOOLS_HEADER_MENU_PLACEMENT = {
+  side: 'bottom',
+  align: 'end',
+  anchorAlignment: 'choice-cell',
+  sideOffset: 'calc(var(--dimension-space-100) + var(--dimension-space-050))',
+  alignOffset: 0,
+} as const satisfies MenuPlacement;

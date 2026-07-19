@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsMenu } from '@ds-mo/ui/components/ds-men
 
 @ProxyCmp({
   defineCustomElementFn: defineDsMenu,
-  inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset']
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'selectionMode', 'side', 'sideOffset']
 })
 @Component({
   selector: 'ds-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'side', 'sideOffset'],
+  inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'selectionMode', 'side', 'sideOffset'],
   outputs: ['dsClose', 'dsSelect', 'dsGradientSelect', 'dsSwatchSelect'],
 })
 export class DsMenu {

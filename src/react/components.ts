@@ -4,7 +4,13 @@
  */
 
 /* eslint-disable */
+export { DsAgentActivity } from "./ds-agent-activity.js";
+export { DsAgentResponse } from "./ds-agent-response.js";
+export { DsAgentSourceList } from "./ds-agent-source-list.js";
+export { DsAgentToolCall } from "./ds-agent-tool-call.js";
 export { DsAppShell } from "./ds-app-shell.js";
+export { DsAttachmentList } from "./ds-attachment-list.js";
+export { DsAvatar } from "./ds-avatar.js";
 export { DsBadge } from "./ds-badge.js";
 export { DsBanner } from "./ds-banner.js";
 export { DsBarNav } from "./ds-bar-nav.js";
@@ -20,16 +26,27 @@ export { DsChartLegend } from "./ds-chart-legend.js";
 export { DsChartLine } from "./ds-chart-line.js";
 export { DsCheckbox } from "./ds-checkbox.js";
 export { DsChip } from "./ds-chip.js";
+export { DsCodeBlock } from "./ds-code-block.js";
+export { DsConversationListItem } from "./ds-conversation-list-item.js";
+export { DsConversationListSection } from "./ds-conversation-list-section.js";
+export { DsConversationList } from "./ds-conversation-list.js";
 export { DsDivider } from "./ds-divider.js";
 export { DsEmptyState } from "./ds-empty-state.js";
 export { DsField } from "./ds-field.js";
 export { DsIcon } from "./ds-icon.js";
 export { DsInput } from "./ds-input.js";
 export { DsLoader } from "./ds-loader.js";
+export { DsMarkdown } from "./ds-markdown.js";
 export { DsMenu } from "./ds-menu.js";
+export { DsMessageBubble } from "./ds-message-bubble.js";
+export { DsMessageComposer } from "./ds-message-composer.js";
+export { DsMessageScroller } from "./ds-message-scroller.js";
+export { DsMessage } from "./ds-message.js";
 export { DsModal } from "./ds-modal.js";
 export { DsPanelNav } from "./ds-panel-nav.js";
 export { DsPanelSubNav } from "./ds-panel-sub-nav.js";
+export { DsPanelToolHeader } from "./ds-panel-tool-header.js";
+export { DsPanelToolSearch } from "./ds-panel-tool-search.js";
 export { DsPanelTools } from "./ds-panel-tools.js";
 export { DsRadio } from "./ds-radio.js";
 export { DsSelectMulti } from "./ds-select-multi.js";

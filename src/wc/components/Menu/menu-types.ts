@@ -4,6 +4,7 @@ import type { SwatchPickerOption, SwatchPickerSection } from '../SwatchPicker/sw
 export type { MenuAlign, MenuSide } from './menu-position';
 export {
   PANEL_NAV_USER_MENU_PLACEMENT,
+  PANEL_TOOLS_HEADER_MENU_PLACEMENT,
   type MenuPlacement,
 } from './menu-placement';
 

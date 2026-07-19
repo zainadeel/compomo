@@ -1,0 +1,137 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "attachment-list",
+  "title": "AttachmentList",
+  "description": "Channel-neutral list of message attachments with name, media type, size, and optional safe link.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/attachment-list",
+    "source": "src/wc/components/AttachmentList/AttachmentList.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Channel-neutral list of message attachments with name, media type, size, and optional safe link.",
+      "useWhen": [
+        "A conversation message needs to display already-known attachment metadata."
+      ],
+      "avoidWhen": [
+        "Users need to choose, upload, remove, or edit files; those controls belong to the product workflow."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message",
+        "component:ds-message-bubble"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Attachment name remains visible and is the link text when a safe URL is available.",
+        "Media type and size are supporting metadata, never the only identifier."
+      ],
+      "responsiveBehavior": [
+        "Long names wrap or truncate without overflowing the message surface."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "items": {
+          "type": "ConversationAttachment[]",
+          "resolvedType": "ConversationAttachment[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Attachments'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "items": {
+        "type": "ConversationAttachment[]",
+        "resolvedType": "ConversationAttachment[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Attachments'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-attachment-list",
+      "react": "DsAttachmentList",
+      "angular": "DsAttachmentList"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-attachment-list.js';",
+        "example": "<ds-attachment-list></ds-attachment-list>"
+      },
+      "react": {
+        "import": "import { DsAttachmentList } from '@ds-mo/ui/react';",
+        "example": "<DsAttachmentList />"
+      },
+      "angular": {
+        "import": "import { DsAttachmentList } from '@ds-mo/ui/angular/ds-attachment-list';",
+        "example": "<ds-attachment-list></ds-attachment-list>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AttachmentList/AttachmentList.css",
+      "content": ":host {\n  display: block;\n  min-width: 0;\n  box-sizing: border-box;\n}\n\n.attachment-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--dimension-space-050);\n}\n\n.attachment-list__item {\n  display: flex;\n  max-width: var(--dimension-form-width-sm);\n  padding: var(--dimension-space-075);\n  border-radius: var(--dimension-radius-025);\n  background: var(--color-background-secondary);\n  color: inherit;\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n  text-decoration: none;\n  box-sizing: border-box;\n}\n\na.attachment-list__item:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);\n  outline-offset: var(--dimension-stroke-width-012);\n}\n\n.attachment-list__item-content {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-075);\n  min-width: 0;\n}\n\n.attachment-list__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AttachmentList/AttachmentList.tsx",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\nimport type { ConversationAttachment } from '../conversation-types';\n\nfunction safeAttachmentUrl(value: string | undefined): string | undefined {\n  if (!value) return undefined;\n  try {\n    const url = new URL(value, document.baseURI);\n    return ['http:', 'https:', 'blob:'].includes(url.protocol) ? url.href : undefined;\n  } catch {\n    return undefined;\n  }\n}\n\n@Component({\n  tag: 'ds-attachment-list',\n  styleUrl: 'AttachmentList.css',\n  scoped: true,\n})\nexport class AttachmentList {\n  @Prop() items: ConversationAttachment[] = [];\n  @Prop() label: string = 'Attachments';\n\n  private renderItem(item: ConversationAttachment) {\n    const url = safeAttachmentUrl(item.url);\n    const content = (\n      <span class=\"attachment-list__item-content\">\n        <ds-icon name=\"Document\" size=\"sm\" color=\"secondary\" />\n        <span class=\"attachment-list__copy\">\n          <ds-text as=\"span\" variant=\"text-body-small\" emphasis color=\"primary\" lineTruncation={1}>{item.name}</ds-text>\n          {item.mediaType || item.size ? (\n            <ds-text as=\"span\" variant=\"text-caption\" color=\"secondary\">\n              {[item.mediaType, item.size].filter(Boolean).join(' · ')}\n            </ds-text>\n          ) : null}\n        </span>\n      </span>\n    );\n    return url ? (\n      <a class=\"attachment-list__item\" href={url} target=\"_blank\" rel=\"noopener noreferrer\">{content}</a>\n    ) : (\n      <div class=\"attachment-list__item\">{content}</div>\n    );\n  }\n\n  render() {\n    return (\n      <Host>\n        <div class=\"attachment-list\" role=\"list\" aria-label={this.label}>\n          {this.items.map(item => <div role=\"listitem\" key={item.id}>{this.renderItem(item)}</div>)}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

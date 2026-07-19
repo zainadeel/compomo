@@ -23,6 +23,20 @@ export type {
   BarNavTab,
   BarNavActionItem,
 } from '../types/components/BarNav/bar-nav-types';
+export type {
+  ConversationItemState,
+  MessageDirection,
+  MessageGroupPosition,
+  MessageDeliveryState,
+  MessageScrollerPosition,
+  MessageComposerStatus,
+  ConversationAttachment,
+  AgentActivityState,
+  AgentActivityItem,
+  AgentSource,
+  AgentToolState,
+  AgentResponsePart,
+} from '../types/components/conversation-types';
 `;
 
 const existing = readFileSync(indexPath, 'utf8');

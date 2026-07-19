@@ -1,0 +1,119 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message-bubble",
+  "title": "MessageBubble",
+  "description": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-bubble",
+    "source": "src/wc/components/MessageBubble/MessageBubble.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+      "useWhen": [
+        "Message content needs a primary, secondary, ghost, or error surface within a Message row.",
+        "Plain incoming or outgoing message copy should use the shared body-medium regular typography recipe without application styling."
+      ],
+      "avoidWhen": [
+        "The surface is a general card, callout, or form container.",
+        "The application wants to promote ordinary conversation copy to body-large; message typography stays body-medium unless a distinct authored rich-content element owns its own complete type recipe."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message",
+        "component:ds-markdown"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Surface styling does not add semantics; meaningful error or status copy belongs in message content or metadata."
+      ],
+      "responsiveBehavior": [
+        "The bubble wraps content and allows wide ghost responses to use more transcript width."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "variant": {
+          "type": "MessageBubbleVariant",
+          "resolvedType": "\"error\" | \"ghost\" | \"primary\" | \"secondary\"",
+          "attribute": "variant",
+          "default": "'secondary'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "variant": {
+        "type": "MessageBubbleVariant",
+        "resolvedType": "\"error\" | \"ghost\" | \"primary\" | \"secondary\"",
+        "attribute": "variant",
+        "default": "'secondary'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-message-bubble",
+      "react": "DsMessageBubble",
+      "angular": "DsMessageBubble"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-message-bubble.js';",
+        "example": "<ds-message-bubble></ds-message-bubble>"
+      },
+      "react": {
+        "import": "import { DsMessageBubble } from '@ds-mo/ui/react';",
+        "example": "<DsMessageBubble />"
+      },
+      "angular": {
+        "import": "import { DsMessageBubble } from '@ds-mo/ui/angular/ds-message-bubble';",
+        "example": "<ds-message-bubble></ds-message-bubble>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/MessageBubble/MessageBubble.css",
+      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n}\n\n:host(.message-bubble--ghost) {\n  display: block;\n  max-width: 100%;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding: var(--dimension-space-100);\n  border-start-start-radius: var(\n    --ds-message-bubble-radius-start-start,\n    var(--dimension-radius-050)\n  );\n  border-start-end-radius: var(--ds-message-bubble-radius-start-end, var(--dimension-radius-050));\n  border-end-start-radius: var(--ds-message-bubble-radius-end-start, var(--dimension-radius-050));\n  border-end-end-radius: var(--ds-message-bubble-radius-end-end, var(--dimension-radius-050));\n  background: var(--color-background-secondary);\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--primary) .message-bubble {\n  background: var(--color-background-bold-brand);\n  color: var(--color-foreground-faint-brand);\n}\n\n:host(.message-bubble--secondary) .message-bubble {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--ghost) .message-bubble {\n  padding-inline: 0;\n  background: transparent;\n  border-radius: 0;\n}\n\n:host(.message-bubble--error) .message-bubble {\n  background: var(--color-background-faint-negative);\n  color: var(--color-foreground-bold-negative);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-bold-negative);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MessageBubble/MessageBubble.tsx",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost' | 'error';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'secondary';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\"><slot /></div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

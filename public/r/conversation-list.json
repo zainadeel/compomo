@@ -1,0 +1,101 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "conversation-list",
+  "title": "ConversationList",
+  "description": "Scrollable conversation-list region with dedicated empty and floating-action placement.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/conversation-list",
+    "source": "src/wc/components/ConversationList/ConversationList.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Scrollable conversation-list region with dedicated empty and floating-action placement.",
+      "useWhen": [
+        "A messaging-like surface needs a reusable history list with empty and action regions."
+      ],
+      "avoidWhen": [
+        "The content is not a collection of conversations or threads."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-conversation-list-section",
+        "component:ds-conversation-list-item",
+        "component:ds-empty-state"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Provide an accessible list label through the surrounding heading or region.",
+        "Keep the empty message descriptive and the floating action explicitly named."
+      ],
+      "responsiveBehavior": [
+        "The list fills its owner, scrolls independently, and keeps its action at the lower end corner."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {},
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {},
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-conversation-list",
+      "react": "DsConversationList",
+      "angular": "DsConversationList"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-conversation-list.js';",
+        "example": "<ds-conversation-list></ds-conversation-list>"
+      },
+      "react": {
+        "import": "import { DsConversationList } from '@ds-mo/ui/react';",
+        "example": "<DsConversationList />"
+      },
+      "angular": {
+        "import": "import { DsConversationList } from '@ds-mo/ui/angular/ds-conversation-list';",
+        "example": "<ds-conversation-list></ds-conversation-list>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/ConversationList/ConversationList.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  height: 100%;\n  min-height: 0;\n  box-sizing: border-box;\n}\n\n.conversation-list {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n  min-height: 0;\n  box-sizing: border-box;\n}\n\n.conversation-list__content {\n  position: relative;\n  flex: 1 1 auto;\n  min-height: 0;\n  overflow: auto;\n  padding: var(--dimension-space-100);\n  padding-bottom: calc(var(--dimension-size-600) + var(--dimension-size-100));\n  box-sizing: border-box;\n}\n\n.conversation-list__empty {\n  display: contents;\n}\n\n.conversation-list__actions {\n  position: absolute;\n  right: var(--dimension-space-100);\n  bottom: var(--dimension-space-100);\n  z-index: var(--dimension-z-index-floating);\n}\n\n.conversation-list__actions-surface {\n  display: flex;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: var(--effect-elevation-elevated-floating);\n}\n\n.conversation-list__actions-surface:empty {\n  display: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ConversationList/ConversationList.tsx",
+      "content": "import { Component, h, Host } from '@stencil/core';\n\n@Component({\n  tag: 'ds-conversation-list',\n  styleUrl: 'ConversationList.css',\n  scoped: true,\n})\nexport class ConversationList {\n  render() {\n    return (\n      <Host>\n        <div class=\"conversation-list\">\n          <div class=\"conversation-list__content\">\n            <slot />\n            <div class=\"conversation-list__empty\">\n              <slot name=\"empty\" />\n            </div>\n          </div>\n          <div class=\"conversation-list__actions\">\n            <div class=\"conversation-list__actions-surface\">\n              <slot name=\"actions\" />\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

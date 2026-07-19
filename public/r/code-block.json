@@ -1,0 +1,150 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "code-block",
+  "title": "CodeBlock",
+  "description": "Scrollable monospace code surface with optional language or filename context and copy action.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/code-block",
+    "source": "src/wc/components/CodeBlock/CodeBlock.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Scrollable monospace code surface with optional language or filename context and copy action.",
+      "useWhen": [
+        "A message or document displays fenced code that readers may copy."
+      ],
+      "avoidWhen": [
+        "A live editor, terminal, diff viewer, or syntax-highlighting environment is required."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-markdown",
+        "component:ds-button-unfilled"
+      ],
+      "accessibility": [
+        "The copy action has explicit status wording and the code remains selectable text.",
+        "Language and filename labels supplement rather than replace the code content."
+      ],
+      "responsiveBehavior": [
+        "Long lines scroll horizontally and do not widen the owning transcript."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "code": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "code",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "filename": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "filename",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "language": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "language",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "code": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "code",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "filename": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "filename",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "language": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "language",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-code-block",
+      "react": "DsCodeBlock",
+      "angular": "DsCodeBlock"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-code-block.js';",
+        "example": "<ds-code-block></ds-code-block>"
+      },
+      "react": {
+        "import": "import { DsCodeBlock } from '@ds-mo/ui/react';",
+        "example": "<DsCodeBlock />"
+      },
+      "angular": {
+        "import": "import { DsCodeBlock } from '@ds-mo/ui/angular/ds-code-block';",
+        "example": "<ds-code-block></ds-code-block>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CodeBlock/CodeBlock.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n}\n\n.code-block {\n  width: 100%;\n  min-width: 0;\n  margin: 0;\n  overflow: hidden;\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-strong-neutral);\n  color: var(--color-foreground-faint-neutral);\n  box-sizing: border-box;\n}\n\n.code-block__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  min-height: var(--dimension-size-400);\n  padding: var(--dimension-space-050) var(--dimension-space-100);\n  background: var(--color-background-strong-neutral);\n  box-sizing: border-box;\n}\n\npre {\n  margin: 0;\n  padding: var(--dimension-space-150);\n  overflow: auto;\n  font-family: var(--typography-fontfamily-mono);\n  font-size: var(--typography-fontsize-sm);\n  line-height: var(--typography-lineheight-sm);\n  tab-size: 2;\n}\n\ncode {\n  font: inherit;\n  white-space: pre;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CodeBlock/CodeBlock.tsx",
+      "content": "import { Component, h, Host, Prop, State } from '@stencil/core';\n\n@Component({\n  tag: 'ds-code-block',\n  styleUrl: 'CodeBlock.css',\n  scoped: true,\n})\nexport class CodeBlock {\n  @Prop() code: string = '';\n  @Prop() language: string = '';\n  @Prop() filename: string = '';\n\n  @State() private copied: boolean = false;\n  private copiedTimer?: ReturnType<typeof setTimeout>;\n\n  disconnectedCallback() {\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n  }\n\n  private copy = async () => {\n    if (!navigator.clipboard || !this.code) return;\n    await navigator.clipboard.writeText(this.code);\n    this.copied = true;\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n    this.copiedTimer = setTimeout(() => {\n      this.copied = false;\n    }, 2000);\n  };\n\n  render() {\n    const label = this.filename || this.language || 'Code';\n    return (\n      <Host>\n        <figure class=\"code-block\">\n          <figcaption class=\"code-block__header\">\n            <ds-text as=\"span\" variant=\"text-caption\" emphasis color=\"on-strong\">\n              {label}\n            </ds-text>\n            <ds-button-unfilled\n              variant=\"icon\"\n              icon={this.copied ? 'Check' : 'Copy'}\n              size=\"xs\"\n              aria-label={this.copied ? 'Copied' : 'Copy code'}\n              hasBorder={false}\n              onDsClick={this.copy}\n            />\n          </figcaption>\n          <pre>\n            <code>{this.code}</code>\n          </pre>\n        </figure>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-switch.js';
 import '../../../../dist/components/ds-swatch-picker.js';
-import { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
+import { TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 import { shellGradientPickerSections } from '../../shell/shell-gradient-presets';
 
@@ -19,9 +19,12 @@ const meta: Meta = {
   title: 'Overlay/Menu',
   tags: ['autodocs'],
   argTypes: {
-    side:  { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
+    side: { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
     align: { control: 'select', options: ['start', 'center', 'end'] },
-    sideOffset: { control: 'text', description: 'px number or TokoMo length (e.g. var(--dimension-space-200))' },
+    sideOffset: {
+      control: 'text',
+      description: 'px number or TokoMo length (e.g. var(--dimension-space-200))',
+    },
   },
   args: { side: 'bottom', align: 'start', sideOffset: TOKEN_CSS_LENGTHS.space050 },
 };
@@ -78,6 +81,25 @@ export const WithSwitch: Story = {
           { label: 'Auto-save', showSwitch: true, switchValue: true },
         ]}
         anchor-id="menu-anchor-tog"
+      ></ds-menu>
+    </div>
+  `,
+};
+
+export const SingleSelection: Story = {
+  name: 'Single-selection radio menu',
+  render: () => html`
+    <div style="padding: 16px; height: 280px">
+      <span id="menu-anchor-radio" style="display: inline-block; width: 1px; height: 1px"></span>
+      <ds-menu
+        ?open=${true}
+        selection-mode="single"
+        .items=${[
+          { label: 'All chats', value: 'all', isSelected: true },
+          { label: 'Unread', value: 'unread', isSelected: false },
+          { label: 'Groups only', value: 'group', isSelected: false },
+        ]}
+        anchor-id="menu-anchor-radio"
       ></ds-menu>
     </div>
   `,

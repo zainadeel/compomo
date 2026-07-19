@@ -1,0 +1,141 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "markdown",
+  "title": "Markdown",
+  "description": "Safe CommonMark and GFM renderer built from parsed nodes without raw HTML injection.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/markdown",
+    "source": "src/wc/components/Markdown/Markdown.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Safe CommonMark and GFM renderer built from parsed nodes without raw HTML injection.",
+      "useWhen": [
+        "Trusted or untrusted message text needs headings, lists, links, tables, tasks, quotes, and code."
+      ],
+      "avoidWhen": [
+        "The application needs arbitrary HTML, custom plugins, or a full document CMS renderer."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-code-block",
+        "component:ds-message-bubble"
+      ],
+      "patterns": [
+        "pattern:conversation",
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Semantic parsed elements preserve heading, list, table, quote, and code relationships.",
+        "Raw HTML is ignored and unsafe link schemes are not made interactive.",
+        "Link text must remain descriptive in authored content."
+      ],
+      "states": [
+        "Streaming updates are coalesced to one parse and render per animation frame."
+      ],
+      "responsiveBehavior": [
+        "Tables and code scroll horizontally instead of forcing the transcript wider."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "content": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "content",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "streaming": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "streaming",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "content": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "content",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "streaming": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "streaming",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-markdown",
+      "react": "DsMarkdown",
+      "angular": "DsMarkdown"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-markdown.js';",
+        "example": "<ds-markdown></ds-markdown>"
+      },
+      "react": {
+        "import": "import { DsMarkdown } from '@ds-mo/ui/react';",
+        "example": "<DsMarkdown />"
+      },
+      "angular": {
+        "import": "import { DsMarkdown } from '@ds-mo/ui/angular/ds-markdown';",
+        "example": "<ds-markdown></ds-markdown>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "code-block"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Markdown/Markdown.css",
+      "content": ":host {\n  display: block;\n  min-width: 0;\n  color: inherit;\n  box-sizing: border-box;\n}\n\n.markdown {\n  min-width: 0;\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  overflow-wrap: anywhere;\n}\n\n.markdown > :first-child {\n  margin-top: 0;\n}\n\n.markdown > :last-child {\n  margin-bottom: 0;\n}\n\np,\nul,\nol,\nblockquote,\n.markdown__table-wrap,\nds-code-block {\n  margin: 0 0 var(--dimension-space-150);\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin: var(--dimension-space-200) 0 var(--dimension-space-100);\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-weight: var(--typography-weight-semibold);\n}\n\nh1,\nh2 {\n  font-size: var(--typography-fontsize-xl);\n  line-height: var(--typography-lineheight-xl);\n}\n\nh3,\nh4,\nh5,\nh6 {\n  font-size: var(--typography-fontsize-lg);\n  line-height: var(--typography-lineheight-lg);\n}\n\nul,\nol {\n  padding-left: var(--dimension-space-300);\n}\n\nli + li {\n  margin-top: var(--dimension-space-050);\n}\n\nli > input {\n  margin-right: var(--dimension-space-050);\n}\n\nblockquote {\n  padding-left: var(--dimension-space-150);\n  border-left: var(--dimension-stroke-width-025) solid var(--color-border-secondary);\n  color: var(--color-foreground-secondary);\n}\n\na {\n  color: var(--color-foreground-brand);\n  text-decoration: underline;\n}\n\ncode:not(ds-code-block code) {\n  padding: var(--dimension-space-012) var(--dimension-space-025);\n  border-radius: var(--dimension-radius-025);\n  background: var(--color-background-secondary);\n  font-family: var(--typography-fontfamily-mono);\n  font-size: var(--typography-fontsize-sm);\n}\n\nhr {\n  margin: var(--dimension-space-200) 0;\n  border: none;\n  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n.markdown__table-wrap {\n  overflow-x: auto;\n}\n\ntable {\n  width: 100%;\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  padding: var(--dimension-space-075);\n  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  text-align: left;\n  vertical-align: top;\n}\n\nth {\n  font-weight: var(--typography-weight-semibold);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Markdown/Markdown.tsx",
+      "content": "import { Component, h, Host, Prop, State, VNode, Watch } from '@stencil/core';\nimport type { Nodes, Root } from 'mdast';\n\ntype MarkdownRender = VNode | string | null | MarkdownRender[];\ntype MarkdownParser = {\n  fromMarkdown: typeof import('mdast-util-from-markdown').fromMarkdown;\n  gfmFromMarkdown: typeof import('mdast-util-gfm').gfmFromMarkdown;\n  gfm: typeof import('micromark-extension-gfm').gfm;\n};\n\nlet parserPromise: Promise<MarkdownParser> | undefined;\n\nfunction loadParser(): Promise<MarkdownParser> {\n  parserPromise ??= Promise.all([\n    import('mdast-util-from-markdown'),\n    import('mdast-util-gfm'),\n    import('micromark-extension-gfm'),\n  ]).then(([fromMarkdownModule, gfmFromMarkdownModule, gfmModule]) => ({\n    fromMarkdown: fromMarkdownModule.fromMarkdown,\n    gfmFromMarkdown: gfmFromMarkdownModule.gfmFromMarkdown,\n    gfm: gfmModule.gfm,\n  }));\n  return parserPromise;\n}\n\nfunction safeHref(value: string | null | undefined): string | undefined {\n  if (!value) return undefined;\n  try {\n    const url = new URL(value, document.baseURI);\n    if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) return undefined;\n    return url.href;\n  } catch {\n    return undefined;\n  }\n}\n\n@Component({\n  tag: 'ds-markdown',\n  styleUrl: 'Markdown.css',\n  scoped: true,\n})\nexport class Markdown {\n  @Prop() content: string = '';\n  @Prop() streaming: boolean = false;\n\n  @State() private tree: Root | null = null;\n  private parseFrame?: number;\n  private parseRevision = 0;\n\n  componentWillLoad() {\n    // The browser-targeted named-character decoder used by the Markdown parser\n    // creates a DOM element when its module is evaluated. Keep public package\n    // imports server-safe by loading that parser only in a browser context.\n    if (typeof document !== 'undefined') return this.parse();\n  }\n\n  disconnectedCallback() {\n    this.parseRevision += 1;\n    if (this.parseFrame && typeof cancelAnimationFrame === 'function') {\n      cancelAnimationFrame(this.parseFrame);\n    }\n  }\n\n  @Watch('content')\n  scheduleParse() {\n    if (typeof requestAnimationFrame !== 'function') return;\n    if (this.parseFrame) cancelAnimationFrame(this.parseFrame);\n    this.parseFrame = requestAnimationFrame(() => {\n      this.parseFrame = undefined;\n      void this.parse();\n    });\n  }\n\n  private async parse() {\n    const revision = ++this.parseRevision;\n    try {\n      const { fromMarkdown, gfmFromMarkdown, gfm } = await loadParser();\n      const tree = fromMarkdown(this.content, {\n        extensions: [gfm()],\n        mdastExtensions: [gfmFromMarkdown()],\n      });\n      if (revision === this.parseRevision) this.tree = tree;\n    } catch {\n      if (revision === this.parseRevision) this.tree = null;\n    }\n  }\n\n  private children(node: Nodes): MarkdownRender[] {\n    if (!('children' in node)) return [];\n    return node.children.map(child => this.renderNode(child));\n  }\n\n  private renderNode(node: Nodes): MarkdownRender {\n    switch (node.type) {\n      case 'root':\n        return this.children(node);\n      case 'text':\n        // Keep prose text on an element boundary. Besides giving streaming updates a\n        // stable render target, this avoids axe-core treating a bare Stencil text\n        // vnode as an element while it generates a contrast-result selector.\n        return <span class=\"markdown__text\">{node.value}</span>;\n      case 'paragraph':\n        return <p class=\"markdown__paragraph\">{this.children(node)}</p>;\n      case 'heading': {\n        const Tag = `h${node.depth}`;\n        return <Tag class=\"markdown__heading\">{this.children(node)}</Tag>;\n      }\n      case 'strong':\n        return <strong class=\"markdown__strong\">{this.children(node)}</strong>;\n      case 'emphasis':\n        return <em class=\"markdown__emphasis\">{this.children(node)}</em>;\n      case 'delete':\n        return <del class=\"markdown__delete\">{this.children(node)}</del>;\n      case 'blockquote':\n        return <blockquote class=\"markdown__blockquote\">{this.children(node)}</blockquote>;\n      case 'break':\n        return <br class=\"markdown__break\" />;\n      case 'thematicBreak':\n        return <hr class=\"markdown__thematic-break\" />;\n      case 'inlineCode':\n        return <code class=\"markdown__inline-code\">{node.value}</code>;\n      case 'code':\n        return (\n          <ds-code-block\n            class=\"markdown__code-block\"\n            code={node.value}\n            language={node.lang ?? ''}\n            filename={node.meta ?? ''}\n          />\n        );\n      case 'link': {\n        const href = safeHref(node.url);\n        return href ? (\n          <a class=\"markdown__link\" href={href} target=\"_blank\" rel=\"noopener noreferrer\">\n            {this.children(node)}\n          </a>\n        ) : (\n          this.children(node)\n        );\n      }\n      case 'list': {\n        const Tag = node.ordered ? 'ol' : 'ul';\n        return (\n          <Tag class=\"markdown__list\" start={node.ordered && node.start ? node.start : undefined}>\n            {this.children(node)}\n          </Tag>\n        );\n      }\n      case 'listItem':\n        return (\n          <li class=\"markdown__list-item\">\n            {typeof node.checked === 'boolean' ? (\n              <input\n                class=\"markdown__task-indicator\"\n                type=\"checkbox\"\n                checked={node.checked}\n                disabled\n                aria-hidden=\"true\"\n                tabIndex={-1}\n              />\n            ) : null}\n            {this.children(node)}\n          </li>\n        );\n      case 'table': {\n        const [heading, ...rows] = node.children;\n        return (\n          <div class=\"markdown__table-wrap\">\n            <table class=\"markdown__table\">\n              {heading ? (\n                <thead class=\"markdown__table-head\">\n                  <tr class=\"markdown__table-row\">\n                    {heading.children.map(cell => (\n                      <th class=\"markdown__table-heading\" scope=\"col\">\n                        {this.children(cell)}\n                      </th>\n                    ))}\n                  </tr>\n                </thead>\n              ) : null}\n              <tbody class=\"markdown__table-body\">{rows.map(row => this.renderNode(row))}</tbody>\n            </table>\n          </div>\n        );\n      }\n      case 'tableRow':\n        return <tr class=\"markdown__table-row\">{this.children(node)}</tr>;\n      case 'tableCell':\n        return <td class=\"markdown__table-cell\">{this.children(node)}</td>;\n      case 'image': {\n        const href = safeHref(node.url);\n        return href ? (\n          <a class=\"markdown__image-link\" href={href} target=\"_blank\" rel=\"noopener noreferrer\">\n            {node.alt || 'View image'}\n          </a>\n        ) : (\n          node.alt || null\n        );\n      }\n      case 'html':\n      case 'definition':\n      case 'footnoteDefinition':\n        return null;\n      case 'footnoteReference':\n        return <sup class=\"markdown__footnote\">{node.label}</sup>;\n      default:\n        return this.children(node);\n    }\n  }\n\n  render() {\n    return (\n      <Host aria-busy={this.streaming ? 'true' : undefined}>\n        <div class=\"markdown\">\n          {this.tree ? (\n            this.renderNode(this.tree)\n          ) : (\n            <p class=\"markdown__paragraph\">\n              <span class=\"markdown__text\">{this.content}</span>\n            </p>\n          )}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

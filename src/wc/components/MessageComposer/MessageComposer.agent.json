@@ -1,0 +1,44 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-message-composer",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-message-composer",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Two-line auto-growing conversation textarea with submit, stop, error, and extensible leading-tool or trailing-action regions.",
+  "useWhen": [
+    "A conversation accepts multi-line text and needs Enter-to-submit with a streaming stop action."
+  ],
+  "avoidWhen": ["The text is a conventional form field submitted with unrelated fields."],
+  "commonlyComposedWith": [
+    "component:ds-message-scroller",
+    "component:ds-button-filled",
+    "component:ds-button-unfilled"
+  ],
+  "patterns": ["pattern:conversation"],
+  "accessibility": [
+    "Always provide a localized textarea label and submit or stop action names.",
+    "Shift plus Enter inserts a newline while Enter submits non-empty content.",
+    "Streaming and error states remain perceivable without relying on icon shape alone."
+  ],
+  "states": [
+    "The owner controls draft value and transport state; the composer emits intent without performing transport.",
+    "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last.",
+    "The submit action defaults to brand for both agent and person-to-person conversations; change submitIntent only when the action consequence has a different semantic intent."
+  ],
+  "responsiveBehavior": [
+    "The textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/MessageComposer/MessageComposer.stories.ts"
+    },
+    {
+      "label": "Scroller overlay composition",
+      "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+    }
+  ]
+}

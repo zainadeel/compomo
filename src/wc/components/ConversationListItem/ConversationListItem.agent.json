@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-conversation-list-item",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-conversation-list-item",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Selectable conversation row with one-line preview, recency, unread presence, generic busy or error status, and channel-owned accessory slots.",
+  "useWhen": ["A conversation history needs a compact row that opens one thread."],
+  "avoidWhen": ["The row represents a command rather than a persisted conversation."],
+  "commonlyComposedWith": [
+    "component:ds-conversation-list-section",
+    "component:ds-avatar",
+    "component:ds-badge",
+    "component:ds-loader"
+  ],
+  "patterns": ["pattern:conversation"],
+  "accessibility": [
+    "The conversation surface is one button with its title as the primary accessible name; actions are sibling controls so buttons are never nested.",
+    "An action in the actions slot remains keyboard-focusable and appears on row focus as well as pointer hover; touch layouts keep it visible.",
+    "Status copy must make busy or error meaning available without relying on motion or color."
+  ],
+  "states": [
+    "Rows reuse the md choice-item label/subtext recipe used by Menu, including 6px row padding, 2px text inset, and the shared content gap. The enclosing conversation-list scroll region supplies the larger 8px outer container padding.",
+    "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording.",
+    "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
+    "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
+    "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
+    "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
+  ],
+  "responsiveBehavior": ["Long titles and previews truncate without displacing trailing status."],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+    }
+  ]
+}

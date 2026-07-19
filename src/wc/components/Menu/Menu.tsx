@@ -1,4 +1,15 @@
-import { Component, Prop, State, Event, EventEmitter, Element, Watch, Listen, h, Host } from '@stencil/core';
+import {
+  Component,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Element,
+  Watch,
+  Listen,
+  h,
+  Host,
+} from '@stencil/core';
 import {
   choicePopupMinWidth,
   resolveChoicePopupAlignOffset,
@@ -10,6 +21,8 @@ import {
 } from '../../utils';
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
+
+export type MenuSelectionMode = 'none' | 'single';
 import {
   isMenuGradientPickerSection,
   isMenuPickerSection,
@@ -41,6 +54,8 @@ export class Menu {
 
   @Prop({ mutable: true }) open: boolean = false;
   @Prop() items: MenuItemData[] = [];
+  /** Give ordinary rows mutually-exclusive radio-menu semantics using isSelected. */
+  @Prop() selectionMode: MenuSelectionMode = 'none';
   @Prop() sections: MenuSection[] = [];
   @Prop() side: MenuSide = 'bottom';
   @Prop() align: MenuAlign = 'start';
@@ -180,7 +195,9 @@ export class Menu {
   }
 
   private focusAnchor() {
-    const anchor = this.resolvedAnchor as (HTMLElement & { setFocus?: () => Promise<void> | void }) | null;
+    const anchor = this.resolvedAnchor as
+      | (HTMLElement & { setFocus?: () => Promise<void> | void })
+      | null;
     if (anchor?.setFocus) {
       anchor.setFocus();
       return;
@@ -196,12 +213,14 @@ export class Menu {
       return;
     }
 
-    const candidates = Array.from(document.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR))
-      .filter(element => (
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR)
+    ).filter(
+      element =>
         !element.closest('.menu-popup') &&
         !element.closest('[inert]') &&
         element.getClientRects().length > 0
-      ));
+    );
     const index = candidates.indexOf(anchor);
     (candidates[index + 1] ?? anchor).focus();
   }
@@ -209,8 +228,9 @@ export class Menu {
   private compositeTabLeavesPopup(event: KeyboardEvent): boolean {
     const popup = this.el.querySelector<HTMLElement>('.menu-popup');
     if (!popup) return true;
-    const focusables = Array.from(popup.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR))
-      .filter(element => element.getClientRects().length > 0);
+    const focusables = Array.from(
+      popup.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR)
+    ).filter(element => element.getClientRects().length > 0);
     const currentIndex = focusables.indexOf(event.target as HTMLElement);
     if (currentIndex < 0) return true;
     return event.shiftKey ? currentIndex === 0 : currentIndex === focusables.length - 1;
@@ -224,7 +244,7 @@ export class Menu {
 
   private get flatItems(): MenuItemData[] {
     return this.activeSections.flatMap(section =>
-      isMenuPickerSection(section) ? [] : section.items,
+      isMenuPickerSection(section) ? [] : section.items
     );
   }
 
@@ -278,8 +298,14 @@ export class Menu {
     const anchorRect = anchorEl.getBoundingClientRect();
     const sectionInsetPx = this.viewportPadPx;
     if (!this.minWidth) {
-      if (this.anchorAlignment === 'choice-cell' && (this.side === 'top' || this.side === 'bottom')) {
-        popup.style.minWidth = `max(var(--dimension-menu-width-xs), ${choicePopupMinWidth(anchorRect.width, sectionInsetPx)}px)`;
+      if (
+        this.anchorAlignment === 'choice-cell' &&
+        (this.side === 'top' || this.side === 'bottom')
+      ) {
+        popup.style.minWidth = `max(var(--dimension-menu-width-xs), ${choicePopupMinWidth(
+          anchorRect.width,
+          sectionInsetPx
+        )}px)`;
       } else {
         popup.style.removeProperty('min-width');
       }
@@ -317,9 +343,7 @@ export class Menu {
     const flat = this.flatItems;
     const selectedIdx = flat.findIndex(it => it.isSelected && !it.isInactive);
     const firstEnabledIdx = flat.findIndex(it => !it.isInactive);
-    this.focusedIndex = selectedIdx >= 0
-      ? selectedIdx
-      : (firstEnabledIdx >= 0 ? firstEnabledIdx : 0);
+    this.focusedIndex = selectedIdx >= 0 ? selectedIdx : firstEnabledIdx >= 0 ? firstEnabledIdx : 0;
 
     requestAnimationFrame(() => {
       const btns = this.el.querySelectorAll<HTMLElement>('.menu-item');
@@ -389,7 +413,10 @@ export class Menu {
     if (this.hasCompositeSections) return;
 
     const flat = this.flatItems;
-    const enabled = flat.map((it, i) => ({ it, i })).filter(({ it }) => !it.isInactive).map(({ i }) => i);
+    const enabled = flat
+      .map((it, i) => ({ it, i }))
+      .filter(({ it }) => !it.isInactive)
+      .map(({ i }) => i);
     if (!enabled.length) return;
 
     const cur = enabled.indexOf(this.focusedIndex);
@@ -397,25 +424,29 @@ export class Menu {
 
     switch (e.key) {
       case 'ArrowDown':
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         this.focusRingVisible = true;
         this.focusedIndex = enabled[(safe + 1) % enabled.length];
         this.focusItem(this.focusedIndex);
         break;
       case 'ArrowUp':
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         this.focusRingVisible = true;
         this.focusedIndex = enabled[(safe - 1 + enabled.length) % enabled.length];
         this.focusItem(this.focusedIndex);
         break;
       case 'Home':
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         this.focusRingVisible = true;
         this.focusedIndex = enabled[0];
         this.focusItem(this.focusedIndex);
         break;
       case 'End':
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
         this.focusRingVisible = true;
         this.focusedIndex = enabled[enabled.length - 1];
         this.focusItem(this.focusedIndex);
@@ -474,123 +505,178 @@ export class Menu {
           aria-orientation={this.hasCompositeSections ? undefined : 'vertical'}
         >
           <div class="ds-choice-list">
-          {sections.map((section, si) => (
-            <div
-              key={si}
-              class={{
-                'menu-section': true,
-                'menu-section--divided': si < sections.length - 1,
-                'menu-section--gradient-picker': isMenuPickerSection(section),
-                'ds-choice-section': true,
-                'ds-choice-section--divided': si < sections.length - 1,
-              }}
-              role={section.header ? 'group' : undefined}
-              aria-label={section.header}
-            >
-              {section.header && (
-                <ds-text
-                  class="section-header ds-choice-section__header ds-control--md"
-                  as="span"
-                  variant="text-body-small"
-                  emphasis
-                  color="primary"
-                  aria-hidden="true"
-                >
-                  {section.header}
-                </ds-text>
-              )}
-              {isMenuGradientPickerSection(section) ? (
-                <ds-swatch-picker
-                  value={section.value}
-                  groupLabel={section.header ?? 'Shell gradient theme'}
-                  sections={shellGradientPickerSections()}
-                  onDsChange={(e: CustomEvent<string>) => {
-                    e.stopPropagation();
-                    this.handleGradientSelect(e.detail as ShellGradientPreset);
-                  }}
-                />
-              ) : isMenuSwatchPickerSection(section) ? (
-                <ds-swatch-picker
-                  value={section.value}
-                  groupLabel={section.groupLabel ?? section.header ?? 'Swatch options'}
-                  options={section.options ?? []}
-                  sections={section.sections ?? []}
-                  onDsChange={(e: CustomEvent<string>) => {
-                    e.stopPropagation();
-                    this.handleSwatchSelect(e.detail);
-                  }}
-                />
-              ) : (
-                section.items.map(item => {
-                const idx = flatIdx++;
-                const isFocused = this.focusedIndex === idx;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    class={{
-                      'menu-item': true,
-                      'ds-choice-item': true,
-                      'ds-control--md': true,
-                      'ds-focus-ring-inset': true,
-                      'ds-focus-ring--visible': isFocused && this.focusRingVisible,
-                      'ds-interaction-fill': !item.isInactive,
-                      'ds-interaction-fill--selected': !!item.isSelected && !item.isInactive,
-                      'menu-item--selected': !!item.isSelected,
-                      'ds-control-inactive': !!item.isInactive,
-                      'menu-item--destructive': !!item.isDestructive,
-                      'menu-item--focused': isFocused,
-                    }}
-                    role={this.hasCompositeSections ? undefined : item.showSwitch ? 'menuitemcheckbox' : 'menuitem'}
-                    aria-checked={!this.hasCompositeSections && item.showSwitch ? String(!!item.switchValue) : undefined}
-                    aria-pressed={this.hasCompositeSections
-                      ? String(item.showSwitch ? !!item.switchValue : !!item.isSelected)
-                      : undefined}
-                    aria-current={!this.hasCompositeSections && !item.showSwitch && item.isSelected ? 'true' : undefined}
-                    disabled={item.isInactive}
-                    tabIndex={this.hasCompositeSections ? 0 : isFocused ? 0 : -1}
-                    onMouseDown={() => { this.focusRingVisible = false; }}
-                    onClick={() => this.handleItemClick(item)}
-                    onFocus={() => { this.focusedIndex = idx; }}
+            {sections.map((section, si) => (
+              <div
+                key={si}
+                class={{
+                  'menu-section': true,
+                  'menu-section--divided': si < sections.length - 1,
+                  'menu-section--gradient-picker': isMenuPickerSection(section),
+                  'ds-choice-section': true,
+                  'ds-choice-section--divided': si < sections.length - 1,
+                }}
+                role={section.header ? 'group' : undefined}
+                aria-label={section.header}
+              >
+                {section.header && (
+                  <ds-text
+                    class="section-header ds-choice-section__header ds-control--md"
+                    as="span"
+                    variant="text-body-small"
+                    emphasis
+                    color="primary"
+                    aria-hidden="true"
                   >
-                    <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
-                      <ds-text
-                        class="menu-item__label ds-choice-item__label"
-                        as="span"
-                        variant="text-body-medium"
-                        color={item.isSelected ? 'primary' : 'secondary'}
+                    {section.header}
+                  </ds-text>
+                )}
+                {isMenuGradientPickerSection(section) ? (
+                  <ds-swatch-picker
+                    value={section.value}
+                    groupLabel={section.header ?? 'Shell gradient theme'}
+                    sections={shellGradientPickerSections()}
+                    onDsChange={(e: CustomEvent<string>) => {
+                      e.stopPropagation();
+                      this.handleGradientSelect(e.detail as ShellGradientPreset);
+                    }}
+                  />
+                ) : isMenuSwatchPickerSection(section) ? (
+                  <ds-swatch-picker
+                    value={section.value}
+                    groupLabel={section.groupLabel ?? section.header ?? 'Swatch options'}
+                    options={section.options ?? []}
+                    sections={section.sections ?? []}
+                    onDsChange={(e: CustomEvent<string>) => {
+                      e.stopPropagation();
+                      this.handleSwatchSelect(e.detail);
+                    }}
+                  />
+                ) : (
+                  section.items.map(item => {
+                    const idx = flatIdx++;
+                    const isFocused = this.focusedIndex === idx;
+                    const isRadioItem =
+                      !this.hasCompositeSections &&
+                      this.selectionMode === 'single' &&
+                      !item.showSwitch;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        class={{
+                          'menu-item': true,
+                          'ds-choice-item': true,
+                          'ds-control--md': true,
+                          'ds-focus-ring-inset': true,
+                          'ds-focus-ring--visible': isFocused && this.focusRingVisible,
+                          'ds-interaction-fill': !item.isInactive,
+                          'ds-interaction-fill--selected': !!item.isSelected && !item.isInactive,
+                          'menu-item--selected': !!item.isSelected,
+                          'ds-control-inactive': !!item.isInactive,
+                          'menu-item--destructive': !!item.isDestructive,
+                          'menu-item--focused': isFocused,
+                        }}
+                        role={
+                          this.hasCompositeSections
+                            ? undefined
+                            : item.showSwitch
+                            ? 'menuitemcheckbox'
+                            : isRadioItem
+                            ? 'menuitemradio'
+                            : 'menuitem'
+                        }
+                        aria-checked={
+                          !this.hasCompositeSections && item.showSwitch
+                            ? String(!!item.switchValue)
+                            : isRadioItem
+                            ? String(!!item.isSelected)
+                            : undefined
+                        }
+                        aria-pressed={
+                          this.hasCompositeSections
+                            ? String(item.showSwitch ? !!item.switchValue : !!item.isSelected)
+                            : undefined
+                        }
+                        aria-current={
+                          !this.hasCompositeSections &&
+                          !item.showSwitch &&
+                          !isRadioItem &&
+                          item.isSelected
+                            ? 'true'
+                            : undefined
+                        }
+                        disabled={item.isInactive}
+                        tabIndex={this.hasCompositeSections ? 0 : isFocused ? 0 : -1}
+                        onMouseDown={() => {
+                          this.focusRingVisible = false;
+                        }}
+                        onClick={() => this.handleItemClick(item)}
+                        onFocus={() => {
+                          this.focusedIndex = idx;
+                        }}
                       >
-                        {item.label}
-                      </ds-text>
-                      {item.subtext && (
-                        <ds-text class="menu-item__subtext ds-choice-item__subtext" as="span" variant="text-body-small" color="secondary">
-                          {item.subtext}
-                        </ds-text>
-                      )}
-                    </div>
-                    {item.dot && (
-                      <span class="menu-item__dot-box ds-interaction-fill__content" aria-hidden="true">
-                        <ds-badge
-                          class="menu-item__dot"
-                          variant="dot"
-                          hasRing={false}
-                          label=""
-                        />
-                      </span>
-                    )}
-                    {item.showSwitch && (
-                      <ds-switch
-                        class="menu-item__switch ds-interaction-fill__content"
-                        size="md"
-                        checked={!!item.switchValue}
-                        presentation
-                      />
-                    )}
-                  </button>
-                );
-              }))}
-            </div>
-          ))}
+                        {isRadioItem && (
+                          <span
+                            class="menu-item__radio-box ds-interaction-fill__content"
+                            aria-hidden="true"
+                          >
+                            <span
+                              class={{
+                                'menu-item__radio': true,
+                                'menu-item__radio--checked': !!item.isSelected,
+                              }}
+                            >
+                              {item.isSelected && <span class="menu-item__radio-dot" />}
+                            </span>
+                          </span>
+                        )}
+                        <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
+                          <ds-text
+                            class="menu-item__label ds-choice-item__label"
+                            as="span"
+                            variant="text-body-medium"
+                            color={item.isSelected ? 'primary' : 'secondary'}
+                          >
+                            {item.label}
+                          </ds-text>
+                          {item.subtext && (
+                            <ds-text
+                              class="menu-item__subtext ds-choice-item__subtext"
+                              as="span"
+                              variant="text-body-small"
+                              color="secondary"
+                            >
+                              {item.subtext}
+                            </ds-text>
+                          )}
+                        </div>
+                        {item.dot && (
+                          <span
+                            class="menu-item__dot-box ds-interaction-fill__content"
+                            aria-hidden="true"
+                          >
+                            <ds-badge
+                              class="menu-item__dot"
+                              variant="dot"
+                              hasRing={false}
+                              label=""
+                            />
+                          </span>
+                        )}
+                        {item.showSwitch && (
+                          <ds-switch
+                            class="menu-item__switch ds-interaction-fill__content"
+                            size="md"
+                            checked={!!item.switchValue}
+                            presentation
+                          />
+                        )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </Host>

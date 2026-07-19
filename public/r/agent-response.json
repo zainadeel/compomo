@@ -1,0 +1,211 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent-response",
+  "title": "AgentResponse",
+  "description": "Ordered renderer for normalized immutable agent response parts inside a generic incoming message.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-response",
+    "source": "src/wc/components/AgentResponse/AgentResponse.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Ordered renderer for normalized immutable agent response parts inside a generic incoming message.",
+      "useWhen": [
+        "An agent response combines Markdown, user-safe activity, display-only tools, attachments, and sources in authored order."
+      ],
+      "avoidWhen": [
+        "The component would be expected to own a model, transport, persistence, title generation, approval policy, or private reasoning."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message",
+        "component:ds-markdown",
+        "component:ds-agent-activity",
+        "component:ds-agent-tool-call",
+        "component:ds-agent-source-list"
+      ],
+      "patterns": [
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Part order matches authored reading order and remains inside generic message semantics.",
+        "Streaming state supplements rather than replaces meaningful textual status."
+      ],
+      "states": [
+        "The owner replaces immutable part arrays as scripted or live output changes."
+      ],
+      "responsiveBehavior": [
+        "Rich content uses the wider ghost message treatment while respecting transcript constraints."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "author": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "author",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "messageId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "message-id",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "parts": {
+          "type": "AgentResponsePart[]",
+          "resolvedType": "AgentResponsePart[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "showAuthor": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-author",
+          "default": "true",
+          "required": false,
+          "mutable": false
+        },
+        "streaming": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "streaming",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "timestamp": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "timestamp",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "author": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "author",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "messageId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "message-id",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "parts": {
+        "type": "AgentResponsePart[]",
+        "resolvedType": "AgentResponsePart[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "showAuthor": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-author",
+        "default": "true",
+        "required": false,
+        "mutable": false
+      },
+      "streaming": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "streaming",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "timestamp": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "timestamp",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-agent-response",
+      "react": "DsAgentResponse",
+      "angular": "DsAgentResponse"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-agent-response.js';",
+        "example": "<ds-agent-response></ds-agent-response>"
+      },
+      "react": {
+        "import": "import { DsAgentResponse } from '@ds-mo/ui/react';",
+        "example": "<DsAgentResponse />"
+      },
+      "angular": {
+        "import": "import { DsAgentResponse } from '@ds-mo/ui/angular/ds-agent-response';",
+        "example": "<ds-agent-response></ds-agent-response>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: parts.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "agent-activity",
+    "agent-source-list",
+    "agent-tool-call",
+    "attachment-list",
+    "markdown",
+    "message",
+    "message-bubble"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AgentResponse/AgentResponse.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n}\n.agent-response {\n  display: grid;\n  gap: var(--dimension-space-150);\n  min-width: 0;\n  width: 100%;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentResponse/AgentResponse.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { AgentResponsePart } from '../conversation-types';\n\n@Component({ tag: 'ds-agent-response', styleUrl: 'AgentResponse.css', scoped: true })\nexport class AgentResponse {\n  @Prop() messageId: string = '';\n  @Prop() author: string = '';\n  @Prop() showAuthor: boolean = true;\n  @Prop() timestamp: string = '';\n  @Prop() parts: AgentResponsePart[] = [];\n  @Prop() streaming: boolean = false;\n\n  private renderPart(part: AgentResponsePart) {\n    switch (part.type) {\n      case 'markdown':\n        return (\n          <ds-markdown\n            key={part.id}\n            content={part.content}\n            streaming={part.state === 'streaming'}\n          />\n        );\n      case 'activity':\n        return <ds-agent-activity key={part.id} items={part.items} />;\n      case 'tool':\n        return (\n          <ds-agent-tool-call\n            key={part.id}\n            name={part.name}\n            label={part.label}\n            state={part.state}\n            input={part.input}\n            output={part.output}\n            error={part.error}\n          />\n        );\n      case 'attachments':\n        return <ds-attachment-list key={part.id} items={part.items} />;\n      case 'sources':\n        return <ds-agent-source-list key={part.id} items={part.items} />;\n    }\n  }\n\n  render() {\n    return (\n      <Host>\n        <ds-message\n          messageId={this.messageId}\n          direction=\"incoming\"\n          author={this.author}\n          showAuthor={this.showAuthor}\n          timestamp={this.timestamp}\n          streaming={this.streaming}\n        >\n          <slot name=\"avatar\" slot=\"avatar\" />\n          <ds-message-bubble variant=\"ghost\">\n            <div class=\"agent-response\">{this.parts.map(part => this.renderPart(part))}</div>\n          </ds-message-bubble>\n          <slot name=\"footer\" slot=\"footer\" />\n          <slot name=\"actions\" slot=\"actions\" />\n        </ds-message>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

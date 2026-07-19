@@ -152,12 +152,12 @@ export const ThumbAlignment: Story = {
   render: () => html`
     <div style=${STACK}>
       <div style=${PANEL}>
-        <ds-text as="span" variant="text-title-small">Edge aligned · thumb stays inside</ds-text>
+        <ds-text as="span" variant="text-title-small">Edge aligned · thumb edge reaches rail endpoint</ds-text>
         <ds-slider value="0" label="Minimum"></ds-slider>
         <ds-slider value="100" label="Maximum"></ds-slider>
       </div>
       <div style=${PANEL}>
-        <ds-text as="span" variant="text-title-small">Center aligned · thumb center reaches edge</ds-text>
+        <ds-text as="span" variant="text-title-small">Center aligned · thumb center reaches rail endpoint</ds-text>
         <ds-slider value="0" label="Minimum" thumb-alignment="center"></ds-slider>
         <ds-slider value="100" label="Maximum" thumb-alignment="center"></ds-slider>
       </div>

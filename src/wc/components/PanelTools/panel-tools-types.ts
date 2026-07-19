@@ -1,11 +1,5 @@
 /** Tool ids for the `ds-panel-tools` rail and drawer views. */
-export type PanelToolsToolId =
-  | 'search'
-  | 'agents'
-  | 'messages'
-  | 'stacks'
-  | 'activity'
-  | 'help';
+export type PanelToolsToolId = 'search' | 'agents' | 'messages' | 'stacks' | 'activity' | 'help';
 
 export const PANEL_TOOLS_TOOL_IDS: PanelToolsToolId[] = [
   'search',
@@ -51,3 +45,26 @@ export interface PanelToolsItem {
   isInactive?: boolean;
   ariaLabel?: string;
 }
+
+export interface PanelToolsHeaderAction {
+  id: string;
+  icon: string;
+  ariaLabel: string;
+  triggerId?: string;
+  controls?: string;
+  expanded?: boolean;
+  haspopup?: 'menu' | 'dialog' | 'listbox' | 'tree' | 'grid';
+  pressed?: boolean;
+  isInactive?: boolean;
+}
+
+export interface PanelToolsHeaderConfig {
+  title?: string;
+  showBack?: boolean;
+  backIcon?: string;
+  backAriaLabel?: string;
+  actions?: PanelToolsHeaderAction[];
+}
+
+/** Per-tool header state. The application replaces the object when a tool changes depth or actions. */
+export type PanelToolsHeaders = Partial<Record<PanelToolsToolId, PanelToolsHeaderConfig>>;

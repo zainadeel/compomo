@@ -1,3 +1,4 @@
+@import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
@@ -66,8 +67,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--dimension-space-050);
-  padding: var(--dimension-space-050);
+  gap: var(--ds-control-gap);
+  padding: 0 var(--ds-control-padding-inline);
   background-color: transparent;
   border: none;
   border-radius: var(--dimension-radius-half);
@@ -77,7 +78,7 @@
   color: var(--color-foreground-secondary);
   transition: color var(--effect-motion-short-2);
   flex-shrink: 0;
-  height: var(--dimension-size-300);
+  height: var(--ds-control-height);
   min-width: var(--dimension-size-400);
   box-sizing: border-box;
   --_dot: var(--color-foreground-bold-brand);
@@ -108,25 +109,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--dimension-space-025);
+  gap: var(--ds-control-gap);
   min-width: 0;
-}
-
-.tab__content--label,
-.tab__content--icon-label {
-  padding: 0 var(--dimension-space-025);
 }
 
 .tab__content--dot {
   padding-right: var(--dimension-space-050);
 }
 
-.tab__content--label.tab__content--dot,
-.tab__content--icon-label.tab__content--dot {
-  padding-right: calc(var(--dimension-space-025) + var(--dimension-space-050));
-}
-
 .tab__label {
+  padding: 0 var(--ds-control-label-inset);
   white-space: nowrap;
 }
 

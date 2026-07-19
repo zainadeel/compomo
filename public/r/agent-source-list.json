@@ -1,0 +1,153 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent-source-list",
+  "title": "AgentSourceList",
+  "description": "Collapsible list of agent response sources with title, description, and validated external links.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-source-list",
+    "source": "src/wc/components/AgentSourceList/AgentSourceList.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Collapsible list of agent response sources with title, description, and validated external links.",
+      "useWhen": [
+        "An agent response cites external material readers may inspect."
+      ],
+      "avoidWhen": [
+        "The links are ordinary body links or are not sources for the response."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-agent-response",
+        "component:ds-markdown"
+      ],
+      "patterns": [
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Each source uses descriptive linked text and visible supporting context.",
+        "Unsafe link schemes remain non-interactive text."
+      ],
+      "responsiveBehavior": [
+        "Source titles and descriptions wrap within the response width."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "default": "'Sources'",
+          "required": false,
+          "mutable": false
+        },
+        "items": {
+          "type": "AgentSource[]",
+          "resolvedType": "AgentSource[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "default": "'Sources'",
+        "required": false,
+        "mutable": false
+      },
+      "items": {
+        "type": "AgentSource[]",
+        "resolvedType": "AgentSource[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-agent-source-list",
+      "react": "DsAgentSourceList",
+      "angular": "DsAgentSourceList"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-agent-source-list.js';",
+        "example": "<ds-agent-source-list></ds-agent-source-list>"
+      },
+      "react": {
+        "import": "import { DsAgentSourceList } from '@ds-mo/ui/react';",
+        "example": "<DsAgentSourceList />"
+      },
+      "angular": {
+        "import": "import { DsAgentSourceList } from '@ds-mo/ui/angular/ds-agent-source-list';",
+        "example": "<ds-agent-source-list></ds-agent-source-list>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AgentSourceList/AgentSourceList.css",
+      "content": ":host { display: block; }\n.agent-sources { border-block-start: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); }\nsummary { align-items: center; cursor: pointer; display: flex; gap: var(--dimension-space-050); list-style: none; padding-block: var(--dimension-space-075); }\nsummary::-webkit-details-marker { display: none; }\ndetails[open] summary ds-icon { transform: rotate(90deg); }\nol { display: grid; gap: var(--dimension-space-075); margin: 0; padding: 0 0 var(--dimension-space-075) var(--dimension-space-150); }\nli { display: grid; gap: var(--dimension-space-025); }\na { align-items: center; color: inherit; display: inline-flex; gap: var(--dimension-space-025); width: fit-content; }\n\n@media (prefers-reduced-motion: no-preference) { summary ds-icon { transition: transform var(--effect-motion-short-2); } }\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentSourceList/AgentSourceList.tsx",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { AgentSource } from '../conversation-types';\n\n@Component({ tag: 'ds-agent-source-list', styleUrl: 'AgentSourceList.css', scoped: true })\nexport class AgentSourceList {\n  @Prop() items: AgentSource[] = [];\n  @Prop() heading: string = 'Sources';\n  @Prop() open: boolean = false;\n\n  private safeUrl(value: string) {\n    try {\n      const parsed = new URL(value, document.baseURI);\n      return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : undefined;\n    } catch { return undefined; }\n  }\n\n  render() {\n    if (!this.items.length) return null;\n    return (\n      <Host>\n        <details class=\"agent-sources\" open={this.open}>\n          <summary>\n            <ds-icon name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n            <ds-text variant=\"text-body-small\" emphasis>{this.heading} · {this.items.length}</ds-text>\n          </summary>\n          <ol>\n            {this.items.map(source => {\n              const href = this.safeUrl(source.url);\n              return <li>\n                {href\n                  ? <a href={href} target=\"_blank\" rel=\"noopener noreferrer\"><ds-text variant=\"text-body-small\" emphasis>{source.title}</ds-text><ds-icon name=\"ExternalLink\" size=\"xs\" color=\"inherit\" /></a>\n                  : <ds-text variant=\"text-body-small\" emphasis>{source.title}</ds-text>}\n                {source.description ? <ds-text variant=\"text-caption\" color=\"secondary\">{source.description}</ds-text> : null}\n              </li>;\n            })}\n          </ol>\n        </details>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

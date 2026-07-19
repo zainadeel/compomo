@@ -17,6 +17,9 @@ import { DsPanelTools as DsPanelToolsElement, defineCustomElement as defineDsPan
 
 export type DsPanelToolsEvents = {
     onDsToolChange: EventName<DsPanelToolsCustomEvent<{ id: PanelToolsToolId; selected: boolean; }>>,
+    onDsPresentationChange: EventName<DsPanelToolsCustomEvent<{ presentation: 'drawer' | 'fullscreen'; }>>,
+    onDsHeaderBack: EventName<DsPanelToolsCustomEvent<{ tool: PanelToolsToolId; }>>,
+    onDsHeaderAction: EventName<DsPanelToolsCustomEvent<{ tool: PanelToolsToolId; id: string; }>>,
     onDsChromeTransitionStart: EventName<DsPanelToolsCustomEvent<ChromeTransitionDetail>>,
     onDsChromeTransitionEnd: EventName<DsPanelToolsCustomEvent<ChromeTransitionDetail>>
 };
@@ -28,6 +31,9 @@ export const DsPanelTools: StencilReactComponent<DsPanelToolsElement, DsPanelToo
     react: React,
     events: {
         onDsToolChange: 'dsToolChange',
+        onDsPresentationChange: 'dsPresentationChange',
+        onDsHeaderBack: 'dsHeaderBack',
+        onDsHeaderAction: 'dsHeaderAction',
         onDsChromeTransitionStart: 'dsChromeTransitionStart',
         onDsChromeTransitionEnd: 'dsChromeTransitionEnd'
     } as DsPanelToolsEvents,

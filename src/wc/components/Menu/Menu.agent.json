@@ -7,10 +7,10 @@
   "tag": "ds-menu",
   "audience": "general",
   "status": "stable",
-  "summary": "Anchored action menu with flat commands, grouped sections, selected command state, supplemental notification dots, switches, and destructive actions.",
+  "summary": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
   "useWhen": [
     "A trigger reveals a short contextual list of commands or state-changing actions.",
-    "Actions need grouping, selected state, supplemental notification dots, switch rows, or destructive treatment."
+    "Actions need grouping, mutually exclusive selected state, supplemental notification dots, switch rows, or destructive treatment."
   ],
   "avoidWhen": [
     "The user is selecting a value for a form field.",
@@ -40,14 +40,13 @@
     "component:ds-switch",
     "component:ds-swatch-picker"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
     "Open with visible initial focus only when the trigger was activated from the keyboard.",
     "Keep disabled items discoverable only when their unavailable state is meaningful.",
     "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
+    "Single-selection menus use menuitemradio semantics and aria-checked on each row; the leading radio mark is presentation-only.",
     "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
     "Use notification dots only as supplemental status and not as the sole indication of important information."
   ],
@@ -55,6 +54,7 @@
     "The host owns open state and responds to selection and close events.",
     "Use either flat items or sections, not both.",
     "After dsSelect from a switch row, update switchValue in the items property so the controlled indicator reflects the new state.",
+    "For selectionMode single, keep exactly one item isSelected and update the items property after dsSelect.",
     "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
     "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only."
   ],

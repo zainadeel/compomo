@@ -1,0 +1,85 @@
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.message-composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  width: 100%;
+  margin: 0;
+}
+
+.message-composer__attachments:empty,
+.message-composer__tools:empty {
+  display: none;
+}
+
+.message-composer__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  padding: var(--dimension-space-100);
+  border-radius: var(--dimension-radius-300);
+  background: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-sm);
+  overflow: hidden;
+}
+
+.message-composer--error .message-composer__field {
+  box-shadow: var(--effect-elevation-elevated-sm),
+    inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-negative);
+}
+
+textarea {
+  width: 100%;
+  min-height: calc(var(--typography-lineheight-md) * 2 + var(--dimension-space-150));
+  max-height: calc(var(--typography-lineheight-md) * 6 + var(--dimension-space-150));
+  padding: var(--dimension-space-075);
+  border: none;
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: transparent;
+  color: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+textarea::placeholder {
+  color: var(--color-foreground-secondary);
+}
+
+textarea:focus::placeholder {
+  color: var(--color-foreground-quaternary);
+}
+
+.message-composer__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  min-height: var(--dimension-size-400);
+}
+
+.message-composer__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dimension-space-050);
+  width: 100%;
+  min-width: 0;
+}
+
+.message-composer__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}

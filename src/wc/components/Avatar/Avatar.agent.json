@@ -1,0 +1,31 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-avatar",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-avatar",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
+  "useWhen": [
+    "A list or message composition needs a consistent 32px circular identity marker represented by an icon."
+  ],
+  "avoidWhen": [
+    "The identity has a supplied photograph, initials, presence state, or editable profile behavior; those variants are not part of this primitive."
+  ],
+  "commonlyComposedWith": ["component:ds-conversation-list-item", "component:ds-message"],
+  "accessibility": [
+    "Provide label only when the icon communicates meaning that surrounding text does not already convey.",
+    "Omit label when the owning row or message already provides an equivalent accessible name."
+  ],
+  "responsiveBehavior": [
+    "The avatar keeps its fixed 32px circle and 20px icon at every viewport size."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Avatar/Avatar.stories.ts"
+    }
+  ]
+}

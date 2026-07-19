@@ -44,6 +44,8 @@
   font-style: inherit;
   font-variant-numeric: inherit;
   font-feature-settings: inherit;
+  -webkit-user-select: inherit;
+  user-select: inherit;
   white-space: inherit;
   text-wrap: inherit;
   overflow-wrap: inherit;

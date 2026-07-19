@@ -440,11 +440,26 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   await expect.poll(() => footer.evaluate(element =>
     getComputedStyle(element, '::before').height,
   )).toBe('1px');
-  for (const side of ['top', 'right', 'bottom', 'left'] as const) {
-    await expect(footer).toHaveCSS(`padding-${side}`, '4px');
-  }
+  await expect(footer).toHaveCSS('padding-top', '4px');
+  await expect(footer).toHaveCSS('padding-right', '0px');
+  await expect(footer).toHaveCSS('padding-bottom', '4px');
+  await expect(footer).toHaveCSS('padding-left', '0px');
+  await expect(footerContent).toHaveCSS('padding-right', '0px');
+  await expect(footerContent).toHaveCSS('padding-left', '0px');
   await expect(summary).toHaveClass(/ds-text--body-medium/);
   await expect(clear.locator('ds-text')).toHaveClass(/ds-text--body-medium/);
+  const labelPadding = await footer.evaluate(element => {
+    const summaryElement = element.querySelector('.ds-choice-footer__summary');
+    const clearElement = element.querySelector('.ds-choice-footer__clear ds-text');
+    return {
+      summaryLeft: summaryElement ? getComputedStyle(summaryElement).paddingLeft : '',
+      summaryRight: summaryElement ? getComputedStyle(summaryElement).paddingRight : '',
+      clearLeft: clearElement ? getComputedStyle(clearElement).paddingLeft : '',
+      clearRight: clearElement ? getComputedStyle(clearElement).paddingRight : '',
+    };
+  });
+  expect(new Set(Object.values(labelPadding))).toEqual(new Set([labelPadding.summaryLeft]));
+  expect(Number.parseFloat(labelPadding.summaryLeft)).toBeGreaterThan(0);
   const insets = await footer.evaluate(element => {
     const footerRect = element.getBoundingClientRect();
     const summaryRect = element.querySelector('.ds-choice-footer__summary')?.getBoundingClientRect();

@@ -27,7 +27,10 @@ function posix(relativePath) {
   return relativePath.split(path.sep).join('/');
 }
 
-export function listFrameworkComponentProxies(root = ROOT, { includeCollisionCopies = false } = {}) {
+export function listFrameworkComponentProxies(
+  root = ROOT,
+  { includeCollisionCopies = false } = {}
+) {
   const proxies = [];
   for (const { directory } of FRAMEWORK_OUTPUTS) {
     const absoluteDirectory = path.join(root, directory);
@@ -61,10 +64,20 @@ export function cleanFrameworkProxies(root = ROOT) {
 
   const removed = [...new Set(generatedArtifacts)].sort();
   for (const relativePath of removed) fs.rmSync(path.join(root, relativePath), { force: true });
+
+  // Stencil caches output hashes independently from the generated source files.
+  // Clear that derived cache with the proxies so a clean build/watch cannot skip
+  // recreating an unchanged adapter that was just removed above.
+  fs.rmSync(path.join(root, '.stencil'), { recursive: true, force: true });
+
   return removed;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === SCRIPT_PATH) {
   const removed = cleanFrameworkProxies();
-  console.log(`Cleaned ${removed.length} generated framework proxy artifact${removed.length === 1 ? '' : 's'}.`);
+  console.log(
+    `Cleaned ${removed.length} generated framework proxy artifact${
+      removed.length === 1 ? '' : 's'
+    }.`
+  );
 }

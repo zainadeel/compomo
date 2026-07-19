@@ -1,0 +1,136 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar",
+  "title": "Avatar",
+  "description": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/avatar",
+    "source": "src/wc/components/Avatar/Avatar.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
+      "useWhen": [
+        "A list or message composition needs a consistent 32px circular identity marker represented by an icon."
+      ],
+      "avoidWhen": [
+        "The identity has a supplied photograph, initials, presence state, or editable profile behavior; those variants are not part of this primitive."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-conversation-list-item",
+        "component:ds-message"
+      ],
+      "accessibility": [
+        "Provide label only when the icon communicates meaning that surrounding text does not already convey.",
+        "Omit label when the owning row or message already provides an equivalent accessible name."
+      ],
+      "responsiveBehavior": [
+        "The avatar keeps its fixed 32px circle and 20px icon at every viewport size."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Avatar/Avatar.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "icon": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "icon",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Canonical IcoMo icon name displayed inside the avatar."
+        },
+        "label": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "label",
+          "required": false,
+          "mutable": false,
+          "description": "Optional accessible label. Omit when the surrounding content already conveys the meaning."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "icon": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "icon",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Canonical IcoMo icon name displayed inside the avatar."
+      },
+      "label": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "label",
+        "required": false,
+        "mutable": false,
+        "description": "Optional accessible label. Omit when the surrounding content already conveys the meaning."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-avatar",
+      "react": "DsAvatar",
+      "angular": "DsAvatar"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-avatar.js';",
+        "example": "<ds-avatar></ds-avatar>"
+      },
+      "react": {
+        "import": "import { DsAvatar } from '@ds-mo/ui/react';",
+        "example": "<DsAvatar />"
+      },
+      "angular": {
+        "import": "import { DsAvatar } from '@ds-mo/ui/angular/ds-avatar';",
+        "example": "<ds-avatar></ds-avatar>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Avatar/Avatar.css",
+      "content": ":host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-400);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Avatar/Avatar.tsx",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-avatar',\n  styleUrl: 'Avatar.css',\n  scoped: true,\n})\nexport class Avatar {\n  /** Canonical IcoMo icon name displayed inside the avatar. */\n  @Prop() icon: string = '';\n\n  /** Optional accessible label. Omit when the surrounding content already conveys the meaning. */\n  @Prop() label: string | undefined;\n\n  render() {\n    return (\n      <Host>\n        <span\n          class=\"avatar\"\n          role={this.label ? 'img' : 'presentation'}\n          aria-label={this.label}\n          aria-hidden={!this.label ? 'true' : undefined}\n        >\n          <ds-icon name={this.icon} size=\"md\" color=\"secondary\" />\n        </span>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

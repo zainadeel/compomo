@@ -1,0 +1,118 @@
+:host {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  box-sizing: border-box;
+}
+
+.markdown {
+  min-width: 0;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+  overflow-wrap: anywhere;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+p,
+ul,
+ol,
+blockquote,
+.markdown__table-wrap,
+ds-code-block {
+  margin: 0 0 var(--dimension-space-150);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: var(--dimension-space-200) 0 var(--dimension-space-100);
+  color: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+  font-weight: var(--typography-weight-semibold);
+}
+
+h1,
+h2 {
+  font-size: var(--typography-fontsize-xl);
+  line-height: var(--typography-lineheight-xl);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--typography-fontsize-lg);
+  line-height: var(--typography-lineheight-lg);
+}
+
+ul,
+ol {
+  padding-left: var(--dimension-space-300);
+}
+
+li + li {
+  margin-top: var(--dimension-space-050);
+}
+
+li > input {
+  margin-right: var(--dimension-space-050);
+}
+
+blockquote {
+  padding-left: var(--dimension-space-150);
+  border-left: var(--dimension-stroke-width-025) solid var(--color-border-secondary);
+  color: var(--color-foreground-secondary);
+}
+
+a {
+  color: var(--color-foreground-brand);
+  text-decoration: underline;
+}
+
+code:not(ds-code-block code) {
+  padding: var(--dimension-space-012) var(--dimension-space-025);
+  border-radius: var(--dimension-radius-025);
+  background: var(--color-background-secondary);
+  font-family: var(--typography-fontfamily-mono);
+  font-size: var(--typography-fontsize-sm);
+}
+
+hr {
+  margin: var(--dimension-space-200) 0;
+  border: none;
+  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.markdown__table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: var(--dimension-space-075);
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-weight: var(--typography-weight-semibold);
+}

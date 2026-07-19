@@ -1,3 +1,4 @@
+@import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 
@@ -203,7 +204,7 @@ ds-text.panel-nav__group-label {
   user-select: none;
   height: var(--dimension-size-300, 24px);
   /* Former nested pad: group-label (075) + item-label-text (025). */
-  padding: 0 calc(var(--dimension-space-075, 6px) + var(--dimension-space-025, 2px));
+  padding: 0 calc(var(--dimension-space-075, 6px) + var(--ds-control-label-inset));
   white-space: nowrap;
   overflow: hidden;
   max-height: var(--dimension-size-300, 24px);
@@ -285,7 +286,7 @@ ds-text.panel-nav__group-label {
 }
 
 .panel-nav__item-label-text {
-  padding: 0 var(--dimension-space-025, 2px);
+  padding: 0 var(--ds-control-label-inset);
 }
 
 /* ── Item notification dot — 20px suffix zone matches the icon geometry ──── */
@@ -334,7 +335,7 @@ ds-text.panel-nav__group-label {
 .panel-nav--collapsed ds-text.panel-nav__group-label {
   opacity: 0;
   max-height: 0;
-  padding: 0 calc(var(--dimension-space-075, 6px) + var(--dimension-space-025, 2px));
+  padding: 0 calc(var(--dimension-space-075, 6px) + var(--ds-control-label-inset));
   pointer-events: none;
   transition:
     opacity var(--_nav-label-fade-out-motion) 0ms,
@@ -375,9 +376,9 @@ ds-text.panel-nav__group-label {
 
 .panel-nav__footer-user {
   position: absolute;
-  /* row position: right of gear button */
-  left: calc(var(--_nav-padding-x) + var(--_nav-footer-btn-w) + var(--dimension-space-050, 4px));
-  right: calc(var(--_nav-padding-x) - var(--dimension-stroke-width-012, 1px));
+  /* Expanded row: balanced shell inset with an 8px gear-to-user gap. */
+  left: calc(var(--_nav-padding-x) + var(--_nav-footer-btn-w) + var(--dimension-space-100, 8px));
+  right: var(--_nav-padding-x);
   top: var(--_nav-padding-y);
   width: auto;
   min-width: 0;
@@ -389,7 +390,7 @@ ds-text.panel-nav__group-label {
 }
 
 .panel-nav--collapsed .panel-nav__footer-user {
-  /* column position: full-width row below gear */
+  /* Compact column keeps the intentionally tighter 4px vertical gap. */
   left: var(--_nav-padding-x);
   top: calc(var(--_nav-padding-y) + var(--_nav-item-height) + var(--dimension-space-050, 4px));
 }

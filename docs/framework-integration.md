@@ -54,7 +54,7 @@ Each fixed rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `hel
 </ds-panel-tools>
 ```
 
-The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open. Set `storage-key` to remember only the last active tool in the current browser; the drawer still restores closed after reload. AppShell supplies the fixed drawer width: `--dimension-panel-width-sm` (400px) on desktop and `--dimension-panel-width-xs` (300px) from 768–1199px.
+The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open. Set `storage-key` to remember only the last active tool in the current browser; the drawer still restores closed after reload. AppShell supplies the same fixed `--dimension-panel-width-xs` (300px) drawer width on desktop and tablet.
 
 Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages (`M`), Activity (`N`), and Help (`?`); `]` closes the drawer. They are skipped while the user is typing in an editable control.
 

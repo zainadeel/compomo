@@ -1,0 +1,124 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--dimension-size-800);
+}
+
+:host(.message-host--group-middle),
+:host(.message-host--group-last) {
+  margin-block-start: calc(-1 * var(--dimension-space-100));
+}
+
+.message {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.message--outgoing {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.message--outgoing .message__avatar {
+  display: none;
+}
+
+.message__avatar:empty,
+.message__header:empty,
+.message__footer:empty,
+.message__actions:empty {
+  display: none;
+}
+
+.message__avatar:not(:empty) {
+  margin-inline-end: var(--dimension-space-075);
+}
+
+.message__actions:not(:empty) {
+  margin-inline-start: var(--dimension-space-075);
+}
+
+.message__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--dimension-space-025);
+}
+
+.message--incoming .message__body {
+  width: 100%;
+}
+
+.message--outgoing .message__body {
+  align-items: flex-end;
+}
+
+.message--outgoing .message__header {
+  display: none;
+}
+
+.message--system .message__body {
+  align-items: center;
+}
+
+.message__header,
+.message__footer,
+.message__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+}
+
+.message__content {
+  width: 100%;
+  min-width: 0;
+}
+
+.message--outgoing .message__content {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.message__footer time {
+  display: inline-flex;
+}
+
+.message--group-middle .message__header,
+.message--group-last .message__header {
+  display: none;
+}
+
+.message--group-first .message__footer,
+.message--group-middle .message__footer {
+  display: none;
+}
+
+.message--incoming.message--group-first .message__content ::slotted(ds-message-bubble) {
+  --ds-message-bubble-radius-end-start: var(--dimension-radius-025);
+}
+
+.message--incoming.message--group-middle .message__content ::slotted(ds-message-bubble) {
+  --ds-message-bubble-radius-start-start: var(--dimension-radius-025);
+  --ds-message-bubble-radius-end-start: var(--dimension-radius-025);
+}
+
+.message--incoming.message--group-last .message__content ::slotted(ds-message-bubble) {
+  --ds-message-bubble-radius-start-start: var(--dimension-radius-025);
+}
+
+.message--outgoing.message--group-first .message__content ::slotted(ds-message-bubble) {
+  --ds-message-bubble-radius-end-end: var(--dimension-radius-025);
+}
+
+.message--outgoing.message--group-middle .message__content ::slotted(ds-message-bubble) {
+  --ds-message-bubble-radius-start-end: var(--dimension-radius-025);
+  --ds-message-bubble-radius-end-end: var(--dimension-radius-025);
+}
+
+.message--outgoing.message--group-last .message__content ::slotted(ds-message-bubble) {
+  --ds-message-bubble-radius-start-end: var(--dimension-radius-025);
+}

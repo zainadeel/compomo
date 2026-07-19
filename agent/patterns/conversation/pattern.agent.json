@@ -1,0 +1,77 @@
+{
+  "$schema": "../../schemas/pattern.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "pattern:conversation",
+  "kind": "pattern",
+  "status": "experimental",
+  "summary": "Compose channel-neutral history, transcript, message surfaces, attachments, and composer behavior for reusable conversations.",
+  "useWhen": [
+    "A product needs threaded conversation UX that may serve agent or person-to-person channels."
+  ],
+  "avoidWhen": ["The experience is a static activity feed or form without conversational turns."],
+  "components": [
+    {
+      "component": "component:ds-conversation-list",
+      "role": "Owns history scrolling, empty layout, and floating action placement.",
+      "required": true
+    },
+    {
+      "component": "component:ds-panel-tool-search",
+      "role": "Collects a product-owned conversation history search query when the conversation is presented as a PanelTools product.",
+      "required": false
+    },
+    {
+      "component": "component:ds-message-scroller",
+      "role": "Owns transcript position and live-edge following.",
+      "required": true
+    },
+    {
+      "component": "component:ds-message",
+      "role": "Owns each turn's direction, grouping, and metadata.",
+      "required": true
+    },
+    {
+      "component": "component:ds-message-bubble",
+      "role": "Owns the visible content surface and body-medium default independently of row semantics.",
+      "required": true
+    },
+    {
+      "component": "component:ds-message-composer",
+      "role": "Emits draft, submit, and stop intent without transport ownership.",
+      "required": true
+    },
+    {
+      "component": "component:ds-attachment-list",
+      "role": "Displays existing attachment metadata when present.",
+      "required": false
+    }
+  ],
+  "stateOwnership": [
+    "The application owns conversations, messages, selection, drafts, persistence, transport, unread policy, and any history search query or matching policy. ConversationListItem presents every positive unreadCount as one dot aligned with the title row; unread titles are primary and read titles are secondary.",
+    "The application owns contextual row-menu commands such as pin, rename, members, and delete; ConversationListItem supplies the sibling actions slot and hover/focus/touch presentation.",
+    "When history search is present, distinguish an empty history from a populated history with no matching conversations.",
+    "Plain incoming and outgoing message copy uses MessageBubble's body-medium regular default; the application must not promote ordinary conversation turns to body-large.",
+    "MessageScroller owns reader-relative transcript position and follow behavior. Compose MessageComposer in its overlay slot so transcript content moves behind the surface while measured bottom clearance keeps the latest turn readable.",
+    "MessageComposer emits intent while the application controls its value and status. Its submit action defaults to brand for agent and person-to-person channels; select another submitIntent only for a different semantic consequence, never merely to identify AI content."
+  ],
+  "accessibility": [
+    "Give history and transcript regions distinct localized names.",
+    "Preserve message author, order, time, status, and delivery meaning in text.",
+    "Do not force the reader back to the live edge after deliberate transcript interaction."
+  ],
+  "responsiveBehavior": [
+    "Let the containing product select drawer or full-width layout while keeping transcript measure readable and rich content horizontally scrollable."
+  ],
+  "implementations": {
+    "customElements": {
+      "status": "planned",
+      "references": ["src/wc/components/MessageScroller/MessageScroller.stories.ts"]
+    },
+    "react": { "status": "planned", "references": ["src/react/components.ts"] },
+    "angular": { "status": "planned", "references": ["src/angular/index.ts"] }
+  },
+  "references": [
+    "src/wc/components/ConversationList/ConversationList.stories.ts",
+    "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+  ]
+}

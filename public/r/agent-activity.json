@@ -1,0 +1,158 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent-activity",
+  "title": "AgentActivity",
+  "description": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-activity",
+    "source": "src/wc/components/AgentActivity/AgentActivity.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Collapsible, user-safe summary of agent work steps without private reasoning.",
+      "useWhen": [
+        "An agent response benefits from concise progress or completion summaries."
+      ],
+      "avoidWhen": [
+        "The content would reveal private chain-of-thought, hidden prompts, secrets, or raw internal traces."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-agent-response",
+        "component:ds-loader"
+      ],
+      "patterns": [
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Each step has textual state and description; animation and color are supplementary.",
+        "The disclosure uses native keyboard and expanded-state semantics."
+      ],
+      "states": [
+        "While collapsed, the summary follows the current user-safe activity and shimmers only while active; while expanded, the heading becomes Activity and the ordered list exposes every step.",
+        "Pending, active, complete, and error describe user-safe workflow progress."
+      ],
+      "responsiveBehavior": [
+        "Steps wrap within the response width."
+      ],
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "default": "'Activity'",
+          "required": false,
+          "mutable": false
+        },
+        "items": {
+          "type": "AgentActivityItem[]",
+          "resolvedType": "AgentActivityItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "default": "'Activity'",
+        "required": false,
+        "mutable": false
+      },
+      "items": {
+        "type": "AgentActivityItem[]",
+        "resolvedType": "AgentActivityItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-agent-activity",
+      "react": "DsAgentActivity",
+      "angular": "DsAgentActivity"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-agent-activity.js';",
+        "example": "<ds-agent-activity></ds-agent-activity>"
+      },
+      "react": {
+        "import": "import { DsAgentActivity } from '@ds-mo/ui/react';",
+        "example": "<DsAgentActivity />"
+      },
+      "angular": {
+        "import": "import { DsAgentActivity } from '@ds-mo/ui/angular/ds-agent-activity';",
+        "example": "<ds-agent-activity></ds-agent-activity>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.2.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "loader",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AgentActivity/AgentActivity.css",
+      "content": ":host {\n  display: block;\n}\n.agent-activity {\n  margin: 0;\n}\nsummary {\n  align-items: center;\n  color: var(--color-foreground-secondary);\n  cursor: pointer;\n  display: flex;\n  gap: var(--dimension-space-050);\n  list-style: none;\n  padding: var(--dimension-space-025) 0;\n}\nsummary::-webkit-details-marker {\n  display: none;\n}\ndetails[open] summary ds-icon {\n  transform: rotate(90deg);\n}\nds-text.agent-activity__summary-label {\n  min-width: 0;\n}\nol {\n  display: grid;\n  gap: var(--dimension-space-075);\n  list-style: none;\n  margin: 0;\n  padding: var(--dimension-space-100) 0 0 var(--dimension-space-200);\n}\n.agent-activity__item {\n  align-items: start;\n  display: grid;\n  gap: var(--dimension-space-050);\n  grid-template-columns: auto minmax(0, 1fr);\n}\n.agent-activity__marker {\n  align-items: center;\n  color: var(--color-foreground-faint-neutral);\n  display: flex;\n  padding-block-start: var(--dimension-space-025);\n}\n.agent-activity__item--active .agent-activity__marker {\n  color: var(--color-foreground-faint-brand);\n}\n.agent-activity__item--error .agent-activity__marker {\n  color: var(--color-foreground-bold-negative);\n}\n.agent-activity__item span:last-child {\n  display: grid;\n  gap: var(--dimension-space-025);\n}\n.agent-activity__pending-dot {\n  width: var(--dimension-size-050);\n  height: var(--dimension-size-050);\n  border-radius: var(--dimension-radius-half);\n  background: currentColor;\n}\n.agent-activity__state {\n  position: absolute;\n  width: var(--dimension-size-050);\n  height: var(--dimension-size-050);\n  overflow: hidden;\n  clip-path: inset(50%);\n  white-space: nowrap;\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  summary ds-icon {\n    transition: transform var(--effect-motion-short-2);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentActivity/AgentActivity.tsx",
+      "content": "import { Component, Prop, State, Watch, h, Host } from '@stencil/core';\nimport type { AgentActivityItem } from '../conversation-types';\n\n@Component({\n  tag: 'ds-agent-activity',\n  styleUrl: 'AgentActivity.css',\n  scoped: true,\n})\nexport class AgentActivity {\n  @Prop() items: AgentActivityItem[] = [];\n  @Prop() heading: string = 'Activity';\n  @Prop() open: boolean = false;\n\n  @State() private expanded: boolean = false;\n\n  componentWillLoad() {\n    this.expanded = this.open;\n  }\n\n  @Watch('open')\n  handleOpenChange(open: boolean) {\n    this.expanded = open;\n  }\n\n  private get currentItem(): AgentActivityItem | undefined {\n    return (\n      this.items.find(item => item.state === 'active') ??\n      this.items.find(item => item.state === 'error') ??\n      [...this.items].reverse().find(item => item.state === 'complete') ??\n      this.items.find(item => item.state === 'pending')\n    );\n  }\n\n  private handleToggle = (event: Event) => {\n    this.expanded = (event.currentTarget as HTMLDetailsElement).open;\n  };\n\n  private stateLabel(item: AgentActivityItem): string {\n    if (item.state === 'active') return 'In progress';\n    if (item.state === 'complete') return 'Complete';\n    if (item.state === 'error') return 'Error';\n    return 'Pending';\n  }\n\n  render() {\n    return (\n      <Host>\n        <details class=\"agent-activity\" open={this.open} onToggle={this.handleToggle}>\n          <summary>\n            <ds-icon name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n            <ds-text\n              class=\"agent-activity__summary-label\"\n              variant=\"text-body-small\"\n              shimmer={!this.expanded && this.currentItem?.state === 'active'}\n            >\n              {this.expanded ? this.heading : this.currentItem?.label ?? this.heading}\n            </ds-text>\n          </summary>\n          <ol>\n            {this.items.map(item => (\n              <li class={`agent-activity__item agent-activity__item--${item.state}`}>\n                <span class=\"agent-activity__marker\" aria-hidden=\"true\">\n                  {item.state === 'active' ? (\n                    <ds-loader size=\"xs\" color=\"inherit\" />\n                  ) : item.state === 'pending' ? (\n                    <span class=\"agent-activity__pending-dot\" />\n                  ) : (\n                    <ds-icon\n                      name={item.state === 'error' ? 'ErrorTriangle' : 'Check'}\n                      size=\"xs\"\n                      color=\"inherit\"\n                    />\n                  )}\n                </span>\n                <span>\n                  <ds-text variant=\"text-body-small\" shimmer={item.state === 'active'}>\n                    {item.label}\n                  </ds-text>\n                  {item.detail ? (\n                    <ds-text variant=\"text-caption\" color=\"secondary\">\n                      {item.detail}\n                    </ds-text>\n                  ) : null}\n                  <span class=\"agent-activity__state\">{this.stateLabel(item)}</span>\n                </span>\n              </li>\n            ))}\n          </ol>\n        </details>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

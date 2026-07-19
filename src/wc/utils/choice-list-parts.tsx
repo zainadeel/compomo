@@ -5,22 +5,28 @@ import type { ChoiceOption } from './choice-list';
 interface ChoiceSearchProps {
   value: string;
   placeholder: string;
-  controls: string;
+  ariaLabel?: string;
+  controls?: string;
   activeDescendant?: string;
+  disabled?: boolean;
   inputRef: (element: HTMLInputElement | null) => void;
   clearLabel: string;
   onValueChange: (value: string) => void;
+  onClear?: () => void;
   onKeyDown: (event: KeyboardEvent) => void;
 }
 
 export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
   value,
   placeholder,
+  ariaLabel,
   controls,
   activeDescendant,
+  disabled = false,
   inputRef,
   clearLabel,
   onValueChange,
+  onClear,
   onKeyDown,
 }) => {
   let inputElement: HTMLInputElement | null = null;
@@ -38,13 +44,14 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
           type="search"
           value={value}
           placeholder={placeholder}
-          aria-label={placeholder}
+          disabled={disabled}
+          aria-label={ariaLabel ?? placeholder}
           aria-controls={controls}
           aria-activedescendant={activeDescendant}
           onInput={event => onValueChange((event.target as HTMLInputElement).value)}
           onKeyDown={onKeyDown}
         />
-        {value && (
+        {value && !disabled && (
           <ds-button-unfilled
             class="select-search__clear"
             variant="icon"
@@ -53,8 +60,10 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
             hasBorder={false}
             rounded
             ariaLabel={`${clearLabel} ${placeholder}`}
+            onDsChange={event => event.stopPropagation()}
             onDsClick={() => {
               onValueChange('');
+              onClear?.();
               requestAnimationFrame(() => inputElement?.focus());
             }}
           />

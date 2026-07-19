@@ -1,7 +1,10 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { computeMenuPosition } from '../src/wc/components/Menu/menu-position';
-import { PANEL_NAV_USER_MENU_PLACEMENT } from '../src/wc/components/Menu/menu-placement';
+import {
+  PANEL_NAV_USER_MENU_PLACEMENT,
+  PANEL_TOOLS_HEADER_MENU_PLACEMENT,
+} from '../src/wc/components/Menu/menu-placement';
 import { resolveChoicePopupAlignOffset } from '../src/wc/utils/choice-popup-alignment';
 import { resolveCssLengthPx } from '../src/wc/utils/resolve-css-length-px';
 import { TOKEN_CSS_LENGTHS } from '../src/wc/utils/token-defaults';
@@ -65,5 +68,35 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
     } finally {
       style.remove();
     }
+  });
+});
+
+describe('PANEL_TOOLS_HEADER_MENU_PLACEMENT', () => {
+  it('matches the BarNav overflow offset and aligns the last choice cell', () => {
+    assert.deepEqual(PANEL_TOOLS_HEADER_MENU_PLACEMENT, {
+      side: 'bottom',
+      align: 'end',
+      anchorAlignment: 'choice-cell',
+      sideOffset: 'calc(var(--dimension-space-100) + var(--dimension-space-050))',
+      alignOffset: 0,
+    });
+  });
+
+  it('places the popup 4px below a 48px header', () => {
+    const position = computeMenuPosition({
+      anchorRect: { top: 8, left: 260, right: 292, bottom: 40, width: 32, height: 32 },
+      popupWidth: 200,
+      popupHeight: 160,
+      side: PANEL_TOOLS_HEADER_MENU_PLACEMENT.side,
+      align: PANEL_TOOLS_HEADER_MENU_PLACEMENT.align,
+      sideOffsetPx: 12,
+      alignOffsetPx: 4,
+      viewportPadPx: 4,
+      viewportWidth: 800,
+      viewportHeight: 600,
+    });
+
+    assert.equal(position.y, 52);
+    assert.equal(position.y - 48, 4);
   });
 });

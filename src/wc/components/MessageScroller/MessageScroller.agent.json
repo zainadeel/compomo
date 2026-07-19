@@ -1,0 +1,37 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-message-scroller",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-message-scroller",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+  "useWhen": [
+    "Messages can append or stream and transcript position must remain respectful of reader intent."
+  ],
+  "avoidWhen": ["Content is static prose without message navigation or live updates."],
+  "commonlyComposedWith": ["component:ds-message", "component:ds-message-composer"],
+  "patterns": ["pattern:conversation"],
+  "accessibility": [
+    "Give each transcript a concise localized label.",
+    "New content is exposed through log semantics without stealing focus.",
+    "The scroll-to-latest control remains keyboard accessible when follow behavior is released."
+  ],
+  "states": [
+    "Selection and transcript interaction release automatic following.",
+    "Opening saved history, message jumps, and prepended history preserve deliberate position.",
+    "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
+    "Place a composer container in the overlay slot so messages scroll behind it; the scroller measures its live height, reserves matching transcript clearance, and keeps scroll-to-latest above it."
+  ],
+  "responsiveBehavior": [
+    "Transcript width is readable while the scroll region fills available height."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+    }
+  ]
+}

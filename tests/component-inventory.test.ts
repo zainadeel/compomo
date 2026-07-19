@@ -24,21 +24,32 @@ function fixtureRoot() {
   return root;
 }
 
-function writeComponent(root: string, directory: string, tag: string, options: {
-  style?: boolean;
-  story?: boolean;
-  agent?: boolean;
-} = {}) {
+function writeComponent(
+  root: string,
+  directory: string,
+  tag: string,
+  options: {
+    style?: boolean;
+    story?: boolean;
+    agent?: boolean;
+  } = {}
+) {
   const componentDirectory = path.join(root, 'src/wc/components', directory);
   fs.mkdirSync(componentDirectory, { recursive: true });
-  fs.writeFileSync(path.join(componentDirectory, `${directory}.tsx`), `
+  fs.writeFileSync(
+    path.join(componentDirectory, `${directory}.tsx`),
+    `
     import { Component, h } from '@stencil/core';
     @Component({ tag: '${tag}', styleUrl: '${directory}.css', scoped: true })
     export class ${directory} { render() { return <div />; } }
-  `);
-  if (options.style !== false) fs.writeFileSync(path.join(componentDirectory, `${directory}.css`), '');
-  if (options.story !== false) fs.writeFileSync(path.join(componentDirectory, `${directory}.stories.ts`), '');
-  if (options.agent !== false) fs.writeFileSync(path.join(componentDirectory, `${directory}.agent.json`), '{}');
+  `
+  );
+  if (options.style !== false)
+    fs.writeFileSync(path.join(componentDirectory, `${directory}.css`), '');
+  if (options.story !== false)
+    fs.writeFileSync(path.join(componentDirectory, `${directory}.stories.ts`), '');
+  if (options.agent !== false)
+    fs.writeFileSync(path.join(componentDirectory, `${directory}.agent.json`), '{}');
 }
 
 function writeFile(root: string, relativePath: string, contents = '') {
@@ -52,14 +63,21 @@ describe('source-derived component inventory', () => {
     const root = fixtureRoot();
     writeComponent(root, 'NewWidget', 'ds-new-widget');
     const components = discoverComponents(root);
-    assert.deepEqual(components.map(component => component.id), ['component:ds-new-widget']);
+    assert.deepEqual(
+      components.map(component => component.id),
+      ['component:ds-new-widget']
+    );
     assert.deepEqual(validateAuthoredArtifacts({ root, components, checkAdapters: false }), []);
   });
 
   it('reports missing stories and agent metadata with exact paths', () => {
     const root = fixtureRoot();
     writeComponent(root, 'NewWidget', 'ds-new-widget', { story: false, agent: false });
-    const errors = validateAuthoredArtifacts({ root, components: discoverComponents(root), checkAdapters: false });
+    const errors = validateAuthoredArtifacts({
+      root,
+      components: discoverComponents(root),
+      checkAdapters: false,
+    });
     assert.ok(errors.some(error => error.includes('NewWidget.stories.ts')));
     assert.ok(errors.some(error => error.includes('NewWidget.agent.json')));
   });
@@ -68,9 +86,18 @@ describe('source-derived component inventory', () => {
     const root = fixtureRoot();
     writeComponent(root, 'NewWidget', 'ds-new-widget');
     const componentDirectory = path.join(root, 'src/wc/components/NewWidget');
-    fs.writeFileSync(path.join(componentDirectory, 'NewWidget.helper.ts'), 'export const helper = true;');
-    fs.writeFileSync(path.join(componentDirectory, 'NewWidget.helper 2.ts'), 'export const stale = true;');
-    fs.writeFileSync(path.join(componentDirectory, 'NewWidget.stories 2.ts'), 'export const staleStory = true;');
+    fs.writeFileSync(
+      path.join(componentDirectory, 'NewWidget.helper.ts'),
+      'export const helper = true;'
+    );
+    fs.writeFileSync(
+      path.join(componentDirectory, 'NewWidget.helper 2.ts'),
+      'export const stale = true;'
+    );
+    fs.writeFileSync(
+      path.join(componentDirectory, 'NewWidget.stories 2.ts'),
+      'export const staleStory = true;'
+    );
 
     const [component] = discoverComponents(root);
     assert.deepEqual(componentSourceFiles(component, root), [
@@ -118,10 +145,25 @@ describe('source-derived component inventory', () => {
     writeFile(root, 'src/react/ds-deleted-widget 2.ts');
 
     const errors = validateFrameworkAdapters({ root, components: discoverComponents(root) });
-    assert.ok(errors.some(error => error.includes('missing generated framework adapter src/react/ds-new-widget.ts')));
-    assert.ok(errors.some(error => error.includes('stale generated framework adapter src/angular/ds-deleted-widget.ts')));
-    assert.ok(errors.some(error => error.includes('stale generated framework adapter src/react/ds-deleted-widget.ts')));
-    assert.equal(errors.some(error => error.includes(' 2.ts')), false);
+    assert.ok(
+      errors.some(error =>
+        error.includes('missing generated framework adapter src/react/ds-new-widget.ts')
+      )
+    );
+    assert.ok(
+      errors.some(error =>
+        error.includes('stale generated framework adapter src/angular/ds-deleted-widget.ts')
+      )
+    );
+    assert.ok(
+      errors.some(error =>
+        error.includes('stale generated framework adapter src/react/ds-deleted-widget.ts')
+      )
+    );
+    assert.equal(
+      errors.some(error => error.includes(' 2.ts')),
+      false
+    );
   });
 
   it('cleans generated proxies and barrels while preserving Angular support files', () => {
@@ -135,12 +177,15 @@ describe('source-derived component inventory', () => {
       'src/react/ds-new-widget.ts',
       'src/react/components.ts',
       'src/react/components 2.ts',
-    ]) writeFile(root, generatedPath, 'generated');
+    ])
+      writeFile(root, generatedPath, 'generated');
     for (const supportPath of [
       'src/angular/boolean-value-accessor.ts',
       'src/angular/value-accessor.ts',
       'src/angular/angular-component-lib/utils.ts',
-    ]) writeFile(root, supportPath, 'preserved');
+    ])
+      writeFile(root, supportPath, 'preserved');
+    writeFile(root, '.stencil/compiler-cache.json', 'derived');
 
     const removed = cleanFrameworkProxies(root);
     assert.deepEqual(removed, [
@@ -157,7 +202,9 @@ describe('source-derived component inventory', () => {
       'src/angular/boolean-value-accessor.ts',
       'src/angular/value-accessor.ts',
       'src/angular/angular-component-lib/utils.ts',
-    ]) assert.equal(fs.readFileSync(path.join(root, supportPath), 'utf8'), 'preserved');
+    ])
+      assert.equal(fs.readFileSync(path.join(root, supportPath), 'utf8'), 'preserved');
+    assert.equal(fs.existsSync(path.join(root, '.stencil')), false);
   });
 
   it('detects renamed registry items and detail files', () => {
@@ -166,7 +213,7 @@ describe('source-derived component inventory', () => {
     const errors = validateRegistryCoverage(
       discoverComponents(root),
       { items: [{ name: 'old-widget' }] },
-      ['registry.json', 'old-widget.json'],
+      ['registry.json', 'old-widget.json']
     );
     assert.ok(errors.includes('registry coverage: missing new-widget'));
     assert.ok(errors.includes('registry coverage: stale item old-widget'));
@@ -174,11 +221,10 @@ describe('source-derived component inventory', () => {
   });
 
   it('detects registry output left after component deletion', () => {
-    const errors = validateRegistryCoverage(
-      [],
-      { items: [{ name: 'deleted-widget' }] },
-      ['registry.json', 'deleted-widget.json'],
-    );
+    const errors = validateRegistryCoverage([], { items: [{ name: 'deleted-widget' }] }, [
+      'registry.json',
+      'deleted-widget.json',
+    ]);
     assert.ok(errors.includes('registry coverage: stale item deleted-widget'));
     assert.ok(errors.includes('registry coverage: stale file public/r/deleted-widget.json'));
   });
