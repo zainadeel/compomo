@@ -10,12 +10,14 @@ import {
   State,
 } from '@stencil/core';
 import type { MessageScrollerPosition } from '../conversation-types';
+import { scrollEdgeFadeClassMap } from '../../utils/scroll-edge-fade';
 
 const LIVE_EDGE_THRESHOLD = 24;
 
 @Component({
   tag: 'ds-message-scroller',
   styleUrl: 'MessageScroller.css',
+  styleUrls: ['../../utils/scroll-edge-fade.css'],
   scoped: true,
 })
 export class MessageScroller {
@@ -192,7 +194,10 @@ export class MessageScroller {
       <Host>
         <div class="message-scroller">
           <div
-            class="message-scroller__viewport"
+            class={{
+              'message-scroller__viewport': true,
+              ...scrollEdgeFadeClassMap({ edges: 'bottom' }),
+            }}
             ref={element => {
               this.viewport = element;
             }}

@@ -66,7 +66,7 @@ export class Message {
             <div class="message__header">
               <slot name="header" />
               {this.author && this.showAuthor ? (
-                <ds-text as="span" variant="text-caption" emphasis color="secondary">
+                <ds-text as="span" variant="text-caption" emphasis color="primary">
                   {this.author}
                 </ds-text>
               ) : null}

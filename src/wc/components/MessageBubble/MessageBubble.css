@@ -11,15 +11,16 @@
 
 .message-bubble {
   min-width: 0;
-  padding: var(--dimension-space-100);
+  padding-block: var(--dimension-space-100);
+  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));
   border-start-start-radius: var(
     --ds-message-bubble-radius-start-start,
-    var(--dimension-radius-050)
+    var(--dimension-radius-025)
   );
-  border-start-end-radius: var(--ds-message-bubble-radius-start-end, var(--dimension-radius-050));
-  border-end-start-radius: var(--ds-message-bubble-radius-end-start, var(--dimension-radius-050));
-  border-end-end-radius: var(--ds-message-bubble-radius-end-end, var(--dimension-radius-050));
-  background: var(--color-background-secondary);
+  border-start-end-radius: var(--ds-message-bubble-radius-start-end, var(--dimension-radius-025));
+  border-end-start-radius: var(--ds-message-bubble-radius-end-start, var(--dimension-radius-025));
+  border-end-end-radius: var(--ds-message-bubble-radius-end-end, var(--dimension-radius-025));
+  background: transparent;
   color: var(--color-foreground-primary);
   font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-md);
@@ -31,8 +32,9 @@
 }
 
 :host(.message-bubble--primary) .message-bubble {
-  background: var(--color-background-bold-brand);
-  color: var(--color-foreground-faint-brand);
+  background: var(--color-background-primary);
+  color: var(--color-foreground-primary);
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
 }
 
 :host(.message-bubble--secondary) .message-bubble {
