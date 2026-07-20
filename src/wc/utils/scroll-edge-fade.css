@@ -168,4 +168,30 @@
   mask-image: none;
 }
 
+/**
+ * Masks a long content element against a scrollport-relative block window.
+ * The owner updates the start/end offsets as the scrollport moves. Keeping the
+ * mask on the content instead of the overflow element leaves native scrollbars
+ * outside the fade.
+ */
+.scroll-edge-fade--block-window {
+  --ds-scroll-edge-fade-window-start: 100%;
+  --ds-scroll-edge-fade-window-end: 100%;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 var(--ds-scroll-edge-fade-window-start),
+    transparent var(--ds-scroll-edge-fade-window-end)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 var(--ds-scroll-edge-fade-window-start),
+    transparent var(--ds-scroll-edge-fade-window-end)
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
 /* stylelint-enable color-no-hex */

@@ -3,6 +3,8 @@
   min-width: 0;
   color: inherit;
   box-sizing: border-box;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .markdown {
