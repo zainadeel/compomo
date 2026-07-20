@@ -77,6 +77,7 @@ export class BarNav {
   @State() private hideTabsForDetailRoute = false;
   @State() private tabsCollapsed = false;
   @State() private menuOpen = false;
+  @State() private menuTriggerActive = false;
   /** When false, defer showing expanded tabs or the collapsed trigger until intrinsic width is measured (avoids a one-frame flash of the full tab row on narrow viewports). */
   @State() private tabLayoutCommitted = false;
   @State() private visibleTabs: BarNavTab[] = [];
@@ -142,6 +143,7 @@ export class BarNav {
     this.tabLayoutCommitted = false;
     this.tabsCollapsed = false;
     this.menuOpen = false;
+    this.menuTriggerActive = false;
     this.menuInitialFocusVisible = false;
     this.intrinsicWidthRetryCount = 0;
     this.tabLayoutPendingFrames = 0;
@@ -176,6 +178,7 @@ export class BarNav {
   onTabsCollapsedChange(collapsed: boolean, prevCollapsed: boolean | undefined) {
     if (!collapsed) {
       this.menuOpen = false;
+      this.menuTriggerActive = false;
       this.menuInitialFocusVisible = false;
       this.menuEl = null;
     }
@@ -377,6 +380,7 @@ export class BarNav {
       this.tabsCollapsed = nextCollapsed;
       if (!nextCollapsed) {
         this.menuOpen = false;
+        this.menuTriggerActive = false;
       }
     }
     this.syncFocusedTabId(
@@ -472,6 +476,10 @@ export class BarNav {
   private handleMenuClose() {
     this.menuOpen = false;
     this.menuInitialFocusVisible = false;
+  }
+
+  private handleMenuAfterClose() {
+    if (!this.menuOpen) this.menuTriggerActive = false;
   }
 
   /** Batch tabs/basePath/currentUrl updates so URL derivation never runs with a mixed section. */
@@ -643,6 +651,7 @@ export class BarNav {
     }
 
     this.menuInitialFocusVisible = options?.focusVisible ?? false;
+    this.menuTriggerActive = true;
     this.menuOpen = true;
   }
 
@@ -836,7 +845,6 @@ export class BarNav {
                   'bar-nav__overflow-trigger': true,
                 }}
                 icon="Ellipses"
-                isActive={this.menuOpen}
                 activeFill={false}
                 hasBorder={false}
                 focusTabIndex={this.overflowRovingFocused ? 0 : -1}
@@ -844,7 +852,7 @@ export class BarNav {
                   this.triggerEl = (el as (HTMLElement & { setFocus?: () => Promise<void> })) ?? null;
                 }}
                 haspopup="menu"
-                expanded={this.menuOpen}
+                expanded={this.menuTriggerActive}
                 aria-label={this.moreTabsLabel}
                 onDsClick={() => this.toggleTabMenu({ focusVisible: false })}
                 onFocusin={this.handleOverflowFocus}
@@ -868,6 +876,7 @@ export class BarNav {
             initialFocusVisible={this.menuInitialFocusVisible}
             onDsSelect={(e: Event) => this.handleMenuSelect(e)}
             onDsClose={() => this.handleMenuClose()}
+            onDsAfterClose={() => this.handleMenuAfterClose()}
           />
         )}
       </Host>

@@ -130,6 +130,11 @@ export class ButtonUnfilled {
     return this.variant === 'icon' && this.dot && !this.isLoading;
   }
 
+  /** An expanded popup trigger is visually active even when selection is controlled separately. */
+  private get visuallyActive(): boolean {
+    return this.isActive || this.expanded === true;
+  }
+
   /** Knock-out ring: selected fill → active wash; otherwise surface token. */
   private get dotRing(): string {
     if (this.isActive && this.activeFill) {
@@ -162,7 +167,8 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-inverted': bg === 'inverted',
       'ds-interaction-fill--on-media': bg === 'media',
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
-      'button-unfilled--active': this.isActive,
+      'button-unfilled--active': this.visuallyActive,
+      'button-unfilled--expanded': this.expanded === true && !this.isInactive,
       'button-unfilled--bordered': this.hasBorder,
       'button-unfilled--rounded': this.rounded,
       'ds-control-inactive': this.isInactive,

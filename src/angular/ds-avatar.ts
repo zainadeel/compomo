@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsAvatar } from '@ds-mo/ui/components/ds-a
 
 @ProxyCmp({
   defineCustomElementFn: defineDsAvatar,
-  inputs: ['icon', 'label']
+  inputs: ['icon', 'iconColor', 'label']
 })
 @Component({
   selector: 'ds-avatar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['icon', 'label'],
+  inputs: ['icon', 'iconColor', 'label'],
 })
 export class DsAvatar {
   protected el: HTMLDsAvatarElement;

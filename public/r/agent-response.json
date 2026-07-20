@@ -199,7 +199,7 @@
   "files": [
     {
       "path": "src/wc/components/AgentResponse/AgentResponse.css",
-      "content": ":host {\n  display: block;\n  width: 100%;\n}\n.agent-response {\n  display: grid;\n  gap: var(--dimension-space-150);\n  min-width: 0;\n  width: 100%;\n}\n",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.agent-response {\n  display: grid;\n  gap: var(--dimension-space-150);\n  min-width: 0;\n  width: 100%;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
       "type": "registry:ui"
     },
     {

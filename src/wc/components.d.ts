@@ -8,6 +8,7 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
+import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
@@ -22,7 +23,7 @@ import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-import { IconColor, IconSize } from "./components/Icon/Icon";
+import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
@@ -43,7 +44,6 @@ import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMul
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
-import { IconSize as IconSize1 } from "./components/Icon/Icon";
 import { ControlSize } from "./utils/control-text";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
@@ -55,6 +55,7 @@ import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Too
 export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
+export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
@@ -69,7 +70,7 @@ export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-export { IconColor, IconSize } from "./components/Icon/Icon";
+export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
@@ -90,7 +91,6 @@ export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMul
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
-export { IconSize as IconSize1 } from "./components/Icon/Icon";
 export { ControlSize } from "./utils/control-text";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
@@ -208,6 +208,11 @@ export namespace Components {
           * @default ''
          */
         "icon": string;
+        /**
+          * Semantic color for the icon. Use primary to surface unread or current identity state.
+          * @default 'secondary'
+         */
+        "iconColor": IconColor;
         /**
           * Optional accessible label. Omit when the surrounding content already conveys the meaning.
          */
@@ -777,6 +782,11 @@ export namespace Components {
     }
     interface DsConversationListItem {
         /**
+          * Keep the contextual-actions surface visible while its popup is open or closing.
+          * @default false
+         */
+        "actionsOpen": boolean;
+        /**
           * @default ''
          */
         "conversationId": string;
@@ -892,7 +902,7 @@ export namespace Components {
           * Semantic foreground color token, or a raw CSS var reference. `tertiary` and the still-fainter `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
           * @default 'inherit'
          */
-        "color": IconColor;
+        "color": IconColor1;
         /**
           * Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons.
          */
@@ -1195,6 +1205,11 @@ export namespace Components {
           * @default 'Account'
          */
         "accountLabel": string;
+        /**
+          * Keep the account-menu trigger visually active while its popup is open or closing.
+          * @default false
+         */
+        "accountMenuExpanded": boolean;
         /**
           * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
@@ -2772,6 +2787,7 @@ declare global {
     };
     interface HTMLDsMenuElementEventMap {
         "dsClose": void;
+        "dsAfterClose": void;
         "dsSelect": MenuItemData;
         "dsGradientSelect": ShellGradientPreset;
         "dsSwatchSelect": string;
@@ -3360,6 +3376,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "icon"?: string;
+        /**
+          * Semantic color for the icon. Use primary to surface unread or current identity state.
+          * @default 'secondary'
+         */
+        "iconColor"?: IconColor;
         /**
           * Optional accessible label. Omit when the surrounding content already conveys the meaning.
          */
@@ -3967,6 +3988,11 @@ declare namespace LocalJSX {
     }
     interface DsConversationListItem {
         /**
+          * Keep the contextual-actions surface visible while its popup is open or closing.
+          * @default false
+         */
+        "actionsOpen"?: boolean;
+        /**
           * @default ''
          */
         "conversationId"?: string;
@@ -4083,7 +4109,7 @@ declare namespace LocalJSX {
           * Semantic foreground color token, or a raw CSS var reference. `tertiary` and the still-fainter `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
           * @default 'inherit'
          */
-        "color"?: IconColor;
+        "color"?: IconColor1;
         /**
           * Accessible label. Sets `role="img"` and `aria-label`. Omit for decorative icons.
          */
@@ -4256,6 +4282,10 @@ declare namespace LocalJSX {
         "menuLabel"?: string;
         "menuWidth"?: string | undefined;
         "minWidth"?: string | undefined;
+        /**
+          * Emitted after the popup's exit motion is complete and its rendered content is removed.
+         */
+        "onDsAfterClose"?: (event: DsMenuCustomEvent<void>) => void;
         "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
         /**
           * Emitted when a `gradient-picker` section swatch is chosen.
@@ -4398,6 +4428,11 @@ declare namespace LocalJSX {
           * @default 'Account'
          */
         "accountLabel"?: string;
+        /**
+          * Keep the account-menu trigger visually active while its popup is open or closing.
+          * @default false
+         */
+        "accountMenuExpanded"?: boolean;
         /**
           * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
@@ -5612,6 +5647,7 @@ declare namespace LocalJSX {
     }
     interface DsAvatarAttributes {
         "icon": string;
+        "iconColor": IconColor;
         "label": string | undefined;
     }
     interface DsBadgeAttributes {
@@ -5763,6 +5799,7 @@ declare namespace LocalJSX {
         "state": ConversationItemState;
         "statusLabel": string;
         "unreadCount": number;
+        "actionsOpen": boolean;
     }
     interface DsConversationListSectionAttributes {
         "heading": string;
@@ -5892,6 +5929,7 @@ declare namespace LocalJSX {
         "dashboardLabel": string;
         "settingsLabel": string;
         "accountLabel": string;
+        "accountMenuExpanded": boolean;
         "dashboardNavigationLabel": string;
         "settingsNavigationLabel": string;
         "expandNavigationLabel": string;

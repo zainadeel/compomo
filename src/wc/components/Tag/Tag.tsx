@@ -87,7 +87,12 @@ export class Tag {
       <Host class={hostClass} style={maxWidthStyle}>
         <button
           type="button"
-          class="tag__button ds-interaction-fill ds-focus-ring-inset"
+          class={{
+            'tag__button': true,
+            'tag__button--expanded': this.expanded,
+            'ds-interaction-fill': true,
+            'ds-focus-ring-inset': true,
+          }}
           aria-haspopup="menu"
           aria-expanded={this.expanded ? 'true' : 'false'}
           aria-controls={this.ariaControls}

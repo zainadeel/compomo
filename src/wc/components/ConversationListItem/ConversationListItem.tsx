@@ -19,6 +19,8 @@ export class ConversationListItem {
   @Prop() state: ConversationItemState = 'default';
   @Prop() statusLabel: string = '';
   @Prop() unreadCount: number = 0;
+  /** Keep the contextual-actions surface visible while its popup is open or closing. */
+  @Prop({ reflect: true }) actionsOpen: boolean = false;
 
   @Event() dsSelect!: EventEmitter<{ id: string }>;
 
@@ -44,7 +46,10 @@ export class ConversationListItem {
       .join('. ');
 
     return (
-      <Host role="listitem">
+      <Host
+        role="listitem"
+        class={{ 'conversation-list-item--actions-open': this.actionsOpen }}
+      >
         <div class="conversation-list-item__row">
           <button
             type="button"

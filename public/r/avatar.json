@@ -49,6 +49,15 @@
           "mutable": false,
           "description": "Canonical IcoMo icon name displayed inside the avatar."
         },
+        "iconColor": {
+          "type": "IconColor",
+          "resolvedType": "\"ai\" | \"bold-ai\" | \"bold-brand\" | \"bold-caution\" | \"bold-negative\" | \"bold-neutral\" | \"bold-positive\" | \"bold-warning\" | \"brand\" | \"caution\" | \"faint-ai\" | \"faint-brand\" | \"faint-caution\" | \"faint-negative\" | \"faint-neutral\" | \"faint-positive\" | \"faint-warning\" | \"guide\" | \"inherit\" | \"medium-ai\" | \"medium-brand\" | \"medium-caution\" | \"medium-negative\" | \"medium-neutral\" | \"medium-positive\" | \"medium-warning\" | \"negative\" | \"neutral\" | \"on-bold\" | \"on-strong\" | \"positive\" | \"primary\" | \"quaternary\" | \"secondary\" | \"strong-ai\" | \"strong-brand\" | \"strong-caution\" | \"strong-negative\" | \"strong-neutral\" | \"strong-positive\" | \"strong-warning\" | \"tertiary\" | \"warning\" | `var(--${string})`",
+          "attribute": "icon-color",
+          "default": "'secondary'",
+          "required": false,
+          "mutable": false,
+          "description": "Semantic color for the icon. Use primary to surface unread or current identity state."
+        },
         "label": {
           "type": "string | undefined",
           "resolvedType": "string | undefined",
@@ -71,6 +80,15 @@
         "required": false,
         "mutable": false,
         "description": "Canonical IcoMo icon name displayed inside the avatar."
+      },
+      "iconColor": {
+        "type": "IconColor",
+        "resolvedType": "\"ai\" | \"bold-ai\" | \"bold-brand\" | \"bold-caution\" | \"bold-negative\" | \"bold-neutral\" | \"bold-positive\" | \"bold-warning\" | \"brand\" | \"caution\" | \"faint-ai\" | \"faint-brand\" | \"faint-caution\" | \"faint-negative\" | \"faint-neutral\" | \"faint-positive\" | \"faint-warning\" | \"guide\" | \"inherit\" | \"medium-ai\" | \"medium-brand\" | \"medium-caution\" | \"medium-negative\" | \"medium-neutral\" | \"medium-positive\" | \"medium-warning\" | \"negative\" | \"neutral\" | \"on-bold\" | \"on-strong\" | \"positive\" | \"primary\" | \"quaternary\" | \"secondary\" | \"strong-ai\" | \"strong-brand\" | \"strong-caution\" | \"strong-negative\" | \"strong-neutral\" | \"strong-positive\" | \"strong-warning\" | \"tertiary\" | \"warning\" | `var(--${string})`",
+        "attribute": "icon-color",
+        "default": "'secondary'",
+        "required": false,
+        "mutable": false,
+        "description": "Semantic color for the icon. Use primary to surface unread or current identity state."
       },
       "label": {
         "type": "string | undefined",
@@ -129,7 +147,7 @@
     },
     {
       "path": "src/wc/components/Avatar/Avatar.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-avatar',\n  styleUrl: 'Avatar.css',\n  scoped: true,\n})\nexport class Avatar {\n  /** Canonical IcoMo icon name displayed inside the avatar. */\n  @Prop() icon: string = '';\n\n  /** Optional accessible label. Omit when the surrounding content already conveys the meaning. */\n  @Prop() label: string | undefined;\n\n  render() {\n    return (\n      <Host>\n        <span\n          class=\"avatar\"\n          role={this.label ? 'img' : 'presentation'}\n          aria-label={this.label}\n          aria-hidden={!this.label ? 'true' : undefined}\n        >\n          <ds-icon name={this.icon} size=\"md\" color=\"secondary\" />\n        </span>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\nimport type { IconColor } from '../Icon/Icon';\n\n@Component({\n  tag: 'ds-avatar',\n  styleUrl: 'Avatar.css',\n  scoped: true,\n})\nexport class Avatar {\n  /** Canonical IcoMo icon name displayed inside the avatar. */\n  @Prop() icon: string = '';\n\n  /** Semantic color for the icon. Use primary to surface unread or current identity state. */\n  @Prop() iconColor: IconColor = 'secondary';\n\n  /** Optional accessible label. Omit when the surrounding content already conveys the meaning. */\n  @Prop() label: string | undefined;\n\n  render() {\n    return (\n      <Host>\n        <span\n          class=\"avatar\"\n          role={this.label ? 'img' : 'presentation'}\n          aria-label={this.label}\n          aria-hidden={!this.label ? 'true' : undefined}\n        >\n          <ds-icon name={this.icon} size=\"md\" color={this.iconColor} />\n        </span>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

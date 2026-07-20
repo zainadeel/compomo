@@ -83,6 +83,8 @@ export class PanelNav {
   @Prop() dashboardLabel: string = 'Dashboard';
   @Prop() settingsLabel: string = 'Settings';
   @Prop() accountLabel: string = 'Account';
+  /** Keep the account-menu trigger visually active while its popup is open or closing. */
+  @Prop() accountMenuExpanded: boolean = false;
   @Prop() dashboardNavigationLabel: string = 'Dashboard navigation';
   @Prop() settingsNavigationLabel: string = 'Settings navigation';
   @Prop() expandNavigationLabel: string = 'Expand navigation';
@@ -628,9 +630,18 @@ export class PanelNav {
       <button
         type="button"
         id={PANEL_NAV_USER_MENU_ANCHOR_ID}
-        class="panel-nav__item panel-nav__footer-user ds-focus-ring-inset ds-interaction-fill"
+        class={{
+          'panel-nav__item': true,
+          'panel-nav__item--active': this.accountMenuExpanded,
+          'panel-nav__footer-user': true,
+          'panel-nav__footer-user--menu-expanded': this.accountMenuExpanded,
+          'ds-focus-ring-inset': true,
+          'ds-interaction-fill': true,
+        }}
         tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
         aria-label={this.accountLabel}
+        aria-haspopup="menu"
+        aria-expanded={String(this.accountMenuExpanded)}
         onClick={e => this.handleUserAction(e)}
         onKeyDown={(e: KeyboardEvent) => this.handleRovingKeyDown(e, this.getUserRovingIndex())}
         onFocus={() => {

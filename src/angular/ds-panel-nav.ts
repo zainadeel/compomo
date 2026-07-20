@@ -10,7 +10,7 @@ import { defineCustomElement as defineDsPanelNav } from '@ds-mo/ui/components/ds
 
 @ProxyCmp({
   defineCustomElementFn: defineDsPanelNav,
-  inputs: ['accountLabel', 'activeId', 'breakpoint', 'collapseNavigationLabel', 'collapsed', 'currentUrl', 'dashboardLabel', 'dashboardNavigationLabel', 'disableViewTransition', 'expandNavigationLabel', 'groups', 'navStyle', 'navigationItemsLabel', 'routerMode', 'settingsLabel', 'settingsNavigationLabel', 'storageKey', 'userInitial', 'userName'],
+  inputs: ['accountLabel', 'accountMenuExpanded', 'activeId', 'breakpoint', 'collapseNavigationLabel', 'collapsed', 'currentUrl', 'dashboardLabel', 'dashboardNavigationLabel', 'disableViewTransition', 'expandNavigationLabel', 'groups', 'navStyle', 'navigationItemsLabel', 'routerMode', 'settingsLabel', 'settingsNavigationLabel', 'storageKey', 'userInitial', 'userName'],
   methods: ['toggleCollapsed']
 })
 @Component({
@@ -18,7 +18,7 @@ import { defineCustomElement as defineDsPanelNav } from '@ds-mo/ui/components/ds
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['accountLabel', 'activeId', 'breakpoint', 'collapseNavigationLabel', 'collapsed', 'currentUrl', 'dashboardLabel', 'dashboardNavigationLabel', 'disableViewTransition', 'expandNavigationLabel', 'groups', 'navStyle', 'navigationItemsLabel', 'routerMode', 'settingsLabel', 'settingsNavigationLabel', 'storageKey', 'userInitial', 'userName'],
+  inputs: ['accountLabel', 'accountMenuExpanded', 'activeId', 'breakpoint', 'collapseNavigationLabel', 'collapsed', 'currentUrl', 'dashboardLabel', 'dashboardNavigationLabel', 'disableViewTransition', 'expandNavigationLabel', 'groups', 'navStyle', 'navigationItemsLabel', 'routerMode', 'settingsLabel', 'settingsNavigationLabel', 'storageKey', 'userInitial', 'userName'],
   outputs: ['dsNavSelect', 'dsNavToggle', 'dsChromeTransitionStart', 'dsChromeTransitionEnd', 'dsNavFooterAction', 'dsNavUserAction'],
 })
 export class DsPanelNav {

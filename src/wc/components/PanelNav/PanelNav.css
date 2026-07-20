@@ -385,8 +385,17 @@ ds-text.panel-nav__group-label {
   transition:
     left var(--_nav-expand-motion),
     right var(--_nav-expand-motion),
-    top var(--_nav-expand-motion),
-    color var(--effect-motion-short-3, 200ms ease);
+    top var(--_nav-expand-motion);
+}
+
+/* Popup-open state keeps the native footer trigger visibly pressed. */
+.panel-nav__footer-user--menu-expanded::after,
+.panel-nav__footer-user--menu-expanded:hover:not(:disabled)::after {
+  background: var(--_nav-pressed);
+}
+
+.panel-nav__footer-user--menu-expanded {
+  color: var(--_nav-fg-primary);
 }
 
 .panel-nav--collapsed .panel-nav__footer-user {
@@ -487,9 +496,8 @@ ds-text.panel-nav__user-initial.ds-text--caption {
   max-width: none;
   min-width: 0;
   text-align: center;
-  color: var(--_nav-fg-secondary);
+  color: inherit;
   pointer-events: none;
-  transition: color var(--effect-motion-short-3, 200ms ease);
 }
 
 /* ── Drag-to-resize handle ───────────────────────────────────────────────── */

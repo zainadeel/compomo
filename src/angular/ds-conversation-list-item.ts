@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsConversationListItem } from '@ds-mo/ui/c
 
 @ProxyCmp({
   defineCustomElementFn: defineDsConversationListItem,
-  inputs: ['conversationId', 'conversationTitle', 'preview', 'selected', 'state', 'statusLabel', 'unreadCount', 'updatedAt']
+  inputs: ['actionsOpen', 'conversationId', 'conversationTitle', 'preview', 'selected', 'state', 'statusLabel', 'unreadCount', 'updatedAt']
 })
 @Component({
   selector: 'ds-conversation-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['conversationId', 'conversationTitle', 'preview', 'selected', 'state', 'statusLabel', 'unreadCount', 'updatedAt'],
+  inputs: ['actionsOpen', 'conversationId', 'conversationTitle', 'preview', 'selected', 'state', 'statusLabel', 'unreadCount', 'updatedAt'],
   outputs: ['dsSelect'],
 })
 export class DsConversationListItem {

@@ -65,6 +65,16 @@
   color: var(--ds-button-unfilled-fg-active);
 }
 
+/*
+ * An open popup is a transient pressed state, not a selected state. Keep the
+ * pressed wash visible for the popup's complete rendered lifecycle even when
+ * shell chrome opts out of selected fills with `activeFill=false`.
+ */
+.button-unfilled.button-unfilled--expanded::after,
+.button-unfilled.button-unfilled--expanded:hover:not(:disabled)::after {
+  background: var(--ds-interaction-pressed);
+}
+
 /* Inset stroke via interaction-fill ::after (above selected / hover washes). */
 .button-unfilled--bordered {
   --ds-interaction-border-width: var(--dimension-stroke-width-012);

@@ -153,6 +153,39 @@ test('uses brand active by default and neutral active on faint surfaces', async 
   ))).toBe(await resolveColor('--color-interaction-active'));
 });
 
+test('keeps popup triggers visibly pressed when expanded without creating selected fill', async ({ page }) => {
+  const host = page.locator('#unfilled-icon');
+  const button = host.locator('button');
+  const tokens = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    document.body.append(probe);
+    const resolve = (property: string, token: string) => {
+      probe.style.setProperty(property, `var(${token})`);
+      return getComputedStyle(probe).getPropertyValue(property);
+    };
+    const result = {
+      primary: resolve('color', '--color-foreground-primary'),
+      pressed: resolve('background-color', '--color-interaction-pressed'),
+    };
+    probe.remove();
+    return result;
+  });
+
+  await host.evaluate(element => {
+    const control = element as HTMLElement & { activeFill: boolean; expanded: boolean };
+    control.activeFill = false;
+    control.expanded = true;
+  });
+
+  await expect(button).toHaveAttribute('aria-expanded', 'true');
+  await expect(button).toHaveClass(/button-unfilled--expanded/);
+  await expect(button).not.toHaveClass(/ds-interaction-fill--selected/);
+  await expect(button).toHaveCSS('color', tokens.primary);
+  await expect.poll(() => button.evaluate(element => (
+    getComputedStyle(element, '::after').backgroundColor
+  ))).toBe(tokens.pressed);
+});
+
 test('keeps inactive buttons disabled, styled, and non-activating', async ({ page }) => {
   for (const id of ['filled-inactive', 'unfilled-inactive']) {
     const host = page.locator(`#${id}`);

@@ -101,6 +101,8 @@ export class Menu {
   @State() private focusRingVisible: boolean = false;
 
   @Event() dsClose!: EventEmitter<void>;
+  /** Emitted after the popup's exit motion is complete and its rendered content is removed. */
+  @Event() dsAfterClose!: EventEmitter<void>;
   @Event() dsSelect!: EventEmitter<MenuItemData>;
   /** Emitted when a `gradient-picker` section swatch is chosen. */
   @Event() dsGradientSelect!: EventEmitter<ShellGradientPreset>;
@@ -203,6 +205,7 @@ export class Menu {
     this.closing = false;
     this.lastRenderedSections = [];
     this.closingSections = null;
+    this.dsAfterClose.emit();
   }
 
   private captureClosingSections() {

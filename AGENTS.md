@@ -288,6 +288,7 @@ export class MyComponent {
 - **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
 - ButtonUnfilled's omitted `background` is the shared default treatment for primary and secondary parent surfaces and uses the brand-active selected fill. Pass `faint` explicitly on faint surfaces to use the neutral active fill; use the other matching surface context on medium, bold, strong, translucent, inverted, media, or always-dark surfaces. Do not use surface context to make an action artificially louder or quieter.
 - Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground to **primary** (toggle mode) — not brand tint.
+- An unfilled popup trigger with `expanded=true` automatically promotes its foreground to primary and paints the pressed interaction overlay, including when shell chrome passes `activeFill=false`. Popup-open is transient pressed state, not selected state. Keep `expanded` active through the popup's rendered exit lifecycle and clear it from `dsAfterClose`.
 - **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
 - Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
@@ -579,6 +580,10 @@ Rules:
 - Keep overflow on the same element that receives the fade classes. Make standalone scroll regions keyboard-reachable when their off-screen content would otherwise be inaccessible.
 
 **Anchored choice-popup alignment**
+
+- Every menu trigger must expose its popup relationship and keep the trigger's active/pressed visual state for the popup's full rendered lifetime, including exit motion. Do not clear the visual state as soon as `open` becomes false.
+- For application-owned `ds-menu` instances, separate interactive `open` state from retained trigger/context state. Set `open=false` to begin closing, keep the trigger active and its item/anchor context stable, then clear them from `dsAfterClose`. Pressing the active trigger again may reopen and cancel the pending close.
+- `ds-menu` snapshots the last painted sections through exit motion so an action may update product state without changing labels or swapping menu contexts during the fade. Consumers must still retain trigger state through `dsAfterClose`; the content snapshot does not own external trigger styling.
 
 - `ds-menu`, Select, and SelectMulti share `choice-popup-alignment.ts`. The default `choice-cell` contract extends the popup frame by the section inset so the first/last interactive row edge—not the popup frame—aligns with the trigger.
 - Leave `ds-menu.anchorAlignment` at `choice-cell` for ordinary menus. Use `popup-frame` only when a deliberately custom layout must align the popup's outer frame, and treat `alignOffset` as an additional nudge after that policy.
