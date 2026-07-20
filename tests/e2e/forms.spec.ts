@@ -361,9 +361,9 @@ test('switch supports readonly, required, unchecked, and external form behavior'
 test('switch sizes preserve density-specific thumb insets and an outset focus ring', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const expected = {
-    md: { width: 32, height: 20, thumb: 12, inset: 4, blockInset: 4, stroke: '1.25px' },
+    md: { width: 32, height: 20, thumb: 12, inset: 4, blockInset: 4, stroke: '1px' },
     sm: { width: 24, height: 16, thumb: 10, inset: 3, blockInset: 3, stroke: '1px' },
-    xs: { width: 20, height: 12, thumb: 8, inset: 2, blockInset: 2, stroke: '0.75px' },
+    xs: { width: 20, height: 12, thumb: 8, inset: 2, blockInset: 2, stroke: '1px' },
   } as const;
 
   for (const [size, dimensions] of Object.entries(expected)) {
@@ -373,8 +373,10 @@ test('switch sizes preserve density-specific thumb insets and an outset focus ri
       const thumbElement = element.shadowRoot!.querySelector<HTMLElement>('.thumb')!;
       const thumb = thumbElement.getBoundingClientRect();
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-foreground-tertiary)';
+      probe.style.color = 'var(--color-border-secondary)';
       element.shadowRoot!.append(probe);
+      const borderSecondary = getComputedStyle(probe).color;
+      probe.style.color = 'var(--color-foreground-tertiary)';
       const tertiary = getComputedStyle(probe).color;
       probe.remove();
       return {
@@ -386,6 +388,7 @@ test('switch sizes preserve density-specific thumb insets and an outset focus ri
         border: getComputedStyle(element).boxShadow,
         thumbBackground: getComputedStyle(thumbElement).backgroundColor,
         thumbBorder: getComputedStyle(thumbElement).boxShadow,
+        borderSecondary,
         tertiary,
       };
     });
@@ -399,6 +402,7 @@ test('switch sizes preserve density-specific thumb insets and an outset focus ri
     });
     expect(off.border).toContain('inset');
     expect(off.border).toContain(dimensions.stroke);
+    expect(off.border).toContain(off.borderSecondary);
     expect(off.thumbBackground).toBe(off.tertiary);
     expect(off.thumbBorder).toBe('none');
 
@@ -702,9 +706,9 @@ test('slider drag paint stays locked to the pointer without positional easing', 
 
 test('slider sizes align with the control density system', async ({ page }) => {
   const expected = {
-    md: { control: 32, thumb: 16, track: 8, trackStroke: '1.25px' },
+    md: { control: 32, thumb: 16, track: 8, trackStroke: '1px' },
     sm: { control: 24, thumb: 12, track: 6, trackStroke: '1px' },
-    xs: { control: 16, thumb: 8, track: 4, trackStroke: '0.75px' },
+    xs: { control: 16, thumb: 8, track: 4, trackStroke: '1px' },
   } as const;
 
   for (const [size, dimensions] of Object.entries(expected)) {
@@ -714,11 +718,11 @@ test('slider sizes align with the control density system', async ({ page }) => {
       const rail = element.querySelector<HTMLElement>('.slider__rail')!;
       const visual = element.querySelector<HTMLElement>('.slider__thumb-visual')!;
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-foreground-tertiary)';
+      probe.style.color = 'var(--color-border-secondary)';
       element.append(probe);
       const trackColor = getComputedStyle(probe).color;
-      probe.style.color = 'var(--color-border-bold-brand)';
-      const thumbColor = getComputedStyle(probe).color;
+      probe.style.boxShadow = 'var(--effect-elevation-elevated-sm)';
+      const thumbElevation = getComputedStyle(probe).boxShadow;
       probe.remove();
       return {
         control: Math.round(control.getBoundingClientRect().height),
@@ -730,7 +734,7 @@ test('slider sizes align with the control density system', async ({ page }) => {
         thumbBorder: getComputedStyle(visual).boxShadow,
         thumbRadius: getComputedStyle(visual).borderRadius,
         trackColor,
-        thumbColor,
+        thumbElevation,
       };
     });
 
@@ -744,9 +748,7 @@ test('slider sizes align with the control density system', async ({ page }) => {
     expect(actual.trackBorder).toContain('inset');
     expect(actual.trackBorder).toContain(dimensions.trackStroke);
     expect(actual.trackBorder).toContain(actual.trackColor);
-    expect(actual.thumbBorder).toContain('inset');
-    expect(actual.thumbBorder).toContain('1.5px');
-    expect(actual.thumbBorder).toContain(actual.thumbColor);
+    expect(actual.thumbBorder).toBe(actual.thumbElevation);
     expect(actual.thumbRadius).toBe('2px');
   }
 });
