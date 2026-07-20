@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.1](https://github.com/zainadeel/compomo/compare/v9.2.0...v9.2.1) (2026-07-20)
+
+
+### Fixed
+
+* refine form and conversation styles ([#354](https://github.com/zainadeel/compomo/issues/354)) ([c875225](https://github.com/zainadeel/compomo/commit/c875225f12b5ac7c5fcd0d47ce3b24e64200805f))
+
 ## [9.2.0](https://github.com/zainadeel/compomo/compare/v9.1.0...v9.2.0) (2026-07-19)
 
 
