@@ -1,5 +1,16 @@
 # Changelog
 
+## [10.0.0](https://github.com/zainadeel/compomo/compare/v9.2.1...v10.0.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* modernize overlays, settings cards, and conversations ([#357](https://github.com/zainadeel/compomo/issues/357))
+
+### Added
+
+* modernize overlays, settings cards, and conversations ([#357](https://github.com/zainadeel/compomo/issues/357)) ([d77de29](https://github.com/zainadeel/compomo/commit/d77de29231f6975abadf7f85c5eb924af9de7948))
+
 ## [9.2.1](https://github.com/zainadeel/compomo/compare/v9.2.0...v9.2.1) (2026-07-20)
 
 
