@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Settings cards</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Settings</h1>
+      <ds-card-setting
+        id="general-card"
+        heading="General"
+        card-width="sm"
+        edit-label="Edit General"
+        cancel-label="Cancel General"
+        save-label="Save General"
+      >
+        <p>Organization settings.</p>
+      </ds-card-setting>
+
+      <ds-card-setting
+        id="drivers-card"
+        heading="Driver identification"
+        card-width="sm"
+        edit-label="Edit Driver identification"
+        cancel-label="Cancel Driver identification"
+        save-label="Save Driver identification"
+      >
+        <p>Driver identification settings.</p>
+      </ds-card-setting>
+    </main>
+
+    <script type="module" src="/card-setting-setup.mjs"></script>
+  </body>
+</html>

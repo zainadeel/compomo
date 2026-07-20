@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Message row fixture</h1>
+      <ds-message direction="incoming" author="Avery" timestamp="9:41 AM">
+        <ds-message-bubble variant="secondary">
+          Could you send the revised arrival window?
+        </ds-message-bubble>
+      </ds-message>
+      <ds-message
+        id="failed-message"
+        direction="outgoing"
+        author="You"
+        show-author="false"
+        timestamp="9:45 AM"
+        delivery-state="failed"
+      >
+        <ds-message-bubble variant="primary">I’ll confirm it now.</ds-message-bubble>
+      </ds-message>
+    </main>
+    <script type="module" src="/message-row-setup.mjs"></script>
+  </body>
+</html>

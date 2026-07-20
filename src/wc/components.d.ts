@@ -10,13 +10,11 @@ import { NavChromeStyle } from "./shell/nav-chrome";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
-import { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
-import { CardAppearance, CardWidth } from "./components/Card/Card";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
-import { CardSettingWidth } from "./components/CardSetting/CardSetting";
+import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
@@ -32,7 +30,7 @@ import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment } from "./utils";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
-import { ModalWidth } from "./components/Modal/Modal";
+import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
@@ -51,19 +49,18 @@ import { SwitchSize } from "./components/Switch/Switch";
 import { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
+import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
-export { BannerContrast, BannerIntent } from "./components/Banner/Banner";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
-export { CardAppearance, CardWidth } from "./components/Card/Card";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
-export { CardSettingWidth } from "./components/CardSetting/CardSetting";
+export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
 export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
@@ -79,7 +76,7 @@ export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment } from "./utils";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
-export { ModalWidth } from "./components/Modal/Modal";
+export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
@@ -98,6 +95,7 @@ export { SwitchSize } from "./components/Switch/Switch";
 export { TabGroupItem } from "./components/TabGroup/tab-item-utils";
 export { TabBackground } from "./components/TabGroup/TabGroup";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
+export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export namespace Components {
     interface DsAgentActivity {
@@ -257,38 +255,6 @@ export namespace Components {
           * @default 'counter'
          */
         "variant": BadgeVariant;
-    }
-    interface DsBanner {
-        /**
-          * @default 'medium'
-         */
-        "contrast": BannerContrast;
-        /**
-          * @default 'Dismiss'
-         */
-        "dismissLabel": string;
-        /**
-          * Renders at a fixed position (centered top) and auto-dismisses after 4 s.
-          * @default false
-         */
-        "floating": boolean;
-        /**
-          * Renders the diagonal-stripe accent bar above the body.
-          * @default false
-         */
-        "header": boolean;
-        /**
-          * @default 'neutral'
-         */
-        "intent": BannerIntent;
-        /**
-          * @default ''
-         */
-        "message": string;
-        /**
-          * @default false
-         */
-        "showDismiss": boolean;
     }
     interface DsBarNav {
         /**
@@ -477,27 +443,6 @@ export namespace Components {
           * @default 'hug'
          */
         "width": ButtonUnfilledWidth;
-    }
-    /**
-     * Shared card chrome — width + matching min-height tokens, header (title + actions),
-     * and a flex body that fills leftover space. Data-visualization cards use their
-     * dedicated `ds-card-shell-data-viz` boundary instead.
-     */
-    interface DsCard {
-        /**
-          * Chrome recipe — `editing` applies the settings edit wash.
-          * @default 'default'
-         */
-        "appearance": CardAppearance;
-        /**
-          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so empty bodies still fill the card.
-          * @default 'md'
-         */
-        "cardWidth": CardWidth;
-        /**
-          * Section heading shown in the card header.
-         */
-        "heading": string;
     }
     /**
      * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
@@ -1189,6 +1134,14 @@ export namespace Components {
         "scrollToStart": () => Promise<void>;
     }
     interface DsModal {
+        /**
+          * Optional id reference for explanatory content in the default slot.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default 'Close'
+         */
+        "closeAriaLabel": string;
         "heading": string;
         /**
           * @default 'md'
@@ -1198,7 +1151,6 @@ export namespace Components {
           * @default false
          */
         "open": boolean;
-        "subtitle": string | undefined;
     }
     interface DsPanelNav {
         /**
@@ -2219,6 +2171,38 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
+    interface DsToast {
+        /**
+          * Localized accessible label for every toast close action.
+          * @default 'Close notification'
+         */
+        "closeLabel": string;
+        /**
+          * Accessible label for the notification region.
+          * @default 'Notifications'
+         */
+        "label": string;
+        /**
+          * Maximum visible global-stack records. Limited records remain mounted and inert.
+          * @default 3
+         */
+        "limit": number;
+        /**
+          * Manager that supplies toast records. Assign as a JavaScript property.
+          * @default defaultToastManager
+         */
+        "manager": ToastManager;
+        /**
+          * Allowed swipe-to-dismiss directions. Assign as a JavaScript property.
+          * @default ['down', 'right']
+         */
+        "swipeDirections": ToastSwipeDirection[];
+        /**
+          * Default auto-dismiss delay. Use 0 for persistent records.
+          * @default TOKEN_DEFAULTS.animationDelayLong2
+         */
+        "timeout": number | string;
+    }
     /**
      * Imperative body portal for the popup.
      * Stencil must not own the portaled node — moving a VDOM child to `document.body`
@@ -2301,10 +2285,6 @@ export namespace Components {
          */
         "y": number;
     }
-}
-export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsBannerElement;
 }
 export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2426,6 +2406,10 @@ export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTagElement;
 }
+export interface DsToastCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsToastElement;
+}
 declare global {
     interface HTMLDsAgentActivityElement extends Components.DsAgentActivity, HTMLStencilElement {
     }
@@ -2474,23 +2458,6 @@ declare global {
     var HTMLDsBadgeElement: {
         prototype: HTMLDsBadgeElement;
         new (): HTMLDsBadgeElement;
-    };
-    interface HTMLDsBannerElementEventMap {
-        "dsDismiss": void;
-    }
-    interface HTMLDsBannerElement extends Components.DsBanner, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsBannerElementEventMap>(type: K, listener: (this: HTMLDsBannerElement, ev: DsBannerCustomEvent<HTMLDsBannerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsBannerElementEventMap>(type: K, listener: (this: HTMLDsBannerElement, ev: DsBannerCustomEvent<HTMLDsBannerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsBannerElement: {
-        prototype: HTMLDsBannerElement;
-        new (): HTMLDsBannerElement;
     };
     interface HTMLDsBarNavElementEventMap {
         "dsTabChange": string;
@@ -2544,17 +2511,6 @@ declare global {
         prototype: HTMLDsButtonUnfilledElement;
         new (): HTMLDsButtonUnfilledElement;
     };
-    /**
-     * Shared card chrome — width + matching min-height tokens, header (title + actions),
-     * and a flex body that fills leftover space. Data-visualization cards use their
-     * dedicated `ds-card-shell-data-viz` boundary instead.
-     */
-    interface HTMLDsCardElement extends Components.DsCard, HTMLStencilElement {
-    }
-    var HTMLDsCardElement: {
-        prototype: HTMLDsCardElement;
-        new (): HTMLDsCardElement;
-    };
     interface HTMLDsCardDataVizDonutElementEventMap {
         "dsFilterClick": void;
     }
@@ -2577,7 +2533,7 @@ declare global {
         new (): HTMLDsCardDataVizDonutElement;
     };
     interface HTMLDsCardSettingElementEventMap {
-        "dsEditingChange": boolean;
+        "dsAction": CardSettingActionDetail;
     }
     interface HTMLDsCardSettingElement extends Components.DsCardSetting, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsCardSettingElementEventMap>(type: K, listener: (this: HTMLDsCardSettingElement, ev: DsCardSettingCustomEvent<HTMLDsCardSettingElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2855,7 +2811,8 @@ declare global {
         new (): HTMLDsMessageScrollerElement;
     };
     interface HTMLDsModalElementEventMap {
-        "dsClose": void;
+        "dsClose": ModalCloseDetail;
+        "dsAfterClose": void;
     }
     interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -3173,6 +3130,25 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    interface HTMLDsToastElementEventMap {
+        "dsToastClose": ToastCloseEventDetail;
+        "dsToastRemove": ToastEventDetail;
+        "dsToastAction": ToastActionEventDetail;
+    }
+    interface HTMLDsToastElement extends Components.DsToast, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsToastElementEventMap>(type: K, listener: (this: HTMLDsToastElement, ev: DsToastCustomEvent<HTMLDsToastElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsToastElementEventMap>(type: K, listener: (this: HTMLDsToastElement, ev: DsToastCustomEvent<HTMLDsToastElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsToastElement: {
+        prototype: HTMLDsToastElement;
+        new (): HTMLDsToastElement;
+    };
     /**
      * Imperative body portal for the popup.
      * Stencil must not own the portaled node — moving a VDOM child to `document.body`
@@ -3213,11 +3189,9 @@ declare global {
         "ds-attachment-list": HTMLDsAttachmentListElement;
         "ds-avatar": HTMLDsAvatarElement;
         "ds-badge": HTMLDsBadgeElement;
-        "ds-banner": HTMLDsBannerElement;
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
-        "ds-card": HTMLDsCardElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-card-shell-data-viz": HTMLDsCardShellDataVizElement;
@@ -3261,6 +3235,7 @@ declare global {
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
+        "ds-toast": HTMLDsToastElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-data-viz": HTMLDsTooltipDataVizElement;
     }
@@ -3425,39 +3400,6 @@ declare namespace LocalJSX {
           * @default 'counter'
          */
         "variant"?: BadgeVariant;
-    }
-    interface DsBanner {
-        /**
-          * @default 'medium'
-         */
-        "contrast"?: BannerContrast;
-        /**
-          * @default 'Dismiss'
-         */
-        "dismissLabel"?: string;
-        /**
-          * Renders at a fixed position (centered top) and auto-dismisses after 4 s.
-          * @default false
-         */
-        "floating"?: boolean;
-        /**
-          * Renders the diagonal-stripe accent bar above the body.
-          * @default false
-         */
-        "header"?: boolean;
-        /**
-          * @default 'neutral'
-         */
-        "intent"?: BannerIntent;
-        /**
-          * @default ''
-         */
-        "message"?: string;
-        "onDsDismiss"?: (event: DsBannerCustomEvent<void>) => void;
-        /**
-          * @default false
-         */
-        "showDismiss"?: boolean;
     }
     interface DsBarNav {
         /**
@@ -3653,27 +3595,6 @@ declare namespace LocalJSX {
         "width"?: ButtonUnfilledWidth;
     }
     /**
-     * Shared card chrome — width + matching min-height tokens, header (title + actions),
-     * and a flex body that fills leftover space. Data-visualization cards use their
-     * dedicated `ds-card-shell-data-viz` boundary instead.
-     */
-    interface DsCard {
-        /**
-          * Chrome recipe — `editing` applies the settings edit wash.
-          * @default 'default'
-         */
-        "appearance"?: CardAppearance;
-        /**
-          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so empty bodies still fill the card.
-          * @default 'md'
-         */
-        "cardWidth"?: CardWidth;
-        /**
-          * Section heading shown in the card header.
-         */
-        "heading": string;
-    }
-    /**
      * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
@@ -3720,9 +3641,9 @@ declare namespace LocalJSX {
          */
         "heading": string;
         /**
-          * Emits when the user enters or exits edit mode.
+          * Emits a controlled edit, save, or cancel request.
          */
-        "onDsEditingChange"?: (event: DsCardSettingCustomEvent<boolean>) => void;
+        "onDsAction"?: (event: DsCardSettingCustomEvent<CardSettingActionDetail>) => void;
         /**
           * @default 'Save'
          */
@@ -4411,17 +4332,31 @@ declare namespace LocalJSX {
         "onDsReachStart"?: (event: DsMessageScrollerCustomEvent<void>) => void;
     }
     interface DsModal {
+        /**
+          * Optional id reference for explanatory content in the default slot.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default 'Close'
+         */
+        "closeAriaLabel"?: string;
         "heading": string;
         /**
           * @default 'md'
          */
         "modalWidth"?: ModalWidth | string;
-        "onDsClose"?: (event: DsModalCustomEvent<void>) => void;
+        /**
+          * Emitted after exit motion completes, the top layer closes, and focus is restored.
+         */
+        "onDsAfterClose"?: (event: DsModalCustomEvent<void>) => void;
+        /**
+          * Emitted when an internal dismissal control requests that the modal close.
+         */
+        "onDsClose"?: (event: DsModalCustomEvent<ModalCloseDetail>) => void;
         /**
           * @default false
          */
         "open"?: boolean;
-        "subtitle"?: string | undefined;
     }
     interface DsPanelNav {
         /**
@@ -5532,6 +5467,41 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
+    interface DsToast {
+        /**
+          * Localized accessible label for every toast close action.
+          * @default 'Close notification'
+         */
+        "closeLabel"?: string;
+        /**
+          * Accessible label for the notification region.
+          * @default 'Notifications'
+         */
+        "label"?: string;
+        /**
+          * Maximum visible global-stack records. Limited records remain mounted and inert.
+          * @default 3
+         */
+        "limit"?: number;
+        /**
+          * Manager that supplies toast records. Assign as a JavaScript property.
+          * @default defaultToastManager
+         */
+        "manager"?: ToastManager;
+        "onDsToastAction"?: (event: DsToastCustomEvent<ToastActionEventDetail>) => void;
+        "onDsToastClose"?: (event: DsToastCustomEvent<ToastCloseEventDetail>) => void;
+        "onDsToastRemove"?: (event: DsToastCustomEvent<ToastEventDetail>) => void;
+        /**
+          * Allowed swipe-to-dismiss directions. Assign as a JavaScript property.
+          * @default ['down', 'right']
+         */
+        "swipeDirections"?: ToastSwipeDirection[];
+        /**
+          * Default auto-dismiss delay. Use 0 for persistent records.
+          * @default TOKEN_DEFAULTS.animationDelayLong2
+         */
+        "timeout"?: number | string;
+    }
     /**
      * Imperative body portal for the popup.
      * Stencil must not own the portaled node — moving a VDOM child to `document.body`
@@ -5660,15 +5630,6 @@ declare namespace LocalJSX {
         "gradientBackground": boolean;
         "label": string | undefined;
     }
-    interface DsBannerAttributes {
-        "intent": BannerIntent;
-        "contrast": BannerContrast;
-        "message": string;
-        "header": boolean;
-        "floating": boolean;
-        "showDismiss": boolean;
-        "dismissLabel": string;
-    }
     interface DsBarNavAttributes {
         "navStyle": NavChromeStyle;
         "tabsJson": string;
@@ -5713,11 +5674,6 @@ declare namespace LocalJSX {
         "haspopup": ButtonUnfilledPopup | undefined;
         "pressed": boolean | undefined;
         "focusTabIndex": number;
-    }
-    interface DsCardAttributes {
-        "heading": string;
-        "cardWidth": CardWidth;
-        "appearance": CardAppearance;
     }
     interface DsCardDataVizDonutAttributes {
         "heading": string;
@@ -5911,8 +5867,9 @@ declare namespace LocalJSX {
     interface DsModalAttributes {
         "open": boolean;
         "heading": string;
-        "subtitle": string | undefined;
+        "closeAriaLabel": string;
         "modalWidth": ModalWidth | string;
+        "ariaDescribedby": string | undefined;
     }
     interface DsPanelNavAttributes {
         "navStyle": NavChromeStyle;
@@ -6148,6 +6105,12 @@ declare namespace LocalJSX {
         "for": string | undefined;
         "textId": string | undefined;
     }
+    interface DsToastAttributes {
+        "limit": number;
+        "timeout": string;
+        "label": string;
+        "closeLabel": string;
+    }
     interface DsTooltipAttributes {
         "label": string;
         "size": TooltipSize;
@@ -6176,11 +6139,9 @@ declare namespace LocalJSX {
         "ds-attachment-list": Omit<DsAttachmentList, keyof DsAttachmentListAttributes> & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes]?: DsAttachmentList[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `attr:${K}`]?: DsAttachmentListAttributes[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `prop:${K}`]?: DsAttachmentList[K] };
         "ds-avatar": Omit<DsAvatar, keyof DsAvatarAttributes> & { [K in keyof DsAvatar & keyof DsAvatarAttributes]?: DsAvatar[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `attr:${K}`]?: DsAvatarAttributes[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `prop:${K}`]?: DsAvatar[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
-        "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
-        "ds-card": Omit<DsCard, keyof DsCardAttributes> & { [K in keyof DsCard & keyof DsCardAttributes]?: DsCard[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `attr:${K}`]?: DsCardAttributes[K] } & { [K in keyof DsCard & keyof DsCardAttributes as `prop:${K}`]?: DsCard[K] } & OneOf<"heading", DsCard["heading"], DsCardAttributes["heading"]>;
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-card-shell-data-viz": Omit<DsCardShellDataViz, keyof DsCardShellDataVizAttributes> & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes]?: DsCardShellDataViz[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `attr:${K}`]?: DsCardShellDataVizAttributes[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `prop:${K}`]?: DsCardShellDataViz[K] } & OneOf<"heading", DsCardShellDataViz["heading"], DsCardShellDataVizAttributes["heading"]>;
@@ -6224,6 +6185,7 @@ declare namespace LocalJSX {
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-data-viz": Omit<DsTooltipDataViz, keyof DsTooltipDataVizAttributes> & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes]?: DsTooltipDataViz[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `attr:${K}`]?: DsTooltipDataVizAttributes[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `prop:${K}`]?: DsTooltipDataViz[K] };
     }
@@ -6240,16 +6202,9 @@ declare module "@stencil/core" {
             "ds-attachment-list": LocalJSX.IntrinsicElements["ds-attachment-list"] & JSXBase.HTMLAttributes<HTMLDsAttachmentListElement>;
             "ds-avatar": LocalJSX.IntrinsicElements["ds-avatar"] & JSXBase.HTMLAttributes<HTMLDsAvatarElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
-            "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
-            /**
-             * Shared card chrome — width + matching min-height tokens, header (title + actions),
-             * and a flex body that fills leftover space. Data-visualization cards use their
-             * dedicated `ds-card-shell-data-viz` boundary instead.
-             */
-            "ds-card": LocalJSX.IntrinsicElements["ds-card"] & JSXBase.HTMLAttributes<HTMLDsCardElement>;
             /**
              * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
              * content-sized legend. Hover sync between chart and legend stays here.
@@ -6319,6 +6274,7 @@ declare module "@stencil/core" {
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-toast": LocalJSX.IntrinsicElements["ds-toast"] & JSXBase.HTMLAttributes<HTMLDsToastElement>;
             /**
              * Imperative body portal for the popup.
              * Stencil must not own the portaled node — moving a VDOM child to `document.body`

@@ -39,7 +39,7 @@
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-card",
+    "component:ds-card-setting",
     "component:ds-text",
     "component:ds-icon",
     "component:ds-menu"

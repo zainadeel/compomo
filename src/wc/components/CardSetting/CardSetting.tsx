@@ -1,7 +1,26 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
-import type { CardWidth } from '../Card/Card';
 
-export type CardSettingWidth = CardWidth;
+export type CardSettingWidth = 'sm' | 'md' | 'lg';
+export type CardSettingAction = 'edit' | 'save' | 'cancel';
+
+export interface CardSettingActionDetail {
+  action: CardSettingAction;
+  originalEvent: MouseEvent;
+}
+
+const CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {
+  sm: 'var(--dimension-card-width-sm)',
+  md: 'var(--dimension-card-width-md)',
+  lg: 'var(--dimension-card-width-lg)',
+};
+
+const CARD_HEIGHT_VARS: Record<CardSettingWidth, string> = {
+  sm: 'var(--dimension-card-height-sm)',
+  md: 'var(--dimension-card-height-md)',
+  lg: 'var(--dimension-card-height-lg)',
+};
+
+const FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';
 
 @Component({
   tag: 'ds-card-setting',
@@ -25,59 +44,80 @@ export class CardSetting {
   @Prop() cancelLabel: string = 'Cancel';
   @Prop() saveLabel: string = 'Save';
 
-  /** Emits when the user enters or exits edit mode. */
-  @Event() dsEditingChange!: EventEmitter<boolean>;
+  /** Emits a controlled edit, save, or cancel request. */
+  @Event() dsAction!: EventEmitter<CardSettingActionDetail>;
 
-  private enterEdit = () => {
-    this.dsEditingChange.emit(true);
-  };
-
-  private exitEdit = () => {
-    this.dsEditingChange.emit(false);
-  };
+  private emitAction(action: CardSettingAction, originalEvent: MouseEvent) {
+    this.dsAction.emit({ action, originalEvent });
+  }
 
   render() {
     const editing = this.editing;
 
     return (
-      <Host class="card-setting">
-        <ds-card
-          heading={this.heading}
-          cardWidth={this.cardWidth}
-          appearance={editing ? 'editing' : 'default'}
-        >
+      <Host
+        class={{
+          'card-setting': true,
+          'card-setting--editing': editing,
+        }}
+        style={{
+          '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth],
+          '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],
+        }}
+      >
+        <header class="card-setting__header">
+          <ds-text
+            class="card-setting__title"
+            variant="text-title-small"
+            emphasis
+            color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
+            as="h2"
+          >
+            {this.heading}
+          </ds-text>
+          <div class="card-setting__actions">
           {!editing ? (
             <ds-button-unfilled
-              slot="actions"
               variant="icon"
               type="button"
               icon="Pencil"
               aria-label={this.editLabel}
-              onDsClick={this.enterEdit}
+              onDsClick={(event: CustomEvent<MouseEvent>) =>
+                this.emitAction('edit', event.detail)
+              }
             />
           ) : (
-            <div slot="actions" class="card-setting__actions">
+            [
               <ds-button-unfilled
+                key="cancel"
                 variant="icon"
                 type="button"
                 icon="Cross"
                 background="bold"
                 aria-label={this.cancelLabel}
-                onDsClick={this.exitEdit}
-              />
+                onDsClick={(event: CustomEvent<MouseEvent>) =>
+                  this.emitAction('cancel', event.detail)
+                }
+              />,
               <ds-button-filled
+                key="save"
                 variant="icon"
                 type="button"
                 icon="Check"
                 intent="brand"
                 contrast="faint"
                 aria-label={this.saveLabel}
-                onDsClick={this.exitEdit}
-              />
-            </div>
+                onDsClick={(event: CustomEvent<MouseEvent>) =>
+                  this.emitAction('save', event.detail)
+                }
+              />,
+            ]
           )}
+          </div>
+        </header>
+        <div class="card-setting__body">
           <slot />
-        </ds-card>
+        </div>
       </Host>
     );
   }

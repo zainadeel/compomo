@@ -1,6 +1,6 @@
 import { Component, h, Host, Prop } from '@stencil/core';
 
-export type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost' | 'error';
+export type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost';
 
 @Component({
   tag: 'ds-message-bubble',

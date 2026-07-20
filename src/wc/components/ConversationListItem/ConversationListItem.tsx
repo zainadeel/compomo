@@ -89,7 +89,7 @@ export class ConversationListItem {
                 ) : null}
               </span>
               <span class="conversation-list-item__preview-row">
-                {busy ? <ds-loader size="xs" color="secondary" /> : null}
+                {busy ? <ds-loader size="sm" color="secondary" /> : null}
                 <ds-text
                   class="conversation-list-item__preview ds-choice-item__subtext"
                   as="span"

@@ -59,9 +59,6 @@ export class Message {
           }}
           aria-label={this.author ? `Message from ${this.author}` : 'Message'}
         >
-          <div class="message__avatar">
-            <slot name="avatar" />
-          </div>
           <div class="message__body">
             <div class="message__header">
               <slot name="header" />

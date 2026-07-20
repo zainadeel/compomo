@@ -5,7 +5,6 @@ import '../../../../dist/components/ds-message.js';
 import '../../../../dist/components/ds-message-bubble.js';
 import '../../../../dist/components/ds-message-composer.js';
 import '../../../../dist/components/ds-button-unfilled.js';
-import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-text.js';
 
 const meta: Meta = {
@@ -72,7 +71,6 @@ export const PersonToPersonReuse: Story = {
           timestamp="9:41 AM"
           group-position="first"
         >
-          <ds-icon slot="avatar" name="Person" size="md"></ds-icon>
           <ds-message-bubble variant="secondary"
             >Could you send the revised arrival window?</ds-message-bubble
           >

@@ -10,11 +10,9 @@ export const DIRECTIVES = [
   d.DsAttachmentList,
   d.DsAvatar,
   d.DsBadge,
-  d.DsBanner,
   d.DsBarNav,
   d.DsButtonFilled,
   d.DsButtonUnfilled,
-  d.DsCard,
   d.DsCardDataVizDonut,
   d.DsCardSetting,
   d.DsCardShellDataViz,
@@ -58,6 +56,7 @@ export const DIRECTIVES = [
   d.DsTabGroup,
   d.DsTag,
   d.DsText,
+  d.DsToast,
   d.DsTooltip,
   d.DsTooltipDataViz
 ];

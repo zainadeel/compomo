@@ -60,6 +60,10 @@
       "types": "./dist/lib/utils/index.d.ts",
       "import": "./dist/lib/utils/index.js"
     },
+    "./toast": {
+      "types": "./dist/lib/toast/index.d.ts",
+      "import": "./dist/lib/toast/index.js"
+    },
     "./agent": "./dist/agent.json",
     "./agent/patterns": "./dist/agent-patterns.json",
     "./dist/components/*": "./dist/components/*",
@@ -100,7 +104,7 @@
   "peerDependencies": {
     "@angular/core": ">=19 <23",
     "@angular/forms": ">=19 <23",
-    "@ds-mo/icons": "^6.2.0",
+    "@ds-mo/icons": "^6.3.0",
     "@ds-mo/tokens": "^3.1.1",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19"
@@ -125,7 +129,7 @@
     "@angular/core": "^22.0.7",
     "@angular/forms": "^22.0.7",
     "@axe-core/playwright": "^4.12.1",
-    "@ds-mo/icons": "^6.2.0",
+    "@ds-mo/icons": "^6.3.0",
     "@ds-mo/tokens": "^3.1.1",
     "@eslint/js": "^10.0.1",
     "@modelcontextprotocol/sdk": "^1.29.0",

@@ -11,17 +11,17 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsCardSettingCustomEvent } from "@ds-mo/ui";
+import { type CardSettingActionDetail, type DsCardSettingCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsCardSetting as DsCardSettingElement, defineCustomElement as defineDsCardSetting } from "@ds-mo/ui/dist/components/ds-card-setting.js";
 
-export type DsCardSettingEvents = { onDsEditingChange: EventName<DsCardSettingCustomEvent<boolean>> };
+export type DsCardSettingEvents = { onDsAction: EventName<DsCardSettingCustomEvent<CardSettingActionDetail>> };
 
 export const DsCardSetting: StencilReactComponent<DsCardSettingElement, DsCardSettingEvents, Components.DsCardSetting, 'heading'> = /*@__PURE__*/ createComponent<DsCardSettingElement, DsCardSettingEvents, Components.DsCardSetting, 'heading'>({
     tagName: 'ds-card-setting',
     elementClass: DsCardSettingElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsEditingChange: 'dsEditingChange' } as DsCardSettingEvents,
+    events: { onDsAction: 'dsAction' } as DsCardSettingEvents,
     defineCustomElement: defineDsCardSetting
 });

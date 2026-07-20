@@ -1,0 +1,100 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-modal",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-modal",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
+  "useWhen": [
+    "The user must confirm or cancel one focused decision before returning to the underlying interface.",
+    "A short blocking task or compact form needs dialog semantics, focus containment, and explicit completion actions.",
+    "The content can be safely dismissed through Close, Escape, or the backdrop."
+  ],
+  "avoidWhen": [
+    "The message is non-blocking feedback or a transient status update.",
+    "The interaction is a contextual list of commands anchored to a trigger.",
+    "The workflow is multi-step, long-form, or requires substantial navigation.",
+    "Dismissal would lose work or leave an irreversible operation in an unsafe state.",
+    "A second modal would be opened over an existing modal."
+  ],
+  "alternatives": [
+    {
+      "when": "The user needs non-blocking feedback or a transient status message.",
+      "component": "component:ds-toast",
+      "reason": "Toast communicates transient status without trapping focus or blocking the page."
+    },
+    {
+      "when": "A trigger reveals a short contextual list of commands.",
+      "component": "component:ds-menu",
+      "reason": "Menu provides anchored command semantics without creating a blocking dialog."
+    },
+    {
+      "when": "Editable settings should remain visible without blocking the rest of the interface.",
+      "component": "component:ds-card-setting",
+      "reason": "CardSetting provides a persistent controlled settings workflow without modal focus containment."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-filled",
+    "component:ds-button-unfilled",
+    "component:ds-field",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
+    "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
+    "Opening the native modal dialog moves focus to the header Close action, traps Tab navigation inside the top layer, and makes outside content inert.",
+    "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
+    "After exit motion completes, the native dialog leaves the top layer, focus returns to the previously focused element, and dsAfterClose emits.",
+    "Use visible label-only footer buttons. Keep at most two actions: one bold filled primary action followed by one bordered unfilled action, or two bordered unfilled actions.",
+    "Use negative intent for a filled destructive action and state the irreversible consequence in the content.",
+    "Do not open a modal from another modal; keep one blocking decision in focus at a time."
+  ],
+  "states": [
+    "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
+    "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
+    "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
+    "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",
+    "The owner performs save, delete, cancel, and other product consequences before or while closing the modal."
+  ],
+  "responsiveBehavior": [
+    "Choose the smallest sm, md, or lg width that fits the focused task; the top-layer dialog clamps to the viewport with token-based outer space.",
+    "Content scrolls independently when needed while the 64px header and optional 64px footer remain fixed.",
+    "Avoid layouts whose minimum content width exceeds the narrow viewport clamp.",
+    "The native top layer escapes transformed ancestors, clipping containers, and application stacking contexts without moving slotted content."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set open as a JavaScript property when controlling the modal; inspect dsClose.detail.reason and use dsAfterClose for cleanup that must wait for exit motion and focus restoration.",
+      "Connect the most relevant slotted explanatory text through aria-describedby.",
+      "Footer actions are slotted application-owned controls and must implement their own product consequence."
+    ],
+    "react": [
+      "Pass open to DsModal, inspect onDsClose event detail, and use onDsAfterClose only for cleanup after exit motion and focus restoration.",
+      "Connect the most relevant slotted explanatory text through aria-describedby.",
+      "Assign footer controls with slot=\"footer\" and handle each action before updating open."
+    ],
+    "angular": [
+      "Bind [open], inspect $event.detail from (dsClose), and use (dsAfterClose) only for cleanup after exit motion and focus restoration.",
+      "Connect the most relevant slotted explanatory text through aria-describedby.",
+      "Assign footer controls with slot=\"footer\" and handle each action before updating open."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook confirmation and footer examples",
+      "path": "src/wc/components/Modal/Modal.stories.ts"
+    },
+    {
+      "label": "Cross-browser focus, dismissal, geometry, and accessibility coverage",
+      "path": "tests/e2e/accessibility-overlays.spec.ts"
+    },
+    {
+      "label": "Reduced-motion overlay coverage",
+      "path": "tests/e2e/reduced-motion.spec.ts"
+    }
+  ]
+}

@@ -21,9 +21,9 @@
   ],
   "alternatives": [
     {
-      "when": "Content needs an enclosing surface and outer boundary.",
-      "component": "component:ds-card",
-      "reason": "Card owns container chrome, structure, and edge treatment."
+      "when": "Editable settings need an enclosing section surface and outer boundary.",
+      "component": "component:ds-card-setting",
+      "reason": "CardSetting owns settings-section chrome, structure, and edge treatment."
     },
     {
       "when": "A static compact label is being used to name a group.",
@@ -32,7 +32,7 @@
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-card",
+    "component:ds-card-setting",
     "component:ds-menu",
     "component:ds-panel-sub-nav"
   ],

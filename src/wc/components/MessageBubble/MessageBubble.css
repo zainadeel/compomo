@@ -30,6 +30,7 @@
 :host(.message-bubble--primary) .message-bubble {
   background: var(--color-translucent-translucent);
   color: var(--color-foreground-primary);
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
 }
 
 :host(.message-bubble--secondary) .message-bubble {
@@ -40,10 +41,4 @@
   padding-inline: 0;
   background: transparent;
   border-radius: 0;
-}
-
-:host(.message-bubble--error) .message-bubble {
-  background: var(--color-background-faint-negative);
-  color: var(--color-foreground-bold-negative);
-  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-bold-negative);
 }

@@ -90,14 +90,14 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Toggle**, **Checkbox**, **Radio**, **Input**, **Slider**, **Field**
 
 ### Overlays
-- **Modal**, **Menu**, **Tooltip**, **Select**, **Banner**
+- **Modal**, **Menu**, **Tooltip**, **Select**, **Toast**
 
 ### Navigation
 - **TabGroup** (horizontal local views), **PanelSubNav** (vertical local views)
 - **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout
-- **EmptyState**, **Loader**, **Skeleton**, **Card** (shared chrome), **CardSetting**, **CardDataVizDonut**
+- **EmptyState**, **Loader**, **Skeleton**, **CardSetting**, **CardDataVizDonut**
 
 ## Token dependency
 

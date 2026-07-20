@@ -2,15 +2,101 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "card-setting",
   "title": "CardSetting",
-  "description": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
+  "description": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
     "source": "src/wc/components/CardSetting/CardSetting.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+      "useWhen": [
+        "A settings page needs a persistent section that switches between read-only and editable content.",
+        "The parent can control one active editing section and owns validation, persistence, cancellation, and body content.",
+        "The section uses the standard Pencil, Save, and Cancel header workflow."
+      ],
+      "avoidWhen": [
+        "The surface contains a chart, legend, metric visualization, or other data-visualization composition.",
+        "The content is a general-purpose read-only card with no settings edit workflow.",
+        "The task must block the rest of the interface or requires confirmation in a modal.",
+        "Several sections must remain editable at the same time.",
+        "The header requires custom actions beyond the fixed edit-save-cancel workflow."
+      ],
+      "alternatives": [
+        {
+          "when": "The surface contains a chart or specialized data-visualization composition.",
+          "component": "component:ds-card-shell-data-viz",
+          "reason": "CardShellDataViz owns the independently evolving data-visualization shell contract."
+        },
+        {
+          "when": "The task must block the interface for one focused decision or short workflow.",
+          "component": "component:ds-modal",
+          "reason": "Modal provides top-layer focus containment and explicit blocking-task dismissal."
+        },
+        {
+          "when": "Only one labeled form control is needed without a section surface.",
+          "component": "component:ds-field",
+          "reason": "Field provides the control label, supporting copy, and validation relationship without card chrome."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-input",
+        "component:ds-select",
+        "component:ds-switch",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
+        "Edit, Save, and Cancel are icon-only controls with localized accessible labels supplied by the matching label props. When several sections share a page, include the section name in each label.",
+        "The owner must expose persistent field labels, descriptions, and validation messages inside the body.",
+        "Save must not remove validation errors or exit editing until the parent accepts the action and updates the controlled editing state.",
+        "Cancel must restore or retain the last persisted values according to product policy before the parent exits editing.",
+        "Keep only one CardSetting in edit mode so keyboard and screen-reader users have one unambiguous set of Save and Cancel actions.",
+        "When another section requests editing, resolve dirty changes in the current section before switching; never silently discard user input."
+      ],
+      "states": [
+        "The editing property is controlled; CardSetting never changes it internally.",
+        "dsAction emits edit, save, or cancel with the original pointer event. The parent decides whether and when editing changes.",
+        "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
+        "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
+        "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
+        "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing."
+      ],
+      "responsiveBehavior": [
+        "Choose sm, md, or lg from the parent layout; each width uses its matching token-based minimum height.",
+        "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
+        "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Set editing as a JavaScript property and inspect dsAction.detail.action before updating the controlled state.",
+          "When one section emits edit, update every sibling CardSetting so only the requested section remains editing."
+        ],
+        "react": [
+          "Pass editing from parent state and inspect onDsAction event detail; do not treat Save as successful until validation and persistence complete.",
+          "Store one active section id and derive each CardSetting editing prop from that id."
+        ],
+        "angular": [
+          "Bind [editing] and inspect $event.detail.action from (dsAction); do not treat Save as successful until validation and persistence complete.",
+          "Store one active section id and derive each CardSetting editing binding from that id."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook controlled and single-edit examples",
+          "path": "src/wc/components/CardSetting/CardSetting.stories.ts"
+        },
+        {
+          "label": "Cross-browser shell and action coverage",
+          "path": "tests/e2e/card-setting.spec.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "cancelLabel": {
@@ -66,12 +152,12 @@
       },
       "events": [
         {
-          "name": "dsEditingChange",
-          "detail": "boolean",
+          "name": "dsAction",
+          "detail": "CardSettingActionDetail",
           "bubbles": true,
           "cancelable": true,
           "composed": true,
-          "description": "Emits when the user enters or exits edit mode."
+          "description": "Emits a controlled edit, save, or cancel request."
         }
       ],
       "methods": [],
@@ -131,12 +217,12 @@
     },
     "events": [
       {
-        "name": "dsEditingChange",
-        "detail": "boolean",
+        "name": "dsAction",
+        "detail": "CardSettingActionDetail",
         "bubbles": true,
         "cancelable": true,
         "composed": true,
-        "description": "Emits when the user enters or exits edit mode."
+        "description": "Emits a controlled edit, save, or cancel request."
       }
     ],
     "methods": [],
@@ -164,7 +250,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^3.1.1",
-          "@ds-mo/icons ^6.2.0"
+          "@ds-mo/icons ^6.3.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
@@ -177,17 +263,17 @@
   "registryDependencies": [
     "button-filled",
     "button-unfilled",
-    "card"
+    "text"
   ],
   "files": [
     {
       "path": "src/wc/components/CardSetting/CardSetting.css",
-      "content": ":host {\n  display: contents;\n}\n\n.card-setting__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n",
+      "content": ":host {\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n  width: var(--_card-setting-width);\n  min-height: var(--_card-setting-min-height);\n  max-width: 100%;\n  overflow: hidden;\n  background-color: var(--color-background-primary);\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.card-setting--editing) {\n  background-color: var(--color-background-bold-brand);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);\n}\n\n.card-setting__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  height: var(--dimension-size-600);\n  padding: var(--dimension-space-100);\n  flex: 0 0 auto;\n  box-sizing: border-box;\n  background-color: var(--color-background-secondary);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n:host(.card-setting--editing) .card-setting__header {\n  background-color: transparent;\n  border-bottom-color: transparent;\n}\n\nds-text.card-setting__title {\n  display: flex;\n  flex: 1 1 auto;\n  align-items: center;\n  min-width: 0;\n  padding: calc(var(--dimension-space-075) + var(--dimension-space-025));\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.card-setting__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n\n.card-setting__body {\n  display: flex;\n  flex: 1 1 auto;\n  flex-direction: column;\n  min-height: 0;\n  box-sizing: border-box;\n  background-color: var(--color-background-primary);\n  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);\n}\n\n:host(.card-setting--editing) .card-setting__body {\n  border-radius: var(--dimension-radius-025);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/CardSetting/CardSetting.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type { CardWidth } from '../Card/Card';\n\nexport type CardSettingWidth = CardWidth;\n\n@Component({\n  tag: 'ds-card-setting',\n  styleUrl: 'CardSetting.css',\n  scoped: true,\n})\nexport class CardSetting {\n  /** Section heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /**\n   * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\n   * matching `--dimension-card-height-*` so the body fills available space\n   * even when the slot is empty.\n   */\n  @Prop() cardWidth: CardSettingWidth = 'md';\n\n  /** Controlled edit state — parent owns single-edit orchestration. */\n  @Prop() editing = false;\n  @Prop() editLabel: string = 'Edit';\n  @Prop() cancelLabel: string = 'Cancel';\n  @Prop() saveLabel: string = 'Save';\n\n  /** Emits when the user enters or exits edit mode. */\n  @Event() dsEditingChange!: EventEmitter<boolean>;\n\n  private enterEdit = () => {\n    this.dsEditingChange.emit(true);\n  };\n\n  private exitEdit = () => {\n    this.dsEditingChange.emit(false);\n  };\n\n  render() {\n    const editing = this.editing;\n\n    return (\n      <Host class=\"card-setting\">\n        <ds-card\n          heading={this.heading}\n          cardWidth={this.cardWidth}\n          appearance={editing ? 'editing' : 'default'}\n        >\n          {!editing ? (\n            <ds-button-unfilled\n              slot=\"actions\"\n              variant=\"icon\"\n              type=\"button\"\n              icon=\"Pencil\"\n              aria-label={this.editLabel}\n              onDsClick={this.enterEdit}\n            />\n          ) : (\n            <div slot=\"actions\" class=\"card-setting__actions\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Cross\"\n                background=\"bold\"\n                aria-label={this.cancelLabel}\n                onDsClick={this.exitEdit}\n              />\n              <ds-button-filled\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Check\"\n                intent=\"brand\"\n                contrast=\"faint\"\n                aria-label={this.saveLabel}\n                onDsClick={this.exitEdit}\n              />\n            </div>\n          )}\n          <slot />\n        </ds-card>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\nexport type CardSettingWidth = 'sm' | 'md' | 'lg';\nexport type CardSettingAction = 'edit' | 'save' | 'cancel';\n\nexport interface CardSettingActionDetail {\n  action: CardSettingAction;\n  originalEvent: MouseEvent;\n}\n\nconst CARD_WIDTH_VARS: Record<CardSettingWidth, string> = {\n  sm: 'var(--dimension-card-width-sm)',\n  md: 'var(--dimension-card-width-md)',\n  lg: 'var(--dimension-card-width-lg)',\n};\n\nconst CARD_HEIGHT_VARS: Record<CardSettingWidth, string> = {\n  sm: 'var(--dimension-card-height-sm)',\n  md: 'var(--dimension-card-height-md)',\n  lg: 'var(--dimension-card-height-lg)',\n};\n\nconst FAINT_BRAND_TITLE_COLOR = 'var(--color-foreground-faint-brand)';\n\n@Component({\n  tag: 'ds-card-setting',\n  styleUrl: 'CardSetting.css',\n  scoped: true,\n})\nexport class CardSetting {\n  /** Section heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /**\n   * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the\n   * matching `--dimension-card-height-*` so the body fills available space\n   * even when the slot is empty.\n   */\n  @Prop() cardWidth: CardSettingWidth = 'md';\n\n  /** Controlled edit state — parent owns single-edit orchestration. */\n  @Prop() editing = false;\n  @Prop() editLabel: string = 'Edit';\n  @Prop() cancelLabel: string = 'Cancel';\n  @Prop() saveLabel: string = 'Save';\n\n  /** Emits a controlled edit, save, or cancel request. */\n  @Event() dsAction!: EventEmitter<CardSettingActionDetail>;\n\n  private emitAction(action: CardSettingAction, originalEvent: MouseEvent) {\n    this.dsAction.emit({ action, originalEvent });\n  }\n\n  render() {\n    const editing = this.editing;\n\n    return (\n      <Host\n        class={{\n          'card-setting': true,\n          'card-setting--editing': editing,\n        }}\n        style={{\n          '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth],\n          '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],\n        }}\n      >\n        <header class=\"card-setting__header\">\n          <ds-text\n            class=\"card-setting__title\"\n            variant=\"text-title-small\"\n            emphasis\n            color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}\n            as=\"h2\"\n          >\n            {this.heading}\n          </ds-text>\n          <div class=\"card-setting__actions\">\n          {!editing ? (\n            <ds-button-unfilled\n              variant=\"icon\"\n              type=\"button\"\n              icon=\"Pencil\"\n              aria-label={this.editLabel}\n              onDsClick={(event: CustomEvent<MouseEvent>) =>\n                this.emitAction('edit', event.detail)\n              }\n            />\n          ) : (\n            [\n              <ds-button-unfilled\n                key=\"cancel\"\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Cross\"\n                background=\"bold\"\n                aria-label={this.cancelLabel}\n                onDsClick={(event: CustomEvent<MouseEvent>) =>\n                  this.emitAction('cancel', event.detail)\n                }\n              />,\n              <ds-button-filled\n                key=\"save\"\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Check\"\n                intent=\"brand\"\n                contrast=\"faint\"\n                aria-label={this.saveLabel}\n                onDsClick={(event: CustomEvent<MouseEvent>) =>\n                  this.emitAction('save', event.detail)\n                }\n              />,\n            ]\n          )}\n          </div>\n        </header>\n        <div class=\"card-setting__body\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

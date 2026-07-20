@@ -118,7 +118,7 @@ export class MessageComposer {
                 <ds-button-filled
                   class="message-composer__action"
                   variant="icon"
-                  icon={this.streaming ? 'Pause' : 'PaperplaneSend'}
+                  icon={this.streaming ? 'SquareFilled' : 'ArrowUp'}
                   intent={this.streaming ? 'neutral' : this.submitIntent}
                   size="md"
                   rounded

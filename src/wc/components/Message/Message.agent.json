@@ -7,7 +7,7 @@
   "tag": "ds-message",
   "audience": "general",
   "status": "experimental",
-  "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+  "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and header, footer, or action accessory regions.",
   "useWhen": [
     "A transcript contains messages that need consistent incoming, outgoing, or system layout."
   ],
@@ -16,10 +16,11 @@
   "patterns": ["pattern:conversation"],
   "accessibility": [
     "Author and time metadata remain textual when they are necessary to interpret the transcript.",
-    "Delivery failure must be expressed in text rather than color alone."
+    "Delivery failure uses negative Failed to send text in the footer while the message bubble keeps its normal outgoing treatment."
   ],
   "states": [
     "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+    "Visible author, bubble content, and timestamp or delivery footer use consistent 4px vertical gaps.",
     "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label.",
     "Set showAuthor false only when the product makes participant and assistant roles visually self-evident; continue passing author so the accessible message label remains specific."
   ],

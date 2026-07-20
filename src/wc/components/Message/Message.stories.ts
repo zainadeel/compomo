@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-message.js';
 import '../../../../dist/components/ds-message-bubble.js';
-import '../../../../dist/components/ds-avatar.js';
 
 export default { title: 'Conversation/Message row', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
@@ -10,7 +9,6 @@ type Story = StoryObj;
 export const Incoming: Story = {
   render: () => html`
     <ds-message message-id="one" direction="incoming" author="Avery" timestamp="9:41 AM">
-      <ds-avatar slot="avatar" icon="Person" label="Direct chat"></ds-avatar>
       <ds-message-bubble variant="secondary"
         >Can you send the revised arrival window?</ds-message-bubble
       >
@@ -33,6 +31,22 @@ export const Outgoing: Story = {
   `,
 };
 
+export const FailedOutgoing: Story = {
+  name: 'Failed outgoing delivery',
+  render: () => html`
+    <ds-message
+      message-id="failed"
+      direction="outgoing"
+      author="You"
+      .showAuthor=${false}
+      timestamp="9:45 AM"
+      delivery-state="failed"
+    >
+      <ds-message-bubble variant="primary">I’ll confirm it now.</ds-message-bubble>
+    </ds-message>
+  `,
+};
+
 export const Grouped: Story = {
   render: () => html`
     <div style="display:grid; gap:var(--dimension-space-150); width:min(600px, 90vw);">
@@ -43,7 +57,6 @@ export const Grouped: Story = {
           author="Avery"
           group-position="first"
         >
-          <ds-avatar slot="avatar" icon="Person" label="Direct chat"></ds-avatar>
           <ds-message-bubble variant="secondary">The route is updated.</ds-message-bubble>
         </ds-message>
         <ds-message

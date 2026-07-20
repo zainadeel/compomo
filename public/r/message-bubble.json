@@ -15,7 +15,7 @@
       "status": "experimental",
       "summary": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
       "useWhen": [
-        "Message content needs a primary, secondary, ghost, or error surface within a Message row.",
+        "Message content needs a primary, secondary, or ghost surface within a Message row.",
         "Plain incoming or outgoing message copy should use the shared body-medium regular typography recipe without application styling."
       ],
       "avoidWhen": [
@@ -30,7 +30,7 @@
         "pattern:conversation"
       ],
       "accessibility": [
-        "Surface styling does not add semantics; meaningful error or status copy belongs in message content or metadata."
+        "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
       ],
       "responsiveBehavior": [
         "The bubble wraps content and allows wide ghost responses to use more transcript width."
@@ -46,7 +46,7 @@
       "props": {
         "variant": {
           "type": "MessageBubbleVariant",
-          "resolvedType": "\"error\" | \"ghost\" | \"primary\" | \"secondary\"",
+          "resolvedType": "\"ghost\" | \"primary\" | \"secondary\"",
           "attribute": "variant",
           "default": "'secondary'",
           "required": false,
@@ -60,7 +60,7 @@
     "props": {
       "variant": {
         "type": "MessageBubbleVariant",
-        "resolvedType": "\"error\" | \"ghost\" | \"primary\" | \"secondary\"",
+        "resolvedType": "\"ghost\" | \"primary\" | \"secondary\"",
         "attribute": "variant",
         "default": "'secondary'",
         "required": false,
@@ -93,7 +93,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^3.1.1",
-          "@ds-mo/icons ^6.2.0"
+          "@ds-mo/icons ^6.3.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
@@ -107,12 +107,12 @@
   "files": [
     {
       "path": "src/wc/components/MessageBubble/MessageBubble.css",
-      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n:host(.message-bubble--ghost) {\n  display: block;\n  max-width: 100%;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding-block: var(--dimension-space-100);\n  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--primary) .message-bubble {\n  background: var(--color-translucent-translucent);\n  color: var(--color-foreground-primary);\n}\n\n:host(.message-bubble--secondary) .message-bubble {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--ghost) .message-bubble {\n  padding-inline: 0;\n  background: transparent;\n  border-radius: 0;\n}\n\n:host(.message-bubble--error) .message-bubble {\n  background: var(--color-background-faint-negative);\n  color: var(--color-foreground-bold-negative);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-bold-negative);\n}\n",
+      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n:host(.message-bubble--ghost) {\n  display: block;\n  max-width: 100%;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding-block: var(--dimension-space-100);\n  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--primary) .message-bubble {\n  background: var(--color-translucent-translucent);\n  color: var(--color-foreground-primary);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--secondary) .message-bubble {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--ghost) .message-bubble {\n  padding-inline: 0;\n  background: transparent;\n  border-radius: 0;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/MessageBubble/MessageBubble.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost' | 'error';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'secondary';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\"><slot /></div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'secondary';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\"><slot /></div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

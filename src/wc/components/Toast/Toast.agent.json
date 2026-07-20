@@ -1,0 +1,101 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-toast",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-toast",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Application-level floating notification system with a global manager, queued bottom-end stack, anchored feedback, actions, promise states, priority announcements, pauseable timers, keyboard access, and swipe dismissal.",
+  "useWhen": [
+    "A completed or failed operation needs brief non-blocking feedback without moving page content.",
+    "An application needs one coordinated notification queue that can be triggered outside the current component tree.",
+    "A short-lived undo or recovery action belongs directly with transient feedback.",
+    "Contextual feedback such as Copy confirmation should appear near the control that caused it."
+  ],
+  "avoidWhen": [
+    "The message must remain visible as part of page content or contains information users need later.",
+    "The user must make a decision before continuing; use Modal for a blocking workflow.",
+    "Validation belongs to a specific field or form section; keep the error adjacent to that content.",
+    "The notification would contain long prose, several actions, navigation, or a complete workflow.",
+    "Repeated background events would create a noisy stream instead of one updated or deduplicated toast."
+  ],
+  "alternatives": [
+    {
+      "when": "The user must respond before continuing or an irreversible action needs confirmation.",
+      "component": "component:ds-modal",
+      "reason": "Modal owns blocking focus containment and explicit decision actions."
+    },
+    {
+      "when": "A form control needs persistent validation or supporting guidance.",
+      "component": "component:ds-field",
+      "reason": "Field keeps actionable feedback associated with the control that needs correction."
+    },
+    {
+      "when": "A compact status must remain visible in the page hierarchy.",
+      "component": "component:ds-tag",
+      "reason": "Tag represents persistent static metadata rather than transient feedback."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-filled",
+    "component:ds-button-unfilled",
+    "component:ds-modal",
+    "component:ds-field"
+  ],
+  "accessibility": [
+    "Mount one ds-toast near the application root. New notifications never move focus.",
+    "Provide a concise title, description, or both. Do not place the only recovery instructions in an automatically expiring toast.",
+    "Use low priority for ordinary feedback. Reserve high priority for urgent interruptions that warrant assertive announcement.",
+    "F6 moves focus into the Notifications region; Escape dismisses the focused toast and focus returns to a surviving toast or the previous control.",
+    "Timers pause while users hover, focus, swipe, or leave the document, preserving the remaining reading time.",
+    "Use timeout 0 for feedback that must remain until explicitly dismissed. Keep action labels concise and uniquely understandable.",
+    "Anchored feedback supplements the triggering control but does not replace its accessible name, state, or persistent result.",
+    "Do not include secrets, customer PII, or sensitive operational details in transient notification text."
+  ],
+  "states": [
+    "The manager owns add, ID-based upsert, update, close, closeAll, and promise transitions. The component renders the manager snapshot.",
+    "Loading promise records remain persistent until the same id updates to success or error and begins its resulting timeout.",
+    "Only the newest records up to the limit are visible in the global stack. The collapsed trail insets each successive toast by 8px per side; hover or keyboard focus expands all visible records to full width. Older records remain mounted and inert until promoted.",
+    "All timers pause together on hover, focus, touch swipe, window blur, or hidden-document state and resume from their exact remainder.",
+    "Closing records remain rendered through exit motion before removal callbacks and dsToastRemove.",
+    "One optional bordered unfilled action sits below the text at bottom-left, emits dsToastAction, and runs the supplied callback without dismissing automatically.",
+    "Swipe state exposes movement and direction hooks; down and right are the default dismissal directions.",
+    "Anchored records use trigger-relative positioning and do not consume the global stack limit."
+  ],
+  "responsiveBehavior": [
+    "The global stack stays at the viewport bottom-end with token-based inset and never exceeds the available viewport width.",
+    "Anchored toasts flip on their placement axis and clamp to viewport padding when the preferred side does not fit.",
+    "The owner does not create separate mobile and desktop managers; one queue preserves ordering across responsive layouts.",
+    "Pointer swipe remains optional input. Close and action controls retain keyboard access through the notification region."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Import ds-toast once and call toastManager from @ds-mo/ui/toast. Assign a custom manager and swipeDirections through JavaScript properties.",
+      "Mount one ds-toast per manager; a second connected viewport for the same manager remains inactive."
+    ],
+    "react": [
+      "Render one DsToast near the application root and import toastManager or createToastManager from @ds-mo/ui/toast.",
+      "Pass custom manager, action callbacks, data, positioner anchors, and swipe directions as properties rather than string attributes."
+    ],
+    "angular": [
+      "Import DsToast once near the application root and import toastManager or createToastManager from @ds-mo/ui/toast.",
+      "Use property binding for manager, action callbacks, data, positioner anchors, and swipeDirections."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Toast/Toast.stories.ts"
+    },
+    {
+      "label": "Manager unit coverage",
+      "path": "tests/toast-manager.test.ts"
+    },
+    {
+      "label": "Cross-browser behavior coverage",
+      "path": "tests/e2e/toast.spec.ts"
+    }
+  ]
+}

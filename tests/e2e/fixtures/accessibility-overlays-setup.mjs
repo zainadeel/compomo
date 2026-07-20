@@ -1,10 +1,14 @@
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-modal.js';
+import '/dist/components/ds-button-filled.js';
+import '/dist/components/ds-button-unfilled.js';
 import '/dist/components/ds-shell-gradient-picker.js';
 
 await Promise.all([
   customElements.whenDefined('ds-menu'),
   customElements.whenDefined('ds-modal'),
+  customElements.whenDefined('ds-button-filled'),
+  customElements.whenDefined('ds-button-unfilled'),
   customElements.whenDefined('ds-shell-gradient-picker'),
 ]);
 
@@ -37,6 +41,14 @@ richMenu.addEventListener('dsClose', () => richAnchor.setAttribute('aria-expande
 
 const modalTrigger = document.getElementById('modal-trigger');
 const modal = document.getElementById('modal');
+window.__modalCloseReasons = [];
+window.__modalAfterClose = 0;
+modal.addEventListener('dsClose', event => {
+  window.__modalCloseReasons.push(event.detail.reason);
+});
+modal.addEventListener('dsAfterClose', () => {
+  window.__modalAfterClose += 1;
+});
 modalTrigger.addEventListener('click', () => {
   modal.open = true;
 });

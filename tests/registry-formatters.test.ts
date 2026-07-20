@@ -30,7 +30,7 @@ test('formats compiler API, framework imports, and complete intent', () => {
 });
 
 test('labels missing semantic intent without failing component formatting', () => {
-  const output = formatComponentDetail(loadComponent('banner'));
+  const output = formatComponentDetail(loadComponent('card-data-viz-donut'));
   assert.match(output, /Semantic guidance is migration-pending/);
   assert.doesNotMatch(output, /\nundefined\n/);
 });

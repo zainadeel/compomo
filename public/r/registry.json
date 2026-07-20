@@ -13,7 +13,7 @@
     "peerDependencies": {
       "required": [
         "@ds-mo/tokens ^3.1.1",
-        "@ds-mo/icons ^6.2.0"
+        "@ds-mo/icons ^6.3.0"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React and Angular adapters are included."
@@ -765,69 +765,6 @@
       ]
     },
     {
-      "name": "banner",
-      "title": "Banner",
-      "description": "Intent-colored message bar. Supports floating toast mode with auto-dismiss and fade-out animation.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/banner",
-        "source": "src/wc/components/Banner/Banner.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "contrast": {
-            "type": "BannerContrast",
-            "required": false
-          },
-          "dismissLabel": {
-            "type": "string",
-            "required": false
-          },
-          "floating": {
-            "type": "boolean",
-            "required": false
-          },
-          "header": {
-            "type": "boolean",
-            "required": false
-          },
-          "intent": {
-            "type": "BannerIntent",
-            "required": false
-          },
-          "message": {
-            "type": "string",
-            "required": false
-          },
-          "showDismiss": {
-            "type": "boolean",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsDismiss",
-            "detail": "void"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-banner",
-          "react": "DsBanner",
-          "angular": "DsBanner"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "bar-nav",
       "title": "BarNav",
       "description": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
@@ -1345,48 +1282,6 @@
       ]
     },
     {
-      "name": "card",
-      "title": "Card",
-      "description": "General and settings-compatible card chrome — width + matching min-height tokens, header (title + actions slot), and a flex body that fills leftover space.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card",
-        "source": "src/wc/components/Card/Card.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
-        "props": {
-          "appearance": {
-            "type": "CardAppearance",
-            "required": false
-          },
-          "cardWidth": {
-            "type": "CardWidth",
-            "required": false
-          },
-          "heading": {
-            "type": "string",
-            "required": true
-          }
-        },
-        "events": [],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-card",
-          "react": "DsCard",
-          "angular": "DsCard"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "card-data-viz-donut",
       "title": "CardDataVizDonut",
       "description": "Donut data-viz card on dedicated ds-card-shell-data-viz chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
@@ -1437,15 +1332,101 @@
     {
       "name": "card-setting",
       "title": "CardSetting",
-      "description": "Settings page section shell composed on ds-card with view/edit header actions. Edit state is controlled by the parent.",
+      "description": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-setting",
         "source": "src/wc/components/CardSetting/CardSetting.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+          "useWhen": [
+            "A settings page needs a persistent section that switches between read-only and editable content.",
+            "The parent can control one active editing section and owns validation, persistence, cancellation, and body content.",
+            "The section uses the standard Pencil, Save, and Cancel header workflow."
+          ],
+          "avoidWhen": [
+            "The surface contains a chart, legend, metric visualization, or other data-visualization composition.",
+            "The content is a general-purpose read-only card with no settings edit workflow.",
+            "The task must block the rest of the interface or requires confirmation in a modal.",
+            "Several sections must remain editable at the same time.",
+            "The header requires custom actions beyond the fixed edit-save-cancel workflow."
+          ],
+          "alternatives": [
+            {
+              "when": "The surface contains a chart or specialized data-visualization composition.",
+              "component": "component:ds-card-shell-data-viz",
+              "reason": "CardShellDataViz owns the independently evolving data-visualization shell contract."
+            },
+            {
+              "when": "The task must block the interface for one focused decision or short workflow.",
+              "component": "component:ds-modal",
+              "reason": "Modal provides top-layer focus containment and explicit blocking-task dismissal."
+            },
+            {
+              "when": "Only one labeled form control is needed without a section surface.",
+              "component": "component:ds-field",
+              "reason": "Field provides the control label, supporting copy, and validation relationship without card chrome."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-input",
+            "component:ds-select",
+            "component:ds-switch",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
+            "Edit, Save, and Cancel are icon-only controls with localized accessible labels supplied by the matching label props. When several sections share a page, include the section name in each label.",
+            "The owner must expose persistent field labels, descriptions, and validation messages inside the body.",
+            "Save must not remove validation errors or exit editing until the parent accepts the action and updates the controlled editing state.",
+            "Cancel must restore or retain the last persisted values according to product policy before the parent exits editing.",
+            "Keep only one CardSetting in edit mode so keyboard and screen-reader users have one unambiguous set of Save and Cancel actions.",
+            "When another section requests editing, resolve dirty changes in the current section before switching; never silently discard user input."
+          ],
+          "states": [
+            "The editing property is controlled; CardSetting never changes it internally.",
+            "dsAction emits edit, save, or cancel with the original pointer event. The parent decides whether and when editing changes.",
+            "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
+            "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
+            "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
+            "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing."
+          ],
+          "responsiveBehavior": [
+            "Choose sm, md, or lg from the parent layout; each width uses its matching token-based minimum height.",
+            "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
+            "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set editing as a JavaScript property and inspect dsAction.detail.action before updating the controlled state.",
+              "When one section emits edit, update every sibling CardSetting so only the requested section remains editing."
+            ],
+            "react": [
+              "Pass editing from parent state and inspect onDsAction event detail; do not treat Save as successful until validation and persistence complete.",
+              "Store one active section id and derive each CardSetting editing prop from that id."
+            ],
+            "angular": [
+              "Bind [editing] and inspect $event.detail.action from (dsAction); do not treat Save as successful until validation and persistence complete.",
+              "Store one active section id and derive each CardSetting editing binding from that id."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook controlled and single-edit examples",
+              "path": "src/wc/components/CardSetting/CardSetting.stories.ts"
+            },
+            {
+              "label": "Cross-browser shell and action coverage",
+              "path": "tests/e2e/card-setting.spec.ts"
+            }
+          ]
+        },
         "props": {
           "cancelLabel": {
             "type": "string",
@@ -1474,8 +1455,8 @@
         },
         "events": [
           {
-            "name": "dsEditingChange",
-            "detail": "boolean"
+            "name": "dsAction",
+            "detail": "CardSettingActionDetail"
           }
         ],
         "slots": [],
@@ -1492,13 +1473,13 @@
       "registryDependencies": [
         "button-filled",
         "button-unfilled",
-        "card"
+        "text"
       ]
     },
     {
       "name": "card-shell-data-viz",
       "title": "CardShellDataViz",
-      "description": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts will evolve independently from general and settings cards.",
+      "description": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts evolve independently from settings sections.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1509,22 +1490,22 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts will evolve independently from general and settings cards.",
+          "summary": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts evolve independently from settings sections.",
           "useWhen": [
             "A card contains a chart, data-visualization legend, metric visualization, or a specialized data-viz composition.",
             "A data-visualization card needs a heading and optional header actions while retaining a flexible body for its composing component.",
-            "Several chart-specific cards need one shell boundary that can evolve without changing general or settings cards."
+            "Several chart-specific cards need one shell boundary that can evolve without changing settings sections."
           ],
           "avoidWhen": [
             "The card contains settings or editable form content; use the settings card composition.",
-            "The surface is ordinary content without data visualization; use the general card shell.",
+            "The surface is ordinary content without data visualization; use a product-owned layout rather than data-viz card chrome.",
             "The shell would own chart-specific layout, hover synchronization, legends, or empty-state policy; keep those in the composing data-viz card."
           ],
           "alternatives": [
             {
-              "when": "The card contains general content rather than data visualization.",
-              "component": "component:ds-card",
-              "reason": "Card owns the existing general and settings-compatible chrome contract."
+              "when": "The surface contains editable settings rather than data visualization.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns the persistent controlled settings-section workflow."
             },
             {
               "when": "The composition is the standard donut chart plus synchronized legend.",
@@ -2276,7 +2257,7 @@
           ],
           "states": [
             "Rows reuse the md choice-item label/subtext recipe used by Menu, including 6px row padding, 2px text inset, and the shared content gap. The enclosing conversation-list scroll region supplies the larger 8px outer container padding.",
-            "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording.",
+            "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording. A busy row pairs its body-small status with the sm 16px Loader at an 8px gap.",
             "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
             "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
             "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
@@ -2448,9 +2429,9 @@
           ],
           "alternatives": [
             {
-              "when": "Content needs an enclosing surface and outer boundary.",
-              "component": "component:ds-card",
-              "reason": "Card owns container chrome, structure, and edge treatment."
+              "when": "Editable settings need an enclosing section surface and outer boundary.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns settings-section chrome, structure, and edge treatment."
             },
             {
               "when": "A static compact label is being used to name a group.",
@@ -2459,7 +2440,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-card",
+            "component:ds-card-setting",
             "component:ds-menu",
             "component:ds-panel-sub-nav"
           ],
@@ -3490,7 +3471,7 @@
     {
       "name": "message",
       "title": "Message",
-      "description": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+      "description": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and header, footer, or action accessory regions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3501,7 +3482,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and accessory regions.",
+          "summary": "Channel-neutral message row owning direction, grouping, author, time, delivery metadata, and header, footer, or action accessory regions.",
           "useWhen": [
             "A transcript contains messages that need consistent incoming, outgoing, or system layout."
           ],
@@ -3517,10 +3498,11 @@
           ],
           "accessibility": [
             "Author and time metadata remain textual when they are necessary to interpret the transcript.",
-            "Delivery failure must be expressed in text rather than color alone."
+            "Delivery failure uses negative Failed to send text in the footer while the message bubble keeps its normal outgoing treatment."
           ],
           "states": [
             "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+            "Visible author, bubble content, and timestamp or delivery footer use consistent 4px vertical gaps.",
             "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label.",
             "Set showAuthor false only when the product makes participant and assistant roles visually self-evident; continue passing author so the accessible message label remains specific."
           ],
@@ -3604,7 +3586,7 @@
           "status": "experimental",
           "summary": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
           "useWhen": [
-            "Message content needs a primary, secondary, ghost, or error surface within a Message row.",
+            "Message content needs a primary, secondary, or ghost surface within a Message row.",
             "Plain incoming or outgoing message copy should use the shared body-medium regular typography recipe without application styling."
           ],
           "avoidWhen": [
@@ -3619,7 +3601,7 @@
             "pattern:conversation"
           ],
           "accessibility": [
-            "Surface styling does not add semantics; meaningful error or status copy belongs in message content or metadata."
+            "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
           ],
           "responsiveBehavior": [
             "The bubble wraps content and allows wide ghost responses to use more transcript width."
@@ -3850,16 +3832,117 @@
     {
       "name": "modal",
       "title": "Modal",
-      "description": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
+      "description": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
         "storybook": "https://zainadeel.github.io/compomo/?path=/story/modal",
         "source": "src/wc/components/Modal/Modal.tsx",
-        "intentStatus": "migration-pending",
-        "intent": null,
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
+          "useWhen": [
+            "The user must confirm or cancel one focused decision before returning to the underlying interface.",
+            "A short blocking task or compact form needs dialog semantics, focus containment, and explicit completion actions.",
+            "The content can be safely dismissed through Close, Escape, or the backdrop."
+          ],
+          "avoidWhen": [
+            "The message is non-blocking feedback or a transient status update.",
+            "The interaction is a contextual list of commands anchored to a trigger.",
+            "The workflow is multi-step, long-form, or requires substantial navigation.",
+            "Dismissal would lose work or leave an irreversible operation in an unsafe state.",
+            "A second modal would be opened over an existing modal."
+          ],
+          "alternatives": [
+            {
+              "when": "The user needs non-blocking feedback or a transient status message.",
+              "component": "component:ds-toast",
+              "reason": "Toast communicates transient status without trapping focus or blocking the page."
+            },
+            {
+              "when": "A trigger reveals a short contextual list of commands.",
+              "component": "component:ds-menu",
+              "reason": "Menu provides anchored command semantics without creating a blocking dialog."
+            },
+            {
+              "when": "Editable settings should remain visible without blocking the rest of the interface.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting provides a persistent controlled settings workflow without modal focus containment."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-field",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
+            "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
+            "Opening the native modal dialog moves focus to the header Close action, traps Tab navigation inside the top layer, and makes outside content inert.",
+            "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
+            "After exit motion completes, the native dialog leaves the top layer, focus returns to the previously focused element, and dsAfterClose emits.",
+            "Use visible label-only footer buttons. Keep at most two actions: one bold filled primary action followed by one bordered unfilled action, or two bordered unfilled actions.",
+            "Use negative intent for a filled destructive action and state the irreversible consequence in the content.",
+            "Do not open a modal from another modal; keep one blocking decision in focus at a time."
+          ],
+          "states": [
+            "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
+            "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
+            "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
+            "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",
+            "The owner performs save, delete, cancel, and other product consequences before or while closing the modal."
+          ],
+          "responsiveBehavior": [
+            "Choose the smallest sm, md, or lg width that fits the focused task; the top-layer dialog clamps to the viewport with token-based outer space.",
+            "Content scrolls independently when needed while the 64px header and optional 64px footer remain fixed.",
+            "Avoid layouts whose minimum content width exceeds the narrow viewport clamp.",
+            "The native top layer escapes transformed ancestors, clipping containers, and application stacking contexts without moving slotted content."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set open as a JavaScript property when controlling the modal; inspect dsClose.detail.reason and use dsAfterClose for cleanup that must wait for exit motion and focus restoration.",
+              "Connect the most relevant slotted explanatory text through aria-describedby.",
+              "Footer actions are slotted application-owned controls and must implement their own product consequence."
+            ],
+            "react": [
+              "Pass open to DsModal, inspect onDsClose event detail, and use onDsAfterClose only for cleanup after exit motion and focus restoration.",
+              "Connect the most relevant slotted explanatory text through aria-describedby.",
+              "Assign footer controls with slot=\"footer\" and handle each action before updating open."
+            ],
+            "angular": [
+              "Bind [open], inspect $event.detail from (dsClose), and use (dsAfterClose) only for cleanup after exit motion and focus restoration.",
+              "Connect the most relevant slotted explanatory text through aria-describedby.",
+              "Assign footer controls with slot=\"footer\" and handle each action before updating open."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook confirmation and footer examples",
+              "path": "src/wc/components/Modal/Modal.stories.ts"
+            },
+            {
+              "label": "Cross-browser focus, dismissal, geometry, and accessibility coverage",
+              "path": "tests/e2e/accessibility-overlays.spec.ts"
+            },
+            {
+              "label": "Reduced-motion overlay coverage",
+              "path": "tests/e2e/reduced-motion.spec.ts"
+            }
+          ]
+        },
         "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "closeAriaLabel": {
+            "type": "string",
+            "required": false
+          },
           "heading": {
             "type": "string",
             "required": true
@@ -3871,16 +3954,16 @@
           "open": {
             "type": "boolean",
             "required": false
-          },
-          "subtitle": {
-            "type": "string | undefined",
-            "required": false
           }
         },
         "events": [
           {
-            "name": "dsClose",
+            "name": "dsAfterClose",
             "detail": "void"
+          },
+          {
+            "name": "dsClose",
+            "detail": "ModalCloseDetail"
           }
         ],
         "slots": [],
@@ -3895,6 +3978,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "button-unfilled",
         "text"
       ]
     },
@@ -4184,7 +4268,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-card",
+            "component:ds-card-setting",
             "component:ds-text"
           ],
           "accessibility": [
@@ -5677,7 +5761,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-card",
+            "component:ds-card-setting",
             "component:ds-text",
             "component:ds-icon"
           ],
@@ -6458,7 +6542,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-card",
+            "component:ds-card-setting",
             "component:ds-text",
             "component:ds-icon",
             "component:ds-menu"
@@ -6612,7 +6696,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-icon",
-            "component:ds-card",
+            "component:ds-card-setting",
             "component:ds-field",
             "component:ds-button-filled"
           ],
@@ -6729,6 +6813,168 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
+    },
+    {
+      "name": "toast",
+      "title": "Toast",
+      "description": "Application-level floating notification system with a global manager, queued bottom-end stack, anchored feedback, actions, promise states, priority announcements, pauseable timers, keyboard access, and swipe dismissal.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/toast",
+        "source": "src/wc/components/Toast/Toast.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Application-level floating notification system with a global manager, queued bottom-end stack, anchored feedback, actions, promise states, priority announcements, pauseable timers, keyboard access, and swipe dismissal.",
+          "useWhen": [
+            "A completed or failed operation needs brief non-blocking feedback without moving page content.",
+            "An application needs one coordinated notification queue that can be triggered outside the current component tree.",
+            "A short-lived undo or recovery action belongs directly with transient feedback.",
+            "Contextual feedback such as Copy confirmation should appear near the control that caused it."
+          ],
+          "avoidWhen": [
+            "The message must remain visible as part of page content or contains information users need later.",
+            "The user must make a decision before continuing; use Modal for a blocking workflow.",
+            "Validation belongs to a specific field or form section; keep the error adjacent to that content.",
+            "The notification would contain long prose, several actions, navigation, or a complete workflow.",
+            "Repeated background events would create a noisy stream instead of one updated or deduplicated toast."
+          ],
+          "alternatives": [
+            {
+              "when": "The user must respond before continuing or an irreversible action needs confirmation.",
+              "component": "component:ds-modal",
+              "reason": "Modal owns blocking focus containment and explicit decision actions."
+            },
+            {
+              "when": "A form control needs persistent validation or supporting guidance.",
+              "component": "component:ds-field",
+              "reason": "Field keeps actionable feedback associated with the control that needs correction."
+            },
+            {
+              "when": "A compact status must remain visible in the page hierarchy.",
+              "component": "component:ds-tag",
+              "reason": "Tag represents persistent static metadata rather than transient feedback."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-modal",
+            "component:ds-field"
+          ],
+          "accessibility": [
+            "Mount one ds-toast near the application root. New notifications never move focus.",
+            "Provide a concise title, description, or both. Do not place the only recovery instructions in an automatically expiring toast.",
+            "Use low priority for ordinary feedback. Reserve high priority for urgent interruptions that warrant assertive announcement.",
+            "F6 moves focus into the Notifications region; Escape dismisses the focused toast and focus returns to a surviving toast or the previous control.",
+            "Timers pause while users hover, focus, swipe, or leave the document, preserving the remaining reading time.",
+            "Use timeout 0 for feedback that must remain until explicitly dismissed. Keep action labels concise and uniquely understandable.",
+            "Anchored feedback supplements the triggering control but does not replace its accessible name, state, or persistent result.",
+            "Do not include secrets, customer PII, or sensitive operational details in transient notification text."
+          ],
+          "states": [
+            "The manager owns add, ID-based upsert, update, close, closeAll, and promise transitions. The component renders the manager snapshot.",
+            "Loading promise records remain persistent until the same id updates to success or error and begins its resulting timeout.",
+            "Only the newest records up to the limit are visible in the global stack. The collapsed trail insets each successive toast by 8px per side; hover or keyboard focus expands all visible records to full width. Older records remain mounted and inert until promoted.",
+            "All timers pause together on hover, focus, touch swipe, window blur, or hidden-document state and resume from their exact remainder.",
+            "Closing records remain rendered through exit motion before removal callbacks and dsToastRemove.",
+            "One optional bordered unfilled action sits below the text at bottom-left, emits dsToastAction, and runs the supplied callback without dismissing automatically.",
+            "Swipe state exposes movement and direction hooks; down and right are the default dismissal directions.",
+            "Anchored records use trigger-relative positioning and do not consume the global stack limit."
+          ],
+          "responsiveBehavior": [
+            "The global stack stays at the viewport bottom-end with token-based inset and never exceeds the available viewport width.",
+            "Anchored toasts flip on their placement axis and clamp to viewport padding when the preferred side does not fit.",
+            "The owner does not create separate mobile and desktop managers; one queue preserves ordering across responsive layouts.",
+            "Pointer swipe remains optional input. Close and action controls retain keyboard access through the notification region."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Import ds-toast once and call toastManager from @ds-mo/ui/toast. Assign a custom manager and swipeDirections through JavaScript properties.",
+              "Mount one ds-toast per manager; a second connected viewport for the same manager remains inactive."
+            ],
+            "react": [
+              "Render one DsToast near the application root and import toastManager or createToastManager from @ds-mo/ui/toast.",
+              "Pass custom manager, action callbacks, data, positioner anchors, and swipe directions as properties rather than string attributes."
+            ],
+            "angular": [
+              "Import DsToast once near the application root and import toastManager or createToastManager from @ds-mo/ui/toast.",
+              "Use property binding for manager, action callbacks, data, positioner anchors, and swipeDirections."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Toast/Toast.stories.ts"
+            },
+            {
+              "label": "Manager unit coverage",
+              "path": "tests/toast-manager.test.ts"
+            },
+            {
+              "label": "Cross-browser behavior coverage",
+              "path": "tests/e2e/toast.spec.ts"
+            }
+          ]
+        },
+        "props": {
+          "closeLabel": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "limit": {
+            "type": "number",
+            "required": false
+          },
+          "manager": {
+            "type": "ToastManager",
+            "required": false
+          },
+          "swipeDirections": {
+            "type": "ToastSwipeDirection[]",
+            "required": false
+          },
+          "timeout": {
+            "type": "number | string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsToastAction",
+            "detail": "ToastActionEventDetail"
+          },
+          {
+            "name": "dsToastClose",
+            "detail": "ToastCloseEventDetail"
+          },
+          {
+            "name": "dsToastRemove",
+            "detail": "ToastEventDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-toast",
+          "react": "DsToast",
+          "angular": "DsToast"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text"
+      ]
     },
     {
       "name": "tooltip",
