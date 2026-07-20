@@ -4,29 +4,26 @@ on:
   pull_request_target:
     types: [opened, edited, synchronize, reopened]
 
-permissions:
-  pull-requests: read
+permissions: {}
 
 jobs:
   validate:
     name: Validate PR title
     runs-on: ubuntu-latest
     steps:
-      - uses: amannn/action-semantic-pull-request@v6
+      - name: Validate conventional title
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          types: |
-            feat
-            fix
-            perf
-            revert
-            docs
-            style
-            refactor
-            test
-            build
-            ci
-            chore
-          subjectPattern: ^(?![A-Z]).+$
-          subjectPatternError: Subject must start with a lowercase letter.
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|perf|revert|docs|style|refactor|test|build|ci|chore)(\([^)]+\))?!?: (.+)$'
+
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            echo "::error::PR title must use an allowed conventional-commit type, optional scope, and subject."
+            exit 1
+          fi
+
+          subject="${BASH_REMATCH[3]}"
+          if [[ "$subject" =~ ^[A-Z] ]]; then
+            echo "::error::Subject must start with a lowercase letter."
+            exit 1
+          fi
