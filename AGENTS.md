@@ -32,7 +32,7 @@ src/
         ButtonFilled.tsx
         ButtonFilled.css
         ButtonFilled.stories.ts
-      ...               # All ported components (Badge, Banner, …)
+      ...               # All ported components (Badge, Toast, …)
     components.d.ts     # Auto-generated Stencil type declarations — do not edit
   angular/              # Auto-generated Angular proxies (proxies.ts, index.ts) — do not edit
   react/                # Auto-generated React wrappers — do not edit
@@ -105,8 +105,9 @@ The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 5. Runs Angular output target → regenerates `src/angular/`, verifies the proxy inventory, and compiles it to `dist/angular/`
 6. Runs React output target → regenerates `src/react/`, verifies the proxy inventory, and compiles it to `dist/react/`; the inventory is verified again at the end of the build
 7. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
-8. Regenerates `public/r/` from compiler facts + component intent and emits component and executable-pattern manifests at `dist/agent.json` and `dist/agent-patterns.json`
-9. Bundles the local stdio MCP executable and its generated registry snapshot into `dist/mcp/` and `dist/mcp-data/`; consumers run it through the published `compomo-mcp` binary
+8. Compiles the framework-neutral toast manager from `src/wc/toast/` to the public `@ds-mo/ui/toast` subpath
+9. Regenerates `public/r/` from compiler facts + component intent and emits component and executable-pattern manifests at `dist/agent.json` and `dist/agent-patterns.json`
+10. Bundles the local stdio MCP executable and its generated registry snapshot into `dist/mcp/` and `dist/mcp-data/`; consumers run it through the published `compomo-mcp` binary
 
 There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
@@ -128,6 +129,7 @@ Package `exports`:
     "types": "./dist/types/components.d.ts"
   },
   "./shell": { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
+ "./toast": { "import": "./dist/lib/toast/index.js", "types": "./dist/lib/toast/index.d.ts" },
   "./utils": { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
 }
@@ -308,9 +310,9 @@ export class MyComponent {
 - Panel-tool search keeps its 1px tertiary row divider unchanged while the input is focused. The divider belongs to the 48px container, not the 32px input, so it must not be promoted as an input focus boundary.
 - When a tool search also filters its results, enable its optional filter trigger and pair it with an application-owned `ds-menu`. The 32px search control, 16px vertical divider, and borderless 32px Filter action keep 8px gaps; the product owns filter labels, selected state, matching policy, and result-empty copy.
 - Panel-tool search is a shrinkable grid/flex item (`min-width: 0`) inside the fixed 300px drawer. A one-column grid that owns it must declare `grid-template-columns: minmax(0, 1fr)`; an implicit `auto` track can expand to the search row's intrinsic width and clip the filter action beneath the tool rail. Its filter trigger must remain fully inside the row with an 8px trailing inset; a long placeholder or inherited min-content width must never push the button under the tool rail. Verify the rendered SVG box, not only the trigger's accessible name or `icon` prop.
-- Conversation history uses the same md choice-row label/subtext padding recipe as Menu. The scroll container changes from Menu's 4px section inset to an 8px outer inset; do not also give conversation rows an 8px bespoke padding. Rows retain the shared 6px md row padding plus the 2px label/subtext inset. Conversation titles are body-medium emphasis—not title-small—and previews are body-small truncated to one line. A positive `unreadCount` renders one dot on the title's right-side action track rather than a visible counter; unread titles use primary foreground and read titles use secondary.
+- Conversation history uses the same md choice-row label/subtext padding recipe as Menu. The scroll container changes from Menu's 4px section inset to an 8px outer inset; do not also give conversation rows an 8px bespoke padding. Rows retain the shared 6px md row padding plus the 2px label/subtext inset. Conversation titles are body-medium emphasis—not title-small—and previews are body-small truncated to one line. A busy preview pairs that body-small status with the sm 16px Loader at an 8px gap. A positive `unreadCount` renders one dot on the title's right-side action track rather than a visible counter; unread titles use primary foreground and read titles use secondary.
 - Put contextual row controls in `ds-conversation-list-item`'s `actions` slot so they remain sibling controls rather than invalid buttons nested inside the row button. A standard chat-options action is a borderless rounded md ButtonUnfilled with the Ellipses icon. The component overlays it at a stable 8px right inset and reveals it on row hover or focus-within; touch layouts keep it visible. The application owns menu items, open state, focus return, pinning, and other product consequences.
-- `ds-message-bubble` owns the default typography for plain incoming and outgoing conversation copy: body-medium regular (14px/20px). Applications compose raw message text inside the bubble and must not add a body-large override. Rich descendants such as `ds-markdown` may own their complete internal type hierarchy, but their ordinary paragraph baseline remains body-medium.
+- `ds-message-bubble` owns the default typography for plain incoming and outgoing conversation copy: body-medium regular (14px/20px). Applications compose raw message text inside the bubble and must not add a body-large override. Rich descendants such as `ds-markdown` may own their complete internal type hierarchy, but their ordinary paragraph baseline remains body-medium. `ds-message` keeps 4px between its visible author, bubble content, and timestamp or delivery footer. Failed outgoing delivery keeps the normal primary bubble and renders negative “Failed to send” metadata in that footer; there is no error bubble variant.
 - `ds-message-composer` begins at two body-medium lines, grows in whole-line increments through six lines, and then scrolls internally. Do not replace this with fixed one-row or arbitrary pixel heights in a consuming application.
 - Put leading composer utilities such as Add in its `tools` slot. Put trailing utilities such as Dictation in its `actions` slot; the built-in Send/Stop action stays last. Agent and person-to-person composers both use the brand submit intent by default—do not use AI color tokens merely to identify an agent channel.
 - When a composer floats over a transcript, place its padded container in `ds-message-scroller`'s `overlay` slot. The scroller measures the overlay, lets messages move behind it, reserves matching live-edge clearance, and positions Scroll to latest 8px above it. Do not recreate this with a fixed bottom padding or a sibling grid row that clips messages at the composer edge.
@@ -562,12 +564,23 @@ Rules:
 - Focus is a ring state, not hover. Keyboard/programmatic focus must not use hover or pressed fills unless the item is actually hovered or pressed.
 - Set `--ds-focus-ring-color` from the surface context instead of hardcoding colors: default app surfaces use `--color-interaction-focus`, navigation chrome uses `--color-navigation-interaction-focus`, and medium/bold/strong/always-dark surfaces use their matching `*-interaction-*-focus` token.
 
+**Toast**
+
+- Mount one `ds-toast` near the application root. It consumes the default `toastManager` from `@ds-mo/ui/toast`; isolated applications may create and property-bind a custom manager with `createToastManager()`. Never mount two toast components for one manager.
+- Toast is floating-only and replaces the former `ds-banner`; there is no persistent inline banner mode. Keep persistent messages in the owning page, form, field, or status composition.
+- The manager owns `add`, ID upsert, `update`, `close`, `closeAll`, and `promise`. Promise loading records remain persistent and update the same ID to success or error.
+- The global stack is bottom-end, newest-first, and limited to three visible records by default. While collapsed, each visible toast behind the frontmost is inset another 8px on both sides; hover or keyboard focus expands every visible toast to full width and its measured vertical offset. Ending toasts contribute zero stack height so the correct surviving toast promotes immediately without a second positional jump. Limited records remain mounted and inert until promoted. Anchored records use trigger-relative positioning and do not consume the global stack limit.
+- Timers pause together on hover, focus, touch swipe, window blur, and document hiding, then resume from their exact remainder. `timeout=0` is persistent. Functional timeout values use `resolveCssTimeMs`; exit cleanup uses `resolveMotionTimeMs`.
+- F6 moves focus into the Notifications region without stealing focus when a toast arrives. Escape closes the focused toast and focus moves to another toast or returns to the previous control. Low priority uses polite announcement; reserve high priority for urgent assertive feedback.
+- Default swipe dismissal supports down and right, ignores interactive descendants, and exposes movement/direction state for styling. Close remains available as an unbordered `ds-button-unfilled` Cross action inset 8px from the surface's top and right edges.
+- Toast surfaces use primary background plus floating elevation. Titles use primary `text-title-small`; descriptions use secondary `text-body-medium`. An optional action sits below the text, bottom-left aligned, as a bordered label-only `ds-button-unfilled`; it never dismisses implicitly. Styling by `type` is deferred to explicit data-state hooks rather than intent-colored surfaces.
+
 **Reduced motion**
 
 - Every infinite animation, spatial/layout transition, transform transition, opacity state transition, and overlay enter/exit animation must define a `@media (prefers-reduced-motion: reduce)` end state in the same stylesheet. `local/require-reduced-motion` warns when this contract is missing.
 - Under reduced motion, stop infinite/decorative animation and make spatial, layout, opacity, and overlay changes immediate. Keep the final visual state; never hide required content merely to avoid motion. `ds-loader` remains a static loading glyph and relies on its status semantics or the owner's `aria-busy`.
 - Short color, background-color, and border-color control transitions may remain. They do not move content and are the intentional tiered-policy exception.
-- JS timers coupled to CSS enter/exit motion must use `resolveMotionTimeMs`; functional delays such as tooltip hover intent and banner auto-dismiss continue to use `resolveCssTimeMs`.
+- JS timers coupled to CSS enter/exit motion must use `resolveMotionTimeMs`; functional delays such as tooltip hover intent and toast auto-dismiss continue to use `resolveCssTimeMs`.
 - Web Animations API and View Transition effects must check `prefersReducedMotion()` and apply the final state without running the decorative reveal.
 - Chrome components emitting `dsChromeTransitionStart` must also settle on `transitioncancel`, zero computed duration, and a computed-duration watchdog so reduced motion cannot strand BarNav overflow coordination.
 
@@ -670,7 +683,10 @@ A list of hoverable rows with visual `gap`/`row-gap` between them has dead space
 In vertical legends, the label yields width first and truncates before the compact value or percentage columns. Values and percentages use tabular numerals and stay inside the row interaction fill. `percentageDecimals` accepts only `1` (default) or `2`; both the minimum and maximum fraction digits are locked to that value so every row uses the same precision while `locale` controls localized number punctuation.
 
 **Data-visualization cards use their own shell boundary.**
-Use `ds-card-shell-data-viz` for every chart, legend, or metric-visualization card; do not compose data-viz surfaces on `ds-card`. The shell owns only data-viz header/actions chrome, token-based width/min-height, and a flexible body. Dedicated compositions such as `ds-card-data-viz-donut` own chart regions, legends, hover synchronization, loading, empty, and error policy. General and settings cards remain on `ds-card`, allowing both shell families to evolve independently.
+Use `ds-card-shell-data-viz` for every chart, legend, or metric-visualization card. The shell owns only data-viz header/actions chrome, token-based width/min-height, and a flexible body. Dedicated compositions such as `ds-card-data-viz-donut` own chart regions, legends, hover synchronization, loading, empty, and error policy. `ds-card-setting` independently owns settings-section chrome; there is no standalone general-purpose `ds-card` primitive.
+
+**Settings cards are controlled single-edit sections.**
+Use `ds-card-setting` only for persistent settings sections with the standard Edit, Save, and Cancel header workflow. The parent owns one active editing section, body composition, value snapshots, validation, persistence, loading, and error consequences. `dsAction` distinguishes `edit`, `save`, and `cancel`; update the controlled `editing` prop only after applying the requested consequence. In particular, keep the section editing while save validation or persistence is pending, exit only after success, and resolve dirty changes before switching to another section rather than silently discarding them. When several sections share a page, give each icon action a localized accessible label that includes its section name. General read-only surfaces remain product-owned layouts rather than using CardSetting as generic card chrome.
 
 ---
 

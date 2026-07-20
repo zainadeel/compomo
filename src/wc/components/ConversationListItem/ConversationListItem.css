@@ -53,7 +53,7 @@
 
 .conversation-list-item__preview-row {
   min-width: 0;
-  gap: var(--dimension-space-050);
+  gap: var(--dimension-space-100);
 }
 
 ds-text.conversation-list-item__title,

@@ -39,7 +39,7 @@ export class CardDataVizDonut {
 
   componentWillRender() {
     // Not `:scope >` — Stencil's scoped slot polyfill relocates slotted children into
-    // region wrappers (and here into nested `ds-card`), so they may not stay direct
+    // region wrappers (and here into nested `ds-card-shell-data-viz`), so they may not stay direct
     // host children across renders.
     this.hasChartSlot = !!this.el.querySelector('[slot="chart"]');
     this.hasLegendSlot = !!this.el.querySelector('[slot="legend"]');

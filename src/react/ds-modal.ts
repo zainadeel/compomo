@@ -11,17 +11,23 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsModalCustomEvent } from "@ds-mo/ui";
+import { type DsModalCustomEvent, type ModalCloseDetail } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsModal as DsModalElement, defineCustomElement as defineDsModal } from "@ds-mo/ui/dist/components/ds-modal.js";
 
-export type DsModalEvents = { onDsClose: EventName<DsModalCustomEvent<void>> };
+export type DsModalEvents = {
+    onDsClose: EventName<DsModalCustomEvent<ModalCloseDetail>>,
+    onDsAfterClose: EventName<DsModalCustomEvent<void>>
+};
 
 export const DsModal: StencilReactComponent<DsModalElement, DsModalEvents, Components.DsModal, 'heading'> = /*@__PURE__*/ createComponent<DsModalElement, DsModalEvents, Components.DsModal, 'heading'>({
     tagName: 'ds-modal',
     elementClass: DsModalElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: { onDsClose: 'dsClose' } as DsModalEvents,
+    events: {
+        onDsClose: 'dsClose',
+        onDsAfterClose: 'dsAfterClose'
+    } as DsModalEvents,
     defineCustomElement: defineDsModal
 });

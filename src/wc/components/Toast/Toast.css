@@ -1,0 +1,180 @@
+:host {
+  display: contents;
+}
+
+.toast-region {
+  position: fixed;
+  inset: 0;
+  z-index: var(--dimension-z-index-floating);
+  pointer-events: none;
+  outline: none;
+}
+
+.toast-viewport {
+  position: absolute;
+  right: var(--dimension-space-200);
+  bottom: var(--dimension-space-200);
+  display: grid;
+  width: min(
+    var(--dimension-card-width-sm),
+    calc(100vw - 2 * var(--dimension-space-200))
+  );
+}
+
+.toast-positioner {
+  grid-area: 1 / 1;
+  align-self: end;
+  justify-self: center;
+  width: 100%;
+  pointer-events: auto;
+  transform: translateY(
+    calc(-1 * var(--toast-index) * var(--dimension-space-100))
+  );
+  transition:
+    transform var(--effect-motion-short-3),
+    width var(--effect-motion-short-3);
+}
+
+.toast-viewport:not([data-expanded]) .toast-positioner {
+  width: calc(
+    100% - 2 * var(--toast-index) * var(--dimension-space-100)
+  );
+}
+
+.toast-viewport[data-expanded] .toast-positioner {
+  transform: translateY(calc(-1 * var(--toast-offset-y)));
+}
+
+.toast-positioner[data-limited] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.toast-positioner--anchored {
+  position: fixed;
+  width: min(
+    var(--dimension-card-width-sm),
+    calc(100vw - 2 * var(--dimension-space-200))
+  );
+  transform: none;
+}
+
+.toast-positioner--anchored[data-positioned='false'] {
+  visibility: hidden;
+}
+
+.toast-surface {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--toast-height, auto);
+  padding: var(--dimension-space-200);
+  overflow: hidden;
+  color: var(--color-foreground-primary);
+  background-color: var(--color-background-primary);
+  border-radius: var(--dimension-radius-050);
+  box-shadow: var(--effect-elevation-elevated-floating);
+  transform: translate(
+    var(--toast-swipe-movement-x),
+    var(--toast-swipe-movement-y)
+  );
+  animation: toast-enter var(--effect-motion-short-2) both;
+}
+
+.toast-positioner--ending .toast-surface {
+  animation: toast-exit var(--effect-motion-short-3) both;
+}
+
+.toast-surface--swiping {
+  transition: none;
+  user-select: none;
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-inline-end: var(--dimension-size-500);
+  transition: opacity var(--effect-motion-short-3);
+}
+
+.toast-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: var(--typography-lineheight-md);
+  margin-block: calc(-1 * var(--dimension-space-025));
+  gap: var(--dimension-space-050);
+}
+
+.toast-title,
+.toast-description {
+  min-width: 0;
+}
+
+.toast-action {
+  align-self: start;
+  margin-top: calc(
+    var(--dimension-space-200) + var(--dimension-space-025)
+  );
+}
+
+.toast-close {
+  position: absolute;
+  top: var(--dimension-space-100);
+  right: var(--dimension-space-100);
+  transition: opacity var(--effect-motion-short-3);
+}
+
+.toast-viewport:not([data-expanded]) .toast-positioner[data-behind] .toast-content,
+.toast-viewport:not([data-expanded]) .toast-positioner[data-behind] .toast-close {
+  opacity: 0;
+}
+
+.toast-assertive-announcer {
+  position: absolute;
+  width: var(--dimension-size-100);
+  height: var(--dimension-size-100);
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--dimension-space-100));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-positioner,
+  .toast-surface,
+  .toast-content,
+  .toast-close,
+  .toast-positioner--ending .toast-surface {
+    transition: none;
+    animation: none;
+  }
+
+  .toast-positioner--ending .toast-surface {
+    opacity: 0;
+  }
+}

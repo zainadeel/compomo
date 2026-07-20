@@ -18,11 +18,11 @@ import { defineCustomElement as defineDsCardSetting } from '@ds-mo/ui/components
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['cancelLabel', 'cardWidth', 'editLabel', 'editing', { name: 'heading', required: true }, 'saveLabel'],
-  outputs: ['dsEditingChange'],
+  outputs: ['dsAction'],
 })
 export class DsCardSetting {
   protected el: HTMLDsCardSettingElement;
-  @Output() dsEditingChange = new EventEmitter<DsCardSettingCustomEvent<boolean>>();
+  @Output() dsAction = new EventEmitter<DsCardSettingCustomEvent<IDsCardSettingCardSettingActionDetail>>();
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -31,12 +31,13 @@ export class DsCardSetting {
 
 
 import type { DsCardSettingCustomEvent } from '@ds-mo/ui/components';
+import type { CardSettingActionDetail as IDsCardSettingCardSettingActionDetail } from '@ds-mo/ui/components';
 
 export declare interface DsCardSetting extends Components.DsCardSetting {
   /**
-   * Emits when the user enters or exits edit mode.
+   * Emits a controlled edit, save, or cancel request.
    */
-  dsEditingChange: EventEmitter<DsCardSettingCustomEvent<boolean>>;
+  dsAction: EventEmitter<DsCardSettingCustomEvent<IDsCardSettingCardSettingActionDetail>>;
 }
 
 

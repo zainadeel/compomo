@@ -24,7 +24,7 @@
   ],
   "states": [
     "Rows reuse the md choice-item label/subtext recipe used by Menu, including 6px row padding, 2px text inset, and the shared content gap. The enclosing conversation-list scroll region supplies the larger 8px outer container padding.",
-    "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording.",
+    "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording. A busy row pairs its body-small status with the sm 16px Loader at an 8px gap.",
     "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
     "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
     "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",

@@ -2,17 +2,126 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "modal",
   "title": "Modal",
-  "description": "Dialog overlay with portal rendering, escape-to-close, backdrop click, focus management, and entry/exit animations.",
+  "description": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/modal",
     "source": "src/wc/components/Modal/Modal.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
+      "useWhen": [
+        "The user must confirm or cancel one focused decision before returning to the underlying interface.",
+        "A short blocking task or compact form needs dialog semantics, focus containment, and explicit completion actions.",
+        "The content can be safely dismissed through Close, Escape, or the backdrop."
+      ],
+      "avoidWhen": [
+        "The message is non-blocking feedback or a transient status update.",
+        "The interaction is a contextual list of commands anchored to a trigger.",
+        "The workflow is multi-step, long-form, or requires substantial navigation.",
+        "Dismissal would lose work or leave an irreversible operation in an unsafe state.",
+        "A second modal would be opened over an existing modal."
+      ],
+      "alternatives": [
+        {
+          "when": "The user needs non-blocking feedback or a transient status message.",
+          "component": "component:ds-toast",
+          "reason": "Toast communicates transient status without trapping focus or blocking the page."
+        },
+        {
+          "when": "A trigger reveals a short contextual list of commands.",
+          "component": "component:ds-menu",
+          "reason": "Menu provides anchored command semantics without creating a blocking dialog."
+        },
+        {
+          "when": "Editable settings should remain visible without blocking the rest of the interface.",
+          "component": "component:ds-card-setting",
+          "reason": "CardSetting provides a persistent controlled settings workflow without modal focus containment."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-button-filled",
+        "component:ds-button-unfilled",
+        "component:ds-field",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
+        "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
+        "Opening the native modal dialog moves focus to the header Close action, traps Tab navigation inside the top layer, and makes outside content inert.",
+        "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
+        "After exit motion completes, the native dialog leaves the top layer, focus returns to the previously focused element, and dsAfterClose emits.",
+        "Use visible label-only footer buttons. Keep at most two actions: one bold filled primary action followed by one bordered unfilled action, or two bordered unfilled actions.",
+        "Use negative intent for a filled destructive action and state the irreversible consequence in the content.",
+        "Do not open a modal from another modal; keep one blocking decision in focus at a time."
+      ],
+      "states": [
+        "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
+        "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
+        "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
+        "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",
+        "The owner performs save, delete, cancel, and other product consequences before or while closing the modal."
+      ],
+      "responsiveBehavior": [
+        "Choose the smallest sm, md, or lg width that fits the focused task; the top-layer dialog clamps to the viewport with token-based outer space.",
+        "Content scrolls independently when needed while the 64px header and optional 64px footer remain fixed.",
+        "Avoid layouts whose minimum content width exceeds the narrow viewport clamp.",
+        "The native top layer escapes transformed ancestors, clipping containers, and application stacking contexts without moving slotted content."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Set open as a JavaScript property when controlling the modal; inspect dsClose.detail.reason and use dsAfterClose for cleanup that must wait for exit motion and focus restoration.",
+          "Connect the most relevant slotted explanatory text through aria-describedby.",
+          "Footer actions are slotted application-owned controls and must implement their own product consequence."
+        ],
+        "react": [
+          "Pass open to DsModal, inspect onDsClose event detail, and use onDsAfterClose only for cleanup after exit motion and focus restoration.",
+          "Connect the most relevant slotted explanatory text through aria-describedby.",
+          "Assign footer controls with slot=\"footer\" and handle each action before updating open."
+        ],
+        "angular": [
+          "Bind [open], inspect $event.detail from (dsClose), and use (dsAfterClose) only for cleanup after exit motion and focus restoration.",
+          "Connect the most relevant slotted explanatory text through aria-describedby.",
+          "Assign footer controls with slot=\"footer\" and handle each action before updating open."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook confirmation and footer examples",
+          "path": "src/wc/components/Modal/Modal.stories.ts"
+        },
+        {
+          "label": "Cross-browser focus, dismissal, geometry, and accessibility coverage",
+          "path": "tests/e2e/accessibility-overlays.spec.ts"
+        },
+        {
+          "label": "Reduced-motion overlay coverage",
+          "path": "tests/e2e/reduced-motion.spec.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
+        "ariaDescribedby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-describedby",
+          "required": false,
+          "mutable": false,
+          "description": "Optional id reference for explanatory content in the default slot."
+        },
+        "closeAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "close-aria-label",
+          "default": "'Close'",
+          "required": false,
+          "mutable": false
+        },
         "heading": {
           "type": "string",
           "resolvedType": "string",
@@ -35,28 +144,46 @@
           "default": "false",
           "required": false,
           "mutable": true
-        },
-        "subtitle": {
-          "type": "string | undefined",
-          "resolvedType": "string | undefined",
-          "attribute": "subtitle",
-          "required": false,
-          "mutable": false
         }
       },
       "events": [
         {
-          "name": "dsClose",
+          "name": "dsAfterClose",
           "detail": "void",
           "bubbles": true,
           "cancelable": true,
-          "composed": true
+          "composed": true,
+          "description": "Emitted after exit motion completes, the top layer closes, and focus is restored."
+        },
+        {
+          "name": "dsClose",
+          "detail": "ModalCloseDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when an internal dismissal control requests that the modal close."
         }
       ],
       "methods": [],
       "slots": []
     },
     "props": {
+      "ariaDescribedby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-describedby",
+        "required": false,
+        "mutable": false,
+        "description": "Optional id reference for explanatory content in the default slot."
+      },
+      "closeAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "close-aria-label",
+        "default": "'Close'",
+        "required": false,
+        "mutable": false
+      },
       "heading": {
         "type": "string",
         "resolvedType": "string",
@@ -79,22 +206,24 @@
         "default": "false",
         "required": false,
         "mutable": true
-      },
-      "subtitle": {
-        "type": "string | undefined",
-        "resolvedType": "string | undefined",
-        "attribute": "subtitle",
-        "required": false,
-        "mutable": false
       }
     },
     "events": [
       {
-        "name": "dsClose",
+        "name": "dsAfterClose",
         "detail": "void",
         "bubbles": true,
         "cancelable": true,
-        "composed": true
+        "composed": true,
+        "description": "Emitted after exit motion completes, the top layer closes, and focus is restored."
+      },
+      {
+        "name": "dsClose",
+        "detail": "ModalCloseDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when an internal dismissal control requests that the modal close."
       }
     ],
     "methods": [],
@@ -122,7 +251,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^3.1.1",
-          "@ds-mo/icons ^6.2.0"
+          "@ds-mo/icons ^6.3.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }
@@ -133,17 +262,18 @@
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
+    "button-unfilled",
     "text"
   ],
   "files": [
     {
       "path": "src/wc/components/Modal/Modal.css",
-      "content": ".modal-backdrop {\n  background-color: var(--color-background-shade);\n  backdrop-filter: blur(var(--effect-blur-sm));\n  -webkit-backdrop-filter: blur(var(--effect-blur-sm));\n  animation: modalBackdropIn var(--effect-motion-short-2) forwards;\n  box-sizing: border-box;\n}\n\n.modal-backdrop--closing {\n  animation: modalBackdropOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalBackdropIn {\n  from { opacity: 0; }\n  to   { opacity: 1; }\n}\n\n@keyframes modalBackdropOut {\n  from { opacity: 1; }\n  to   { opacity: 0; }\n}\n\n.modal-dialog {\n  display: flex;\n  flex-direction: column;\n  max-height: calc(100vh - 2 * var(--dimension-space-200));\n  overflow: hidden;\n  background-color: var(--color-background-primary);\n  border-radius: var(--dimension-radius-300);\n  box-shadow: var(--effect-elevation-elevated-floating);\n  animation: modalDialogIn var(--effect-motion-short-2) forwards;\n  outline: none;\n  box-sizing: border-box;\n}\n\n.modal-backdrop--closing .modal-dialog {\n  animation: modalDialogOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalDialogIn {\n  from { opacity: 0; transform: scale(0.97) translateY(4px); }\n  to   { opacity: 1; transform: scale(1) translateY(0); }\n}\n\n@keyframes modalDialogOut {\n  from { opacity: 1; transform: scale(1) translateY(0); }\n  to   { opacity: 0; transform: scale(0.97) translateY(4px); }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .modal-backdrop,\n  .modal-dialog {\n    animation: none;\n    transform: none;\n  }\n\n  .modal-backdrop {\n    opacity: 1;\n  }\n\n  .modal-backdrop--closing,\n  .modal-backdrop--closing .modal-dialog {\n    opacity: 0;\n  }\n}\n\n.modal-header {\n  padding: var(--dimension-space-200) var(--dimension-space-200) var(--dimension-space-100);\n  flex-shrink: 0;\n}\n\n.modal-subtitle {\n  margin-top: var(--dimension-space-100);\n}\n\n.modal-body {\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  overflow-y: auto;\n  flex: 1;\n}\n\n.modal-footer {\n  padding: var(--dimension-space-100) var(--dimension-space-200) var(--dimension-space-200);\n  flex-shrink: 0;\n}\n\n.modal-footer:empty { display: none; }\n",
+      "content": ":host {\n  display: contents;\n}\n\n.modal-dialog {\n  display: none;\n  flex-direction: column;\n  max-width: none;\n  max-height: calc(100vh - 2 * var(--dimension-space-200));\n  margin: auto;\n  padding: 0;\n  overflow: hidden;\n  color: var(--color-foreground-primary);\n  background-color: var(--color-background-primary);\n  border: 0;\n  border-radius: var(--dimension-radius-050);\n  box-shadow: var(--effect-elevation-elevated-floating);\n  outline: none;\n  box-sizing: border-box;\n}\n\n.modal-dialog[open] {\n  display: flex;\n  animation: modalDialogIn var(--effect-motion-short-2) forwards;\n}\n\n.modal-dialog::backdrop {\n  background-color: var(--color-background-shade);\n  animation: modalBackdropIn var(--effect-motion-short-2) forwards;\n}\n\n.modal-dialog--closing {\n  animation: modalDialogOut var(--effect-motion-short-3) forwards;\n}\n\n.modal-dialog--closing::backdrop {\n  animation: modalBackdropOut var(--effect-motion-short-3) forwards;\n}\n\n@keyframes modalBackdropIn {\n  from { opacity: 0; }\n  to   { opacity: 1; }\n}\n\n@keyframes modalBackdropOut {\n  from { opacity: 1; }\n  to   { opacity: 0; }\n}\n\n@keyframes modalDialogIn {\n  from { opacity: 0; transform: scale(0.97) translateY(4px); }\n  to   { opacity: 1; transform: scale(1) translateY(0); }\n}\n\n@keyframes modalDialogOut {\n  from { opacity: 1; transform: scale(1) translateY(0); }\n  to   { opacity: 0; transform: scale(0.97) translateY(4px); }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .modal-dialog[open],\n  .modal-dialog--closing {\n    animation: none;\n    transform: none;\n  }\n\n  .modal-dialog::backdrop {\n    animation: none;\n    opacity: 1;\n  }\n\n  .modal-dialog--closing,\n  .modal-dialog--closing::backdrop {\n    opacity: 0;\n  }\n}\n\n.modal-header {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  height: var(--dimension-size-800);\n  padding: var(--dimension-space-200);\n  flex: 0 0 auto;\n  box-sizing: border-box;\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  color: var(--color-foreground-primary);\n}\n\nds-text.modal-heading {\n  flex: 1 1 0;\n  width: auto;\n  min-width: 0;\n  text-align: left;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.modal-close {\n  flex: 0 0 auto;\n}\n\n.modal-content {\n  min-height: 0;\n  padding: var(--dimension-space-200);\n  overflow-y: auto;\n  flex: 1 1 auto;\n  box-sizing: border-box;\n}\n\n.modal-footer {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  gap: var(--dimension-space-100);\n  height: var(--dimension-size-800);\n  padding: var(--dimension-space-200);\n  flex: 0 0 auto;\n  box-sizing: border-box;\n  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n.modal-footer--empty {\n  display: none;\n}\n\n.modal-footer slot {\n  display: contents;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Modal/Modal.tsx",
-      "content": "import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';\nimport { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';\n\nexport type ModalWidth = 'sm' | 'md' | 'lg';\n\nconst WIDTH_MAP: Record<ModalWidth, string> = {\n  sm: 'var(--dimension-modal-width-sm)',\n  md: 'var(--dimension-modal-width-md)',\n  lg: 'var(--dimension-modal-width-lg)',\n};\n\nconst FOCUSABLE_SEL = [\n  'a[href]',\n  'area[href]',\n  'button:not([disabled])',\n  'input:not([disabled]):not([type=\"hidden\"])',\n  'select:not([disabled])',\n  'textarea:not([disabled])',\n  'iframe',\n  '[contenteditable=\"true\"]',\n  '[tabindex]:not([tabindex=\"-1\"])',\n].join(',');\n\nlet modalIdCounter = 0;\nconst activeModalStack: object[] = [];\nconst modalInertState = new WeakMap<HTMLElement, { count: number; wasInert: boolean }>();\n\nfunction makeInert(element: HTMLElement) {\n  const state = modalInertState.get(element);\n  if (state) {\n    state.count += 1;\n    return;\n  }\n  modalInertState.set(element, { count: 1, wasInert: element.inert });\n  element.inert = true;\n}\n\nfunction releaseInert(element: HTMLElement) {\n  const state = modalInertState.get(element);\n  if (!state) return;\n  state.count -= 1;\n  if (state.count > 0) return;\n  element.inert = state.wasInert;\n  modalInertState.delete(element);\n}\n\n@Component({\n  tag: 'ds-modal',\n  styleUrl: 'Modal.css',\n  scoped: true,\n})\nexport class Modal {\n  @Element() el!: HTMLElement;\n\n  @Prop({ mutable: true }) open: boolean = false;\n  @Prop() heading!: string;\n  @Prop() subtitle: string | undefined;\n  @Prop() modalWidth: ModalWidth | string = 'md';\n\n  @State() private shouldRender: boolean = false;\n  @State() private closing: boolean = false;\n\n  @Event() dsClose!: EventEmitter<void>;\n\n  private instanceId = ++modalIdCounter;\n  private titleId = `ds-modal-title-${modalIdCounter}`;\n  private subtitleId = `ds-modal-subtitle-${modalIdCounter}`;\n  private previousFocus: HTMLElement | null = null;\n  private escapeHandler: ((e: KeyboardEvent) => void) | null = null;\n  private tabHandler: ((e: KeyboardEvent) => void) | null = null;\n  private closeTimer: ReturnType<typeof setTimeout> | null = null;\n  private inertedElements: HTMLElement[] = [];\n\n  componentDidLoad() {\n    if (this.open) this.onOpenChange(true);\n  }\n\n  disconnectedCallback() {\n    this.teardownListeners();\n    this.deactivateModal();\n  }\n\n  @Watch('open')\n  onOpenChange(isOpen: boolean) {\n    if (isOpen) {\n      this.teardownListeners();\n      this.shouldRender = true;\n      this.closing = false;\n      this.previousFocus = document.activeElement as HTMLElement | null;\n      this.activateModal();\n      requestAnimationFrame(() => {\n        this.focusFirst();\n        this.setupListeners();\n      });\n    } else if (this.shouldRender) {\n      this.closing = true;\n      const closeAnimationMs = this.closeAnimationMs;\n      if (closeAnimationMs <= 0) {\n        this.finishClose();\n        return;\n      }\n      this.closeTimer = setTimeout(() => {\n        this.closeTimer = null;\n        this.finishClose();\n      }, closeAnimationMs);\n    }\n  }\n\n  private focusFirst() {\n    const dialog = this.el.querySelector('.modal-dialog') as HTMLElement | null;\n    if (!dialog) return;\n    const focusables = this.getFocusables(dialog);\n    (focusables[0] ?? dialog).focus();\n  }\n\n  private getFocusables(root: HTMLElement): HTMLElement[] {\n    return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SEL)).filter(\n      el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'\n    );\n  }\n\n  private setupListeners() {\n    this.escapeHandler = (e: KeyboardEvent) => {\n      if (e.key === 'Escape' && this.isTopModal) { e.preventDefault(); this.close(); }\n    };\n\n    this.tabHandler = (e: KeyboardEvent) => {\n      if (e.key !== 'Tab' || !this.isTopModal) return;\n      const dialog = this.el.querySelector('.modal-dialog') as HTMLElement | null;\n      if (!dialog) return;\n      const focusables = this.getFocusables(dialog);\n      if (!focusables.length) { e.preventDefault(); dialog.focus(); return; }\n      const first = focusables[0];\n      const last = focusables[focusables.length - 1];\n      const active = document.activeElement;\n      if (e.shiftKey) {\n        if (active === first || active === dialog || !dialog.contains(active)) {\n          e.preventDefault(); last.focus();\n        }\n      } else {\n        if (active === last || !dialog.contains(active)) {\n          e.preventDefault(); first.focus();\n        }\n      }\n    };\n\n    document.addEventListener('keydown', this.escapeHandler);\n    document.addEventListener('keydown', this.tabHandler);\n  }\n\n  private teardownListeners() {\n    if (this.escapeHandler) {\n      document.removeEventListener('keydown', this.escapeHandler);\n      this.escapeHandler = null;\n    }\n    if (this.tabHandler) {\n      document.removeEventListener('keydown', this.tabHandler);\n      this.tabHandler = null;\n    }\n    if (this.closeTimer) {\n      clearTimeout(this.closeTimer);\n      this.closeTimer = null;\n    }\n  }\n\n  private close() {\n    if (!this.open || this.closing || !this.isTopModal) return;\n    this.dsClose.emit();\n    this.open = false;\n  }\n\n  private handleBackdropMouseDown(e: MouseEvent) {\n    if (e.target === e.currentTarget && this.isTopModal) this.close();\n  }\n\n  private get isTopModal(): boolean {\n    return activeModalStack[activeModalStack.length - 1] === this;\n  }\n\n  /** Inert every sibling branch outside the modal without assuming it is a body child. */\n  private activateModal() {\n    if (!activeModalStack.includes(this)) activeModalStack.push(this);\n    if (this.inertedElements.length) return;\n\n    let branch: HTMLElement = this.el;\n    let parent = branch.parentElement;\n    while (parent) {\n      for (const sibling of Array.from(parent.children)) {\n        if (sibling === branch || !(sibling instanceof HTMLElement)) continue;\n        makeInert(sibling);\n        this.inertedElements.push(sibling);\n      }\n      if (parent === document.body) break;\n      branch = parent;\n      parent = parent.parentElement;\n    }\n  }\n\n  private deactivateModal() {\n    const stackIndex = activeModalStack.lastIndexOf(this);\n    if (stackIndex >= 0) activeModalStack.splice(stackIndex, 1);\n    for (const element of this.inertedElements) releaseInert(element);\n    this.inertedElements = [];\n  }\n\n  private get resolvedWidth(): string {\n    if (this.modalWidth === 'sm' || this.modalWidth === 'md' || this.modalWidth === 'lg') {\n      return WIDTH_MAP[this.modalWidth];\n    }\n    return this.modalWidth as string;\n  }\n\n  private get closeAnimationMs(): number {\n    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);\n  }\n\n  private finishClose() {\n    this.shouldRender = false;\n    this.closing = false;\n    this.teardownListeners();\n    this.deactivateModal();\n    this.previousFocus?.focus?.();\n    this.previousFocus = null;\n  }\n\n  render() {\n    // Always render slots so scoped-mode slot distribution doesn't leak content.\n    // The backdrop is hidden via CSS when not active.\n    const hidden = !this.shouldRender && !this.closing;\n\n    return (\n      <Host style={{ display: 'contents' }}>\n        <div\n          class={{ 'modal-backdrop': true, 'modal-backdrop--closing': this.closing, 'modal-backdrop--hidden': hidden }}\n          onMouseDown={(e: MouseEvent) => this.handleBackdropMouseDown(e)}\n          style={{ position: 'fixed', inset: '0', zIndex: '9999', display: hidden ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--dimension-space-200)' }}\n        >\n          <div\n            class={{ 'modal-dialog': true, 'modal-dialog--closing': this.closing }}\n            role=\"dialog\"\n            aria-modal=\"true\"\n            aria-labelledby={this.titleId}\n            aria-describedby={this.subtitle ? this.subtitleId : undefined}\n            tabIndex={-1}\n            style={{ width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))` }}\n          >\n            <div class=\"modal-header\">\n              <ds-text\n                as=\"h2\"\n                variant=\"text-title-small\"\n                textId={this.titleId}\n              >\n                {this.heading}\n              </ds-text>\n              {this.subtitle && (\n                <ds-text\n                  class=\"modal-subtitle\"\n                  as=\"div\"\n                  variant=\"text-body-medium\"\n                  color=\"secondary\"\n                  wrap=\"balance\"\n                  textId={this.subtitleId}\n                >\n                  {this.subtitle}\n                </ds-text>\n              )}\n            </div>\n            <div class=\"modal-body\">\n              <slot />\n            </div>\n            <div class=\"modal-footer\">\n              <slot name=\"footer\" />\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';\nimport { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';\n\nexport type ModalWidth = 'sm' | 'md' | 'lg';\nexport type ModalCloseReason = 'close-button' | 'escape' | 'backdrop';\n\nexport interface ModalCloseDetail {\n  reason: ModalCloseReason;\n  originalEvent: Event;\n}\n\nconst WIDTH_MAP: Record<ModalWidth, string> = {\n  sm: 'var(--dimension-modal-width-sm)',\n  md: 'var(--dimension-modal-width-md)',\n  lg: 'var(--dimension-modal-width-lg)',\n};\n\nconst FOCUSABLE_SEL = [\n  'a[href]',\n  'area[href]',\n  'button:not([disabled])',\n  'input:not([disabled]):not([type=\"hidden\"])',\n  'select:not([disabled])',\n  'textarea:not([disabled])',\n  'iframe',\n  '[contenteditable=\"true\"]',\n  '[tabindex]:not([tabindex=\"-1\"])',\n].join(',');\n\nlet modalIdCounter = 0;\n\n@Component({\n  tag: 'ds-modal',\n  styleUrl: 'Modal.css',\n  scoped: true,\n})\nexport class Modal {\n  @Element() el!: HTMLElement;\n\n  @Prop({ mutable: true }) open: boolean = false;\n  @Prop() heading!: string;\n  @Prop() closeAriaLabel: string = 'Close';\n  @Prop() modalWidth: ModalWidth | string = 'md';\n  /** Optional id reference for explanatory content in the default slot. */\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @State() private closing: boolean = false;\n  @State() private hasFooter: boolean = false;\n\n  /** Emitted when an internal dismissal control requests that the modal close. */\n  @Event() dsClose!: EventEmitter<ModalCloseDetail>;\n  /** Emitted after exit motion completes, the top layer closes, and focus is restored. */\n  @Event() dsAfterClose!: EventEmitter<void>;\n\n  private titleId = `ds-modal-title-${++modalIdCounter}`;\n  private dialogEl: HTMLDialogElement | null = null;\n  private previousFocus: HTMLElement | null = null;\n  private closeTimer: ReturnType<typeof setTimeout> | null = null;\n\n  componentDidLoad() {\n    this.updateFooterPresence();\n    if (this.open) this.onOpenChange(true);\n  }\n\n  disconnectedCallback() {\n    this.clearCloseTimer();\n    if (this.dialogEl?.open) this.dialogEl.close();\n  }\n\n  @Watch('open')\n  onOpenChange(isOpen: boolean) {\n    if (isOpen) {\n      this.clearCloseTimer();\n      const alreadyOpen = !!this.dialogEl?.open;\n      this.closing = false;\n      if (!this.dialogEl || alreadyOpen) return;\n      this.previousFocus = document.activeElement as HTMLElement | null;\n      this.dialogEl.showModal();\n      requestAnimationFrame(() => {\n        if (this.open && this.dialogEl?.open) this.focusClose();\n      });\n    } else if (this.dialogEl?.open) {\n      this.closing = true;\n      const closeAnimationMs = this.closeAnimationMs;\n      if (closeAnimationMs <= 0) {\n        this.finishClose();\n        return;\n      }\n      this.closeTimer = setTimeout(() => {\n        this.closeTimer = null;\n        this.finishClose();\n      }, closeAnimationMs);\n    }\n  }\n\n  private focusClose() {\n    const close = this.el.querySelector('ds-button-unfilled.modal-close') as\n      | (HTMLElement & { setFocus?: () => Promise<void> })\n      | null;\n    void close?.setFocus?.();\n  }\n\n  private clearCloseTimer() {\n    if (this.closeTimer) {\n      clearTimeout(this.closeTimer);\n      this.closeTimer = null;\n    }\n  }\n\n  private requestClose(reason: ModalCloseReason, originalEvent: Event) {\n    if (!this.open || this.closing || !this.dialogEl?.open) return;\n    this.dsClose.emit({ reason, originalEvent });\n    this.open = false;\n  }\n\n  private updateFooterPresence(slot?: HTMLSlotElement) {\n    const assignedNodes = slot?.assignedNodes({ flatten: true }) ?? [];\n    this.hasFooter =\n      assignedNodes.some(node => node.nodeType !== Node.TEXT_NODE || !!node.textContent?.trim()) ||\n      this.el.querySelector('[slot=\"footer\"]') !== null;\n  }\n\n  private handleCancel(event: Event) {\n    event.preventDefault();\n    this.requestClose('escape', event);\n  }\n\n  private handleBackdropPointerDown(event: PointerEvent) {\n    if (event.target === this.dialogEl) this.requestClose('backdrop', event);\n  }\n\n  private handleKeyDown(event: KeyboardEvent) {\n    if (event.key !== 'Tab' || !this.dialogEl) return;\n    const focusables = Array.from(\n      this.dialogEl.querySelectorAll<HTMLElement>(FOCUSABLE_SEL)\n    ).filter(element =>\n      !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true'\n    );\n    if (!focusables.length) {\n      event.preventDefault();\n      this.dialogEl.focus();\n      return;\n    }\n    const first = focusables[0];\n    const last = focusables[focusables.length - 1];\n    const active = document.activeElement;\n    if (event.shiftKey && (active === first || active === this.dialogEl)) {\n      event.preventDefault();\n      last.focus();\n    } else if (!event.shiftKey && active === last) {\n      event.preventDefault();\n      first.focus();\n    }\n  }\n\n  private get resolvedWidth(): string {\n    if (this.modalWidth === 'sm' || this.modalWidth === 'md' || this.modalWidth === 'lg') {\n      return WIDTH_MAP[this.modalWidth];\n    }\n    return this.modalWidth as string;\n  }\n\n  private get closeAnimationMs(): number {\n    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);\n  }\n\n  private finishClose() {\n    if (!this.dialogEl?.open) return;\n    this.dialogEl.close();\n    this.closing = false;\n    this.clearCloseTimer();\n    this.previousFocus?.focus?.();\n    this.previousFocus = null;\n    this.dsAfterClose.emit();\n  }\n\n  render() {\n    return (\n      <Host>\n        <dialog\n          ref={(element?: HTMLDialogElement) => {\n            this.dialogEl = element ?? null;\n          }}\n          class={{ 'modal-dialog': true, 'modal-dialog--closing': this.closing }}\n          aria-labelledby={this.titleId}\n          aria-describedby={this.ariaDescribedby}\n          onCancel={(event: Event) => this.handleCancel(event)}\n          onPointerDown={(event: PointerEvent) => this.handleBackdropPointerDown(event)}\n          onKeyDown={(event: KeyboardEvent) => this.handleKeyDown(event)}\n          style={{\n            width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))`,\n          }}\n        >\n          <div class=\"modal-header\">\n            <ds-text\n              class=\"modal-heading\"\n              as=\"h2\"\n              variant=\"text-title-medium\"\n              emphasis\n              color=\"primary\"\n              lineTruncation={1}\n              textId={this.titleId}\n            >\n              {this.heading}\n            </ds-text>\n            <ds-button-unfilled\n              class=\"modal-close\"\n              variant=\"icon\"\n              icon=\"Cross\"\n              size=\"md\"\n              aria-label={this.closeAriaLabel}\n              activeFill={false}\n              hasBorder={false}\n              onDsClick={(event: CustomEvent<MouseEvent>) =>\n                this.requestClose('close-button', event.detail)\n              }\n            />\n          </div>\n          <div class=\"modal-content\">\n            <slot />\n          </div>\n          <div\n            class={{\n              'modal-footer': true,\n              'modal-footer--empty': !this.hasFooter,\n            }}\n          >\n            <slot\n              name=\"footer\"\n              onSlotchange={(event: Event) =>\n                this.updateFooterPresence(event.currentTarget as HTMLSlotElement)\n              }\n            />\n          </div>\n        </dialog>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

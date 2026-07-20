@@ -14,7 +14,7 @@
 
 .message {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 0;
   width: 100%;
@@ -25,19 +25,10 @@
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.message--outgoing .message__avatar {
-  display: none;
-}
-
-.message__avatar:empty,
 .message__header:empty,
 .message__footer:empty,
 .message__actions:empty {
   display: none;
-}
-
-.message__avatar:not(:empty) {
-  margin-inline-end: var(--dimension-space-075);
 }
 
 .message__actions:not(:empty) {
@@ -48,7 +39,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: var(--dimension-space-025);
+  gap: var(--dimension-space-050);
 }
 
 .message--incoming .message__body {

@@ -3,78 +3,146 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-modal.js';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-text.js';
 
 const meta: Meta = {
   title: 'Overlay/Modal',
   tags: ['autodocs'],
   argTypes: {
-    heading:    { control: 'text' },
-    subtitle:   { control: 'text' },
+    heading: { control: 'text' },
     modalWidth: { control: 'select', options: ['sm', 'md', 'lg'] },
   },
-  args: { heading: 'Confirm action', modalWidth: 'md' },
+  args: { heading: 'Save changes?', modalWidth: 'md' },
 };
 
 export default meta;
 type Story = StoryObj;
 
+const closeOwningModal = (event: CustomEvent<MouseEvent>) => {
+  const trigger = event.currentTarget as HTMLElement | null;
+  const modal = trigger?.closest('ds-modal') as HTMLDsModalElement | null;
+  if (modal) modal.open = false;
+};
+
 export const Playground: Story = {
   render: args => html`
     <ds-modal
       ?open=${true}
-      heading=${args['heading'] ?? 'Confirm action'}
-      subtitle=${args['subtitle'] ?? ''}
+      heading=${args['heading'] ?? 'Save changes?'}
       modal-width=${args['modalWidth'] ?? 'md'}
+      aria-describedby="modal-playground-description"
     >
-      <p>Modal body content goes here. You can place any content inside the default slot.</p>
-      <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button-unfilled variant="icon" icon="Cross" aria-label="Cancel"></ds-button-unfilled>
-        <ds-button-filled variant="icon" icon="Check" intent="brand" aria-label="Confirm"></ds-button-filled>
-      </div>
+      <ds-text
+        as="p"
+        variant="text-body-medium"
+        color="secondary"
+        text-id="modal-playground-description"
+      >
+        Save these changes to make them available to everyone with access.
+      </ds-text>
+      <ds-button-filled
+        slot="footer"
+        variant="label"
+        label="Save"
+        intent="brand"
+        contrast="bold"
+        @dsClick=${closeOwningModal}
+      ></ds-button-filled>
+      <ds-button-unfilled
+        slot="footer"
+        variant="label"
+        label="Cancel"
+        has-border
+        @dsClick=${closeOwningModal}
+      ></ds-button-unfilled>
     </ds-modal>
   `,
 };
 
-export const WithSubtitle: Story = {
+export const DeleteConfirmation: Story = {
   render: () => html`
     <ds-modal
       ?open=${true}
       heading="Delete vehicle?"
-      subtitle="This action cannot be undone. All associated data will be permanently removed."
+      aria-describedby="modal-delete-description"
     >
-      <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button-unfilled variant="icon" icon="Cross" aria-label="Cancel"></ds-button-unfilled>
-        <ds-button-filled variant="icon" icon="Trash" intent="negative" aria-label="Delete"></ds-button-filled>
-      </div>
+      <ds-text
+        as="p"
+        variant="text-body-medium"
+        color="secondary"
+        text-id="modal-delete-description"
+      >
+        This action cannot be undone. The vehicle and its associated data will be permanently removed.
+      </ds-text>
+      <ds-button-filled
+        slot="footer"
+        variant="label"
+        label="Delete"
+        intent="negative"
+        contrast="bold"
+        @dsClick=${closeOwningModal}
+      ></ds-button-filled>
+      <ds-button-unfilled
+        slot="footer"
+        variant="label"
+        label="Cancel"
+        has-border
+        @dsClick=${closeOwningModal}
+      ></ds-button-unfilled>
     </ds-modal>
   `,
 };
 
-export const SmallWidth: Story = {
+export const LeaveConfirmation: Story = {
   render: () => html`
-    <ds-modal ?open=${true} heading="Are you sure?" modal-width="sm">
-      <p>This will apply to all selected items.</p>
-      <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button-unfilled variant="icon" icon="Cross" aria-label="Cancel"></ds-button-unfilled>
-        <ds-button-filled variant="icon" icon="Check" intent="brand" aria-label="OK"></ds-button-filled>
-      </div>
+    <ds-modal
+      ?open=${true}
+      heading="Leave this page?"
+      modal-width="sm"
+      aria-describedby="modal-leave-description"
+    >
+      <ds-text
+        as="p"
+        variant="text-body-medium"
+        color="secondary"
+        text-id="modal-leave-description"
+      >
+        Your unsaved changes will remain available until you return.
+      </ds-text>
+      <ds-button-filled
+        slot="footer"
+        variant="label"
+        label="Keep editing"
+        intent="brand"
+        contrast="bold"
+        @dsClick=${closeOwningModal}
+      ></ds-button-filled>
+      <ds-button-unfilled
+        slot="footer"
+        variant="label"
+        label="Leave"
+        has-border
+        @dsClick=${closeOwningModal}
+      ></ds-button-unfilled>
     </ds-modal>
   `,
 };
 
-export const LargeWidth: Story = {
+export const WithoutFooter: Story = {
   render: () => html`
-    <ds-modal ?open=${true} heading="Vehicle details" modal-width="lg">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
-        <div><label style="font-size: 12px; color: var(--color-foreground-secondary)">VIN</label><p style="margin: 4px 0">1HGBH41JXMN109186</p></div>
-        <div><label style="font-size: 12px; color: var(--color-foreground-secondary)">Make</label><p style="margin: 4px 0">Ford F-150</p></div>
-        <div><label style="font-size: 12px; color: var(--color-foreground-secondary)">Year</label><p style="margin: 4px 0">2023</p></div>
-        <div><label style="font-size: 12px; color: var(--color-foreground-secondary)">Status</label><p style="margin: 4px 0">Active</p></div>
-      </div>
-      <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px">
-        <ds-button-unfilled variant="icon" icon="Cross" aria-label="Close"></ds-button-unfilled>
-        <ds-button-filled variant="icon" icon="Pencil" intent="brand" aria-label="Edit"></ds-button-filled>
-      </div>
+    <ds-modal
+      ?open=${true}
+      heading="Vehicle update"
+      aria-describedby="modal-update-description"
+    >
+      <ds-text
+        as="p"
+        variant="text-body-medium"
+        color="secondary"
+        text-id="modal-update-description"
+      >
+        Vehicle details were updated successfully. You can close this message when you are ready.
+      </ds-text>
     </ds-modal>
   `,
 };

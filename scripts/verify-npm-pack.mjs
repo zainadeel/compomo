@@ -10,6 +10,8 @@ const REQUIRED_PATHS = [
   'dist/types/components.d.ts',
   'dist/lib/shell/index.js',
   'dist/lib/shell/index.d.ts',
+  'dist/lib/toast/index.js',
+  'dist/lib/toast/index.d.ts',
   'dist/lib/utils/index.js',
   'dist/lib/utils/index.d.ts',
   'dist/react/components.js',

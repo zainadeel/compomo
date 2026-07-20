@@ -52,7 +52,6 @@ export class AgentResponse {
           timestamp={this.timestamp}
           streaming={this.streaming}
         >
-          <slot name="avatar" slot="avatar" />
           <ds-message-bubble variant="ghost">
             <div class="agent-response">{this.parts.map(part => this.renderPart(part))}</div>
           </ds-message-bubble>

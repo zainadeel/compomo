@@ -1,0 +1,93 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-setting",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-setting",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+  "useWhen": [
+    "A settings page needs a persistent section that switches between read-only and editable content.",
+    "The parent can control one active editing section and owns validation, persistence, cancellation, and body content.",
+    "The section uses the standard Pencil, Save, and Cancel header workflow."
+  ],
+  "avoidWhen": [
+    "The surface contains a chart, legend, metric visualization, or other data-visualization composition.",
+    "The content is a general-purpose read-only card with no settings edit workflow.",
+    "The task must block the rest of the interface or requires confirmation in a modal.",
+    "Several sections must remain editable at the same time.",
+    "The header requires custom actions beyond the fixed edit-save-cancel workflow."
+  ],
+  "alternatives": [
+    {
+      "when": "The surface contains a chart or specialized data-visualization composition.",
+      "component": "component:ds-card-shell-data-viz",
+      "reason": "CardShellDataViz owns the independently evolving data-visualization shell contract."
+    },
+    {
+      "when": "The task must block the interface for one focused decision or short workflow.",
+      "component": "component:ds-modal",
+      "reason": "Modal provides top-layer focus containment and explicit blocking-task dismissal."
+    },
+    {
+      "when": "Only one labeled form control is needed without a section surface.",
+      "component": "component:ds-field",
+      "reason": "Field provides the control label, supporting copy, and validation relationship without card chrome."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-input",
+    "component:ds-select",
+    "component:ds-switch",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
+    "Edit, Save, and Cancel are icon-only controls with localized accessible labels supplied by the matching label props. When several sections share a page, include the section name in each label.",
+    "The owner must expose persistent field labels, descriptions, and validation messages inside the body.",
+    "Save must not remove validation errors or exit editing until the parent accepts the action and updates the controlled editing state.",
+    "Cancel must restore or retain the last persisted values according to product policy before the parent exits editing.",
+    "Keep only one CardSetting in edit mode so keyboard and screen-reader users have one unambiguous set of Save and Cancel actions.",
+    "When another section requests editing, resolve dirty changes in the current section before switching; never silently discard user input."
+  ],
+  "states": [
+    "The editing property is controlled; CardSetting never changes it internally.",
+    "dsAction emits edit, save, or cancel with the original pointer event. The parent decides whether and when editing changes.",
+    "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
+    "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
+    "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
+    "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing."
+  ],
+  "responsiveBehavior": [
+    "Choose sm, md, or lg from the parent layout; each width uses its matching token-based minimum height.",
+    "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
+    "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set editing as a JavaScript property and inspect dsAction.detail.action before updating the controlled state.",
+      "When one section emits edit, update every sibling CardSetting so only the requested section remains editing."
+    ],
+    "react": [
+      "Pass editing from parent state and inspect onDsAction event detail; do not treat Save as successful until validation and persistence complete.",
+      "Store one active section id and derive each CardSetting editing prop from that id."
+    ],
+    "angular": [
+      "Bind [editing] and inspect $event.detail.action from (dsAction); do not treat Save as successful until validation and persistence complete.",
+      "Store one active section id and derive each CardSetting editing binding from that id."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook controlled and single-edit examples",
+      "path": "src/wc/components/CardSetting/CardSetting.stories.ts"
+    },
+    {
+      "label": "Cross-browser shell and action coverage",
+      "path": "tests/e2e/card-setting.spec.ts"
+    }
+  ]
+}

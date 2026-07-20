@@ -56,26 +56,91 @@ test('rich preference popup exposes dialog and radio-group semantics without ste
   expect(results.violations).toEqual([]);
 });
 
-test('modal makes outside branches inert, traps focus, and restores its trigger', async ({ page }) => {
+test('modal uses the top layer, reports dismissal reasons, and restores its trigger', async ({ page }) => {
   const trigger = page.locator('#modal-trigger');
   await trigger.focus();
   await trigger.press('Enter');
 
   const dialog = page.getByRole('dialog', { name: 'Confirm changes' });
+  const close = dialog.getByRole('button', { name: 'Close' });
   await expect(dialog).toBeVisible();
-  await expect(page.locator('#page-content')).toHaveJSProperty('inert', true);
-  await expect(page.locator('#after-modal')).toHaveJSProperty('inert', true);
-  await expect(page.locator('#inside-first')).toBeFocused();
+  await expect(dialog).toHaveAttribute('aria-describedby', 'modal-description');
+  await expect(close).toBeFocused();
+  expect(await dialog.evaluate(element => element instanceof HTMLDialogElement && element.open)).toBe(true);
+  expect((await dialog.boundingBox())!.width).toBeGreaterThan(1);
 
-  await page.locator('#inside-last').focus();
+  await page.locator('#outside-action').evaluate((element: HTMLButtonElement) => element.focus());
+  await expect(close).toBeFocused();
+
+  const chromeHeights = await dialog.evaluate(element => ({
+    header: getComputedStyle(element.querySelector('.modal-header')!).height,
+    headerPaddingInline: getComputedStyle(element.querySelector('.modal-header')!).paddingInline,
+    footer: getComputedStyle(element.querySelector('.modal-footer')!).height,
+    titleFontSize: getComputedStyle(element.querySelector('.modal-heading')!).fontSize,
+    titleLineHeight: getComputedStyle(element.querySelector('.modal-heading')!).lineHeight,
+    titlePaddingInline: getComputedStyle(element.querySelector('.modal-heading')!).paddingInline,
+  }));
+  expect(chromeHeights).toEqual({
+    header: '64px',
+    headerPaddingInline: '16px',
+    footer: '64px',
+    titleFontSize: '18px',
+    titleLineHeight: '24px',
+    titlePaddingInline: '0px',
+  });
+
+  await dialog.getByRole('button', { name: 'Cancel' }).focus();
   await page.keyboard.press('Tab');
-  await expect(page.locator('#inside-first')).toBeFocused();
+  await expect(close).toBeFocused();
 
   const results = await new AxeBuilder({ page }).include('#modal').analyze();
   expect(results.violations).toEqual([]);
 
+  await close.click();
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+  expect(await page.evaluate(() =>
+    (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+  )).toEqual(['close-button']);
+  expect(await page.evaluate(() =>
+    (window as typeof window & { __modalAfterClose: number }).__modalAfterClose
+  )).toBe(1);
+
+  await trigger.press('Enter');
+  await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  await expect(page.locator('#page-content')).toHaveJSProperty('inert', false);
   await expect(trigger).toBeFocused();
+  expect(await page.evaluate(() =>
+    (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+  )).toEqual(['close-button', 'escape']);
+
+  await trigger.press('Enter');
+  await expect(close).toBeFocused();
+  await page.mouse.click(0, 0);
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+  expect(await page.evaluate(() =>
+    (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+  )).toEqual(['close-button', 'escape', 'backdrop']);
+  expect(await page.evaluate(() =>
+    (window as typeof window & { __modalAfterClose: number }).__modalAfterClose
+  )).toBe(3);
+});
+
+test('modal omits the footer block when no footer actions are assigned', async ({ page }) => {
+  const modal = page.locator('#modal-no-footer');
+  await modal.evaluate((element: HTMLDsModalElement) => {
+    element.open = true;
+  });
+
+  const dialog = page.getByRole('dialog', { name: 'Update complete' });
+  const footer = dialog.locator('.modal-footer');
+  await expect(dialog).toBeVisible();
+  await expect(footer).toHaveClass(/modal-footer--empty/);
+  await expect(footer).toBeHidden();
+  await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
 });

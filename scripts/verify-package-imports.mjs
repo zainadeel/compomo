@@ -91,6 +91,7 @@ try {
     const angularComponent = await import('@ds-mo/ui/angular/ds-button-filled');
     const react = await import('@ds-mo/ui/react');
     const shell = await import('@ds-mo/ui/shell');
+    const toast = await import('@ds-mo/ui/toast');
     const utils = await import('@ds-mo/ui/utils');
     const agent = await import('@ds-mo/ui/agent', { with: { type: 'json' } });
     const patterns = await import('@ds-mo/ui/agent/patterns', { with: { type: 'json' } });
@@ -102,6 +103,8 @@ try {
       ['react', react.DsButtonFilled],
       ['shell', shell.normalizeShellGradientPreset],
       ['shell swatch presets', shell.shellGradientPickerSections?.().flatMap(section => section.options).length],
+      ['toast manager', toast.toastManager?.add],
+      ['toast manager factory', toast.createToastManager],
       ['utils', utils.resolveCssLengthPx],
       ['agent manifest', agent.default?.entries?.length],
       ['agent pattern manifest', patterns.default?.entries?.length],
@@ -114,7 +117,7 @@ try {
     stdio: 'inherit',
   });
   await verifyPackagedMcp(smokeDir);
-  console.log('✅ Packed native, Angular, React, shell, utils, agent, and MCP entry points load successfully.');
+  console.log('✅ Packed native, Angular, React, shell, toast, utils, agent, and MCP entry points load successfully.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

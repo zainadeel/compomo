@@ -2,6 +2,12 @@ import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } 
 import { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type ModalWidth = 'sm' | 'md' | 'lg';
+export type ModalCloseReason = 'close-button' | 'escape' | 'backdrop';
+
+export interface ModalCloseDetail {
+  reason: ModalCloseReason;
+  originalEvent: Event;
+}
 
 const WIDTH_MAP: Record<ModalWidth, string> = {
   sm: 'var(--dimension-modal-width-sm)',
@@ -22,27 +28,6 @@ const FOCUSABLE_SEL = [
 ].join(',');
 
 let modalIdCounter = 0;
-const activeModalStack: object[] = [];
-const modalInertState = new WeakMap<HTMLElement, { count: number; wasInert: boolean }>();
-
-function makeInert(element: HTMLElement) {
-  const state = modalInertState.get(element);
-  if (state) {
-    state.count += 1;
-    return;
-  }
-  modalInertState.set(element, { count: 1, wasInert: element.inert });
-  element.inert = true;
-}
-
-function releaseInert(element: HTMLElement) {
-  const state = modalInertState.get(element);
-  if (!state) return;
-  state.count -= 1;
-  if (state.count > 0) return;
-  element.inert = state.wasInert;
-  modalInertState.delete(element);
-}
 
 @Component({
   tag: 'ds-modal',
@@ -54,45 +39,47 @@ export class Modal {
 
   @Prop({ mutable: true }) open: boolean = false;
   @Prop() heading!: string;
-  @Prop() subtitle: string | undefined;
+  @Prop() closeAriaLabel: string = 'Close';
   @Prop() modalWidth: ModalWidth | string = 'md';
+  /** Optional id reference for explanatory content in the default slot. */
+  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;
 
-  @State() private shouldRender: boolean = false;
   @State() private closing: boolean = false;
+  @State() private hasFooter: boolean = false;
 
-  @Event() dsClose!: EventEmitter<void>;
+  /** Emitted when an internal dismissal control requests that the modal close. */
+  @Event() dsClose!: EventEmitter<ModalCloseDetail>;
+  /** Emitted after exit motion completes, the top layer closes, and focus is restored. */
+  @Event() dsAfterClose!: EventEmitter<void>;
 
-  private instanceId = ++modalIdCounter;
-  private titleId = `ds-modal-title-${modalIdCounter}`;
-  private subtitleId = `ds-modal-subtitle-${modalIdCounter}`;
+  private titleId = `ds-modal-title-${++modalIdCounter}`;
+  private dialogEl: HTMLDialogElement | null = null;
   private previousFocus: HTMLElement | null = null;
-  private escapeHandler: ((e: KeyboardEvent) => void) | null = null;
-  private tabHandler: ((e: KeyboardEvent) => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
-  private inertedElements: HTMLElement[] = [];
 
   componentDidLoad() {
+    this.updateFooterPresence();
     if (this.open) this.onOpenChange(true);
   }
 
   disconnectedCallback() {
-    this.teardownListeners();
-    this.deactivateModal();
+    this.clearCloseTimer();
+    if (this.dialogEl?.open) this.dialogEl.close();
   }
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      this.teardownListeners();
-      this.shouldRender = true;
+      this.clearCloseTimer();
+      const alreadyOpen = !!this.dialogEl?.open;
       this.closing = false;
+      if (!this.dialogEl || alreadyOpen) return;
       this.previousFocus = document.activeElement as HTMLElement | null;
-      this.activateModal();
+      this.dialogEl.showModal();
       requestAnimationFrame(() => {
-        this.focusFirst();
-        this.setupListeners();
+        if (this.open && this.dialogEl?.open) this.focusClose();
       });
-    } else if (this.shouldRender) {
+    } else if (this.dialogEl?.open) {
       this.closing = true;
       const closeAnimationMs = this.closeAnimationMs;
       if (closeAnimationMs <= 0) {
@@ -106,101 +93,64 @@ export class Modal {
     }
   }
 
-  private focusFirst() {
-    const dialog = this.el.querySelector('.modal-dialog') as HTMLElement | null;
-    if (!dialog) return;
-    const focusables = this.getFocusables(dialog);
-    (focusables[0] ?? dialog).focus();
+  private focusClose() {
+    const close = this.el.querySelector('ds-button-unfilled.modal-close') as
+      | (HTMLElement & { setFocus?: () => Promise<void> })
+      | null;
+    void close?.setFocus?.();
   }
 
-  private getFocusables(root: HTMLElement): HTMLElement[] {
-    return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SEL)).filter(
-      el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
-    );
-  }
-
-  private setupListeners() {
-    this.escapeHandler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && this.isTopModal) { e.preventDefault(); this.close(); }
-    };
-
-    this.tabHandler = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || !this.isTopModal) return;
-      const dialog = this.el.querySelector('.modal-dialog') as HTMLElement | null;
-      if (!dialog) return;
-      const focusables = this.getFocusables(dialog);
-      if (!focusables.length) { e.preventDefault(); dialog.focus(); return; }
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      const active = document.activeElement;
-      if (e.shiftKey) {
-        if (active === first || active === dialog || !dialog.contains(active)) {
-          e.preventDefault(); last.focus();
-        }
-      } else {
-        if (active === last || !dialog.contains(active)) {
-          e.preventDefault(); first.focus();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', this.escapeHandler);
-    document.addEventListener('keydown', this.tabHandler);
-  }
-
-  private teardownListeners() {
-    if (this.escapeHandler) {
-      document.removeEventListener('keydown', this.escapeHandler);
-      this.escapeHandler = null;
-    }
-    if (this.tabHandler) {
-      document.removeEventListener('keydown', this.tabHandler);
-      this.tabHandler = null;
-    }
+  private clearCloseTimer() {
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
     }
   }
 
-  private close() {
-    if (!this.open || this.closing || !this.isTopModal) return;
-    this.dsClose.emit();
+  private requestClose(reason: ModalCloseReason, originalEvent: Event) {
+    if (!this.open || this.closing || !this.dialogEl?.open) return;
+    this.dsClose.emit({ reason, originalEvent });
     this.open = false;
   }
 
-  private handleBackdropMouseDown(e: MouseEvent) {
-    if (e.target === e.currentTarget && this.isTopModal) this.close();
+  private updateFooterPresence(slot?: HTMLSlotElement) {
+    const assignedNodes = slot?.assignedNodes({ flatten: true }) ?? [];
+    this.hasFooter =
+      assignedNodes.some(node => node.nodeType !== Node.TEXT_NODE || !!node.textContent?.trim()) ||
+      this.el.querySelector('[slot="footer"]') !== null;
   }
 
-  private get isTopModal(): boolean {
-    return activeModalStack[activeModalStack.length - 1] === this;
+  private handleCancel(event: Event) {
+    event.preventDefault();
+    this.requestClose('escape', event);
   }
 
-  /** Inert every sibling branch outside the modal without assuming it is a body child. */
-  private activateModal() {
-    if (!activeModalStack.includes(this)) activeModalStack.push(this);
-    if (this.inertedElements.length) return;
+  private handleBackdropPointerDown(event: PointerEvent) {
+    if (event.target === this.dialogEl) this.requestClose('backdrop', event);
+  }
 
-    let branch: HTMLElement = this.el;
-    let parent = branch.parentElement;
-    while (parent) {
-      for (const sibling of Array.from(parent.children)) {
-        if (sibling === branch || !(sibling instanceof HTMLElement)) continue;
-        makeInert(sibling);
-        this.inertedElements.push(sibling);
-      }
-      if (parent === document.body) break;
-      branch = parent;
-      parent = parent.parentElement;
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.key !== 'Tab' || !this.dialogEl) return;
+    const focusables = Array.from(
+      this.dialogEl.querySelectorAll<HTMLElement>(FOCUSABLE_SEL)
+    ).filter(element =>
+      !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true'
+    );
+    if (!focusables.length) {
+      event.preventDefault();
+      this.dialogEl.focus();
+      return;
     }
-  }
-
-  private deactivateModal() {
-    const stackIndex = activeModalStack.lastIndexOf(this);
-    if (stackIndex >= 0) activeModalStack.splice(stackIndex, 1);
-    for (const element of this.inertedElements) releaseInert(element);
-    this.inertedElements = [];
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+    if (event.shiftKey && (active === first || active === this.dialogEl)) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   private get resolvedWidth(): string {
@@ -215,64 +165,74 @@ export class Modal {
   }
 
   private finishClose() {
-    this.shouldRender = false;
+    if (!this.dialogEl?.open) return;
+    this.dialogEl.close();
     this.closing = false;
-    this.teardownListeners();
-    this.deactivateModal();
+    this.clearCloseTimer();
     this.previousFocus?.focus?.();
     this.previousFocus = null;
+    this.dsAfterClose.emit();
   }
 
   render() {
-    // Always render slots so scoped-mode slot distribution doesn't leak content.
-    // The backdrop is hidden via CSS when not active.
-    const hidden = !this.shouldRender && !this.closing;
-
     return (
-      <Host style={{ display: 'contents' }}>
-        <div
-          class={{ 'modal-backdrop': true, 'modal-backdrop--closing': this.closing, 'modal-backdrop--hidden': hidden }}
-          onMouseDown={(e: MouseEvent) => this.handleBackdropMouseDown(e)}
-          style={{ position: 'fixed', inset: '0', zIndex: '9999', display: hidden ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--dimension-space-200)' }}
+      <Host>
+        <dialog
+          ref={(element?: HTMLDialogElement) => {
+            this.dialogEl = element ?? null;
+          }}
+          class={{ 'modal-dialog': true, 'modal-dialog--closing': this.closing }}
+          aria-labelledby={this.titleId}
+          aria-describedby={this.ariaDescribedby}
+          onCancel={(event: Event) => this.handleCancel(event)}
+          onPointerDown={(event: PointerEvent) => this.handleBackdropPointerDown(event)}
+          onKeyDown={(event: KeyboardEvent) => this.handleKeyDown(event)}
+          style={{
+            width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))`,
+          }}
         >
-          <div
-            class={{ 'modal-dialog': true, 'modal-dialog--closing': this.closing }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={this.titleId}
-            aria-describedby={this.subtitle ? this.subtitleId : undefined}
-            tabIndex={-1}
-            style={{ width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))` }}
-          >
-            <div class="modal-header">
-              <ds-text
-                as="h2"
-                variant="text-title-small"
-                textId={this.titleId}
-              >
-                {this.heading}
-              </ds-text>
-              {this.subtitle && (
-                <ds-text
-                  class="modal-subtitle"
-                  as="div"
-                  variant="text-body-medium"
-                  color="secondary"
-                  wrap="balance"
-                  textId={this.subtitleId}
-                >
-                  {this.subtitle}
-                </ds-text>
-              )}
-            </div>
-            <div class="modal-body">
-              <slot />
-            </div>
-            <div class="modal-footer">
-              <slot name="footer" />
-            </div>
+          <div class="modal-header">
+            <ds-text
+              class="modal-heading"
+              as="h2"
+              variant="text-title-medium"
+              emphasis
+              color="primary"
+              lineTruncation={1}
+              textId={this.titleId}
+            >
+              {this.heading}
+            </ds-text>
+            <ds-button-unfilled
+              class="modal-close"
+              variant="icon"
+              icon="Cross"
+              size="md"
+              aria-label={this.closeAriaLabel}
+              activeFill={false}
+              hasBorder={false}
+              onDsClick={(event: CustomEvent<MouseEvent>) =>
+                this.requestClose('close-button', event.detail)
+              }
+            />
           </div>
-        </div>
+          <div class="modal-content">
+            <slot />
+          </div>
+          <div
+            class={{
+              'modal-footer': true,
+              'modal-footer--empty': !this.hasFooter,
+            }}
+          >
+            <slot
+              name="footer"
+              onSlotchange={(event: Event) =>
+                this.updateFooterPresence(event.currentTarget as HTMLSlotElement)
+              }
+            />
+          </div>
+        </dialog>
       </Host>
     );
   }
