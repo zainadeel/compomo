@@ -288,6 +288,7 @@ export class MyComponent {
 - **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
 - ButtonUnfilled's omitted `background` is the shared default treatment for primary and secondary parent surfaces and uses the brand-active selected fill. Pass `faint` explicitly on faint surfaces to use the neutral active fill; use the other matching surface context on medium, bold, strong, translucent, inverted, media, or always-dark surfaces. Do not use surface context to make an action artificially louder or quieter.
 - Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground to **primary** (toggle mode) — not brand tint.
+- An unfilled popup trigger with `expanded=true` automatically promotes its foreground to primary and paints the pressed interaction overlay, including when shell chrome passes `activeFill=false`. Popup-open is transient pressed state, not selected state. Keep `expanded` active through the popup's rendered exit lifecycle and clear it from `dsAfterClose`.
 - **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
 - Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
@@ -486,7 +487,7 @@ The xs recipe is a compact **visual density**, not permission to crowd pointer t
 **Switch density**
 
 - `ds-switch` is compact chrome placed inside menu, control, and form rows rather than a full-height control itself.
-- Sizes are `md` = 32×20 with a 12px thumb and 4px body inset, `sm` = 24×16 with a 10px thumb and 3px inset, and `xs` = 20×12 with an 8px thumb and 2px inset. Unchecked uses a transparent track with an inset `--color-foreground-tertiary` stroke (1.25px at md, 1px at sm, and 0.75px at xs) and a solid `--color-foreground-tertiary` thumb without a border. Checked keeps the brand track and primary-background thumb with no strokes.
+- Sizes are `md` = 32×20 with a 12px thumb and 4px body inset, `sm` = 24×16 with a 10px thumb and 3px inset, and `xs` = 20×12 with an 8px thumb and 2px inset. Unchecked uses a transparent track with a 1px inset `--color-border-secondary` stroke at every size and a solid `--color-foreground-tertiary` thumb without a border. Checked keeps the brand track and primary-background thumb with no strokes.
 - The Switch host owns its structural unchecked inset stroke directly; do not put it on the shared interaction-fill pseudo-elements because a parent row may own those layers. Hover/press wash is confined to the thumb. Switch focus uses the shared **outset** `ds-focus-ring`, not the inset ring.
 - Track color and thumb position animate with `--effect-motion-short-3`, matching SwatchPicker selection motion; do not add depressed/elevated shadows or press-scale transforms.
 - Every switch requires an accessible name. Use `aria-label` for standalone icon-like contexts or `aria-labelledby` to associate visible text; use `name`/`value` for form submission.
@@ -502,7 +503,7 @@ The xs recipe is a compact **visual density**, not permission to crowd pointer t
 - Every thumb contains a native range input. A visible `label` names a single thumb; range sliders require localized `startLabel` and `endLabel`. Use `valueText` for one authored value description or assign `valueTexts` for per-thumb range descriptions when raw numbers are not understandable by themselves.
 - Pointer input chooses the nearest thumb and emits `dsChange` continuously; `dsCommit` is for expensive work after pointer, keyboard, or assistive-technology interaction settles.
 - Horizontal Slider fills its parent. Vertical Slider uses a token-based default length that layouts may override through `--ds-slider-vertical-length`. `thumbAlignment="edge"` keeps the full thumb inside the control; `center` aligns its center to the endpoints.
-- Sizes follow control density: md uses a 32px control, 16px thumb, and 4px rail; sm uses 24/12/3; xs uses 16/8/2. The thumb is square with a 2px radius at every density. The rail and thumb outline use foreground tertiary for structural 3:1 contrast, while the selected indicator uses bold brand.
+- Sizes follow control density: md uses a 32px control, 16px thumb, and 4px rail; sm uses 24/12/3; xs uses 16/8/2. The rail uses a 1px inset `--color-border-secondary` stroke at every size, while the selected indicator uses bold brand. The thumb stays square with a 2px radius, has no border, and uses `--effect-elevation-elevated-sm` at every density.
 - `readOnly` remains focusable and submitted but prevents changes. `disabled` and `isInactive` remove all thumbs from interaction and form submission. Form reset restores the initial normalized value; a range submits repeated entries under one name.
 - Slider exposes orientation, dragging, focus, filled, dirty, touched, valid, disabled, and read-only data hooks. Do not add a second validation or gesture policy in consuming CSS.
 
@@ -579,6 +580,10 @@ Rules:
 - Keep overflow on the same element that receives the fade classes. Make standalone scroll regions keyboard-reachable when their off-screen content would otherwise be inaccessible.
 
 **Anchored choice-popup alignment**
+
+- Every menu trigger must expose its popup relationship and keep the trigger's active/pressed visual state for the popup's full rendered lifetime, including exit motion. Do not clear the visual state as soon as `open` becomes false.
+- For application-owned `ds-menu` instances, separate interactive `open` state from retained trigger/context state. Set `open=false` to begin closing, keep the trigger active and its item/anchor context stable, then clear them from `dsAfterClose`. Pressing the active trigger again may reopen and cancel the pending close.
+- `ds-menu` snapshots the last painted sections through exit motion so an action may update product state without changing labels or swapping menu contexts during the fade. Consumers must still retain trigger state through `dsAfterClose`; the content snapshot does not own external trigger styling.
 
 - `ds-menu`, Select, and SelectMulti share `choice-popup-alignment.ts`. The default `choice-cell` contract extends the popup frame by the section inset so the first/last interactive row edge—not the popup frame—aligns with the trigger.
 - Leave `ds-menu.anchorAlignment` at `choice-cell` for ordinary menus. Use `popup-frame` only when a deliberately custom layout must align the popup's outer frame, and treat `alignOffset` as an additional nudge after that policy.

@@ -69,6 +69,10 @@
   cursor: not-allowed;
 }
 
+.tag__button--expanded::after {
+  background: var(--ds-interaction-pressed);
+}
+
 /* Hover/press wash stays above the Tag's semantic background. */
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */

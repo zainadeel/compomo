@@ -127,7 +127,7 @@
   "files": [
     {
       "path": "src/wc/components/ConversationListSection/ConversationListSection.css",
-      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n}\n\n:host(:not(:first-child)) {\n  /* Match the 16px separation between PanelNav groups. */\n  margin-top: var(--dimension-space-200);\n}\n\n.conversation-list-section {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n}\n\nds-text.conversation-list-section__heading {\n  display: block;\n  padding: var(--dimension-space-050) var(--dimension-space-100);\n}\n\n.conversation-list-section__items {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-025);\n}\n",
+      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n:host(:not(:first-child)) {\n  /* Match the 16px separation between PanelNav groups. */\n  margin-top: var(--dimension-space-200);\n}\n\n.conversation-list-section {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n}\n\nds-text.conversation-list-section__heading {\n  display: block;\n  padding: var(--dimension-space-050) var(--dimension-space-100);\n}\n\n.conversation-list-section__items {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-025);\n}\n",
       "type": "registry:ui"
     },
     {

@@ -6,7 +6,7 @@
   --ds-switch-height: var(--dimension-size-250);
   --ds-switch-thumb-size: var(--dimension-size-150);
   --ds-switch-gap: var(--dimension-space-050);
-  --ds-switch-stroke: var(--dimension-stroke-width-015);
+  --ds-switch-stroke: var(--dimension-stroke-width-012);
   --ds-switch-inset: var(--ds-switch-gap);
   --ds-switch-thumb-hover: var(--color-interaction-hover);
   --ds-switch-thumb-pressed: var(--color-interaction-pressed);
@@ -28,7 +28,7 @@
   user-select: none;
   outline: none;
   background-color: transparent;
-  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-foreground-tertiary);
+  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-border-secondary);
   transition:
     background-color var(--effect-motion-short-3),
     box-shadow var(--effect-motion-short-3);
@@ -39,7 +39,6 @@
   --ds-switch-height: var(--dimension-size-200);
   --ds-switch-thumb-size: calc(var(--dimension-size-base) * 5 / 4);
   --ds-switch-gap: calc(var(--dimension-space-025) + var(--dimension-space-012));
-  --ds-switch-stroke: var(--dimension-stroke-width-012);
 }
 
 :host(.switch--xs) {
@@ -47,7 +46,6 @@
   --ds-switch-height: var(--dimension-size-150);
   --ds-switch-thumb-size: var(--dimension-size-100);
   --ds-switch-gap: var(--dimension-space-025);
-  --ds-switch-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);
 }
 
 :host(.checked) {

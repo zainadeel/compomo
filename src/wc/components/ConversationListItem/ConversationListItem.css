@@ -3,6 +3,8 @@
 :host {
   display: block;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .conversation-list-item__row {
@@ -96,13 +98,18 @@ ds-text.conversation-list-item__preview.ds-choice-item__subtext {
 }
 
 .conversation-list-item__row:hover .conversation-list-item__actions,
-.conversation-list-item__row:has(:focus-visible) .conversation-list-item__actions {
+.conversation-list-item__row:has(:focus-visible) .conversation-list-item__actions,
+:host(.conversation-list-item--actions-open) .conversation-list-item__actions {
   opacity: 1;
   pointer-events: auto;
 }
 
 /* Keep the row wash continuous while the pointer moves onto its sibling action. */
 .conversation-list-item__row:hover .conversation-list-item::after {
+  background: var(--ds-interaction-hover);
+}
+
+:host(.conversation-list-item--actions-open) .conversation-list-item::after {
   background: var(--ds-interaction-hover);
 }
 

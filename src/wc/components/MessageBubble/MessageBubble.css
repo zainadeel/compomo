@@ -2,6 +2,8 @@
   display: inline-flex;
   max-width: 80%;
   box-sizing: border-box;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 :host(.message-bubble--ghost) {
@@ -11,15 +13,10 @@
 
 .message-bubble {
   min-width: 0;
-  padding: var(--dimension-space-100);
-  border-start-start-radius: var(
-    --ds-message-bubble-radius-start-start,
-    var(--dimension-radius-050)
-  );
-  border-start-end-radius: var(--ds-message-bubble-radius-start-end, var(--dimension-radius-050));
-  border-end-start-radius: var(--ds-message-bubble-radius-end-start, var(--dimension-radius-050));
-  border-end-end-radius: var(--ds-message-bubble-radius-end-end, var(--dimension-radius-050));
-  background: var(--color-background-secondary);
+  padding-block: var(--dimension-space-100);
+  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));
+  border-radius: var(--dimension-radius-050);
+  background: transparent;
   color: var(--color-foreground-primary);
   font-family: var(--typography-font-family);
   font-size: var(--typography-fontsize-md);
@@ -31,8 +28,8 @@
 }
 
 :host(.message-bubble--primary) .message-bubble {
-  background: var(--color-background-bold-brand);
-  color: var(--color-foreground-faint-brand);
+  background: var(--color-translucent-translucent);
+  color: var(--color-foreground-primary);
 }
 
 :host(.message-bubble--secondary) .message-bubble {

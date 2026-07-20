@@ -44,6 +44,23 @@ const MENU_FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
+function snapshotMenuSections(sections: MenuSection[]): MenuSection[] {
+  return sections.map(section => {
+    if (isMenuGradientPickerSection(section)) return { ...section };
+    if (isMenuSwatchPickerSection(section)) {
+      return {
+        ...section,
+        options: section.options?.map(option => ({ ...option })),
+        sections: section.sections?.map(swatchSection => ({
+          ...swatchSection,
+          options: swatchSection.options.map(option => ({ ...option })),
+        })),
+      };
+    }
+    return { ...section, items: section.items.map(item => ({ ...item })) };
+  });
+}
+
 @Component({
   tag: 'ds-menu',
   styleUrl: 'Menu.css',
@@ -84,6 +101,8 @@ export class Menu {
   @State() private focusRingVisible: boolean = false;
 
   @Event() dsClose!: EventEmitter<void>;
+  /** Emitted after the popup's exit motion is complete and its rendered content is removed. */
+  @Event() dsAfterClose!: EventEmitter<void>;
   @Event() dsSelect!: EventEmitter<MenuItemData>;
   /** Emitted when a `gradient-picker` section swatch is chosen. */
   @Event() dsGradientSelect!: EventEmitter<ShellGradientPreset>;
@@ -96,6 +115,9 @@ export class Menu {
   private itemEls: HTMLElement[] = [];
   private positionRetryRaf: number | null = null;
   private listenersReady = false;
+  /** Last content actually painted while open; retained unchanged through exit motion. */
+  private lastRenderedSections: MenuSection[] = [];
+  private closingSections: MenuSection[] | null = null;
 
   componentDidLoad() {
     if (this.open) this.onOpenChange(true);
@@ -110,6 +132,7 @@ export class Menu {
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
       this.teardownListeners();
+      this.closingSections = null;
       this.shouldRender = true;
       this.closing = false;
       this.positionReady = false;
@@ -122,6 +145,7 @@ export class Menu {
       });
     } else if (this.shouldRender) {
       this.cancelPositionRetry();
+      this.captureClosingSections();
       this.closing = true;
       this.teardownListeners();
       this.listenersReady = false;
@@ -179,6 +203,17 @@ export class Menu {
   private finishClose() {
     this.shouldRender = false;
     this.closing = false;
+    this.lastRenderedSections = [];
+    this.closingSections = null;
+    this.dsAfterClose.emit();
+  }
+
+  private captureClosingSections() {
+    if (this.closingSections) return;
+    const visibleSections = this.lastRenderedSections.length
+      ? this.lastRenderedSections
+      : this.activeSections;
+    this.closingSections = snapshotMenuSections(visibleSections);
   }
 
   private get resolvedAnchor(): HTMLElement | null {
@@ -386,6 +421,7 @@ export class Menu {
   }
 
   private close(restoreFocus = true) {
+    this.captureClosingSections();
     if (restoreFocus) this.focusAnchor();
     this.dsClose.emit();
     this.open = false;
@@ -461,6 +497,9 @@ export class Menu {
 
   private handleItemClick(item: MenuItemData) {
     if (item.isInactive) return;
+    // Consumers commonly change the item source while handling selection.
+    // Capture first so the exit animation never paints the next menu context.
+    this.captureClosingSections();
     this.dsSelect.emit(item);
   }
 
@@ -475,7 +514,14 @@ export class Menu {
   render() {
     if (!this.shouldRender) return <Host style={{ display: 'contents' }} />;
 
-    const sections = this.activeSections;
+    const sections = this.closing
+      ? (this.closingSections ?? this.lastRenderedSections)
+      : this.activeSections;
+    const hasCompositeSections = sections.some(isMenuPickerSection);
+    if (!this.closing) {
+      this.lastRenderedSections = snapshotMenuSections(sections);
+      this.closingSections = null;
+    }
     let flatIdx = 0;
 
     const popupStyle: Record<string, string> = {
@@ -500,9 +546,9 @@ export class Menu {
             'ds-choice-popup--closing': this.closing,
           }}
           style={popupStyle}
-          role={this.hasCompositeSections ? 'dialog' : 'menu'}
+          role={hasCompositeSections ? 'dialog' : 'menu'}
           aria-label={this.menuLabel}
-          aria-orientation={this.hasCompositeSections ? undefined : 'vertical'}
+          aria-orientation={hasCompositeSections ? undefined : 'vertical'}
         >
           <div class="ds-choice-list">
             {sections.map((section, si) => (
@@ -556,7 +602,7 @@ export class Menu {
                     const idx = flatIdx++;
                     const isFocused = this.focusedIndex === idx;
                     const isRadioItem =
-                      !this.hasCompositeSections &&
+                      !hasCompositeSections &&
                       this.selectionMode === 'single' &&
                       !item.showSwitch;
                     return (
@@ -577,7 +623,7 @@ export class Menu {
                           'menu-item--focused': isFocused,
                         }}
                         role={
-                          this.hasCompositeSections
+                          hasCompositeSections
                             ? undefined
                             : item.showSwitch
                             ? 'menuitemcheckbox'
@@ -586,19 +632,19 @@ export class Menu {
                             : 'menuitem'
                         }
                         aria-checked={
-                          !this.hasCompositeSections && item.showSwitch
+                          !hasCompositeSections && item.showSwitch
                             ? String(!!item.switchValue)
                             : isRadioItem
                             ? String(!!item.isSelected)
                             : undefined
                         }
                         aria-pressed={
-                          this.hasCompositeSections
+                          hasCompositeSections
                             ? String(item.showSwitch ? !!item.switchValue : !!item.isSelected)
                             : undefined
                         }
                         aria-current={
-                          !this.hasCompositeSections &&
+                          !hasCompositeSections &&
                           !item.showSwitch &&
                           !isRadioItem &&
                           item.isSelected
@@ -606,7 +652,7 @@ export class Menu {
                             : undefined
                         }
                         disabled={item.isInactive}
-                        tabIndex={this.hasCompositeSections ? 0 : isFocused ? 0 : -1}
+                        tabIndex={hasCompositeSections ? 0 : isFocused ? 0 : -1}
                         onMouseDown={() => {
                           this.focusRingVisible = false;
                         }}

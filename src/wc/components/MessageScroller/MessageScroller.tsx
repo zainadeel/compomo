@@ -16,6 +16,7 @@ const LIVE_EDGE_THRESHOLD = 24;
 @Component({
   tag: 'ds-message-scroller',
   styleUrl: 'MessageScroller.css',
+  styleUrls: ['../../utils/scroll-edge-fade.css'],
   scoped: true,
 })
 export class MessageScroller {
@@ -40,6 +41,8 @@ export class MessageScroller {
   private atStart = false;
   private programmatic = false;
   private previousScrollHeight = 0;
+  private overlayBlockSize = 0;
+  private overlayContentBlockSize = 0;
 
   componentDidLoad() {
     this.connectObservers();
@@ -100,10 +103,13 @@ export class MessageScroller {
     this.previousScrollHeight = this.viewport.scrollHeight;
     this.resizeObserver = new ResizeObserver(() => this.handleContentGrowth());
     this.resizeObserver.observe(this.content);
+    this.resizeObserver.observe(this.viewport);
     if (this.overlay) {
       this.overlayResizeObserver = new ResizeObserver(entries => {
         const blockSize = Math.ceil(entries[0]?.contentRect.height ?? 0);
+        this.overlayBlockSize = blockSize;
         this.el.style.setProperty('--ds-message-scroller-overlay-block-size', `${blockSize}px`);
+        this.syncOverlayContentBlockSize();
         this.handleContentGrowth();
       });
       this.overlayResizeObserver.observe(this.overlay);
@@ -127,6 +133,35 @@ export class MessageScroller {
     }
     this.previousScrollHeight = nextHeight;
     this.showScrollToLatest = !this.following && !this.isAtLiveEdge();
+    this.syncContentFade();
+  }
+
+  private syncContentFade() {
+    if (!this.viewport || !this.content) return;
+    const fadeEnd = Math.max(this.viewport.scrollTop + this.viewport.clientHeight, 0);
+    const fadeStart = Math.max(fadeEnd - this.overlayContentBlockSize, 0);
+    this.content.style.setProperty('--ds-scroll-edge-fade-window-start', `${fadeStart}px`);
+    this.content.style.setProperty('--ds-scroll-edge-fade-window-end', `${fadeEnd}px`);
+  }
+
+  private syncOverlayContentBlockSize() {
+    if (!this.overlay) return;
+    const assigned = this.el.querySelector<HTMLElement>('[slot="overlay"]');
+    if (!(assigned instanceof HTMLElement)) {
+      this.overlayContentBlockSize = this.overlayBlockSize;
+    } else {
+      const visibleContent =
+        assigned.firstElementChild instanceof HTMLElement ? assigned.firstElementChild : assigned;
+      const topInset = Math.max(
+        Math.ceil(visibleContent.getBoundingClientRect().top - this.overlay.getBoundingClientRect().top),
+        0
+      );
+      this.overlayContentBlockSize = Math.max(this.overlayBlockSize - topInset, 0);
+    }
+    this.el.style.setProperty(
+      '--ds-message-scroller-overlay-content-block-size',
+      `${this.overlayContentBlockSize}px`
+    );
   }
 
   private applyDefaultPosition() {
@@ -135,6 +170,7 @@ export class MessageScroller {
       this.viewport.scrollTop = 0;
       this.following = false;
       this.showScrollToLatest = this.viewport.scrollHeight > this.viewport.clientHeight;
+      this.syncContentFade();
       return;
     }
     if (this.defaultPosition === 'last-anchor') {
@@ -144,12 +180,14 @@ export class MessageScroller {
         last.scrollIntoView({ block: 'start' });
         this.following = this.isAtLiveEdge();
         this.showScrollToLatest = !this.following;
+        this.syncContentFade();
         return;
       }
     }
     this.viewport.scrollTop = this.viewport.scrollHeight;
     this.following = true;
     this.showScrollToLatest = false;
+    this.syncContentFade();
   }
 
   private isAtLiveEdge(): boolean {
@@ -161,7 +199,9 @@ export class MessageScroller {
   }
 
   private handleScroll = () => {
-    if (!this.viewport || this.programmatic) return;
+    if (!this.viewport) return;
+    this.syncContentFade();
+    if (this.programmatic) return;
     this.following = this.isAtLiveEdge();
     this.showScrollToLatest = !this.following;
     const nextAtStart = this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD;
@@ -206,7 +246,7 @@ export class MessageScroller {
             }}
           >
             <div
-              class="message-scroller__content"
+              class="message-scroller__content scroll-edge-fade--block-window"
               ref={element => {
                 this.content = element;
               }}

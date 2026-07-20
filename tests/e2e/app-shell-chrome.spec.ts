@@ -397,6 +397,27 @@ test.describe('App shell chrome', () => {
     expect(Math.abs(geometry.inkCenterDeltaY)).toBeLessThanOrEqual(0.5);
   });
 
+  test('collapsed account trigger promotes its initial immediately while its menu is expanded', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Collapse navigation' }).click();
+    const panel = page.locator('#panel');
+    const account = page.getByRole('button', { name: 'Account' });
+    const initial = page.locator('.panel-nav__user-initial');
+
+    await panel.evaluate(element => {
+      (element as HTMLElement & { accountMenuExpanded: boolean }).accountMenuExpanded = true;
+    });
+
+    await expect(account).toHaveAttribute('aria-expanded', 'true');
+    await expect.poll(() => initial.evaluate(element => getComputedStyle(element).color))
+      .toBe(await account.evaluate(element => getComputedStyle(element).color));
+    await expect.poll(() => initial.evaluate(element => getComputedStyle(element).transitionDuration))
+      .toBe('0s');
+    await expect.poll(() => account.evaluate(element => getComputedStyle(element).transitionProperty))
+      .not.toContain('color');
+  });
+
   test('keeps balanced panel insets, an 8px expanded footer gap, and the same animated user node', async ({
     page,
   }) => {

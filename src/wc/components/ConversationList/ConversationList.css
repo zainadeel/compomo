@@ -4,6 +4,8 @@
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .conversation-list {
@@ -32,15 +34,15 @@
 
 .conversation-list__actions {
   position: absolute;
-  right: var(--dimension-space-100);
-  bottom: var(--dimension-space-100);
+  right: var(--dimension-space-200);
+  bottom: var(--dimension-space-200);
   z-index: var(--dimension-z-index-floating);
 }
 
 .conversation-list__actions-surface {
   display: flex;
   border-radius: var(--dimension-radius-half);
-  box-shadow: var(--effect-elevation-elevated-floating);
+  box-shadow: var(--effect-elevation-elevated-md);
 }
 
 .conversation-list__actions-surface:empty {

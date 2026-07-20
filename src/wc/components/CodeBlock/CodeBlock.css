@@ -3,6 +3,8 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .code-block {
@@ -35,6 +37,8 @@ pre {
   font-size: var(--typography-fontsize-sm);
   line-height: var(--typography-lineheight-sm);
   tab-size: 2;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 code {

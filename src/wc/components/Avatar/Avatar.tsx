@@ -1,4 +1,5 @@
 import { Component, h, Host, Prop } from '@stencil/core';
+import type { IconColor } from '../Icon/Icon';
 
 @Component({
   tag: 'ds-avatar',
@@ -8,6 +9,9 @@ import { Component, h, Host, Prop } from '@stencil/core';
 export class Avatar {
   /** Canonical IcoMo icon name displayed inside the avatar. */
   @Prop() icon: string = '';
+
+  /** Semantic color for the icon. Use primary to surface unread or current identity state. */
+  @Prop() iconColor: IconColor = 'secondary';
 
   /** Optional accessible label. Omit when the surrounding content already conveys the meaning. */
   @Prop() label: string | undefined;
@@ -21,7 +25,7 @@ export class Avatar {
           aria-label={this.label}
           aria-hidden={!this.label ? 'true' : undefined}
         >
-          <ds-icon name={this.icon} size="md" color="secondary" />
+          <ds-icon name={this.icon} size="md" color={this.iconColor} />
         </span>
       </Host>
     );

@@ -4,8 +4,7 @@
   --ds-slider-control-size: var(--dimension-size-400);
   --ds-slider-thumb-size: var(--dimension-size-200);
   --ds-slider-track-size: var(--dimension-size-100);
-  --ds-slider-track-stroke: var(--dimension-stroke-width-015);
-  --ds-slider-thumb-stroke: var(--dimension-stroke-width-018);
+  --ds-slider-track-stroke: var(--dimension-stroke-width-012);
   --ds-slider-vertical-length: calc(var(--dimension-size-800) * 3);
   display: flex;
   flex-direction: column;
@@ -19,14 +18,12 @@
   --ds-slider-control-size: var(--dimension-size-300);
   --ds-slider-thumb-size: var(--dimension-size-150);
   --ds-slider-track-size: var(--dimension-size-075);
-  --ds-slider-track-stroke: var(--dimension-stroke-width-012);
 }
 
 :host(.slider--xs) {
   --ds-slider-control-size: var(--dimension-size-200);
   --ds-slider-thumb-size: var(--dimension-size-100);
   --ds-slider-track-size: var(--dimension-size-050);
-  --ds-slider-track-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);
 }
 
 :host(.slider--vertical) {
@@ -84,7 +81,7 @@
   overflow: hidden;
   border-radius: var(--dimension-radius-025);
   background-color: transparent;
-  box-shadow: inset 0 0 0 var(--ds-slider-track-stroke) var(--color-foreground-tertiary);
+  box-shadow: inset 0 0 0 var(--ds-slider-track-stroke) var(--color-border-secondary);
   transform: translateY(-50%);
   pointer-events: none;
 }
@@ -158,7 +155,7 @@
   overflow: visible;
   border-radius: var(--dimension-radius-025);
   background-color: var(--color-background-primary);
-  box-shadow: inset 0 0 0 var(--ds-slider-thumb-stroke) var(--color-border-bold-brand);
+  box-shadow: var(--effect-elevation-elevated-sm);
   pointer-events: none;
   transition:
     background-color var(--effect-motion-short-2),

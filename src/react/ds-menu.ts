@@ -17,6 +17,7 @@ import { DsMenu as DsMenuElement, defineCustomElement as defineDsMenu } from "@d
 
 export type DsMenuEvents = {
     onDsClose: EventName<DsMenuCustomEvent<void>>,
+    onDsAfterClose: EventName<DsMenuCustomEvent<void>>,
     onDsSelect: EventName<DsMenuCustomEvent<MenuItemData>>,
     onDsGradientSelect: EventName<DsMenuCustomEvent<ShellGradientPreset>>,
     onDsSwatchSelect: EventName<DsMenuCustomEvent<string>>
@@ -29,6 +30,7 @@ export const DsMenu: StencilReactComponent<DsMenuElement, DsMenuEvents, Componen
     react: React,
     events: {
         onDsClose: 'dsClose',
+        onDsAfterClose: 'dsAfterClose',
         onDsSelect: 'dsSelect',
         onDsGradientSelect: 'dsGradientSelect',
         onDsSwatchSelect: 'dsSwatchSelect'

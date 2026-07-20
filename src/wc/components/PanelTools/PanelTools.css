@@ -103,6 +103,9 @@
   transition: none;
   width: 100vw;
 }
+:host([presentation='fullscreen']) .panel-tools__drawer--visible {
+  border-left: none;
+}
 :host([presentation='fullscreen']) .panel-tools__drawer-surface {
   background-color: transparent;
   width: 100vw;

@@ -30,7 +30,7 @@
 .message-scroller__content {
   display: flex;
   flex-direction: column;
-  gap: var(--dimension-space-150);
+  gap: var(--dimension-space-300);
   width: 100%;
   max-width: var(--dimension-panel-width-2xl);
   min-height: 100%;
@@ -53,8 +53,10 @@
 
 .message-scroller__control {
   position: absolute;
-  right: var(--dimension-space-100);
-  bottom: calc(var(--ds-message-scroller-overlay-block-size, 0px) + var(--dimension-space-100));
+  bottom: calc(
+    var(--ds-message-scroller-overlay-content-block-size, 0px) + var(--dimension-space-200)
+  );
+  left: 50%;
   z-index: var(--dimension-z-index-floating);
   display: flex;
   align-items: center;
@@ -62,6 +64,7 @@
   border-radius: var(--dimension-radius-half);
   background: var(--color-background-transparent);
   box-shadow: var(--effect-elevation-elevated-md);
+  transform: translateX(-50%);
   -webkit-backdrop-filter: blur(var(--effect-blur-sm));
   backdrop-filter: blur(var(--effect-blur-sm));
 }

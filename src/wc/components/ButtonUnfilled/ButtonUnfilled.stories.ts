@@ -16,6 +16,7 @@ const meta: Meta = {
     label: { control: 'text' },
     icon: { control: 'text' },
     isActive: { control: 'boolean' },
+    expanded: { control: 'boolean' },
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
     rounded: { control: 'boolean' },
@@ -46,6 +47,7 @@ const meta: Meta = {
     icon: 'Bell',
     ariaLabel: '',
     isActive: false,
+    expanded: false,
     activeFill: true,
     hasBorder: true,
     rounded: false,
@@ -75,6 +77,7 @@ export const Playground: Story = {
       label=${args['label']}
       icon=${args['icon']}
       ?is-active=${args['isActive']}
+      ?expanded=${args['expanded']}
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
       ?rounded=${args['rounded']}
@@ -199,6 +202,18 @@ export const States: Story = {
         <span style="${LABEL}">active (chrome)</span>
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
         <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox active" is-active .activeFill=${false} .hasBorder=${false} dot></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">popup open (chrome)</span>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Ellipses"
+          aria-label="Options menu open"
+          haspopup="menu"
+          expanded
+          .activeFill=${false}
+          .hasBorder=${false}
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">no border</span>

@@ -18,11 +18,12 @@ import { defineCustomElement as defineDsMenu } from '@ds-mo/ui/components/ds-men
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['align', 'alignOffset', 'anchor', 'anchorAlignment', 'anchorId', 'initialFocusVisible', 'items', 'menuLabel', 'menuWidth', 'minWidth', 'open', 'sections', 'selectionMode', 'side', 'sideOffset'],
-  outputs: ['dsClose', 'dsSelect', 'dsGradientSelect', 'dsSwatchSelect'],
+  outputs: ['dsClose', 'dsAfterClose', 'dsSelect', 'dsGradientSelect', 'dsSwatchSelect'],
 })
 export class DsMenu {
   protected el: HTMLDsMenuElement;
   @Output() dsClose = new EventEmitter<DsMenuCustomEvent<void>>();
+  @Output() dsAfterClose = new EventEmitter<DsMenuCustomEvent<void>>();
   @Output() dsSelect = new EventEmitter<DsMenuCustomEvent<IDsMenuMenuItemData>>();
   @Output() dsGradientSelect = new EventEmitter<DsMenuCustomEvent<IDsMenuShellGradientPreset>>();
   @Output() dsSwatchSelect = new EventEmitter<DsMenuCustomEvent<string>>();
@@ -40,6 +41,10 @@ import type { ShellGradientPreset as IDsMenuShellGradientPreset } from '@ds-mo/u
 export declare interface DsMenu extends Components.DsMenu {
 
   dsClose: EventEmitter<DsMenuCustomEvent<void>>;
+  /**
+   * Emitted after the popup's exit motion is complete and its rendered content is removed.
+   */
+  dsAfterClose: EventEmitter<DsMenuCustomEvent<void>>;
 
   dsSelect: EventEmitter<DsMenuCustomEvent<IDsMenuMenuItemData>>;
   /**

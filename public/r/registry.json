@@ -601,6 +601,10 @@
             "type": "string",
             "required": false
           },
+          "iconColor": {
+            "type": "IconColor",
+            "required": false
+          },
           "label": {
             "type": "string | undefined",
             "required": false
@@ -2289,6 +2293,10 @@
           ]
         },
         "props": {
+          "actionsOpen": {
+            "type": "boolean",
+            "required": false
+          },
           "conversationId": {
             "type": "string",
             "required": false
@@ -3441,6 +3449,10 @@
         },
         "events": [
           {
+            "name": "dsAfterClose",
+            "detail": "void"
+          },
+          {
             "name": "dsClose",
             "detail": "void"
           },
@@ -3998,6 +4010,10 @@
         "props": {
           "accountLabel": {
             "type": "string",
+            "required": false
+          },
+          "accountMenuExpanded": {
+            "type": "boolean",
             "required": false
           },
           "activeId": {
