@@ -1,5 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
+import type { ChoiceBackground } from '../../utils/choice-list';
 
 export type ButtonFilledIntent =
   | 'neutral'
@@ -13,6 +14,8 @@ export type ButtonFilledIntent =
   | 'walkthrough';
 
 export type ButtonFilledContrast = 'bold' | 'strong' | 'medium' | 'faint';
+
+export type ButtonFilledBackground = ChoiceBackground;
 
 export type ButtonFilledVariant = 'icon' | 'label' | 'icon-label';
 
@@ -64,6 +67,15 @@ export class ButtonFilled {
    * bold → faint, strong → medium, medium → strong, faint → bold.
    */
   @Prop() contrast: ButtonFilledContrast = 'bold';
+
+  /** Show a 1px secondary inset border. */
+  @Prop() hasBorder: boolean = false;
+
+  /**
+   * Actual parent surface context for the optional inset border color only.
+   * Omit on primary and secondary surfaces.
+   */
+  @Prop() background: ButtonFilledBackground | undefined;
 
   /** Use the half-radius treatment instead of the default control radius. */
   @Prop() rounded: boolean = false;
@@ -125,6 +137,7 @@ export class ButtonFilled {
       'ds-interaction-fill--on-strong': this.contrast === 'strong',
       'ds-interaction-fill--on-medium': this.contrast === 'medium',
       /* faint → default app interaction tokens (no --on-*). */
+      'button-filled--bordered': this.hasBorder,
       'ds-control-inactive': this.isInactive,
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
@@ -133,6 +146,7 @@ export class ButtonFilled {
       'button-filled--label': this.variant === 'label',
       'button-filled--icon-label': this.variant === 'icon-label',
       'button-filled--rounded': this.rounded,
+      [`button-filled--background-${this.background}`]: this.background !== undefined,
       [`button-filled--intent-${this.intent}`]: true,
       [`button-filled--contrast-${this.contrast}`]: this.contrast !== 'bold',
     };

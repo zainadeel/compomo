@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-data-viz-donut",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-data-viz-donut",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
+  "useWhen": [
+    "A dashboard widget needs the standard donut and visible legend composition in one data-viz card.",
+    "Chart slices and legend rows should cross-highlight without application hover wiring.",
+    "The card needs the shared header filter action while the application owns filter state and menu content."
+  ],
+  "avoidWhen": [
+    "The visualization is a bar, line, metric, or custom chart; compose CardShellDataViz directly.",
+    "The product needs a custom legend treatment such as chips, external stat callouts, or selectable filters.",
+    "The surface is a settings section or generic content card."
+  ],
+  "alternatives": [
+    {
+      "when": "The visualization needs shared data-viz chrome without the canonical donut layout.",
+      "component": "component:ds-card-shell-data-viz",
+      "reason": "CardShellDataViz owns only the header, actions, width, and body boundary."
+    },
+    {
+      "when": "A donut and legend need a custom layout without card chrome.",
+      "component": "component:ds-chart-donut",
+      "reason": "Compose the chart and ChartLegend directly and own their layout and hover synchronization."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-shell-data-viz",
+    "component:ds-chart-donut",
+    "component:ds-chart-legend",
+    "component:ds-empty-state",
+    "component:ds-skeleton"
+  ],
+  "accessibility": [
+    "Provide a concise card heading and a localized filter label for the icon-only header action.",
+    "Keep essential values available through the chart and visible legend rather than encoding meaning through slice color alone.",
+    "The application owns meaningful loading, empty, and error status copy when either content region is temporarily replaced or absent."
+  ],
+  "states": [
+    "The chart region fills remaining card height while the legend remains content-sized.",
+    "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
+    "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
+    "The filter action emits intent while the parent owns popup content, applied constraints, and data updates."
+  ],
+  "responsiveBehavior": [
+    "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
+    "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots."
+    ],
+    "react": [
+      "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+    ],
+    "angular": [
+      "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.stories.ts"
+    },
+    {
+      "label": "Dashboard review examples",
+      "path": "src/wc/stories/DataViz/OverviewReview.stories.ts"
+    }
+  ]
+}

@@ -2,15 +2,79 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "chart-line",
   "title": "ChartLine",
-  "description": "ChartLine component from @ds-mo/ui.",
+  "description": "Static single- or multi-series line chart for trends across ordered, evenly spaced categories, including preformatted time-period labels.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-line",
     "source": "src/wc/components/ChartLine/ChartLine.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Static single- or multi-series line chart for trends across ordered, evenly spaced categories, including preformatted time-period labels.",
+      "useWhen": [
+        "Users need to follow one or more numeric trends across a shared ordered x-axis.",
+        "Time periods are already grouped into equally spaced labels such as months, weeks, or days.",
+        "A horizontal ChartLegend should identify multiple series."
+      ],
+      "avoidWhen": [
+        "Pixel position must reflect irregular elapsed time or continuous timestamps.",
+        "The primary task is comparing unrelated category magnitudes rather than following a trend.",
+        "The chart needs built-in zoom, brushing, selection, or drill-down.",
+        "Series lengths do not align with the shared category list."
+      ],
+      "alternatives": [
+        {
+          "when": "Users need to compare one measure across discrete categories or time buckets.",
+          "component": "component:ds-chart-bar",
+          "reason": "Bars emphasize independent bucket magnitudes."
+        },
+        {
+          "when": "The data communicates parts of a total.",
+          "component": "component:ds-chart-donut",
+          "reason": "Donut provides the part-to-whole and center-summary treatment."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-chart-legend",
+        "component:ds-card-shell-data-viz",
+        "component:ds-tooltip-data-viz"
+      ],
+      "accessibility": [
+        "Provide a visible legend or adjacent textual summary when exact series values are important; the chart image name alone is not a complete data table.",
+        "Do not rely on series color alone to communicate meaning.",
+        "A future point tooltip must supplement rather than replace accessible series and value context."
+      ],
+      "states": [
+        "The chart is currently static and does not own hover, selection, loading, or empty-state policy.",
+        "Point markers may be shown or hidden without changing the underlying series meaning.",
+        "Authored series colors override the shared categorical palette."
+      ],
+      "responsiveBehavior": [
+        "The owner supplies dimensions and updates them when its layout changes.",
+        "Category positions are always equally spaced, even when labels represent time.",
+        "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
+        ],
+        "react": [
+          "Pass stable series and category arrays with dimensions derived from the containing layout."
+        ],
+        "angular": [
+          "Bind series and categories as properties with dimensions derived from the containing layout."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/ChartLine/ChartLine.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "categories": {

@@ -6,8 +6,11 @@ export type CardDataVizDonutWidth = CardShellDataVizWidth;
 /** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */
 type HoveredDatum = { label: string } | null;
 
-/** A slotted chart/legend that opts into hover sync by exposing an `activeLabel` prop. */
-type SyncableSlot = HTMLElement & { activeLabel?: string | null };
+/** A slotted chart/legend that opts into composition behavior through public props. */
+type SyncableSlot = HTMLElement & {
+  activeLabel?: string | null;
+  showTooltip?: boolean;
+};
 
 /**
  * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
@@ -52,6 +55,12 @@ export class CardDataVizDonut {
     // elements) since Stencil events bubble and the slot content can be swapped at runtime.
     this.el.addEventListener('dsSliceHover', this.handleChartHover);
     this.el.addEventListener('dsItemHover', this.handleLegendHover);
+  }
+
+  componentDidRender() {
+    const chart = this.el.querySelector('[slot="chart"]') as SyncableSlot | null;
+    if (!chart || !('showTooltip' in chart)) return;
+    chart.showTooltip = !this.hasLegendSlot;
   }
 
   disconnectedCallback() {

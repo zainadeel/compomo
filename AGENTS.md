@@ -49,7 +49,6 @@ agent/
   schemas/              # Versioned platform-neutral agent metadata contracts
   contracts/            # Stable compatibility contracts consumed by validation
   patterns/             # Cross-component workflow guidance
-  baseline/             # Temporary migration allowlists for legacy metadata
 docs/                   # Framework integration reference (not Storybook source)
 dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + patched index.d.ts
@@ -90,7 +89,7 @@ npm run mcp              # Run the in-repo MCP server
 npm run clean            # Remove dist/
 ```
 
-`registry:build` requires compiler metadata from `npm run build`. The registry is generated from the source-derived component inventory plus `dist/docs/components.json`; never add a handwritten component catalog entry. `agent:validate` rejects missing artifacts, missing new-component intent, stale adapters, compiler drift, and stale registry output. Legacy components still awaiting intent are listed only in `agent/baseline/component-metadata-migration.json`; remove an ID when its agent file is added, and never add new components to that baseline.
+`registry:build` requires compiler metadata from `npm run build`. The registry is generated from the source-derived component inventory plus `dist/docs/components.json`; never add a handwritten component catalog entry. Every component requires co-located agent intent. `agent:validate` rejects missing artifacts or intent, stale adapters, compiler drift, and stale registry output.
 
 ---
 
@@ -184,7 +183,7 @@ Angular forms import the matching generated value accessor from `@ds-mo/ui/angul
 4. Regenerate registry: `npm run registry:build` (commit `public/r/` changes).
 5. Validate agent metadata: `npm run agent:validate`.
 
-Agent metadata contains design intent only: when to use or avoid a component,
+Agent metadata is mandatory and contains design intent only: when to use or avoid a component,
 alternatives, compositions, accessibility, state ownership, responsive behavior,
 and irreducible framework caveats. Do not duplicate tags, props, defaults, events,
 methods, slots, package versions, token values, or framework bindings; those are
@@ -286,13 +285,14 @@ export class MyComponent {
 - Keep the action's accessible name while loading. The owning workflow announces broader progress when needed.
 - For forms, use `type="submit"` and handle native form submission; reserve `dsClick` for non-submit commands.
 - Use only one filled action in a local decision area. Secondary actions use `ds-button-unfilled`; filled semantic intent must describe the action's consequence rather than decorate a surface.
+- ButtonFilled's optional `hasBorder` inset stroke is off by default. Its `background` prop describes the actual parent surface only to select that stroke's secondary border color; it never remaps the button fill, foreground, hover, pressed, or focus treatment. `contrast` remains the sole owner of those filled-button treatments. Omit `background` on primary and secondary surfaces, pass `faint` explicitly on faint surfaces, and use the matching medium, bold, strong, translucent, inverted, media, or always-dark context elsewhere.
 - Use `ds-button-unfilled` (not a separate icon-only tag) for unfilled actions.
 - **Breaking rename:** `ds-button-unfilled-icon` → `ds-button-unfilled` (React `DsButtonUnfilled`, Angular `DsButtonUnfilled`). Update imports from `…/ds-button-unfilled-icon.js` and pass `variant="icon"` at former icon-only call sites (default is now `label`).
 - ButtonUnfilled's omitted `background` is the shared default treatment for primary and secondary parent surfaces and uses the brand-active selected fill. Pass `faint` explicitly on faint surfaces to use the neutral active fill; use the other matching surface context on medium, bold, strong, translucent, inverted, media, or always-dark surfaces. Do not use surface context to make an action artificially louder or quieter.
 - Use `isActive` for the active/selected visual state on unfilled. Active always promotes foreground to **primary** (toggle mode) — not brand tint.
 - An unfilled popup trigger with `expanded=true` automatically promotes its foreground to primary and paints the pressed interaction overlay, including when shell chrome passes `activeFill=false`. Popup-open is transient pressed state, not selected state. Keep `expanded` active through the popup's rendered exit lifecycle and clear it from `dsAfterClose`.
 - **`activeFill` recipe:** default `true` for general UI (toolbars, content actions) — selected shows the interaction fill. Shell chrome (PanelNav, PanelTools, BarNav overflow, etc.) must pass `activeFill={false}` so selection is foreground-only (primary color, no fill).
-- Use `hasBorder` for the optional 1px `--color-border-secondary` inset stroke. Default is **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
+- ButtonUnfilled's optional `hasBorder` inset stroke defaults **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
 
 **PanelTools tool views**
@@ -674,7 +674,7 @@ Apply padding, flex/grid sizing, overflow width, z-index, and component classes 
 `.ds-interaction-fill` sets `z-index: 0` on the control so its `::before`/`::after` fills stay inside that stacking context. Paint order: selected (`::before` z-index 1) → content (z-index 2) → hover/press (`::after` z-index 3, topmost — covers badge dots). Place label/icon with `.ds-interaction-fill__content` or `position: relative; z-index: 2` on children — never above `::after`. For genuinely floating elements that must sit above unrelated siblings (tooltips, popovers), use the `--dimension-z-index-*` token scale (`base` 0, `raised` 50, `overlay` 250, `modal` 450, `floating` 500, `tooltip` 750) rather than a magic number — see `TooltipDataViz.css`.
 
 **Cross-component hover-sync: keep "external highlight" and "own hover" as separate state, don't collapse them into one prop.**
-When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong _only_ to a genuine pointer/keyboard interaction on that specific element (a hover-fill affordance implying "you can click here", or a data-viz tooltip on bar/line) and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did _this_ element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. Donut skips the tooltip entirely — the legend already shows label/value. See `ChartDonut`/`ChartLegend`.
+When two components sync hover via events (e.g. `ds-chart-donut`'s `dsSliceHover` ↔ `ds-chart-legend`'s `dsItemHover`, wired by the consumer via `activeLabel`), it's tempting to drive everything off the single `activeLabel` prop. Don't — some visual effects belong _only_ to a genuine pointer/keyboard interaction on that specific element (a hover-fill affordance implying "you can click here", or a data-viz tooltip) and must never appear just because a sibling's hover was synced in. Keep an internal `hoveredLabel` state for "did _this_ element get directly interacted with," and compute the shared dimming effect as `activeLabel ?? hoveredLabel` while gating the exclusive-to-real-hover effects on `hoveredLabel` (or, better, plain CSS `:hover`/`:focus-visible`) alone. A standalone Donut shows its chart-owned tooltip for local slice pointer/focus by default. Disable it when a visible legend already owns label/value detail; `ds-card-data-viz-donut` does this automatically when its legend slot is present. See `ChartDonut`/`ChartLegend`.
 
 **Paired chrome transition events must always settle, including cancellation.**
 AppShell consumers such as BarNav pause layout measurement between `dsChromeTransitionStart` and `dsChromeTransitionEnd`. A CSS `transitionend` listener alone is not a completion guarantee: framework hydration, responsive class churn, reduced motion, or a replacement transition can emit `transitioncancel` or no terminal event. Components that publish this lifecycle must handle both `transitionend` and `transitioncancel` and keep a watchdog derived from the element's computed transition duration/delay. Every emitted start must have exactly one matching end; otherwise sibling chrome can remain permanently hidden or inert. See `PanelNav.startCollapseAnimation` and the cancellation case in `app-shell-chrome.spec.ts`.

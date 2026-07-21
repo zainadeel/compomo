@@ -8,8 +8,9 @@ export type TooltipDataVizSide = 'left' | 'right';
 export type TooltipDataVizAlign = 'top' | 'bottom';
 
 /**
- * Positioned value/label callout for chart hover interactions (bar, line point, …).
- * Donut charts skip this — legend sync already surfaces the hovered slice.
+ * Positioned value/label callout for chart hover interactions (bar, line point,
+ * standalone donut slice, …). Donut compositions suppress it when a visible
+ * legend already surfaces the hovered slice.
  * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
  * charts hover-highlight data that lives inside an SVG, so the chart itself computes
  * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.

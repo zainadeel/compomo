@@ -101,39 +101,22 @@ export function readJson(root, relativePath) {
 export function validateAuthoredArtifacts({
   root = ROOT,
   components,
-  migrationIds = new Set(),
-  artifactExceptions = {},
   checkAdapters = true,
 }) {
   const errors = [];
-  const componentIds = new Set(components.map(component => component.id));
   for (const component of components) {
-    const exceptions = artifactExceptions[component.id] ?? {};
     const required = [
       ['source', component.sourcePath],
       ['style', component.stylePath],
       ['story', component.storyPath],
+      ['agent', component.agentPath],
     ];
-    for (const [kind, requiredPath] of required) {
+    for (const [, requiredPath] of required) {
       if (fs.existsSync(path.join(root, requiredPath))) continue;
-      if (kind !== 'source' && typeof exceptions[kind] === 'string' && exceptions[kind]) continue;
       errors.push(`${component.tag}: missing required authored artifact ${requiredPath}`);
-    }
-    const hasAgent = fs.existsSync(path.join(root, component.agentPath));
-    if (!hasAgent && !migrationIds.has(component.id)) {
-      errors.push(`${component.tag}: missing ${component.agentPath}; new components require co-located agent metadata`);
-    }
-    if (hasAgent && migrationIds.has(component.id)) {
-      errors.push(`remove completed ${component.id} from missingAgentMetadata`);
     }
   }
   if (checkAdapters) errors.push(...validateFrameworkAdapters({ root, components }));
-  for (const id of migrationIds) {
-    if (!componentIds.has(id)) errors.push(`stale or unknown migration component ${id}`);
-  }
-  for (const id of Object.keys(artifactExceptions)) {
-    if (!componentIds.has(id)) errors.push(`stale or unknown artifact exception ${id}`);
-  }
   return errors;
 }
 

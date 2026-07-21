@@ -1,0 +1,71 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-chart-bar",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-chart-bar",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Single-series bar chart for comparing discrete categories or evenly spaced time buckets on a band-scaled axis.",
+  "useWhen": [
+    "Users need to compare one numeric measure across a small set of categories.",
+    "Values are grouped into ordered time buckets such as hours, days, weeks, or months and equal visual spacing is appropriate.",
+    "A data-viz card needs a compact magnitude comparison rather than a continuous trend."
+  ],
+  "avoidWhen": [
+    "Timestamp positions must reflect irregular elapsed time; pre-bucket the data or use a future continuous time-scale chart.",
+    "The visualization needs stacked, grouped, or multi-series bars.",
+    "The interaction requires selection, drill-down, brushing, or zoom.",
+    "The data communicates a part-to-whole relationship."
+  ],
+  "alternatives": [
+    {
+      "when": "Users need to follow one or more trends across ordered categories.",
+      "component": "component:ds-chart-line",
+      "reason": "ChartLine connects ordered observations and supports multiple named series."
+    },
+    {
+      "when": "The data communicates parts of a total.",
+      "component": "component:ds-chart-donut",
+      "reason": "ChartDonut provides the part-to-whole composition and center aggregate."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-shell-data-viz",
+    "component:ds-tooltip-data-viz"
+  ],
+  "accessibility": [
+    "Keep category labels concise and provide an adjacent textual summary when exact values are critical to completing a task.",
+    "Do not rely on bar color alone to communicate category meaning.",
+    "A future interactive tooltip must supplement rather than replace the chart's accessible value representation."
+  ],
+  "states": [
+    "The chart is currently a static single-series rendering without hover, selection, loading, or empty-state policy.",
+    "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
+    "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
+    "Authored datum colors override the shared categorical palette."
+  ],
+  "responsiveBehavior": [
+    "The owner supplies dimensions and updates them with its layout; the chart does not measure its container.",
+    "Limit or pre-format long category labels so they remain legible at the chosen width.",
+    "Time labels remain ordered, pre-formatted buckets with equal spacing rather than raw continuous timestamps."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
+    ],
+    "react": [
+      "Pass a stable data array and dimensions derived from the containing layout."
+    ],
+    "angular": [
+      "Bind data as a property and update dimensions from the containing layout."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ChartBar/ChartBar.stories.ts"
+    }
+  ]
+}

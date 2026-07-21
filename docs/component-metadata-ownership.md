@@ -18,13 +18,9 @@ CompoMo has one source-derived component inventory and two deliberately separate
 3. Co-located agent intent is schema-validated and merged by stable component ID.
 4. `public/r/` is cleared before generation, so renamed and deleted components cannot leave stale output.
 5. The same compact registry projection becomes the published `dist/agent.json` package manifest.
-6. `npm run agent:validate` verifies authored artifacts, migration state, references, adapter presence, compiler coverage, and exact registry coverage.
+6. `npm run agent:validate` verifies required authored artifacts and intent, references, adapter presence, compiler coverage, and exact registry coverage.
 7. CI regenerates the registry and rejects any committed-output difference.
 
-## Migration baseline
+## Required intent
 
-`agent/baseline/component-metadata-migration.json` contains only components that existed before agent intent became mandatory. New components cannot be added without metadata because they are absent from this baseline. Temporary `legacySummaries` preserve useful discovery prose without carrying any API facts. When a legacy component receives valid metadata, remove its ID and any legacy summary in the same change.
-
-`metadataRefactors` is a separate quality backlog for components that already have valid intent but need a later guidance review. These entries do not weaken metadata requirements or mark the component as migration-pending.
-
-Artifact exceptions require a non-empty reason and are limited to styles or stories. Component source and agent metadata are never silently exempted.
+Every discovered component must have its source, stylesheet, story, and co-located agent metadata. There are no migration or artifact exceptions. The registry always publishes complete intent, and validation fails immediately when any authored artifact is missing.

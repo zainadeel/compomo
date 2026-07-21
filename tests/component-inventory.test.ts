@@ -70,14 +70,19 @@ describe('source-derived component inventory', () => {
     assert.deepEqual(validateAuthoredArtifacts({ root, components, checkAdapters: false }), []);
   });
 
-  it('reports missing stories and agent metadata with exact paths', () => {
+  it('reports every missing authored artifact with exact paths', () => {
     const root = fixtureRoot();
-    writeComponent(root, 'NewWidget', 'ds-new-widget', { story: false, agent: false });
+    writeComponent(root, 'NewWidget', 'ds-new-widget', {
+      style: false,
+      story: false,
+      agent: false,
+    });
     const errors = validateAuthoredArtifacts({
       root,
       components: discoverComponents(root),
       checkAdapters: false,
     });
+    assert.ok(errors.some(error => error.includes('NewWidget.css')));
     assert.ok(errors.some(error => error.includes('NewWidget.stories.ts')));
     assert.ok(errors.some(error => error.includes('NewWidget.agent.json')));
   });
@@ -105,34 +110,6 @@ describe('source-derived component inventory', () => {
       'src/wc/components/NewWidget/NewWidget.helper.ts',
       'src/wc/components/NewWidget/NewWidget.tsx',
     ]);
-  });
-
-  it('allows only explicit migration and artifact exceptions', () => {
-    const root = fixtureRoot();
-    writeComponent(root, 'LegacyWidget', 'ds-legacy-widget', { style: false, agent: false });
-    const components = discoverComponents(root);
-    const errors = validateAuthoredArtifacts({
-      root,
-      components,
-      migrationIds: new Set(['component:ds-legacy-widget']),
-      artifactExceptions: {
-        'component:ds-legacy-widget': { style: 'Component intentionally has no styles.' },
-      },
-      checkAdapters: false,
-    });
-    assert.deepEqual(errors, []);
-  });
-
-  it('requires migration entries to be removed after metadata is added', () => {
-    const root = fixtureRoot();
-    writeComponent(root, 'LegacyWidget', 'ds-legacy-widget');
-    const errors = validateAuthoredArtifacts({
-      root,
-      components: discoverComponents(root),
-      migrationIds: new Set(['component:ds-legacy-widget']),
-      checkAdapters: false,
-    });
-    assert.ok(errors.some(error => error.includes('remove completed component:ds-legacy-widget')));
   });
 
   it('detects missing and stale generated framework adapters', () => {

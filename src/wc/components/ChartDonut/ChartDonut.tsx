@@ -37,6 +37,11 @@ export class ChartDonut {
   @Prop() cornerRadius: number | string = TOKEN_DEFAULTS.radius025;
   /** Gap between slices, in degrees. */
   @Prop() gap: number = 1;
+  /**
+   * Show a chart-owned value callout for genuine pointer or keyboard focus.
+   * Disable when a visible legend already owns persistent label and value detail.
+   */
+  @Prop() showTooltip: boolean = true;
   /** Primary center value; defaults to the sum of `data` values (e.g. "187", "40.9%"). */
   @Prop() centerValue: string | undefined;
   /** Secondary caption below the center value (e.g. "Total", "Normal"). Rendered uppercase. */
@@ -45,8 +50,8 @@ export class ChartDonut {
    * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling
    * `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync.
    * Falls back to this component's own pointer/focus hover when unset.
-   * Slice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz
-   * tooltip (the legend already surfaces label/value).
+   * Slice hover dims peer slices and emits `dsSliceHover` for legend sync. External
+   * highlight never opens the local tooltip.
    */
   @Prop() activeLabel: string | null = null;
 
@@ -56,6 +61,8 @@ export class ChartDonut {
   @State() private displayedCaptionText: string = '';
   /** Measured fill diameter when `size` is unset. */
   @State() private measuredSize: number = FILL_FALLBACK_PX;
+  @State() private tooltipX: number = 0;
+  @State() private tooltipY: number = 0;
 
   /** Fires with the hovered/focused slice's datum, or `null` on leave/blur. */
   @Event() dsSliceHover!: EventEmitter<ChartDatum | null>;
@@ -139,6 +146,36 @@ export class ChartDonut {
   private handleHover(datum: ChartDatum | null) {
     this.hoveredLabel = datum?.label ?? null;
     this.dsSliceHover.emit(datum);
+  }
+
+  private get tooltipDatum(): ChartDatum | null {
+    if (!this.showTooltip || this.hoveredLabel == null) return null;
+    return this.data.find(datum => datum.label === this.hoveredLabel) ?? null;
+  }
+
+  private updateTooltipFromPointer(event: MouseEvent) {
+    if (!this.showTooltip) return;
+    const wrapper = this.el.querySelector<HTMLElement>('.chart-donut__wrapper');
+    if (!wrapper) return;
+    const rect = wrapper.getBoundingClientRect();
+    this.tooltipX = event.clientX - rect.left;
+    this.tooltipY = event.clientY - rect.top;
+  }
+
+  private updateTooltipFromSvgPoint(
+    path: SVGPathElement,
+    svgX: number,
+    svgY: number,
+    viewBoxSize: number,
+  ) {
+    if (!this.showTooltip) return;
+    const wrapper = this.el.querySelector<HTMLElement>('.chart-donut__wrapper');
+    const svg = path.ownerSVGElement;
+    if (!wrapper || !svg) return;
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    this.tooltipX = svgRect.left - wrapperRect.left + svgX * (svgRect.width / viewBoxSize);
+    this.tooltipY = svgRect.top - wrapperRect.top + svgY * (svgRect.height / viewBoxSize);
   }
 
   componentDidRender() {
@@ -241,6 +278,7 @@ export class ChartDonut {
                 slices.map((slice, i) => {
                   const datum = this.data[i];
                   const isDimmed = highlightLabel != null && datum.label !== highlightLabel;
+                  const [centroidX, centroidY] = arcGenerator.centroid(slice);
                   return (
                     <path
                       key={datum.label}
@@ -250,9 +288,21 @@ export class ChartDonut {
                       tabindex={0}
                       role="img"
                       aria-label={`${datum.label}: ${datum.value}`}
-                      onMouseEnter={() => this.handleHover(datum)}
+                      onMouseEnter={(event: MouseEvent) => {
+                        this.updateTooltipFromPointer(event);
+                        this.handleHover(datum);
+                      }}
+                      onMouseMove={(event: MouseEvent) => this.updateTooltipFromPointer(event)}
                       onMouseLeave={() => this.handleHover(null)}
-                      onFocus={() => this.handleHover(datum)}
+                      onFocus={(event: FocusEvent) => {
+                        this.updateTooltipFromSvgPoint(
+                          event.currentTarget as SVGPathElement,
+                          radius + centroidX,
+                          radius + centroidY,
+                          size,
+                        );
+                        this.handleHover(datum);
+                      }}
                       onBlur={() => this.handleHover(null)}
                     />
                   );
@@ -286,6 +336,14 @@ export class ChartDonut {
               </text>
             )}
           </svg>
+          {this.tooltipDatum && (
+            <ds-tooltip-data-viz
+              label={this.tooltipDatum.label}
+              value={formatCompactNumber(this.tooltipDatum.value, this.locale)}
+              x={this.tooltipX}
+              y={this.tooltipY}
+            />
+          )}
         </div>
       </Host>
     );

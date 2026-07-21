@@ -26,12 +26,13 @@ test('formats compiler API, framework imports, and complete intent', () => {
   assert.match(output, /@ds-mo\/ui\/react/);
   assert.match(output, /@ds-mo\/ui\/angular\/ds-button-filled/);
   assert.match(output, /The user initiates the single primary command in a local decision area/);
-  assert.doesNotMatch(output, /undefined/);
+  assert.doesNotMatch(output, /\nundefined\n/);
 });
 
-test('labels missing semantic intent without failing component formatting', () => {
+test('formats completed semantic intent for migrated components', () => {
   const output = formatComponentDetail(loadComponent('card-data-viz-donut'));
-  assert.match(output, /Semantic guidance is migration-pending/);
+  assert.match(output, /Canonical donut-plus-legend dashboard card/);
+  assert.match(output, /standard donut and visible legend composition/);
   assert.doesNotMatch(output, /\nundefined\n/);
 });
 

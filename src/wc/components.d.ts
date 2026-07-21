@@ -11,7 +11,7 @@ import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -57,7 +57,7 @@ export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
@@ -303,10 +303,19 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
+          * Actual parent surface context for the optional inset border color only. Omit on primary and secondary surfaces.
+         */
+        "background": ButtonFilledBackground | undefined;
+        /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
         "contrast": ButtonFilledContrast;
+        /**
+          * Show a 1px secondary inset border.
+          * @default false
+         */
+        "hasBorder": boolean;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -523,7 +532,7 @@ export namespace Components {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. Slice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz tooltip (the legend already surfaces label/value).
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. Slice hover dims peer slices and emits `dsSliceHover` for legend sync. External highlight never opens the local tooltip.
           * @default null
          */
         "activeLabel": string | null;
@@ -555,6 +564,11 @@ export namespace Components {
           * @default 'No data'
          */
         "noDataLabel": string;
+        /**
+          * Show a chart-owned value callout for genuine pointer or keyboard focus. Disable when a visible legend already owns persistent label and value detail.
+          * @default true
+         */
+        "showTooltip": boolean;
         /**
           * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
@@ -2249,8 +2263,9 @@ export namespace Components {
         "size": TooltipSize;
     }
     /**
-     * Positioned value/label callout for chart hover interactions (bar, line point, …).
-     * Donut charts skip this — legend sync already surfaces the hovered slice.
+     * Positioned value/label callout for chart hover interactions (bar, line point,
+     * standalone donut slice, …). Donut compositions suppress it when a visible
+     * legend already surfaces the hovered slice.
      * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
      * charts hover-highlight data that lives inside an SVG, so the chart itself computes
      * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
@@ -3169,8 +3184,9 @@ declare global {
         new (): HTMLDsTooltipElement;
     };
     /**
-     * Positioned value/label callout for chart hover interactions (bar, line point, …).
-     * Donut charts skip this — legend sync already surfaces the hovered slice.
+     * Positioned value/label callout for chart hover interactions (bar, line point,
+     * standalone donut slice, …). Donut compositions suppress it when a visible
+     * legend already surfaces the hovered slice.
      * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
      * charts hover-highlight data that lives inside an SVG, so the chart itself computes
      * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
@@ -3466,10 +3482,19 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
+          * Actual parent surface context for the optional inset border color only. Omit on primary and secondary surfaces.
+         */
+        "background"?: ButtonFilledBackground | undefined;
+        /**
           * Background fill weight. Foreground uses the paired contrast token: bold → faint, strong → medium, medium → strong, faint → bold.
           * @default 'bold'
          */
         "contrast"?: ButtonFilledContrast;
+        /**
+          * Show a 1px secondary inset border.
+          * @default false
+         */
+        "hasBorder"?: boolean;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -3695,7 +3720,7 @@ declare namespace LocalJSX {
     }
     interface DsChartDonut {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. Slice hover dims peer slices and emits `dsSliceHover` for legend sync — no data-viz tooltip (the legend already surfaces label/value).
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling `ds-chart-legend`'s `dsItemHover` event to keep chart and legend hover in sync. Falls back to this component's own pointer/focus hover when unset. Slice hover dims peer slices and emits `dsSliceHover` for legend sync. External highlight never opens the local tooltip.
           * @default null
          */
         "activeLabel"?: string | null;
@@ -3731,6 +3756,11 @@ declare namespace LocalJSX {
           * Fires with the hovered/focused slice's datum, or `null` on leave/blur.
          */
         "onDsSliceHover"?: (event: DsChartDonutCustomEvent<ChartDatum | null>) => void;
+        /**
+          * Show a chart-owned value callout for genuine pointer or keyboard focus. Disable when a visible legend already owns persistent label and value detail.
+          * @default true
+         */
+        "showTooltip"?: boolean;
         /**
           * Explicit diameter in px. When unset, the donut sizes to its container (ResizeObserver) clamped between `--dimension-size-base * 16` (128px) and `* 24` (192px), and stays centered in the leftover space. Prefer unset inside card layouts.
          */
@@ -5562,8 +5592,9 @@ declare namespace LocalJSX {
         "size"?: TooltipSize;
     }
     /**
-     * Positioned value/label callout for chart hover interactions (bar, line point, …).
-     * Donut charts skip this — legend sync already surfaces the hovered slice.
+     * Positioned value/label callout for chart hover interactions (bar, line point,
+     * standalone donut slice, …). Donut compositions suppress it when a visible
+     * legend already surfaces the hovered slice.
      * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
      * charts hover-highlight data that lives inside an SVG, so the chart itself computes
      * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.
@@ -5668,6 +5699,8 @@ declare namespace LocalJSX {
         "icon": string;
         "intent": ButtonFilledIntent;
         "contrast": ButtonFilledContrast;
+        "hasBorder": boolean;
+        "background": ButtonFilledBackground | undefined;
         "rounded": boolean;
         "isInactive": boolean;
         "isLoading": boolean;
@@ -5724,6 +5757,7 @@ declare namespace LocalJSX {
         "thickness": string;
         "cornerRadius": string;
         "gap": number;
+        "showTooltip": boolean;
         "centerValue": string | undefined;
         "centerCaption": string | undefined;
         "activeLabel": string | null;
@@ -6308,8 +6342,9 @@ declare module "@stencil/core" {
              */
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             /**
-             * Positioned value/label callout for chart hover interactions (bar, line point, …).
-             * Donut charts skip this — legend sync already surfaces the hovered slice.
+             * Positioned value/label callout for chart hover interactions (bar, line point,
+             * standalone donut slice, …). Donut compositions suppress it when a visible
+             * legend already surfaces the hovered slice.
              * Unlike `ds-tooltip`, this doesn't bind to a slotted anchor element —
              * charts hover-highlight data that lives inside an SVG, so the chart itself computes
              * the anchor point (e.g. the cursor position while hovering) and passes it in as `x`/`y`.

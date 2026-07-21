@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsChartDonut } from '@ds-mo/ui/components/
 
 @ProxyCmp({
   defineCustomElementFn: defineDsChartDonut,
-  inputs: ['activeLabel', 'centerCaption', 'centerValue', 'cornerRadius', 'data', 'gap', 'locale', 'noDataLabel', 'size', 'thickness']
+  inputs: ['activeLabel', 'centerCaption', 'centerValue', 'cornerRadius', 'data', 'gap', 'locale', 'noDataLabel', 'showTooltip', 'size', 'thickness']
 })
 @Component({
   selector: 'ds-chart-donut',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeLabel', 'centerCaption', 'centerValue', 'cornerRadius', 'data', 'gap', 'locale', 'noDataLabel', 'size', 'thickness'],
+  inputs: ['activeLabel', 'centerCaption', 'centerValue', 'cornerRadius', 'data', 'gap', 'locale', 'noDataLabel', 'showTooltip', 'size', 'thickness'],
   outputs: ['dsSliceHover'],
 })
 export class DsChartDonut {

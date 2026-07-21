@@ -12,18 +12,12 @@ const root = path.resolve(import.meta.dirname, '..');
 const buttonMetadata = JSON.parse(
   fs.readFileSync(path.join(root, 'src/wc/components/ButtonFilled/ButtonFilled.agent.json'), 'utf8')
 );
-const migration = JSON.parse(
-  fs.readFileSync(path.join(root, 'agent/baseline/component-metadata-migration.json'), 'utf8')
-);
 
 test('prototype agent metadata is schema-valid and references source components', () => {
   const result = validateAgentContract();
 
   assert.equal(result.sourceComponents, 58);
-  assert.equal(
-    result.componentDocuments,
-    result.sourceComponents - migration.missingAgentMetadata.length
-  );
+  assert.equal(result.componentDocuments, result.sourceComponents);
   assert.equal(result.patternDocuments, 4);
 });
 
