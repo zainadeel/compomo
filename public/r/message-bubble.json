@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "message-bubble",
   "title": "MessageBubble",
-  "description": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+  "description": "Visible plain-message surface with a body-medium default, separated from message-row direction and metadata.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,18 +13,18 @@
     "intent": {
       "audience": "general",
       "status": "experimental",
-      "summary": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+      "summary": "Visible plain-message surface with a body-medium default, separated from message-row direction and metadata.",
       "useWhen": [
-        "Message content needs a primary, secondary, or ghost surface within a Message row.",
-        "Plain incoming or outgoing message copy should use the shared body-medium regular typography recipe without application styling."
+        "Plain user-sent or received person-to-person message copy needs a visible surface within a Message row.",
+        "Plain conversation copy should use the shared body-medium regular typography recipe without application styling."
       ],
       "avoidWhen": [
         "The surface is a general card, callout, or form container.",
-        "The application wants to promote ordinary conversation copy to body-large; message typography stays body-medium unless a distinct authored rich-content element owns its own complete type recipe."
+        "The content is a rich agent response; compose AgentResponse directly in Message.",
+        "The state only indicates that another participant is typing; use TypingIndicator."
       ],
       "commonlyComposedWith": [
-        "component:ds-message",
-        "component:ds-markdown"
+        "component:ds-message"
       ],
       "patterns": [
         "pattern:conversation"
@@ -32,8 +32,13 @@
       "accessibility": [
         "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
       ],
+      "states": [
+        "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
+        "The received variant represents ordinary incoming person-to-person copy.",
+        "Typing and rich agent output are not MessageBubble variants."
+      ],
       "responsiveBehavior": [
-        "The bubble wraps content and allows wide ghost responses to use more transcript width."
+        "The bubble wraps plain message copy within the transcript width."
       ],
       "references": [
         {
@@ -46,9 +51,9 @@
       "props": {
         "variant": {
           "type": "MessageBubbleVariant",
-          "resolvedType": "\"ghost\" | \"primary\" | \"secondary\"",
+          "resolvedType": "\"received\" | \"user\"",
           "attribute": "variant",
-          "default": "'secondary'",
+          "default": "'received'",
           "required": false,
           "mutable": false
         }
@@ -60,9 +65,9 @@
     "props": {
       "variant": {
         "type": "MessageBubbleVariant",
-        "resolvedType": "\"ghost\" | \"primary\" | \"secondary\"",
+        "resolvedType": "\"received\" | \"user\"",
         "attribute": "variant",
-        "default": "'secondary'",
+        "default": "'received'",
         "required": false,
         "mutable": false
       }
@@ -107,12 +112,12 @@
   "files": [
     {
       "path": "src/wc/components/MessageBubble/MessageBubble.css",
-      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n:host(.message-bubble--ghost) {\n  display: block;\n  max-width: 100%;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding-block: var(--dimension-space-100);\n  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--primary) .message-bubble {\n  background: var(--color-translucent-translucent);\n  color: var(--color-foreground-primary);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--secondary) .message-bubble {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--ghost) .message-bubble {\n  padding-inline: 0;\n  background: transparent;\n  border-radius: 0;\n}\n",
+      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding-block: var(--dimension-space-100);\n  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--user) .message-bubble {\n  background: var(--color-translucent-translucent);\n  color: var(--color-foreground-secondary);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--received) .message-bubble {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/MessageBubble/MessageBubble.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'secondary';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\"><slot /></div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'user' | 'received';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'received';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\"><slot /></div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -754,6 +754,7 @@ export class PanelNav {
 
     const navCls: Record<string, boolean> = {
       'panel-nav': true,
+      'ds-control--md': true,
       'panel-nav--dashboard': isDashboard,
       'panel-nav--settings': !isDashboard,
       'panel-nav--collapsed': collapsed,

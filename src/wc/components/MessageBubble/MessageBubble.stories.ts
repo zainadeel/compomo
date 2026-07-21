@@ -8,9 +8,8 @@ type Story = StoryObj;
 export const Variants: Story = {
   render: () => html`
     <div style="display:grid;gap:var(--dimension-space-100);">
-      <ds-message-bubble variant="primary">Primary</ds-message-bubble>
-      <ds-message-bubble variant="secondary">Secondary</ds-message-bubble>
-      <ds-message-bubble variant="ghost">Ghost</ds-message-bubble>
+      <ds-message-bubble variant="user">User message</ds-message-bubble>
+      <ds-message-bubble variant="received">Received message</ds-message-bubble>
     </div>
   `,
 };

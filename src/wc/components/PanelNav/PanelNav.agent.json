@@ -62,6 +62,7 @@
     "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
     "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
     "The host owns the external user menu opened from dsNavUserAction.",
+    "Item and header controls inherit the shared md control radius while local shell geometry continues to own collapsed layout and footer animation positioning.",
     "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate."
   ],
   "responsiveBehavior": [

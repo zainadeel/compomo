@@ -21,6 +21,12 @@ test('matches selected metric canvases and resolves numeric width to pixels', as
   await expect(page.locator('#icon')).toHaveClass(/skeleton--rounded/);
   await expect(page.locator('#control')).toHaveClass(/ds-control--md/);
   await expect(page.locator('#control')).toHaveCSS('width', '160px');
+
+  const control = page.locator('#control');
+  await control.evaluate(element => {
+    (element as HTMLElement).style.setProperty('--ds-control-radius', '10px');
+  });
+  await expect(control.locator('.skeleton__shape')).toHaveCSS('border-radius', '10px');
 });
 
 test('uses concise background contexts with explicit faint support', async ({ page }) => {

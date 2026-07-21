@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('uses body-medium emphasis, one preview line, and read-aware title color', async ({
+test('uses read-aware body-medium emphasis and color with a one-line preview', async ({
   page,
 }) => {
   const item = page.locator('#conversation');
@@ -17,7 +17,8 @@ test('uses body-medium emphasis, one preview line, and read-aware title color', 
 
   await expect(title).toHaveCSS('font-size', '14px');
   await expect(title).toHaveCSS('line-height', '20px');
-  await expect(title).toHaveCSS('font-weight', '500');
+  await expect(title).toHaveCSS('font-weight', '400');
+  await expect(unreadTitle).toHaveCSS('font-weight', '500');
   await expect(preview).toHaveCSS('-webkit-line-clamp', '1');
 
   const colors = await page.evaluate(() => {

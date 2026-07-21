@@ -121,7 +121,6 @@ export class MessageComposer {
                   icon={this.streaming ? 'SquareFilled' : 'ArrowUp'}
                   intent={this.streaming ? 'neutral' : this.submitIntent}
                   size="md"
-                  rounded
                   aria-label={this.streaming ? 'Stop response' : 'Send message'}
                   isInactive={this.isInactive || (!this.streaming && !this.value.trim())}
                   onDsClick={this.handleAction}

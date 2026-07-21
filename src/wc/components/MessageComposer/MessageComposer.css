@@ -24,10 +24,15 @@
   flex-direction: column;
   gap: var(--dimension-space-050);
   padding: var(--dimension-space-100);
-  border-radius: var(--dimension-radius-050);
+  border-radius: var(--dimension-radius-125);
   background: var(--color-background-primary);
   box-shadow: var(--effect-elevation-elevated-md);
   overflow: hidden;
+}
+
+.message-composer:not(.message-composer--error) .message-composer__field:focus-within {
+  box-shadow: var(--effect-elevation-elevated-md),
+    inset 0 0 0 var(--dimension-stroke-width-018) var(--color-border-bold-brand);
 }
 
 .message-composer--error .message-composer__field {
@@ -64,6 +69,11 @@ textarea:focus::placeholder {
   color: var(--color-foreground-quaternary);
 }
 
+textarea:focus,
+textarea:focus-visible {
+  outline: none;
+}
+
 .message-composer__tools {
   display: flex;
   align-items: center;
@@ -83,7 +93,7 @@ textarea:focus::placeholder {
 .message-composer__actions {
   display: flex;
   align-items: center;
-  gap: var(--dimension-space-050);
+  gap: var(--dimension-space-100);
   flex: 0 0 auto;
   margin-inline-start: auto;
 }

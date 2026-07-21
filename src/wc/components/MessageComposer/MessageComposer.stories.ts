@@ -13,7 +13,7 @@ export default meta;
 type Story = StoryObj;
 
 const composerFrame = (content: unknown) => html`
-  <div style="width:min(600px, 90vw); padding:var(--dimension-space-200);">${content}</div>
+  <div style="width:min(600px, 90vw); padding:var(--dimension-space-100);">${content}</div>
 `;
 
 export const Ready: Story = {
@@ -36,7 +36,6 @@ export const ToolsAndActions: Story = {
           variant="icon"
           icon="Plus"
           size="md"
-          rounded
           .hasBorder=${false}
           aria-label="Add to message"
         ></ds-button-unfilled>
@@ -45,7 +44,6 @@ export const ToolsAndActions: Story = {
           variant="icon"
           icon="Mic"
           size="md"
-          rounded
           .hasBorder=${false}
           aria-label="Dictate message"
         ></ds-button-unfilled>

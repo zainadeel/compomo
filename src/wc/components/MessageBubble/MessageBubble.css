@@ -6,11 +6,6 @@
   user-select: text;
 }
 
-:host(.message-bubble--ghost) {
-  display: block;
-  max-width: 100%;
-}
-
 .message-bubble {
   min-width: 0;
   padding-block: var(--dimension-space-100);
@@ -27,18 +22,12 @@
   overflow-wrap: anywhere;
 }
 
-:host(.message-bubble--primary) .message-bubble {
+:host(.message-bubble--user) .message-bubble {
   background: var(--color-translucent-translucent);
-  color: var(--color-foreground-primary);
+  color: var(--color-foreground-secondary);
   box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
 }
 
-:host(.message-bubble--secondary) .message-bubble {
+:host(.message-bubble--received) .message-bubble {
   box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
-}
-
-:host(.message-bubble--ghost) .message-bubble {
-  padding-inline: 0;
-  background: transparent;
-  border-radius: 0;
 }

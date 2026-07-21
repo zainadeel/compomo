@@ -10,14 +10,14 @@
   "components": [
     {"component":"component:ds-message-scroller","role":"Provides generic transcript movement and live-edge behavior.","required":true},
     {"component":"component:ds-message","role":"Renders participant turns with channel-neutral semantics.","required":true},
-    {"component":"component:ds-message-bubble","role":"Renders participant copy with the shared body-medium regular message baseline.","required":true},
+    {"component":"component:ds-message-bubble","role":"Renders user-sent prompts with the shared body-medium regular message baseline and secondary foreground.","required":true},
     {"component":"component:ds-agent-response","role":"Renders ordered normalized agent response parts.","required":true},
     {"component":"component:ds-message-composer","role":"Emits participant submission and stop intent.","required":true}
   ],
   "stateOwnership": [
     "The application owns scripted or real transport, immutable response parts, retry, stop, generated titles, and persistence.",
-    "Participant turns use MessageBubble's body-medium regular default; the application does not promote ordinary sent-message copy to body-large.",
-    "AgentResponse owns ordered display only and never reveals private reasoning.",
+    "User-sent prompts use MessageBubble's user variant and body-medium regular default with secondary foreground; the application does not promote ordinary sent-message copy to body-large.",
+    "AgentResponse renders directly in Message without a MessageBubble surface, owns ordered display only, and never reveals private reasoning.",
     "Tool-call components display execution state but do not request participant approval."
   ],
   "accessibility": [
@@ -25,7 +25,7 @@
     "Sources use descriptive external links and unsafe schemes remain non-interactive.",
     "Streaming and tool states remain available as text without relying on animation."
   ],
-  "responsiveBehavior": ["Use wider ghost responses for rich content while retaining readable text measure and horizontal scrolling for code or tables."],
+  "responsiveBehavior": ["Let AgentResponse use the available transcript width while retaining readable text measure and horizontal scrolling for code or tables."],
   "implementations": {
     "customElements":{"status":"planned","references":["src/wc/components/MessageScroller/MessageScroller.stories.ts"]},
     "react":{"status":"planned","references":["src/react/components.ts"]},

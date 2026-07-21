@@ -1,0 +1,42 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-typing-indicator",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-typing-indicator",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Dedicated transient status for another participant actively composing a message.",
+  "useWhen": [
+    "An agent or person-to-person conversation needs to show that another participant is currently typing."
+  ],
+  "avoidWhen": [
+    "An operation is loading or streaming a response; use Loader or the owning region's busy state.",
+    "The status represents persisted message content; use Message and MessageBubble."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-message",
+    "component:ds-message-scroller"
+  ],
+  "patterns": [
+    "pattern:conversation"
+  ],
+  "accessibility": [
+    "Provide concise localized status text that names the participant when that context is not otherwise clear.",
+    "The polite atomic status announces typing without representing it as a message bubble."
+  ],
+  "states": [
+    "TypingIndicator is transient conversation status, never persisted message content.",
+    "Its body-small secondary text may shimmer, while reduced-motion preferences retain a static readable status."
+  ],
+  "responsiveBehavior": [
+    "The indicator fills the message content width and wraps only when localized status text requires it."
+  ],
+  "references": [
+    {
+      "label": "Storybook example",
+      "path": "src/wc/components/TypingIndicator/TypingIndicator.stories.ts"
+    }
+  ]
+}

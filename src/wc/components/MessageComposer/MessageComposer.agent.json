@@ -25,7 +25,9 @@
   ],
   "states": [
     "The owner controls draft value and transport state; the composer emits intent without performing transport.",
-    "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last.",
+    "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. These icon buttons use the standard non-rounded control radius.",
+    "The composer surface uses the 10px --dimension-radius-125 token.",
+    "Mouse or keyboard focus on the textarea gives the complete composer surface the same bold-brand inset stroke width and color as an active Input; the native textarea never draws a separate outline.",
     "The submit action defaults to brand for both agent and person-to-person conversations; change submitIntent only when the action consequence has a different semantic intent."
   ],
   "responsiveBehavior": [

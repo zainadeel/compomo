@@ -8,7 +8,15 @@
   <body>
     <main>
       <h1>Message composer fixture</h1>
-      <ds-message-composer id="composer" value="Ready to send"></ds-message-composer>
+      <ds-message-composer id="composer" value="Ready to send">
+        <ds-button-unfilled
+          id="dictation"
+          slot="actions"
+          variant="icon"
+          icon="Mic"
+          aria-label="Dictate message"
+        ></ds-button-unfilled>
+      </ds-message-composer>
     </main>
     <script type="module" src="/message-composer-setup.mjs"></script>
   </body>

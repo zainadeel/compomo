@@ -9,7 +9,7 @@
     <main>
       <h1>Message row fixture</h1>
       <ds-message direction="incoming" author="Avery" timestamp="9:41 AM">
-        <ds-message-bubble variant="secondary">
+        <ds-message-bubble variant="received">
           Could you send the revised arrival window?
         </ds-message-bubble>
       </ds-message>
@@ -21,7 +21,7 @@
         timestamp="9:45 AM"
         delivery-state="failed"
       >
-        <ds-message-bubble variant="primary">I’ll confirm it now.</ds-message-bubble>
+        <ds-message-bubble variant="user">I’ll confirm it now.</ds-message-bubble>
       </ds-message>
     </main>
     <script type="module" src="/message-row-setup.mjs"></script>

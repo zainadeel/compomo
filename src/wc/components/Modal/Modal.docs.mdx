@@ -1,0 +1,42 @@
+import { Canvas, Controls, Description, Meta, Title } from '@storybook/addon-docs/blocks';
+import * as ModalStories from './Modal.stories';
+
+<Meta of={ModalStories} />
+
+<Title />
+
+<Description>
+  Modal presents a focused decision or short blocking workflow in a native dialog. Each example
+  below runs in its own iframe so its top-layer dialog and backdrop remain isolated from the docs
+  page and the other examples.
+</Description>
+
+## Playground
+
+<Canvas
+  of={ModalStories.Playground}
+  story={{ inline: false, height: '360px' }}
+/>
+
+<Controls of={ModalStories.Playground} />
+
+## Delete confirmation
+
+<Canvas
+  of={ModalStories.DeleteConfirmation}
+  story={{ inline: false, height: '360px' }}
+/>
+
+## Leave confirmation
+
+<Canvas
+  of={ModalStories.LeaveConfirmation}
+  story={{ inline: false, height: '360px' }}
+/>
+
+## Without footer
+
+<Canvas
+  of={ModalStories.WithoutFooter}
+  story={{ inline: false, height: '360px' }}
+/>

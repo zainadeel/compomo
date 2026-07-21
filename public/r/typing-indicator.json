@@ -1,0 +1,127 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "typing-indicator",
+  "title": "TypingIndicator",
+  "description": "Dedicated transient status for another participant actively composing a message.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/typing-indicator",
+    "source": "src/wc/components/TypingIndicator/TypingIndicator.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Dedicated transient status for another participant actively composing a message.",
+      "useWhen": [
+        "An agent or person-to-person conversation needs to show that another participant is currently typing."
+      ],
+      "avoidWhen": [
+        "An operation is loading or streaming a response; use Loader or the owning region's busy state.",
+        "The status represents persisted message content; use Message and MessageBubble."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message",
+        "component:ds-message-scroller"
+      ],
+      "patterns": [
+        "pattern:conversation"
+      ],
+      "accessibility": [
+        "Provide concise localized status text that names the participant when that context is not otherwise clear.",
+        "The polite atomic status announces typing without representing it as a message bubble."
+      ],
+      "states": [
+        "TypingIndicator is transient conversation status, never persisted message content.",
+        "Its body-small secondary text may shimmer, while reduced-motion preferences retain a static readable status."
+      ],
+      "responsiveBehavior": [
+        "The indicator fills the message content width and wraps only when localized status text requires it."
+      ],
+      "references": [
+        {
+          "label": "Storybook example",
+          "path": "src/wc/components/TypingIndicator/TypingIndicator.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Typing…'",
+          "required": false,
+          "mutable": false,
+          "description": "Concise localized status text, ideally naming the participant who is typing."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Typing…'",
+        "required": false,
+        "mutable": false,
+        "description": "Concise localized status text, ideally naming the participant who is typing."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-typing-indicator",
+      "react": "DsTypingIndicator",
+      "angular": "DsTypingIndicator"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-typing-indicator.js';",
+        "example": "<ds-typing-indicator></ds-typing-indicator>"
+      },
+      "react": {
+        "import": "import { DsTypingIndicator } from '@ds-mo/ui/react';",
+        "example": "<DsTypingIndicator />"
+      },
+      "angular": {
+        "import": "import { DsTypingIndicator } from '@ds-mo/ui/angular/ds-typing-indicator';",
+        "example": "<ds-typing-indicator></ds-typing-indicator>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.3.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/TypingIndicator/TypingIndicator.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TypingIndicator/TypingIndicator.tsx",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-typing-indicator',\n  styleUrl: 'TypingIndicator.css',\n  scoped: true,\n})\nexport class TypingIndicator {\n  /** Concise localized status text, ideally naming the participant who is typing. */\n  @Prop() label: string = 'Typing…';\n\n  render() {\n    return (\n      <Host role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n        <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\" shimmer>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}
