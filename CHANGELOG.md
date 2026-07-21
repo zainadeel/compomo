@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/zainadeel/compomo/compare/v11.0.0...v11.1.0) (2026-07-21)
+
+
+### Added
+
+* refine filled buttons and data visualization ([#361](https://github.com/zainadeel/compomo/issues/361)) ([4b2a4c1](https://github.com/zainadeel/compomo/commit/4b2a4c1746901d971593a588f1ecfeb0a052b616))
+
 ## [11.0.0](https://github.com/zainadeel/compomo/compare/v10.0.0...v11.0.0) (2026-07-21)
 
 
