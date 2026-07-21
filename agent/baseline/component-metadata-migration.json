@@ -1,9 +1,0 @@
-{
-  "$schema": "../schemas/component-metadata-migration.schema.json",
-  "schemaVersion": "1.0.0",
-  "description": "Temporary allowlist for components that predate required co-located agent intent. Entries must only be removed, never added.",
-  "artifactExceptions": {},
-  "legacySummaries": {},
-  "metadataRefactors": {},
-  "missingAgentMetadata": []
-}

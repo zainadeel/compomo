@@ -128,7 +128,7 @@
         "name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
         "title": { "type": "string", "minLength": 1 },
         "summary": { "type": "string", "minLength": 1 },
-        "intentStatus": { "enum": ["complete", "migration-pending"] },
+        "intentStatus": { "const": "complete" },
         "intent": { "type": ["object", "null"] },
         "api": {
           "type": "object",

@@ -15,7 +15,6 @@ import {
 
 const OUT = path.join(ROOT, 'public/r');
 const PACKAGE_JSON = readJson(ROOT, 'package.json');
-const MIGRATION = readJson(ROOT, 'agent/baseline/component-metadata-migration.json');
 const PACKAGE_NAME = PACKAGE_JSON.name;
 const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
 const TOKENS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/tokens'];
@@ -23,8 +22,7 @@ const ICONS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/icons'];
 const FRAMEWORKS = 'Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters.';
 
 function readIntent(component) {
-  const absolute = path.join(ROOT, component.agentPath);
-  return fs.existsSync(absolute) ? readJson(ROOT, component.agentPath) : null;
+  return readJson(ROOT, component.agentPath);
 }
 
 function apiProps(docs) {
@@ -66,7 +64,6 @@ function apiSlots(docs) {
 }
 
 function compactIntent(intent) {
-  if (!intent) return null;
   const {
     $schema: _schema,
     schemaVersion: _schemaVersion,
@@ -145,10 +142,6 @@ const registryItems = [];
 for (const component of components) {
   const docs = compilerDocs.get(component.tag);
   const intent = readIntent(component);
-  const migrationPending = MIGRATION.missingAgentMetadata.includes(component.id);
-  if (!intent && !migrationPending) {
-    throw new Error(`${component.agentPath} is required for ${component.tag}.`);
-  }
 
   const props = apiProps(docs);
   const events = apiEvents(docs);
@@ -156,7 +149,7 @@ for (const component of components) {
   const slots = apiSlots(docs);
   const internalDependencies = [...new Set(docs.dependencies ?? [])].sort();
   const usesIcons = component.tag === 'ds-icon' || internalDependencies.includes('ds-icon');
-  const description = intent?.summary || MIGRATION.legacySummaries[component.id] || docs.docs || `${component.title} component from ${PACKAGE_NAME}.`;
+  const description = intent.summary;
   const frameworkExports = {
     customElement: component.tag,
     react: `Ds${component.title}`,
@@ -174,7 +167,7 @@ for (const component of components) {
       distribution: 'npm',
       storybook: `${STORYBOOK_URL}?path=/story/${component.name}`,
       source: component.sourcePath,
-      intentStatus: intent ? 'complete' : 'migration-pending',
+      intentStatus: 'complete',
       intent: compactIntent(intent),
       api: { props, events, methods, slots },
       props,

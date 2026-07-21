@@ -16,7 +16,6 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const COMPONENT_SCHEMA_PATH = 'agent/schemas/component-agent.schema.json';
 const PATTERN_SCHEMA_PATH = 'agent/schemas/pattern.schema.json';
 const TRILOGY_SCHEMA_PATH = 'agent/schemas/trilogy-manifest.schema.json';
-const MIGRATION_SCHEMA_PATH = 'agent/schemas/component-metadata-migration.schema.json';
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, relativePath), 'utf8'));
@@ -41,7 +40,6 @@ export function validateAgentContract() {
   const validateComponent = ajv.compile(readJson(COMPONENT_SCHEMA_PATH));
   const validatePattern = ajv.compile(readJson(PATTERN_SCHEMA_PATH));
   ajv.compile(readJson(TRILOGY_SCHEMA_PATH));
-  const validateMigration = ajv.compile(readJson(MIGRATION_SCHEMA_PATH));
   const inventory = discoverComponents(ROOT);
   const knownComponents = new Map(inventory.map(component => [component.id, component]));
   const errors = [];
@@ -50,19 +48,10 @@ export function validateAgentContract() {
   const patternDocuments = walk('agent/patterns', '.agent.json');
   const patterns = new Map();
 
-  const migrationPath = 'agent/baseline/component-metadata-migration.json';
-  const migration = readJson(migrationPath);
-  if (!validateMigration(migration)) errors.push(formatErrors(migrationPath, validateMigration.errors));
-  const migrationIds = new Set(migration.missingAgentMetadata ?? []);
-  for (const id of Object.keys(migration.legacySummaries ?? {})) {
-    if (!migrationIds.has(id)) errors.push(`${migrationPath}: remove legacy summary for completed ${id}`);
-  }
   errors.push(...validateAuthoredArtifacts({
     root: ROOT,
     components: inventory,
-    migrationIds,
-    artifactExceptions: migration.artifactExceptions,
-  }).map(error => `${migrationPath}: ${error}`));
+  }));
 
   for (const relativePath of componentDocuments) {
     const document = readJson(relativePath);

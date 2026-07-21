@@ -49,7 +49,6 @@ agent/
   schemas/              # Versioned platform-neutral agent metadata contracts
   contracts/            # Stable compatibility contracts consumed by validation
   patterns/             # Cross-component workflow guidance
-  baseline/             # Temporary migration allowlists for legacy metadata
 docs/                   # Framework integration reference (not Storybook source)
 dist/                   # Generated — do not edit directly
   components/           # Per-component ESM files + patched index.d.ts
@@ -90,7 +89,7 @@ npm run mcp              # Run the in-repo MCP server
 npm run clean            # Remove dist/
 ```
 
-`registry:build` requires compiler metadata from `npm run build`. The registry is generated from the source-derived component inventory plus `dist/docs/components.json`; never add a handwritten component catalog entry. `agent:validate` rejects missing artifacts, missing new-component intent, stale adapters, compiler drift, and stale registry output. Legacy components still awaiting intent are listed only in `agent/baseline/component-metadata-migration.json`; remove an ID when its agent file is added, and never add new components to that baseline.
+`registry:build` requires compiler metadata from `npm run build`. The registry is generated from the source-derived component inventory plus `dist/docs/components.json`; never add a handwritten component catalog entry. Every component requires co-located agent intent. `agent:validate` rejects missing artifacts or intent, stale adapters, compiler drift, and stale registry output.
 
 ---
 
@@ -184,7 +183,7 @@ Angular forms import the matching generated value accessor from `@ds-mo/ui/angul
 4. Regenerate registry: `npm run registry:build` (commit `public/r/` changes).
 5. Validate agent metadata: `npm run agent:validate`.
 
-Agent metadata contains design intent only: when to use or avoid a component,
+Agent metadata is mandatory and contains design intent only: when to use or avoid a component,
 alternatives, compositions, accessibility, state ownership, responsive behavior,
 and irreducible framework caveats. Do not duplicate tags, props, defaults, events,
 methods, slots, package versions, token values, or framework bindings; those are

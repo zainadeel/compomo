@@ -61,18 +61,14 @@ export function formatComponentDetail(component) {
     sections.push(`## Peer Dependencies\n\n${[...required, ...optional].join('\n')}`);
   }
 
-  if (meta.intent) {
-    const intent = [
-      `**Use when**\n${meta.intent.useWhen.map(item => `- ${item}`).join('\n')}`,
-      `**Avoid when**\n${meta.intent.avoidWhen.map(item => `- ${item}`).join('\n')}`,
-      `**Accessibility**\n${meta.intent.accessibility.map(item => `- ${item}`).join('\n')}`,
-    ];
-    sections.push(`## Design Intent\n\n${intent.join('\n\n')}`);
-    if (meta.intent.patterns?.length) {
-      sections.push(`## Composition Patterns\n\n${meta.intent.patterns.map(pattern => `- \`${pattern}\` — retrieve it with \`get_pattern\` for executable framework recipes.`).join('\n')}`);
-    }
-  } else {
-    sections.push('## Design Intent\n\nSemantic guidance is migration-pending. Use the generated API and Storybook examples, and verify component choice against adjacent components.');
+  const intent = [
+    `**Use when**\n${meta.intent.useWhen.map(item => `- ${item}`).join('\n')}`,
+    `**Avoid when**\n${meta.intent.avoidWhen.map(item => `- ${item}`).join('\n')}`,
+    `**Accessibility**\n${meta.intent.accessibility.map(item => `- ${item}`).join('\n')}`,
+  ];
+  sections.push(`## Design Intent\n\n${intent.join('\n\n')}`);
+  if (meta.intent.patterns?.length) {
+    sections.push(`## Composition Patterns\n\n${meta.intent.patterns.map(pattern => `- \`${pattern}\` — retrieve it with \`get_pattern\` for executable framework recipes.`).join('\n')}`);
   }
 
   if (consumption.complexPropertyNote) sections.push(`## Framework Note\n\n${consumption.complexPropertyNote}`);
