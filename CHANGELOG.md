@@ -1,5 +1,16 @@
 # Changelog
 
+## [11.0.0](https://github.com/zainadeel/compomo/compare/v10.0.0...v11.0.0) (2026-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* refine conversation and control contracts ([#359](https://github.com/zainadeel/compomo/issues/359))
+
+### Added
+
+* refine conversation and control contracts ([#359](https://github.com/zainadeel/compomo/issues/359)) ([082a77c](https://github.com/zainadeel/compomo/commit/082a77c25dced6ccc3326e359aa2d7ac83077f0b))
+
 ## [10.0.0](https://github.com/zainadeel/compomo/compare/v9.2.1...v10.0.0) (2026-07-20)
 
 
