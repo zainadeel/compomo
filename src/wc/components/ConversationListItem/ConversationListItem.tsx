@@ -76,7 +76,7 @@ export class ConversationListItem {
                   class="conversation-list-item__title ds-choice-item__label"
                   as="span"
                   variant="text-body-medium"
-                  emphasis
+                  emphasis={this.unreadCount > 0}
                   color={this.unreadCount > 0 ? 'primary' : 'secondary'}
                   lineTruncation={1}
                 >

@@ -122,7 +122,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--dimension-space-075, 6px);
-  border-radius: var(--dimension-radius-025, 2px);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025, 2px));
   cursor: pointer;
   color: var(--_nav-fg-primary);
   flex-shrink: 0;
@@ -228,7 +228,7 @@ ds-text.panel-nav__group-label {
   gap: var(--dimension-space-050, 4px);
   padding: 0 var(--dimension-space-075, 6px);
   height: var(--dimension-size-400, 32px);
-  border-radius: var(--dimension-radius-025, 2px);
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025, 2px));
   cursor: pointer;
   color: var(--_nav-fg-secondary);
   box-sizing: border-box;

@@ -61,3 +61,4 @@ export { DsText } from './ds-text';
 export { DsToast } from './ds-toast';
 export { DsTooltip } from './ds-tooltip';
 export { DsTooltipDataViz } from './ds-tooltip-data-viz';
+export { DsTypingIndicator } from './ds-typing-indicator';

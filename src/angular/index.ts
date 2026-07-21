@@ -58,5 +58,6 @@ export const DIRECTIVES = [
   d.DsText,
   d.DsToast,
   d.DsTooltip,
-  d.DsTooltipDataViz
+  d.DsTooltipDataViz,
+  d.DsTypingIndicator
 ];

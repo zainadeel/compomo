@@ -4,6 +4,7 @@ import '../../../../dist/components/ds-message-scroller.js';
 import '../../../../dist/components/ds-message.js';
 import '../../../../dist/components/ds-message-bubble.js';
 import '../../../../dist/components/ds-message-composer.js';
+import '../../../../dist/components/ds-typing-indicator.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-text.js';
 
@@ -26,7 +27,7 @@ export const GenericConversation: Story = {
           timestamp="2:14 PM"
           group-position="single"
         >
-          <ds-message-bubble variant="primary"
+          <ds-message-bubble variant="user"
             >Could you summarize the recent service issues?</ds-message-bubble
           >
         </ds-message>
@@ -37,19 +38,18 @@ export const GenericConversation: Story = {
           timestamp="2:15 PM"
           group-position="single"
         >
-          <ds-message-bubble variant="secondary"
+          <ds-message-bubble variant="received"
             >Yes. I found three repeat battery issues and two overdue tire
             inspections.</ds-message-bubble
           >
         </ds-message>
-        <div slot="overlay" style="padding:var(--dimension-space-200);">
+        <div slot="overlay" style="padding:var(--dimension-space-100);">
           <ds-message-composer label="Message support" placeholder="Write a follow-up">
             <ds-button-unfilled
               slot="tools"
               variant="icon"
               icon="Plus"
               size="md"
-              rounded
               .hasBorder=${false}
               aria-label="Add to message"
             ></ds-button-unfilled>
@@ -71,7 +71,7 @@ export const PersonToPersonReuse: Story = {
           timestamp="9:41 AM"
           group-position="first"
         >
-          <ds-message-bubble variant="secondary"
+          <ds-message-bubble variant="received"
             >Could you send the revised arrival window?</ds-message-bubble
           >
         </ds-message>
@@ -82,7 +82,7 @@ export const PersonToPersonReuse: Story = {
           timestamp="9:42 AM"
           group-position="last"
         >
-          <ds-message-bubble variant="secondary"
+          <ds-message-bubble variant="received"
             >The customer is available after noon.</ds-message-bubble
           >
         </ds-message>
@@ -93,21 +93,18 @@ export const PersonToPersonReuse: Story = {
           timestamp="9:45 AM"
           delivery-state="read"
         >
-          <ds-message-bubble variant="primary">Yes — I’ll confirm it now.</ds-message-bubble>
+          <ds-message-bubble variant="user">Yes — I’ll confirm it now.</ds-message-bubble>
         </ds-message>
         <ds-message message-id="typing" direction="incoming" author="Avery" streaming>
-          <ds-message-bubble variant="ghost"
-            ><ds-text variant="text-body-small" shimmer>Typing…</ds-text></ds-message-bubble
-          >
+          <ds-typing-indicator label="Avery is typing…"></ds-typing-indicator>
         </ds-message>
-        <div slot="overlay" style="padding:var(--dimension-space-200);">
+        <div slot="overlay" style="padding:var(--dimension-space-100);">
           <ds-message-composer label="Message Avery" placeholder="Write a message">
             <ds-button-unfilled
               slot="tools"
               variant="icon"
               icon="Plus"
               size="md"
-              rounded
               .hasBorder=${false}
               aria-label="Add to message"
             ></ds-button-unfilled>

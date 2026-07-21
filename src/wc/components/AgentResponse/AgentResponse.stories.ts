@@ -92,7 +92,7 @@ export const Conversation: Story = {
           timestamp="2:14 PM"
           group-position="single"
         >
-          <ds-message-bubble variant="primary"
+          <ds-message-bubble variant="user"
             >Summarize recent service issues and attach the records.</ds-message-bubble
           >
         </ds-message>
@@ -103,14 +103,13 @@ export const Conversation: Story = {
           timestamp="2:15 PM"
           .parts=${richParts}
         ></ds-agent-response>
-        <div slot="overlay" style="padding:var(--dimension-space-200);">
+        <div slot="overlay" style="padding:var(--dimension-space-100);">
           <ds-message-composer label="Message agent" placeholder="Ask a follow-up">
             <ds-button-unfilled
               slot="tools"
               variant="icon"
               icon="Plus"
               size="md"
-              rounded
               .hasBorder=${false}
               aria-label="Add to message"
             ></ds-button-unfilled>
@@ -119,7 +118,6 @@ export const Conversation: Story = {
               variant="icon"
               icon="Mic"
               size="md"
-              rounded
               .hasBorder=${false}
               aria-label="Dictate message"
             ></ds-button-unfilled>

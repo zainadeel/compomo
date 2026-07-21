@@ -32,8 +32,13 @@
     },
     {
       "component": "component:ds-message-bubble",
-      "role": "Owns the visible content surface and body-medium default independently of row semantics.",
+      "role": "Owns plain user-sent and received person-to-person surfaces and their body-medium default independently of row semantics.",
       "required": true
+    },
+    {
+      "component": "component:ds-typing-indicator",
+      "role": "Presents transient participant typing status without representing it as persisted message content.",
+      "required": false
     },
     {
       "component": "component:ds-message-composer",
@@ -47,11 +52,12 @@
     }
   ],
   "stateOwnership": [
-    "The application owns conversations, messages, selection, drafts, persistence, transport, unread policy, and any history search query or matching policy. ConversationListItem presents every positive unreadCount as one dot aligned with the title row; unread titles are primary and read titles are secondary.",
+    "The application owns conversations, messages, selection, drafts, persistence, transport, unread policy, and any history search query or matching policy. ConversationListItem presents every positive unreadCount as one dot aligned with the title row; unread titles are emphasized and primary while read titles use regular weight and secondary foreground.",
     "The application owns contextual row-menu commands such as pin, rename, members, and delete; ConversationListItem supplies the sibling actions slot and hover/focus/touch presentation.",
     "When history search is present, distinguish an empty history from a populated history with no matching conversations.",
-    "Plain incoming and outgoing message copy uses MessageBubble's body-medium regular default; the application must not promote ordinary conversation turns to body-large.",
-    "MessageScroller owns reader-relative transcript position and follow behavior. Compose MessageComposer in its overlay slot so transcript content moves behind the surface while measured bottom clearance keeps the latest turn readable.",
+    "Plain user-sent and received person-to-person copy uses MessageBubble's body-medium regular default; user bubbles use secondary foreground, and the application must not promote ordinary conversation turns to body-large.",
+    "TypingIndicator owns transient participant typing status and is composed directly in an incoming Message; it is never approximated with a MessageBubble variant.",
+    "MessageScroller owns reader-relative transcript position and follow behavior. Compose MessageComposer in its overlay slot with 8px padding on every side so transcript content moves behind the surface while measured bottom clearance keeps the latest turn readable.",
     "MessageComposer emits intent while the application controls its value and status. Its submit action defaults to brand for agent and person-to-person channels; select another submitIntent only for a different semantic consequence, never merely to identify AI content."
   ],
   "accessibility": [

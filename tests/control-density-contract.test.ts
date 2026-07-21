@@ -7,6 +7,17 @@ const root = path.resolve(import.meta.dirname, '..');
 
 const read = (relativePath: string) => fs.readFileSync(path.join(root, relativePath), 'utf8');
 
+test('all control densities share one default radius declaration', () => {
+  const css = read('src/wc/utils/control-density.css');
+  assert.equal(
+    css.match(/--ds-control-radius:\s*var\(--dimension-radius-025\);/g)?.length,
+    1,
+  );
+  for (const size of ['md', 'sm', 'xs']) {
+    assert.match(css, new RegExp(`:host\\(\\.ds-control--${size}\\)[\\s\\S]*?--ds-control-radius`));
+  }
+});
+
 test('shell navigation rows consume the shared control-density recipe', () => {
   const cases = [
     {
@@ -38,12 +49,32 @@ test('PanelNav text hosts consume the shared md label inset without coupling row
   const source = read('src/wc/components/PanelNav/PanelNav.tsx');
 
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
+  assert.match(source, /['"]ds-control--md['"]: true/);
+  assert.match(
+    css,
+    /\.panel-nav__header-btn\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/,
+  );
+  assert.match(
+    css,
+    /\.panel-nav__item\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/,
+  );
   assert.match(css, /\.panel-nav__item-label-text\s*{[\s\S]*?padding: 0 var\(--ds-control-label-inset\);/);
   assert.match(source, /panel-nav__footer-user-label panel-nav__item-label-text ds-control--md/);
   assert.match(source, /panel-nav__item-label panel-nav__item-label-text ds-control--md/);
   assert.match(source, /panel-nav__group-label ds-control--md/);
   assert.doesNotMatch(css, /height: var\(--ds-control-height\);/);
   assert.doesNotMatch(css, /gap: var\(--ds-control-gap\);/);
+});
+
+test('Skeleton control placeholders consume the selected density radius', () => {
+  const css = read('src/wc/components/Skeleton/Skeleton.css');
+  const source = read('src/wc/components/Skeleton/Skeleton.tsx');
+
+  assert.match(source, /\[`ds-control--\$\{this\.controlSize\}`\]: this\.variant === 'control'/);
+  assert.match(
+    css,
+    /:host\(\.skeleton--control\) \.skeleton__shape\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/,
+  );
 });
 
 test('read-only tool titles use the same md density variables as their actions', () => {

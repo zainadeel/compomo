@@ -16,6 +16,17 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('panel nav controls inherit the shared md control radius', async ({ page }) => {
+    const nav = page.locator('.panel-nav');
+    await expect(nav).toHaveClass(/ds-control--md/);
+    await nav.evaluate(element => {
+      (element as HTMLElement).style.setProperty('--ds-control-radius', '10px');
+    });
+
+    await expect(nav.locator('.panel-nav__header-btn')).toHaveCSS('border-radius', '10px');
+    await expect(nav.locator('.panel-nav__item').first()).toHaveCSS('border-radius', '10px');
+  });
+
   test('contains page scrolling without moving the shell viewport', async ({ page }) => {
     const shell = page.locator('ds-app-shell');
     const shellRoot = page.locator('.app-shell');

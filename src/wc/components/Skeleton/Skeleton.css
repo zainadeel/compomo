@@ -119,6 +119,10 @@
   height: var(--ds-control-height);
 }
 
+:host(.skeleton--control) .skeleton__shape {
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+}
+
 :host(.skeleton--control.skeleton--rounded) .skeleton__shape {
   border-radius: var(--dimension-radius-half);
 }

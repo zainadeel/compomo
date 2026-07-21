@@ -38,7 +38,7 @@ test('reports failed delivery in footer metadata without changing the bubble', a
     hasText: 'Failed to send',
   });
 
-  await expect(bubble).toHaveClass(/message-bubble--primary/);
+  await expect(bubble).toHaveClass(/message-bubble--user/);
   await expect(bubble).not.toHaveClass(/message-bubble--error/);
   await expect(failure).toHaveJSProperty('color', 'negative');
 

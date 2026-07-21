@@ -135,10 +135,11 @@
             "Streaming state supplements rather than replaces meaningful textual status."
           ],
           "states": [
-            "The owner replaces immutable part arrays as scripted or live output changes."
+            "The owner replaces immutable part arrays as scripted or live output changes.",
+            "AgentResponse renders directly in Message without borrowing a plain MessageBubble surface."
           ],
           "responsiveBehavior": [
-            "Rich content uses the wider ghost message treatment while respecting transcript constraints."
+            "Rich content uses the available transcript width while respecting readable measure and overflow constraints."
           ],
           "references": [
             {
@@ -191,8 +192,7 @@
         "agent-tool-call",
         "attachment-list",
         "markdown",
-        "message",
-        "message-bubble"
+        "message"
       ]
     },
     {
@@ -2260,7 +2260,7 @@
             "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording. A busy row pairs its body-small status with the sm 16px Loader at an 8px gap.",
             "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
             "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
-            "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
+            "The title uses body-medium, not title-small, and the body-small preview truncates after one line. Unread titles use emphasis with primary foreground; read titles use regular weight with secondary foreground.",
             "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
           ],
           "responsiveBehavior": [
@@ -3573,7 +3573,7 @@
     {
       "name": "message-bubble",
       "title": "MessageBubble",
-      "description": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+      "description": "Visible plain-message surface with a body-medium default, separated from message-row direction and metadata.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3584,18 +3584,18 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Visible message content surface with a body-medium default, separated from message-row direction and metadata.",
+          "summary": "Visible plain-message surface with a body-medium default, separated from message-row direction and metadata.",
           "useWhen": [
-            "Message content needs a primary, secondary, or ghost surface within a Message row.",
-            "Plain incoming or outgoing message copy should use the shared body-medium regular typography recipe without application styling."
+            "Plain user-sent or received person-to-person message copy needs a visible surface within a Message row.",
+            "Plain conversation copy should use the shared body-medium regular typography recipe without application styling."
           ],
           "avoidWhen": [
             "The surface is a general card, callout, or form container.",
-            "The application wants to promote ordinary conversation copy to body-large; message typography stays body-medium unless a distinct authored rich-content element owns its own complete type recipe."
+            "The content is a rich agent response; compose AgentResponse directly in Message.",
+            "The state only indicates that another participant is typing; use TypingIndicator."
           ],
           "commonlyComposedWith": [
-            "component:ds-message",
-            "component:ds-markdown"
+            "component:ds-message"
           ],
           "patterns": [
             "pattern:conversation"
@@ -3603,8 +3603,13 @@
           "accessibility": [
             "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
           ],
+          "states": [
+            "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
+            "The received variant represents ordinary incoming person-to-person copy.",
+            "Typing and rich agent output are not MessageBubble variants."
+          ],
           "responsiveBehavior": [
-            "The bubble wraps content and allows wide ghost responses to use more transcript width."
+            "The bubble wraps plain message copy within the transcript width."
           ],
           "references": [
             {
@@ -3669,7 +3674,9 @@
           ],
           "states": [
             "The owner controls draft value and transport state; the composer emits intent without performing transport.",
-            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last.",
+            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. These icon buttons use the standard non-rounded control radius.",
+            "The composer surface uses the 10px --dimension-radius-125 token.",
+            "Mouse or keyboard focus on the textarea gives the complete composer surface the same bold-brand inset stroke width and color as an active Input; the native textarea never draws a separate outline.",
             "The submit action defaults to brand for both agent and person-to-person conversations; change submitIntent only when the action consequence has a different semantic intent."
           ],
           "responsiveBehavior": [
@@ -3778,7 +3785,7 @@
             "Selection and transcript interaction release automatic following.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
             "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
-            "Place a composer container in the overlay slot so messages scroll behind it; the scroller measures its live height, reserves matching transcript clearance, and keeps scroll-to-latest above it."
+            "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the scroller measures its live height, reserves matching transcript clearance, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
             "Transcript width is readable while the scroll region fills available height."
@@ -4051,6 +4058,7 @@
             "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
             "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
             "The host owns the external user menu opened from dsNavUserAction.",
+            "Item and header controls inherit the shared md control radius while local shell geometry continues to own collapsed layout and footer animation positioning.",
             "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate."
           ],
           "responsiveBehavior": [
@@ -5772,7 +5780,7 @@
             "The owner preserves focus and meaningful reading order when replacing placeholders with real content."
           ],
           "states": [
-            "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes.",
+            "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes; control atoms inherit the selected control density's default radius.",
             "Compose approximate line count, hierarchy, widths, and control placement without simulating actual values.",
             "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
             "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",
@@ -7164,6 +7172,75 @@
           "customElement": "ds-tooltip-data-viz",
           "react": "DsTooltipDataViz",
           "angular": "DsTooltipDataViz"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "typing-indicator",
+      "title": "TypingIndicator",
+      "description": "Dedicated transient status for another participant actively composing a message.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/typing-indicator",
+        "source": "src/wc/components/TypingIndicator/TypingIndicator.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Dedicated transient status for another participant actively composing a message.",
+          "useWhen": [
+            "An agent or person-to-person conversation needs to show that another participant is currently typing."
+          ],
+          "avoidWhen": [
+            "An operation is loading or streaming a response; use Loader or the owning region's busy state.",
+            "The status represents persisted message content; use Message and MessageBubble."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message",
+            "component:ds-message-scroller"
+          ],
+          "patterns": [
+            "pattern:conversation"
+          ],
+          "accessibility": [
+            "Provide concise localized status text that names the participant when that context is not otherwise clear.",
+            "The polite atomic status announces typing without representing it as a message bubble."
+          ],
+          "states": [
+            "TypingIndicator is transient conversation status, never persisted message content.",
+            "Its body-small secondary text may shimmer, while reduced-motion preferences retain a static readable status."
+          ],
+          "responsiveBehavior": [
+            "The indicator fills the message content width and wraps only when localized status text requires it."
+          ],
+          "references": [
+            {
+              "label": "Storybook example",
+              "path": "src/wc/components/TypingIndicator/TypingIndicator.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "label": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-typing-indicator",
+          "react": "DsTypingIndicator",
+          "angular": "DsTypingIndicator"
         }
       },
       "dependencies": [

@@ -214,14 +214,13 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                         heading="What can I help with?"
                         body="This prototype uses scripted responses."
                       ></ds-empty-state>
-                      <div slot="overlay" style="padding:var(--dimension-space-200);">
+                      <div slot="overlay" style="padding:var(--dimension-space-100);">
                         <ds-message-composer label="Message agent" placeholder="Ask the agent">
                           <ds-button-unfilled
                             slot="tools"
                             variant="icon"
                             icon="Plus"
                             size="md"
-                            rounded
                             .hasBorder=${false}
                             aria-label="Add to message"
                           ></ds-button-unfilled>
@@ -230,7 +229,6 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                             variant="icon"
                             icon="Mic"
                             size="md"
-                            rounded
                             .hasBorder=${false}
                             aria-label="Dictate message"
                           ></ds-button-unfilled>
@@ -247,14 +245,13 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                       heading="What can I help with?"
                       body="This prototype uses scripted responses."
                     ></ds-empty-state>
-                    <div slot="overlay" style="padding:var(--dimension-space-200);">
+                    <div slot="overlay" style="padding:var(--dimension-space-100);">
                       <ds-message-composer label="Message agent" placeholder="Ask the agent">
                         <ds-button-unfilled
                           slot="tools"
                           variant="icon"
                           icon="Plus"
                           size="md"
-                          rounded
                           .hasBorder=${false}
                           aria-label="Add to message"
                         ></ds-button-unfilled>
@@ -263,7 +260,6 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                           variant="icon"
                           icon="Mic"
                           size="md"
-                          rounded
                           .hasBorder=${false}
                           aria-label="Dictate message"
                         ></ds-button-unfilled>

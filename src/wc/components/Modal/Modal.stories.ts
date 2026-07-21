@@ -7,7 +7,6 @@ import '../../../../dist/components/ds-text.js';
 
 const meta: Meta = {
   title: 'Overlay/Modal',
-  tags: ['autodocs'],
   argTypes: {
     heading: { control: 'text' },
     modalWidth: { control: 'select', options: ['sm', 'md', 'lg'] },

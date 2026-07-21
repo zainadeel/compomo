@@ -1,6 +1,6 @@
 import { Component, h, Host, Prop } from '@stencil/core';
 
-export type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost';
+export type MessageBubbleVariant = 'user' | 'received';
 
 @Component({
   tag: 'ds-message-bubble',
@@ -8,7 +8,7 @@ export type MessageBubbleVariant = 'primary' | 'secondary' | 'ghost';
   scoped: true,
 })
 export class MessageBubble {
-  @Prop() variant: MessageBubbleVariant = 'secondary';
+  @Prop() variant: MessageBubbleVariant = 'received';
 
   render() {
     return (

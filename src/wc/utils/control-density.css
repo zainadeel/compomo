@@ -15,13 +15,21 @@
  */
 
 :host(.ds-control--md),
+.ds-control--md,
+:host(.ds-control--sm),
+.ds-control--sm,
+:host(.ds-control--xs),
+.ds-control--xs {
+  --ds-control-radius: var(--dimension-radius-025);
+}
+
+:host(.ds-control--md),
 .ds-control--md {
   --ds-control-height: var(--dimension-size-400);
   --ds-control-icon: var(--dimension-iconography-md);
   --ds-control-padding-inline: var(--dimension-space-075);
   --ds-control-label-inset: var(--dimension-space-025);
   --ds-control-gap: var(--dimension-space-050);
-  --ds-control-radius: var(--dimension-radius-025);
 }
 
 :host(.ds-control--sm),
@@ -31,7 +39,6 @@
   --ds-control-padding-inline: var(--dimension-space-050);
   --ds-control-label-inset: var(--dimension-space-025);
   --ds-control-gap: var(--dimension-space-025);
-  --ds-control-radius: var(--dimension-radius-025);
 }
 
 :host(.ds-control--xs),
@@ -41,5 +48,4 @@
   --ds-control-padding-inline: var(--dimension-space-025);
   --ds-control-label-inset: var(--dimension-space-025);
   --ds-control-gap: 0;
-  --ds-control-radius: var(--dimension-radius-025);
 }

@@ -1081,7 +1081,7 @@ export namespace Components {
     }
     interface DsMessageBubble {
         /**
-          * @default 'secondary'
+          * @default 'received'
          */
         "variant": MessageBubbleVariant;
     }
@@ -2285,6 +2285,13 @@ export namespace Components {
          */
         "y": number;
     }
+    interface DsTypingIndicator {
+        /**
+          * Concise localized status text, ideally naming the participant who is typing.
+          * @default 'Typing…'
+         */
+        "label": string;
+    }
 }
 export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -3180,6 +3187,12 @@ declare global {
         prototype: HTMLDsTooltipDataVizElement;
         new (): HTMLDsTooltipDataVizElement;
     };
+    interface HTMLDsTypingIndicatorElement extends Components.DsTypingIndicator, HTMLStencilElement {
+    }
+    var HTMLDsTypingIndicatorElement: {
+        prototype: HTMLDsTypingIndicatorElement;
+        new (): HTMLDsTypingIndicatorElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-agent-activity": HTMLDsAgentActivityElement;
         "ds-agent-response": HTMLDsAgentResponseElement;
@@ -3238,6 +3251,7 @@ declare global {
         "ds-toast": HTMLDsToastElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-data-viz": HTMLDsTooltipDataVizElement;
+        "ds-typing-indicator": HTMLDsTypingIndicatorElement;
     }
 }
 declare namespace LocalJSX {
@@ -4279,7 +4293,7 @@ declare namespace LocalJSX {
     }
     interface DsMessageBubble {
         /**
-          * @default 'secondary'
+          * @default 'received'
          */
         "variant"?: MessageBubbleVariant;
     }
@@ -5584,6 +5598,13 @@ declare namespace LocalJSX {
          */
         "y"?: number;
     }
+    interface DsTypingIndicator {
+        /**
+          * Concise localized status text, ideally naming the participant who is typing.
+          * @default 'Typing…'
+         */
+        "label"?: string;
+    }
 
     interface DsAgentActivityAttributes {
         "heading": string;
@@ -6129,6 +6150,9 @@ declare namespace LocalJSX {
         "y": number;
         "delay": string;
     }
+    interface DsTypingIndicatorAttributes {
+        "label": string;
+    }
 
     interface IntrinsicElements {
         "ds-agent-activity": Omit<DsAgentActivity, keyof DsAgentActivityAttributes> & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes]?: DsAgentActivity[K] } & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes as `attr:${K}`]?: DsAgentActivityAttributes[K] } & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes as `prop:${K}`]?: DsAgentActivity[K] };
@@ -6188,6 +6212,7 @@ declare namespace LocalJSX {
         "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-data-viz": Omit<DsTooltipDataViz, keyof DsTooltipDataVizAttributes> & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes]?: DsTooltipDataViz[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `attr:${K}`]?: DsTooltipDataVizAttributes[K] } & { [K in keyof DsTooltipDataViz & keyof DsTooltipDataVizAttributes as `prop:${K}`]?: DsTooltipDataViz[K] };
+        "ds-typing-indicator": Omit<DsTypingIndicator, keyof DsTypingIndicatorAttributes> & { [K in keyof DsTypingIndicator & keyof DsTypingIndicatorAttributes]?: DsTypingIndicator[K] } & { [K in keyof DsTypingIndicator & keyof DsTypingIndicatorAttributes as `attr:${K}`]?: DsTypingIndicatorAttributes[K] } & { [K in keyof DsTypingIndicator & keyof DsTypingIndicatorAttributes as `prop:${K}`]?: DsTypingIndicator[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -6296,6 +6321,7 @@ declare module "@stencil/core" {
              * keep the instance mounted while the cursor moves so tracking stays instant.
              */
             "ds-tooltip-data-viz": LocalJSX.IntrinsicElements["ds-tooltip-data-viz"] & JSXBase.HTMLAttributes<HTMLDsTooltipDataVizElement>;
+            "ds-typing-indicator": LocalJSX.IntrinsicElements["ds-typing-indicator"] & JSXBase.HTMLAttributes<HTMLDsTypingIndicatorElement>;
         }
     }
 }

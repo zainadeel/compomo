@@ -9,7 +9,7 @@ type Story = StoryObj;
 export const Incoming: Story = {
   render: () => html`
     <ds-message message-id="one" direction="incoming" author="Avery" timestamp="9:41 AM">
-      <ds-message-bubble variant="secondary"
+      <ds-message-bubble variant="received"
         >Can you send the revised arrival window?</ds-message-bubble
       >
     </ds-message>
@@ -26,7 +26,7 @@ export const Outgoing: Story = {
       timestamp="9:45 AM"
       delivery-state="read"
     >
-      <ds-message-bubble variant="primary">I’ll confirm it now.</ds-message-bubble>
+      <ds-message-bubble variant="user">I’ll confirm it now.</ds-message-bubble>
     </ds-message>
   `,
 };
@@ -42,7 +42,7 @@ export const FailedOutgoing: Story = {
       timestamp="9:45 AM"
       delivery-state="failed"
     >
-      <ds-message-bubble variant="primary">I’ll confirm it now.</ds-message-bubble>
+      <ds-message-bubble variant="user">I’ll confirm it now.</ds-message-bubble>
     </ds-message>
   `,
 };
@@ -57,7 +57,7 @@ export const Grouped: Story = {
           author="Avery"
           group-position="first"
         >
-          <ds-message-bubble variant="secondary">The route is updated.</ds-message-bubble>
+          <ds-message-bubble variant="received">The route is updated.</ds-message-bubble>
         </ds-message>
         <ds-message
           message-id="group-two"
@@ -66,7 +66,7 @@ export const Grouped: Story = {
           group-position="last"
           timestamp="9:42 AM"
         >
-          <ds-message-bubble variant="secondary"
+          <ds-message-bubble variant="received"
             >The customer confirmed the new window.</ds-message-bubble
           >
         </ds-message>
@@ -79,7 +79,7 @@ export const Grouped: Story = {
         timestamp="9:45 AM"
         delivery-state="delivered"
       >
-        <ds-message-bubble variant="primary">Thanks—I’ll notify the driver.</ds-message-bubble>
+        <ds-message-bubble variant="user">Thanks—I’ll notify the driver.</ds-message-bubble>
       </ds-message>
     </div>
   `,

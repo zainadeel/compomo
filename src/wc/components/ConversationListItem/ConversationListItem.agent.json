@@ -27,7 +27,7 @@
     "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording. A busy row pairs its body-small status with the sm 16px Loader at an 8px gap.",
     "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
     "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
-    "The title uses body-medium emphasis, not title-small, and the body-small preview truncates after one line. Unread titles use primary foreground; read titles use secondary foreground.",
+    "The title uses body-medium, not title-small, and the body-small preview truncates after one line. Unread titles use emphasis with primary foreground; read titles use regular weight with secondary foreground.",
     "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
   ],
   "responsiveBehavior": ["Long titles and previews truncate without displacing trailing status."],
