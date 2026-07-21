@@ -1,0 +1,71 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-tooltip-data-viz",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-tooltip-data-viz",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Chart-owned, non-interactive label and value callout positioned from pointer or focused-mark coordinates inside a visualization wrapper.",
+  "useWhen": [
+    "A chart needs immediate visual value feedback for a genuinely hovered or keyboard-focused mark.",
+    "The anchor lives inside SVG or chart coordinates rather than on a slotted HTML trigger.",
+    "The owning chart can mount the callout for one interaction session and update its coordinates while tracking."
+  ],
+  "avoidWhen": [
+    "A normal control or text trigger needs supplemental explanation; use Tooltip.",
+    "The content needs links, actions, focus, or touch-primary disclosure.",
+    "An externally synchronized highlight has no genuine local pointer or keyboard interaction.",
+    "The callout would be the only accessible source of an essential value."
+  ],
+  "alternatives": [
+    {
+      "when": "A slotted control or text trigger needs a conventional tooltip.",
+      "component": "component:ds-tooltip",
+      "reason": "Tooltip owns trigger semantics, focus behavior, and anchored overlay lifecycle."
+    },
+    {
+      "when": "Donut details should remain continuously visible beside the chart.",
+      "component": "component:ds-chart-legend",
+      "reason": "A visible legend avoids redundant transient slice callouts."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-chart-bar",
+    "component:ds-chart-line",
+    "component:ds-chart-donut"
+  ],
+  "accessibility": [
+    "The callout is presentation-only and never replaces the owning chart mark's accessible label or an adjacent data summary.",
+    "Keyboard-focused marks receive the same visual feedback as pointer-hovered marks.",
+    "The callout never receives focus or contains interactive descendants."
+  ],
+  "states": [
+    "The owning chart mounts the callout when a local interaction starts and unmounts it when that interaction ends.",
+    "Coordinate updates track within one mounted interaction session without restarting the show delay.",
+    "Placement flips horizontally or vertically when the rendered callout approaches a viewport edge.",
+    "Reduced motion preserves the final visible state without an opacity transition."
+  ],
+  "responsiveBehavior": [
+    "Render inside a positioned chart wrapper and pass coordinates relative to that wrapper.",
+    "Keep labels concise enough for the single-line callout; persistent or long explanations belong outside the chart."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "The owning chart computes coordinates and conditionally mounts the component; applications should not use it as a standalone overlay."
+    ],
+    "react": [
+      "Keep callout lifecycle and coordinates inside the chart wrapper rather than application-global tooltip state."
+    ],
+    "angular": [
+      "Keep callout lifecycle and coordinates inside the chart wrapper rather than application-global tooltip state."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook example",
+      "path": "src/wc/components/TooltipDataViz/TooltipDataViz.stories.ts"
+    }
+  ]
+}

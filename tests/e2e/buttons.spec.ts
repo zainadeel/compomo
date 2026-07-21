@@ -100,6 +100,102 @@ test('loading swaps the correct content for each variant', async ({ page }) => {
   }
 });
 
+test('keeps the filled inset border opt-in and visible while inactive', async ({ page }) => {
+  const defaultHost = page.locator('#filled-label');
+  const defaultButton = defaultHost.locator('button');
+  const borderedHost = page.locator('#filled-bordered');
+  const borderedButton = borderedHost.locator('button');
+
+  await expect(defaultHost).toHaveJSProperty('hasBorder', false);
+  await expect(defaultButton).not.toHaveClass(/button-filled--bordered/);
+  await expect(defaultButton).toHaveCSS('--ds-interaction-border-width', '0px');
+
+  await expect(borderedHost).toHaveJSProperty('hasBorder', true);
+  await expect(borderedButton).toHaveClass(/button-filled--bordered/);
+  const borderWidth = await page.evaluate(() => (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue('--dimension-stroke-width-012')
+      .trim()
+  ));
+  await expect(borderedButton).toHaveCSS('--ds-interaction-border-width', borderWidth);
+  await expect.poll(() => borderedButton.evaluate(element => (
+    getComputedStyle(element, '::after').boxShadow
+  ))).toContain('inset');
+
+  await borderedHost.evaluate(element => {
+    (element as HTMLElement & { isInactive: boolean }).isInactive = true;
+  });
+  await expect.poll(() => borderedButton.evaluate(element => (
+    element.classList.contains('ds-interaction-fill')
+  ))).toBe(false);
+  await expect(borderedButton).toHaveCSS('box-shadow', /inset/);
+});
+
+test('filled background remaps only the optional inset border color', async ({ page }) => {
+  const host = page.locator('#filled-bordered');
+  const button = host.locator('button');
+  const surfaces = [
+    { background: 'faint', token: '--color-border-secondary' },
+    { background: 'medium', token: '--color-border-on-medium-background-secondary' },
+    { background: 'bold', token: '--color-border-on-bold-background-secondary' },
+    { background: 'strong', token: '--color-border-on-strong-background-secondary' },
+    { background: 'translucent', token: '--color-translucent-border-secondary' },
+    { background: 'inverted', token: '--color-inverted-border-secondary' },
+    { background: 'media', token: '--color-media-border-secondary' },
+    { background: 'always-dark', token: '--color-always-dark-border-secondary' },
+  ] as const;
+
+  const baseline = await button.evaluate(element => {
+    const styles = getComputedStyle(element);
+    return {
+      backgroundColor: styles.backgroundColor,
+      color: styles.color,
+      hover: styles.getPropertyValue('--ds-interaction-hover'),
+      pressed: styles.getPropertyValue('--ds-interaction-pressed'),
+      focus: styles.getPropertyValue('--ds-focus-ring-color'),
+      stableClasses: [...element.classList]
+        .filter(className => !className.startsWith('button-filled--background-'))
+        .sort(),
+    };
+  });
+
+  for (const surface of surfaces) {
+    await host.evaluate((element, background) => {
+      (element as HTMLElement & { background: string }).background = background;
+    }, surface.background);
+    await expect(button).toHaveClass(new RegExp(`button-filled--background-${surface.background}`));
+
+    const expectedBorder = await page.evaluate(token => {
+      const probe = document.createElement('div');
+      probe.style.borderColor = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).borderColor;
+      probe.remove();
+      return color;
+    }, surface.token);
+
+    const state = await button.evaluate(element => {
+      const styles = getComputedStyle(element);
+      return {
+        backgroundColor: styles.backgroundColor,
+        color: styles.color,
+        hover: styles.getPropertyValue('--ds-interaction-hover'),
+        pressed: styles.getPropertyValue('--ds-interaction-pressed'),
+        focus: styles.getPropertyValue('--ds-focus-ring-color'),
+        borderShadow: getComputedStyle(element, '::after').boxShadow,
+        stableClasses: [...element.classList]
+          .filter(className => !className.startsWith('button-filled--background-'))
+          .sort(),
+      };
+    });
+
+    expect(state).toMatchObject({
+      ...baseline,
+      borderShadow: expect.stringContaining(expectedBorder),
+    });
+  }
+});
+
 test('uses one background prop for standard and special surfaces', async ({ page }) => {
   const host = page.locator('#unfilled-label');
   const button = host.locator('button');

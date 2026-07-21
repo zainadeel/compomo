@@ -1,0 +1,73 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-chart-donut",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-chart-donut",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Part-to-whole donut chart with a center aggregate, responsive fill sizing, local slice tooltip feedback, and externally controlled legend highlighting.",
+  "useWhen": [
+    "Users need to understand a small part-to-whole breakdown with a prominent total or status in the center.",
+    "A standalone donut needs pointer and keyboard-focus value feedback through a chart-owned data-viz tooltip.",
+    "A donut and visible ChartLegend should cross-highlight by matching stable labels."
+  ],
+  "avoidWhen": [
+    "The data is a trend, time sequence, or independent magnitude comparison.",
+    "The category count creates slices too small to understand reliably.",
+    "Hover is intended to select, filter, or navigate rather than temporarily highlight data."
+  ],
+  "alternatives": [
+    {
+      "when": "The product needs the canonical card, filter action, visible legend, and built-in hover synchronization.",
+      "component": "component:ds-card-data-viz-donut",
+      "reason": "The dedicated card owns that complete composition and suppresses redundant slice tooltips."
+    },
+    {
+      "when": "Users need to compare independent category magnitudes.",
+      "component": "component:ds-chart-bar",
+      "reason": "Bars make category magnitude differences easier to compare."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-chart-legend",
+    "component:ds-tooltip-data-viz",
+    "component:ds-card-data-viz-donut"
+  ],
+  "accessibility": [
+    "Every non-empty slice remains keyboard focusable and exposes its label and value without depending on the visual tooltip.",
+    "Use a visible legend when the full set of labels, values, or percentages must remain continuously available.",
+    "Provide localized no-data text for the neutral empty ring.",
+    "Center text is a visual summary and must not be the only source of essential category detail."
+  ],
+  "states": [
+    "Genuine local pointer or keyboard focus may show a chart-owned tooltip; externally synchronized highlight never opens it.",
+    "When a visible legend already owns label and value detail, suppress the redundant donut tooltip. CardDataVizDonut does this automatically.",
+    "Local hover and external highlight remain separate while both may dim non-matching slices.",
+    "Zero or negative totals render a neutral empty ring without interactive slices.",
+    "Center value and caption truncate when they exceed the safe inner-circle measure."
+  ],
+  "responsiveBehavior": [
+    "Prefer container-fill sizing inside data-viz cards and explicit sizing only in layouts that own a stable diameter.",
+    "Fill sizing remains centered and constrained to the shared donut size band.",
+    "The owner adapts category count and legend placement for available space."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign data as a JavaScript property and wire slice-hover detail to a sibling legend only when not using CardDataVizDonut."
+    ],
+    "react": [
+      "Keep synchronized highlight controlled by the composition and disable slice tooltips when a sibling legend continuously shows the same details."
+    ],
+    "angular": [
+      "Keep synchronized highlight controlled by the composition and disable slice tooltips when a sibling legend continuously shows the same details."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ChartDonut/ChartDonut.stories.ts"
+    }
+  ]
+}

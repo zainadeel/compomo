@@ -35,11 +35,13 @@ const meta: Meta = {
     thickness: { control: 'number', description: 'Ring thickness in px. Defaults to --dimension-size-200 (16px).' },
     cornerRadius: { control: 'number', description: 'Slice corner radius in px. Defaults to --dimension-radius-025 (2px).' },
     gap: { control: 'number', description: 'Gap between slices, in degrees.' },
+    showTooltip: { control: 'boolean' },
   },
   args: {
     thickness: 16,
     cornerRadius: 2,
     gap: 1,
+    showTooltip: true,
   },
 };
 export default meta;
@@ -56,6 +58,7 @@ export const Playground: Story = {
       thickness=${args['thickness']}
       corner-radius=${args['cornerRadius']}
       gap=${args['gap']}
+      .showTooltip=${args['showTooltip']}
       center-caption="Total reviewed"
     ></ds-chart-donut>
   `,
@@ -71,6 +74,7 @@ export const WithLegend: Story = {
         })}
         size=${175}
         center-caption="Total reviewed"
+        .showTooltip=${false}
       ></ds-chart-donut>
       <ds-chart-legend
         ${ref(el => {
@@ -93,6 +97,7 @@ export const AvailabilityStatusPattern: Story = {
         })}
         size=${175}
         center-caption="Total vehicles"
+        .showTooltip=${false}
       ></ds-chart-donut>
       <ds-chart-legend
         style="width:100%"
@@ -116,6 +121,7 @@ export const Empty: Story = {
         })}
         size=${175}
         center-caption="Total vehicles"
+        .showTooltip=${false}
       ></ds-chart-donut>
       <ds-chart-legend
         style="width:100%"
@@ -162,8 +168,7 @@ export const CenterTextTruncation: Story = {
  * real `<a>`; click is intercepted here only so the demo doesn't leave Storybook.
  *
  * Both directions only dim opacity — neither shows a hover-fill on the other side.
- * Donut slices do not show a data-viz tooltip on hover (the legend already surfaces
- * label/value); bar/line charts will use `ds-tooltip-data-viz` when those land.
+ * The donut tooltip is disabled because the legend already surfaces label/value.
  * Legend rows keep their own hover-fill (`:hover`/`:focus-visible` in CSS) for real pointer/
  * keyboard interaction, since that's a "you can click here" affordance that shouldn't appear just
  * because the donut was hovered.
@@ -191,6 +196,7 @@ export const SyncedWithLegend: Story = {
           })}
           size=${175}
           center-caption="Total vehicles"
+          .showTooltip=${false}
         ></ds-chart-donut>
         <ds-chart-legend
           style="width:100%"

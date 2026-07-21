@@ -14,6 +14,7 @@
 
 .chart-donut__wrapper {
   position: relative;
+  overflow: visible;
 }
 
 :host(.chart-donut--fill) .chart-donut__wrapper {
@@ -50,6 +51,7 @@
   font-weight: var(--typography-weight-semibold);
   letter-spacing: var(--typography-letterspacing-negative-double);
   cursor: default;
+  pointer-events: none;
 }
 
 /* Matches ds-text text-body-medium regular. */
@@ -61,4 +63,5 @@
   font-weight: var(--typography-weight-regular);
   letter-spacing: var(--typography-letterspacing-negative-half);
   cursor: default;
+  pointer-events: none;
 }

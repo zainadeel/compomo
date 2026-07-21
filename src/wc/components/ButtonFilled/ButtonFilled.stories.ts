@@ -18,6 +18,16 @@ const CONTRASTS = ['bold', 'strong', 'medium', 'faint'] as const;
 const VARIANTS = ['label', 'icon', 'icon-label'] as const;
 const SIZES = ['md', 'sm', 'xs'] as const;
 const WIDTHS = ['hug', 'fill'] as const;
+const BACKGROUNDS = [
+  'faint',
+  'medium',
+  'bold',
+  'strong',
+  'translucent',
+  'inverted',
+  'media',
+  'always-dark',
+] as const;
 
 const meta: Meta = {
   title: 'Primitives/ButtonFilled',
@@ -30,6 +40,8 @@ const meta: Meta = {
     icon: { control: 'text' },
     intent: { control: 'select', options: [...INTENTS] },
     contrast: { control: 'select', options: [...CONTRASTS] },
+    hasBorder: { control: 'boolean' },
+    background: { control: 'select', options: ['', ...BACKGROUNDS] },
     rounded: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -43,6 +55,8 @@ const meta: Meta = {
     icon: 'Check',
     intent: 'brand',
     contrast: 'bold',
+    hasBorder: false,
+    background: '',
     rounded: false,
     isInactive: false,
     isLoading: false,
@@ -57,6 +71,8 @@ const ROW = 'display:flex;gap:var(--dimension-space-100);align-items:center;flex
 const COL = 'display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;';
 const LABEL =
   'min-width:96px;color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);';
+const SURFACE =
+  'display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);';
 
 export const Playground: Story = {
   render: args => html`
@@ -68,6 +84,8 @@ export const Playground: Story = {
       icon=${args['icon']}
       intent=${args['intent']}
       contrast=${args['contrast']}
+      .hasBorder=${args['hasBorder']}
+      .background=${args['background'] || undefined}
       ?rounded=${args['rounded']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}
@@ -206,6 +224,49 @@ export const OnBoldBrand: Story = {
     >
       <ds-button-filled variant="icon" icon="Check" intent="neutral" contrast="faint" aria-label="Save"></ds-button-filled>
       <ds-button-filled variant="label" label="Save" intent="brand" contrast="faint"></ds-button-filled>
+    </div>
+  `,
+};
+
+export const BorderSurfaceContexts: Story = {
+  render: () => html`
+    <div style="${COL}">
+      <div style="${SURFACE} background:var(--color-background-primary);">
+        <span style="${LABEL}">default</span>
+        <ds-button-filled has-border label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-background-faint-neutral);">
+        <span style="${LABEL}">faint</span>
+        <ds-button-filled has-border background="faint" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-background-medium-neutral);">
+        <span style="${LABEL}">medium</span>
+        <ds-button-filled has-border background="medium" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-background-bold-neutral);">
+        <span style="${LABEL}">bold</span>
+        <ds-button-filled has-border background="bold" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-background-strong-neutral);">
+        <span style="${LABEL}">strong</span>
+        <ds-button-filled has-border background="strong" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand);">
+        <span style="${LABEL};color:var(--color-translucent-foreground-secondary)">translucent</span>
+        <ds-button-filled has-border background="translucent" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-inverted-background);">
+        <span style="${LABEL};color:var(--color-inverted-foreground-secondary)">inverted</span>
+        <ds-button-filled has-border background="inverted" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-media-background);">
+        <span style="${LABEL};color:var(--color-media-foreground-secondary)">media</span>
+        <ds-button-filled has-border background="media" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+      <div style="${SURFACE} background:var(--color-always-dark-background);">
+        <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)">always-dark</span>
+        <ds-button-filled has-border background="always-dark" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
     </div>
   `,
 };

@@ -1,4 +1,5 @@
 export type {
+  ButtonFilledBackground,
   ButtonFilledContrast,
   ButtonFilledIntent,
   ButtonFilledSize,

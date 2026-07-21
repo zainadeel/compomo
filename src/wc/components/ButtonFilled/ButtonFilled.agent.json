@@ -47,6 +47,8 @@
     "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
     "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
     "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
+    "The optional inset border is off by default. Enable it only when the filled action needs an explicit edge against its parent surface.",
+    "Parent surface context changes only the optional inset border color. Contrast continues to own the button fill, foreground, hover, pressed, and focus treatments; never use surface context to change action hierarchy.",
     "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."

@@ -2,15 +2,85 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "chart-legend",
   "title": "ChartLegend",
-  "description": "Base legend for `ds-chart-*` components. Webapp's Overview widgets each style\nlegends differently (list w/ values, compact chips, bare swatches, external\nstat callouts) — this covers the common \"swatch + label + optional value\" case.\nConsumers who need a different treatment skip this component entirely and\nrender their own markup against the same `ChartDatum[]` data.",
+  "description": "Display-first chart legend with swatches, labels, optional values and percentages, explicit deep links, and highlight-only chart synchronization.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-legend",
     "source": "src/wc/components/ChartLegend/ChartLegend.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Display-first chart legend with swatches, labels, optional values and percentages, explicit deep links, and highlight-only chart synchronization.",
+      "useWhen": [
+        "A chart needs the standard swatch, label, and optional numeric-detail legend.",
+        "Donut slices or line series need a continuously visible key beside or below the visualization.",
+        "A category has an explicit deep-link destination and should render as an accessible link."
+      ],
+      "avoidWhen": [
+        "The design calls for chips, bare swatches, external stat callouts, or another custom legend treatment.",
+        "Rows need to toggle visibility, filter data, or represent selection.",
+        "The content is a command menu or navigation list unrelated to chart data."
+      ],
+      "alternatives": [
+        {
+          "when": "The product needs a nonstandard legend treatment.",
+          "component": "component:ds-text",
+          "reason": "Compose product-owned semantic markup from the same chart data rather than forcing it into this row recipe."
+        },
+        {
+          "when": "The donut belongs in the canonical dashboard card.",
+          "component": "component:ds-card-data-viz-donut",
+          "reason": "The dedicated card places the legend and handles bidirectional highlight synchronization."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-chart-donut",
+        "component:ds-chart-line",
+        "component:ds-card-data-viz-donut",
+        "component:ds-card-shell-data-viz"
+      ],
+      "accessibility": [
+        "Rows remain non-interactive unless the item supplies an actual link destination.",
+        "Synced highlight changes opacity only and never moves focus or announces selection.",
+        "Keep full labels available when visible text truncates, and retain stable tabular numeric columns.",
+        "Do not rely on swatch color alone; every entry requires a meaningful visible label."
+      ],
+      "states": [
+        "Local pointer or focus interaction and external chart highlight remain separate; both may dim peers, but only a real link row receives interactive affordances.",
+        "Hover synchronization is temporary emphasis, never filtering, toggling, or selected state.",
+        "Percentage values use one consistent precision across the complete legend.",
+        "The list owns pointer leave so moving across row gaps does not clear and reapply highlight."
+      ],
+      "responsiveBehavior": [
+        "Vertical legends let the label yield width and truncate before right-aligned value and percentage columns.",
+        "Horizontal legends wrap complete entries and suit compact series keys below a chart.",
+        "The parent constrains width and decides when a custom condensed treatment is necessary."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign items as a JavaScript property and set href only for genuine navigation."
+        ],
+        "react": [
+          "Intercept the item-click event only when application routing must replace native link navigation."
+        ],
+        "angular": [
+          "Intercept the item-click event only when application routing must replace native link navigation."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/ChartLegend/ChartLegend.stories.ts"
+        },
+        {
+          "label": "Rendered interaction tests",
+          "path": "tests/e2e/chart-legend.spec.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "activeLabel": {

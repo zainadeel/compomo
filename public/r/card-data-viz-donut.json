@@ -2,15 +2,84 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "card-data-viz-donut",
   "title": "CardDataVizDonut",
-  "description": "Donut data-viz card on dedicated ds-card-shell-data-viz chrome — fill chart region, content-sized legend, header filter action, and chart↔legend hover sync.",
+  "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
     "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
     "source": "src/wc/components/CardDataVizDonut/CardDataVizDonut.tsx",
-    "intentStatus": "migration-pending",
-    "intent": null,
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
+      "useWhen": [
+        "A dashboard widget needs the standard donut and visible legend composition in one data-viz card.",
+        "Chart slices and legend rows should cross-highlight without application hover wiring.",
+        "The card needs the shared header filter action while the application owns filter state and menu content."
+      ],
+      "avoidWhen": [
+        "The visualization is a bar, line, metric, or custom chart; compose CardShellDataViz directly.",
+        "The product needs a custom legend treatment such as chips, external stat callouts, or selectable filters.",
+        "The surface is a settings section or generic content card."
+      ],
+      "alternatives": [
+        {
+          "when": "The visualization needs shared data-viz chrome without the canonical donut layout.",
+          "component": "component:ds-card-shell-data-viz",
+          "reason": "CardShellDataViz owns only the header, actions, width, and body boundary."
+        },
+        {
+          "when": "A donut and legend need a custom layout without card chrome.",
+          "component": "component:ds-chart-donut",
+          "reason": "Compose the chart and ChartLegend directly and own their layout and hover synchronization."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card-shell-data-viz",
+        "component:ds-chart-donut",
+        "component:ds-chart-legend",
+        "component:ds-empty-state",
+        "component:ds-skeleton"
+      ],
+      "accessibility": [
+        "Provide a concise card heading and a localized filter label for the icon-only header action.",
+        "Keep essential values available through the chart and visible legend rather than encoding meaning through slice color alone.",
+        "The application owns meaningful loading, empty, and error status copy when either content region is temporarily replaced or absent."
+      ],
+      "states": [
+        "The chart region fills remaining card height while the legend remains content-sized.",
+        "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
+        "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
+        "The filter action emits intent while the parent owns popup content, applied constraints, and data updates."
+      ],
+      "responsiveBehavior": [
+        "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
+        "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots."
+        ],
+        "react": [
+          "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+        ],
+        "angular": [
+          "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.stories.ts"
+        },
+        {
+          "label": "Dashboard review examples",
+          "path": "src/wc/stories/DataViz/OverviewReview.stories.ts"
+        }
+      ]
+    },
     "api": {
       "props": {
         "cardWidth": {
@@ -136,7 +205,7 @@
     },
     {
       "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.tsx",
-      "content": "import { Component, Element, Event, EventEmitter, State, h, Host, Prop } from '@stencil/core';\nimport type { CardShellDataVizWidth } from '../CardShellDataViz/CardShellDataViz';\n\nexport type CardDataVizDonutWidth = CardShellDataVizWidth;\n\n/** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */\ntype HoveredDatum = { label: string } | null;\n\n/** A slotted chart/legend that opts into hover sync by exposing an `activeLabel` prop. */\ntype SyncableSlot = HTMLElement & { activeLabel?: string | null };\n\n/**\n * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and\n * content-sized legend. Hover sync between chart and legend stays here.\n */\n@Component({\n  tag: 'ds-card-data-viz-donut',\n  styleUrl: 'CardDataVizDonut.css',\n  scoped: true,\n})\nexport class CardDataVizDonut {\n  @Element() el!: HTMLElement;\n\n  /** Widget heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Card width token — also sets matching min-height. */\n  @Prop() cardWidth: CardDataVizDonutWidth = 'md';\n  @Prop() filterLabel: string = 'Filter';\n\n  /** Emits when the header filter control is activated. */\n  @Event() dsFilterClick!: EventEmitter<void>;\n\n  // Scoped (light-DOM) components have no native slot projection to detect emptiness from CSS —\n  // check the actual children so an unused region (e.g. no legend) doesn't render a dangling\n  // padded box plus a body gap next to nothing.\n  @State() private hasChartSlot = false;\n  @State() private hasLegendSlot = false;\n\n  componentWillRender() {\n    // Not `:scope >` — Stencil's scoped slot polyfill relocates slotted children into\n    // region wrappers (and here into nested `ds-card-shell-data-viz`), so they may not stay direct\n    // host children across renders.\n    this.hasChartSlot = !!this.el.querySelector('[slot=\"chart\"]');\n    this.hasLegendSlot = !!this.el.querySelector('[slot=\"legend\"]');\n  }\n\n  componentDidLoad() {\n    // Sync the chart's and legend's `activeLabel` from each other's hover events, so any\n    // ds-chart-donut + ds-chart-legend pair cross-highlights without every consumer having to\n    // wire it up by hand. Delegated on the host (rather than bound to the specific slotted\n    // elements) since Stencil events bubble and the slot content can be swapped at runtime.\n    this.el.addEventListener('dsSliceHover', this.handleChartHover);\n    this.el.addEventListener('dsItemHover', this.handleLegendHover);\n  }\n\n  disconnectedCallback() {\n    this.el.removeEventListener('dsSliceHover', this.handleChartHover);\n    this.el.removeEventListener('dsItemHover', this.handleLegendHover);\n  }\n\n  private handleChartHover = (e: Event) => {\n    // Not `:scope >` — Stencil's slot polyfill for scoped (non-shadow) components relocates\n    // slotted children into an inner region wrapper on render, so they're no longer direct\n    // children of the host by the time this fires.\n    const legend = this.el.querySelector('[slot=\"legend\"]') as SyncableSlot | null;\n    if (!legend || !('activeLabel' in legend)) return;\n    legend.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;\n  };\n\n  private handleLegendHover = (e: Event) => {\n    const chart = this.el.querySelector('[slot=\"chart\"]') as SyncableSlot | null;\n    if (!chart || !('activeLabel' in chart)) return;\n    chart.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;\n  };\n\n  private handleFilterClick = () => {\n    this.dsFilterClick.emit();\n  };\n\n  render() {\n    return (\n      <Host class=\"card-data-viz-donut\">\n        <ds-card-shell-data-viz heading={this.heading} cardWidth={this.cardWidth}>\n          <ds-button-unfilled\n            slot=\"actions\"\n            variant=\"icon\"\n            type=\"button\"\n            icon=\"Filters\"\n            aria-label={this.filterLabel}\n            onDsClick={this.handleFilterClick}\n          />\n          <div class=\"card-data-viz-donut__layout\">\n            {this.hasChartSlot && (\n              <div class=\"card-data-viz-donut__chart-region\">\n                <slot name=\"chart\" />\n              </div>\n            )}\n            {this.hasLegendSlot && (\n              <div class=\"card-data-viz-donut__legend-region\">\n                <slot name=\"legend\" />\n              </div>\n            )}\n          </div>\n        </ds-card-shell-data-viz>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, Event, EventEmitter, State, h, Host, Prop } from '@stencil/core';\nimport type { CardShellDataVizWidth } from '../CardShellDataViz/CardShellDataViz';\n\nexport type CardDataVizDonutWidth = CardShellDataVizWidth;\n\n/** Matches the `dsSliceHover`/`dsItemHover` detail shape emitted by `ds-chart-*` and `ds-chart-legend`. */\ntype HoveredDatum = { label: string } | null;\n\n/** A slotted chart/legend that opts into composition behavior through public props. */\ntype SyncableSlot = HTMLElement & {\n  activeLabel?: string | null;\n  showTooltip?: boolean;\n};\n\n/**\n * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and\n * content-sized legend. Hover sync between chart and legend stays here.\n */\n@Component({\n  tag: 'ds-card-data-viz-donut',\n  styleUrl: 'CardDataVizDonut.css',\n  scoped: true,\n})\nexport class CardDataVizDonut {\n  @Element() el!: HTMLElement;\n\n  /** Widget heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Card width token — also sets matching min-height. */\n  @Prop() cardWidth: CardDataVizDonutWidth = 'md';\n  @Prop() filterLabel: string = 'Filter';\n\n  /** Emits when the header filter control is activated. */\n  @Event() dsFilterClick!: EventEmitter<void>;\n\n  // Scoped (light-DOM) components have no native slot projection to detect emptiness from CSS —\n  // check the actual children so an unused region (e.g. no legend) doesn't render a dangling\n  // padded box plus a body gap next to nothing.\n  @State() private hasChartSlot = false;\n  @State() private hasLegendSlot = false;\n\n  componentWillRender() {\n    // Not `:scope >` — Stencil's scoped slot polyfill relocates slotted children into\n    // region wrappers (and here into nested `ds-card-shell-data-viz`), so they may not stay direct\n    // host children across renders.\n    this.hasChartSlot = !!this.el.querySelector('[slot=\"chart\"]');\n    this.hasLegendSlot = !!this.el.querySelector('[slot=\"legend\"]');\n  }\n\n  componentDidLoad() {\n    // Sync the chart's and legend's `activeLabel` from each other's hover events, so any\n    // ds-chart-donut + ds-chart-legend pair cross-highlights without every consumer having to\n    // wire it up by hand. Delegated on the host (rather than bound to the specific slotted\n    // elements) since Stencil events bubble and the slot content can be swapped at runtime.\n    this.el.addEventListener('dsSliceHover', this.handleChartHover);\n    this.el.addEventListener('dsItemHover', this.handleLegendHover);\n  }\n\n  componentDidRender() {\n    const chart = this.el.querySelector('[slot=\"chart\"]') as SyncableSlot | null;\n    if (!chart || !('showTooltip' in chart)) return;\n    chart.showTooltip = !this.hasLegendSlot;\n  }\n\n  disconnectedCallback() {\n    this.el.removeEventListener('dsSliceHover', this.handleChartHover);\n    this.el.removeEventListener('dsItemHover', this.handleLegendHover);\n  }\n\n  private handleChartHover = (e: Event) => {\n    // Not `:scope >` — Stencil's slot polyfill for scoped (non-shadow) components relocates\n    // slotted children into an inner region wrapper on render, so they're no longer direct\n    // children of the host by the time this fires.\n    const legend = this.el.querySelector('[slot=\"legend\"]') as SyncableSlot | null;\n    if (!legend || !('activeLabel' in legend)) return;\n    legend.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;\n  };\n\n  private handleLegendHover = (e: Event) => {\n    const chart = this.el.querySelector('[slot=\"chart\"]') as SyncableSlot | null;\n    if (!chart || !('activeLabel' in chart)) return;\n    chart.activeLabel = (e as CustomEvent<HoveredDatum>).detail?.label ?? null;\n  };\n\n  private handleFilterClick = () => {\n    this.dsFilterClick.emit();\n  };\n\n  render() {\n    return (\n      <Host class=\"card-data-viz-donut\">\n        <ds-card-shell-data-viz heading={this.heading} cardWidth={this.cardWidth}>\n          <ds-button-unfilled\n            slot=\"actions\"\n            variant=\"icon\"\n            type=\"button\"\n            icon=\"Filters\"\n            aria-label={this.filterLabel}\n            onDsClick={this.handleFilterClick}\n          />\n          <div class=\"card-data-viz-donut__layout\">\n            {this.hasChartSlot && (\n              <div class=\"card-data-viz-donut__chart-region\">\n                <slot name=\"chart\" />\n              </div>\n            )}\n            {this.hasLegendSlot && (\n              <div class=\"card-data-viz-donut__legend-region\">\n                <slot name=\"legend\" />\n              </div>\n            )}\n          </div>\n        </ds-card-shell-data-viz>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

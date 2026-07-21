@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Chart donut tooltip behavior</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <h1>Chart donut tooltip behavior</h1>
+      <ds-chart-donut id="standalone" size="175" center-caption="Total"></ds-chart-donut>
+      <ds-chart-donut id="external-highlight" size="175" center-caption="Total"></ds-chart-donut>
+      <ds-chart-donut id="tooltip-disabled" size="175" center-caption="Total"></ds-chart-donut>
+
+      <ds-card-data-viz-donut id="card-with-legend" heading="Status">
+        <ds-chart-donut slot="chart" size="175" center-caption="Total"></ds-chart-donut>
+        <ds-chart-legend slot="legend"></ds-chart-legend>
+      </ds-card-data-viz-donut>
+
+      <ds-card-data-viz-donut id="card-chart-only" heading="Status">
+        <ds-chart-donut slot="chart" size="175" center-caption="Total"></ds-chart-donut>
+      </ds-card-data-viz-donut>
+    </main>
+    <script type="module" src="/chart-donut-setup.mjs"></script>
+  </body>
+</html>
