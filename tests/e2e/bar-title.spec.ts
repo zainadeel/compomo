@@ -410,23 +410,31 @@ test('selects compact and constrained variants from ShellPage capacity', async (
     const back = element.querySelector<HTMLElement>('.bar-title__back');
     const heading = element.querySelector<HTMLElement>('.bar-title__heading');
     const actions = element.querySelector<HTMLElement>('.bar-title__actions');
+    const leading = element.querySelector<HTMLElement>('.bar-title__leading');
     // Query the actual controls rather than `actions.children`: a `display:
     // contents` `ds-tooltip` wrapper can sit between `.bar-title__actions`
     // and the button it wraps, and contributes a degenerate (zero) rect.
     const actionControls = actions
       ? Array.from(actions.querySelectorAll<HTMLElement>('ds-button-filled, ds-button-unfilled'))
       : [];
+    const headingRect = heading?.getBoundingClientRect();
+    const actionsRect = actions?.getBoundingClientRect();
     return {
       height: host.height,
       backRight: back?.getBoundingClientRect().right ?? 0,
-      headingLeft: heading?.getBoundingClientRect().left ?? 0,
-      actionsRightInset: host.right - (actions?.getBoundingClientRect().right ?? host.right),
+      headingLeft: headingRect?.left ?? 0,
+      actionsRightInset: host.right - (actionsRect?.right ?? host.right),
       headingPaddingLeft: heading ? Number.parseFloat(getComputedStyle(heading).paddingLeft) : 0,
       actionGap:
         actionControls.length > 1
           ? actionControls[1].getBoundingClientRect().left -
             actionControls[0].getBoundingClientRect().right
           : 0,
+      // The expanded-only alignment fix pulls `.bar-title__leading` up with a
+      // negative margin; regression-guards that it never leaks into compact.
+      leadingMarginBlockStart: leading ? getComputedStyle(leading).marginBlockStart : '',
+      headingCenterY: headingRect ? headingRect.top + headingRect.height / 2 : 0,
+      actionsCenterY: actionsRect ? actionsRect.top + actionsRect.height / 2 : 0,
     };
   });
 
@@ -435,6 +443,8 @@ test('selects compact and constrained variants from ShellPage capacity', async (
   expect(compactGeometry.headingPaddingLeft).toBe(8);
   expect(compactGeometry.actionsRightInset).toBeCloseTo(8, 3);
   expect(compactGeometry.actionGap).toBeCloseTo(8, 3);
+  expect(compactGeometry.leadingMarginBlockStart).toBe('0px');
+  expect(compactGeometry.headingCenterY).toBeCloseTo(compactGeometry.actionsCenterY, 0);
 
   await viewport.evaluate((element: HTMLElement) => {
     element.style.width = 'var(--dimension-panel-width-lg)';

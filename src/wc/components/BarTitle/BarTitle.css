@@ -76,7 +76,7 @@
  * title row lands flush with the actions' top without moving actions.
  * Tied to the same tokens that size the breadcrumb, not a guessed pixel value.
  */
-:host(.bar-title-host--has-back) .bar-title__leading {
+:host(.bar-title-host--expanded.bar-title-host--has-back) .bar-title__leading {
   margin-block-start: calc(-1 * (var(--dimension-size-200) + var(--dimension-space-050) * 2));
 }
 
