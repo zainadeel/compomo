@@ -32,8 +32,6 @@ export type BarTitleActionItem = BarTitleAction | BarTitleDivider;
 
 export type BarTitleVariant = 'expanded' | 'compact' | 'constrained';
 
-export type BarTitleMode = 'default' | 'editor';
-
 export type BarTitlePrimaryActionCollapse = 'auto' | 'never';
 
 export function isBarTitleDivider(

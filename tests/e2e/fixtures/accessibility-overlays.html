@@ -11,6 +11,12 @@
         overflow: hidden;
         transform: translateZ(0);
       }
+
+      #collision-anchor {
+        position: fixed;
+        right: 8px;
+        bottom: 8px;
+      }
     </style>
   </head>
   <body>
@@ -37,6 +43,9 @@
       <p>The update is ready.</p>
     </ds-modal>
     <button id="after-modal">After modal</button>
+
+    <button id="collision-anchor" aria-haspopup="menu" aria-controls="collision-menu" aria-expanded="false">More</button>
+    <ds-menu id="collision-menu" anchor-id="collision-anchor" menu-label="Collision actions"></ds-menu>
 
     <script type="module" src="/accessibility-overlays-setup.mjs"></script>
   </body>

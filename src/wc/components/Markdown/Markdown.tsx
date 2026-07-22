@@ -123,6 +123,7 @@ export class Markdown {
         return (
           <ds-code-block
             class="markdown__code-block"
+            data-ds-prose="off"
             code={node.value}
             language={node.lang ?? ''}
             filename={node.meta ?? ''}
@@ -165,7 +166,7 @@ export class Markdown {
       case 'table': {
         const [heading, ...rows] = node.children;
         return (
-          <div class="markdown__table-wrap">
+          <div class="markdown__table-wrap ds-prose__table-scroll" tabIndex={0}>
             <table class="markdown__table">
               {heading ? (
                 <thead class="markdown__table-head">
@@ -211,7 +212,7 @@ export class Markdown {
   render() {
     return (
       <Host aria-busy={this.streaming ? 'true' : undefined}>
-        <div class="markdown">
+        <div class="markdown ds-prose">
           {this.tree ? (
             this.renderNode(this.tree)
           ) : (

@@ -45,7 +45,7 @@
   ],
   "responsiveBehavior": [
     "Let ShellPage select expanded, compact, and constrained variants from its own capacity and scroll position.",
-    "Set primaryAction.collapse to never only when the action must preserve visible hierarchy, such as Save in create and edit flows.",
+    "Set primaryAction.collapse to never only when an ordinary routed-page action must preserve visible hierarchy; create and edit workflows use BarWorkflow instead.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
     "Place TabGroup inside ShellPage content for inner-page panels; route-level sections remain in BarTitle."
   ],

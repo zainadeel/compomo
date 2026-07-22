@@ -18,6 +18,7 @@
     "The application owns scripted or real transport, immutable response parts, retry, stop, generated titles, and persistence.",
     "User-sent prompts use MessageBubble's user variant and body-medium regular default with secondary foreground; the application does not promote ordinary sent-message copy to body-large.",
     "AgentResponse renders directly in Message without a MessageBubble surface, owns ordered display only, and never reveals private reasoning.",
+    "Markdown parsing and safe node creation belong to the renderer; the renderer-neutral @ds-mo/ui/prose.css surface owns only semantic-tree styling.",
     "Tool-call components display execution state but do not request participant approval."
   ],
   "accessibility": [

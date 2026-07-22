@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Workflow header</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        margin: 0;
+        font-family: var(--typography-font-family, system-ui);
+        background: var(--color-background-primary);
+      }
+
+      form {
+        width: min(100%, var(--dimension-panel-width-2xl));
+      }
+    </style>
+  </head>
+  <body>
+    <form id="workflow-form">
+      <ds-bar-workflow
+        id="workflow-header"
+        heading="Create driver"
+        value="details"
+        exit-label="Exit"
+        exit-aria-label="Exit driver creation"
+        previous-label="Previous step"
+        next-label="Next step"
+      ></ds-bar-workflow>
+    </form>
+    <script type="module" src="/bar-workflow-setup.mjs"></script>
+  </body>
+</html>

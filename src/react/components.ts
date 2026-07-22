@@ -13,6 +13,7 @@ export { DsAvatar } from "./ds-avatar.js";
 export { DsBadge } from "./ds-badge.js";
 export { DsBarNav } from "./ds-bar-nav.js";
 export { DsBarTitle } from "./ds-bar-title.js";
+export { DsBarWorkflow } from "./ds-bar-workflow.js";
 export { DsButtonFilled } from "./ds-button-filled.js";
 export { DsButtonUnfilled } from "./ds-button-unfilled.js";
 export { DsCardDataVizDonut } from "./ds-card-data-viz-donut.js";

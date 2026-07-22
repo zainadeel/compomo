@@ -11,6 +11,7 @@ export const DIRECTIVES = [
   d.DsBadge,
   d.DsBarNav,
   d.DsBarTitle,
+  d.DsBarWorkflow,
   d.DsButtonFilled,
   d.DsButtonUnfilled,
   d.DsCardDataVizDonut,

@@ -3,7 +3,7 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-empty-state.js';
 
 const meta: Meta = {
-  title: 'Utility/Empty State',
+  title: 'Utility/EmptyState',
   tags: ['autodocs'],
   argTypes: {
     icon: { control: 'text' },

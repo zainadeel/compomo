@@ -9,7 +9,7 @@
   "status": "experimental",
   "summary": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
   "useWhen": [
-    "A list or message composition needs a consistent 32px circular identity marker represented by an icon."
+    "A list or message composition needs a consistent circular identity marker represented by an icon at md, sm, or xs control density."
   ],
   "avoidWhen": [
     "The identity has a supplied photograph, initials, presence state, or editable profile behavior; those variants are not part of this primitive."
@@ -17,10 +17,11 @@
   "commonlyComposedWith": ["component:ds-conversation-list-item", "component:ds-message"],
   "accessibility": [
     "Provide label only when the icon communicates meaning that surrounding text does not already convey.",
-    "Omit label when the owning row or message already provides an equivalent accessible name."
+    "Omit label when the owning row or message already provides an equivalent accessible name.",
+    "Treat primary and secondary as general icon hierarchy; an owning product may map that hierarchy to states such as unread and read, but Avatar does not own those states."
   ],
   "responsiveBehavior": [
-    "The avatar keeps its fixed 32px circle and 20px icon at every viewport size."
+    "The selected size stays fixed across viewports: md is a 32px circle with a 20px icon, sm is 24px with 16px, and xs is 16px with 12px."
   ],
   "references": [
     {

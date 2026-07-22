@@ -3,10 +3,12 @@ import { html } from 'lit';
 import type { MenuItemData } from '../Menu/menu-types';
 import '../../../../dist/components/ds-panel-tool-search.js';
 import '../../../../dist/components/ds-menu.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 export default {
   title: 'Navigation/PanelToolsSearch',
   tags: ['autodocs'],
+  parameters: { docs: isolatedOverlayDocs('320px') },
 } satisfies Meta;
 
 type Story = StoryObj;

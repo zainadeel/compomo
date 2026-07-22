@@ -1,0 +1,214 @@
+/*
+ * Renderer-neutral document rhythm for safe semantic DOM.
+ *
+ * Import `@ds-mo/ui/prose.css`, then apply `.ds-prose` to a consumer-owned
+ * semantic container. Keep selectors at zero specificity so ordinary product
+ * CSS can override the recipe. `data-ds-prose="off"` opts an entire embedded
+ * product-UI subtree out of prose element styling.
+ */
+
+:where(.ds-prose) {
+  display: block;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+:where(.ds-prose)
+  :where(p, ul, ol, dl, blockquote, figure, figcaption, table):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin: 0;
+  color: inherit;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  font-weight: var(--typography-weight-regular);
+  line-height: var(--typography-lineheight-md);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+:where(.ds-prose)
+  :where(h1, h2, h3, h4, h5, h6):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin: 0;
+  color: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+  font-weight: var(--typography-weight-semibold);
+}
+
+:where(.ds-prose)
+  :where(h1, h2):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  font-size: var(--typography-fontsize-xl);
+  line-height: var(--typography-lineheight-xl);
+  letter-spacing: var(--typography-letterspacing-negative-double);
+}
+
+:where(.ds-prose)
+  :where(h3, h4):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  font-size: var(--typography-fontsize-lg);
+  line-height: var(--typography-lineheight-lg);
+  letter-spacing: var(--typography-letterspacing-negative);
+}
+
+:where(.ds-prose)
+  :where(h5, h6):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  letter-spacing: var(--typography-letterspacing-negative);
+}
+
+/* New blocks own their leading space, so appending streamed content never
+ * changes the style or position of an earlier sibling. */
+:where(.ds-prose) > :where(* + *) {
+  margin-block-start: var(--dimension-space-150);
+}
+
+:where(.ds-prose)
+  > :where(*)
+  + :where(h1, h2, h3, h4, h5, h6):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin-block-start: var(--dimension-space-200);
+}
+
+:where(.ds-prose)
+  > :where(h1, h2, h3, h4, h5, h6):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *))
+  + :where(*) {
+  margin-block-start: var(--dimension-space-100);
+}
+
+:where(.ds-prose)
+  :where(blockquote, li, dd)
+  > :where(* + *):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin-block-start: var(--dimension-space-050);
+}
+
+:where(.ds-prose)
+  :where(li + li, dt + dd):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin-block-start: var(--dimension-space-050);
+}
+
+:where(.ds-prose)
+  :where(ul, ol):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  padding-inline-start: var(--dimension-space-300);
+}
+
+:where(.ds-prose)
+  :where(li > ul, li > ol):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin-block-start: var(--dimension-space-050);
+}
+
+:where(.ds-prose)
+  :where(li > input[type='checkbox']):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin-inline-end: var(--dimension-space-050);
+}
+
+:where(.ds-prose)
+  :where(blockquote):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  padding-inline-start: var(--dimension-space-150);
+  border-inline-start: var(--dimension-stroke-width-025) solid var(--color-border-secondary);
+  color: var(--color-foreground-secondary);
+}
+
+:where(.ds-prose)
+  :where(strong, b):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  font-weight: var(--typography-weight-medium);
+}
+
+:where(.ds-prose)
+  :where(h1, h2, h3, h4, h5, h6)
+  :where(strong, b):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  font-weight: inherit;
+}
+
+:where(.ds-prose)
+  :where(a):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  color: var(--color-foreground-brand);
+  text-decoration: underline;
+}
+
+:where(.ds-prose)
+  :where(code):not(:where(pre code, [data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  padding: var(--dimension-space-012) var(--dimension-space-025);
+  border-radius: var(--dimension-radius-025);
+  background: var(--color-background-secondary);
+  font-family: var(--typography-fontfamily-mono);
+  font-size: var(--typography-fontsize-sm);
+  line-height: var(--typography-lineheight-sm);
+  letter-spacing: var(--typography-letterspacing-none);
+}
+
+:where(.ds-prose)
+  :where(pre):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--dimension-space-150);
+  overflow: auto;
+  border-radius: var(--dimension-radius-050);
+  background: var(--color-background-strong-neutral);
+  color: var(--color-foreground-faint-neutral);
+  font-family: var(--typography-fontfamily-mono);
+  font-size: var(--typography-fontsize-sm);
+  line-height: var(--typography-lineheight-sm);
+  letter-spacing: var(--typography-letterspacing-none);
+  tab-size: 2;
+}
+
+:where(.ds-prose)
+  :where(pre code):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  white-space: pre;
+}
+
+:where(.ds-prose)
+  :where(hr):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin: 0;
+  border: 0;
+  border-block-start: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+:where(.ds-prose__table-scroll) {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow-x: auto;
+}
+
+:where(.ds-prose)
+  :where(table):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+:where(.ds-prose)
+  :where(th, td):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  padding: var(--dimension-space-075);
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  text-align: start;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+:where(.ds-prose)
+  :where(th):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  color: var(--color-foreground-primary);
+  font-weight: var(--typography-weight-medium);
+}
+
+:where(.ds-prose)
+  :where(img, video, svg):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+:where(.ds-prose)
+  :where(figcaption):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  margin-block-start: var(--dimension-space-050);
+  color: var(--color-foreground-secondary);
+  font-size: var(--typography-fontsize-sm);
+  line-height: var(--typography-lineheight-sm);
+  letter-spacing: var(--typography-letterspacing-none);
+}

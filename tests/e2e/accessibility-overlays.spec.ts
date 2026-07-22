@@ -28,6 +28,18 @@ test('plain menu restores focus on Escape but lets Tab continue forward', async 
   await expect(anchor).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {
+  const anchor = page.locator('#collision-anchor');
+  await anchor.click();
+  const menu = page.getByRole('menu', { name: 'Collision actions' });
+  await expect(menu).toBeVisible();
+
+  const [anchorBox, menuBox] = await Promise.all([anchor.boundingBox(), menu.boundingBox()]);
+  expect(anchorBox).not.toBeNull();
+  expect(menuBox).not.toBeNull();
+  expect(menuBox!.y + menuBox!.height).toBeLessThanOrEqual(anchorBox!.y);
+});
+
 test('rich preference popup exposes dialog and radio-group semantics without stealing arrow keys', async ({ page }) => {
   await page.locator('#rich-anchor').click();
   const popup = page.getByRole('dialog', { name: 'Appearance' });

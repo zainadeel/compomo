@@ -7,6 +7,7 @@ import type {
 } from '../BarTitle/bar-title-types';
 import '../../../../dist/components/ds-shell-page.js';
 import '../../../../dist/components/ds-bar-title.js';
+import '../../../../dist/components/ds-bar-workflow.js';
 
 const sections: BarTitleSectionItem[] = [
   { id: 'summary', label: 'Summary' },
@@ -200,20 +201,15 @@ export const CreateOrEdit: Story = {
     ${demoStyles}
     <div class="shell-page-demo shell-page-demo--constrained">
       <ds-shell-page>
-        <ds-bar-title
+        <ds-bar-workflow
           slot="header"
           heading="Create driver"
-          description="Add identity, contact, and employment details for the new driver."
-          show-back
-          back-aria-label="Cancel and return to Drivers"
-          .primaryAction=${{
-            id: 'save-driver',
+          exit-aria-label="Exit driver creation"
+          .submitAction=${{
             label: 'Save driver',
             type: 'submit',
-            collapse: 'never',
           }}
-          .actions=${[{ id: 'save-draft', label: 'Save draft' }]}
-        ></ds-bar-title>
+        ></ds-bar-workflow>
         ${pageContent}
       </ds-shell-page>
     </div>

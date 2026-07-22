@@ -26,7 +26,8 @@
   overflow-anchor: none;
 }
 
-.shell-page__sticky-header ::slotted(ds-bar-title) {
+.shell-page__sticky-header ::slotted(ds-bar-title),
+.shell-page__sticky-header ::slotted(ds-bar-workflow) {
   display: block;
   min-width: 0;
 }

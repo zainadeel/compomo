@@ -39,6 +39,19 @@ richAnchor.addEventListener('click', () => {
 });
 richMenu.addEventListener('dsClose', () => richAnchor.setAttribute('aria-expanded', 'false'));
 
+const collisionAnchor = document.getElementById('collision-anchor');
+const collisionMenu = document.getElementById('collision-menu');
+collisionMenu.items = [
+  { label: 'View details', value: 'details' },
+  { label: 'Duplicate', value: 'duplicate' },
+  { label: 'Archive', value: 'archive' },
+];
+collisionAnchor.addEventListener('click', () => {
+  collisionMenu.open = true;
+  collisionAnchor.setAttribute('aria-expanded', 'true');
+});
+collisionMenu.addEventListener('dsClose', () => collisionAnchor.setAttribute('aria-expanded', 'false'));
+
 const modalTrigger = document.getElementById('modal-trigger');
 const modal = document.getElementById('modal');
 window.__modalCloseReasons = [];

@@ -4,7 +4,6 @@ import {
   isBarTitleDivider,
   type BarTitleAction,
   type BarTitleActionItem,
-  type BarTitleMode,
   type BarTitlePrimaryAction,
   type BarTitleSection,
   type BarTitleSectionItem,
@@ -57,9 +56,6 @@ export class BarTitle {
   /** Explicit visual/capacity variant. ShellPage owns automatic selection. */
   @Prop() variant: BarTitleVariant = 'expanded';
 
-  /** Semantic page-header treatment. Editor mode uses bold-brand create/edit chrome. */
-  @Prop() mode: BarTitleMode = 'default';
-
   /** Emitted when the leading Back action is activated. */
   @Event() dsBack!: EventEmitter<MouseEvent>;
 
@@ -97,18 +93,13 @@ export class BarTitle {
     return this.variant !== 'expanded';
   }
 
-  private get editor(): boolean {
-    return this.mode === 'editor';
-  }
-
   /** Tooltip copy is fixed and generic; backAriaLabel/actionsAriaLabel stay page-specific. */
   private get backTooltipLabel(): string {
-    return this.editor ? 'Exit' : 'Go back';
+    return 'Go back';
   }
 
   private get primaryCollapsed(): boolean {
     return (
-      !this.editor &&
       this.variant === 'constrained' &&
       this.primaryAction !== null &&
       (this.primaryAction.collapse ?? 'auto') === 'auto'
@@ -255,7 +246,6 @@ export class BarTitle {
             'ds-control--md': true,
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
-            'ds-interaction-fill--on-bold': this.editor,
           }}
           type="button"
           aria-haspopup="menu"
@@ -269,7 +259,7 @@ export class BarTitle {
             as="span"
             variant="text-body-medium"
             emphasis
-            color={this.editor ? 'on-bold' : 'primary'}
+            color="primary"
           >
             {this.selectedSectionLabel}
           </ds-text>
@@ -287,46 +277,24 @@ export class BarTitle {
 
   private renderActions() {
     const primary = this.primaryAction;
-    const compactEditor = this.editor && this.compact;
     if (!primary && !this.showActionMenuTrigger) return null;
 
     return (
       <div class="bar-title__actions">
         {primary && !this.primaryCollapsed ? (
-          compactEditor ? (
-            <ds-tooltip label={primary.label} side="bottom" size="sm">
-              <ds-button-filled
-                class="bar-title__primary-action"
-                variant="icon"
-                icon="Check"
-                label={primary.label}
-                aria-label={primary.label}
-                intent="brand"
-                contrast="faint"
-                background="bold"
-                size="md"
-                type={primary.type ?? 'button'}
-                isInactive={primary.isInactive}
-                isLoading={primary.isLoading}
-                onDsClick={() => this.dsAction.emit(primary.id)}
-              />
-            </ds-tooltip>
-          ) : (
-            <ds-button-filled
-              class="bar-title__primary-action"
-              variant={primary.icon ? 'icon-label' : 'label'}
-              icon={primary.icon ?? ''}
-              label={primary.label}
-              intent={this.editor ? 'brand' : (primary.intent ?? 'brand')}
-              contrast={this.editor ? 'faint' : (primary.contrast ?? 'bold')}
-              background={this.editor ? 'bold' : undefined}
-              size="md"
-              type={primary.type ?? 'button'}
-              isInactive={primary.isInactive}
-              isLoading={primary.isLoading}
-              onDsClick={() => this.dsAction.emit(primary.id)}
-            />
-          )
+          <ds-button-filled
+            class="bar-title__primary-action"
+            variant={primary.icon ? 'icon-label' : 'label'}
+            icon={primary.icon ?? ''}
+            label={primary.label}
+            intent={primary.intent ?? 'brand'}
+            contrast={primary.contrast ?? 'bold'}
+            size="md"
+            type={primary.type ?? 'button'}
+            isInactive={primary.isInactive}
+            isLoading={primary.isLoading}
+            onDsClick={() => this.dsAction.emit(primary.id)}
+          />
         ) : null}
         {this.showActionMenuTrigger ? (
           <ds-tooltip label="Page options" side="bottom" size="sm">
@@ -340,9 +308,8 @@ export class BarTitle {
               icon="Ellipses"
               aria-label={this.actionsAriaLabel}
               size="md"
-              background={this.editor ? 'bold' : undefined}
-              activeFill={!this.compact && !this.editor}
-              hasBorder={!this.compact && !this.primaryCollapsed && !this.editor}
+              activeFill={!this.compact}
+              hasBorder={!this.compact && !this.primaryCollapsed}
               haspopup="menu"
               controls={this.actionMenuId}
               expanded={this.actionMenuOpen}
@@ -358,25 +325,6 @@ export class BarTitle {
     if (!this.showBack) return null;
 
     if (!compact) {
-      if (this.editor) {
-        return (
-          <div class="bar-title__exit">
-            <ds-button-unfilled
-              class="bar-title__exit-action"
-              variant="icon-label"
-              icon="Cross"
-              label={this.backLabel}
-              aria-label={this.backAriaLabel}
-              size="xs"
-              background="bold"
-              activeFill={false}
-              hasBorder={false}
-              onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}
-            />
-          </div>
-        );
-      }
-
       return (
         <div class="bar-title__breadcrumb">
           <ds-button-unfilled
@@ -398,10 +346,9 @@ export class BarTitle {
         <ds-button-unfilled
           class="bar-title__back"
           variant="icon"
-          icon={this.editor ? 'Cross' : 'ChevronLeft'}
+          icon="ChevronLeft"
           aria-label={this.backAriaLabel}
           size="md"
-          background={this.editor ? 'bold' : undefined}
           activeFill={false}
           hasBorder={false}
           onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}
@@ -418,7 +365,6 @@ export class BarTitle {
           'bar-title-host--compact': compact,
           'bar-title-host--expanded': this.variant === 'expanded',
           'bar-title-host--constrained': this.variant === 'constrained',
-          'bar-title-host--editor': this.editor,
           'bar-title-host--has-description': !!this.description,
           'bar-title-host--has-back': this.showBack,
         }}
@@ -435,7 +381,7 @@ export class BarTitle {
                       class="bar-title__heading ds-control--md"
                       variant={compact ? 'text-title-small' : 'text-title-medium'}
                       emphasis
-                      color={this.editor ? 'on-bold' : 'primary'}
+                      color="primary"
                       as="h1"
                       lineTruncation={1}
                     >
@@ -448,11 +394,7 @@ export class BarTitle {
                   <ds-text
                     class="bar-title__description"
                     variant="text-body-small"
-                    color={
-                      this.editor
-                        ? 'var(--color-foreground-on-bold-background-secondary)'
-                        : 'secondary'
-                    }
+                    color="secondary"
                     lineTruncation={2}
                     wrap="wrap"
                     as="p"

@@ -13,7 +13,7 @@ const ITEMS = [
 ];
 
 const meta: Meta = {
-  title: 'Utility/Choice Lists',
+  title: 'Utility/ChoiceLists',
   parameters: { controls: { disable: true } },
 };
 

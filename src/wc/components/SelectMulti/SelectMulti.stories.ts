@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-select-multi.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const OPTIONS = [
   { label: 'Vehicles', value: 'vehicles', subtext: '142 available' },
@@ -18,6 +19,9 @@ const SECTIONS = [
 const meta: Meta = {
   title: 'Form/Select Multi',
   tags: ['autodocs'],
+  parameters: {
+    docs: isolatedOverlayDocs('440px'),
+  },
   argTypes: {
     values: { control: 'object' },
     placeholder: { control: 'text' },

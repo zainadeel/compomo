@@ -36,7 +36,20 @@ const attachments: ConversationAttachment[] = [
   },
 ];
 
-const richParts: AgentResponsePart[] = [
+const representativeParts: AgentResponsePart[] = [
+  {
+    id: 'intro',
+    type: 'markdown',
+    state: 'complete',
+    content: `## Service summary
+
+The highest-priority finding is **repeat battery drain** on three vehicles. Review the [maintenance guide](https://example.com/maintenance) before running \`scheduleInspection()\`.
+
+1. Inspect the affected vehicles.
+   - Confirm battery age.
+   - Record charging voltage.
+2. Schedule follow-up service.`,
+  },
   {
     id: 'activity',
     type: 'activity',
@@ -51,11 +64,23 @@ const richParts: AgentResponsePart[] = [
     ],
   },
   {
-    id: 'copy',
+    id: 'details',
     type: 'markdown',
     state: 'complete',
-    content:
-      '## Service summary\n\nThe highest-priority finding is **repeat battery drain** on three vehicles.\n\n```ts\nconst affected = records.filter(record => record.issue === "battery")\n```',
+    content: `### Findings
+
+> Three repeat failures share the same charging-system signature.
+
+\`\`\`ts
+const affected = records.filter(record => record.issue === "battery")
+\`\`\`
+
+| Vehicle | Repeat visits | Next step |
+| --- | ---: | --- |
+| Unit 104 | 3 | Charging-system test |
+| Unit 228 | 2 | Battery replacement |
+
+Long diagnostic identifier: battery_drain_follow_up_required_for_vehicle_unit_104_without_breaks`,
   },
   {
     id: 'tool',
@@ -79,6 +104,12 @@ const richParts: AgentResponsePart[] = [
       },
     ],
   },
+  {
+    id: 'streaming-close',
+    type: 'markdown',
+    state: 'streaming',
+    content: 'I can also prepare the follow-up work orders and notify',
+  },
 ];
 
 export const Conversation: Story = {
@@ -101,7 +132,8 @@ export const Conversation: Story = {
           author="Agent"
           .showAuthor=${false}
           timestamp="2:15 PM"
-          .parts=${richParts}
+          .parts=${representativeParts}
+          .streaming=${true}
         ></ds-agent-response>
         <div slot="overlay" style="padding:var(--dimension-space-100);">
           <ds-message-composer label="Message agent" placeholder="Ask a follow-up">

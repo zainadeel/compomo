@@ -4,10 +4,14 @@ import { ref } from 'lit/directives/ref.js';
 import { createToastManager, type ToastManager } from '../../toast';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-toast.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const meta: Meta = {
   title: 'Overlay/Toast',
   tags: ['autodocs'],
+  parameters: {
+    docs: isolatedOverlayDocs('420px'),
+  },
   argTypes: {
     limit: { control: { type: 'number', min: 1 } },
     timeout: { control: 'text' },

@@ -7,10 +7,12 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
+import { AvatarSize } from "./components/Avatar/Avatar";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { BarTitleActionItem, BarTitleMode, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -55,10 +57,12 @@ import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastM
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
+export { AvatarSize } from "./components/Avatar/Avatar";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { BarTitleActionItem, BarTitleMode, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -194,7 +198,7 @@ export namespace Components {
          */
         "icon": string;
         /**
-          * Semantic color for the icon. Use primary to surface unread or current identity state.
+          * Semantic icon hierarchy. Use primary for stronger emphasis; secondary is the default.
           * @default 'secondary'
          */
         "iconColor": IconColor;
@@ -202,6 +206,11 @@ export namespace Components {
           * Optional accessible label. Omit when the surrounding content already conveys the meaning.
          */
         "label": string | undefined;
+        /**
+          * Circle and icon density. Maps to 32/20, 24/16, or 16/12 px.
+          * @default 'md'
+         */
+        "size": AvatarSize;
     }
     interface DsBadge {
         /**
@@ -314,11 +323,6 @@ export namespace Components {
          */
         "heading": string;
         /**
-          * Semantic page-header treatment. Editor mode uses bold-brand create/edit chrome.
-          * @default 'default'
-         */
-        "mode": BarTitleMode;
-        /**
           * The one highest-emphasis page action.
           * @default null
          */
@@ -348,6 +352,52 @@ export namespace Components {
           * @default 'expanded'
          */
         "variant": BarTitleVariant;
+    }
+    interface DsBarWorkflow {
+        /**
+          * Workflow-specific accessible name for Exit.
+          * @default 'Exit workflow'
+         */
+        "exitAriaLabel": string;
+        /**
+          * Concise tooltip label for the Exit control.
+          * @default 'Exit'
+         */
+        "exitLabel": string;
+        /**
+          * The workflow's single visible h1.
+         */
+        "heading": string;
+        /**
+          * Prevent advancing while the current step is incomplete or invalid.
+          * @default false
+         */
+        "isNextInactive": boolean;
+        /**
+          * Tooltip and accessible name for the next-step control.
+          * @default 'Next step'
+         */
+        "nextLabel": string;
+        /**
+          * Tooltip and accessible name for the previous-step control.
+          * @default 'Previous step'
+         */
+        "previousLabel": string;
+        /**
+          * Ordered workflow steps. Step state is controlled by the application.
+          * @default []
+         */
+        "steps": BarWorkflowStep[];
+        /**
+          * The final-step Save or Submit action.
+          * @default {     label: 'Save',     type: 'submit',   }
+         */
+        "submitAction": BarWorkflowSubmitAction;
+        /**
+          * Id of the current workflow step. Falls back to the first step.
+          * @default ''
+         */
+        "value": string;
     }
     interface DsButtonFilled {
         /**
@@ -1100,6 +1150,7 @@ export namespace Components {
          */
         "selectionMode": MenuSelectionMode;
         /**
+          * Preferred side; placement flips to the opposite side when that offers a better fit.
           * @default 'bottom'
          */
         "side": MenuSide;
@@ -2398,6 +2449,10 @@ export interface DsBarTitleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarTitleElement;
 }
+export interface DsBarWorkflowCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBarWorkflowElement;
+}
 export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
@@ -2596,6 +2651,25 @@ declare global {
     var HTMLDsBarTitleElement: {
         prototype: HTMLDsBarTitleElement;
         new (): HTMLDsBarTitleElement;
+    };
+    interface HTMLDsBarWorkflowElementEventMap {
+        "dsExit": MouseEvent;
+        "dsStepChange": string;
+        "dsSubmit": MouseEvent;
+    }
+    interface HTMLDsBarWorkflowElement extends Components.DsBarWorkflow, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBarWorkflowElementEventMap>(type: K, listener: (this: HTMLDsBarWorkflowElement, ev: DsBarWorkflowCustomEvent<HTMLDsBarWorkflowElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBarWorkflowElementEventMap>(type: K, listener: (this: HTMLDsBarWorkflowElement, ev: DsBarWorkflowCustomEvent<HTMLDsBarWorkflowElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBarWorkflowElement: {
+        prototype: HTMLDsBarWorkflowElement;
+        new (): HTMLDsBarWorkflowElement;
     };
     interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
@@ -3330,6 +3404,7 @@ declare global {
         "ds-badge": HTMLDsBadgeElement;
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-bar-title": HTMLDsBarTitleElement;
+        "ds-bar-workflow": HTMLDsBarWorkflowElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
@@ -3478,7 +3553,7 @@ declare namespace LocalJSX {
          */
         "icon"?: string;
         /**
-          * Semantic color for the icon. Use primary to surface unread or current identity state.
+          * Semantic icon hierarchy. Use primary for stronger emphasis; secondary is the default.
           * @default 'secondary'
          */
         "iconColor"?: IconColor;
@@ -3486,6 +3561,11 @@ declare namespace LocalJSX {
           * Optional accessible label. Omit when the surrounding content already conveys the meaning.
          */
         "label"?: string | undefined;
+        /**
+          * Circle and icon density. Maps to 32/20, 24/16, or 16/12 px.
+          * @default 'md'
+         */
+        "size"?: AvatarSize;
     }
     interface DsBadge {
         /**
@@ -3602,11 +3682,6 @@ declare namespace LocalJSX {
          */
         "heading": string;
         /**
-          * Semantic page-header treatment. Editor mode uses bold-brand create/edit chrome.
-          * @default 'default'
-         */
-        "mode"?: BarTitleMode;
-        /**
           * Emitted with the activated primary or overflow action id.
          */
         "onDsAction"?: (event: DsBarTitleCustomEvent<string>) => void;
@@ -3648,6 +3723,64 @@ declare namespace LocalJSX {
           * @default 'expanded'
          */
         "variant"?: BarTitleVariant;
+    }
+    interface DsBarWorkflow {
+        /**
+          * Workflow-specific accessible name for Exit.
+          * @default 'Exit workflow'
+         */
+        "exitAriaLabel"?: string;
+        /**
+          * Concise tooltip label for the Exit control.
+          * @default 'Exit'
+         */
+        "exitLabel"?: string;
+        /**
+          * The workflow's single visible h1.
+         */
+        "heading": string;
+        /**
+          * Prevent advancing while the current step is incomplete or invalid.
+          * @default false
+         */
+        "isNextInactive"?: boolean;
+        /**
+          * Tooltip and accessible name for the next-step control.
+          * @default 'Next step'
+         */
+        "nextLabel"?: string;
+        /**
+          * Emitted when Exit is activated.
+         */
+        "onDsExit"?: (event: DsBarWorkflowCustomEvent<MouseEvent>) => void;
+        /**
+          * Emitted with the target previous or next step id. The component never mutates value.
+         */
+        "onDsStepChange"?: (event: DsBarWorkflowCustomEvent<string>) => void;
+        /**
+          * Emitted when the final Save or Submit control is activated.
+         */
+        "onDsSubmit"?: (event: DsBarWorkflowCustomEvent<MouseEvent>) => void;
+        /**
+          * Tooltip and accessible name for the previous-step control.
+          * @default 'Previous step'
+         */
+        "previousLabel"?: string;
+        /**
+          * Ordered workflow steps. Step state is controlled by the application.
+          * @default []
+         */
+        "steps"?: BarWorkflowStep[];
+        /**
+          * The final-step Save or Submit action.
+          * @default {     label: 'Save',     type: 'submit',   }
+         */
+        "submitAction"?: BarWorkflowSubmitAction;
+        /**
+          * Id of the current workflow step. Falls back to the first step.
+          * @default ''
+         */
+        "value"?: string;
     }
     interface DsButtonFilled {
         /**
@@ -4449,6 +4582,7 @@ declare namespace LocalJSX {
          */
         "selectionMode"?: MenuSelectionMode;
         /**
+          * Preferred side; placement flips to the opposite side when that offers a better fit.
           * @default 'bottom'
          */
         "side"?: MenuSide;
@@ -5868,6 +6002,7 @@ declare namespace LocalJSX {
     interface DsAvatarAttributes {
         "icon": string;
         "iconColor": IconColor;
+        "size": AvatarSize;
         "label": string | undefined;
     }
     interface DsBadgeAttributes {
@@ -5899,7 +6034,15 @@ declare namespace LocalJSX {
         "sectionsAriaLabel": string;
         "actionsAriaLabel": string;
         "variant": BarTitleVariant;
-        "mode": BarTitleMode;
+    }
+    interface DsBarWorkflowAttributes {
+        "heading": string;
+        "value": string;
+        "exitLabel": string;
+        "exitAriaLabel": string;
+        "previousLabel": string;
+        "nextLabel": string;
+        "isNextInactive": boolean;
     }
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
@@ -6417,6 +6560,7 @@ declare namespace LocalJSX {
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-bar-title": Omit<DsBarTitle, keyof DsBarTitleAttributes> & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes]?: DsBarTitle[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `attr:${K}`]?: DsBarTitleAttributes[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `prop:${K}`]?: DsBarTitle[K] } & OneOf<"heading", DsBarTitle["heading"], DsBarTitleAttributes["heading"]>;
+        "ds-bar-workflow": Omit<DsBarWorkflow, keyof DsBarWorkflowAttributes> & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes]?: DsBarWorkflow[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `attr:${K}`]?: DsBarWorkflowAttributes[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `prop:${K}`]?: DsBarWorkflow[K] } & OneOf<"heading", DsBarWorkflow["heading"], DsBarWorkflowAttributes["heading"]>;
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
@@ -6483,6 +6627,7 @@ declare module "@stencil/core" {
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
             "ds-bar-title": LocalJSX.IntrinsicElements["ds-bar-title"] & JSXBase.HTMLAttributes<HTMLDsBarTitleElement>;
+            "ds-bar-workflow": LocalJSX.IntrinsicElements["ds-bar-workflow"] & JSXBase.HTMLAttributes<HTMLDsBarWorkflowElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**

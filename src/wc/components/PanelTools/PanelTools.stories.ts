@@ -14,6 +14,7 @@ import type {
   PanelToolsItem,
   PanelToolsToolId,
 } from './panel-tools-types';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
@@ -30,6 +31,7 @@ const meta: Meta = {
   parameters: {
     layout: 'fullscreen',
     docs: {
+      ...isolatedOverlayDocs('720px'),
       description: {
         component:
           'Tool rail + sliding 300px drawer. Each tool supports a backward-compatible body slot (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) and a full-view slot (`search-view`, `agents-view`, and so on). PanelTools owns the shared drawer header; split fullscreen layouts may compose one header per visible pane. Closing uses a clipped reveal and keeps slotted content mounted.',

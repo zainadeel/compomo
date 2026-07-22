@@ -7,6 +7,7 @@ import '../../../../dist/components/ds-swatch-picker.js';
 import { TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 import { shellGradientPickerSections } from '../../shell/shell-gradient-presets';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const items = [
   { label: 'Edit', value: 'edit' },
@@ -20,21 +21,30 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: {
     docs: {
-      story: {
-        inline: false,
-        iframeHeight: '420px',
+      ...isolatedOverlayDocs('420px'),
+      description: {
+        component:
+          'Controlled anchored action menu. The application owns open and item state: dsSelect reports intent ' +
+          'without mutating selection or closing automatically, while dsAfterClose marks the end of exit rendering. ' +
+          'The requested side is preferred and flips to its opposite when collision space is better there.',
       },
     },
   },
   argTypes: {
     side: { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
     align: { control: 'select', options: ['start', 'center', 'end'] },
+    anchorAlignment: { control: 'select', options: ['choice-cell', 'popup-frame'] },
     sideOffset: {
       control: 'text',
       description: 'px number or TokoMo length (e.g. var(--dimension-space-200))',
     },
   },
-  args: { side: 'bottom', align: 'start', sideOffset: TOKEN_CSS_LENGTHS.space050 },
+  args: {
+    side: 'bottom',
+    align: 'start',
+    anchorAlignment: 'choice-cell',
+    sideOffset: TOKEN_CSS_LENGTHS.space050,
+  },
 };
 
 export default meta;
@@ -49,6 +59,7 @@ export const Playground: Story = {
         .items=${items}
         side=${args['side'] ?? 'bottom'}
         align=${args['align'] ?? 'start'}
+        anchorAlignment=${args['anchorAlignment'] ?? 'choice-cell'}
         anchor-id="menu-anchor-pg"
         ${ref(el => {
           if (!el) return;
@@ -56,6 +67,32 @@ export const Playground: Story = {
           const raw = args['sideOffset'] ?? TOKEN_CSS_LENGTHS.space050;
           menu.sideOffset = typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : raw;
         })}
+      ></ds-menu>
+    </div>
+  `,
+};
+
+export const CollisionAwarePlacement: Story = {
+  name: 'Collision-aware placement',
+  render: () => html`
+    <div
+      style="
+        display:flex;
+        align-items:flex-end;
+        justify-content:center;
+        box-sizing:border-box;
+        height:320px;
+        padding:var(--dimension-space-100);
+      "
+    >
+      <button id="menu-anchor-collision" type="button">Preferred bottom placement</button>
+      <ds-menu
+        ?open=${true}
+        side="bottom"
+        align="start"
+        anchor-id="menu-anchor-collision"
+        menu-label="Collision-aware actions"
+        .items=${items}
       ></ds-menu>
     </div>
   `,

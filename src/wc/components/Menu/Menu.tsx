@@ -74,6 +74,7 @@ export class Menu {
   /** Give ordinary rows mutually-exclusive radio-menu semantics using isSelected. */
   @Prop() selectionMode: MenuSelectionMode = 'none';
   @Prop() sections: MenuSection[] = [];
+  /** Preferred side; placement flips to the opposite side when that offers a better fit. */
   @Prop() side: MenuSide = 'bottom';
   @Prop() align: MenuAlign = 'start';
   /** Align choice-row edges to the anchor by default; use `popup-frame` only for custom frame geometry. */
@@ -112,10 +113,8 @@ export class Menu {
   private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
   private scrollResizeHandler: (() => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
-  private itemEls: HTMLElement[] = [];
   private positionRetryRaf: number | null = null;
   private livePositionRaf: number | null = null;
-  private listenersReady = false;
   /** Last content actually painted while open; retained unchanged through exit motion. */
   private lastRenderedSections: MenuSection[] = [];
   private closingSections: MenuSection[] | null = null;
@@ -145,9 +144,7 @@ export class Menu {
       this.shouldRender = true;
       this.closing = false;
       this.positionReady = false;
-      this.listenersReady = false;
       this.focusRingVisible = this.initialFocusVisible;
-      this.listenersReady = true;
       this.setupListeners();
       this.schedulePositionUpdate(() => {
         this.focusInitialItem();
@@ -157,7 +154,6 @@ export class Menu {
       this.captureClosingSections();
       this.closing = true;
       this.teardownListeners();
-      this.listenersReady = false;
       const closeAnimationMs = this.closeAnimationMs;
       if (closeAnimationMs <= 0) {
         this.finishClose();
