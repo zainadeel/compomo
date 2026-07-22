@@ -51,6 +51,7 @@
   "responsiveBehavior": [
     "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
     "Roomy pages expand at the top and compact after scroll; medium-capacity pages start compact; narrow pages use the constrained header variant.",
+    "A newly navigated header resolves current page capacity before it is revealed, so persistent tool or navigation chrome cannot flash the expanded presentation first.",
     "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
     "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling."

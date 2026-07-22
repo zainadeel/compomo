@@ -11,6 +11,10 @@ test('plain menu restores focus on Escape but lets Tab continue forward', async 
   await anchor.click();
   const menu = page.getByRole('menu', { name: 'Actions' });
   await expect(menu).toBeVisible();
+  await expect(menu).toHaveJSProperty('popover', 'manual');
+  expect(await menu.evaluate(element => element.matches(':popover-open'))).toBe(true);
+  await expect(menu).toHaveCSS('border-top-width', '0px');
+  await expect(menu).toHaveCSS('padding-top', '0px');
   await expect(menu.getByRole('menuitem', { name: 'Edit' })).toBeFocused();
 
   await page.keyboard.press('Escape');

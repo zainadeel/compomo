@@ -7,11 +7,11 @@
   "tag": "ds-bar-title",
   "audience": "general",
   "status": "stable",
-  "summary": "Page-level title chrome with optional Back navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+  "summary": "Page-level title chrome with default and create/edit editor modes, optional route navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
   "useWhen": [
     "A top-level page needs one h1 above its content.",
     "A list or detail page has multiple route-level sections that belong in the inline active-section menu.",
-    "A detail, create, or edit page needs a page-level Back action.",
+    "A detail page needs a page-level Back action, or a create/edit page needs editor-mode Exit and Save chrome.",
     "A page needs one primary action plus optional secondary or destructive overflow commands."
   ],
   "avoidWhen": [
@@ -52,14 +52,16 @@
     "Omitting Back, sections, primaryAction, and actions produces the top-level title-only header.",
     "Two or more selectable sections add the inline section trigger; one section does not render a redundant menu.",
     "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
-    "expanded renders the larger heading, optional description, inset divider, and an xs icon-label Back breadcrumb above a flush-left h1; compact renders 48px chrome with inline Back; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
-    "primaryAction collapse defaults to auto. Use never for Save-like actions whose hierarchy must remain visible in constrained layouts."
+    "expanded renders the larger heading, optional description, inset divider, and an xs icon-label Back breadcrumb in the top inset. The title and right-side actions share one top alignment whether Back is present, while the description remains in the left title column; compact renders 48px chrome with inline Back; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
+    "primaryAction collapse defaults to auto. Use never for exceptional default-mode actions whose hierarchy must remain visible in constrained layouts.",
+    "editor mode renders bold-brand chrome without the bottom boundary, treats the leading dsBack action as Exit, and keeps the primary Save action visible. Expanded uses Cross plus the Exit label and a label Save button; compact and constrained use Cross and Check icon buttons."
   ],
   "responsiveBehavior": [
     "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
     "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
     "Compact titles use the shared md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
-    "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
+    "A never-collapse default-mode primary action remains visible in constrained mode; the title and section label yield space first.",
+    "Editor mode keeps Exit and Save available in every presentation. Supply a concise Exit accessible name through backAriaLabel, use backLabel for the expanded Exit label, and provide primaryAction so dsAction can identify Save."
   ],
   "frameworkCaveats": {
     "customElements": [

@@ -10,7 +10,7 @@ import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+import { BarTitleActionItem, BarTitleMode, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -58,7 +58,7 @@ export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+export { BarTitleActionItem, BarTitleMode, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -313,6 +313,11 @@ export namespace Components {
           * The page's single visible h1.
          */
         "heading": string;
+        /**
+          * Semantic page-header treatment. Editor mode uses bold-brand create/edit chrome.
+          * @default 'default'
+         */
+        "mode": BarTitleMode;
         /**
           * The one highest-emphasis page action.
           * @default null
@@ -3597,6 +3602,11 @@ declare namespace LocalJSX {
          */
         "heading": string;
         /**
+          * Semantic page-header treatment. Editor mode uses bold-brand create/edit chrome.
+          * @default 'default'
+         */
+        "mode"?: BarTitleMode;
+        /**
           * Emitted with the activated primary or overflow action id.
          */
         "onDsAction"?: (event: DsBarTitleCustomEvent<string>) => void;
@@ -5889,6 +5899,7 @@ declare namespace LocalJSX {
         "sectionsAriaLabel": string;
         "actionsAriaLabel": string;
         "variant": BarTitleVariant;
+        "mode": BarTitleMode;
     }
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
