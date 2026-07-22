@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.0](https://github.com/zainadeel/compomo/compare/v12.0.0...v12.1.0) (2026-07-22)
+
+
+### Added
+
+* add BarTitle editor mode and align expanded actions with the title row ([#365](https://github.com/zainadeel/compomo/issues/365)) ([578222f](https://github.com/zainadeel/compomo/commit/578222f5310ff5af25071c10e463ecb83de9c13d))
+
 ## [12.0.0](https://github.com/zainadeel/compomo/compare/v11.1.0...v12.0.0) (2026-07-22)
 
 
