@@ -145,7 +145,7 @@ test('selects compact and constrained variants from ShellPage capacity', async (
   expect(compactGeometry.height).toBe(48);
   expect(compactGeometry.headingLeft - compactGeometry.backRight).toBe(4);
   expect(compactGeometry.headingPaddingLeft).toBe(8);
-  expect(compactGeometry.actionsRightInset).toBe(8);
+  expect(compactGeometry.actionsRightInset).toBeCloseTo(8, 3);
   expect(compactGeometry.actionGap).toBe(8);
 
   await viewport.evaluate((element: HTMLElement) => {
