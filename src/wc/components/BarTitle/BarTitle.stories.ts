@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import type {
   BarTitleActionItem,
+  BarTitleMode,
   BarTitlePrimaryAction,
   BarTitleSectionItem,
   BarTitleVariant,
@@ -47,6 +48,7 @@ interface BarTitleReviewCase {
   value?: string;
   primaryAction?: BarTitlePrimaryAction;
   actions?: BarTitleActionItem[];
+  mode?: BarTitleMode;
 }
 
 const pageCases: BarTitleReviewCase[] = [
@@ -99,19 +101,18 @@ const pageCases: BarTitleReviewCase[] = [
   {
     id: 'create-edit',
     label: 'Create or edit',
-    rationale: 'Back behaves as Cancel; the submit action stays visible when constrained.',
+    rationale: 'Editor mode uses Exit plus an always-visible Save action on bold-brand chrome.',
     heading: 'Create driver',
     description: 'Add identity, contact, and employment details for the new driver.',
     showBack: true,
-    backAriaLabel: 'Cancel and return to Drivers',
-    backLabel: 'Drivers',
+    backAriaLabel: 'Exit driver creation',
+    backLabel: 'Exit',
+    mode: 'editor',
     primaryAction: {
       id: 'save-driver',
-      label: 'Save driver',
+      label: 'Save',
       type: 'submit',
-      collapse: 'never',
     },
-    actions: [{ id: 'save-draft', label: 'Save draft' }],
   },
 ];
 
@@ -134,6 +135,7 @@ const meta: Meta = {
     backAriaLabel: { control: 'text' },
     backLabel: { control: 'text' },
     variant: { control: 'select', options: ['expanded', 'compact', 'constrained'] },
+    mode: { control: 'select', options: ['default', 'editor'] },
   },
   args: {
     heading: 'John Smith',
@@ -142,6 +144,7 @@ const meta: Meta = {
     backAriaLabel: 'Back to Drivers',
     backLabel: 'Drivers',
     variant: 'expanded',
+    mode: 'default',
   },
 };
 
@@ -237,6 +240,7 @@ function renderHeader(reviewCase: BarTitleReviewCase, variant: BarTitleVariant =
       back-aria-label=${reviewCase.backAriaLabel ?? 'Back'}
       back-label=${reviewCase.backLabel ?? 'Back'}
       variant=${variant}
+      mode=${reviewCase.mode ?? 'default'}
       .sections=${reviewCase.sections ?? []}
       value=${reviewCase.value ?? ''}
       .primaryAction=${reviewCase.primaryAction ?? null}
@@ -304,6 +308,7 @@ export const Playground: Story = {
         back-aria-label=${args['backAriaLabel']}
         back-label=${args['backLabel']}
         variant=${args['variant']}
+        mode=${args['mode']}
         .sections=${detailSections}
         value="summary"
         .primaryAction=${detailPrimaryAction}

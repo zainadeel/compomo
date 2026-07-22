@@ -18,6 +18,14 @@ const items = [
 const meta: Meta = {
   title: 'Overlay/Menu',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      story: {
+        inline: false,
+        iframeHeight: '420px',
+      },
+    },
+  },
   argTypes: {
     side: { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
     align: { control: 'select', options: ['start', 'center', 'end'] },

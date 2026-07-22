@@ -16,6 +16,8 @@
   overflow: hidden;
   inset: auto;
   margin: 0;
+  padding: 0;
+  border: 0;
   background-color: var(--color-background-primary);
   border-radius: var(--dimension-radius-075);
   box-shadow: var(--effect-shadow-elevated-floating);

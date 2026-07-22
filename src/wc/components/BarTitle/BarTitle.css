@@ -9,12 +9,21 @@
   background: var(--color-background-primary);
 }
 
+:host([data-shell-page-syncing]) {
+  visibility: hidden;
+}
+
 .bar-title {
   position: relative;
   min-width: 0;
   padding: 0;
   box-sizing: border-box;
   background: var(--color-background-primary);
+}
+
+:host(.bar-title-host--editor),
+:host(.bar-title-host--editor) .bar-title {
+  background: var(--color-background-bold-brand);
 }
 
 .bar-title::after {
@@ -26,7 +35,12 @@
   pointer-events: none;
 }
 
+:host(.bar-title-host--editor) .bar-title::after {
+  display: none;
+}
+
 .bar-title__inner {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -37,15 +51,46 @@
 
 .bar-title__row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: var(--dimension-space-100);
   min-height: var(--dimension-size-400);
   min-width: 0;
 }
 
-.bar-title__identity {
+:host(.bar-title-host--expanded) .bar-title__row {
+  gap: var(--dimension-space-400);
+}
+
+.bar-title__leading {
   display: flex;
   flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+}
+
+/*
+ * Pull the whole leading block up by exactly the breadcrumb row's own box
+ * (its xs control-height + its top margin + the row-gap below it), so the
+ * title row lands flush with the actions' top without moving actions.
+ * Tied to the same tokens that size the breadcrumb, not a guessed pixel value.
+ */
+:host(.bar-title-host--expanded.bar-title-host--has-back) .bar-title__leading {
+  margin-block-start: calc(-1 * (var(--dimension-size-200) + var(--dimension-space-050) * 2));
+}
+
+.bar-title__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  min-width: 0;
+  min-height: var(--dimension-size-400);
+}
+
+.bar-title__identity {
+  display: flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: var(--dimension-space-050);
   min-width: 0;
@@ -57,10 +102,12 @@
   flex: 0 0 auto;
 }
 
-.bar-title__breadcrumb {
+.bar-title__breadcrumb,
+.bar-title__exit {
   display: flex;
   align-items: center;
   min-width: 0;
+  margin-block-start: var(--dimension-space-050);
 }
 
 .bar-title__heading {
@@ -76,6 +123,7 @@
 .bar-title__divider {
   width: var(--dimension-stroke-width-012);
   height: var(--dimension-size-250);
+  margin-inline-start: var(--dimension-space-100);
   flex: 0 0 var(--dimension-stroke-width-012);
   background: var(--color-border-tertiary);
 }
@@ -88,6 +136,8 @@
 }
 
 .bar-title__section-trigger {
+  --ds-control-radius: var(--dimension-radius-half);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -111,6 +161,18 @@
   color: var(--color-foreground-primary);
 }
 
+:host(.bar-title-host--editor) .bar-title__divider {
+  background: var(--color-border-on-bold-background-tertiary);
+}
+
+:host(.bar-title-host--editor) .bar-title__section-trigger {
+  color: var(--color-foreground-on-bold-background-secondary);
+}
+
+:host(.bar-title-host--editor) .bar-title__section-trigger--expanded {
+  color: var(--color-foreground-on-bold-background-primary);
+}
+
 .bar-title__section-trigger--expanded::after,
 .bar-title__section-trigger--expanded:hover::after {
   background: var(--ds-interaction-pressed);
@@ -118,32 +180,23 @@
 
 .bar-title__section-label {
   min-width: 0;
-  padding-inline-start: var(--ds-control-label-inset);
+  padding-inline: var(--ds-control-label-inset);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.bar-title__section-chevron {
-  margin-inline-end: var(--ds-control-label-inset);
 }
 
 .bar-title__actions {
   display: flex;
   align-items: center;
   gap: var(--dimension-space-100);
-  margin-inline-start: auto;
   flex: 0 0 auto;
 }
 
 .bar-title__description {
   display: block;
-  width: auto;
   min-width: 0;
   max-width: 100%;
-  height: var(--dimension-size-400);
-  margin-inline-start: 0;
-  overflow: hidden;
 }
 
 :host(.bar-title-host--compact) .bar-title {
@@ -163,10 +216,15 @@
 
 :host(.bar-title-host--compact) .bar-title__row {
   height: 100%;
+  align-items: center;
 }
 
 :host(.bar-title-host--compact) .bar-title__identity {
   height: var(--dimension-size-400);
+}
+
+:host(.bar-title-host--compact) .bar-title__divider {
+  margin-inline-start: 0;
 }
 
 :host(.bar-title-host--compact) .bar-title__heading {
