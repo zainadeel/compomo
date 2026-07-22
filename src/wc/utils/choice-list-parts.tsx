@@ -53,12 +53,13 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
         />
         {value && !disabled && (
           <ds-tooltip
-            class="select-search__clear"
+            class="select-search__clear-tooltip"
             label={`${clearLabel} ${placeholder}`}
             side="top"
             size="sm"
           >
             <ds-button-unfilled
+              class="select-search__clear"
               variant="icon"
               size="sm"
               icon="CrossCircle"
