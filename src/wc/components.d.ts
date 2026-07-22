@@ -6,11 +6,11 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
-import { NavChromeStyle } from "./shell/nav-chrome";
-import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
+import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
+import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -28,6 +28,7 @@ import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment } from "./utils";
+import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
@@ -40,6 +41,7 @@ import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
+import { ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { ControlSize } from "./utils/control-text";
@@ -52,11 +54,11 @@ import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
-export { NavChromeStyle } from "./shell/nav-chrome";
-export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
+export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
+export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -74,6 +76,7 @@ export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment } from "./utils";
+export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
@@ -86,6 +89,7 @@ export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
+export { ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { ControlSize } from "./utils/control-text";
@@ -173,23 +177,6 @@ export namespace Components {
          */
         "state": AgentToolState;
     }
-    interface DsAppShell {
-        /**
-          * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
-          * @default 'neutral'
-         */
-        "gradientPreset": ShellGradientPreset;
-        /**
-          * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
-          * @default 'dashboard'
-         */
-        "navStyle": NavChromeStyle;
-        /**
-          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N/? toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
-          * @default true
-         */
-        "shortcutsEnabled": boolean;
-    }
     interface DsAttachmentList {
         /**
           * @default []
@@ -227,7 +214,7 @@ export namespace Components {
          */
         "count": number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an AppShell with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
           * @default false
          */
         "gradientBackground": boolean;
@@ -295,6 +282,67 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    interface DsBarTitle {
+        /**
+          * Secondary page actions shown in the overflow menu. Dividers create groups.
+          * @default []
+         */
+        "actions": BarTitleActionItem[];
+        /**
+          * Accessible name for the page-actions menu.
+          * @default 'More page actions'
+         */
+        "actionsAriaLabel": string;
+        /**
+          * Accessible name for the leading Back action.
+          * @default 'Back'
+         */
+        "backAriaLabel": string;
+        /**
+          * Visible parent-page label used by the expanded Back breadcrumb.
+          * @default 'Back'
+         */
+        "backLabel": string;
+        /**
+          * Optional supporting copy shown in the expanded presentation.
+          * @default ''
+         */
+        "description": string;
+        /**
+          * The page's single visible h1.
+         */
+        "heading": string;
+        /**
+          * The one highest-emphasis page action.
+          * @default null
+         */
+        "primaryAction": BarTitlePrimaryAction | null;
+        /**
+          * Optional page sections exposed through the active-section menu.
+          * @default []
+         */
+        "sections": BarTitleSectionItem[];
+        /**
+          * Accessible name for the page-section menu.
+          * @default 'Change page section'
+         */
+        "sectionsAriaLabel": string;
+        /**
+          * Show the leading page-level Back action.
+          * @default false
+         */
+        "showBack": boolean;
+        /**
+          * Id of the active page section.
+          * @default ''
+         */
+        "value": string;
+        /**
+          * Explicit visual/capacity variant. ShellPage owns automatic selection.
+          * @default 'expanded'
+         */
+        "variant": BarTitleVariant;
     }
     interface DsButtonFilled {
         /**
@@ -1808,6 +1856,23 @@ export namespace Components {
          */
         "width": SelectMultiWidth;
     }
+    interface DsShellApp {
+        /**
+          * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
+          * @default 'neutral'
+         */
+        "gradientPreset": ShellGradientPreset;
+        /**
+          * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
+          * @default 'dashboard'
+         */
+        "navStyle": NavChromeStyle;
+        /**
+          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
+          * @default true
+         */
+        "shortcutsEnabled": boolean;
+    }
     /**
      * @deprecated Use `ds-swatch-picker` with shell preset options.
      */
@@ -1844,6 +1909,18 @@ export namespace Components {
           * @default false
          */
         "selected": boolean;
+    }
+    interface DsShellPage {
+        /**
+          * Standard page gutters, or no inset for full-bleed page content.
+          * @default 'default'
+         */
+        "contentInset": ShellPageContentInset;
+        /**
+          * Automatic container/scroll behavior, or an explicit header variant override.
+          * @default 'auto'
+         */
+        "headerPresentation": ShellPageHeaderPresentation;
     }
     interface DsSkeleton {
         /**
@@ -2312,6 +2389,10 @@ export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarNavElement;
 }
+export interface DsBarTitleCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBarTitleElement;
+}
 export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
@@ -2457,12 +2538,6 @@ declare global {
         prototype: HTMLDsAgentToolCallElement;
         new (): HTMLDsAgentToolCallElement;
     };
-    interface HTMLDsAppShellElement extends Components.DsAppShell, HTMLStencilElement {
-    }
-    var HTMLDsAppShellElement: {
-        prototype: HTMLDsAppShellElement;
-        new (): HTMLDsAppShellElement;
-    };
     interface HTMLDsAttachmentListElement extends Components.DsAttachmentList, HTMLStencilElement {
     }
     var HTMLDsAttachmentListElement: {
@@ -2497,6 +2572,25 @@ declare global {
     var HTMLDsBarNavElement: {
         prototype: HTMLDsBarNavElement;
         new (): HTMLDsBarNavElement;
+    };
+    interface HTMLDsBarTitleElementEventMap {
+        "dsBack": MouseEvent;
+        "dsSectionChange": string;
+        "dsAction": string;
+    }
+    interface HTMLDsBarTitleElement extends Components.DsBarTitle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBarTitleElementEventMap>(type: K, listener: (this: HTMLDsBarTitleElement, ev: DsBarTitleCustomEvent<HTMLDsBarTitleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBarTitleElementEventMap>(type: K, listener: (this: HTMLDsBarTitleElement, ev: DsBarTitleCustomEvent<HTMLDsBarTitleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBarTitleElement: {
+        prototype: HTMLDsBarTitleElement;
+        new (): HTMLDsBarTitleElement;
     };
     interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
@@ -3014,6 +3108,12 @@ declare global {
         prototype: HTMLDsSelectMultiElement;
         new (): HTMLDsSelectMultiElement;
     };
+    interface HTMLDsShellAppElement extends Components.DsShellApp, HTMLStencilElement {
+    }
+    var HTMLDsShellAppElement: {
+        prototype: HTMLDsShellAppElement;
+        new (): HTMLDsShellAppElement;
+    };
     interface HTMLDsShellGradientPickerElementEventMap {
         "dsChange": ShellGradientPreset1;
     }
@@ -3053,6 +3153,12 @@ declare global {
     var HTMLDsShellGradientSwatchElement: {
         prototype: HTMLDsShellGradientSwatchElement;
         new (): HTMLDsShellGradientSwatchElement;
+    };
+    interface HTMLDsShellPageElement extends Components.DsShellPage, HTMLStencilElement {
+    }
+    var HTMLDsShellPageElement: {
+        prototype: HTMLDsShellPageElement;
+        new (): HTMLDsShellPageElement;
     };
     interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
     }
@@ -3214,11 +3320,11 @@ declare global {
         "ds-agent-response": HTMLDsAgentResponseElement;
         "ds-agent-source-list": HTMLDsAgentSourceListElement;
         "ds-agent-tool-call": HTMLDsAgentToolCallElement;
-        "ds-app-shell": HTMLDsAppShellElement;
         "ds-attachment-list": HTMLDsAttachmentListElement;
         "ds-avatar": HTMLDsAvatarElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-bar-nav": HTMLDsBarNavElement;
+        "ds-bar-title": HTMLDsBarTitleElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
@@ -3255,8 +3361,10 @@ declare global {
         "ds-radio": HTMLDsRadioElement;
         "ds-select": HTMLDsSelectElement;
         "ds-select-multi": HTMLDsSelectMultiElement;
+        "ds-shell-app": HTMLDsShellAppElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
+        "ds-shell-page": HTMLDsShellPageElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-swatch-picker": HTMLDsSwatchPickerElement;
@@ -3348,23 +3456,6 @@ declare namespace LocalJSX {
          */
         "state"?: AgentToolState;
     }
-    interface DsAppShell {
-        /**
-          * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
-          * @default 'neutral'
-         */
-        "gradientPreset"?: ShellGradientPreset;
-        /**
-          * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
-          * @default 'dashboard'
-         */
-        "navStyle"?: NavChromeStyle;
-        /**
-          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N/? toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
-          * @default true
-         */
-        "shortcutsEnabled"?: boolean;
-    }
     interface DsAttachmentList {
         /**
           * @default []
@@ -3402,7 +3493,7 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an AppShell with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
           * @default false
          */
         "gradientBackground"?: boolean;
@@ -3474,6 +3565,79 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    interface DsBarTitle {
+        /**
+          * Secondary page actions shown in the overflow menu. Dividers create groups.
+          * @default []
+         */
+        "actions"?: BarTitleActionItem[];
+        /**
+          * Accessible name for the page-actions menu.
+          * @default 'More page actions'
+         */
+        "actionsAriaLabel"?: string;
+        /**
+          * Accessible name for the leading Back action.
+          * @default 'Back'
+         */
+        "backAriaLabel"?: string;
+        /**
+          * Visible parent-page label used by the expanded Back breadcrumb.
+          * @default 'Back'
+         */
+        "backLabel"?: string;
+        /**
+          * Optional supporting copy shown in the expanded presentation.
+          * @default ''
+         */
+        "description"?: string;
+        /**
+          * The page's single visible h1.
+         */
+        "heading": string;
+        /**
+          * Emitted with the activated primary or overflow action id.
+         */
+        "onDsAction"?: (event: DsBarTitleCustomEvent<string>) => void;
+        /**
+          * Emitted when the leading Back action is activated.
+         */
+        "onDsBack"?: (event: DsBarTitleCustomEvent<MouseEvent>) => void;
+        /**
+          * Emitted with the newly selected page-section id.
+         */
+        "onDsSectionChange"?: (event: DsBarTitleCustomEvent<string>) => void;
+        /**
+          * The one highest-emphasis page action.
+          * @default null
+         */
+        "primaryAction"?: BarTitlePrimaryAction | null;
+        /**
+          * Optional page sections exposed through the active-section menu.
+          * @default []
+         */
+        "sections"?: BarTitleSectionItem[];
+        /**
+          * Accessible name for the page-section menu.
+          * @default 'Change page section'
+         */
+        "sectionsAriaLabel"?: string;
+        /**
+          * Show the leading page-level Back action.
+          * @default false
+         */
+        "showBack"?: boolean;
+        /**
+          * Id of the active page section.
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * Explicit visual/capacity variant. ShellPage owns automatic selection.
+          * @default 'expanded'
+         */
+        "variant"?: BarTitleVariant;
     }
     interface DsButtonFilled {
         /**
@@ -4470,7 +4634,7 @@ declare namespace LocalJSX {
         "navigationItemsLabel"?: string;
         "onDsChromeTransitionEnd"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
         /**
-          * Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion.
+          * Bubbling lifecycle — `ds-shell-app` pauses chrome metrics during width motion.
          */
         "onDsChromeTransitionStart"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
         /**
@@ -5118,6 +5282,23 @@ declare namespace LocalJSX {
          */
         "width"?: SelectMultiWidth;
     }
+    interface DsShellApp {
+        /**
+          * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
+          * @default 'neutral'
+         */
+        "gradientPreset"?: ShellGradientPreset;
+        /**
+          * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
+          * @default 'dashboard'
+         */
+        "navStyle"?: NavChromeStyle;
+        /**
+          * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
+          * @default true
+         */
+        "shortcutsEnabled"?: boolean;
+    }
     /**
      * @deprecated Use `ds-swatch-picker` with shell preset options.
      */
@@ -5156,6 +5337,18 @@ declare namespace LocalJSX {
           * @default false
          */
         "selected"?: boolean;
+    }
+    interface DsShellPage {
+        /**
+          * Standard page gutters, or no inset for full-bleed page content.
+          * @default 'default'
+         */
+        "contentInset"?: ShellPageContentInset;
+        /**
+          * Automatic container/scroll behavior, or an explicit header variant override.
+          * @default 'auto'
+         */
+        "headerPresentation"?: ShellPageHeaderPresentation;
     }
     interface DsSkeleton {
         /**
@@ -5659,11 +5852,6 @@ declare namespace LocalJSX {
         "error": string;
         "open": boolean;
     }
-    interface DsAppShellAttributes {
-        "navStyle": NavChromeStyle;
-        "gradientPreset": ShellGradientPreset;
-        "shortcutsEnabled": boolean;
-    }
     interface DsAttachmentListAttributes {
         "label": string;
     }
@@ -5690,6 +5878,17 @@ declare namespace LocalJSX {
         "basePath": string;
         "currentUrl": string;
         "moreTabsLabel": string;
+    }
+    interface DsBarTitleAttributes {
+        "heading": string;
+        "description": string;
+        "showBack": boolean;
+        "backAriaLabel": string;
+        "backLabel": string;
+        "value": string;
+        "sectionsAriaLabel": string;
+        "actionsAriaLabel": string;
+        "variant": BarTitleVariant;
     }
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
@@ -6060,6 +6259,11 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
+    interface DsShellAppAttributes {
+        "navStyle": NavChromeStyle;
+        "gradientPreset": ShellGradientPreset;
+        "shortcutsEnabled": boolean;
+    }
     interface DsShellGradientPickerAttributes {
         "value": ShellGradientPreset;
         "groupLabel": string;
@@ -6069,6 +6273,10 @@ declare namespace LocalJSX {
         "selected": boolean;
         "isInactive": boolean;
         "ariaLabel": string | null;
+    }
+    interface DsShellPageAttributes {
+        "headerPresentation": ShellPageHeaderPresentation;
+        "contentInset": ShellPageContentInset;
     }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
@@ -6193,11 +6401,11 @@ declare namespace LocalJSX {
         "ds-agent-response": Omit<DsAgentResponse, keyof DsAgentResponseAttributes> & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes]?: DsAgentResponse[K] } & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes as `attr:${K}`]?: DsAgentResponseAttributes[K] } & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes as `prop:${K}`]?: DsAgentResponse[K] };
         "ds-agent-source-list": Omit<DsAgentSourceList, keyof DsAgentSourceListAttributes> & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes]?: DsAgentSourceList[K] } & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes as `attr:${K}`]?: DsAgentSourceListAttributes[K] } & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes as `prop:${K}`]?: DsAgentSourceList[K] };
         "ds-agent-tool-call": Omit<DsAgentToolCall, keyof DsAgentToolCallAttributes> & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes]?: DsAgentToolCall[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `attr:${K}`]?: DsAgentToolCallAttributes[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `prop:${K}`]?: DsAgentToolCall[K] };
-        "ds-app-shell": Omit<DsAppShell, keyof DsAppShellAttributes> & { [K in keyof DsAppShell & keyof DsAppShellAttributes]?: DsAppShell[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `attr:${K}`]?: DsAppShellAttributes[K] } & { [K in keyof DsAppShell & keyof DsAppShellAttributes as `prop:${K}`]?: DsAppShell[K] };
         "ds-attachment-list": Omit<DsAttachmentList, keyof DsAttachmentListAttributes> & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes]?: DsAttachmentList[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `attr:${K}`]?: DsAttachmentListAttributes[K] } & { [K in keyof DsAttachmentList & keyof DsAttachmentListAttributes as `prop:${K}`]?: DsAttachmentList[K] };
         "ds-avatar": Omit<DsAvatar, keyof DsAvatarAttributes> & { [K in keyof DsAvatar & keyof DsAvatarAttributes]?: DsAvatar[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `attr:${K}`]?: DsAvatarAttributes[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `prop:${K}`]?: DsAvatar[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
+        "ds-bar-title": Omit<DsBarTitle, keyof DsBarTitleAttributes> & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes]?: DsBarTitle[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `attr:${K}`]?: DsBarTitleAttributes[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `prop:${K}`]?: DsBarTitle[K] } & OneOf<"heading", DsBarTitle["heading"], DsBarTitleAttributes["heading"]>;
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
@@ -6234,8 +6442,10 @@ declare namespace LocalJSX {
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-select-multi": Omit<DsSelectMulti, keyof DsSelectMultiAttributes> & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes]?: DsSelectMulti[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `attr:${K}`]?: DsSelectMultiAttributes[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `prop:${K}`]?: DsSelectMulti[K] };
+        "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
+        "ds-shell-page": Omit<DsShellPage, keyof DsShellPageAttributes> & { [K in keyof DsShellPage & keyof DsShellPageAttributes]?: DsShellPage[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `attr:${K}`]?: DsShellPageAttributes[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `prop:${K}`]?: DsShellPage[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-swatch-picker": Omit<DsSwatchPicker, keyof DsSwatchPickerAttributes> & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes]?: DsSwatchPicker[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `attr:${K}`]?: DsSwatchPickerAttributes[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `prop:${K}`]?: DsSwatchPicker[K] };
@@ -6257,11 +6467,11 @@ declare module "@stencil/core" {
             "ds-agent-response": LocalJSX.IntrinsicElements["ds-agent-response"] & JSXBase.HTMLAttributes<HTMLDsAgentResponseElement>;
             "ds-agent-source-list": LocalJSX.IntrinsicElements["ds-agent-source-list"] & JSXBase.HTMLAttributes<HTMLDsAgentSourceListElement>;
             "ds-agent-tool-call": LocalJSX.IntrinsicElements["ds-agent-tool-call"] & JSXBase.HTMLAttributes<HTMLDsAgentToolCallElement>;
-            "ds-app-shell": LocalJSX.IntrinsicElements["ds-app-shell"] & JSXBase.HTMLAttributes<HTMLDsAppShellElement>;
             "ds-attachment-list": LocalJSX.IntrinsicElements["ds-attachment-list"] & JSXBase.HTMLAttributes<HTMLDsAttachmentListElement>;
             "ds-avatar": LocalJSX.IntrinsicElements["ds-avatar"] & JSXBase.HTMLAttributes<HTMLDsAvatarElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
+            "ds-bar-title": LocalJSX.IntrinsicElements["ds-bar-title"] & JSXBase.HTMLAttributes<HTMLDsBarTitleElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
@@ -6318,6 +6528,7 @@ declare module "@stencil/core" {
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-select-multi": LocalJSX.IntrinsicElements["ds-select-multi"] & JSXBase.HTMLAttributes<HTMLDsSelectMultiElement>;
+            "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;
             /**
              * @deprecated Use `ds-swatch-picker` with shell preset options.
              */
@@ -6326,6 +6537,7 @@ declare module "@stencil/core" {
              * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
              */
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
+            "ds-shell-page": LocalJSX.IntrinsicElements["ds-shell-page"] & JSXBase.HTMLAttributes<HTMLDsShellPageElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-swatch-picker": LocalJSX.IntrinsicElements["ds-swatch-picker"] & JSXBase.HTMLAttributes<HTMLDsSwatchPickerElement>;

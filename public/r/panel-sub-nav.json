@@ -39,7 +39,7 @@
         {
           "when": "The choices are secondary application routes.",
           "component": "component:ds-bar-nav",
-          "reason": "BarNav owns route sections inside AppShell."
+          "reason": "BarNav owns route sections inside ShellApp."
         },
         {
           "when": "The choices are transient actions or options.",

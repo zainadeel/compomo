@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
 import { writeBuildStamp, writePackageVersion } from './write-build-stamp.mjs';
 
 writePackageVersion();
@@ -8,6 +9,21 @@ const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const children = new Set();
 let storybookStarted = false;
 let shuttingDown = false;
+
+const cleanCollisions = () => {
+  const collisions = cleanFileProviderCollisions();
+  if (collisions.length) {
+    process.stdout.write(
+      `[storybook-dev] Cleaned ${collisions.length} File Provider collision artifact${collisions.length === 1 ? '' : 's'}\n`,
+    );
+  }
+};
+
+// File Provider can materialize collision copies several seconds after a
+// generator finishes. Sweep while the dev process is alive instead of only at
+// the exact Stencil completion boundary.
+const collisionSweep = setInterval(cleanCollisions, 2000);
+collisionSweep.unref();
 
 const prefixAndPipe = (child, prefix, onLine) => {
   let stdoutBuffer = '';
@@ -77,6 +93,7 @@ const startStorybook = () => {
 
 const watcher = spawnScript('dev', 'stencil', line => {
   if (line.includes('build finished, watching for changes')) {
+    cleanCollisions();
     writeBuildStamp();
     if (!storybookStarted) {
       startStorybook();
@@ -91,6 +108,7 @@ const watcher = spawnScript('dev', 'stencil', line => {
 const shutdown = signal => {
   if (shuttingDown) return;
   shuttingDown = true;
+  clearInterval(collisionSweep);
 
   for (const child of children) {
     child.kill(signal);

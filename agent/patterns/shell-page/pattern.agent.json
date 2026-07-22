@@ -1,0 +1,138 @@
+{
+  "$schema": "../../schemas/pattern.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "pattern:shell-page",
+  "kind": "pattern",
+  "status": "stable",
+  "summary": "Compose one ShellPage inside ShellApp's content region with a slotted BarTitle and application-owned routed content.",
+  "useWhen": [
+    "A standard authenticated route needs shared page title chrome, sticky scroll compaction, and consistent content inset.",
+    "The page column can change width as global navigation or tools open and close."
+  ],
+  "avoidWhen": [
+    "The experience does not use the standard authenticated ShellApp layout.",
+    "The content belongs to a drawer, modal, card, or fullscreen tool pane.",
+    "A ShellPage already owns the route; never nest ShellPages."
+  ],
+  "components": [
+    {
+      "component": "component:ds-shell-app",
+      "role": "Owns global chrome and the single scrolling content region.",
+      "required": true
+    },
+    {
+      "component": "component:ds-shell-page",
+      "role": "Owns the page main landmark, sticky header orchestration, responsive variants, and content inset.",
+      "required": true
+    },
+    {
+      "component": "component:ds-bar-title",
+      "role": "Provides the page h1, inline route-section selector, Back intent, and page actions.",
+      "required": true
+    }
+  ],
+  "stateOwnership": [
+    "ShellApp owns global navigation, tools, and scrolling; ShellPage never creates another scroll container.",
+    "ShellPage owns automatic BarTitle variant selection. Consumers do not synchronize BarTitle.variant when headerPresentation is auto.",
+    "The route owner owns heading copy, Back consequences, selected section value, available actions, data, forms, and product outcomes.",
+    "Keep dsSectionChange controlled by updating the route and passing the resolved value back to BarTitle."
+  ],
+  "accessibility": [
+    "Render one active ShellPage so the application contains one routed-page main landmark.",
+    "Provide one BarTitle in slot=header and one concise heading so the page contains one h1.",
+    "Use destination-specific Back labels and preserve action labels across inline and overflow presentations.",
+    "Keep route loading, error, empty, success, and validation communication in the ShellPage content slot."
+  ],
+  "responsiveBehavior": [
+    "Let ShellPage select expanded, compact, and constrained variants from its own capacity and scroll position.",
+    "Set primaryAction.collapse to never only when the action must preserve visible hierarchy, such as Save in create and edit flows.",
+    "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
+    "Place TabGroup inside ShellPage content for inner-page panels; route-level sections remain in BarTitle."
+  ],
+  "implementations": {
+    "customElements": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "routed-page",
+          "title": "Routed page shell",
+          "summary": "A standard page with an inline section selector and application-owned content.",
+          "files": [
+            {
+              "path": "page.html",
+              "language": "html",
+              "content": "<ds-shell-app>\n  <ds-shell-page>\n    <ds-bar-title\n      id=\"drivers-header\"\n      slot=\"header\"\n      heading=\"Drivers\"\n      value=\"active\"\n    ></ds-bar-title>\n    <section aria-label=\"Driver results\">Page content</section>\n  </ds-shell-page>\n</ds-shell-app>"
+            },
+            {
+              "path": "page.ts",
+              "language": "typescript",
+              "content": "import '@ds-mo/ui/dist/components/ds-shell-app.js'\nimport '@ds-mo/ui/dist/components/ds-shell-page.js'\nimport '@ds-mo/ui/dist/components/ds-bar-title.js'\n\nconst header = document.querySelector<HTMLDsBarTitleElement>('#drivers-header')!\nheader.sections = [\n  { id: 'active', label: 'Active' },\n  { id: 'inactive', label: 'Inactive' },\n]\nheader.primaryAction = { id: 'create', label: 'Create driver' }\nheader.addEventListener('dsSectionChange', event => {\n  const value = (event as CustomEvent<string>).detail\n  // Update the route, then pass the resolved route value back to the header.\n  header.value = value\n})"
+            }
+          ],
+          "notes": [
+            "The complete application also supplies PanelNav, BarNav, and PanelTools through ShellApp's named slots.",
+            "Do not put page content inside BarTitle."
+          ]
+        }
+      ],
+      "references": [
+        "src/wc/components/ShellPage/ShellPage.stories.ts",
+        "tests/e2e/fixtures/bar-title.html"
+      ]
+    },
+    "react": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "routed-page",
+          "title": "React routed page shell",
+          "summary": "Generated React wrappers with controlled route-section state.",
+          "files": [
+            {
+              "path": "DriversPage.tsx",
+              "language": "tsx",
+              "content": "import { useState } from 'react'\nimport { DsShellApp, DsBarTitle, DsShellPage } from '@ds-mo/ui/react'\n\nconst sections = [\n  { id: 'active', label: 'Active' },\n  { id: 'inactive', label: 'Inactive' },\n]\n\nexport function DriversPage() {\n  const [value, setValue] = useState('active')\n  return (\n    <DsShellApp>\n      <DsShellPage>\n        <DsBarTitle\n          slot=\"header\"\n          heading=\"Drivers\"\n          sections={sections}\n          value={value}\n          primaryAction={{ id: 'create', label: 'Create driver' }}\n          onDsSectionChange={event => setValue(event.detail)}\n        />\n        <section aria-label=\"Driver results\">Page content</section>\n      </DsShellPage>\n    </DsShellApp>\n  )\n}"
+            }
+          ],
+          "notes": [
+            "Resolve value from router state in production rather than keeping duplicate local route state.",
+            "Use contentInset=\"none\" only for full-bleed pages."
+          ]
+        }
+      ],
+      "references": ["src/react/ds-shell-page.ts", "src/react/ds-bar-title.ts"]
+    },
+    "angular": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "routed-page",
+          "title": "Angular routed page shell",
+          "summary": "Generated standalone adapters with router-owned page content.",
+          "files": [
+            {
+              "path": "drivers-page.component.html",
+              "language": "html",
+              "content": "<ds-shell-page>\n  <ds-bar-title\n    slot=\"header\"\n    heading=\"Drivers\"\n    [sections]=\"sections\"\n    [value]=\"selectedSection\"\n    [primaryAction]=\"primaryAction\"\n    (dsSectionChange)=\"selectSection($event.detail)\"\n  ></ds-bar-title>\n  <router-outlet />\n</ds-shell-page>"
+            },
+            {
+              "path": "drivers-page.component.ts",
+              "language": "typescript",
+              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title'\nimport { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page'\n\n@Component({\n  standalone: true,\n  imports: [DsBarTitle, DsShellPage, RouterOutlet],\n  templateUrl: './drivers-page.component.html',\n})\nexport class DriversPageComponent {\n  readonly sections = [\n    { id: 'active', label: 'Active' },\n    { id: 'inactive', label: 'Inactive' },\n  ]\n  readonly primaryAction = { id: 'create', label: 'Create driver' }\n  selectedSection = 'active'\n\n  selectSection(id: string) {\n    this.selectedSection = id\n    // Navigate to the matching child route.\n  }\n}"
+            }
+          ],
+          "notes": [
+            "ShellApp belongs in the persistent application layout; routed page components render ShellPage in its default content slot.",
+            "Do not add an overflow-auto wrapper around ds-shell-page."
+          ]
+        }
+      ],
+      "references": ["src/angular/ds-shell-page.ts", "src/angular/ds-bar-title.ts"]
+    }
+  },
+  "references": [
+    "src/wc/components/ShellPage/ShellPage.agent.json",
+    "src/wc/components/BarTitle/BarTitle.agent.json",
+    "src/wc/components/ShellApp/ShellApp.agent.json"
+  ]
+}

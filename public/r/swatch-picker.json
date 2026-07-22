@@ -44,7 +44,7 @@
       ],
       "commonlyComposedWith": [
         "component:ds-menu",
-        "component:ds-app-shell"
+        "component:ds-shell-app"
       ],
       "accessibility": [
         "Provide a localized groupLabel describing the complete choice.",

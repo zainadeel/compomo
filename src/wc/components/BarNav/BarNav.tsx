@@ -223,7 +223,7 @@ export class BarNav {
   }
 
   private bindChromeTransitionListeners() {
-    const shell = this.el.closest('ds-app-shell');
+    const shell = this.el.closest<HTMLElement>('ds-shell-app');
     if (!shell) return;
     this.chromeTransitionShell = shell;
     shell.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);

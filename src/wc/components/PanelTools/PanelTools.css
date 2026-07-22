@@ -58,7 +58,7 @@
   border-left: var(--_panel-tools-border);
 }
 
-/* Fixed-width surface — AppShell supplies the standard 300px tools width. */
+/* Fixed-width surface — ShellApp supplies the standard 300px tools width. */
 .panel-tools__drawer-surface {
   display: flex;
   flex-direction: column;

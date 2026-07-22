@@ -17,7 +17,7 @@
   "accessibility": [
     "Give each transcript a concise localized label.",
     "New content is exposed through log semantics without stealing focus.",
-    "The scroll-to-latest control remains keyboard accessible when follow behavior is released."
+    "The scroll-to-latest control remains keyboard accessible when follow behavior is released and exposes its action name in a tooltip."
   ],
   "states": [
     "Selection and transcript interaction release automatic following.",

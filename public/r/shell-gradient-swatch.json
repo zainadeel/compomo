@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "shell-gradient-swatch",
   "title": "ShellGradientSwatch",
-  "description": "Deprecated internal compatibility component for one legacy AppShell gradient swatch.",
+  "description": "Deprecated internal compatibility component for one legacy ShellApp gradient swatch.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -15,7 +15,7 @@
       "status": "deprecated",
       "replacedBy": "component:ds-swatch-picker",
       "replacementReason": "SwatchPicker renders its option buttons internally so an individually published radio swatch is no longer needed.",
-      "summary": "Deprecated internal compatibility component for one legacy AppShell gradient swatch.",
+      "summary": "Deprecated internal compatibility component for one legacy ShellApp gradient swatch.",
       "useWhen": [
         "Maintaining or extending ShellGradientPicker inside CompoMo."
       ],

@@ -1,4 +1,4 @@
-/** Bubbling/composed events — `ds-app-shell` and `ds-bar-nav` coordinate during width motion. */
+/** Bubbling/composed events — `ds-shell-app` and `ds-bar-nav` coordinate during width motion. */
 
 export const CHROME_TRANSITION_START = 'dsChromeTransitionStart';
 export const CHROME_TRANSITION_END = 'dsChromeTransitionEnd';

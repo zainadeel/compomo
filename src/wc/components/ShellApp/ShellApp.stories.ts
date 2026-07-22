@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import type { TemplateResult } from 'lit';
 import { ref } from 'lit/directives/ref.js';
-import '../../../../dist/components/ds-app-shell.js';
+import '../../../../dist/components/ds-shell-app.js';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
@@ -75,7 +75,7 @@ function shellLayout(gradientPreset: ShellGradientPreset): TemplateResult {
         font-family: var(--typography-font-family, system-ui);
       "
     >
-      <ds-app-shell nav-style="dashboard" gradient-preset=${gradientPreset} style="height: 100%;">
+      <ds-shell-app nav-style="dashboard" gradient-preset=${gradientPreset} style="height: 100%;">
         <ds-panel-nav
           slot="panel"
           nav-style="dashboard"
@@ -96,13 +96,13 @@ function shellLayout(gradientPreset: ShellGradientPreset): TemplateResult {
           })}
         ></ds-bar-nav>
         <ds-panel-tools slot="tools" ${ref(wirePanelTools)}></ds-panel-tools>
-      </ds-app-shell>
+      </ds-shell-app>
     </div>
   `;
 }
 
 const meta: Meta = {
-  title: 'Navigation/AppShell',
+  title: 'Layout/ShellApp',
   parameters: { layout: 'fullscreen' },
 };
 

@@ -268,15 +268,17 @@ export class MessageScroller {
           </div>
           {this.showScrollToLatest ? (
             <div class="message-scroller__control">
-              <ds-button-unfilled
-                variant="icon"
-                icon="ChevronDown"
-                size="md"
-                rounded
-                hasBorder={false}
-                aria-label="Scroll to latest message"
-                onDsClick={() => void this.scrollToEnd()}
-              />
+              <ds-tooltip label="Scroll to latest message" side="top" size="sm">
+                <ds-button-unfilled
+                  variant="icon"
+                  icon="ChevronDown"
+                  size="md"
+                  rounded
+                  hasBorder={false}
+                  aria-label="Scroll to latest message"
+                  onDsClick={() => void this.scrollToEnd()}
+                />
+              </ds-tooltip>
             </div>
           ) : null}
         </div>

@@ -38,11 +38,11 @@ import {
 } from '../../shell/shell-gradient';
 
 @Component({
-  tag: 'ds-app-shell',
-  styleUrl: 'AppShell.css',
+  tag: 'ds-shell-app',
+  styleUrl: 'ShellApp.css',
   scoped: true,
 })
-export class AppShell {
+export class ShellApp {
   /** Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`. */
   @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'dashboard';
 
@@ -53,7 +53,7 @@ export class AppShell {
   @Prop({ attribute: 'gradient-preset', reflect: true }) gradientPreset: ShellGradientPreset =
     DEFAULT_SHELL_GRADIENT_PRESET;
 
-  /** When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K/A/S/M/N/? toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native. */
+  /** When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native. */
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
 
   @Element() el!: HTMLElement;
@@ -152,7 +152,7 @@ export class AppShell {
       this.scheduleChromeSync();
     });
     this.resizeObserver.observe(this.el);
-    const panelWrap = this.el.querySelector('.app-shell__panel');
+    const panelWrap = this.el.querySelector('.shell-app__panel');
     if (panelWrap) this.resizeObserver.observe(panelWrap);
   }
 
@@ -228,7 +228,7 @@ export class AppShell {
       return panelWidthPxFromTokens(this.panelWidthTokens, collapsed);
     }
 
-    const panelWrap = this.el.querySelector('.app-shell__panel') as HTMLElement | null;
+    const panelWrap = this.el.querySelector('.shell-app__panel') as HTMLElement | null;
     const measured = panelWrap?.getBoundingClientRect().width ?? 0;
     if (measured > 0) return measured;
 
@@ -344,27 +344,27 @@ export class AppShell {
   render() {
     const chromeActive = this.chromeLayerActive();
     const shellCls: Record<string, boolean> = {
-      'app-shell': true,
-      'app-shell--gradient': chromeActive,
-      [`app-shell--${this.navStyle}`]: true,
-      'app-shell--tools-fullscreen': this.toolsFullscreen,
+      'shell-app': true,
+      'shell-app--gradient': chromeActive,
+      [`shell-app--${this.navStyle}`]: true,
+      'shell-app--tools-fullscreen': this.toolsFullscreen,
     };
 
     return (
       <Host class={shellCls}>
-        <div class="app-shell__row">
-          <div class="app-shell__chrome" aria-hidden="true" />
-          <div class="app-shell__panel" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
+        <div class="shell-app__row">
+          <div class="shell-app__chrome" aria-hidden="true" />
+          <div class="shell-app__panel" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
             <slot name="panel" />
           </div>
-          <div class="app-shell__main">
-            <div class="app-shell__bar" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
+          <div class="shell-app__main">
+            <div class="shell-app__bar" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
               <slot name="bar" />
             </div>
-            <div class="app-shell__tools">
+            <div class="shell-app__tools">
               <slot name="tools" />
             </div>
-            <div class="app-shell__content" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
+            <div class="shell-app__content" aria-hidden={this.toolsFullscreen ? 'true' : undefined} inert={this.toolsFullscreen ? true : undefined}>
               <slot />
             </div>
           </div>

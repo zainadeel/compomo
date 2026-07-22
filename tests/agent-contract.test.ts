@@ -16,9 +16,9 @@ const buttonMetadata = JSON.parse(
 test('prototype agent metadata is schema-valid and references source components', () => {
   const result = validateAgentContract();
 
-  assert.equal(result.sourceComponents, 58);
+  assert.equal(result.sourceComponents, 60);
   assert.equal(result.componentDocuments, result.sourceComponents);
-  assert.equal(result.patternDocuments, 4);
+  assert.equal(result.patternDocuments, 5);
 });
 
 test('menu trigger pattern provides executable recipes for every framework', () => {

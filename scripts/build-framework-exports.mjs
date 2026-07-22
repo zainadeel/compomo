@@ -2,8 +2,11 @@
 /** Compile generated framework adapters to publishable JavaScript and declarations. */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+
+cleanFileProviderCollisions();
 
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react.json'], { stdio: 'inherit' });
 execFileSync(npx, ['ngc', '-p', 'tsconfig.angular.json'], { stdio: 'inherit' });

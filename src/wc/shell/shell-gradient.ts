@@ -1,4 +1,4 @@
-/** CSS var names consumed by `ds-panel-nav` / `ds-bar-nav` inside `ds-app-shell`. */
+/** CSS var names consumed by `ds-panel-nav` / `ds-bar-nav` inside `ds-shell-app`. */
 import type { ShellGradientPreset } from './shell-gradient-presets';
 import {
   DEFAULT_SHELL_GRADIENT_PRESET,
@@ -56,7 +56,7 @@ export interface ShellViewportDimensions {
 
 /**
  * Viewport size for shell chrome with `background-attachment: fixed`.
- * Must not use the `ds-app-shell` element box — the shell can be shorter or
+ * Must not use the `ds-shell-app` element box — the shell can be shorter or
  * taller than the viewport when host height chains break or content overflows.
  */
 export function readShellViewportDimensions(win?: Window): ShellViewportDimensions {

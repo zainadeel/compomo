@@ -203,18 +203,20 @@ export class Modal {
             >
               {this.heading}
             </ds-text>
-            <ds-button-unfilled
-              class="modal-close"
-              variant="icon"
-              icon="Cross"
-              size="md"
-              aria-label={this.closeAriaLabel}
-              activeFill={false}
-              hasBorder={false}
-              onDsClick={(event: CustomEvent<MouseEvent>) =>
-                this.requestClose('close-button', event.detail)
-              }
-            />
+            <ds-tooltip class="modal-close-tooltip" label={this.closeAriaLabel} side="bottom" size="sm">
+              <ds-button-unfilled
+                class="modal-close"
+                variant="icon"
+                icon="Cross"
+                size="md"
+                aria-label={this.closeAriaLabel}
+                activeFill={false}
+                hasBorder={false}
+                onDsClick={(event: CustomEvent<MouseEvent>) =>
+                  this.requestClose('close-button', event.detail)
+                }
+              />
+            </ds-tooltip>
           </div>
           <div class="modal-content">
             <slot />

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Page shell and header</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        font-family: var(--typography-font-family, system-ui);
+        background: var(--color-background-primary);
+      }
+
+      body {
+        display: grid;
+        place-items: start;
+      }
+
+      #app-viewport {
+        width: min(100%, calc(var(--dimension-panel-width-2xl) + var(--dimension-panel-width-xs)));
+        height: var(--dimension-panel-width-lg);
+        border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+        box-sizing: border-box;
+      }
+
+      ds-shell-app {
+        height: 100%;
+      }
+
+      .page-body {
+        display: grid;
+        gap: var(--dimension-space-200);
+      }
+
+      .page-panel {
+        min-height: var(--dimension-panel-width-xs);
+        padding: var(--dimension-space-300);
+        box-sizing: border-box;
+        border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+        border-radius: var(--dimension-radius-100);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-viewport">
+      <ds-shell-app id="shell-app">
+        <ds-shell-page id="shell-page">
+          <ds-bar-title
+            id="detail-header"
+            slot="header"
+            heading="John Smith"
+            description="View and manage driver details, activity, timecards, and settings."
+            show-back
+            back-aria-label="Back to Drivers"
+            back-label="Drivers"
+            value="summary"
+            sections-aria-label="Change driver section"
+            actions-aria-label="More driver actions"
+          ></ds-bar-title>
+          <div id="page-content" class="page-body">
+            <p id="event-status">No action selected</p>
+            <section class="page-panel"><h2>Driver information</h2></section>
+            <section class="page-panel"><h2>Recent activity</h2></section>
+            <section class="page-panel"><h2>Account details</h2></section>
+          </div>
+        </ds-shell-page>
+      </ds-shell-app>
+    </div>
+
+    <script type="module" src="/bar-title-setup.mjs"></script>
+  </body>
+</html>

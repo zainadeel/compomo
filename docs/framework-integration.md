@@ -41,7 +41,7 @@ Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). To
 
 ### `ds-panel-tools` — one named slot per tool
 
-Each fixed rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a **named slot** for its own composed UI. Mount all available tool panels once at AppShell scope; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open and keeps every slot mounted so independent tool state survives route and tool changes. Search is required and pinned to the rail header; **Help & Support** is required and pinned to the rail footer. Optional tools retain canonical order when authorization or entitlement filters them out.
+Each fixed rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a **named slot** for its own composed UI. Mount all available tool panels once at ShellApp scope; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open and keeps every slot mounted so independent tool state survives route and tool changes. Search is required and pinned to the rail header; **Help & Support** is required and pinned to the rail footer. Optional tools retain canonical order when authorization or entitlement filters them out.
 
 ```html
 <ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>
@@ -54,19 +54,19 @@ Each fixed rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `hel
 </ds-panel-tools>
 ```
 
-The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open. Set `storage-key` to remember only the last active tool in the current browser; the drawer still restores closed after reload. AppShell supplies the same fixed `--dimension-panel-width-xs` (300px) drawer width on desktop and tablet.
+The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open. Set `storage-key` to remember only the last active tool in the current browser; the drawer still restores closed after reload. ShellApp supplies the same fixed `--dimension-panel-width-xs` (300px) drawer width on desktop and tablet.
 
-Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages (`M`), Activity (`N`), and Help (`?`); `]` closes the drawer. They are skipped while the user is typing in an editable control.
+Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages (`M`), Activity (`N`), and Help (`/`); `]` closes the drawer. They are skipped while the user is typing in an editable control.
 
-## `ds-app-shell` (required workspace layout)
+## `ds-shell-app` (required workspace layout)
 
 ```html
-<ds-app-shell nav-style="dashboard" gradient>
+<ds-shell-app nav-style="dashboard" gradient>
   <ds-panel-nav slot="panel" …></ds-panel-nav>
   <ds-bar-nav slot="bar" …></ds-bar-nav>
   <ds-panel-tools slot="tools" …></ds-panel-tools>
   <main>…page content…</main>
-</ds-app-shell>
+</ds-shell-app>
 ```
 
 | Prop | Default | Behavior |
@@ -82,9 +82,9 @@ Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`coo
 
 ### Why the wash is synced in JavaScript
 
-Nav chrome is not a single static bitmap behind the app. Transparent components (`ds-panel-nav`, `ds-bar-nav`, tools drawer under shell chrome) each composite the **same** `background-image` with per-surface `background-position` / `background-size` so scroll fades, badge rings, and bar offsets align during panel resize. `ds-app-shell` coalesces layout reads to one pass per frame and pauses `ResizeObserver`-driven sync during **panel-nav** width transitions.
+Nav chrome is not a single static bitmap behind the app. Transparent components (`ds-panel-nav`, `ds-bar-nav`, tools drawer under shell chrome) each composite the **same** `background-image` with per-surface `background-position` / `background-size` so scroll fades, badge rings, and bar offsets align during panel resize. `ds-shell-app` coalesces layout reads to one pass per frame and pauses `ResizeObserver`-driven sync during **panel-nav** width transitions.
 
-**Viewport sizing:** the shared chrome layer uses `background-attachment: fixed`, so `--ds-shell-gradient-size` is derived from **`window.visualViewport` / `innerWidth` × `innerHeight`**, not `ds-app-shell.getBoundingClientRect()`. Host apps must still fill the viewport (`html, body, app-root, shell host { height: 100% }`) so the chrome clip rect covers nav surfaces; the wash bitmap itself is always viewport-sized. `ds-app-shell` also listens to `window` `resize` and `visualViewport` `resize`/`scroll` so mobile browser chrome changes re-sync the wash.
+**Viewport sizing:** the shared chrome layer uses `background-attachment: fixed`, so `--ds-shell-gradient-size` is derived from **`window.visualViewport` / `innerWidth` × `innerHeight`**, not `ds-shell-app.getBoundingClientRect()`. Host apps must still fill the viewport (`html, body, app-root, shell host { height: 100% }`) so the chrome clip rect covers nav surfaces; the wash bitmap itself is always viewport-sized. `ds-shell-app` also listens to `window` `resize` and `visualViewport` `resize`/`scroll` so mobile browser chrome changes re-sync the wash.
 
 `ds-panel-tools` emits `dsChromeTransitionStart` with `phase: 'opening' | 'closing'`. On **opening**, `ds-bar-nav` lets tab overflow follow layout as the drawer animates (no synchronous collapse). On **closing**, it pauses overflow measurement until the drawer `max-width` transition ends so tabs do not flicker.
 

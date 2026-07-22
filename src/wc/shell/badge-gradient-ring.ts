@@ -14,10 +14,10 @@ export interface GradientSurface {
 
 /** Whether the badge sits under a shell with an active wash preset. */
 export function isShellGradientActive(from: HTMLElement): boolean {
-  // Explicit <HTMLElement>: the inferred HTMLDsAppShellElement type only
+  // Explicit <HTMLElement>: the inferred HTMLDsShellAppElement type only
   // resolves where @stencil/core types are installed — consumers importing
   // `@ds-mo/ui/shell` (raw TS) compile this without them.
-  const shell = from.closest<HTMLElement>('ds-app-shell');
+  const shell = from.closest<HTMLElement>('ds-shell-app');
   return shell !== null && shell.getAttribute('gradient-preset') !== 'none';
 }
 

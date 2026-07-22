@@ -82,6 +82,7 @@ export class MessageComposer {
 
   render() {
     const error = this.status === 'error';
+    const actionInactive = !this.streaming && (this.isInactive || !this.value.trim());
     return (
       <Host>
         <form
@@ -115,16 +116,37 @@ export class MessageComposer {
               </div>
               <div class="message-composer__actions">
                 <slot name="actions" />
-                <ds-button-filled
-                  class="message-composer__action"
-                  variant="icon"
-                  icon={this.streaming ? 'SquareFilled' : 'ArrowUp'}
-                  intent={this.streaming ? 'neutral' : this.submitIntent}
-                  size="md"
-                  aria-label={this.streaming ? 'Stop response' : 'Send message'}
-                  isInactive={this.isInactive || (!this.streaming && !this.value.trim())}
-                  onDsClick={this.handleAction}
-                />
+                {actionInactive ? (
+                  <ds-tooltip label="Send message" side="top" size="sm">
+                    <ds-button-unfilled
+                      class="message-composer__action"
+                      variant="icon"
+                      icon="ArrowUp"
+                      size="md"
+                      aria-label="Send message"
+                      hasBorder
+                      isInactive
+                      onDsClick={this.handleAction}
+                    />
+                  </ds-tooltip>
+                ) : (
+                  <ds-tooltip
+                    label={this.streaming ? 'Stop response' : 'Send message'}
+                    side="top"
+                    size="sm"
+                  >
+                    <ds-button-filled
+                      class="message-composer__action"
+                      variant="icon"
+                      icon={this.streaming ? 'SquareFilled' : 'ArrowUp'}
+                      intent={this.streaming ? 'brand' : this.submitIntent}
+                      contrast="bold"
+                      size="md"
+                      aria-label={this.streaming ? 'Stop response' : 'Send message'}
+                      onDsClick={this.handleAction}
+                    />
+                  </ds-tooltip>
+                )}
               </div>
             </div>
           </div>

@@ -39,7 +39,7 @@
   color: var(--color-foreground-secondary);
 }
 
-.select-search .select-search__control > .select-search__clear {
+.select-search .select-search__control .select-search__clear {
   align-self: center;
   flex-shrink: 0;
   margin-right: var(--dimension-space-050);

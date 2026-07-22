@@ -94,7 +94,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 
 ### Navigation
 - **TabGroup** (horizontal local views), **PanelSubNav** (vertical local views)
-- **AppShell**, **PanelNav**, **BarNav**, **PanelTools**
+- **ShellApp**, **PanelNav**, **BarNav**, **PanelTools**
 
 ### Status & layout
 - **EmptyState**, **Loader**, **Skeleton**, **CardSetting**, **CardDataVizDonut**

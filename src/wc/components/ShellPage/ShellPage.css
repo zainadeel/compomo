@@ -1,0 +1,51 @@
+:host {
+  display: block;
+  position: relative;
+  min-width: 0;
+  min-height: 100%;
+  box-sizing: border-box;
+  background: var(--color-background-primary);
+}
+
+.shell-page__scroll-sentinel {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-stroke-width-012);
+  pointer-events: none;
+}
+
+.shell-page__sticky-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--dimension-z-index-raised);
+  min-width: 0;
+  background: var(--color-background-primary);
+  overflow: visible;
+  overflow-anchor: none;
+}
+
+.shell-page__sticky-header ::slotted(ds-bar-title) {
+  display: block;
+  min-width: 0;
+}
+
+.shell-page__flow-spacer {
+  height: var(--ds-shell-page-flow-spacer, 0);
+  background: var(--color-background-primary);
+}
+
+.shell-page__content {
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-background-primary);
+}
+
+:host(.shell-page-host--inset-default) .shell-page__content {
+  padding: var(--dimension-space-400) var(--dimension-space-400) var(--dimension-space-800);
+}
+
+:host(.shell-page-host--inset-none) .shell-page__content {
+  padding: 0;
+}

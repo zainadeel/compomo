@@ -12,6 +12,16 @@ const FRAMEWORK_OUTPUTS = [
   { directory: 'src/angular', barrels: ['proxies.ts', 'index.ts'] },
 ];
 
+const FILE_PROVIDER_COLLISION_OUTPUTS = [
+  { directory: 'src/react', pattern: / \d+\.ts$/ },
+  { directory: 'src/angular', pattern: / \d+\.ts$/ },
+  { directory: 'public/r', pattern: / \d+\.json$/ },
+  { directory: 'src/wc/components', pattern: / \d+\.(?:css|json|mdx|ts|tsx)$/ },
+  { directory: 'tests', pattern: / \d+\.(?:html|mjs|ts)$/ },
+  { directory: 'dist', pattern: / \d+\.[a-z0-9.]+$/i },
+  { directory: 'storybook-static', pattern: / \d+\.[a-z0-9.]+$/i },
+];
+
 // Include Apple File Provider collision copies such as `ds-toggle 2.ts`: they
 // are still generated proxy artifacts and TypeScript includes them in builds.
 const COMPONENT_PROXY_FILENAME = /^ds-[a-z0-9]+(?:-[a-z0-9]+)*(?: \d+)?\.ts$/;
@@ -25,6 +35,29 @@ function isGeneratedBarrel(filename, barrels) {
 
 function posix(relativePath) {
   return relativePath.split(path.sep).join('/');
+}
+
+function listFileProviderCollisions(directory, root, pattern, collisions) {
+  if (!fs.existsSync(directory)) return;
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const absolutePath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      listFileProviderCollisions(absolutePath, root, pattern, collisions);
+    } else if (entry.isFile() && pattern.test(entry.name)) {
+      collisions.push(posix(path.relative(root, absolutePath)));
+    }
+  }
+}
+
+export function cleanFileProviderCollisions(root = ROOT) {
+  const collisions = [];
+  for (const { directory, pattern } of FILE_PROVIDER_COLLISION_OUTPUTS) {
+    listFileProviderCollisions(path.join(root, directory), root, pattern, collisions);
+  }
+  for (const relativePath of collisions) {
+    fs.rmSync(path.join(root, relativePath), { force: true });
+  }
+  return collisions.sort();
 }
 
 export function listFrameworkComponentProxies(
@@ -51,6 +84,7 @@ export function listFrameworkComponentProxies(
 export function cleanFrameworkProxies(root = ROOT) {
   const generatedArtifacts = [
     ...listFrameworkComponentProxies(root, { includeCollisionCopies: true }),
+    ...cleanFileProviderCollisions(root),
   ];
   for (const { directory, barrels } of FRAMEWORK_OUTPUTS) {
     const absoluteDirectory = path.join(root, directory);

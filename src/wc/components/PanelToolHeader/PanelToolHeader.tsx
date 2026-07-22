@@ -65,16 +65,18 @@ export class PanelToolHeader {
         <header class="panel-tool-header">
           <div class="panel-tool-header__leading">
             {this.showBack ? (
-              <ds-button-unfilled
-                class="panel-tool-header__back"
-                variant="icon"
-                icon={this.backIcon}
-                size="md"
-                aria-label={this.backAriaLabel}
-                activeFill={false}
-                hasBorder={false}
-                onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}
-              />
+              <ds-tooltip label={this.backAriaLabel} side="bottom" size="sm">
+                <ds-button-unfilled
+                  class="panel-tool-header__back"
+                  variant="icon"
+                  icon={this.backIcon}
+                  size="md"
+                  aria-label={this.backAriaLabel}
+                  activeFill={false}
+                  hasBorder={false}
+                  onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}
+                />
+              </ds-tooltip>
             ) : null}
           </div>
           <ds-text
@@ -89,32 +91,33 @@ export class PanelToolHeader {
           </ds-text>
           <div class="panel-tool-header__trailing">
             {actions.map(action => (
-              <ds-button-unfilled
-                key={action.id}
-                id={action.triggerId || undefined}
-                data-header-action-id={action.id}
-                class={{
-                  'panel-tool-header__action': true,
-                  'panel-tool-header__menu': action.id === 'menu',
-                }}
-                variant="icon"
-                icon={action.icon}
-                size="md"
-                aria-label={action.ariaLabel}
-                haspopup={action.haspopup}
-                controls={action.controls}
-                expanded={action.expanded}
-                pressed={action.pressed}
-                isActive={!!action.expanded}
-                isInactive={action.isInactive}
-                activeFill={false}
-                hasBorder={false}
-                onDsClick={(event: CustomEvent<MouseEvent>) => {
-                  if (!authoredActions && action.id === 'menu')
-                    this.dsMenuToggle.emit(event.detail);
-                  this.dsAction.emit({ id: action.id, originalEvent: event.detail });
-                }}
-              />
+              <ds-tooltip key={action.id} label={action.ariaLabel} side="bottom" size="sm">
+                <ds-button-unfilled
+                  id={action.triggerId || undefined}
+                  data-header-action-id={action.id}
+                  class={{
+                    'panel-tool-header__action': true,
+                    'panel-tool-header__menu': action.id === 'menu',
+                  }}
+                  variant="icon"
+                  icon={action.icon}
+                  size="md"
+                  aria-label={action.ariaLabel}
+                  haspopup={action.haspopup}
+                  controls={action.controls}
+                  expanded={action.expanded}
+                  pressed={action.pressed}
+                  isActive={!!action.expanded}
+                  isInactive={action.isInactive}
+                  activeFill={false}
+                  hasBorder={false}
+                  onDsClick={(event: CustomEvent<MouseEvent>) => {
+                    if (!authoredActions && action.id === 'menu')
+                      this.dsMenuToggle.emit(event.detail);
+                    this.dsAction.emit({ id: action.id, originalEvent: event.detail });
+                  }}
+                />
+              </ds-tooltip>
             ))}
           </div>
         </header>

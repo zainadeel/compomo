@@ -60,7 +60,7 @@ export class Badge {
 
   /**
    * Ring samples the shell gradient stack (base fill + wash) instead of a flat
-   * `box-shadow`. Auto-enabled under an AppShell with an active gradient preset;
+   * `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset;
    * set `gradient-background` to opt in/out explicitly.
    *
    * The attribute must NOT start with `on` — Stencil's setAccessor routes any
@@ -130,7 +130,7 @@ export class Badge {
       this.gradientObserver = new ResizeObserver(update);
       this.gradientObserver.observe(this.el);
 
-      const shell = this.el.closest('ds-app-shell');
+      const shell = this.el.closest('ds-shell-app');
       if (shell) this.gradientObserver.observe(shell);
 
       const bar = this.el.closest('ds-bar-nav');

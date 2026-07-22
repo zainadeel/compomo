@@ -98,7 +98,7 @@ export class PanelNav {
   /** Emitted when the collapse toggle is clicked. Detail = new collapsed state. */
   @Event() dsNavToggle!: EventEmitter<boolean>;
 
-  /** Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion. */
+  /** Bubbling lifecycle — `ds-shell-app` pauses chrome metrics during width motion. */
   @Event({ bubbles: true, composed: true })
   dsChromeTransitionStart!: EventEmitter<ChromeTransitionDetail>;
 
