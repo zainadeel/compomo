@@ -10,7 +10,7 @@
         font-family: var(--typography-font-family, system-ui);
         background: var(--color-background-primary);
       }
-      ds-app-shell {
+      ds-shell-app {
         display: block;
         width: 1280px;
         height: 720px;
@@ -18,7 +18,7 @@
     </style>
   </head>
   <body>
-    <ds-app-shell gradient>
+    <ds-shell-app gradient>
       <ds-panel-nav slot="panel" id="panel" router-mode="event"></ds-panel-nav>
       <ds-bar-nav slot="bar" id="bar"></ds-bar-nav>
       <ds-panel-tools slot="tools" id="tools" storage-key="e2e.panel-tools.last-tool">
@@ -27,7 +27,7 @@
         <ds-text slot="help" variant="text-body-medium" color="secondary">Help panel</ds-text>
       </ds-panel-tools>
       <main slot="default">Page content</main>
-    </ds-app-shell>
-    <script type="module" src="/app-shell-chrome-setup.mjs"></script>
+    </ds-shell-app>
+    <script type="module" src="/shell-app-chrome-setup.mjs"></script>
   </body>
 </html>

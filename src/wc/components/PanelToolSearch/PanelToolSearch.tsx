@@ -91,28 +91,30 @@ export class PanelToolSearch {
                 orientation="vertical"
                 length="var(--dimension-size-200)"
               />
-              <ds-button-unfilled
-                id={this.filterTriggerId || undefined}
-                class="panel-tool-search__filter"
-                variant="icon"
-                icon="Filters"
-                size="md"
-                aria-label={this.filterAriaLabel}
-                haspopup="menu"
-                controls={this.filterControls}
-                expanded={this.filterExpanded}
-                isActive={this.filterActive}
-                isInactive={this.isInactive}
-                activeFill={false}
-                hasBorder={false}
-                onDsChange={(event: CustomEvent<boolean>) => {
-                  event.stopPropagation();
-                }}
-                onDsClick={(event: CustomEvent<MouseEvent>) => {
-                  event.stopPropagation();
-                  this.dsFilterToggle.emit(event.detail);
-                }}
-              />
+              <ds-tooltip label={this.filterAriaLabel} side="bottom" size="sm">
+                <ds-button-unfilled
+                  id={this.filterTriggerId || undefined}
+                  class="panel-tool-search__filter"
+                  variant="icon"
+                  icon="Filters"
+                  size="md"
+                  aria-label={this.filterAriaLabel}
+                  haspopup="menu"
+                  controls={this.filterControls}
+                  expanded={this.filterExpanded}
+                  isActive={this.filterActive}
+                  isInactive={this.isInactive}
+                  activeFill={false}
+                  hasBorder={false}
+                  onDsChange={(event: CustomEvent<boolean>) => {
+                    event.stopPropagation();
+                  }}
+                  onDsClick={(event: CustomEvent<MouseEvent>) => {
+                    event.stopPropagation();
+                    this.dsFilterToggle.emit(event.detail);
+                  }}
+                />
+              </ds-tooltip>
             </div>
           ) : null}
         </div>

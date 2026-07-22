@@ -364,130 +364,6 @@
       ]
     },
     {
-      "name": "app-shell",
-      "title": "AppShell",
-      "description": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/app-shell",
-        "source": "src/wc/components/AppShell/AppShell.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "stable",
-          "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
-          "useWhen": [
-            "Building any standard authenticated product or workspace page with CompoMo.",
-            "PanelNav, BarNav, PanelTools, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
-            "Future application templates need the supported base-page composition boundary."
-          ],
-          "avoidWhen": [
-            "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences that require a different layout.",
-            "Another AppShell already exists in the page; applications must render exactly one and must never nest AppShells.",
-            "Building content inside an existing AppShell; render the page content rather than another shell."
-          ],
-          "commonlyComposedWith": [
-            "component:ds-panel-nav",
-            "component:ds-bar-nav",
-            "component:ds-panel-tools",
-            "component:ds-swatch-picker"
-          ],
-          "patterns": [
-            "pattern:application-shell"
-          ],
-          "accessibility": [
-            "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
-            "Ensure the default content region contains the page's single main landmark.",
-            "Keep PanelNav, BarNav, and PanelTools chrome available in the shell's supported desktop and tablet compositions.",
-            "Do not override browser keyboard chords when enabling shell shortcuts.",
-            "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
-            "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
-          ],
-          "states": [
-            "Render exactly one AppShell as the workspace root and never nest it.",
-            "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
-            "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-            "AppShell propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
-            "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
-            "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; AppShell owns rendering the resolved preset across authenticated routes.",
-            "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
-            "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
-            "BarNav remains present: it shows route-section tabs when available and the active PanelNav destination label as heading otherwise.",
-            "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
-          ],
-          "responsiveBehavior": [
-            "AppShell owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
-            "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
-            "On tablet, AppShell keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
-            "On mobile, AppShell remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
-            "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
-            "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until AppShell provides it."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign complex navigation and tool collections as JavaScript properties on the slotted components.",
-              "Stamp route-derived nav-style before components connect when deterministic first paint is required."
-            ],
-            "react": [
-              "Use generated wrappers and preserve native slot names for PanelNav, BarNav, PanelTools, and main content.",
-              "Resolve all shell inputs from one router state before rendering the composition."
-            ],
-            "angular": [
-              "Use generated standalone adapters and preserve slot attributes in templates.",
-              "Bind complex inputs as properties and update navigation inputs atomically from one resolved router state.",
-              "Bind both nav-style attributes and properties when deterministic first paint is required."
-            ]
-          },
-          "references": [
-            {
-              "label": "Component guide",
-              "path": "src/wc/components/AppShell/AppShell.mdx"
-            },
-            {
-              "label": "Executable Storybook composition",
-              "path": "src/wc/components/AppShell/AppShell.stories.ts"
-            },
-            {
-              "label": "Framework integration",
-              "path": "docs/framework-integration.md"
-            },
-            {
-              "label": "Application shell contract",
-              "path": "agent/patterns/application-shell/pattern.agent.json"
-            }
-          ]
-        },
-        "props": {
-          "gradientPreset": {
-            "type": "ShellGradientPreset",
-            "required": false
-          },
-          "navStyle": {
-            "type": "NavChromeStyle",
-            "required": false
-          },
-          "shortcutsEnabled": {
-            "type": "boolean",
-            "required": false
-          }
-        },
-        "events": [],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-app-shell",
-          "react": "DsAppShell",
-          "angular": "DsAppShell"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
       "name": "attachment-list",
       "title": "AttachmentList",
       "description": "Channel-neutral list of message attachments with name, media type, size, and optional safe link.",
@@ -690,7 +566,7 @@
             "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
             "Use the ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot.",
             "When enabled, the ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
-            "Enabled shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+            "Enabled shell gradient rings align automatically inside active ShellApp gradient chrome and may be explicitly enabled or disabled when composition requires it."
           ],
           "responsiveBehavior": [
             "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",
@@ -767,7 +643,7 @@
     {
       "name": "bar-nav",
       "title": "BarNav",
-      "description": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
+      "description": "Required secondary route navigation within ShellApp, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -778,9 +654,9 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
+          "summary": "Required secondary route navigation within ShellApp, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
           "useWhen": [
-            "Rendering the required secondary navigation region inside AppShell.",
+            "Rendering the required secondary navigation region inside ShellApp.",
             "The active primary destination has peer route sections that users can navigate between.",
             "The active primary destination has no route sections or is showing a detail route and its destination label must preserve the BarNav region."
           ],
@@ -789,7 +665,7 @@
             "A third navigation level is needed; BarNav is never tertiary navigation.",
             "The choices switch local content without navigating routes; use TabGroup instead.",
             "Document-style tabs need reordering, pinning, closing, or user customization.",
-            "BarNav would be mounted outside the application's single AppShell."
+            "BarNav would be mounted outside the application's single ShellApp."
           ],
           "alternatives": [
             {
@@ -809,7 +685,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-app-shell",
+            "component:ds-shell-app",
             "component:ds-panel-nav",
             "component:ds-panel-tools"
           ],
@@ -838,7 +714,7 @@
             "Keep the BarNav region present so shell height and main-content origin remain stable across routes.",
             "Allow the built-in overflow behavior to move trailing sections into Menu when the available width is insufficient.",
             "The active section does not need to remain visible in the tab row when it moves into overflow because page content supplies the page title.",
-            "Do not infer mobile navigation behavior from desktop BarNav; future AppShell mobile composition may use a different navigation design."
+            "Do not infer mobile navigation behavior from desktop BarNav; future ShellApp mobile composition may use a different navigation design."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -924,6 +800,190 @@
         "button-unfilled",
         "menu",
         "text"
+      ]
+    },
+    {
+      "name": "bar-title",
+      "title": "BarTitle",
+      "description": "Page-level title chrome with optional Back navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-title",
+        "source": "src/wc/components/BarTitle/BarTitle.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Page-level title chrome with optional Back navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+          "useWhen": [
+            "A top-level page needs one h1 above its content.",
+            "A list or detail page has multiple route-level sections that belong in the inline active-section menu.",
+            "A detail, create, or edit page needs a page-level Back action.",
+            "A page needs one primary action plus optional secondary or destructive overflow commands."
+          ],
+          "avoidWhen": [
+            "The title belongs to a PanelTools drawer or fullscreen pane; use PanelToolHeader through PanelTools instead.",
+            "The choices are primary application destinations or BarNav destinations rather than sections within the current page.",
+            "The heading belongs to a card, modal, or other bounded region rather than the page.",
+            "Local panels inside page content should remain directly selectable; use TabGroup instead.",
+            "Automatic sticky or responsive page orchestration is required; compose BarTitle in ShellPage rather than implementing it in the header."
+          ],
+          "alternatives": [
+            {
+              "when": "The header belongs to a PanelTools product view.",
+              "component": "component:ds-panel-tool-header",
+              "reason": "PanelToolHeader owns pane-level Back and actions without creating page chrome."
+            },
+            {
+              "when": "A small set of inner-page panels should remain visible as tabs.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup is the local content-view control rather than route-level page title chrome."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-page",
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-menu",
+            "component:ds-text"
+          ],
+          "patterns": [
+            "pattern:shell-page"
+          ],
+          "accessibility": [
+            "Provide one concise heading; BarTitle renders exactly one h1 and changes only its visual recipe between variants.",
+            "Give Back a destination-specific accessible name such as Back to Drivers, provide the concise parent label such as Drivers for the expanded breadcrumb, and handle dsBack in the route owner.",
+            "Keep value synchronized with the current child route; dsSectionChange returns the selected section id.",
+            "Section and overflow triggers expose menu relationships and restore focus after selection or dismissal.",
+            "Use one filled primary action in the page decision area and mark destructive overflow actions explicitly."
+          ],
+          "states": [
+            "Omitting Back, sections, primaryAction, and actions produces the top-level title-only header.",
+            "Two or more selectable sections add the inline section trigger; one section does not render a redundant menu.",
+            "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
+            "expanded renders the larger heading, optional description, inset divider, and an xs icon-label Back breadcrumb above a flush-left h1; compact renders 48px chrome with inline Back; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
+            "primaryAction collapse defaults to auto. Use never for Save-like actions whose hierarchy must remain visible in constrained layouts."
+          ],
+          "responsiveBehavior": [
+            "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
+            "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
+            "Compact titles use the shared md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
+            "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+              "Handle dsBack in the router owner, update value after dsSectionChange, and execute product commands from dsAction."
+            ],
+            "react": [
+              "Pass arrays and objects directly to DsBarTitle and keep value controlled from route state.",
+              "Place DsBarTitle in DsShellPage with slot=header when automatic page behavior is required."
+            ],
+            "angular": [
+              "Bind complex values on the standalone DsBarTitle adapter and handle the three intent events in the route shell.",
+              "Place ds-bar-title in ds-shell-page with slot=header; do not render router-outlet inside BarTitle."
+            ]
+          },
+          "references": [
+            {
+              "label": "Explicit variant examples",
+              "path": "src/wc/components/BarTitle/BarTitle.stories.ts"
+            },
+            {
+              "label": "ShellPage composition and responsive examples",
+              "path": "src/wc/components/ShellPage/ShellPage.stories.ts"
+            },
+            {
+              "label": "Cross-browser shell-page and header coverage",
+              "path": "tests/e2e/bar-title.spec.ts"
+            }
+          ]
+        },
+        "props": {
+          "actions": {
+            "type": "BarTitleActionItem[]",
+            "required": false
+          },
+          "actionsAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "backAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "backLabel": {
+            "type": "string",
+            "required": false
+          },
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "primaryAction": {
+            "type": "BarTitlePrimaryAction | null",
+            "required": false
+          },
+          "sections": {
+            "type": "BarTitleSectionItem[]",
+            "required": false
+          },
+          "sectionsAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "showBack": {
+            "type": "boolean",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          },
+          "variant": {
+            "type": "BarTitleVariant",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAction",
+            "detail": "string"
+          },
+          {
+            "name": "dsBack",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsSectionChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-bar-title",
+          "react": "DsBarTitle",
+          "angular": "DsBarTitle"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-filled",
+        "button-unfilled",
+        "icon",
+        "menu",
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -2467,7 +2527,7 @@
             "component:ds-button-unfilled"
           ],
           "accessibility": [
-            "The copy action has explicit status wording and the code remains selectable text.",
+            "The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.",
             "Language and filename labels supplement rather than replace the code content."
           ],
           "responsiveBehavior": [
@@ -2508,7 +2568,8 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "text"
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -4017,16 +4078,16 @@
             "pattern:conversation"
           ],
           "accessibility": [
-            "Always provide a localized textarea label and submit or stop action names.",
+            "Always provide a localized textarea label and submit or stop action names; the built-in icon action exposes the same name in its tooltip.",
             "Shift plus Enter inserts a newline while Enter submits non-empty content.",
             "Streaming and error states remain perceivable without relying on icon shape alone."
           ],
           "states": [
             "The owner controls draft value and transport state; the composer emits intent without performing transport.",
-            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. These icon buttons use the standard non-rounded control radius.",
+            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. These icon buttons use the standard non-rounded control radius, and the application supplies tooltips for slotted icon actions.",
             "The composer surface uses the 10px --dimension-radius-125 token.",
             "Mouse or keyboard focus on the textarea gives the complete composer surface the same bold-brand inset stroke width and color as an active Input; the native textarea never draws a separate outline.",
-            "The submit action defaults to brand for both agent and person-to-person conversations; change submitIntent only when the action consequence has a different semantic intent."
+            "The empty or otherwise inactive submit action is a disabled bordered ButtonUnfilled. Ready submit actions use submitIntent, while the streaming stop action remains a bold-brand ButtonFilled."
           ],
           "responsiveBehavior": [
             "The textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally."
@@ -4094,7 +4155,9 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "button-filled"
+        "button-filled",
+        "button-unfilled",
+        "tooltip"
       ]
     },
     {
@@ -4128,7 +4191,7 @@
           "accessibility": [
             "Give each transcript a concise localized label.",
             "New content is exposed through log semantics without stealing focus.",
-            "The scroll-to-latest control remains keyboard accessible when follow behavior is released."
+            "The scroll-to-latest control remains keyboard accessible when follow behavior is released and exposes its action name in a tooltip."
           ],
           "states": [
             "Selection and transcript interaction release automatic following.",
@@ -4182,7 +4245,8 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "button-unfilled"
+        "button-unfilled",
+        "tooltip"
       ]
     },
     {
@@ -4238,7 +4302,7 @@
           "accessibility": [
             "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
             "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
-            "Opening the native modal dialog moves focus to the header Close action, traps Tab navigation inside the top layer, and makes outside content inert.",
+            "Opening the native modal dialog moves focus to the header Close action, whose visible tooltip matches its accessible name, traps Tab navigation inside the top layer, and makes outside content inert.",
             "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
             "After exit motion completes, the native dialog leaves the top layer, focus returns to the previously focused element, and dsAfterClose emits.",
             "Use visible label-only footer buttons. Keep at most two actions: one bold filled primary action followed by one bordered unfilled action, or two bordered unfilled actions.",
@@ -4335,7 +4399,8 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "text"
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -4383,7 +4448,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-app-shell",
+            "component:ds-shell-app",
             "component:ds-bar-nav",
             "component:ds-panel-tools",
             "component:ds-menu"
@@ -4414,7 +4479,7 @@
             "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
             "From 768px through 1199px, present PanelNav permanently collapsed and do not allow user expansion.",
             "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
-            "AppShell permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
+            "ShellApp permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
             "When the viewport is below breakpoint, PanelNav locks collapsed, disables its header toggle affordance, and preserves the persisted desktop collapse preference.",
             "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
           ],
@@ -4425,12 +4490,12 @@
             ],
             "react": [
               "Pass groups as an array through the generated React wrapper and synchronize currentUrl with the host router.",
-              "AppShell owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
+              "ShellApp owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
             ],
             "angular": [
               "Import DsPanelNav from @ds-mo/ui/angular/ds-panel-nav and bind groups as a property.",
               "Bind both the nav-style attribute and navStyle property when first-paint route styling must be deterministic.",
-              "AppShell owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
+              "ShellApp owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
             ]
           },
           "references": [
@@ -4616,7 +4681,7 @@
             {
               "when": "The choices are secondary application routes.",
               "component": "component:ds-bar-nav",
-              "reason": "BarNav owns route sections inside AppShell."
+              "reason": "BarNav owns route sections inside ShellApp."
             },
             {
               "when": "The choices are transient actions or options.",
@@ -4731,7 +4796,7 @@
             "component:ds-button-unfilled"
           ],
           "accessibility": [
-            "Leading navigation or dismiss actions and trailing icon actions require concise localized names.",
+            "Leading navigation or dismiss actions and trailing icon actions require concise localized names; the header reuses each name as the action tooltip.",
             "The visible heading names the active panel or subview."
           ],
           "states": [
@@ -4821,7 +4886,8 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "text"
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -4855,13 +4921,13 @@
           ],
           "accessibility": [
             "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
-            "The standard search clear action restores focus and emits both the empty query and dsClear.",
-            "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection."
+            "The standard search clear action restores focus, exposes its localized name in a tooltip, and emits both the empty query and dsClear.",
+            "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection; filterAriaLabel also labels its tooltip."
           ],
           "states": [
             "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px, and a 20px md search icon.",
             "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
-            "The row and control surface remain transparent so the AppShell chrome wash is visible behind them.",
+            "The row and control surface remain transparent so the ShellApp chrome wash is visible behind them.",
             "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
             "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
           ],
@@ -4965,13 +5031,14 @@
         "button-unfilled",
         "divider",
         "icon",
-        "text"
+        "text",
+        "tooltip"
       ]
     },
     {
       "name": "panel-tools",
       "title": "PanelTools",
-      "description": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+      "description": "Required ShellApp utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4982,9 +5049,9 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+          "summary": "Required ShellApp utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
           "useWhen": [
-            "Composing the required global tools region inside the application's single AppShell.",
+            "Composing the required global tools region inside the application's single ShellApp.",
             "Users need to move between application-wide utilities without losing each tool's in-progress state.",
             "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
           ],
@@ -4992,8 +5059,8 @@
             "The action is specific to the current page or selected content rather than globally available across the application.",
             "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
             "A consumer wants to add arbitrary tools, reorder fixed tools, or repurpose a semantic tool id.",
-            "Building the mobile tools experience; future mobile AppShell composition uses a different bottom-bar and panel pattern.",
-            "PanelTools would be mounted outside the application's single AppShell."
+            "Building the mobile tools experience; future mobile ShellApp composition uses a different bottom-bar and panel pattern.",
+            "PanelTools would be mounted outside the application's single ShellApp."
           ],
           "alternatives": [
             {
@@ -5013,7 +5080,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-app-shell",
+            "component:ds-shell-app",
             "component:ds-panel-nav",
             "component:ds-bar-nav"
           ],
@@ -5041,7 +5108,7 @@
             "Each tool supplies its current header title, base-versus-detail Back state, and right-side actions through the headers property. Base views omit Back; deeper views expose Back and update the same header in place.",
             "Header Back and action events express intent only; the owning tool changes product navigation, menus, and data state. PanelTools keeps the final header action exactly 8px from the drawer edge.",
             "Menus opened from a right-side header action use PANEL_TOOLS_HEADER_MENU_PLACEMENT: bottom/end choice-cell alignment and a 12px side offset, placing the popup 4px below the 48px header while aligning the final menu item edge with the trigger.",
-            "Tool view roots stay transparent so AppShell's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
+            "Tool view roots stay transparent so ShellApp's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
             "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
@@ -5052,8 +5119,8 @@
           ],
           "responsiveBehavior": [
             "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
-            "AppShell owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
-            "Below 768px, do not reuse desktop PanelTools: future AppShell mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
+            "ShellApp owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
+            "Below 768px, do not reuse desktop PanelTools: future ShellApp mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
             "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
             "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
             "Use fixed drawer widths for now; do not add user resizing or width persistence."
@@ -5062,10 +5129,10 @@
             "customElements": [
               "Assign items as a JavaScript property for structured data; items-json is the string fallback.",
               "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
-              "Keep PanelTools mounted at AppShell scope across route changes and provide each product through its matching named slot."
+              "Keep PanelTools mounted at ShellApp scope across route changes and provide each product through its matching named slot."
             ],
             "react": [
-              "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at AppShell scope.",
+              "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
               "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
             ],
             "angular": [
@@ -5591,7 +5658,8 @@
         "empty-state",
         "icon",
         "loader",
-        "text"
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -5854,13 +5922,141 @@
         "empty-state",
         "icon",
         "loader",
-        "text"
+        "text",
+        "tooltip"
       ]
+    },
+    {
+      "name": "shell-app",
+      "title": "ShellApp",
+      "description": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-app",
+        "source": "src/wc/components/ShellApp/ShellApp.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "stable",
+          "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
+          "useWhen": [
+            "Building any standard authenticated product or workspace page with CompoMo.",
+            "PanelNav, BarNav, PanelTools, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
+            "Future application templates need the supported base-page composition boundary."
+          ],
+          "avoidWhen": [
+            "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences that require a different layout.",
+            "Another ShellApp already exists in the page; applications must render exactly one and must never nest ShellApps.",
+            "Building content inside an existing ShellApp; render the page content rather than another shell."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-panel-nav",
+            "component:ds-bar-nav",
+            "component:ds-panel-tools",
+            "component:ds-shell-page",
+            "component:ds-swatch-picker"
+          ],
+          "patterns": [
+            "pattern:application-shell",
+            "pattern:shell-page"
+          ],
+          "accessibility": [
+            "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
+            "Ensure the default content region contains the page's single main landmark.",
+            "Keep PanelNav, BarNav, and PanelTools chrome available in the shell's supported desktop and tablet compositions.",
+            "Do not override browser keyboard chords when enabling shell shortcuts.",
+            "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
+            "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
+          ],
+          "states": [
+            "Render exactly one ShellApp as the workspace root and never nest it.",
+            "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
+            "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
+            "ShellApp propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
+            "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
+            "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
+            "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
+            "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
+            "BarNav remains present: it shows route-section tabs when available and the active PanelNav destination label as heading otherwise.",
+            "Render one ShellPage as the default-slot child for each standard routed page; ShellApp owns the content scroller while ShellPage owns page header stickiness and content inset.",
+            "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
+          ],
+          "responsiveBehavior": [
+            "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
+            "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
+            "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
+            "On mobile, ShellApp remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
+            "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
+            "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until ShellApp provides it."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign complex navigation and tool collections as JavaScript properties on the slotted components.",
+              "Stamp route-derived nav-style before components connect when deterministic first paint is required."
+            ],
+            "react": [
+              "Use generated wrappers and preserve native slot names for PanelNav, BarNav, PanelTools, and main content.",
+              "Resolve all shell inputs from one router state before rendering the composition."
+            ],
+            "angular": [
+              "Use generated standalone adapters and preserve slot attributes in templates.",
+              "Bind complex inputs as properties and update navigation inputs atomically from one resolved router state.",
+              "Bind both nav-style attributes and properties when deterministic first paint is required."
+            ]
+          },
+          "references": [
+            {
+              "label": "Component guide",
+              "path": "src/wc/components/ShellApp/ShellApp.mdx"
+            },
+            {
+              "label": "Executable Storybook composition",
+              "path": "src/wc/components/ShellApp/ShellApp.stories.ts"
+            },
+            {
+              "label": "Framework integration",
+              "path": "docs/framework-integration.md"
+            },
+            {
+              "label": "Application shell contract",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "gradientPreset": {
+            "type": "ShellGradientPreset",
+            "required": false
+          },
+          "navStyle": {
+            "type": "NavChromeStyle",
+            "required": false
+          },
+          "shortcutsEnabled": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-app",
+          "react": "DsShellApp",
+          "angular": "DsShellApp"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
     },
     {
       "name": "shell-gradient-picker",
       "title": "ShellGradientPicker",
-      "description": "Deprecated compatibility wrapper that maps the fixed AppShell wash presets into SwatchPicker.",
+      "description": "Deprecated compatibility wrapper that maps the fixed ShellApp wash presets into SwatchPicker.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5873,10 +6069,10 @@
           "status": "deprecated",
           "replacedBy": "component:ds-swatch-picker",
           "replacementReason": "SwatchPicker now owns the same accessible interaction with a generic option model that supports both flat colors and gradients.",
-          "summary": "Deprecated compatibility wrapper that maps the fixed AppShell wash presets into SwatchPicker.",
+          "summary": "Deprecated compatibility wrapper that maps the fixed ShellApp wash presets into SwatchPicker.",
           "useWhen": [
             "Adding the Appearance or Theme section to the application's user or account menu.",
-            "Users must choose the global AppShell chrome treatment from none, cool, neutral, warm, or fresh."
+            "Users must choose the global ShellApp chrome treatment from none, cool, neutral, warm, or fresh."
           ],
           "avoidWhen": [
             "Choosing semantic intent, page background, chart, content, or brand colors.",
@@ -5892,7 +6088,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-app-shell",
+            "component:ds-shell-app",
             "component:ds-menu"
           ],
           "patterns": [
@@ -5906,7 +6102,7 @@
           "states": [
             "Neutral is the default preset; none renders solid shell chrome without a wash.",
             "Cool, neutral, warm, and fresh use design tokens and automatically adapt to the active light or dark color theme.",
-            "Apply dsChange immediately to AppShell.gradientPreset and keep the containing account menu open.",
+            "Apply dsChange immediately to ShellApp.gradientPreset and keep the containing account menu open.",
             "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
             "Treat the fixed preset union as the only supported values and do not construct custom gradients."
           ],
@@ -5916,7 +6112,7 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Listen for dsChange, resolve application preference precedence, and assign the result to the single AppShell gradientPreset property."
+              "Listen for dsChange, resolve application preference precedence, and assign the result to the single ShellApp gradientPreset property."
             ],
             "react": [
               "Use the generated wrapper and handle onDsChange without closing the containing account menu."
@@ -5931,8 +6127,8 @@
               "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
             },
             {
-              "label": "AppShell gradient contract",
-              "path": "src/wc/components/AppShell/AppShell.mdx"
+              "label": "ShellApp gradient contract",
+              "path": "src/wc/components/ShellApp/ShellApp.mdx"
             },
             {
               "label": "Application shell composition",
@@ -5974,7 +6170,7 @@
     {
       "name": "shell-gradient-swatch",
       "title": "ShellGradientSwatch",
-      "description": "Deprecated internal compatibility component for one legacy AppShell gradient swatch.",
+      "description": "Deprecated internal compatibility component for one legacy ShellApp gradient swatch.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5987,7 +6183,7 @@
           "status": "deprecated",
           "replacedBy": "component:ds-swatch-picker",
           "replacementReason": "SwatchPicker renders its option buttons internally so an individually published radio swatch is no longer needed.",
-          "summary": "Deprecated internal compatibility component for one legacy AppShell gradient swatch.",
+          "summary": "Deprecated internal compatibility component for one legacy ShellApp gradient swatch.",
           "useWhen": [
             "Maintaining or extending ShellGradientPicker inside CompoMo."
           ],
@@ -6066,6 +6262,123 @@
           "customElement": "ds-shell-gradient-swatch",
           "react": "DsShellGradientSwatch",
           "angular": "DsShellGradientSwatch"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "shell-page",
+      "title": "ShellPage",
+      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-page",
+        "source": "src/wc/components/ShellPage/ShellPage.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+          "useWhen": [
+            "Rendering a standard routed page inside ShellApp's default content region.",
+            "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the page column narrows.",
+            "Pages need consistent content gutters with an explicit full-bleed option."
+          ],
+          "avoidWhen": [
+            "Building authentication, onboarding, public, modal, drawer, or intentionally focused fullscreen layouts outside the standard ShellApp page region.",
+            "Another ShellPage already owns the routed page; never nest ShellPages.",
+            "A bounded card or pane needs its own header rather than a page-level main landmark."
+          ],
+          "alternatives": [
+            {
+              "when": "The composition is a persistent application-wide workspace frame.",
+              "component": "component:ds-shell-app",
+              "reason": "ShellApp owns global navigation, tools, and the content scroll region; ShellPage belongs inside it."
+            },
+            {
+              "when": "Only static page title chrome is required without sticky or responsive orchestration.",
+              "component": "component:ds-bar-title",
+              "reason": "BarTitle can be used standalone with an explicit variant."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-bar-title",
+            "component:ds-tab-group"
+          ],
+          "patterns": [
+            "pattern:shell-page"
+          ],
+          "accessibility": [
+            "ShellPage exposes the routed page as the main landmark; render exactly one active ShellPage inside ShellApp.",
+            "Provide exactly one BarTitle through the header slot so the page has one h1.",
+            "Keep loading, empty, validation, error, progress, success, and failure communication in the default product-content slot.",
+            "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
+          ],
+          "states": [
+            "headerPresentation=auto selects expanded, compact, or constrained from ShellPage's own inline capacity and scroll position.",
+            "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
+            "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
+            "The required header slot accepts one BarTitle. The default slot owns router output and all page product content."
+          ],
+          "responsiveBehavior": [
+            "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
+            "Roomy pages expand at the top and compact after scroll; medium-capacity pages start compact; narrow pages use the constrained header variant.",
+            "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
+            "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
+            "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Import ShellPage and BarTitle, place one ds-bar-title in slot=header, and render route content as default children.",
+              "Do not set BarTitle.variant while ShellPage owns headerPresentation."
+            ],
+            "react": [
+              "Render DsBarTitle with slot=header inside DsShellPage and keep routed content as the remaining children.",
+              "Use contentInset none only for deliberately full-bleed page products."
+            ],
+            "angular": [
+              "Import the generated standalone DsShellPage and DsBarTitle adapters, preserve slot=header, and place router-outlet in the ShellPage default slot.",
+              "Do not add another overflow auto wrapper around the routed page."
+            ]
+          },
+          "references": [
+            {
+              "label": "Page-family and responsive examples",
+              "path": "src/wc/components/ShellPage/ShellPage.stories.ts"
+            },
+            {
+              "label": "Cross-browser geometry and interaction coverage",
+              "path": "tests/e2e/bar-title.spec.ts"
+            },
+            {
+              "label": "Reusable framework composition",
+              "path": "agent/patterns/shell-page/pattern.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "contentInset": {
+            "type": "ShellPageContentInset",
+            "required": false
+          },
+          "headerPresentation": {
+            "type": "ShellPageHeaderPresentation",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-page",
+          "react": "DsShellPage",
+          "angular": "DsShellPage"
         }
       },
       "dependencies": [
@@ -6482,7 +6795,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-menu",
-            "component:ds-app-shell"
+            "component:ds-shell-app"
           ],
           "accessibility": [
             "Provide a localized groupLabel describing the complete choice.",

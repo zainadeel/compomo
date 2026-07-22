@@ -738,7 +738,8 @@
     "empty-state",
     "icon",
     "loader",
-    "text"
+    "text",
+    "tooltip"
   ],
   "files": [
     {

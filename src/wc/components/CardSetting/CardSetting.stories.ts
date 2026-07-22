@@ -7,7 +7,7 @@ import type { CardSettingActionDetail } from './CardSetting';
 const WIDTHS = ['sm', 'md', 'lg'] as const;
 
 const meta: Meta = {
-  title: 'Layout/CardSetting',
+  title: 'Cards/CardSetting',
   tags: ['autodocs'],
   argTypes: {
     heading: { control: 'text' },

@@ -31,7 +31,7 @@ export const PANEL_TOOLS_SHORTCUTS: Partial<Record<PanelToolsToolId, string>> = 
   messages: 'M',
   stacks: 'S',
   activity: 'N',
-  help: '?',
+  help: '/',
 };
 
 export interface PanelToolsItem {

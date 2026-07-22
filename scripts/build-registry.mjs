@@ -116,7 +116,10 @@ function usage(component, docs) {
 function cleanOutput() {
   fs.mkdirSync(OUT, { recursive: true });
   for (const filename of fs.readdirSync(OUT)) {
-    if (filename === 'registry.json' || /^[a-z0-9]+(?:-[a-z0-9]+)*\.json$/.test(filename)) {
+    // public/r is fully generated. Remove every JSON artifact, including Apple
+    // File Provider collision copies such as `button-filled 2.json`, so stale
+    // registry entries cannot leak into the packaged MCP snapshot.
+    if (filename.endsWith('.json')) {
       fs.rmSync(path.join(OUT, filename));
     }
   }

@@ -38,7 +38,7 @@
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-app-shell",
+    "component:ds-shell-app",
     "component:ds-bar-nav",
     "component:ds-panel-tools",
     "component:ds-menu"
@@ -69,7 +69,7 @@
     "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
     "From 768px through 1199px, present PanelNav permanently collapsed and do not allow user expansion.",
     "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
-    "AppShell permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
+    "ShellApp permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
     "When the viewport is below breakpoint, PanelNav locks collapsed, disables its header toggle affordance, and preserves the persisted desktop collapse preference.",
     "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
   ],
@@ -80,12 +80,12 @@
     ],
     "react": [
       "Pass groups as an array through the generated React wrapper and synchronize currentUrl with the host router.",
-      "AppShell owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
+      "ShellApp owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
     ],
     "angular": [
       "Import DsPanelNav from @ds-mo/ui/angular/ds-panel-nav and bind groups as a property.",
       "Bind both the nav-style attribute and navStyle property when first-paint route styling must be deterministic.",
-      "AppShell owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
+      "ShellApp owns mobile replacement; PanelNav enforces its configured breakpoint expansion lock."
     ]
   },
   "references": [

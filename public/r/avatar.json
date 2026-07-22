@@ -142,7 +142,7 @@
   "files": [
     {
       "path": "src/wc/components/Avatar/Avatar.css",
-      "content": ":host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-400);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n",
+      "content": ":host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-400);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) var(--color-foreground-quaternary);\n}\n",
       "type": "registry:ui"
     },
     {

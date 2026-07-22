@@ -4,7 +4,7 @@
   "id": "pattern:application-shell",
   "kind": "pattern",
   "status": "experimental",
-  "summary": "Required base-page composition for standard authenticated applications, with one AppShell coordinating primary destinations, secondary route sections, tools chrome, responsive modes, and stable main content geometry.",
+  "summary": "Required base-page composition for standard authenticated applications, with one ShellApp coordinating primary destinations, secondary route sections, tools chrome, responsive modes, and stable main content geometry.",
   "useWhen": [
     "Building any standard authenticated product or workspace page with CompoMo.",
     "Application navigation and tools must remain consistent around changing route content.",
@@ -12,12 +12,12 @@
   ],
   "avoidWhen": [
     "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences.",
-    "The page is already rendered inside an AppShell.",
+    "The page is already rendered inside an ShellApp.",
     "A nested or second application shell is being considered."
   ],
   "components": [
     {
-      "component": "component:ds-app-shell",
+      "component": "component:ds-shell-app",
       "role": "Provides the single workspace root and coordinates shell composition, shared chrome, responsive modes, and stable content geometry.",
       "required": true
     },
@@ -39,7 +39,7 @@
   ],
   "stateOwnership": [
     "The application router owns the current route, Dashboard or Settings context, authorization filtering, destination and section collections, localized labels, and navigation execution.",
-    "AppShell owns desktop, tablet, and mobile composition, shell geometry, navStyle propagation, gradient alignment, chrome transitions, metrics, and shell shortcuts.",
+    "ShellApp owns desktop, tablet, and mobile composition, shell geometry, navStyle propagation, gradient alignment, chrome transitions, metrics, and shell shortcuts.",
     "PanelNav owns primary-destination presentation and the user-controlled desktop collapse preference.",
     "BarNav derives the active secondary route from currentUrl and basePath and receives the active PanelNav destination label as heading.",
     "PanelTools owns tool-rail and drawer interaction while the application owns available tool content and active-tool state.",
@@ -56,15 +56,15 @@
     "Use fixed system breakpoints: desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
     "Desktop permits PanelNav expansion and collapse and restores the persisted user preference.",
     "Tablet keeps PanelNav permanently collapsed and does not overwrite the desktop preference.",
-    "Mobile keeps AppShell as the root while replacing desktop navigation with a future dedicated mobile navigation design.",
+    "Mobile keeps ShellApp as the root while replacing desktop navigation with a future dedicated mobile navigation design.",
     "Keep BarNav height, PanelTools chrome, and main-content origin stable across route changes.",
-    "Treat the complete responsive composition as an intended contract that is not yet fully implemented by the current AppShell runtime."
+    "Treat the complete responsive composition as an intended contract that is not yet fully implemented by the current ShellApp runtime."
   ],
   "implementations": {
     "customElements": {
       "status": "verified",
       "references": [
-        "src/wc/components/AppShell/AppShell.stories.ts",
+        "src/wc/components/ShellApp/ShellApp.stories.ts",
         "docs/framework-integration.md"
       ]
     },
@@ -84,7 +84,7 @@
     }
   },
   "references": [
-    "src/wc/components/AppShell/AppShell.mdx",
+    "src/wc/components/ShellApp/ShellApp.mdx",
     "docs/framework-integration.md"
   ]
 }

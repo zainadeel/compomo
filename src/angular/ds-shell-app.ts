@@ -6,21 +6,21 @@ import { ProxyCmp } from './angular-component-lib/utils';
 
 import type { Components } from '@ds-mo/ui/components';
 
-import { defineCustomElement as defineDsAppShell } from '@ds-mo/ui/components/ds-app-shell.js';
+import { defineCustomElement as defineDsShellApp } from '@ds-mo/ui/components/ds-shell-app.js';
 
 @ProxyCmp({
-  defineCustomElementFn: defineDsAppShell,
+  defineCustomElementFn: defineDsShellApp,
   inputs: ['gradientPreset', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
-  selector: 'ds-app-shell',
+  selector: 'ds-shell-app',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['gradientPreset', 'navStyle', 'shortcutsEnabled'],
 })
-export class DsAppShell {
-  protected el: HTMLDsAppShellElement;
+export class DsShellApp {
+  protected el: HTMLDsShellAppElement;
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
@@ -28,6 +28,6 @@ export class DsAppShell {
 }
 
 
-export declare interface DsAppShell extends Components.DsAppShell {}
+export declare interface DsShellApp extends Components.DsShellApp {}
 
 

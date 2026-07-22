@@ -50,7 +50,7 @@ export declare interface DsPanelNav extends Components.DsPanelNav {
    */
   dsNavToggle: EventEmitter<DsPanelNavCustomEvent<boolean>>;
   /**
-   * Bubbling lifecycle — `ds-app-shell` pauses chrome metrics during width motion.
+   * Bubbling lifecycle — `ds-shell-app` pauses chrome metrics during width motion.
    */
   dsChromeTransitionStart: EventEmitter<DsPanelNavCustomEvent<IDsPanelNavChromeTransitionDetail>>;
 

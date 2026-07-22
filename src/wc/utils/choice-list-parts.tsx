@@ -52,21 +52,27 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
           onKeyDown={onKeyDown}
         />
         {value && !disabled && (
-          <ds-button-unfilled
+          <ds-tooltip
             class="select-search__clear"
-            variant="icon"
+            label={`${clearLabel} ${placeholder}`}
+            side="top"
             size="sm"
-            icon="CrossCircle"
-            hasBorder={false}
-            rounded
-            ariaLabel={`${clearLabel} ${placeholder}`}
-            onDsChange={event => event.stopPropagation()}
-            onDsClick={() => {
-              onValueChange('');
-              onClear?.();
-              requestAnimationFrame(() => inputElement?.focus());
-            }}
-          />
+          >
+            <ds-button-unfilled
+              variant="icon"
+              size="sm"
+              icon="CrossCircle"
+              hasBorder={false}
+              rounded
+              ariaLabel={`${clearLabel} ${placeholder}`}
+              onDsChange={event => event.stopPropagation()}
+              onDsClick={() => {
+                onValueChange('');
+                onClear?.();
+                requestAnimationFrame(() => inputElement?.focus());
+              }}
+            />
+          </ds-tooltip>
         )}
       </div>
     </div>

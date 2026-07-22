@@ -96,7 +96,7 @@ ds-text.modal-heading {
   user-select: none;
 }
 
-.modal-close {
+.modal-close-tooltip {
   flex: 0 0 auto;
 }
 

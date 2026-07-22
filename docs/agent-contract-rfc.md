@@ -99,7 +99,7 @@ The first curated intent records are:
 
 - `ds-button-filled`: selection and alternatives
 - `ds-menu`: complex state, properties, events, and anchoring
-- `ds-app-shell`: responsive composition and framework caveats
+- `ds-shell-app`: responsive composition and framework caveats
 - `application-shell`: central cross-component pattern
 - TokoMo: background color, spacing, typography, and motion token families
 - IcoMo: notification, directional, and success icon families

@@ -7,9 +7,9 @@
   "tag": "ds-bar-nav",
   "audience": "specialized",
   "status": "stable",
-  "summary": "Required secondary route navigation within AppShell, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
+  "summary": "Required secondary route navigation within ShellApp, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
   "useWhen": [
-    "Rendering the required secondary navigation region inside AppShell.",
+    "Rendering the required secondary navigation region inside ShellApp.",
     "The active primary destination has peer route sections that users can navigate between.",
     "The active primary destination has no route sections or is showing a detail route and its destination label must preserve the BarNav region."
   ],
@@ -18,7 +18,7 @@
     "A third navigation level is needed; BarNav is never tertiary navigation.",
     "The choices switch local content without navigating routes; use TabGroup instead.",
     "Document-style tabs need reordering, pinning, closing, or user customization.",
-    "BarNav would be mounted outside the application's single AppShell."
+    "BarNav would be mounted outside the application's single ShellApp."
   ],
   "alternatives": [
     {
@@ -38,7 +38,7 @@
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-app-shell",
+    "component:ds-shell-app",
     "component:ds-panel-nav",
     "component:ds-panel-tools"
   ],
@@ -67,7 +67,7 @@
     "Keep the BarNav region present so shell height and main-content origin remain stable across routes.",
     "Allow the built-in overflow behavior to move trailing sections into Menu when the available width is insufficient.",
     "The active section does not need to remain visible in the tab row when it moves into overflow because page content supplies the page title.",
-    "Do not infer mobile navigation behavior from desktop BarNav; future AppShell mobile composition may use a different navigation design."
+    "Do not infer mobile navigation behavior from desktop BarNav; future ShellApp mobile composition may use a different navigation design."
   ],
   "frameworkCaveats": {
     "customElements": [

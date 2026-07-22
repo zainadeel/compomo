@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('App shell chrome', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/app-shell-chrome.html');
+    await page.goto('/shell-app-chrome.html');
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   });
 
@@ -28,9 +28,9 @@ test.describe('App shell chrome', () => {
   });
 
   test('contains page scrolling without moving the shell viewport', async ({ page }) => {
-    const shell = page.locator('ds-app-shell');
-    const shellRoot = page.locator('.app-shell');
-    const content = page.locator('.app-shell__content');
+    const shell = page.locator('ds-shell-app');
+    const shellRoot = page.locator('.shell-app');
+    const content = page.locator('.shell-app__content');
 
     await shell.evaluate(element => {
       element.style.height = '720px';
@@ -55,7 +55,7 @@ test.describe('App shell chrome', () => {
     await expect.poll(() => content.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
 
     const beforeBoundaryWheel = await page.evaluate(() => ({
-      shell: document.querySelector('ds-app-shell')!.getBoundingClientRect().toJSON(),
+      shell: document.querySelector('ds-shell-app')!.getBoundingClientRect().toJSON(),
       windowX: window.scrollX,
       windowY: window.scrollY,
     }));
@@ -67,7 +67,7 @@ test.describe('App shell chrome', () => {
     await page.mouse.wheel(240, 480);
 
     const afterBoundaryWheel = await page.evaluate(() => ({
-      shell: document.querySelector('ds-app-shell')!.getBoundingClientRect().toJSON(),
+      shell: document.querySelector('ds-shell-app')!.getBoundingClientRect().toJSON(),
       windowX: window.scrollX,
       windowY: window.scrollY,
     }));
@@ -117,7 +117,7 @@ test.describe('App shell chrome', () => {
 
   test('keeps fixed 4px header gaps while only the title shrinks', async ({ page }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    const shell = page.locator('ds-app-shell');
+    const shell = page.locator('ds-shell-app');
     const tools = page.locator('ds-panel-tools');
     const drawer = page.locator('.panel-tools__drawer');
     const leading = page.locator('.panel-tool-header__leading');
@@ -484,7 +484,7 @@ test.describe('App shell chrome', () => {
 
   test('rapid collapse reversal emits one balanced chrome transition', async ({ page }) => {
     const transitionCounts = await page.evaluate(async () => {
-      const shell = document.querySelector('ds-app-shell')!;
+      const shell = document.querySelector('ds-shell-app')!;
       const panel = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
       let starts = 0;
       let ends = 0;
@@ -517,8 +517,8 @@ test.describe('App shell chrome', () => {
   });
 
   test('none preset keeps the solid secondary chrome layer mounted', async ({ page }) => {
-    const shell = page.locator('ds-app-shell');
-    const chrome = page.locator('.app-shell__chrome');
+    const shell = page.locator('ds-shell-app');
+    const chrome = page.locator('.shell-app__chrome');
     await chrome.evaluate(element => {
       element.setAttribute('data-e2e-persistent', '');
     });
@@ -627,8 +627,8 @@ test.describe('App shell chrome', () => {
     await expect(surface).toHaveCSS('width', '300px');
   });
 
-  test('question mark toggles Help outside editable controls', async ({ page }) => {
-    await page.keyboard.press('?');
+  test('slash toggles Help outside editable controls', async ({ page }) => {
+    await page.keyboard.press('/');
     await expect(page.locator('ds-panel-tools')).toHaveAttribute('active-tool', 'help');
     await expect(page.getByText('Help panel')).toBeVisible();
   });

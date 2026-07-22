@@ -1,0 +1,431 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bar-title",
+  "title": "BarTitle",
+  "description": "Page-level title chrome with optional Back navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-title",
+    "source": "src/wc/components/BarTitle/BarTitle.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Page-level title chrome with optional Back navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+      "useWhen": [
+        "A top-level page needs one h1 above its content.",
+        "A list or detail page has multiple route-level sections that belong in the inline active-section menu.",
+        "A detail, create, or edit page needs a page-level Back action.",
+        "A page needs one primary action plus optional secondary or destructive overflow commands."
+      ],
+      "avoidWhen": [
+        "The title belongs to a PanelTools drawer or fullscreen pane; use PanelToolHeader through PanelTools instead.",
+        "The choices are primary application destinations or BarNav destinations rather than sections within the current page.",
+        "The heading belongs to a card, modal, or other bounded region rather than the page.",
+        "Local panels inside page content should remain directly selectable; use TabGroup instead.",
+        "Automatic sticky or responsive page orchestration is required; compose BarTitle in ShellPage rather than implementing it in the header."
+      ],
+      "alternatives": [
+        {
+          "when": "The header belongs to a PanelTools product view.",
+          "component": "component:ds-panel-tool-header",
+          "reason": "PanelToolHeader owns pane-level Back and actions without creating page chrome."
+        },
+        {
+          "when": "A small set of inner-page panels should remain visible as tabs.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup is the local content-view control rather than route-level page title chrome."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-page",
+        "component:ds-button-filled",
+        "component:ds-button-unfilled",
+        "component:ds-menu",
+        "component:ds-text"
+      ],
+      "patterns": [
+        "pattern:shell-page"
+      ],
+      "accessibility": [
+        "Provide one concise heading; BarTitle renders exactly one h1 and changes only its visual recipe between variants.",
+        "Give Back a destination-specific accessible name such as Back to Drivers, provide the concise parent label such as Drivers for the expanded breadcrumb, and handle dsBack in the route owner.",
+        "Keep value synchronized with the current child route; dsSectionChange returns the selected section id.",
+        "Section and overflow triggers expose menu relationships and restore focus after selection or dismissal.",
+        "Use one filled primary action in the page decision area and mark destructive overflow actions explicitly."
+      ],
+      "states": [
+        "Omitting Back, sections, primaryAction, and actions produces the top-level title-only header.",
+        "Two or more selectable sections add the inline section trigger; one section does not render a redundant menu.",
+        "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
+        "expanded renders the larger heading, optional description, inset divider, and an xs icon-label Back breadcrumb above a flush-left h1; compact renders 48px chrome with inline Back; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
+        "primaryAction collapse defaults to auto. Use never for Save-like actions whose hierarchy must remain visible in constrained layouts."
+      ],
+      "responsiveBehavior": [
+        "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
+        "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
+        "Compact titles use the shared md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
+        "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+          "Handle dsBack in the router owner, update value after dsSectionChange, and execute product commands from dsAction."
+        ],
+        "react": [
+          "Pass arrays and objects directly to DsBarTitle and keep value controlled from route state.",
+          "Place DsBarTitle in DsShellPage with slot=header when automatic page behavior is required."
+        ],
+        "angular": [
+          "Bind complex values on the standalone DsBarTitle adapter and handle the three intent events in the route shell.",
+          "Place ds-bar-title in ds-shell-page with slot=header; do not render router-outlet inside BarTitle."
+        ]
+      },
+      "references": [
+        {
+          "label": "Explicit variant examples",
+          "path": "src/wc/components/BarTitle/BarTitle.stories.ts"
+        },
+        {
+          "label": "ShellPage composition and responsive examples",
+          "path": "src/wc/components/ShellPage/ShellPage.stories.ts"
+        },
+        {
+          "label": "Cross-browser shell-page and header coverage",
+          "path": "tests/e2e/bar-title.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "actions": {
+          "type": "BarTitleActionItem[]",
+          "resolvedType": "BarTitleActionItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Secondary page actions shown in the overflow menu. Dividers create groups."
+        },
+        "actionsAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "actions-aria-label",
+          "default": "'More page actions'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the page-actions menu."
+        },
+        "backAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "back-aria-label",
+          "default": "'Back'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the leading Back action."
+        },
+        "backLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "back-label",
+          "default": "'Back'",
+          "required": false,
+          "mutable": false,
+          "description": "Visible parent-page label used by the expanded Back breadcrumb."
+        },
+        "description": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "description",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Optional supporting copy shown in the expanded presentation."
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "The page's single visible h1."
+        },
+        "primaryAction": {
+          "type": "BarTitlePrimaryAction | null",
+          "resolvedType": "BarTitlePrimaryAction | null",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "The one highest-emphasis page action."
+        },
+        "sections": {
+          "type": "BarTitleSectionItem[]",
+          "resolvedType": "BarTitleSectionItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Optional page sections exposed through the active-section menu."
+        },
+        "sectionsAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "sections-aria-label",
+          "default": "'Change page section'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the page-section menu."
+        },
+        "showBack": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-back",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show the leading page-level Back action."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Id of the active page section."
+        },
+        "variant": {
+          "type": "BarTitleVariant",
+          "resolvedType": "\"compact\" | \"constrained\" | \"expanded\"",
+          "attribute": "variant",
+          "default": "'expanded'",
+          "required": false,
+          "mutable": false,
+          "description": "Explicit visual/capacity variant. ShellPage owns automatic selection."
+        }
+      },
+      "events": [
+        {
+          "name": "dsAction",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted with the activated primary or overflow action id."
+        },
+        {
+          "name": "dsBack",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when the leading Back action is activated."
+        },
+        {
+          "name": "dsSectionChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted with the newly selected page-section id."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "actions": {
+        "type": "BarTitleActionItem[]",
+        "resolvedType": "BarTitleActionItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Secondary page actions shown in the overflow menu. Dividers create groups."
+      },
+      "actionsAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "actions-aria-label",
+        "default": "'More page actions'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the page-actions menu."
+      },
+      "backAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "back-aria-label",
+        "default": "'Back'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the leading Back action."
+      },
+      "backLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "back-label",
+        "default": "'Back'",
+        "required": false,
+        "mutable": false,
+        "description": "Visible parent-page label used by the expanded Back breadcrumb."
+      },
+      "description": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "description",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Optional supporting copy shown in the expanded presentation."
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "The page's single visible h1."
+      },
+      "primaryAction": {
+        "type": "BarTitlePrimaryAction | null",
+        "resolvedType": "BarTitlePrimaryAction | null",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "The one highest-emphasis page action."
+      },
+      "sections": {
+        "type": "BarTitleSectionItem[]",
+        "resolvedType": "BarTitleSectionItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Optional page sections exposed through the active-section menu."
+      },
+      "sectionsAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "sections-aria-label",
+        "default": "'Change page section'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the page-section menu."
+      },
+      "showBack": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-back",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show the leading page-level Back action."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Id of the active page section."
+      },
+      "variant": {
+        "type": "BarTitleVariant",
+        "resolvedType": "\"compact\" | \"constrained\" | \"expanded\"",
+        "attribute": "variant",
+        "default": "'expanded'",
+        "required": false,
+        "mutable": false,
+        "description": "Explicit visual/capacity variant. ShellPage owns automatic selection."
+      }
+    },
+    "events": [
+      {
+        "name": "dsAction",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted with the activated primary or overflow action id."
+      },
+      {
+        "name": "dsBack",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when the leading Back action is activated."
+      },
+      {
+        "name": "dsSectionChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted with the newly selected page-section id."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-bar-title",
+      "react": "DsBarTitle",
+      "angular": "DsBarTitle"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-bar-title.js';",
+        "example": "<ds-bar-title></ds-bar-title>"
+      },
+      "react": {
+        "import": "import { DsBarTitle } from '@ds-mo/ui/react';",
+        "example": "<DsBarTitle />"
+      },
+      "angular": {
+        "import": "import { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title';",
+        "example": "<ds-bar-title></ds-bar-title>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: actions, primaryAction, sections.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.3.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "button-filled",
+    "button-unfilled",
+    "icon",
+    "menu",
+    "text",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/BarTitle/BarTitle.css",
+      "content": "@import '../../utils/control-density.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n.bar-title {\n  position: relative;\n  min-width: 0;\n  padding: 0;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n.bar-title::after {\n  content: '';\n  position: absolute;\n  inset: auto var(--dimension-space-400) 0;\n  height: var(--dimension-stroke-width-012);\n  background: var(--color-border-tertiary);\n  pointer-events: none;\n}\n\n.bar-title__inner {\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  gap: var(--dimension-space-100);\n  padding: var(--dimension-space-400);\n  box-sizing: border-box;\n}\n\n.bar-title__row {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  min-height: var(--dimension-size-400);\n  min-width: 0;\n}\n\n.bar-title__identity {\n  display: flex;\n  flex: 1 1 auto;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n}\n\n.bar-title__back,\n.bar-title__breadcrumb-back,\n.bar-title__section-chevron {\n  flex: 0 0 auto;\n}\n\n.bar-title__breadcrumb {\n  display: flex;\n  align-items: center;\n  min-width: 0;\n}\n\n.bar-title__heading {\n  display: block;\n  width: auto;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.bar-title__divider {\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-size-250);\n  flex: 0 0 var(--dimension-stroke-width-012);\n  background: var(--color-border-tertiary);\n}\n\n.bar-title__section-selector {\n  display: flex;\n  flex: 0 1 auto;\n  min-width: 0;\n  max-width: var(--dimension-panel-width-sm);\n}\n\n.bar-title__section-trigger {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--ds-control-gap);\n  height: var(--ds-control-height);\n  min-width: 0;\n  max-width: 100%;\n  padding-inline: var(--ds-control-padding-inline);\n  border: none;\n  border-radius: var(--ds-control-radius);\n  box-sizing: border-box;\n  background: transparent;\n  color: var(--color-foreground-secondary);\n  cursor: pointer;\n  font-family: inherit;\n  user-select: none;\n  transition: color var(--effect-motion-short-2);\n}\n\n.bar-title__section-trigger--expanded {\n  color: var(--color-foreground-primary);\n}\n\n.bar-title__section-trigger--expanded::after,\n.bar-title__section-trigger--expanded:hover::after {\n  background: var(--ds-interaction-pressed);\n}\n\n.bar-title__section-label {\n  min-width: 0;\n  padding-inline-start: var(--ds-control-label-inset);\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.bar-title__section-chevron {\n  margin-inline-end: var(--ds-control-label-inset);\n}\n\n.bar-title__actions {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  margin-inline-start: auto;\n  flex: 0 0 auto;\n}\n\n.bar-title__description {\n  display: block;\n  width: auto;\n  min-width: 0;\n  max-width: 100%;\n  height: var(--dimension-size-400);\n  margin-inline-start: 0;\n  overflow: hidden;\n}\n\n:host(.bar-title-host--compact) .bar-title {\n  height: var(--dimension-size-600);\n  padding: var(--dimension-space-100);\n}\n\n:host(.bar-title-host--compact) .bar-title::after {\n  inset-inline: 0;\n}\n\n:host(.bar-title-host--compact) .bar-title__inner {\n  height: 100%;\n  padding: 0;\n  gap: 0;\n}\n\n:host(.bar-title-host--compact) .bar-title__row {\n  height: 100%;\n}\n\n:host(.bar-title-host--compact) .bar-title__identity {\n  height: var(--dimension-size-400);\n}\n\n:host(.bar-title-host--compact) .bar-title__heading {\n  display: inline-flex;\n  flex: 1 1 auto;\n  align-items: center;\n  height: var(--dimension-size-400);\n  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));\n  box-sizing: border-box;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .bar-title__section-trigger {\n    transition: none;\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/BarTitle/BarTitle.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';\nimport type { MenuItemData, MenuSection } from '../Menu/menu-types';\nimport {\n  isBarTitleDivider,\n  type BarTitleAction,\n  type BarTitleActionItem,\n  type BarTitlePrimaryAction,\n  type BarTitleSection,\n  type BarTitleSectionItem,\n  type BarTitleVariant,\n} from './bar-title-types';\n\nlet nextBarTitleId = 0;\n\ntype FocusableButton = HTMLElement & { setFocus?: () => Promise<void> };\n\n@Component({\n  tag: 'ds-bar-title',\n  styleUrl: 'BarTitle.css',\n  scoped: true,\n})\nexport class BarTitle {\n  /** The page's single visible h1. */\n  @Prop() heading!: string;\n\n  /** Optional supporting copy shown in the expanded presentation. */\n  @Prop() description: string = '';\n\n  /** Show the leading page-level Back action. */\n  @Prop({ attribute: 'show-back' }) showBack: boolean = false;\n\n  /** Accessible name for the leading Back action. */\n  @Prop() backAriaLabel: string = 'Back';\n\n  /** Visible parent-page label used by the expanded Back breadcrumb. */\n  @Prop() backLabel: string = 'Back';\n\n  /** Optional page sections exposed through the active-section menu. */\n  @Prop() sections: BarTitleSectionItem[] = [];\n\n  /** Id of the active page section. */\n  @Prop() value: string = '';\n\n  /** Accessible name for the page-section menu. */\n  @Prop() sectionsAriaLabel: string = 'Change page section';\n\n  /** The one highest-emphasis page action. */\n  @Prop() primaryAction: BarTitlePrimaryAction | null = null;\n\n  /** Secondary page actions shown in the overflow menu. Dividers create groups. */\n  @Prop() actions: BarTitleActionItem[] = [];\n\n  /** Accessible name for the page-actions menu. */\n  @Prop() actionsAriaLabel: string = 'More page actions';\n\n  /** Explicit visual/capacity variant. ShellPage owns automatic selection. */\n  @Prop() variant: BarTitleVariant = 'expanded';\n\n  /** Emitted when the leading Back action is activated. */\n  @Event() dsBack!: EventEmitter<MouseEvent>;\n\n  /** Emitted with the newly selected page-section id. */\n  @Event() dsSectionChange!: EventEmitter<string>;\n\n  /** Emitted with the activated primary or overflow action id. */\n  @Event() dsAction!: EventEmitter<string>;\n\n  @State() private sectionMenuOpen = false;\n  @State() private actionMenuOpen = false;\n  @State() private sectionMenuInitialFocusVisible = false;\n  @State() private actionMenuInitialFocusVisible = false;\n\n  private readonly instanceId = nextBarTitleId++;\n  private readonly sectionMenuTriggerId = `bar-title-section-trigger-${this.instanceId}`;\n  private readonly sectionMenuId = `bar-title-section-menu-${this.instanceId}`;\n  private readonly actionMenuTriggerId = `bar-title-action-trigger-${this.instanceId}`;\n  private readonly actionMenuId = `bar-title-action-menu-${this.instanceId}`;\n  private sectionTriggerEl: HTMLButtonElement | null = null;\n  private actionTriggerEl: FocusableButton | null = null;\n\n  @Watch('sections')\n  handleSectionsChange() {\n    if (!this.hasSectionSelector) this.closeSectionMenu();\n  }\n\n  @Watch('actions')\n  @Watch('primaryAction')\n  handleActionsChange() {\n    if (!this.showActionMenuTrigger) this.closeActionMenu();\n  }\n\n  private get compact(): boolean {\n    return this.variant !== 'expanded';\n  }\n\n  private get primaryCollapsed(): boolean {\n    return (\n      this.variant === 'constrained' &&\n      this.primaryAction !== null &&\n      (this.primaryAction.collapse ?? 'auto') === 'auto'\n    );\n  }\n\n  private get selectableSections(): BarTitleSection[] {\n    return this.sections.filter((item): item is BarTitleSection => !isBarTitleDivider(item));\n  }\n\n  private get hasSectionSelector(): boolean {\n    return this.selectableSections.length > 1;\n  }\n\n  private get effectiveValue(): string {\n    return this.selectableSections.some(section => section.id === this.value)\n      ? this.value\n      : (this.selectableSections[0]?.id ?? '');\n  }\n\n  private get selectedSectionLabel(): string {\n    return this.selectableSections.find(section => section.id === this.effectiveValue)?.label ?? '';\n  }\n\n  private get sectionTriggerAriaLabel(): string {\n    return `${this.sectionsAriaLabel}. Current section: ${this.selectedSectionLabel}`;\n  }\n\n  private groupsFromItems<T extends BarTitleSection | BarTitleAction>(\n    source: Array<T | { type: 'divider' }>,\n    map: (item: T) => MenuItemData\n  ): MenuSection[] {\n    const groups: MenuSection[] = [];\n    let items: MenuItemData[] = [];\n    const commit = () => {\n      if (items.length > 0) groups.push({ items });\n      items = [];\n    };\n\n    for (const item of source) {\n      if (isBarTitleDivider(item)) {\n        commit();\n      } else {\n        items.push(map(item));\n      }\n    }\n    commit();\n    return groups;\n  }\n\n  private get sectionMenuSections(): MenuSection[] {\n    return this.groupsFromItems(this.sections, section => ({\n      label: section.label,\n      value: section.id,\n      isSelected: section.id === this.effectiveValue,\n      isInactive: section.isInactive,\n    }));\n  }\n\n  private get selectableActions(): BarTitleAction[] {\n    return this.actions.filter((item): item is BarTitleAction => !isBarTitleDivider(item));\n  }\n\n  private get showActionMenuTrigger(): boolean {\n    return (\n      this.selectableActions.length > 0 || (this.primaryCollapsed && this.primaryAction !== null)\n    );\n  }\n\n  private actionMenuItem(action: BarTitleAction | BarTitlePrimaryAction): MenuItemData {\n    const primary = action as BarTitlePrimaryAction;\n    return {\n      label: action.label,\n      value: action.id,\n      isInactive: action.isInactive || primary.isLoading,\n      isDestructive: action.isDestructive || primary.intent === 'negative',\n    };\n  }\n\n  private get actionMenuSections(): MenuSection[] {\n    const groups = this.groupsFromItems(this.actions, action => this.actionMenuItem(action));\n    if (!this.primaryCollapsed || !this.primaryAction) return groups;\n    return [{ items: [this.actionMenuItem(this.primaryAction)] }, ...groups];\n  }\n\n  private toggleSectionMenu = (event: MouseEvent) => {\n    this.sectionMenuInitialFocusVisible = event.detail === 0;\n    this.actionMenuOpen = false;\n    this.sectionMenuOpen = !this.sectionMenuOpen;\n  };\n\n  private closeSectionMenu = () => {\n    this.sectionMenuOpen = false;\n  };\n\n  private handleSectionSelect = (event: CustomEvent<MenuItemData>) => {\n    const id = String(event.detail?.value ?? '');\n    const selected = this.selectableSections.find(section => section.id === id);\n    if (!selected || selected.isInactive) return;\n    this.closeSectionMenu();\n    this.dsSectionChange.emit(id);\n    requestAnimationFrame(() => this.sectionTriggerEl?.focus());\n  };\n\n  private toggleActionMenu = (event: MouseEvent) => {\n    this.actionMenuInitialFocusVisible = event.detail === 0;\n    this.sectionMenuOpen = false;\n    this.actionMenuOpen = !this.actionMenuOpen;\n  };\n\n  private closeActionMenu = () => {\n    this.actionMenuOpen = false;\n  };\n\n  private handleActionSelect = (event: CustomEvent<MenuItemData>) => {\n    const id = String(event.detail?.value ?? '');\n    const primaryMatches = this.primaryCollapsed && this.primaryAction?.id === id;\n    const action = this.selectableActions.find(candidate => candidate.id === id);\n    if (!primaryMatches && !action) return;\n    if (\n      (primaryMatches && (this.primaryAction?.isInactive || this.primaryAction?.isLoading)) ||\n      action?.isInactive\n    ) {\n      return;\n    }\n    this.closeActionMenu();\n    this.dsAction.emit(id);\n    requestAnimationFrame(() => void this.actionTriggerEl?.setFocus?.());\n  };\n\n  private renderSectionSelector() {\n    if (!this.hasSectionSelector) return null;\n    return [\n      <div class=\"bar-title__divider\" aria-hidden=\"true\" />,\n      <div class=\"bar-title__section-selector\">\n        <button\n          ref={el => {\n            this.sectionTriggerEl = el ?? null;\n          }}\n          id={this.sectionMenuTriggerId}\n          class={{\n            'bar-title__section-trigger': true,\n            'bar-title__section-trigger--expanded': this.sectionMenuOpen,\n            'ds-control--md': true,\n            'ds-focus-ring-inset': true,\n            'ds-interaction-fill': true,\n          }}\n          type=\"button\"\n          aria-haspopup=\"menu\"\n          aria-controls={this.sectionMenuId}\n          aria-expanded={String(this.sectionMenuOpen)}\n          aria-label={this.sectionTriggerAriaLabel}\n          onClick={this.toggleSectionMenu}\n        >\n          <ds-text\n            class=\"bar-title__section-label ds-interaction-fill__content\"\n            as=\"span\"\n            variant=\"text-body-medium\"\n            emphasis\n            color=\"primary\"\n          >\n            {this.selectedSectionLabel}\n          </ds-text>\n          <ds-icon\n            class=\"bar-title__section-chevron ds-interaction-fill__content\"\n            name=\"ChevronUpDown\"\n            size=\"sm\"\n            color=\"inherit\"\n            aria-hidden=\"true\"\n          />\n        </button>\n      </div>,\n    ];\n  }\n\n  private renderActions() {\n    const primary = this.primaryAction;\n    if (!primary && !this.showActionMenuTrigger) return null;\n\n    return (\n      <div class=\"bar-title__actions\">\n        {primary && !this.primaryCollapsed ? (\n          <ds-button-filled\n            class=\"bar-title__primary-action\"\n            variant={primary.icon ? 'icon-label' : 'label'}\n            icon={primary.icon ?? ''}\n            label={primary.label}\n            intent={primary.intent ?? 'brand'}\n            contrast={primary.contrast ?? 'bold'}\n            size=\"md\"\n            type={primary.type ?? 'button'}\n            isInactive={primary.isInactive}\n            isLoading={primary.isLoading}\n            onDsClick={() => this.dsAction.emit(primary.id)}\n          />\n        ) : null}\n        {this.showActionMenuTrigger ? (\n          <ds-button-unfilled\n            ref={el => {\n              this.actionTriggerEl = el ?? null;\n            }}\n            id={this.actionMenuTriggerId}\n            class=\"bar-title__more-actions\"\n            variant=\"icon\"\n            icon=\"Ellipses\"\n            aria-label={this.actionsAriaLabel}\n            size=\"md\"\n            activeFill={!this.compact}\n            hasBorder={!this.compact && !this.primaryCollapsed}\n            haspopup=\"menu\"\n            controls={this.actionMenuId}\n            expanded={this.actionMenuOpen}\n            onDsClick={(event: CustomEvent<MouseEvent>) => this.toggleActionMenu(event.detail)}\n          />\n        ) : null}\n      </div>\n    );\n  }\n\n  private renderBack(compact: boolean) {\n    if (!this.showBack) return null;\n\n    if (!compact) {\n      return (\n        <div class=\"bar-title__breadcrumb\">\n          <ds-button-unfilled\n            class=\"bar-title__breadcrumb-back\"\n            variant=\"icon-label\"\n            icon=\"ChevronLeft\"\n            label={this.backLabel}\n            aria-label={this.backAriaLabel}\n            size=\"xs\"\n            hasBorder={false}\n            onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}\n          />\n        </div>\n      );\n    }\n\n    return (\n      <ds-tooltip label={this.backAriaLabel} side=\"bottom\" size=\"sm\">\n        <ds-button-unfilled\n          class=\"bar-title__back\"\n          variant=\"icon\"\n          icon=\"ChevronLeft\"\n          aria-label={this.backAriaLabel}\n          size=\"md\"\n          activeFill={false}\n          hasBorder={false}\n          onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}\n        />\n      </ds-tooltip>\n    );\n  }\n\n  render() {\n    const compact = this.compact;\n    return (\n      <Host\n        class={{\n          'bar-title-host--compact': compact,\n          'bar-title-host--expanded': this.variant === 'expanded',\n          'bar-title-host--constrained': this.variant === 'constrained',\n          'bar-title-host--has-description': !!this.description,\n          'bar-title-host--has-back': this.showBack,\n        }}\n      >\n        <div class=\"bar-title\">\n          <div class=\"bar-title__inner\">\n            {!compact ? this.renderBack(false) : null}\n            <div class=\"bar-title__row\">\n              <div class=\"bar-title__identity\">\n                {compact ? this.renderBack(true) : null}\n                <ds-text\n                  class=\"bar-title__heading ds-control--md\"\n                  variant={compact ? 'text-title-small' : 'text-title-medium'}\n                  emphasis\n                  color=\"primary\"\n                  as=\"h1\"\n                  lineTruncation={1}\n                >\n                  {this.heading}\n                </ds-text>\n              </div>\n              {this.renderSectionSelector()}\n              {this.renderActions()}\n            </div>\n            {this.description && !compact ? (\n              <ds-text\n                class=\"bar-title__description\"\n                variant=\"text-body-small\"\n                color=\"secondary\"\n                lineTruncation={2}\n                wrap=\"wrap\"\n                as=\"p\"\n              >\n                {this.description}\n              </ds-text>\n            ) : null}\n          </div>\n        </div>\n\n        {this.hasSectionSelector ? (\n          <ds-menu\n            id={this.sectionMenuId}\n            class=\"bar-title__section-menu\"\n            anchorId={this.sectionMenuTriggerId}\n            menuLabel={this.sectionsAriaLabel}\n            open={this.sectionMenuOpen}\n            initialFocusVisible={this.sectionMenuInitialFocusVisible}\n            sections={this.sectionMenuSections}\n            onDsClose={this.closeSectionMenu}\n            onDsSelect={this.handleSectionSelect}\n          />\n        ) : null}\n\n        {this.showActionMenuTrigger ? (\n          <ds-menu\n            id={this.actionMenuId}\n            class=\"bar-title__action-menu\"\n            anchorId={this.actionMenuTriggerId}\n            align=\"end\"\n            menuLabel={this.actionsAriaLabel}\n            open={this.actionMenuOpen}\n            initialFocusVisible={this.actionMenuInitialFocusVisible}\n            sections={this.actionMenuSections}\n            onDsClose={this.closeActionMenu}\n            onDsSelect={this.handleActionSelect}\n          />\n        ) : null}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/BarTitle/bar-title-types.ts",
+      "content": "import type { ButtonFilledContrast, ButtonFilledIntent } from '../ButtonFilled/ButtonFilled';\n\nexport interface BarTitleSection {\n  id: string;\n  label: string;\n  isInactive?: boolean;\n}\n\nexport interface BarTitleDivider {\n  type: 'divider';\n}\n\nexport type BarTitleSectionItem = BarTitleSection | BarTitleDivider;\n\nexport interface BarTitleAction {\n  id: string;\n  label: string;\n  isInactive?: boolean;\n  isDestructive?: boolean;\n}\n\nexport interface BarTitlePrimaryAction extends BarTitleAction {\n  icon?: string;\n  intent?: ButtonFilledIntent;\n  contrast?: ButtonFilledContrast;\n  isLoading?: boolean;\n  type?: 'button' | 'submit' | 'reset';\n  collapse?: BarTitlePrimaryActionCollapse;\n}\n\nexport type BarTitleActionItem = BarTitleAction | BarTitleDivider;\n\nexport type BarTitleVariant = 'expanded' | 'compact' | 'constrained';\n\nexport type BarTitlePrimaryActionCollapse = 'auto' | 'never';\n\nexport function isBarTitleDivider(\n  item: BarTitleSectionItem | BarTitleActionItem\n): item is BarTitleDivider {\n  return 'type' in item && item.type === 'divider';\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

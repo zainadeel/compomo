@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "shell-gradient-picker",
   "title": "ShellGradientPicker",
-  "description": "Deprecated compatibility wrapper that maps the fixed AppShell wash presets into SwatchPicker.",
+  "description": "Deprecated compatibility wrapper that maps the fixed ShellApp wash presets into SwatchPicker.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -15,10 +15,10 @@
       "status": "deprecated",
       "replacedBy": "component:ds-swatch-picker",
       "replacementReason": "SwatchPicker now owns the same accessible interaction with a generic option model that supports both flat colors and gradients.",
-      "summary": "Deprecated compatibility wrapper that maps the fixed AppShell wash presets into SwatchPicker.",
+      "summary": "Deprecated compatibility wrapper that maps the fixed ShellApp wash presets into SwatchPicker.",
       "useWhen": [
         "Adding the Appearance or Theme section to the application's user or account menu.",
-        "Users must choose the global AppShell chrome treatment from none, cool, neutral, warm, or fresh."
+        "Users must choose the global ShellApp chrome treatment from none, cool, neutral, warm, or fresh."
       ],
       "avoidWhen": [
         "Choosing semantic intent, page background, chart, content, or brand colors.",
@@ -34,7 +34,7 @@
         }
       ],
       "commonlyComposedWith": [
-        "component:ds-app-shell",
+        "component:ds-shell-app",
         "component:ds-menu"
       ],
       "patterns": [
@@ -48,7 +48,7 @@
       "states": [
         "Neutral is the default preset; none renders solid shell chrome without a wash.",
         "Cool, neutral, warm, and fresh use design tokens and automatically adapt to the active light or dark color theme.",
-        "Apply dsChange immediately to AppShell.gradientPreset and keep the containing account menu open.",
+        "Apply dsChange immediately to ShellApp.gradientPreset and keep the containing account menu open.",
         "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
         "Treat the fixed preset union as the only supported values and do not construct custom gradients."
       ],
@@ -58,7 +58,7 @@
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Listen for dsChange, resolve application preference precedence, and assign the result to the single AppShell gradientPreset property."
+          "Listen for dsChange, resolve application preference precedence, and assign the result to the single ShellApp gradientPreset property."
         ],
         "react": [
           "Use the generated wrapper and handle onDsChange without closing the containing account menu."
@@ -73,8 +73,8 @@
           "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
         },
         {
-          "label": "AppShell gradient contract",
-          "path": "src/wc/components/AppShell/AppShell.mdx"
+          "label": "ShellApp gradient contract",
+          "path": "src/wc/components/ShellApp/ShellApp.mdx"
         },
         {
           "label": "Application shell composition",

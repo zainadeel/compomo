@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-panel-tools.js';
-import '../../../../dist/components/ds-app-shell.js';
+import '../../../../dist/components/ds-shell-app.js';
 import '../../../../dist/components/ds-panel-tool-header.js';
 import '../../../../dist/components/ds-message-scroller.js';
 import '../../../../dist/components/ds-message-composer.js';
@@ -172,7 +172,7 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
   const fullscreen = presentation === 'fullscreen';
   return html`
     <div style="height:100vh; background:var(--color-background-primary);">
-      <ds-app-shell style="height:100%;">
+      <ds-shell-app style="height:100%;">
         <div style="padding:var(--dimension-space-400);">
           Page content becomes inert in fullscreen.
         </div>
@@ -269,7 +269,7 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                 </section>
               `}
         </ds-panel-tools>
-      </ds-app-shell>
+      </ds-shell-app>
     </div>
   `;
 }
@@ -354,7 +354,7 @@ export const InGradientShell: Story = {
     docs: {
       description: {
         story:
-          'Drawer and rail surfaces are transparent when AppShell uses a wash preset — chrome paints behind them.',
+          'Drawer and rail surfaces are transparent when ShellApp uses a wash preset — chrome paints behind them.',
       },
     },
   },
@@ -368,7 +368,7 @@ export const InGradientShell: Story = {
       ${ref(root => {
         if (!root || wiredGradientTools.has(root)) return;
         wiredGradientTools.add(root);
-        const shell = root.querySelector('ds-app-shell');
+        const shell = root.querySelector('ds-shell-app');
         const tools = root.querySelector('ds-panel-tools') as
           | (HTMLElement & {
               open: boolean;
@@ -389,12 +389,12 @@ export const InGradientShell: Story = {
         void shell;
       })}
     >
-      <ds-app-shell nav-style="dashboard" gradient style="height: 100%;">
+      <ds-shell-app nav-style="dashboard" gradient style="height: 100%;">
         <div
           style="flex: 1; min-width: 0; padding: var(--dimension-space-400); color: var(--color-foreground-secondary);"
         >
           Page content beside the tools rail. Shell shortcuts: K search, A agents, S stacks, M
-          messages, N activity — repeat toggles closed.
+          messages, N activity, / help — repeat toggles closed.
         </div>
         <ds-panel-tools slot="tools">
           <p slot="search">Search drawer over shell chrome</p>
@@ -404,7 +404,7 @@ export const InGradientShell: Story = {
           <p slot="activity">Activity drawer over shell chrome</p>
           <p slot="help">Help &amp; Support drawer over shell chrome</p>
         </ds-panel-tools>
-      </ds-app-shell>
+      </ds-shell-app>
     </div>
   `,
 };

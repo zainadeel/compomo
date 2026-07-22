@@ -12,15 +12,15 @@ import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
 import type { Components } from "@ds-mo/ui/dist/components";
-import { DsAppShell as DsAppShellElement, defineCustomElement as defineDsAppShell } from "@ds-mo/ui/dist/components/ds-app-shell.js";
+import { DsShellPage as DsShellPageElement, defineCustomElement as defineDsShellPage } from "@ds-mo/ui/dist/components/ds-shell-page.js";
 
-export type DsAppShellEvents = NonNullable<unknown>;
+export type DsShellPageEvents = NonNullable<unknown>;
 
-export const DsAppShell: StencilReactComponent<DsAppShellElement, DsAppShellEvents, Components.DsAppShell> = /*@__PURE__*/ createComponent<DsAppShellElement, DsAppShellEvents, Components.DsAppShell>({
-    tagName: 'ds-app-shell',
-    elementClass: DsAppShellElement,
+export const DsShellPage: StencilReactComponent<DsShellPageElement, DsShellPageEvents, Components.DsShellPage> = /*@__PURE__*/ createComponent<DsShellPageElement, DsShellPageEvents, Components.DsShellPage>({
+    tagName: 'ds-shell-page',
+    elementClass: DsShellPageElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsAppShellEvents,
-    defineCustomElement: defineDsAppShell
+    events: {} as DsShellPageEvents,
+    defineCustomElement: defineDsShellPage
 });

@@ -7,9 +7,9 @@
   "tag": "ds-panel-tools",
   "audience": "specialized",
   "status": "stable",
-  "summary": "Required AppShell utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+  "summary": "Required ShellApp utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
   "useWhen": [
-    "Composing the required global tools region inside the application's single AppShell.",
+    "Composing the required global tools region inside the application's single ShellApp.",
     "Users need to move between application-wide utilities without losing each tool's in-progress state.",
     "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
   ],
@@ -17,8 +17,8 @@
     "The action is specific to the current page or selected content rather than globally available across the application.",
     "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
     "A consumer wants to add arbitrary tools, reorder fixed tools, or repurpose a semantic tool id.",
-    "Building the mobile tools experience; future mobile AppShell composition uses a different bottom-bar and panel pattern.",
-    "PanelTools would be mounted outside the application's single AppShell."
+    "Building the mobile tools experience; future mobile ShellApp composition uses a different bottom-bar and panel pattern.",
+    "PanelTools would be mounted outside the application's single ShellApp."
   ],
   "alternatives": [
     {
@@ -38,7 +38,7 @@
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-app-shell",
+    "component:ds-shell-app",
     "component:ds-panel-nav",
     "component:ds-bar-nav"
   ],
@@ -64,7 +64,7 @@
     "Each tool supplies its current header title, base-versus-detail Back state, and right-side actions through the headers property. Base views omit Back; deeper views expose Back and update the same header in place.",
     "Header Back and action events express intent only; the owning tool changes product navigation, menus, and data state. PanelTools keeps the final header action exactly 8px from the drawer edge.",
     "Menus opened from a right-side header action use PANEL_TOOLS_HEADER_MENU_PLACEMENT: bottom/end choice-cell alignment and a 12px side offset, placing the popup 4px below the 48px header while aligning the final menu item edge with the trigger.",
-    "Tool view roots stay transparent so AppShell's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
+    "Tool view roots stay transparent so ShellApp's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
     "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
     "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
     "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
@@ -75,8 +75,8 @@
   ],
   "responsiveBehavior": [
     "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
-    "AppShell owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
-    "Below 768px, do not reuse desktop PanelTools: future AppShell mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
+    "ShellApp owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
+    "Below 768px, do not reuse desktop PanelTools: future ShellApp mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
     "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
     "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
     "Use fixed drawer widths for now; do not add user resizing or width persistence."
@@ -85,10 +85,10 @@
     "customElements": [
       "Assign items as a JavaScript property for structured data; items-json is the string fallback.",
       "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
-      "Keep PanelTools mounted at AppShell scope across route changes and provide each product through its matching named slot."
+      "Keep PanelTools mounted at ShellApp scope across route changes and provide each product through its matching named slot."
     ],
     "react": [
-      "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at AppShell scope.",
+      "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
       "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
     ],
     "angular": [

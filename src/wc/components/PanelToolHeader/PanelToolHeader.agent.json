@@ -18,7 +18,7 @@
   ],
   "commonlyComposedWith": ["component:ds-button-unfilled"],
   "accessibility": [
-    "Leading navigation or dismiss actions and trailing icon actions require concise localized names.",
+    "Leading navigation or dismiss actions and trailing icon actions require concise localized names; the header reuses each name as the action tooltip.",
     "The visible heading names the active panel or subview."
   ],
   "states": [

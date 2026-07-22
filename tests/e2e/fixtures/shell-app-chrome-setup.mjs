@@ -1,4 +1,4 @@
-import '/dist/components/ds-app-shell.js';
+import '/dist/components/ds-shell-app.js';
 import '/dist/components/ds-bar-nav.js';
 import '/dist/components/ds-panel-nav.js';
 import '/dist/components/ds-panel-tools.js';
@@ -24,7 +24,7 @@ const toolsItems = [
 ];
 
 await Promise.all([
-  customElements.whenDefined('ds-app-shell'),
+  customElements.whenDefined('ds-shell-app'),
   customElements.whenDefined('ds-bar-nav'),
   customElements.whenDefined('ds-panel-nav'),
   customElements.whenDefined('ds-panel-tools'),

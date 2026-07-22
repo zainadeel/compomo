@@ -8,7 +8,7 @@
   --ds-shell-panel-tools-width: var(--dimension-panel-width-xs);
 }
 
-.app-shell {
+.shell-app {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -23,7 +23,7 @@
   --_shell-chrome-bg: var(--color-background-secondary);
 }
 
-.app-shell__row {
+.shell-app__row {
   display: flex;
   flex: 1 1 auto;
   min-height: 0;
@@ -37,7 +37,7 @@
  * transparent window, not the pattern phase. JS sets wash background-size from
  * readShellViewportDimensions(), not the shell element box.
  */
-.app-shell__chrome {
+.shell-app__chrome {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -45,7 +45,7 @@
   background-color: var(--_shell-chrome-bg);
 }
 
-:host(.app-shell--gradient) .app-shell__chrome::before {
+:host(.shell-app--gradient) .shell-app__chrome::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -59,7 +59,7 @@
   background-repeat: no-repeat;
 }
 
-.app-shell__panel {
+.shell-app__panel {
   flex: 0 0 auto;
   min-height: 0;
   height: 100%;
@@ -68,12 +68,12 @@
   z-index: 2;
 }
 
-.app-shell__panel ::slotted(ds-panel-nav) {
+.shell-app__panel ::slotted(ds-panel-nav) {
   display: block;
   height: 100%;
 }
 
-.app-shell__main {
+.shell-app__main {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
@@ -87,17 +87,17 @@
   z-index: 1;
 }
 
-.app-shell__bar {
+.shell-app__bar {
   grid-area: bar;
   flex: 0 0 auto;
   min-width: 0;
 }
 
-.app-shell__bar ::slotted(ds-bar-nav) {
+.shell-app__bar ::slotted(ds-bar-nav) {
   display: block;
 }
 
-.app-shell__content {
+.shell-app__content {
   grid-area: content;
   flex: 1 1 auto;
   min-width: 0;
@@ -109,13 +109,13 @@
 }
 
 /* Opaque page surface — masks the fixed chrome layer in the content column. */
-.app-shell__content {
+.shell-app__content {
   position: relative;
   z-index: 1;
   background-color: var(--color-background-primary);
 }
 
-.app-shell__tools {
+.shell-app__tools {
   grid-area: tools;
   flex: 0 0 auto;
   min-width: 0;
@@ -127,14 +127,14 @@
   overflow: hidden;
 }
 
-.app-shell__tools ::slotted(ds-panel-tools) {
+.shell-app__tools ::slotted(ds-panel-tools) {
   display: block;
   height: 100%;
   min-height: 0;
 }
 
-:host(.app-shell--tools-fullscreen) .app-shell__panel,
-:host(.app-shell--tools-fullscreen) .app-shell__bar,
-:host(.app-shell--tools-fullscreen) .app-shell__content {
+:host(.shell-app--tools-fullscreen) .shell-app__panel,
+:host(.shell-app--tools-fullscreen) .shell-app__bar,
+:host(.shell-app--tools-fullscreen) .shell-app__content {
   visibility: hidden;
 }

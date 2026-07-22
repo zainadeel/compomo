@@ -24,13 +24,13 @@
   ],
   "accessibility": [
     "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
-    "The standard search clear action restores focus and emits both the empty query and dsClear.",
-    "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection."
+    "The standard search clear action restores focus, exposes its localized name in a tooltip, and emits both the empty query and dsClear.",
+    "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection; filterAriaLabel also labels its tooltip."
   ],
   "states": [
     "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px, and a 20px md search icon.",
     "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
-    "The row and control surface remain transparent so the AppShell chrome wash is visible behind them.",
+    "The row and control surface remain transparent so the ShellApp chrome wash is visible behind them.",
     "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
     "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
   ],

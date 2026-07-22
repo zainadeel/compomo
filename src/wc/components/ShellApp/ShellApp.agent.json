@@ -1,10 +1,10 @@
 {
   "$schema": "../../../../agent/schemas/component-agent.schema.json",
   "schemaVersion": "1.0.0",
-  "id": "component:ds-app-shell",
+  "id": "component:ds-shell-app",
   "kind": "component",
   "package": "@ds-mo/ui",
-  "tag": "ds-app-shell",
+  "tag": "ds-shell-app",
   "audience": "specialized",
   "status": "stable",
   "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
@@ -15,18 +15,17 @@
   ],
   "avoidWhen": [
     "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences that require a different layout.",
-    "Another AppShell already exists in the page; applications must render exactly one and must never nest AppShells.",
-    "Building content inside an existing AppShell; render the page content rather than another shell."
+    "Another ShellApp already exists in the page; applications must render exactly one and must never nest ShellApps.",
+    "Building content inside an existing ShellApp; render the page content rather than another shell."
   ],
   "commonlyComposedWith": [
     "component:ds-panel-nav",
     "component:ds-bar-nav",
     "component:ds-panel-tools",
+    "component:ds-shell-page",
     "component:ds-swatch-picker"
   ],
-  "patterns": [
-    "pattern:application-shell"
-  ],
+  "patterns": ["pattern:application-shell", "pattern:shell-page"],
   "accessibility": [
     "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
     "Ensure the default content region contains the page's single main landmark.",
@@ -36,24 +35,25 @@
     "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
   ],
   "states": [
-    "Render exactly one AppShell as the workspace root and never nest it.",
+    "Render exactly one ShellApp as the workspace root and never nest it.",
     "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
     "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-    "AppShell propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
+    "ShellApp propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
     "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
-    "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; AppShell owns rendering the resolved preset across authenticated routes.",
+    "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
     "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
     "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
     "BarNav remains present: it shows route-section tabs when available and the active PanelNav destination label as heading otherwise.",
+    "Render one ShellPage as the default-slot child for each standard routed page; ShellApp owns the content scroller while ShellPage owns page header stickiness and content inset.",
     "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
   ],
   "responsiveBehavior": [
-    "AppShell owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
+    "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
     "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
-    "On tablet, AppShell keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
-    "On mobile, AppShell remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
+    "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
+    "On mobile, ShellApp remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
     "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
-    "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until AppShell provides it."
+    "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until ShellApp provides it."
   ],
   "frameworkCaveats": {
     "customElements": [
@@ -73,11 +73,11 @@
   "references": [
     {
       "label": "Component guide",
-      "path": "src/wc/components/AppShell/AppShell.mdx"
+      "path": "src/wc/components/ShellApp/ShellApp.mdx"
     },
     {
       "label": "Executable Storybook composition",
-      "path": "src/wc/components/AppShell/AppShell.stories.ts"
+      "path": "src/wc/components/ShellApp/ShellApp.stories.ts"
     },
     {
       "label": "Framework integration",

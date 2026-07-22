@@ -114,6 +114,7 @@ export class Menu {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private itemEls: HTMLElement[] = [];
   private positionRetryRaf: number | null = null;
+  private livePositionRaf: number | null = null;
   private listenersReady = false;
   /** Last content actually painted while open; retained unchanged through exit motion. */
   private lastRenderedSections: MenuSection[] = [];
@@ -123,8 +124,16 @@ export class Menu {
     if (this.open) this.onOpenChange(true);
   }
 
+  componentDidRender() {
+    if (!this.shouldRender) return;
+    const popup = this.el.querySelector<HTMLElement>('.menu-popup');
+    if (!popup || typeof popup.showPopover !== 'function') return;
+    if (!popup.matches(':popover-open')) popup.showPopover();
+  }
+
   disconnectedCallback() {
     this.cancelPositionRetry();
+    this.cancelLivePositionUpdate();
     this.teardownListeners();
   }
 
@@ -201,6 +210,8 @@ export class Menu {
   }
 
   private finishClose() {
+    const popup = this.el.querySelector<HTMLElement>('.menu-popup');
+    if (popup?.matches(':popover-open')) popup.hidePopover();
     this.shouldRender = false;
     this.closing = false;
     this.lastRenderedSections = [];
@@ -295,6 +306,27 @@ export class Menu {
     }
   }
 
+  private cancelLivePositionUpdate() {
+    if (this.livePositionRaf !== null) {
+      cancelAnimationFrame(this.livePositionRaf);
+      this.livePositionRaf = null;
+    }
+  }
+
+  /** Reposition after the current scroll/layout frame without hiding the open popup. */
+  private scheduleLivePositionUpdate() {
+    if (this.livePositionRaf !== null) return;
+    this.livePositionRaf = requestAnimationFrame(() => {
+      if (this.shouldRender && !this.closing) this.calculatePosition();
+      // Scroll-driven owners such as ShellPage may commit their compact header
+      // render in this frame. Re-read once after that render, then stop tracking.
+      this.livePositionRaf = requestAnimationFrame(() => {
+        this.livePositionRaf = null;
+        if (this.shouldRender && !this.closing) this.calculatePosition();
+      });
+    });
+  }
+
   /** Retry until anchor + popup exist — do not reveal at 0,0 on a failed first pass. */
   private schedulePositionUpdate(onReady?: () => void) {
     if (!this.open) return;
@@ -346,7 +378,7 @@ export class Menu {
       }
     }
 
-    this.pos = computeMenuPosition({
+    const next = computeMenuPosition({
       anchorRect,
       popupWidth: popup.offsetWidth || this.popupFallbackWidthPx,
       popupHeight: popup.offsetHeight || this.popupFallbackHeightPx,
@@ -363,6 +395,7 @@ export class Menu {
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,
     });
+    if (next.x !== this.pos.x || next.y !== this.pos.y) this.pos = next;
     return true;
   }
 
@@ -395,9 +428,7 @@ export class Menu {
       this.close();
     };
 
-    this.scrollResizeHandler = () => {
-      if (this.shouldRender && !this.closing) this.calculatePosition();
-    };
+    this.scrollResizeHandler = () => this.scheduleLivePositionUpdate();
 
     document.addEventListener('mousedown', this.clickOutsideHandler, true);
     window.addEventListener('scroll', this.scrollResizeHandler, true);
@@ -405,6 +436,7 @@ export class Menu {
   }
 
   private teardownListeners() {
+    this.cancelLivePositionUpdate();
     if (this.clickOutsideHandler) {
       document.removeEventListener('mousedown', this.clickOutsideHandler, true);
       this.clickOutsideHandler = null;
@@ -539,6 +571,7 @@ export class Menu {
     return (
       <Host style={{ display: 'contents' }}>
         <div
+          popover="manual"
           class={{
             'menu-popup': true,
             'menu-popup--closing': this.closing,

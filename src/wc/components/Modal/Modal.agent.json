@@ -46,7 +46,7 @@
   "accessibility": [
     "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
     "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
-    "Opening the native modal dialog moves focus to the header Close action, traps Tab navigation inside the top layer, and makes outside content inert.",
+    "Opening the native modal dialog moves focus to the header Close action, whose visible tooltip matches its accessible name, traps Tab navigation inside the top layer, and makes outside content inert.",
     "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
     "After exit motion completes, the native dialog leaves the top layer, focus returns to the previously focused element, and dsAfterClose emits.",
     "Use visible label-only footer buttons. Keep at most two actions: one bold filled primary action followed by one bordered unfilled action, or two bordered unfilled actions.",

@@ -1,0 +1,199 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shell-page",
+  "title": "ShellPage",
+  "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-page",
+    "source": "src/wc/components/ShellPage/ShellPage.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+      "useWhen": [
+        "Rendering a standard routed page inside ShellApp's default content region.",
+        "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the page column narrows.",
+        "Pages need consistent content gutters with an explicit full-bleed option."
+      ],
+      "avoidWhen": [
+        "Building authentication, onboarding, public, modal, drawer, or intentionally focused fullscreen layouts outside the standard ShellApp page region.",
+        "Another ShellPage already owns the routed page; never nest ShellPages.",
+        "A bounded card or pane needs its own header rather than a page-level main landmark."
+      ],
+      "alternatives": [
+        {
+          "when": "The composition is a persistent application-wide workspace frame.",
+          "component": "component:ds-shell-app",
+          "reason": "ShellApp owns global navigation, tools, and the content scroll region; ShellPage belongs inside it."
+        },
+        {
+          "when": "Only static page title chrome is required without sticky or responsive orchestration.",
+          "component": "component:ds-bar-title",
+          "reason": "BarTitle can be used standalone with an explicit variant."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-app",
+        "component:ds-bar-title",
+        "component:ds-tab-group"
+      ],
+      "patterns": [
+        "pattern:shell-page"
+      ],
+      "accessibility": [
+        "ShellPage exposes the routed page as the main landmark; render exactly one active ShellPage inside ShellApp.",
+        "Provide exactly one BarTitle through the header slot so the page has one h1.",
+        "Keep loading, empty, validation, error, progress, success, and failure communication in the default product-content slot.",
+        "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
+      ],
+      "states": [
+        "headerPresentation=auto selects expanded, compact, or constrained from ShellPage's own inline capacity and scroll position.",
+        "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
+        "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
+        "The required header slot accepts one BarTitle. The default slot owns router output and all page product content."
+      ],
+      "responsiveBehavior": [
+        "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
+        "Roomy pages expand at the top and compact after scroll; medium-capacity pages start compact; narrow pages use the constrained header variant.",
+        "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
+        "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
+        "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Import ShellPage and BarTitle, place one ds-bar-title in slot=header, and render route content as default children.",
+          "Do not set BarTitle.variant while ShellPage owns headerPresentation."
+        ],
+        "react": [
+          "Render DsBarTitle with slot=header inside DsShellPage and keep routed content as the remaining children.",
+          "Use contentInset none only for deliberately full-bleed page products."
+        ],
+        "angular": [
+          "Import the generated standalone DsShellPage and DsBarTitle adapters, preserve slot=header, and place router-outlet in the ShellPage default slot.",
+          "Do not add another overflow auto wrapper around the routed page."
+        ]
+      },
+      "references": [
+        {
+          "label": "Page-family and responsive examples",
+          "path": "src/wc/components/ShellPage/ShellPage.stories.ts"
+        },
+        {
+          "label": "Cross-browser geometry and interaction coverage",
+          "path": "tests/e2e/bar-title.spec.ts"
+        },
+        {
+          "label": "Reusable framework composition",
+          "path": "agent/patterns/shell-page/pattern.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "contentInset": {
+          "type": "ShellPageContentInset",
+          "resolvedType": "\"default\" | \"none\"",
+          "attribute": "content-inset",
+          "default": "'default'",
+          "required": false,
+          "mutable": false,
+          "description": "Standard page gutters, or no inset for full-bleed page content."
+        },
+        "headerPresentation": {
+          "type": "ShellPageHeaderPresentation",
+          "resolvedType": "\"auto\" | \"compact\" | \"constrained\" | \"expanded\"",
+          "attribute": "header-presentation",
+          "default": "'auto'",
+          "required": false,
+          "mutable": false,
+          "description": "Automatic container/scroll behavior, or an explicit header variant override."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "contentInset": {
+        "type": "ShellPageContentInset",
+        "resolvedType": "\"default\" | \"none\"",
+        "attribute": "content-inset",
+        "default": "'default'",
+        "required": false,
+        "mutable": false,
+        "description": "Standard page gutters, or no inset for full-bleed page content."
+      },
+      "headerPresentation": {
+        "type": "ShellPageHeaderPresentation",
+        "resolvedType": "\"auto\" | \"compact\" | \"constrained\" | \"expanded\"",
+        "attribute": "header-presentation",
+        "default": "'auto'",
+        "required": false,
+        "mutable": false,
+        "description": "Automatic container/scroll behavior, or an explicit header variant override."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-shell-page",
+      "react": "DsShellPage",
+      "angular": "DsShellPage"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-shell-page.js';",
+        "example": "<ds-shell-page></ds-shell-page>"
+      },
+      "react": {
+        "import": "import { DsShellPage } from '@ds-mo/ui/react';",
+        "example": "<DsShellPage />"
+      },
+      "angular": {
+        "import": "import { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page';",
+        "example": "<ds-shell-page></ds-shell-page>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.3.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/ShellPage/ShellPage.css",
+      "content": ":host {\n  display: block;\n  position: relative;\n  min-width: 0;\n  min-height: 100%;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n.shell-page__scroll-sentinel {\n  position: absolute;\n  inset-block-start: 0;\n  inset-inline-start: 0;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-stroke-width-012);\n  pointer-events: none;\n}\n\n.shell-page__sticky-header {\n  position: sticky;\n  inset-block-start: 0;\n  z-index: var(--dimension-z-index-raised);\n  min-width: 0;\n  background: var(--color-background-primary);\n  overflow: visible;\n  overflow-anchor: none;\n}\n\n.shell-page__sticky-header ::slotted(ds-bar-title) {\n  display: block;\n  min-width: 0;\n}\n\n.shell-page__flow-spacer {\n  height: var(--ds-shell-page-flow-spacer, 0);\n  background: var(--color-background-primary);\n}\n\n.shell-page__content {\n  min-width: 0;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n:host(.shell-page-host--inset-default) .shell-page__content {\n  padding: var(--dimension-space-400) var(--dimension-space-400) var(--dimension-space-800);\n}\n\n:host(.shell-page-host--inset-none) .shell-page__content {\n  padding: 0;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellPage/ShellPage.tsx",
+      "content": "import { Component, Element, h, Host, Prop, State } from '@stencil/core';\nimport { createRafCoalescer } from '../../shell/chrome-transition';\nimport { resolveCssLengthPx } from '../../utils/resolve-css-length-px';\nimport type { BarTitleVariant } from '../BarTitle/bar-title-types';\nimport { resolveShellPageCapacity, resolveShellPageHeaderVariant } from './shell-page-responsive';\nimport type {\n  ShellPageCapacity,\n  ShellPageContentInset,\n  ShellPageHeaderPresentation,\n} from './shell-page-types';\n\ntype BarTitleElement = HTMLElement & { variant: BarTitleVariant };\n\n@Component({\n  tag: 'ds-shell-page',\n  styleUrl: 'ShellPage.css',\n  scoped: true,\n})\nexport class ShellPage {\n  @Element() el!: HTMLElement;\n\n  /** Automatic container/scroll behavior, or an explicit header variant override. */\n  @Prop() headerPresentation: ShellPageHeaderPresentation = 'auto';\n\n  /** Standard page gutters, or no inset for full-bleed page content. */\n  @Prop() contentInset: ShellPageContentInset = 'default';\n\n  @State() private capacity: ShellPageCapacity | null = null;\n  @State() private pageTopVisible = true;\n\n  private sentinelEl: HTMLElement | null = null;\n  private spacerEl: HTMLElement | null = null;\n  private headerEl: BarTitleElement | null = null;\n  private expandedHeaderHeight = 0;\n  private resizeObserver: ResizeObserver | null = null;\n  private headerResizeObserver: ResizeObserver | null = null;\n  private scrollRoot: HTMLElement | Window | null = null;\n  private readonly layoutCoalescer = createRafCoalescer(() => this.syncCapacity());\n\n  componentDidLoad() {\n    this.observeHeader(this.findHeader());\n    this.connectObservers();\n    this.connectScrollRoot();\n    this.layoutCoalescer.schedule();\n  }\n\n  componentDidRender() {\n    this.syncHeaderVariant();\n  }\n\n  disconnectedCallback() {\n    this.resizeObserver?.disconnect();\n    this.resizeObserver = null;\n    this.headerResizeObserver?.disconnect();\n    this.headerResizeObserver = null;\n    this.scrollRoot?.removeEventListener('scroll', this.handleScroll);\n    this.scrollRoot = null;\n    this.layoutCoalescer.cancel();\n  }\n\n  private get effectiveVariant(): BarTitleVariant {\n    return resolveShellPageHeaderVariant(\n      this.headerPresentation,\n      this.capacity ?? 'roomy',\n      this.pageTopVisible\n    );\n  }\n\n  private get isScrollCompacted(): boolean {\n    return this.headerPresentation === 'auto' && this.capacity === 'roomy' && !this.pageTopVisible;\n  }\n\n  private connectObservers() {\n    if (typeof ResizeObserver !== 'undefined') {\n      this.resizeObserver = new ResizeObserver(() => this.layoutCoalescer.schedule());\n      this.resizeObserver.observe(this.el);\n    }\n  }\n\n  private composedParent(element: Element): Element | null {\n    return (element as HTMLElement).assignedSlot?.parentElement ?? element.parentElement;\n  }\n\n  private findScrollRoot(): HTMLElement | Window {\n    let ancestor = this.composedParent(this.el);\n    while (ancestor && ancestor !== document.documentElement) {\n      const overflow = getComputedStyle(ancestor).overflowY;\n      if (overflow === 'auto' || overflow === 'scroll') return ancestor as HTMLElement;\n      ancestor = this.composedParent(ancestor);\n    }\n    return window;\n  }\n\n  private connectScrollRoot() {\n    this.scrollRoot?.removeEventListener('scroll', this.handleScroll);\n    this.scrollRoot = this.findScrollRoot();\n    this.scrollRoot.addEventListener('scroll', this.handleScroll, { passive: true });\n    this.handleScroll();\n  }\n\n  private handleScroll = () => {\n    if (!this.sentinelEl || !this.scrollRoot) return;\n    const rootTop =\n      this.scrollRoot === window ? 0 : (this.scrollRoot as HTMLElement).getBoundingClientRect().top;\n    this.pageTopVisible = this.sentinelEl.getBoundingClientRect().top >= rootTop;\n  };\n\n  private findHeader(): BarTitleElement | null {\n    return this.el.querySelector<BarTitleElement>('ds-bar-title');\n  }\n\n  private syncCapacity() {\n    const inlineSize = this.el.getBoundingClientRect().width;\n    if (inlineSize <= 0) return;\n\n    const compactAt = resolveCssLengthPx('--dimension-panel-width-2xl', 0);\n    const constrainedAt = resolveCssLengthPx('--dimension-panel-width-lg', 0);\n    const hysteresis = resolveCssLengthPx('--dimension-space-100', 0);\n    if (compactAt <= 0 || constrainedAt <= 0) return;\n\n    const next = resolveShellPageCapacity({\n      inlineSize,\n      compactAt,\n      constrainedAt,\n      hysteresis,\n      previous: this.capacity,\n    });\n    if (next !== this.capacity) this.capacity = next;\n    else this.syncHeaderVariant();\n  }\n\n  private get compactHeaderHeight(): number {\n    return resolveCssLengthPx('--dimension-size-600', 0);\n  }\n\n  private setSpacerHeight(height: number) {\n    if (!this.spacerEl) return;\n    this.spacerEl.style.setProperty('--ds-shell-page-flow-spacer', `${Math.max(0, height)}px`);\n  }\n\n  private syncHeaderVariant() {\n    const header = this.headerEl;\n    if (!header) return;\n\n    const next = this.effectiveVariant;\n    if (header.variant === 'expanded') {\n      this.expandedHeaderHeight = header.getBoundingClientRect().height;\n    }\n\n    this.setSpacerHeight(\n      this.isScrollCompacted ? this.expandedHeaderHeight - this.compactHeaderHeight : 0\n    );\n\n    if (header.variant !== next) header.variant = next;\n  }\n\n  private observeHeader(header: BarTitleElement | null) {\n    this.headerResizeObserver?.disconnect();\n    this.headerResizeObserver = null;\n    this.headerEl = header;\n    this.expandedHeaderHeight = 0;\n    this.setSpacerHeight(0);\n\n    if (!header) return;\n    if (typeof ResizeObserver !== 'undefined') {\n      this.headerResizeObserver = new ResizeObserver(() => {\n        if (header.variant === 'expanded') {\n          this.expandedHeaderHeight = header.getBoundingClientRect().height;\n        }\n      });\n      this.headerResizeObserver.observe(header);\n    }\n    this.syncHeaderVariant();\n  }\n\n  private handleHeaderSlotChange = (event: Event) => {\n    const slot = event.target as HTMLSlotElement;\n    const header = slot\n      .assignedElements({ flatten: true })\n      .find(element => element.tagName.toLowerCase() === 'ds-bar-title');\n    this.observeHeader((header as BarTitleElement | undefined) ?? null);\n  };\n\n  render() {\n    return (\n      <Host\n        role=\"main\"\n        class={{\n          'shell-page-host--inset-default': this.contentInset === 'default',\n          'shell-page-host--inset-none': this.contentInset === 'none',\n          [`shell-page-host--header-${this.effectiveVariant}`]: true,\n        }}\n      >\n        <div\n          ref={el => {\n            this.sentinelEl = el ?? null;\n          }}\n          class=\"shell-page__scroll-sentinel\"\n          aria-hidden=\"true\"\n        />\n        <div class=\"shell-page__sticky-header\">\n          <slot name=\"header\" onSlotchange={this.handleHeaderSlotChange} />\n        </div>\n        <div\n          ref={el => {\n            this.spacerEl = el ?? null;\n          }}\n          class=\"shell-page__flow-spacer\"\n          aria-hidden=\"true\"\n        />\n        <div class=\"shell-page__content\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellPage/shell-page-responsive.ts",
+      "content": "import type { ShellPageCapacity, ShellPageHeaderPresentation } from './shell-page-types';\nimport type { BarTitleVariant } from '../BarTitle/bar-title-types';\n\nexport interface ShellPageCapacityOptions {\n  inlineSize: number;\n  compactAt: number;\n  constrainedAt: number;\n  hysteresis: number;\n  previous: ShellPageCapacity | null;\n}\n\nexport function resolveShellPageCapacity({\n  inlineSize,\n  compactAt,\n  constrainedAt,\n  hysteresis,\n  previous,\n}: ShellPageCapacityOptions): ShellPageCapacity {\n  if (previous === null) {\n    if (inlineSize <= constrainedAt) return 'constrained';\n    if (inlineSize <= compactAt) return 'compact';\n    return 'roomy';\n  }\n\n  if (previous === 'constrained') {\n    if (inlineSize <= constrainedAt + hysteresis) return 'constrained';\n    return inlineSize <= compactAt ? 'compact' : 'roomy';\n  }\n\n  if (inlineSize <= constrainedAt) return 'constrained';\n\n  if (previous === 'compact') {\n    return inlineSize <= compactAt + hysteresis ? 'compact' : 'roomy';\n  }\n\n  return inlineSize <= compactAt ? 'compact' : 'roomy';\n}\n\nexport function resolveShellPageHeaderVariant(\n  presentation: ShellPageHeaderPresentation,\n  capacity: ShellPageCapacity,\n  pageTopVisible: boolean\n): BarTitleVariant {\n  if (presentation !== 'auto') return presentation;\n  if (capacity === 'constrained') return 'constrained';\n  if (capacity === 'compact' || !pageTopVisible) return 'compact';\n  return 'expanded';\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellPage/shell-page-types.ts",
+      "content": "import type { BarTitleVariant } from '../BarTitle/bar-title-types';\n\nexport type ShellPageHeaderPresentation = 'auto' | BarTitleVariant;\n\nexport type ShellPageContentInset = 'default' | 'none';\n\nexport type ShellPageCapacity = 'roomy' | 'compact' | 'constrained';\n",
+      "type": "registry:ui"
+    }
+  ]
+}

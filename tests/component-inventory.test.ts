@@ -162,10 +162,16 @@ describe('source-derived component inventory', () => {
       'src/angular/angular-component-lib/utils.ts',
     ])
       writeFile(root, supportPath, 'preserved');
+    writeFile(root, 'src/angular/angular-component-lib/utils 3.ts', 'collision');
+    writeFile(root, 'src/wc/components/Widget/Widget.stories 2.ts', 'collision');
+    writeFile(root, 'tests/e2e/widget.spec 2.ts', 'collision');
+    writeFile(root, 'public/r/widget 2.json', 'collision');
     writeFile(root, '.stencil/compiler-cache.json', 'derived');
 
     const removed = cleanFrameworkProxies(root);
     assert.deepEqual(removed, [
+      'public/r/widget 2.json',
+      'src/angular/angular-component-lib/utils 3.ts',
       'src/angular/ds-new-widget 2.ts',
       'src/angular/ds-new-widget.ts',
       'src/angular/index.ts',
@@ -174,6 +180,8 @@ describe('source-derived component inventory', () => {
       'src/react/components 2.ts',
       'src/react/components.ts',
       'src/react/ds-new-widget.ts',
+      'src/wc/components/Widget/Widget.stories 2.ts',
+      'tests/e2e/widget.spec 2.ts',
     ]);
     for (const supportPath of [
       'src/angular/boolean-value-accessor.ts',

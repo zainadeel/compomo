@@ -56,7 +56,7 @@
     "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
     "Use the ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot.",
     "When enabled, the ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
-    "Enabled shell gradient rings align automatically inside active AppShell gradient chrome and may be explicitly enabled or disabled when composition requires it."
+    "Enabled shell gradient rings align automatically inside active ShellApp gradient chrome and may be explicitly enabled or disabled when composition requires it."
   ],
   "responsiveBehavior": [
     "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",

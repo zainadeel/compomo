@@ -36,14 +36,16 @@ export class CodeBlock {
             <ds-text as="span" variant="text-caption" emphasis color="on-strong">
               {label}
             </ds-text>
-            <ds-button-unfilled
-              variant="icon"
-              icon={this.copied ? 'Check' : 'Copy'}
-              size="xs"
-              aria-label={this.copied ? 'Copied' : 'Copy code'}
-              hasBorder={false}
-              onDsClick={this.copy}
-            />
+            <ds-tooltip label={this.copied ? 'Copied' : 'Copy code'} side="bottom" size="sm">
+              <ds-button-unfilled
+                variant="icon"
+                icon={this.copied ? 'Check' : 'Copy'}
+                size="xs"
+                aria-label={this.copied ? 'Copied' : 'Copy code'}
+                hasBorder={false}
+                onDsClick={this.copy}
+              />
+            </ds-tooltip>
           </figcaption>
           <pre>
             <code>{this.code}</code>

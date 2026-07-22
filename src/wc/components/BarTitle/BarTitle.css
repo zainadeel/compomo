@@ -1,0 +1,185 @@
+@import '../../utils/control-density.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-background-primary);
+}
+
+.bar-title {
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--color-background-primary);
+}
+
+.bar-title::after {
+  content: '';
+  position: absolute;
+  inset: auto var(--dimension-space-400) 0;
+  height: var(--dimension-stroke-width-012);
+  background: var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+.bar-title__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--dimension-space-100);
+  padding: var(--dimension-space-400);
+  box-sizing: border-box;
+}
+
+.bar-title__row {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  min-height: var(--dimension-size-400);
+  min-width: 0;
+}
+
+.bar-title__identity {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+}
+
+.bar-title__back,
+.bar-title__breadcrumb-back,
+.bar-title__section-chevron {
+  flex: 0 0 auto;
+}
+
+.bar-title__breadcrumb {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.bar-title__heading {
+  display: block;
+  width: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.bar-title__divider {
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-size-250);
+  flex: 0 0 var(--dimension-stroke-width-012);
+  background: var(--color-border-tertiary);
+}
+
+.bar-title__section-selector {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: var(--dimension-panel-width-sm);
+}
+
+.bar-title__section-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-control-gap);
+  height: var(--ds-control-height);
+  min-width: 0;
+  max-width: 100%;
+  padding-inline: var(--ds-control-padding-inline);
+  border: none;
+  border-radius: var(--ds-control-radius);
+  box-sizing: border-box;
+  background: transparent;
+  color: var(--color-foreground-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  user-select: none;
+  transition: color var(--effect-motion-short-2);
+}
+
+.bar-title__section-trigger--expanded {
+  color: var(--color-foreground-primary);
+}
+
+.bar-title__section-trigger--expanded::after,
+.bar-title__section-trigger--expanded:hover::after {
+  background: var(--ds-interaction-pressed);
+}
+
+.bar-title__section-label {
+  min-width: 0;
+  padding-inline-start: var(--ds-control-label-inset);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-title__section-chevron {
+  margin-inline-end: var(--ds-control-label-inset);
+}
+
+.bar-title__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+}
+
+.bar-title__description {
+  display: block;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  height: var(--dimension-size-400);
+  margin-inline-start: 0;
+  overflow: hidden;
+}
+
+:host(.bar-title-host--compact) .bar-title {
+  height: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+}
+
+:host(.bar-title-host--compact) .bar-title::after {
+  inset-inline: 0;
+}
+
+:host(.bar-title-host--compact) .bar-title__inner {
+  height: 100%;
+  padding: 0;
+  gap: 0;
+}
+
+:host(.bar-title-host--compact) .bar-title__row {
+  height: 100%;
+}
+
+:host(.bar-title-host--compact) .bar-title__identity {
+  height: var(--dimension-size-400);
+}
+
+:host(.bar-title-host--compact) .bar-title__heading {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  height: var(--dimension-size-400);
+  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-title__section-trigger {
+    transition: none;
+  }
+}

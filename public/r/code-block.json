@@ -25,7 +25,7 @@
         "component:ds-button-unfilled"
       ],
       "accessibility": [
-        "The copy action has explicit status wording and the code remains selectable text.",
+        "The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.",
         "Language and filename labels supplement rather than replace the code content."
       ],
       "responsiveBehavior": [
@@ -133,7 +133,8 @@
   ],
   "registryDependencies": [
     "button-unfilled",
-    "text"
+    "text",
+    "tooltip"
   ],
   "files": [
     {
@@ -143,7 +144,7 @@
     },
     {
       "path": "src/wc/components/CodeBlock/CodeBlock.tsx",
-      "content": "import { Component, h, Host, Prop, State } from '@stencil/core';\n\n@Component({\n  tag: 'ds-code-block',\n  styleUrl: 'CodeBlock.css',\n  scoped: true,\n})\nexport class CodeBlock {\n  @Prop() code: string = '';\n  @Prop() language: string = '';\n  @Prop() filename: string = '';\n\n  @State() private copied: boolean = false;\n  private copiedTimer?: ReturnType<typeof setTimeout>;\n\n  disconnectedCallback() {\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n  }\n\n  private copy = async () => {\n    if (!navigator.clipboard || !this.code) return;\n    await navigator.clipboard.writeText(this.code);\n    this.copied = true;\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n    this.copiedTimer = setTimeout(() => {\n      this.copied = false;\n    }, 2000);\n  };\n\n  render() {\n    const label = this.filename || this.language || 'Code';\n    return (\n      <Host>\n        <figure class=\"code-block\">\n          <figcaption class=\"code-block__header\">\n            <ds-text as=\"span\" variant=\"text-caption\" emphasis color=\"on-strong\">\n              {label}\n            </ds-text>\n            <ds-button-unfilled\n              variant=\"icon\"\n              icon={this.copied ? 'Check' : 'Copy'}\n              size=\"xs\"\n              aria-label={this.copied ? 'Copied' : 'Copy code'}\n              hasBorder={false}\n              onDsClick={this.copy}\n            />\n          </figcaption>\n          <pre>\n            <code>{this.code}</code>\n          </pre>\n        </figure>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop, State } from '@stencil/core';\n\n@Component({\n  tag: 'ds-code-block',\n  styleUrl: 'CodeBlock.css',\n  scoped: true,\n})\nexport class CodeBlock {\n  @Prop() code: string = '';\n  @Prop() language: string = '';\n  @Prop() filename: string = '';\n\n  @State() private copied: boolean = false;\n  private copiedTimer?: ReturnType<typeof setTimeout>;\n\n  disconnectedCallback() {\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n  }\n\n  private copy = async () => {\n    if (!navigator.clipboard || !this.code) return;\n    await navigator.clipboard.writeText(this.code);\n    this.copied = true;\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n    this.copiedTimer = setTimeout(() => {\n      this.copied = false;\n    }, 2000);\n  };\n\n  render() {\n    const label = this.filename || this.language || 'Code';\n    return (\n      <Host>\n        <figure class=\"code-block\">\n          <figcaption class=\"code-block__header\">\n            <ds-text as=\"span\" variant=\"text-caption\" emphasis color=\"on-strong\">\n              {label}\n            </ds-text>\n            <ds-tooltip label={this.copied ? 'Copied' : 'Copy code'} side=\"bottom\" size=\"sm\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                icon={this.copied ? 'Check' : 'Copy'}\n                size=\"xs\"\n                aria-label={this.copied ? 'Copied' : 'Copy code'}\n                hasBorder={false}\n                onDsClick={this.copy}\n              />\n            </ds-tooltip>\n          </figcaption>\n          <pre>\n            <code>{this.code}</code>\n          </pre>\n        </figure>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

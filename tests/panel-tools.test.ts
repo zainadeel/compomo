@@ -62,7 +62,7 @@ describe('PANEL_TOOLS_SHORTCUTS', () => {
       messages: 'M',
       stacks: 'S',
       activity: 'N',
-      help: '?',
+      help: '/',
     });
   });
 });

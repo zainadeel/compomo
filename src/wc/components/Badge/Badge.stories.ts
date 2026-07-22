@@ -215,7 +215,7 @@ export const OnGradientBackground: Story = {
       description: {
         story:
           'Badge rings on gradient chrome use `gradient-background` with `background-attachment: fixed` ' +
-          'so the wash aligns with `ds-app-shell` viewport chrome.',
+          'so the wash aligns with `ds-shell-app` viewport chrome.',
       },
     },
   },
