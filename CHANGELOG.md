@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/zainadeel/compomo/compare/v11.1.0...v12.0.0) (2026-07-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* introduce page shell and title bar ([#363](https://github.com/zainadeel/compomo/issues/363))
+
+### Added
+
+* introduce page shell and title bar ([#363](https://github.com/zainadeel/compomo/issues/363)) ([f3bc709](https://github.com/zainadeel/compomo/commit/f3bc7098e278641441729f4a51b656e41c186efb))
+
 ## [11.1.0](https://github.com/zainadeel/compomo/compare/v11.0.0...v11.1.0) (2026-07-21)
 
 
