@@ -143,10 +143,10 @@ test('selects compact and constrained variants from ShellPage capacity', async (
   });
 
   expect(compactGeometry.height).toBe(48);
-  expect(compactGeometry.headingLeft - compactGeometry.backRight).toBe(4);
+  expect(compactGeometry.headingLeft - compactGeometry.backRight).toBeCloseTo(4, 3);
   expect(compactGeometry.headingPaddingLeft).toBe(8);
   expect(compactGeometry.actionsRightInset).toBeCloseTo(8, 3);
-  expect(compactGeometry.actionGap).toBe(8);
+  expect(compactGeometry.actionGap).toBeCloseTo(8, 3);
 
   await viewport.evaluate((element: HTMLElement) => {
     element.style.width = 'var(--dimension-panel-width-lg)';
