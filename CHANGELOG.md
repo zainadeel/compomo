@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.3.0](https://github.com/zainadeel/compomo/compare/v12.2.0...v12.3.0) (2026-07-23)
+
+
+### Added
+
+* expand headers, data viz, and agent guidance ([#371](https://github.com/zainadeel/compomo/issues/371)) ([0029a4e](https://github.com/zainadeel/compomo/commit/0029a4ea286753bcab64951ae6e5cf3c1d89855a))
+
 ## [12.2.0](https://github.com/zainadeel/compomo/compare/v12.1.0...v12.2.0) (2026-07-23)
 
 
