@@ -11,12 +11,13 @@ import type { EventName, StencilReactComponent } from '@stencil/react-output-tar
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
-import { type DsBarTitleCustomEvent } from "@ds-mo/ui";
+import { type BreadcrumbSelectDetail, type DsBarTitleCustomEvent } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsBarTitle as DsBarTitleElement, defineCustomElement as defineDsBarTitle } from "@ds-mo/ui/dist/components/ds-bar-title.js";
 
 export type DsBarTitleEvents = {
     onDsBack: EventName<DsBarTitleCustomEvent<MouseEvent>>,
+    onDsBreadcrumbSelect: EventName<DsBarTitleCustomEvent<BreadcrumbSelectDetail>>,
     onDsSectionChange: EventName<DsBarTitleCustomEvent<string>>,
     onDsAction: EventName<DsBarTitleCustomEvent<string>>
 };
@@ -28,6 +29,7 @@ export const DsBarTitle: StencilReactComponent<DsBarTitleElement, DsBarTitleEven
     react: React,
     events: {
         onDsBack: 'dsBack',
+        onDsBreadcrumbSelect: 'dsBreadcrumbSelect',
         onDsSectionChange: 'dsSectionChange',
         onDsAction: 'dsAction'
     } as DsBarTitleEvents,

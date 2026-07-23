@@ -16,7 +16,7 @@ const buttonMetadata = JSON.parse(
 test('prototype agent metadata is schema-valid and references source components', () => {
   const result = validateAgentContract();
 
-  assert.equal(result.sourceComponents, 62);
+  assert.equal(result.sourceComponents, 66);
   assert.equal(result.componentDocuments, result.sourceComponents);
   assert.equal(result.patternDocuments, 5);
 });

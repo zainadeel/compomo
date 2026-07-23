@@ -6,6 +6,7 @@ import type {
   BarTitleSectionItem,
   BarTitleVariant,
 } from './bar-title-types';
+import type { BreadcrumbItem } from '../Breadcrumb/breadcrumb-types';
 import '../../../../dist/components/ds-bar-title.js';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
@@ -35,6 +36,11 @@ const detailActions: BarTitleActionItem[] = [
   { id: 'remove-driver', label: 'Remove driver', isDestructive: true },
 ];
 
+const driverBreadcrumbs: BreadcrumbItem[] = [
+  { id: 'workforce', label: 'Workforce', href: '#workforce' },
+  { id: 'drivers', label: 'Drivers', href: '#drivers' },
+];
+
 interface BarTitleReviewCase {
   id: string;
   label: string;
@@ -44,6 +50,7 @@ interface BarTitleReviewCase {
   showBack?: boolean;
   backAriaLabel?: string;
   backLabel?: string;
+  breadcrumbs?: BreadcrumbItem[];
   sections?: BarTitleSectionItem[];
   value?: string;
   primaryAction?: BarTitlePrimaryAction;
@@ -72,12 +79,14 @@ const pageCases: BarTitleReviewCase[] = [
   {
     id: 'detail-with-sections',
     label: 'Inner detail · sections',
-    rationale: 'Back returns to the collection; the selector switches detail routes.',
+    rationale:
+      'Expanded shows route ancestors; compact Back returns to the collection. The selector switches detail routes.',
     heading: 'John Smith',
     description: 'View and manage driver details, activity, timecards, and settings.',
     showBack: true,
     backAriaLabel: 'Back to Drivers',
     backLabel: 'Drivers',
+    breadcrumbs: driverBreadcrumbs,
     sections: detailSections,
     value: 'summary',
     primaryAction: detailPrimaryAction,
@@ -86,12 +95,17 @@ const pageCases: BarTitleReviewCase[] = [
   {
     id: 'detail-without-sections',
     label: 'Inner detail · no sections',
-    rationale: 'Back returns to the collection; actions remain page-level.',
+    rationale:
+      'Expanded shows route ancestors; compact Back returns to the collection. Actions remain page-level.',
     heading: 'Inspection report',
     description: 'Review inspection findings and supporting evidence.',
     showBack: true,
     backAriaLabel: 'Back to Inspections',
     backLabel: 'Inspections',
+    breadcrumbs: [
+      { id: 'safety', label: 'Safety', href: '#safety' },
+      { id: 'inspections', label: 'Inspections', href: '#inspections' },
+    ],
     actions: [
       { id: 'download-report', label: 'Download report' },
       { id: 'archive-report', label: 'Archive report' },
@@ -221,6 +235,7 @@ function renderHeader(reviewCase: BarTitleReviewCase, variant: BarTitleVariant =
       .showBack=${reviewCase.showBack ?? false}
       back-aria-label=${reviewCase.backAriaLabel ?? 'Back'}
       back-label=${reviewCase.backLabel ?? 'Back'}
+      .breadcrumbs=${reviewCase.breadcrumbs ?? []}
       variant=${variant}
       .sections=${reviewCase.sections ?? []}
       value=${reviewCase.value ?? ''}
@@ -288,6 +303,7 @@ export const Playground: Story = {
         .showBack=${args['showBack']}
         back-aria-label=${args['backAriaLabel']}
         back-label=${args['backLabel']}
+        .breadcrumbs=${driverBreadcrumbs}
         variant=${args['variant']}
         .sections=${detailSections}
         value="summary"
@@ -484,6 +500,10 @@ export const ContentStress: Story = {
       showBack: true,
       backAriaLabel: 'Back to Drivers',
       backLabel: 'Drivers',
+      breadcrumbs: [
+        { id: 'workforce', label: 'Workforce and people operations', href: '#workforce' },
+        { id: 'drivers', label: 'Commercial vehicle drivers', href: '#drivers' },
+      ],
       sections: [
         { id: 'compliance', label: 'Compliance documents and certification history' },
         { id: 'activity', label: 'Recent activity' },

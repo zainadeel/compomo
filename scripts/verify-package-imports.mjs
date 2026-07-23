@@ -28,10 +28,67 @@ async function verifyPackagedMcp(consumerDir) {
 
   try {
     await client.connect(transport);
+    const serverInfo = client.getServerVersion();
+    if (serverInfo?.name !== 'compomo' || serverInfo.version !== pkg.version) {
+      throw new Error(
+        `Packaged MCP reported ${serverInfo?.name ?? 'unknown'}@${serverInfo?.version ?? 'unknown'} instead of compomo@${pkg.version}.`
+      );
+    }
+
     const tools = await client.listTools();
     const toolNames = new Set(tools.tools.map(tool => tool.name));
     for (const name of ['list_components', 'get_component', 'list_patterns', 'get_pattern']) {
       if (!toolNames.has(name)) throw new Error(`Missing packaged MCP tool: ${name}`);
+    }
+
+    for (const name of ['list_components', 'get_component', 'list_patterns', 'get_pattern']) {
+      const tool = tools.tools.find(candidate => candidate.name === name);
+      if (!tool?.outputSchema) throw new Error(`Packaged MCP tool does not advertise structured output: ${name}`);
+      if (
+        tool.annotations?.readOnlyHint !== true ||
+        tool.annotations?.destructiveHint !== false ||
+        tool.annotations?.idempotentHint !== true ||
+        tool.annotations?.openWorldHint !== false
+      ) {
+        throw new Error(`Packaged MCP tool does not advertise its read-only behavior: ${name}`);
+      }
+    }
+
+    const componentResult = await client.callTool({
+      name: 'get_component',
+      arguments: { name: 'button-filled' },
+    });
+    if (
+      componentResult.isError ||
+      componentResult.structuredContent?.component?.name !== 'button-filled' ||
+      !componentResult.structuredContent.component.meta?.intent?.useWhen?.length ||
+      componentResult.structuredContent.component.files
+    ) {
+      throw new Error('Packaged MCP did not return structured ButtonFilled metadata without source files.');
+    }
+
+    const componentListResult = await client.callTool({
+      name: 'list_components',
+      arguments: { search: 'button' },
+    });
+    if (
+      componentListResult.isError ||
+      componentListResult.structuredContent?.query !== 'button' ||
+      !componentListResult.structuredContent.components?.some(component => component.name === 'button-filled')
+    ) {
+      throw new Error('Packaged MCP did not return a structured filtered component summary.');
+    }
+
+    const patternListResult = await client.callTool({
+      name: 'list_patterns',
+      arguments: { search: 'menu' },
+    });
+    if (
+      patternListResult.isError ||
+      patternListResult.structuredContent?.query !== 'menu' ||
+      !patternListResult.structuredContent.patterns?.some(pattern => pattern.id === 'pattern:menu-trigger')
+    ) {
+      throw new Error('Packaged MCP did not return a structured filtered pattern summary.');
     }
 
     const result = await client.callTool({
@@ -42,7 +99,14 @@ async function verifyPackagedMcp(consumerDir) {
       ?.filter(item => item.type === 'text')
       .map(item => item.text)
       .join('\n') ?? '';
-    if (result.isError || !text.includes('pattern:menu-trigger') || !text.includes('ViewMenu.tsx')) {
+    if (
+      result.isError ||
+      !text.includes('pattern:menu-trigger') ||
+      !text.includes('ViewMenu.tsx') ||
+      result.structuredContent?.framework !== 'react' ||
+      !result.structuredContent.pattern?.implementations?.react ||
+      result.structuredContent.pattern.implementations.angular
+    ) {
       throw new Error('Packaged MCP did not return the executable React menu-trigger recipe.');
     }
   } catch (error) {

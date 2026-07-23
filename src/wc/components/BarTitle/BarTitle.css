@@ -57,18 +57,8 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--dimension-space-050);
+  gap: var(--dimension-space-100);
   min-width: 0;
-}
-
-/*
- * Pull the whole leading block up by exactly the breadcrumb row's own box
- * (its xs control-height + its top margin + the row-gap below it), so the
- * title row lands flush with the actions' top without moving actions.
- * Tied to the same tokens that size the breadcrumb, not a guessed pixel value.
- */
-:host(.bar-title-host--expanded.bar-title-host--has-back) .bar-title__leading {
-  margin-block-start: calc(-1 * (var(--dimension-size-200) + var(--dimension-space-050) * 2));
 }
 
 .bar-title__title-row {
@@ -88,16 +78,14 @@
 }
 
 .bar-title__back,
-.bar-title__breadcrumb-back,
 .bar-title__section-chevron {
   flex: 0 0 auto;
 }
 
 .bar-title__breadcrumb {
-  display: flex;
-  align-items: center;
+  display: block;
+  width: 100%;
   min-width: 0;
-  margin-block-start: var(--dimension-space-050);
 }
 
 .bar-title__heading {

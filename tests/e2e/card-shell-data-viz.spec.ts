@@ -27,3 +27,59 @@ test('CardDataVizDonut composes the dedicated data-viz shell', async ({ page }) 
   await expect(card.locator('.card-data-viz-donut__chart-region')).toContainText('Donut chart');
   await expect(card.locator('.card-data-viz-donut__legend-region')).toContainText('Donut legend');
 });
+
+test('CardDataVizLine composes a fitting line chart with a static legend', async ({ page }) => {
+  const card = page.locator('#line-card');
+  const chartRegion = card.locator('.card-data-viz-line__chart-region');
+  const chart = card.locator('ds-chart-line');
+  const legend = card.locator('ds-chart-legend');
+  const legendRows = legend.locator('.chart-legend__item');
+
+  await expect(card.locator('ds-card-shell-data-viz')).toHaveCount(1);
+  await expect(card.locator('.card-shell-data-viz__title')).toHaveText('Fuel trend');
+  await expect(chartRegion.locator('ds-chart-line')).toHaveCount(1);
+  await expect(legend).toHaveJSProperty('highlightOnHover', false);
+
+  const [regionBox, chartBox] = await Promise.all([
+    chartRegion.boundingBox(),
+    chart.locator('svg').boundingBox(),
+  ]);
+  expect(regionBox).not.toBeNull();
+  expect(chartBox).not.toBeNull();
+  expect(chartBox!.width).toBeLessThanOrEqual(regionBox!.width);
+
+  await legendRows.first().hover();
+  await expect
+    .poll(() =>
+      legendRows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity))
+    )
+    .toEqual(['1', '1']);
+});
+
+test('CardDataVizBar composes stacked bars with a static legend', async ({ page }) => {
+  const card = page.locator('#bar-card');
+  const chartRegion = card.locator('.card-data-viz-bar__chart-region');
+  const chart = card.locator('ds-chart-bar-stacked');
+  const legend = card.locator('ds-chart-legend');
+  const legendRows = legend.locator('.chart-legend__item');
+
+  await expect(card.locator('ds-card-shell-data-viz')).toHaveCount(1);
+  await expect(card.locator('.card-shell-data-viz__title')).toHaveText('Vehicle activity');
+  await expect(chartRegion.locator('ds-chart-bar-stacked')).toHaveCount(1);
+  await expect(legend).toHaveJSProperty('highlightOnHover', false);
+
+  const [regionBox, chartBox] = await Promise.all([
+    chartRegion.boundingBox(),
+    chart.locator('svg').boundingBox(),
+  ]);
+  expect(regionBox).not.toBeNull();
+  expect(chartBox).not.toBeNull();
+  expect(chartBox!.width).toBeLessThanOrEqual(regionBox!.width);
+
+  await legendRows.first().hover();
+  await expect
+    .poll(() =>
+      legendRows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity))
+    )
+    .toEqual(['1', '1']);
+});

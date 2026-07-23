@@ -28,13 +28,20 @@
       "when": "The composition is the standard donut chart plus synchronized legend.",
       "component": "component:ds-card-data-viz-donut",
       "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization."
+    },
+    {
+      "when": "The composition is the standard line chart plus static horizontal legend.",
+      "component": "component:ds-card-data-viz-line",
+      "reason": "CardDataVizLine composes this shell with line-specific regions and disables decorative legend hover."
     }
   ],
   "commonlyComposedWith": [
     "component:ds-chart-bar",
+    "component:ds-chart-bar-stacked",
     "component:ds-chart-donut",
     "component:ds-chart-line",
     "component:ds-chart-legend",
+    "component:ds-card-data-viz-line",
     "component:ds-button-unfilled"
   ],
   "accessibility": [

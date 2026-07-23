@@ -33,6 +33,7 @@
   ],
   "commonlyComposedWith": [
     "component:ds-chart-legend",
+    "component:ds-card-data-viz-line",
     "component:ds-card-shell-data-viz",
     "component:ds-tooltip-data-viz"
   ],
@@ -43,11 +44,12 @@
   ],
   "states": [
     "The chart is currently static and does not own hover, selection, loading, or empty-state policy.",
+    "Its standard horizontal legend is a static key with local hover highlighting disabled.",
     "Point markers may be shown or hidden without changing the underlying series meaning.",
     "Authored series colors override the shared categorical palette."
   ],
   "responsiveBehavior": [
-    "The owner supplies dimensions and updates them when its layout changes.",
+    "The owner supplies intrinsic dimensions; the SVG preserves its aspect ratio while shrinking to fit a narrower parent.",
     "Category positions are always equally spaced, even when labels represent time.",
     "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
   ],

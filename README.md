@@ -76,6 +76,12 @@ instruction telling agents to retrieve the applicable pattern before composing
 multiple design-system components; connecting the MCP makes recipes available,
 while the instruction makes their use consistent.
 
+Registry-oriented tools return both readable Markdown and schema-validated
+`structuredContent`. Compatible MCP clients can consume the generated component
+API, authored design intent, dependencies, and executable pattern recipes as JSON
+without reparsing prose; text content remains available for older clients. Every
+tool is annotated as read-only, idempotent, and closed-world.
+
 ## Components
 
 All tags are `ds-*` custom elements. Grouped by role (see Storybook for props and stories):
@@ -93,11 +99,11 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 - **Modal**, **Menu**, **Tooltip**, **Select**, **Toast**
 
 ### Navigation
-- **TabGroup** (horizontal local views), **PanelSubNav** (vertical local views)
+- **Breadcrumb** (hierarchical page ancestors), **TabGroup** (horizontal local views), **PanelSubNav** (vertical local views)
 - **ShellApp**, **ShellPage**, **PanelNav**, **BarNav**, **BarTitle**, **BarWorkflow**, **PanelTools**
 
 ### Status & layout
-- **EmptyState**, **Loader**, **Skeleton**, **CardSetting**, **CardDataVizDonut**
+- **EmptyState**, **Loader**, **Skeleton**, **CardSetting**, **CardDataVizDonut**, **CardDataVizLine**
 
 ## Token dependency
 

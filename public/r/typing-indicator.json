@@ -29,12 +29,12 @@
         "pattern:conversation"
       ],
       "accessibility": [
-        "Provide concise localized status text that names the participant when that context is not otherwise clear.",
+        "Provide concise localized status text; the standard label is Typing followed by a three-dot ellipsis.",
         "The polite atomic status announces typing without representing it as a message bubble."
       ],
       "states": [
         "TypingIndicator is transient conversation status, never persisted message content.",
-        "Its body-small secondary text may shimmer, while reduced-motion preferences retain a static readable status."
+        "Its body-medium secondary text may shimmer, while reduced-motion preferences retain a static readable status."
       ],
       "responsiveBehavior": [
         "The indicator fills the message content width and wraps only when localized status text requires it."
@@ -52,10 +52,10 @@
           "type": "string",
           "resolvedType": "string",
           "attribute": "label",
-          "default": "'Typing…'",
+          "default": "'Typing...'",
           "required": false,
           "mutable": false,
-          "description": "Concise localized status text, ideally naming the participant who is typing."
+          "description": "Concise localized typing status."
         }
       },
       "events": [],
@@ -67,10 +67,10 @@
         "type": "string",
         "resolvedType": "string",
         "attribute": "label",
-        "default": "'Typing…'",
+        "default": "'Typing...'",
         "required": false,
         "mutable": false,
-        "description": "Concise localized status text, ideally naming the participant who is typing."
+        "description": "Concise localized typing status."
       }
     },
     "events": [],
@@ -120,7 +120,7 @@
     },
     {
       "path": "src/wc/components/TypingIndicator/TypingIndicator.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-typing-indicator',\n  styleUrl: 'TypingIndicator.css',\n  scoped: true,\n})\nexport class TypingIndicator {\n  /** Concise localized status text, ideally naming the participant who is typing. */\n  @Prop() label: string = 'Typing…';\n\n  render() {\n    return (\n      <Host role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n        <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\" shimmer>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-typing-indicator',\n  styleUrl: 'TypingIndicator.css',\n  scoped: true,\n})\nexport class TypingIndicator {\n  /** Concise localized typing status. */\n  @Prop() label: string = 'Typing...';\n\n  render() {\n    return (\n      <Host role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n        <ds-text as=\"span\" variant=\"text-body-medium\" color=\"secondary\" shimmer>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

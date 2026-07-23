@@ -17,11 +17,13 @@ const meta: Meta = {
     direction: { control: 'select', options: ['vertical', 'horizontal'] },
     percentageDecimals: { control: 'radio', options: [1, 2] },
     showPercentage: { control: 'boolean' },
+    highlightOnHover: { control: 'boolean' },
   },
   args: {
     direction: 'vertical',
     percentageDecimals: 1,
     showPercentage: true,
+    highlightOnHover: true,
   },
 };
 export default meta;
@@ -37,6 +39,7 @@ export const Playground: Story = {
       direction=${args['direction']}
       percentage-decimals=${args['percentageDecimals']}
       ?show-percentage=${args['showPercentage']}
+      ?highlight-on-hover=${args['highlightOnHover']}
     ></ds-chart-legend>
   `,
 };

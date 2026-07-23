@@ -3,6 +3,56 @@ import { addons } from 'storybook/manager-api';
 import { create } from 'storybook/theming';
 import pkg from '../package.json';
 
+const SIDEBAR_INITIALISMS = new Map([
+  ['ai', 'AI'],
+  ['api', 'API'],
+  ['css', 'CSS'],
+  ['dom', 'DOM'],
+  ['gfm', 'GFM'],
+  ['html', 'HTML'],
+  ['js', 'JS'],
+  ['json', 'JSON'],
+  ['mcp', 'MCP'],
+  ['mdx', 'MDX'],
+  ['rtl', 'RTL'],
+  ['spa', 'SPA'],
+  ['svg', 'SVG'],
+  ['ts', 'TS'],
+  ['ui', 'UI'],
+  ['url', 'URL'],
+]);
+
+function sentenceCaseSidebarLabel(label: string): string {
+  const words = label
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .split(/(\s+)/);
+
+  let isFirstWord = true;
+
+  return words
+    .map(part => {
+      if (/^\s+$/.test(part)) return part;
+
+      const token = part.match(/^([^A-Za-z0-9]*)([A-Za-z0-9]+)([^A-Za-z0-9]*)$/);
+      const prefix = token?.[1] ?? '';
+      const word = token?.[2] ?? part;
+      const suffix = token?.[3] ?? '';
+      const initialism = SIDEBAR_INITIALISMS.get(word.toLowerCase());
+      if (initialism) {
+        isFirstWord = false;
+        return `${prefix}${initialism}${suffix}`;
+      }
+
+      const normalized = word.toLowerCase();
+      if (!isFirstWord) return `${prefix}${normalized}${suffix}`;
+
+      isFirstWord = false;
+      return `${prefix}${normalized.charAt(0).toUpperCase()}${normalized.slice(1)}${suffix}`;
+    })
+    .join('');
+}
+
 function setBrandTheme(name: string, version: string) {
   const packageLabel = `${name} v${version}`;
   // Storybook renders brandImage OR brandTitle, not both. With brandImage: null the
@@ -23,6 +73,9 @@ function setBrandTheme(name: string, version: string) {
     showNav: true,
     showToolbar: true,
     enableShortcuts: true,
+    sidebar: {
+      renderLabel: item => sentenceCaseSidebarLabel(item.name),
+    },
   });
 }
 

@@ -37,10 +37,15 @@ const meta: Meta = {
       control: 'select',
       options: ['auto', 'expanded', 'compact', 'constrained'],
     },
+    headerCapacity: {
+      control: 'select',
+      options: ['roomy', 'compact', 'constrained'],
+    },
     contentInset: { control: 'select', options: ['default', 'none'] },
   },
   args: {
     headerPresentation: 'auto',
+    headerCapacity: 'roomy',
     contentInset: 'default',
   },
 };
@@ -114,6 +119,7 @@ export const Playground: Story = {
     <div class="shell-page-demo">
       <ds-shell-page
         header-presentation=${args['headerPresentation']}
+        header-capacity=${args['headerCapacity']}
         content-inset=${args['contentInset']}
       >
         <ds-bar-title
@@ -138,7 +144,7 @@ export const ListWithSections: Story = {
   render: () => html`
     ${demoStyles}
     <div class="shell-page-demo">
-      <ds-shell-page>
+      <ds-shell-page header-capacity="roomy">
         <ds-bar-title
           slot="header"
           heading="Drivers"
@@ -158,7 +164,7 @@ export const DetailWithSections: Story = {
   render: () => html`
     ${demoStyles}
     <div class="shell-page-demo">
-      <ds-shell-page>
+      <ds-shell-page header-capacity="roomy">
         <ds-bar-title
           slot="header"
           heading="John Smith"
@@ -181,7 +187,7 @@ export const DetailWithoutSections: Story = {
   render: () => html`
     ${demoStyles}
     <div class="shell-page-demo">
-      <ds-shell-page>
+      <ds-shell-page header-capacity="roomy">
         <ds-bar-title
           slot="header"
           heading="Inspection report"
@@ -220,7 +226,7 @@ export const TopLevel: Story = {
   render: () => html`
     ${demoStyles}
     <div class="shell-page-demo">
-      <ds-shell-page>
+      <ds-shell-page header-capacity="roomy">
         <ds-bar-title
           slot="header"
           heading="Live Map"
@@ -236,7 +242,7 @@ export const FullBleed: Story = {
   render: () => html`
     ${demoStyles}
     <div class="shell-page-demo">
-      <ds-shell-page content-inset="none">
+      <ds-shell-page header-capacity="roomy" content-inset="none">
         <ds-bar-title slot="header" heading="Live Map"></ds-bar-title>
         <div class="shell-page-demo__full-bleed"></div>
       </ds-shell-page>

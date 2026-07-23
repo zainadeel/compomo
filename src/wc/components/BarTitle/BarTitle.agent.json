@@ -7,11 +7,11 @@
   "tag": "ds-bar-title",
   "audience": "general",
   "status": "stable",
-  "summary": "Page-level title chrome with optional route navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+  "summary": "Page-level title chrome with an optional expanded route breadcrumb, compact Back action, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
   "useWhen": [
     "A top-level page needs one h1 above its content.",
     "A list or detail page has multiple route-level sections that belong in the inline active-section menu.",
-    "A detail page needs a page-level Back action.",
+    "A detail page needs route ancestors in expanded presentation and a page-level Back action in compact chrome.",
     "A page needs one primary action plus optional secondary or destructive overflow commands."
   ],
   "avoidWhen": [
@@ -42,13 +42,15 @@
     "component:ds-shell-page",
     "component:ds-button-filled",
     "component:ds-button-unfilled",
+    "component:ds-breadcrumb",
     "component:ds-menu",
     "component:ds-text"
   ],
   "patterns": ["pattern:shell-page"],
   "accessibility": [
     "Provide one concise heading; BarTitle renders exactly one h1 and changes only its visual recipe between variants.",
-    "Give Back a destination-specific accessible name such as Back to Drivers, provide the concise parent label such as Drivers for the expanded breadcrumb, and handle dsBack in the route owner.",
+    "Give compact Back a destination-specific accessible name such as Back to Drivers and handle dsBack in the route owner.",
+    "Provide ordered breadcrumb items for deeper expanded paths and handle dsBreadcrumbSelect when native href navigation is not used; backLabel remains the single-parent expanded fallback.",
     "Keep value synchronized with the current child route; dsSectionChange returns the selected section id.",
     "Section and overflow triggers expose menu relationships and restore focus after selection or dismissal.",
     "Use one filled primary action in the page decision area and mark destructive overflow actions explicitly."
@@ -57,7 +59,8 @@
     "Omitting Back, sections, primaryAction, and actions produces the top-level title-only header.",
     "Two or more selectable sections add the inline section trigger; one section does not render a redundant menu.",
     "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
-    "expanded renders the larger heading, optional description, inset divider, and an xs icon-label Back breadcrumb in the top inset. The title and right-side actions share one top alignment whether Back is present, while the description remains in the left title column; compact renders 48px chrome with inline Back; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
+    "The overflow trigger uses its bordered treatment whenever the primary action is visible beside it; overflow-only and auto-collapsed-primary presentations keep the trigger borderless.",
+    "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
     "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts."
   ],
   "responsiveBehavior": [
@@ -68,15 +71,15 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
-      "Handle dsBack in the router owner, update value after dsSectionChange, and execute product commands from dsAction."
+      "Assign breadcrumbs, sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+      "Handle dsBack for compact navigation and dsBreadcrumbSelect for application-owned expanded breadcrumb navigation, update value after dsSectionChange, and execute product commands from dsAction."
     ],
     "react": [
-      "Pass arrays and objects directly to DsBarTitle and keep value controlled from route state.",
+      "Pass breadcrumb, section, and action arrays directly to DsBarTitle and keep value controlled from route state.",
       "Place DsBarTitle in DsShellPage with slot=header when automatic page behavior is required."
     ],
     "angular": [
-      "Bind complex values on the standalone DsBarTitle adapter and handle the three intent events in the route shell.",
+      "Bind complex values on the standalone DsBarTitle adapter and handle Back, breadcrumb, section, and action intent events in the route shell.",
       "Place ds-bar-title in ds-shell-page with slot=header; do not render router-outlet inside BarTitle."
     ]
   },

@@ -28,12 +28,19 @@
       "when": "The donut belongs in the canonical dashboard card.",
       "component": "component:ds-card-data-viz-donut",
       "reason": "The dedicated card places the legend and handles bidirectional highlight synchronization."
+    },
+    {
+      "when": "A static line chart and series key belong in the canonical dashboard card.",
+      "component": "component:ds-card-data-viz-line",
+      "reason": "The dedicated card places the horizontal legend and disables decorative local hover highlighting."
     }
   ],
   "commonlyComposedWith": [
     "component:ds-chart-donut",
+    "component:ds-chart-bar-stacked",
     "component:ds-chart-line",
     "component:ds-card-data-viz-donut",
+    "component:ds-card-data-viz-line",
     "component:ds-card-shell-data-viz"
   ],
   "accessibility": [
@@ -43,7 +50,8 @@
     "Do not rely on swatch color alone; every entry requires a meaningful visible label."
   ],
   "states": [
-    "Local pointer or focus interaction and external chart highlight remain separate; both may dim peers, but only a real link row receives interactive affordances.",
+    "Local pointer or focus interaction and external chart highlight remain separate; both may dim peers, but only a real link row receives navigation affordances.",
+    "Disable local hover highlighting for static keys such as a line-chart legend; externally controlled activeLabel highlighting and genuine link affordances remain available.",
     "Hover synchronization is temporary emphasis, never filtering, toggling, or selected state.",
     "Percentage values use one consistent precision across the complete legend.",
     "The list owns pointer leave so moving across row gaps does not clear and reapply highlight."

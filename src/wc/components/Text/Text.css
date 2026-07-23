@@ -128,12 +128,14 @@
 
 :host(.ds-text--decoration-underline) {
   text-decoration: underline;
+  text-decoration-color: var(--color-foreground-tertiary);
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
 }
 
 :host(.ds-text--decoration-dotted-underline) {
   text-decoration: underline dotted;
+  text-decoration-color: var(--color-foreground-tertiary);
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
 }

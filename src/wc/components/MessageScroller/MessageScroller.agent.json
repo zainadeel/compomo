@@ -26,7 +26,9 @@
     "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
   ],
   "responsiveBehavior": [
-    "Transcript width is readable while the scroll region fills available height."
+    "Transcript width is readable while the scroll region fills available height.",
+    "For a narrower fullscreen conversation lane, set --ds-message-scroller-content-max-width on the host instead of constraining the host; the full-width viewport then keeps its scrollbar at the outer edge while the transcript remains centered.",
+    "The custom property sizes the padded transcript box. If the target is the usable conversation width, add the transcript's two 16px inline paddings and size the centered overlay container to the same target plus its two 8px paddings so messages and the visible composer align."
   ],
   "references": [
     {

@@ -45,3 +45,19 @@ test('keeps right-aligned percentages inside the hover row', async ({ page }) =>
 
   expect(new Set(geometry.map(row => row.percentageRight)).size).toBe(1);
 });
+
+test('can render as a static key without local hover highlighting', async ({ page }) => {
+  const legend = page.locator('#legend-static');
+  const rows = legend.locator('.chart-legend__item');
+
+  await expect(legend).toHaveJSProperty('highlightOnHover', false);
+  await expect(rows.first()).not.toHaveClass(/ds-interaction-fill/);
+  await rows.first().hover();
+
+  await expect
+    .poll(() => rows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity)))
+    .toEqual(['1', '1', '1', '1', '1']);
+  await expect
+    .poll(() => page.evaluate(() => (window as any).staticLegendHoverCount))
+    .toBe(0);
+});

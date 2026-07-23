@@ -21,6 +21,16 @@
       <div slot="legend">Donut legend</div>
     </ds-card-data-viz-donut>
 
+    <ds-card-data-viz-line id="line-card" heading="Fuel trend" card-width="sm">
+      <ds-chart-line slot="chart" width="480" height="240"></ds-chart-line>
+      <ds-chart-legend slot="legend" direction="horizontal"></ds-chart-legend>
+    </ds-card-data-viz-line>
+
+    <ds-card-data-viz-bar id="bar-card" heading="Vehicle activity" card-width="sm">
+      <ds-chart-bar-stacked slot="chart" width="480" height="240"></ds-chart-bar-stacked>
+      <ds-chart-legend slot="legend" direction="horizontal"></ds-chart-legend>
+    </ds-card-data-viz-bar>
+
     <script type="module" src="/card-shell-data-viz-setup.mjs"></script>
   </body>
 </html>

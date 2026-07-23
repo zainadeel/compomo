@@ -11,14 +11,18 @@ import { AvatarSize } from "./components/Avatar/Avatar";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
+import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
 import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
+import { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
+import { ChartBarStackedVariant } from "./components/ChartBarStacked/ChartBarStacked";
 import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
@@ -45,7 +49,7 @@ import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOver
 import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
-import { ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+import { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { ControlSize } from "./utils/control-text";
@@ -63,14 +67,18 @@ export { AvatarSize } from "./components/Avatar/Avatar";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
+export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
 export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
+export { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
+export { ChartBarStackedVariant } from "./components/ChartBarStacked/ChartBarStacked";
 export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
@@ -97,7 +105,7 @@ export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOver
 export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
-export { ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+export { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { ControlSize } from "./utils/control-text";
@@ -313,10 +321,20 @@ export namespace Components {
          */
         "backAriaLabel": string;
         /**
-          * Visible parent-page label used by the expanded Back breadcrumb.
+          * Visible parent-page label used by the expanded breadcrumb when breadcrumbs is empty.
           * @default 'Back'
          */
         "backLabel": string;
+        /**
+          * Accessible name for the expanded breadcrumb navigation landmark.
+          * @default 'Breadcrumb'
+         */
+        "breadcrumbAriaLabel": string;
+        /**
+          * Optional expanded ancestor path. Compact variants continue to use the Back action.
+          * @default []
+         */
+        "breadcrumbs": BreadcrumbItem[];
         /**
           * Optional supporting copy shown in the expanded presentation.
           * @default ''
@@ -402,6 +420,18 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    interface DsBreadcrumb {
+        /**
+          * Accessible name for the breadcrumb navigation landmark.
+          * @default 'Breadcrumb'
+         */
+        "ariaLabel": string;
+        /**
+          * Ordered path from the broadest ancestor to the nearest page.
+          * @default []
+         */
+        "items": BreadcrumbItem[];
     }
     interface DsButtonFilled {
         /**
@@ -561,6 +591,25 @@ export namespace Components {
         "width": ButtonUnfilledWidth;
     }
     /**
+     * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+     * region and an optional, content-sized static legend.
+     */
+    interface DsCardDataVizBar {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth": CardDataVizBarWidth;
+        /**
+          * @default 'Filter'
+         */
+        "filterLabel": string;
+        /**
+          * Widget heading shown in the card header.
+         */
+        "heading": string;
+    }
+    /**
      * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
@@ -570,6 +619,25 @@ export namespace Components {
           * @default 'md'
          */
         "cardWidth": CardDataVizDonutWidth;
+        /**
+          * @default 'Filter'
+         */
+        "filterLabel": string;
+        /**
+          * Widget heading shown in the card header.
+         */
+        "heading": string;
+    }
+    /**
+     * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+     * region and a content-sized, static legend.
+     */
+    interface DsCardDataVizLine {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth": CardDataVizLineWidth;
         /**
           * @default 'Filter'
          */
@@ -632,6 +700,30 @@ export namespace Components {
           * @default 240
          */
         "height": number;
+        /**
+          * @default 480
+         */
+        "width": number;
+    }
+    interface DsChartBarStacked {
+        /**
+          * X-axis labels — must match each series' `data` length. Set as a JS property.
+          * @default []
+         */
+        "categories": string[];
+        /**
+          * @default 240
+         */
+        "height": number;
+        /**
+          * Ordered stack series. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "series": ChartSeries[];
+        /**
+          * @default 'stacked'
+         */
+        "variant": ChartBarStackedVariant;
         /**
           * @default 480
          */
@@ -703,6 +795,11 @@ export namespace Components {
           * @default 'vertical'
          */
         "direction": ChartLegendDirection;
+        /**
+          * Let local pointer/focus movement highlight one item and emit `dsItemHover`.
+          * @default true
+         */
+        "highlightOnHover": boolean;
         /**
           * Legend entries. Set as a JS property (not an HTML attribute).
           * @default []
@@ -2000,7 +2097,11 @@ export namespace Components {
          */
         "contentInset": ShellPageContentInset;
         /**
-          * Automatic container/scroll behavior, or an explicit header variant override.
+          * Available page-header capacity supplied by the owning application shell.
+         */
+        "headerCapacity"?: ShellPageCapacity;
+        /**
+          * Automatic capacity/scroll behavior, or an explicit header variant override.
           * @default 'auto'
          */
         "headerPresentation": ShellPageHeaderPresentation;
@@ -2462,8 +2563,8 @@ export namespace Components {
     }
     interface DsTypingIndicator {
         /**
-          * Concise localized status text, ideally naming the participant who is typing.
-          * @default 'Typing…'
+          * Concise localized typing status.
+          * @default 'Typing...'
          */
         "label": string;
     }
@@ -2480,6 +2581,10 @@ export interface DsBarWorkflowCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarWorkflowElement;
 }
+export interface DsBreadcrumbCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBreadcrumbElement;
+}
 export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
@@ -2488,9 +2593,17 @@ export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
 }
+export interface DsCardDataVizBarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardDataVizBarElement;
+}
 export interface DsCardDataVizDonutCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardDataVizDonutElement;
+}
+export interface DsCardDataVizLineCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardDataVizLineElement;
 }
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2666,6 +2779,7 @@ declare global {
     };
     interface HTMLDsBarTitleElementEventMap {
         "dsBack": MouseEvent;
+        "dsBreadcrumbSelect": BreadcrumbSelectDetail;
         "dsSectionChange": string;
         "dsAction": string;
     }
@@ -2702,6 +2816,23 @@ declare global {
         prototype: HTMLDsBarWorkflowElement;
         new (): HTMLDsBarWorkflowElement;
     };
+    interface HTMLDsBreadcrumbElementEventMap {
+        "dsSelect": BreadcrumbSelectDetail;
+    }
+    interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBreadcrumbElementEventMap>(type: K, listener: (this: HTMLDsBreadcrumbElement, ev: DsBreadcrumbCustomEvent<HTMLDsBreadcrumbElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBreadcrumbElement: {
+        prototype: HTMLDsBreadcrumbElement;
+        new (): HTMLDsBreadcrumbElement;
+    };
     interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
     }
@@ -2737,6 +2868,27 @@ declare global {
         prototype: HTMLDsButtonUnfilledElement;
         new (): HTMLDsButtonUnfilledElement;
     };
+    interface HTMLDsCardDataVizBarElementEventMap {
+        "dsFilterClick": void;
+    }
+    /**
+     * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+     * region and an optional, content-sized static legend.
+     */
+    interface HTMLDsCardDataVizBarElement extends Components.DsCardDataVizBar, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardDataVizBarElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizBarElement, ev: DsCardDataVizBarCustomEvent<HTMLDsCardDataVizBarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardDataVizBarElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizBarElement, ev: DsCardDataVizBarCustomEvent<HTMLDsCardDataVizBarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardDataVizBarElement: {
+        prototype: HTMLDsCardDataVizBarElement;
+        new (): HTMLDsCardDataVizBarElement;
+    };
     interface HTMLDsCardDataVizDonutElementEventMap {
         "dsFilterClick": void;
     }
@@ -2757,6 +2909,27 @@ declare global {
     var HTMLDsCardDataVizDonutElement: {
         prototype: HTMLDsCardDataVizDonutElement;
         new (): HTMLDsCardDataVizDonutElement;
+    };
+    interface HTMLDsCardDataVizLineElementEventMap {
+        "dsFilterClick": void;
+    }
+    /**
+     * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+     * region and a content-sized, static legend.
+     */
+    interface HTMLDsCardDataVizLineElement extends Components.DsCardDataVizLine, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardDataVizLineElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizLineElement, ev: DsCardDataVizLineCustomEvent<HTMLDsCardDataVizLineElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardDataVizLineElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizLineElement, ev: DsCardDataVizLineCustomEvent<HTMLDsCardDataVizLineElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardDataVizLineElement: {
+        prototype: HTMLDsCardDataVizLineElement;
+        new (): HTMLDsCardDataVizLineElement;
     };
     interface HTMLDsCardSettingElementEventMap {
         "dsAction": CardSettingActionDetail;
@@ -2790,6 +2963,12 @@ declare global {
     var HTMLDsChartBarElement: {
         prototype: HTMLDsChartBarElement;
         new (): HTMLDsChartBarElement;
+    };
+    interface HTMLDsChartBarStackedElement extends Components.DsChartBarStacked, HTMLStencilElement {
+    }
+    var HTMLDsChartBarStackedElement: {
+        prototype: HTMLDsChartBarStackedElement;
+        new (): HTMLDsChartBarStackedElement;
     };
     interface HTMLDsChartDonutElementEventMap {
         "dsSliceHover": ChartDatum | null;
@@ -3453,12 +3632,16 @@ declare global {
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-bar-title": HTMLDsBarTitleElement;
         "ds-bar-workflow": HTMLDsBarWorkflowElement;
+        "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
+        "ds-card-data-viz-bar": HTMLDsCardDataVizBarElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
+        "ds-card-data-viz-line": HTMLDsCardDataVizLineElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-card-shell-data-viz": HTMLDsCardShellDataVizElement;
         "ds-chart-bar": HTMLDsChartBarElement;
+        "ds-chart-bar-stacked": HTMLDsChartBarStackedElement;
         "ds-chart-donut": HTMLDsChartDonutElement;
         "ds-chart-legend": HTMLDsChartLegendElement;
         "ds-chart-line": HTMLDsChartLineElement;
@@ -3717,10 +3900,20 @@ declare namespace LocalJSX {
          */
         "backAriaLabel"?: string;
         /**
-          * Visible parent-page label used by the expanded Back breadcrumb.
+          * Visible parent-page label used by the expanded breadcrumb when breadcrumbs is empty.
           * @default 'Back'
          */
         "backLabel"?: string;
+        /**
+          * Accessible name for the expanded breadcrumb navigation landmark.
+          * @default 'Breadcrumb'
+         */
+        "breadcrumbAriaLabel"?: string;
+        /**
+          * Optional expanded ancestor path. Compact variants continue to use the Back action.
+          * @default []
+         */
+        "breadcrumbs"?: BreadcrumbItem[];
         /**
           * Optional supporting copy shown in the expanded presentation.
           * @default ''
@@ -3738,6 +3931,10 @@ declare namespace LocalJSX {
           * Emitted when the leading Back action is activated.
          */
         "onDsBack"?: (event: DsBarTitleCustomEvent<MouseEvent>) => void;
+        /**
+          * Emitted when an authored expanded breadcrumb item is activated.
+         */
+        "onDsBreadcrumbSelect"?: (event: DsBarTitleCustomEvent<BreadcrumbSelectDetail>) => void;
         /**
           * Emitted with the newly selected page-section id.
          */
@@ -3830,6 +4027,22 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    interface DsBreadcrumb {
+        /**
+          * Accessible name for the breadcrumb navigation landmark.
+          * @default 'Breadcrumb'
+         */
+        "ariaLabel"?: string;
+        /**
+          * Ordered path from the broadest ancestor to the nearest page.
+          * @default []
+         */
+        "items"?: BreadcrumbItem[];
+        /**
+          * Emitted when an interactive breadcrumb item is activated. Prevent to cancel native navigation.
+         */
+        "onDsSelect"?: (event: DsBreadcrumbCustomEvent<BreadcrumbSelectDetail>) => void;
     }
     interface DsButtonFilled {
         /**
@@ -3990,6 +4203,29 @@ declare namespace LocalJSX {
         "width"?: ButtonUnfilledWidth;
     }
     /**
+     * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+     * region and an optional, content-sized static legend.
+     */
+    interface DsCardDataVizBar {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth"?: CardDataVizBarWidth;
+        /**
+          * @default 'Filter'
+         */
+        "filterLabel"?: string;
+        /**
+          * Widget heading shown in the card header.
+         */
+        "heading": string;
+        /**
+          * Emits when the header filter control is activated.
+         */
+        "onDsFilterClick"?: (event: DsCardDataVizBarCustomEvent<void>) => void;
+    }
+    /**
      * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
      * content-sized legend. Hover sync between chart and legend stays here.
      */
@@ -4011,6 +4247,29 @@ declare namespace LocalJSX {
           * Emits when the header filter control is activated.
          */
         "onDsFilterClick"?: (event: DsCardDataVizDonutCustomEvent<void>) => void;
+    }
+    /**
+     * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+     * region and a content-sized, static legend.
+     */
+    interface DsCardDataVizLine {
+        /**
+          * Card width token — also sets matching min-height.
+          * @default 'md'
+         */
+        "cardWidth"?: CardDataVizLineWidth;
+        /**
+          * @default 'Filter'
+         */
+        "filterLabel"?: string;
+        /**
+          * Widget heading shown in the card header.
+         */
+        "heading": string;
+        /**
+          * Emits when the header filter control is activated.
+         */
+        "onDsFilterClick"?: (event: DsCardDataVizLineCustomEvent<void>) => void;
     }
     interface DsCardSetting {
         /**
@@ -4069,6 +4328,30 @@ declare namespace LocalJSX {
           * @default 240
          */
         "height"?: number;
+        /**
+          * @default 480
+         */
+        "width"?: number;
+    }
+    interface DsChartBarStacked {
+        /**
+          * X-axis labels — must match each series' `data` length. Set as a JS property.
+          * @default []
+         */
+        "categories"?: string[];
+        /**
+          * @default 240
+         */
+        "height"?: number;
+        /**
+          * Ordered stack series. Set as a JS property (not an HTML attribute).
+          * @default []
+         */
+        "series"?: ChartSeries[];
+        /**
+          * @default 'stacked'
+         */
+        "variant"?: ChartBarStackedVariant;
         /**
           * @default 480
          */
@@ -4144,6 +4427,11 @@ declare namespace LocalJSX {
           * @default 'vertical'
          */
         "direction"?: ChartLegendDirection;
+        /**
+          * Let local pointer/focus movement highlight one item and emit `dsItemHover`.
+          * @default true
+         */
+        "highlightOnHover"?: boolean;
         /**
           * Legend entries. Set as a JS property (not an HTML attribute).
           * @default []
@@ -5553,7 +5841,11 @@ declare namespace LocalJSX {
          */
         "contentInset"?: ShellPageContentInset;
         /**
-          * Automatic container/scroll behavior, or an explicit header variant override.
+          * Available page-header capacity supplied by the owning application shell.
+         */
+        "headerCapacity"?: ShellPageCapacity;
+        /**
+          * Automatic capacity/scroll behavior, or an explicit header variant override.
           * @default 'auto'
          */
         "headerPresentation"?: ShellPageHeaderPresentation;
@@ -6032,8 +6324,8 @@ declare namespace LocalJSX {
     }
     interface DsTypingIndicator {
         /**
-          * Concise localized status text, ideally naming the participant who is typing.
-          * @default 'Typing…'
+          * Concise localized typing status.
+          * @default 'Typing...'
          */
         "label"?: string;
     }
@@ -6094,6 +6386,7 @@ declare namespace LocalJSX {
         "showBack": boolean;
         "backAriaLabel": string;
         "backLabel": string;
+        "breadcrumbAriaLabel": string;
         "value": string;
         "sectionsAriaLabel": string;
         "actionsAriaLabel": string;
@@ -6107,6 +6400,9 @@ declare namespace LocalJSX {
         "previousLabel": string;
         "nextLabel": string;
         "isNextInactive": boolean;
+    }
+    interface DsBreadcrumbAttributes {
+        "ariaLabel": string;
     }
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
@@ -6146,9 +6442,19 @@ declare namespace LocalJSX {
         "pressed": boolean | undefined;
         "focusTabIndex": number;
     }
+    interface DsCardDataVizBarAttributes {
+        "heading": string;
+        "cardWidth": CardDataVizBarWidth;
+        "filterLabel": string;
+    }
     interface DsCardDataVizDonutAttributes {
         "heading": string;
         "cardWidth": CardDataVizDonutWidth;
+        "filterLabel": string;
+    }
+    interface DsCardDataVizLineAttributes {
+        "heading": string;
+        "cardWidth": CardDataVizLineWidth;
         "filterLabel": string;
     }
     interface DsCardSettingAttributes {
@@ -6164,6 +6470,11 @@ declare namespace LocalJSX {
         "cardWidth": CardShellDataVizWidth;
     }
     interface DsChartBarAttributes {
+        "width": number;
+        "height": number;
+    }
+    interface DsChartBarStackedAttributes {
+        "variant": ChartBarStackedVariant;
         "width": number;
         "height": number;
     }
@@ -6184,6 +6495,7 @@ declare namespace LocalJSX {
         "direction": ChartLegendDirection;
         "showPercentage": boolean;
         "percentageDecimals": ChartLegendPercentageDecimals;
+        "highlightOnHover": boolean;
         "activeLabel": string | null;
     }
     interface DsChartLineAttributes {
@@ -6500,6 +6812,7 @@ declare namespace LocalJSX {
     }
     interface DsShellPageAttributes {
         "headerPresentation": ShellPageHeaderPresentation;
+        "headerCapacity": ShellPageCapacity;
         "contentInset": ShellPageContentInset;
     }
     interface DsSkeletonAttributes {
@@ -6631,12 +6944,16 @@ declare namespace LocalJSX {
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-bar-title": Omit<DsBarTitle, keyof DsBarTitleAttributes> & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes]?: DsBarTitle[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `attr:${K}`]?: DsBarTitleAttributes[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `prop:${K}`]?: DsBarTitle[K] } & OneOf<"heading", DsBarTitle["heading"], DsBarTitleAttributes["heading"]>;
         "ds-bar-workflow": Omit<DsBarWorkflow, keyof DsBarWorkflowAttributes> & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes]?: DsBarWorkflow[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `attr:${K}`]?: DsBarWorkflowAttributes[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `prop:${K}`]?: DsBarWorkflow[K] } & OneOf<"heading", DsBarWorkflow["heading"], DsBarWorkflowAttributes["heading"]>;
+        "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
+        "ds-card-data-viz-bar": Omit<DsCardDataVizBar, keyof DsCardDataVizBarAttributes> & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes]?: DsCardDataVizBar[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `attr:${K}`]?: DsCardDataVizBarAttributes[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `prop:${K}`]?: DsCardDataVizBar[K] } & OneOf<"heading", DsCardDataVizBar["heading"], DsCardDataVizBarAttributes["heading"]>;
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
+        "ds-card-data-viz-line": Omit<DsCardDataVizLine, keyof DsCardDataVizLineAttributes> & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes]?: DsCardDataVizLine[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `attr:${K}`]?: DsCardDataVizLineAttributes[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `prop:${K}`]?: DsCardDataVizLine[K] } & OneOf<"heading", DsCardDataVizLine["heading"], DsCardDataVizLineAttributes["heading"]>;
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-card-shell-data-viz": Omit<DsCardShellDataViz, keyof DsCardShellDataVizAttributes> & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes]?: DsCardShellDataViz[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `attr:${K}`]?: DsCardShellDataVizAttributes[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `prop:${K}`]?: DsCardShellDataViz[K] } & OneOf<"heading", DsCardShellDataViz["heading"], DsCardShellDataVizAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
+        "ds-chart-bar-stacked": Omit<DsChartBarStacked, keyof DsChartBarStackedAttributes> & { [K in keyof DsChartBarStacked & keyof DsChartBarStackedAttributes]?: DsChartBarStacked[K] } & { [K in keyof DsChartBarStacked & keyof DsChartBarStackedAttributes as `attr:${K}`]?: DsChartBarStackedAttributes[K] } & { [K in keyof DsChartBarStacked & keyof DsChartBarStackedAttributes as `prop:${K}`]?: DsChartBarStacked[K] };
         "ds-chart-donut": Omit<DsChartDonut, keyof DsChartDonutAttributes> & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes]?: DsChartDonut[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `attr:${K}`]?: DsChartDonutAttributes[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `prop:${K}`]?: DsChartDonut[K] };
         "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
         "ds-chart-line": Omit<DsChartLine, keyof DsChartLineAttributes> & { [K in keyof DsChartLine & keyof DsChartLineAttributes]?: DsChartLine[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `attr:${K}`]?: DsChartLineAttributes[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `prop:${K}`]?: DsChartLine[K] };
@@ -6699,13 +7016,24 @@ declare module "@stencil/core" {
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
             "ds-bar-title": LocalJSX.IntrinsicElements["ds-bar-title"] & JSXBase.HTMLAttributes<HTMLDsBarTitleElement>;
             "ds-bar-workflow": LocalJSX.IntrinsicElements["ds-bar-workflow"] & JSXBase.HTMLAttributes<HTMLDsBarWorkflowElement>;
+            "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
+            /**
+             * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+             * region and an optional, content-sized static legend.
+             */
+            "ds-card-data-viz-bar": LocalJSX.IntrinsicElements["ds-card-data-viz-bar"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizBarElement>;
             /**
              * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
              * content-sized legend. Hover sync between chart and legend stays here.
              */
             "ds-card-data-viz-donut": LocalJSX.IntrinsicElements["ds-card-data-viz-donut"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizDonutElement>;
+            /**
+             * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
+             * region and a content-sized, static legend.
+             */
+            "ds-card-data-viz-line": LocalJSX.IntrinsicElements["ds-card-data-viz-line"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizLineElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
             /**
              * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
@@ -6713,6 +7041,7 @@ declare module "@stencil/core" {
              */
             "ds-card-shell-data-viz": LocalJSX.IntrinsicElements["ds-card-shell-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardShellDataVizElement>;
             "ds-chart-bar": LocalJSX.IntrinsicElements["ds-chart-bar"] & JSXBase.HTMLAttributes<HTMLDsChartBarElement>;
+            "ds-chart-bar-stacked": LocalJSX.IntrinsicElements["ds-chart-bar-stacked"] & JSXBase.HTMLAttributes<HTMLDsChartBarStackedElement>;
             "ds-chart-donut": LocalJSX.IntrinsicElements["ds-chart-donut"] & JSXBase.HTMLAttributes<HTMLDsChartDonutElement>;
             /**
              * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style

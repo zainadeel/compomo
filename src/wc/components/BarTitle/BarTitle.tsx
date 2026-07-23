@@ -1,4 +1,15 @@
-import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Prop,
+  State,
+  Watch,
+} from '@stencil/core';
+import type { BreadcrumbItem, BreadcrumbSelectDetail } from '../Breadcrumb/breadcrumb-types';
 import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import {
   isBarTitleDivider,
@@ -20,6 +31,8 @@ type FocusableButton = HTMLElement & { setFocus?: () => Promise<void> };
   scoped: true,
 })
 export class BarTitle {
+  @Element() el!: HTMLElement;
+
   /** The page's single visible h1. */
   @Prop() heading!: string;
 
@@ -32,8 +45,14 @@ export class BarTitle {
   /** Accessible name for the leading Back action. */
   @Prop() backAriaLabel: string = 'Back';
 
-  /** Visible parent-page label used by the expanded Back breadcrumb. */
+  /** Visible parent-page label used by the expanded breadcrumb when breadcrumbs is empty. */
   @Prop() backLabel: string = 'Back';
+
+  /** Optional expanded ancestor path. Compact variants continue to use the Back action. */
+  @Prop() breadcrumbs: BreadcrumbItem[] = [];
+
+  /** Accessible name for the expanded breadcrumb navigation landmark. */
+  @Prop() breadcrumbAriaLabel: string = 'Breadcrumb';
 
   /** Optional page sections exposed through the active-section menu. */
   @Prop() sections: BarTitleSectionItem[] = [];
@@ -59,6 +78,9 @@ export class BarTitle {
   /** Emitted when the leading Back action is activated. */
   @Event() dsBack!: EventEmitter<MouseEvent>;
 
+  /** Emitted when an authored expanded breadcrumb item is activated. */
+  @Event({ cancelable: true }) dsBreadcrumbSelect!: EventEmitter<BreadcrumbSelectDetail>;
+
   /** Emitted with the newly selected page-section id. */
   @Event() dsSectionChange!: EventEmitter<string>;
 
@@ -78,6 +100,12 @@ export class BarTitle {
   private sectionTriggerEl: HTMLButtonElement | null = null;
   private actionTriggerEl: FocusableButton | null = null;
 
+  componentWillLoad() {
+    if (this.el.closest('ds-shell-page')) {
+      this.el.setAttribute('data-shell-page-syncing', '');
+    }
+  }
+
   @Watch('sections')
   handleSectionsChange() {
     if (!this.hasSectionSelector) this.closeSectionMenu();
@@ -91,6 +119,18 @@ export class BarTitle {
 
   private get compact(): boolean {
     return this.variant !== 'expanded';
+  }
+
+  private get expandedBreadcrumbItems(): BreadcrumbItem[] {
+    if (this.breadcrumbs.length > 0) return this.breadcrumbs;
+    if (!this.showBack) return [];
+    return [
+      {
+        id: 'back',
+        label: this.backLabel,
+        ariaLabel: this.backAriaLabel,
+      },
+    ];
   }
 
   /** Tooltip copy is fixed and generic; backAriaLabel/actionsAriaLabel stay page-specific. */
@@ -309,7 +349,7 @@ export class BarTitle {
               aria-label={this.actionsAriaLabel}
               size="md"
               activeFill={!this.compact}
-              hasBorder={!this.compact && !this.primaryCollapsed}
+              hasBorder={primary !== null && !this.primaryCollapsed}
               haspopup="menu"
               controls={this.actionMenuId}
               expanded={this.actionMenuOpen}
@@ -321,26 +361,30 @@ export class BarTitle {
     );
   }
 
-  private renderBack(compact: boolean) {
-    if (!this.showBack) return null;
-
-    if (!compact) {
-      return (
-        <div class="bar-title__breadcrumb">
-          <ds-button-unfilled
-            class="bar-title__breadcrumb-back"
-            variant="icon-label"
-            icon="ChevronLeft"
-            label={this.backLabel}
-            aria-label={this.backAriaLabel}
-            size="xs"
-            hasBorder={false}
-            onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}
-          />
-        </div>
-      );
+  private handleBreadcrumbSelect = (event: CustomEvent<BreadcrumbSelectDetail>) => {
+    if (this.breadcrumbs.length === 0) {
+      this.dsBack.emit(event.detail.originalEvent);
+      return;
     }
+    const forwarded = this.dsBreadcrumbSelect.emit(event.detail);
+    if (forwarded.defaultPrevented) event.preventDefault();
+  };
 
+  private renderBreadcrumb() {
+    const items = this.expandedBreadcrumbItems;
+    if (items.length === 0) return null;
+    return (
+      <ds-breadcrumb
+        class="bar-title__breadcrumb"
+        items={items}
+        ariaLabel={this.breadcrumbAriaLabel}
+        onDsSelect={this.handleBreadcrumbSelect}
+      />
+    );
+  }
+
+  private renderBack() {
+    if (!this.showBack) return null;
     return (
       <ds-tooltip label={this.backTooltipLabel} side="bottom" size="sm">
         <ds-button-unfilled
@@ -367,16 +411,17 @@ export class BarTitle {
           'bar-title-host--constrained': this.variant === 'constrained',
           'bar-title-host--has-description': !!this.description,
           'bar-title-host--has-back': this.showBack,
+          'bar-title-host--has-breadcrumb': !compact && this.expandedBreadcrumbItems.length > 0,
         }}
       >
         <div class="bar-title">
           <div class="bar-title__inner">
+            {!compact ? this.renderBreadcrumb() : null}
             <div class="bar-title__row">
               <div class="bar-title__leading">
-                {!compact ? this.renderBack(false) : null}
-                <div class="bar-title__title-row">
+                <div class="bar-title__title-row" data-shell-page-header-anchor>
                   <div class="bar-title__identity">
-                    {compact ? this.renderBack(true) : null}
+                    {compact ? this.renderBack() : null}
                     <ds-text
                       class="bar-title__heading ds-control--md"
                       variant={compact ? 'text-title-small' : 'text-title-medium'}

@@ -35,7 +35,7 @@ test('uses read-aware body-medium emphasis and color with a one-line preview', a
   await expect(unreadTitle).toHaveCSS('color', colors.primary);
 });
 
-test('pairs the busy label with a 16px loader and 8px gap', async ({ page }) => {
+test('pairs the busy label with a 16px loader and 4px gap', async ({ page }) => {
   const item = page.locator('#busy-conversation');
   const loader = item.locator('ds-loader');
   const label = item.locator('.conversation-list-item__preview');
@@ -51,7 +51,7 @@ test('pairs the busy label with a 16px loader and 8px gap', async ({ page }) => 
   if (!loaderBox || !labelBox) throw new Error('Busy row geometry did not render');
   expect(loaderBox.width).toBeCloseTo(16, 0);
   expect(loaderBox.height).toBeCloseTo(16, 0);
-  expect(labelBox.x - (loaderBox.x + loaderBox.width)).toBeCloseTo(8, 0);
+  expect(labelBox.x - (loaderBox.x + loaderBox.width)).toBeCloseTo(4, 0);
 });
 
 test('renders one unread dot centered on the title action track', async ({ page }) => {

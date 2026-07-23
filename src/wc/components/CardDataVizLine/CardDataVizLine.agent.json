@@ -1,0 +1,70 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-data-viz-line",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-data-viz-line",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
+  "useWhen": [
+    "A dashboard widget needs the standard line chart and visible series key in one data-viz card.",
+    "The legend identifies static line series and should not highlight or dim rows on hover."
+  ],
+  "avoidWhen": [
+    "The visualization needs chart-to-legend hover synchronization or selectable series controls.",
+    "The product needs a custom legend treatment, supporting metrics, or an alternate chart layout."
+  ],
+  "alternatives": [
+    {
+      "when": "The line chart and legend need a custom layout without card chrome.",
+      "component": "component:ds-chart-line",
+      "reason": "Compose ChartLine and a static ChartLegend directly in the product-owned layout."
+    },
+    {
+      "when": "The visualization communicates parts of a total with synchronized slice emphasis.",
+      "component": "component:ds-card-data-viz-donut",
+      "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-shell-data-viz",
+    "component:ds-chart-line",
+    "component:ds-chart-legend",
+    "component:ds-button-unfilled"
+  ],
+  "accessibility": [
+    "Provide a concise heading that identifies the trend and meaningful visible labels for every legend entry.",
+    "Keep essential series and value context available textually rather than relying on line color alone.",
+    "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
+  ],
+  "states": [
+    "The chart region fills the remaining card body while the legend remains content-sized.",
+    "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
+    "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
+    "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
+  ],
+  "responsiveBehavior": [
+    "The selected sm, md, or lg shell size controls the card dimensions while the line chart shrinks within its chart region.",
+    "The horizontal legend wraps complete entries when the available width is constrained.",
+    "The parent dashboard owns card wrapping and breakpoint changes."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign series, categories, and legend items as JavaScript properties, then place the chart and legend in their named slots."
+    ],
+    "react": [
+      "Keep filter and dataset state in the owner; pass the chart and legend with chart and legend slot attributes."
+    ],
+    "angular": [
+      "Keep filter and dataset state in the owner; project the chart and legend into the chart and legend slots."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CardDataVizLine/CardDataVizLine.stories.ts"
+    }
+  ]
+}

@@ -44,7 +44,7 @@
     "Keep route loading, error, empty, success, and validation communication in the ShellPage content slot."
   ],
   "responsiveBehavior": [
-    "Let ShellPage select expanded, compact, and constrained variants from its own capacity and scroll position.",
+    "Resolve viewport and persistent shell chrome into ShellPage.headerCapacity; ShellPage uses that explicit capacity plus scroll position to select expanded, compact, or constrained presentation.",
     "Set primaryAction.collapse to never only when an ordinary routed-page action must preserve visible hierarchy; create and edit workflows use BarWorkflow instead.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
     "Place TabGroup inside ShellPage content for inner-page panels; route-level sections remain in BarTitle."
@@ -61,7 +61,7 @@
             {
               "path": "page.html",
               "language": "html",
-              "content": "<ds-shell-app>\n  <ds-shell-page>\n    <ds-bar-title\n      id=\"drivers-header\"\n      slot=\"header\"\n      heading=\"Drivers\"\n      value=\"active\"\n    ></ds-bar-title>\n    <section aria-label=\"Driver results\">Page content</section>\n  </ds-shell-page>\n</ds-shell-app>"
+              "content": "<ds-shell-app>\n  <ds-shell-page header-capacity=\"roomy\">\n    <ds-bar-title\n      id=\"drivers-header\"\n      slot=\"header\"\n      heading=\"Drivers\"\n      value=\"active\"\n    ></ds-bar-title>\n    <section aria-label=\"Driver results\">Page content</section>\n  </ds-shell-page>\n</ds-shell-app>"
             },
             {
               "path": "page.ts",
@@ -91,7 +91,7 @@
             {
               "path": "DriversPage.tsx",
               "language": "tsx",
-              "content": "import { useState } from 'react'\nimport { DsShellApp, DsBarTitle, DsShellPage } from '@ds-mo/ui/react'\n\nconst sections = [\n  { id: 'active', label: 'Active' },\n  { id: 'inactive', label: 'Inactive' },\n]\n\nexport function DriversPage() {\n  const [value, setValue] = useState('active')\n  return (\n    <DsShellApp>\n      <DsShellPage>\n        <DsBarTitle\n          slot=\"header\"\n          heading=\"Drivers\"\n          sections={sections}\n          value={value}\n          primaryAction={{ id: 'create', label: 'Create driver' }}\n          onDsSectionChange={event => setValue(event.detail)}\n        />\n        <section aria-label=\"Driver results\">Page content</section>\n      </DsShellPage>\n    </DsShellApp>\n  )\n}"
+              "content": "import { useState } from 'react'\nimport { DsShellApp, DsBarTitle, DsShellPage } from '@ds-mo/ui/react'\n\nconst sections = [\n  { id: 'active', label: 'Active' },\n  { id: 'inactive', label: 'Inactive' },\n]\n\nexport function DriversPage() {\n  const [value, setValue] = useState('active')\n  return (\n    <DsShellApp>\n      <DsShellPage headerCapacity=\"roomy\">\n        <DsBarTitle\n          slot=\"header\"\n          heading=\"Drivers\"\n          sections={sections}\n          value={value}\n          primaryAction={{ id: 'create', label: 'Create driver' }}\n          onDsSectionChange={event => setValue(event.detail)}\n        />\n        <section aria-label=\"Driver results\">Page content</section>\n      </DsShellPage>\n    </DsShellApp>\n  )\n}"
             }
           ],
           "notes": [
@@ -113,12 +113,12 @@
             {
               "path": "drivers-page.component.html",
               "language": "html",
-              "content": "<ds-shell-page>\n  <ds-bar-title\n    slot=\"header\"\n    heading=\"Drivers\"\n    [sections]=\"sections\"\n    [value]=\"selectedSection\"\n    [primaryAction]=\"primaryAction\"\n    (dsSectionChange)=\"selectSection($event.detail)\"\n  ></ds-bar-title>\n  <router-outlet />\n</ds-shell-page>"
+              "content": "<ds-shell-page [headerCapacity]=\"headerCapacity\">\n  <ds-bar-title\n    slot=\"header\"\n    heading=\"Drivers\"\n    [sections]=\"sections\"\n    [value]=\"selectedSection\"\n    [primaryAction]=\"primaryAction\"\n    (dsSectionChange)=\"selectSection($event.detail)\"\n  ></ds-bar-title>\n  <router-outlet />\n</ds-shell-page>"
             },
             {
               "path": "drivers-page.component.ts",
               "language": "typescript",
-              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title'\nimport { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page'\n\n@Component({\n  standalone: true,\n  imports: [DsBarTitle, DsShellPage, RouterOutlet],\n  templateUrl: './drivers-page.component.html',\n})\nexport class DriversPageComponent {\n  readonly sections = [\n    { id: 'active', label: 'Active' },\n    { id: 'inactive', label: 'Inactive' },\n  ]\n  readonly primaryAction = { id: 'create', label: 'Create driver' }\n  selectedSection = 'active'\n\n  selectSection(id: string) {\n    this.selectedSection = id\n    // Navigate to the matching child route.\n  }\n}"
+              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport type { ShellPageCapacity } from '@ds-mo/ui'\nimport { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title'\nimport { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page'\n\n@Component({\n  standalone: true,\n  imports: [DsBarTitle, DsShellPage, RouterOutlet],\n  templateUrl: './drivers-page.component.html',\n})\nexport class DriversPageComponent {\n  readonly headerCapacity: ShellPageCapacity = 'roomy'\n  readonly sections = [\n    { id: 'active', label: 'Active' },\n    { id: 'inactive', label: 'Inactive' },\n  ]\n  readonly primaryAction = { id: 'create', label: 'Create driver' }\n  selectedSection = 'active'\n\n  selectSection(id: string) {\n    this.selectedSection = id\n    // Navigate to the matching child route.\n  }\n}"
             }
           ],
           "notes": [

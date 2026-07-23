@@ -1,4 +1,4 @@
-import { Component, Prop, State, Event, EventEmitter, h, Host } from '@stencil/core';
+import { Component, Prop, State, Event, EventEmitter, h, Host, Watch } from '@stencil/core';
 import { categoryColor } from '../../utils/chart-colors';
 import { formatCompactNumber, formatPercentage } from '../../utils';
 import type { ChartLegendItem } from '../../utils/chart-types';
@@ -29,6 +29,8 @@ export class ChartLegend {
   @Prop() showPercentage: boolean = true;
   /** Fixed number of decimal places shown for percentages. */
   @Prop() percentageDecimals: ChartLegendPercentageDecimals = 1;
+  /** Let local pointer/focus movement highlight one item and emit `dsItemHover`. */
+  @Prop() highlightOnHover: boolean = true;
   /**
    * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling
    * chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other
@@ -46,6 +48,11 @@ export class ChartLegend {
   /** Fires when a deep-linkable row (`item.href` set) is activated. */
   @Event() dsItemClick!: EventEmitter<{ item: ChartLegendItem; originalEvent: MouseEvent }>;
 
+  @Watch('highlightOnHover')
+  handleHighlightOnHoverChange(enabled: boolean) {
+    if (!enabled) this.hoveredLabel = null;
+  }
+
   private handleHover(item: ChartLegendItem | null) {
     this.hoveredLabel = item?.label ?? null;
     this.dsItemHover.emit(item);
@@ -59,7 +66,7 @@ export class ChartLegend {
     const total = this.items.reduce((sum, item) => sum + (item.value ?? 0), 0);
     // Highlight/dim from either this component's own hover or an externally-synced label
     // (e.g. a sibling ds-chart-donut slice) — same mechanism ds-chart-donut uses for its slices.
-    const highlightLabel = this.activeLabel ?? this.hoveredLabel;
+    const highlightLabel = this.activeLabel ?? (this.highlightOnHover ? this.hoveredLabel : null);
 
     return (
       <Host
@@ -72,7 +79,10 @@ export class ChartLegend {
         {/* mouseleave lives on the list, not each row — the row-gap between items is still
             inside the list's box, so crossing it while moving between rows never fires this.
             Only actually leaving the whole list does, and that clears with no delay. */}
-        <ul class="chart-legend__list" onMouseLeave={() => this.handleHover(null)}>
+        <ul
+          class="chart-legend__list"
+          onMouseLeave={this.highlightOnHover ? () => this.handleHover(null) : undefined}
+        >
           {this.items.map((item, i) => {
             const isDimmed = highlightLabel != null && item.label !== highlightLabel;
             const RowTag = item.href ? 'a' : 'div';
@@ -87,15 +97,17 @@ export class ChartLegend {
                     'chart-legend__item': true,
                     'chart-legend__item--interactive': !!item.href,
                     'ds-control--md': true,
-                    'ds-interaction-fill': true,
+                    'ds-interaction-fill': this.highlightOnHover || !!item.href,
                     'ds-focus-ring-inset': !!item.href,
                   }}
                   style={{ opacity: isDimmed ? String(DIMMED_OPACITY) : '1' }}
                   href={item.href}
                   onClick={item.href ? (e: MouseEvent) => this.handleClick(item, e) : undefined}
-                  onMouseEnter={() => this.handleHover(item)}
-                  onFocus={() => this.handleHover(item)}
-                  onBlur={() => this.handleHover(null)}
+                  onMouseEnter={
+                    this.highlightOnHover ? () => this.handleHover(item) : undefined
+                  }
+                  onFocus={this.highlightOnHover ? () => this.handleHover(item) : undefined}
+                  onBlur={this.highlightOnHover ? () => this.handleHover(null) : undefined}
                 >
                   <span class="chart-legend__swatch-box">
                     <span class="chart-legend__swatch" style={{ backgroundColor: item.color ?? categoryColor(i) }} />

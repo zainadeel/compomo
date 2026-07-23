@@ -1,0 +1,79 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-chart-bar-stacked",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-chart-bar-stacked",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Multi-series stacked bar chart for comparing raw totals or normalized 0–100% composition across ordered categories and time buckets.",
+  "useWhen": [
+    "Users need to compare both a category total and the contribution of several consistent series.",
+    "A time series needs to show how its composition changes across equal time buckets.",
+    "Every category should normalize to 100% so proportional composition can be compared independently of total magnitude."
+  ],
+  "avoidWhen": [
+    "Users need to compare individual series values precisely across categories; use grouped bars or separate charts.",
+    "The visualization has only one measure per category; use ChartBar.",
+    "The primary task is following continuous trends; use ChartLine.",
+    "Series contain negative values or do not align with the shared category list."
+  ],
+  "alternatives": [
+    {
+      "when": "Each category contains one independent value.",
+      "component": "component:ds-chart-bar",
+      "reason": "ChartBar provides the simpler single-series magnitude comparison."
+    },
+    {
+      "when": "Users need to follow one or more trends rather than compare stack composition.",
+      "component": "component:ds-chart-line",
+      "reason": "ChartLine preserves each series as a continuous path across the ordered axis."
+    },
+    {
+      "when": "One category's parts-to-whole composition is the focus.",
+      "component": "component:ds-chart-donut",
+      "reason": "ChartDonut provides the dedicated single-total composition treatment."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-chart-legend",
+    "component:ds-card-shell-data-viz",
+    "component:ds-tooltip-data-viz"
+  ],
+  "accessibility": [
+    "Provide a visible legend or adjacent textual summary that names every series; do not rely on segment color alone.",
+    "The chart image name includes each category and series value, using normalized percentages in percentage mode.",
+    "Use an adjacent data table when exact cross-category comparisons are necessary to complete the task."
+  ],
+  "states": [
+    "Stacked mode preserves raw magnitudes and scales the y-axis to the largest category total.",
+    "Percentage mode normalizes each non-empty category independently and renders a fixed 0%, 25%, 50%, 75%, and 100% axis.",
+    "Series render bottom-to-top in authored order; keep that order and color mapping stable across categories.",
+    "Stacked mode gives only the top visible segment 2px top corners. Percentage mode keeps every corner square because the normalized stack touches both axis edges.",
+    "Adjacent segments are separated by a non-scaling 1px gap; the stack's outer edges do not receive that separator.",
+    "Negative values are unsupported and render as zero; the owning product supplies loading, empty, and error states."
+  ],
+  "responsiveBehavior": [
+    "The SVG preserves its authored aspect ratio while shrinking to fit a narrower parent.",
+    "The parent supplies dimensions and chooses how many time buckets remain legible at each width.",
+    "Pre-format category labels and reduce bucket count before rendering when horizontal space becomes constrained."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
+    ],
+    "react": [
+      "Pass stable series and category arrays; choose percentage variant only when each category represents a meaningful whole."
+    ],
+    "angular": [
+      "Bind series and categories as properties; choose percentage variant only when each category represents a meaningful whole."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ChartBarStacked/ChartBarStacked.stories.ts"
+    }
+  ]
+}

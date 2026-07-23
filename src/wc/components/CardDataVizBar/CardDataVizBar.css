@@ -1,0 +1,36 @@
+:host {
+  display: contents;
+}
+
+.card-data-viz-bar__layout {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  gap: var(--dimension-space-200);
+}
+
+.card-data-viz-bar__chart-region {
+  display: grid;
+  flex: 1 1 auto;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: var(--dimension-space-400) var(--dimension-space-400) 0
+    var(--dimension-space-400);
+}
+
+.card-data-viz-bar__chart-region > * {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.card-data-viz-bar__legend-region {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  padding: 0 var(--dimension-space-100) var(--dimension-space-100)
+    var(--dimension-space-100);
+}

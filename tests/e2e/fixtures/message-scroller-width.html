@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Message scroller width e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .fullscreen-chat {
+        width: 1000px;
+        height: 400px;
+      }
+
+      ds-message-scroller {
+        --ds-message-scroller-content-max-width: calc(
+          var(--dimension-panel-width-lg) + var(--dimension-space-400)
+        );
+      }
+
+      .message {
+        height: 160px;
+      }
+
+      .composer {
+        width: 100%;
+        max-width: calc(var(--dimension-panel-width-lg) + var(--dimension-space-200));
+        margin-inline: auto;
+        padding: var(--dimension-space-100);
+        box-sizing: border-box;
+      }
+
+      .composer__surface {
+        width: 100%;
+        height: var(--dimension-size-800);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fullscreen-chat">
+      <ds-message-scroller id="scroller" messages-label="Width test" default-position="start">
+        <div class="message">One</div>
+        <div class="message">Two</div>
+        <div class="message">Three</div>
+        <div class="message">Four</div>
+        <div slot="overlay" class="composer">
+          <div class="composer__surface">Composer</div>
+        </div>
+      </ds-message-scroller>
+    </div>
+    <script type="module" src="/message-scroller-width-setup.mjs"></script>
+  </body>
+</html>

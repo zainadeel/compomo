@@ -14,8 +14,8 @@
   list-style: none;
 }
 
-/* Non-visual wrapper — the real box is .chart-legend__item so it can be hovered/clicked
-   as a whole row while its children still align to the list's shared grid columns. */
+/* Non-visual wrapper — the real box is .chart-legend__item so optional highlight/link
+   affordances cover the whole row while children align to the shared grid columns. */
 .chart-legend__list-item {
   display: contents;
 }
