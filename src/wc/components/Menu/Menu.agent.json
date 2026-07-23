@@ -53,14 +53,14 @@
   "states": [
     "The host owns open state and responds to selection and close events.",
     "Use either flat items or sections, not both.",
-    "After dsSelect from a switch row, update switchValue in the items property so the controlled indicator reflects the new state.",
-    "For selectionMode single, keep exactly one item isSelected and update the items property after dsSelect.",
+    "After dsSelect from a switch row, replace the items or sections array with updated switchValue data so the controlled indicator reflects the new state.",
+    "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
     "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
     "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only."
   ],
   "responsiveBehavior": [
     "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
-    "Choose placement relative to the trigger and allow the component to clamp the popup to the viewport.",
+    "Treat side as the preferred placement. When the popup cannot fit there and the opposite side offers more room, Menu flips on that main axis before clamping the final position to the viewport.",
     "Avoid fixed widths that exceed narrow viewports."
   ],
   "frameworkCaveats": {

@@ -54,7 +54,7 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
         {value && !disabled && (
           <ds-tooltip
             class="select-search__clear-tooltip"
-            label={`${clearLabel} ${placeholder}`}
+            label={clearLabel}
             side="top"
             size="sm"
           >
@@ -65,7 +65,7 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
               icon="CrossCircle"
               hasBorder={false}
               rounded
-              ariaLabel={`${clearLabel} ${placeholder}`}
+              ariaLabel={clearLabel}
               onDsChange={event => event.stopPropagation()}
               onDsClick={() => {
                 onValueChange('');

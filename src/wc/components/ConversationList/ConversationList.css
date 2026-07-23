@@ -1,5 +1,6 @@
 :host {
   display: block;
+  position: relative;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -18,14 +19,58 @@
   box-sizing: border-box;
 }
 
-.conversation-list__content {
+.conversation-list__viewport {
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-  padding: var(--dimension-space-100);
-  padding-bottom: calc(var(--dimension-size-600) + var(--dimension-size-100));
   box-sizing: border-box;
+}
+
+.conversation-list__content {
+  position: relative;
+  min-height: 100%;
+  padding: var(--dimension-space-100);
+  padding-bottom: calc(
+    var(--dimension-space-100) + var(--ds-scroll-overlay-block-size, 0px)
+  );
+  box-sizing: border-box;
+}
+
+.conversation-list__fade {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: var(--ds-scroll-overlay-fade-block-size, 0);
+  pointer-events: none;
+  background-color: var(
+    --ds-scroll-overlay-surface-color,
+    var(--_shell-chrome-bg, var(--color-background-primary))
+  );
+  --ds-scroll-edge-fade-size: 100%;
+}
+
+.conversation-list__fade::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(
+    --ds-scroll-overlay-surface-image,
+    var(--ds-shell-gradient-image, none)
+  );
+  background-position: var(--ds-scroll-overlay-surface-position, 0 0);
+  background-attachment: fixed;
+  background-size: var(
+    --ds-scroll-overlay-surface-size,
+    var(--ds-shell-gradient-size, auto)
+  );
+  background-repeat: no-repeat;
+  opacity: var(
+    --ds-scroll-overlay-surface-image-opacity,
+    var(--ds-shell-gradient-opacity, 1)
+  );
 }
 
 .conversation-list__empty {
@@ -34,15 +79,25 @@
 
 .conversation-list__actions {
   position: absolute;
-  right: var(--dimension-space-200);
-  bottom: var(--dimension-space-200);
+  right: 0;
+  bottom: 0;
   z-index: var(--dimension-z-index-floating);
+  padding: 0 var(--dimension-space-200) var(--dimension-space-200) 0;
+}
+
+.conversation-list__actions--footer {
+  left: 0;
+  padding: 0 var(--dimension-space-100) var(--dimension-space-100);
 }
 
 .conversation-list__actions-surface {
   display: flex;
   border-radius: var(--dimension-radius-half);
   box-shadow: var(--effect-elevation-elevated-md);
+}
+
+.conversation-list__actions--footer .conversation-list__actions-surface {
+  width: 100%;
 }
 
 .conversation-list__actions-surface:empty {

@@ -36,15 +36,20 @@
       ],
       "states": [
         "The owner replaces immutable part arrays as scripted or live output changes.",
-        "AgentResponse renders directly in Message without borrowing a plain MessageBubble surface."
+        "AgentResponse renders directly in Message without borrowing a plain MessageBubble surface.",
+        "Markdown parts use the optional safe renderer; prose CSS owns only semantic-tree styling and never response ordering or streaming state."
       ],
       "responsiveBehavior": [
-        "Rich content uses the available transcript width while respecting readable measure and overflow constraints."
+        "Rich content uses the available transcript width while respecting readable measure and local overflow constraints."
       ],
       "references": [
         {
-          "label": "Storybook examples",
-          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+          "label": "Representative streamed response",
+          "path": "src/wc/components/AgentResponse/AgentResponse.stories.ts"
+        },
+        {
+          "label": "Prose distribution decision",
+          "path": "docs/prose-foundation.md"
         }
       ]
     },

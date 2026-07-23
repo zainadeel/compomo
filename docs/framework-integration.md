@@ -14,7 +14,40 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 | Angular | `@ds-mo/ui/angular/ds-*` | Standalone adapter per component; preferred for tree shaking |
 | React | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … |
 
-There is no published `@ds-mo/ui/loader` or global `@ds-mo/ui/css` export. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle.
+There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. The deliberate exception is the renderer-neutral `@ds-mo/ui/prose.css` export for safe semantic document trees.
+
+## Renderer-neutral prose
+
+Import the stylesheet once after TokoMo tokens, then apply `.ds-prose` to an application-owned semantic container. This is a CSS surface rather than a web component, so it needs no React wrapper, Angular adapter, or custom-elements schema entry.
+
+**Plain HTML**
+
+```html
+<link rel="stylesheet" href="/node_modules/@ds-mo/ui/dist/styles/prose.css" />
+<article class="ds-prose">…safe semantic DOM…</article>
+```
+
+**React**
+
+```tsx
+import '@ds-mo/ui/prose.css';
+
+export function SafeRenderedContent() {
+  return <article className="ds-prose">{/* renderer-produced nodes */}</article>;
+}
+```
+
+**Angular**
+
+```css
+@import '@ds-mo/ui/prose.css';
+```
+
+```html
+<article class="ds-prose"><!-- renderer-produced nodes --></article>
+```
+
+Parsing and sanitization remain renderer/application responsibilities. Mark embedded product UI with `data-ds-prose="off"`, and place wide tables inside `.ds-prose__table-scroll`. Renderers must make genuinely scrollable table wrappers and native `pre` blocks keyboard-focusable; add contextual labelling when surrounding content does not identify the region. See [`docs/prose-foundation.md`](prose-foundation.md) for the distribution evidence and full boundary.
 
 On hard reload, seed **all** bar-nav props (`basePath`, `tabs`, `currentUrl`) before the custom element upgrades — not only `currentUrl`. See motive-webapp-lab `shellChromeStateForPath()`.
 
@@ -201,6 +234,7 @@ import type { MenuSection, ShellGradientPreset } from '@ds-mo/ui';
   [sideOffset]="userMenuPlacement.sideOffset"
   [alignOffset]="userMenuPlacement.alignOffset"
   (dsClose)="onUserMenuClose()"
+  (dsAfterClose)="onUserMenuAfterClose()"
   (dsSelect)="onUserMenuSelect($event)"
   (dsSwatchSelect)="onUserMenuSwatchSelect($event)"
 ></ds-menu>
@@ -219,11 +253,15 @@ On `dsNavUserAction`, set `userMenuAnchor = detail.anchor` and `userMenuPlacemen
 
 `ds-menu` aligns its first or last choice-row edge to the trigger by default, matching Select. Keep `anchorAlignment="choice-cell"` for ordinary menus; `popup-frame` is the escape hatch for deliberate outer-frame geometry. `side`, `align`, `sideOffset`, `alignOffset`, `menuWidth`, and `minWidth` remain available for custom placement.
 
+`side` is a preferred placement. The shared Menu/Select positioning model keeps it when the popup fits; if it does not fit and the opposite side has more room, the popup flips bottom↔top or right↔left before its final position is clamped to the viewport. Keep product code declarative—do not measure the viewport or swap sides in the host application.
+
+Menu state is controlled. `dsSelect` reports the chosen item but does not mutate `isSelected` / `switchValue` or close the menu. Replace the `items` or `sections` array with the next state, set `open=false` when that action should dismiss, retain the anchor and trigger-active state through the exit animation, and clear that retained context from `dsAfterClose`.
+
 **Offset strings must be valid CSS lengths** when binding from host apps — use `var(--dimension-space-050)` or `calc(...)`, not bare custom-property names like `--dimension-space-050`. `PANEL_NAV_USER_MENU_PLACEMENT` and `ds-menu` defaults use `TOKEN_CSS_LENGTHS` (`var(--dimension-*)`) for this reason. BarNav overflow menus follow the same pattern.
 
 ### Other external menus
 
-Bind `[open]`, `[sections]` or `[items]`, `[anchor]` / `anchor-id`, and placement props. Position math lives in `menu-position.ts` with viewport clamping.
+Bind `[open]`, `[sections]` or `[items]`, `[anchor]` / `anchor-id`, and placement props. Position math lives in the shared anchored-popup utility with main-axis collision flipping and viewport clamping.
 
 ## Reference consumer
 

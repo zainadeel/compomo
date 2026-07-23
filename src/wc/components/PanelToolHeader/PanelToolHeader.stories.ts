@@ -2,8 +2,13 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-panel-tool-header.js';
 import type { PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
-export default { title: 'Navigation/PanelToolsHeader', tags: ['autodocs'] } satisfies Meta;
+export default {
+  title: 'Navigation/PanelToolsHeader',
+  tags: ['autodocs'],
+  parameters: { docs: isolatedOverlayDocs('240px') },
+} satisfies Meta;
 type Story = StoryObj;
 
 const ROOT_ACTIONS: PanelToolsHeaderAction[] = [

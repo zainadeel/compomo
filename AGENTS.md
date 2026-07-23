@@ -105,8 +105,9 @@ The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 6. Runs React output target → regenerates `src/react/`, verifies the proxy inventory, and compiles it to `dist/react/`; the inventory is verified again at the end of the build
 7. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
 8. Compiles the framework-neutral toast manager from `src/wc/toast/` to the public `@ds-mo/ui/toast` subpath
-9. Regenerates `public/r/` from compiler facts + component intent and emits component and executable-pattern manifests at `dist/agent.json` and `dist/agent-patterns.json`
-10. Bundles the local stdio MCP executable and its generated registry snapshot into `dist/mcp/` and `dist/mcp-data/`; consumers run it through the published `compomo-mcp` binary
+9. Copies renderer-neutral public CSS surfaces from `src/wc/styles/` to `dist/styles/`; `@ds-mo/ui/prose.css` is the safe-semantic-DOM prose recipe
+10. Regenerates `public/r/` from compiler facts + component intent and emits component and executable-pattern manifests at `dist/agent.json` and `dist/agent-patterns.json`
+11. Bundles the local stdio MCP executable and its generated registry snapshot into `dist/mcp/` and `dist/mcp-data/`; consumers run it through the published `compomo-mcp` binary
 
 There is **no** global `dist/ds-mo/ds-mo.css` bundle in the current Stencil config — styles are scoped per component.
 
@@ -129,7 +130,8 @@ Package `exports`:
   },
   "./shell": { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
  "./toast": { "import": "./dist/lib/toast/index.js", "types": "./dist/lib/toast/index.d.ts" },
-  "./utils": { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
+ "./prose.css": "./dist/styles/prose.css",
+ "./utils": { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
 }
 ```
@@ -251,7 +253,7 @@ export class MyComponent {
 
 **CSS lint (`npm run lint:css`)**
 
-- Stylelint warns (does not fail CI) when component/utils CSS uses raw lengths/times/colors where TokoMo tokens belong, or uses a `*-width` component token as `height` / `min-height` / `max-height`.
+- Stylelint warns (does not fail CI) when component/styles/utils CSS uses raw lengths/times/colors where TokoMo tokens belong, or uses a `*-width` component token as `height` / `min-height` / `max-height`.
 - `local/no-ds-text-metric-overrides` warns when consuming component CSS targets `ds-text` and sets `font`, `font-size`, `font-weight`, `letter-spacing`, or `line-height`. Select the complete `variant` / `emphasis` recipe instead; consumers may still control layout, spacing, truncation, positioning, and contextual color on the `ds-text` host.
 - Token families by property category: `--color-*` (color/fill/stroke), `--dimension-space-*` (margin/padding/gap/inset), `--dimension-size-*` / `--dimension-iconography-*` / component width tokens (width/height), `--dimension-radius-*`, `--dimension-stroke-width-*`, `--typography-*`, `--effect-*` / `--dimension-z-index-*`.
 - Justify unavoidable exceptions with `/* stylelint-disable-next-line <rule> -- reason */`.
@@ -273,7 +275,18 @@ export class MyComponent {
 - Choose `as` from native document semantics and heading hierarchy independently from visual `variant`. Omitted color inherits `currentColor`.
 - `tertiary` and `quaternary` are restricted to text inside genuinely inactive/disabled UI or to purely decorative content whose removal changes no meaning, status, hierarchy, or task understanding. Quaternary is the fainter tier. Prefer the owning component's `isInactive` or native `disabled` state; `aria-hidden` alone does not exempt meaningful visible text from contrast requirements.
 - Links are underlined by default. Brand-blue link text may omit the resting underline when color already provides the link affordance; an underline on hover remains appropriate. Dotted underline is required for hidden or supplemental interaction such as a tooltip, and the owning trigger supplies focus, keyboard behavior, and accessible semantics.
-- Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to a future prose/app renderer, not `ds-text`.
+- Slotted text can update/stream without remounting; the host grows in whole line-height increments. Markdown/rich content and `aria-live` belong to the prose/application-renderer boundary, not `ds-text`.
+
+**Prose styling contract**
+
+- `@ds-mo/ui/prose.css` is the renderer-neutral styling surface for safe semantic DOM. Apply `.ds-prose` to a consumer-owned `article`, `section`, or other meaningful container; do not add a `<ds-prose>` component merely to register styles.
+- Prose owns token-driven document typography, one-directional block flow, low-specificity defaults, and overflow containment. It never parses Markdown, sanitizes HTML, owns streaming state, or maps product components.
+- All prose selectors stay at zero specificity with `:where()` so ordinary consumer CSS can override them without `!important`.
+- New blocks own `margin-block-start`; do not use `:last-child`, `:empty`, or forward-looking `:has()` rules that restyle prior streamed content.
+- `data-ds-prose="off"` opts an embedded product-UI subtree out of prose element rules. The opt-out does not implicitly restart inside nested prose.
+- Wrap wide native tables in `.ds-prose__table-scroll`. The wrapper owns horizontal overflow; the table keeps native semantics. Renderers must make genuinely scrollable table wrappers and native `pre` blocks keyboard-focusable and add contextual labelling when surrounding content does not identify the region.
+- `ds-markdown` is an optional safe renderer and consumes the shared prose source. Its parser and node mapping are not part of the prose CSS contract.
+- The initial recipe is compact conversation prose. Do not add documentation/CMS density variants without a concrete consumer. Distribution evidence and framework implications live in `docs/prose-foundation.md`.
 - Native form values cannot contain a custom element. Native inputs use the internal `typography.css` recipe as the explicit exception.
 
 **Buttons (filled / unfilled)**
@@ -295,6 +308,15 @@ export class MyComponent {
 - ButtonUnfilled's optional `hasBorder` inset stroke defaults **on** for general UI; shell chrome (PanelNav, PanelTools, BarNav) should pass `hasBorder={false}`.
 - Do not create one-off button CSS for standard icon-only actions. Keep custom implementations only when the interaction is structurally different, such as the panel-nav M mark that swaps to a collapse/expand icon on hover.
 
+**BarWorkflow**
+
+- Use `ds-bar-workflow` for create and edit flows; keep routed list/detail identity and page actions in `ds-bar-title`.
+- BarWorkflow is always compact 48px bold-brand chrome. It has no expanded, constrained, or responsive `variant`, and ShellPage must not assign one.
+- Omitting `steps` is the default single-step flow: render the plain heading, omit Previous and Next, and keep the Check Save/Submit action visible.
+- A multi-step owner passes ordered `{ id, label }` steps plus controlled `value`. BarWorkflow appends `· X/N` to the h1, omits Previous on step one, shows Previous and Next on intermediate steps, and replaces Next with Check on the last step.
+- `dsStepChange` reports the target step id without mutating `value`. The application owns validation and updates the controlled step; use `isNextInactive` to keep a blocked Next visible.
+- The final `submitAction` owns label, native button type, inactive state, and loading state. Prefer `type="submit"` inside a form; `dsSubmit` reports supplemental product intent.
+
 **PanelTools tool views**
 
 - `ds-panel-tools` owns the single visible header for Search, Agents, Messages, Stacks, Activity, and Help in drawer presentation and in the default shared-header fullscreen presentation. It composes the canonical left-aligned `ds-panel-tool-header` internally. Never add a second title bar inside a `*-view` slot unless the tool intentionally opts into the split fullscreen header contract below.
@@ -308,10 +330,12 @@ export class MyComponent {
 - Do not make a full-view slot hide, replace, or visually duplicate PanelTools chrome. The only exception is `fullscreenHeaderMode="split"`, which suppresses the shared header only while fullscreen so a master/detail product can render one canonical `ds-panel-tool-header` per pane.
 - Fullscreen presentation changes snap without drawer-width animation. For conversation tools, set `fullscreenHeaderMode="split"` and use the extra width for a fixed `--dimension-panel-width-xs` (300px) history rail on the left and the selected conversation on the right. The history header shows the tool title and list actions. The detail header shows the chat title, Exit fullscreen, and chat actions. It never shows Back because the parent list remains visible. Keep both panes mounted; selecting a history row replaces only the detail pane.
 - When a tool has search, place `ds-panel-tool-search` directly below the shared header. Its contract is a transparent 48px row with 8px outer padding around the standard 32px **md** search control; never default a tool search to sm or xs.
+- Search clear actions use the concise localized `clearLabel` by itself for both the tooltip and accessible name. Do not append the placeholder, searched domain, or current query.
 - Panel-tool search keeps its 1px tertiary row divider unchanged while the input is focused. The divider belongs to the 48px container, not the 32px input, so it must not be promoted as an input focus boundary.
 - When a tool search also filters its results, enable its optional filter trigger and pair it with an application-owned `ds-menu`. The 32px search control, 16px vertical divider, and borderless 32px Filter action keep 8px gaps; the product owns filter labels, selected state, matching policy, and result-empty copy.
 - Panel-tool search is a shrinkable grid/flex item (`min-width: 0`) inside the fixed 300px drawer. A one-column grid that owns it must declare `grid-template-columns: minmax(0, 1fr)`; an implicit `auto` track can expand to the search row's intrinsic width and clip the filter action beneath the tool rail. Its filter trigger must remain fully inside the row with an 8px trailing inset; a long placeholder or inherited min-content width must never push the button under the tool rail. Verify the rendered SVG box, not only the trigger's accessible name or `icon` prop.
-- Conversation history uses the same md choice-row label/subtext padding recipe as Menu. The scroll container changes from Menu's 4px section inset to an 8px outer inset; do not also give conversation rows an 8px bespoke padding. Rows retain the shared 6px md row padding plus the 2px label/subtext inset. Conversation titles use body-medium—not title-small—with emphasis only while unread; read titles use regular body-medium. Previews are body-small truncated to one line. A busy preview pairs that body-small status with the sm 16px Loader at an 8px gap. A positive `unreadCount` renders one dot on the title's right-side action track rather than a visible counter; unread titles use primary foreground and read titles use secondary.
+- Conversation history uses the same md choice-row label/subtext padding recipe as Menu. The scroll container changes from Menu's 4px section inset to an 8px outer inset; do not also give conversation rows an 8px bespoke padding. Adjacent rows within a conversation section keep a 4px gap. Rows retain the shared 6px md row padding plus the 2px label/subtext inset. Conversation titles use body-medium—not title-small—with emphasis only while unread; read titles use regular body-medium. Previews are body-small truncated to one line. A busy preview pairs that body-small status with the sm 16px Loader at an 8px gap. A positive `unreadCount` renders one dot on the title's right-side action track rather than a visible counter; unread titles use primary foreground and read titles use secondary.
+- Use `ds-scroll-overlay` when ordinary scrollable content sits beneath a persistent footer action. Put content in the default slot and the complete footer in the `overlay` slot; the component keeps the fade active at every scroll position, reserves the footer's measured height, and begins the fade 8px before the visible footer content. Its `ResizeObserver` updates both clearance and fade whenever the overlay grows, including every MessageComposer growth step. ConversationList and MessageScroller use the same controller internally: set `actionLayout="footer"` on ConversationList for a full-width persistent action, and keep composers in MessageScroller's `overlay` slot rather than wrapping either component in an application-owned fade frame. ConversationList renders the measured fade as a separate surface-aware layer instead of masking the row ancestor, because a CSS mask creates a backdrop root and prevents contextual row actions from blurring the text behind them.
 - Put contextual row controls in `ds-conversation-list-item`'s `actions` slot so they remain sibling controls rather than invalid buttons nested inside the row button. A standard chat-options action is a borderless rounded md ButtonUnfilled with the Ellipses icon. The component overlays it at a stable 8px right inset and reveals it on row hover or focus-within; touch layouts keep it visible. The application owns menu items, open state, focus return, pinning, and other product consequences.
 - `ds-message-bubble` owns the default typography for plain conversation copy: body-medium regular (14px/20px). Use `variant="user"` for user-sent copy in agent and person-to-person channels; it uses secondary foreground. Use `variant="received"` for ordinary incoming person-to-person copy. Agent responses render through `ds-agent-response` without a MessageBubble surface so their ordered rich parts can use the available transcript width. Applications must not promote ordinary conversation turns to body-large. `ds-message` keeps 4px between its visible author, content, and timestamp or delivery footer. Failed outgoing delivery keeps the normal user bubble and renders negative “Failed to send” metadata in that footer; there is no error bubble variant.
 - `ds-typing-indicator` is transient conversation status, not message content. Render it directly in an incoming `ds-message`, provide concise localized status text that names the participant when needed, and never approximate it with a MessageBubble variant. Use Loader or the owning region's busy state for loading or response-streaming progress.
@@ -550,12 +574,12 @@ Shared disabled/inactive visual for interactive controls. Import `src/wc/utils/c
 
 | Class                  | Role                                                           |
 | ---------------------- | -------------------------------------------------------------- |
-| `.ds-control-inactive` | `opacity: 0.25`, `pointer-events: none`, `cursor: not-allowed` |
+| `.ds-control-inactive` | `opacity: 0.5`, `pointer-events: none`, `cursor: not-allowed` |
 
 Rules:
 
 - Prop name is **`isInactive`** (boolean, default `false`) on host controls (`ds-button-filled`, `ds-button-unfilled`, `ds-chip`, `ds-checkbox`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, `ds-slider`, `ds-radio`, `ds-shell-gradient-swatch`, …). Item APIs use `isInactive` too (Menu items, Select/SelectMulti options, TabGroup / PanelSubNav tabs, Radio options, PanelTools rail items).
-- Do not hand-roll `opacity: 0.5` (or any other) inactive styles on these controls — use the util.
+- Do not hand-roll inactive opacity on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 
 **Focus states**
@@ -604,6 +628,7 @@ Rules:
 
 - `ds-menu`, Select, and SelectMulti share `choice-popup-alignment.ts`. The default `choice-cell` contract extends the popup frame by the section inset so the first/last interactive row edge—not the popup frame—aligns with the trigger.
 - Leave `ds-menu.anchorAlignment` at `choice-cell` for ordinary menus. Use `popup-frame` only when a deliberately custom layout must align the popup's outer frame, and treat `alignOffset` as an additional nudge after that policy.
+- Treat an anchored popup's `side` as its preferred side, not an unconditional physical placement. Shared positioning keeps that side when it fits; otherwise it flips to the opposite side only when the opposite offers more main-axis room, then clamps the result to the viewport. Do not add product-level bottom/top or right/left collision branches.
 - Do not copy section-padding offsets into stories or host components. New anchored choice popups must use `resolveChoicePopupAlignOffset` and `choicePopupMinWidth` instead of hand-tuned alignment math.
 
 **TypeScript**

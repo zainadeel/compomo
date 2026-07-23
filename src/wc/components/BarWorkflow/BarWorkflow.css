@@ -1,0 +1,51 @@
+@import '../../utils/control-density.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-background-bold-brand);
+}
+
+.bar-workflow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dimension-space-100);
+  height: var(--dimension-size-600);
+  min-width: 0;
+  padding: var(--dimension-space-100);
+  box-sizing: border-box;
+  background: var(--color-background-bold-brand);
+}
+
+.bar-workflow__identity {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  height: var(--dimension-size-400);
+  min-width: 0;
+}
+
+.bar-workflow__heading {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  width: auto;
+  min-width: 0;
+  height: var(--dimension-size-400);
+  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.bar-workflow__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--dimension-space-100);
+}

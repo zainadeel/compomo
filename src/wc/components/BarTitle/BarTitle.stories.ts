@@ -2,12 +2,12 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import type {
   BarTitleActionItem,
-  BarTitleMode,
   BarTitlePrimaryAction,
   BarTitleSectionItem,
   BarTitleVariant,
 } from './bar-title-types';
 import '../../../../dist/components/ds-bar-title.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const detailSections: BarTitleSectionItem[] = [
   { id: 'summary', label: 'Summary' },
@@ -48,7 +48,6 @@ interface BarTitleReviewCase {
   value?: string;
   primaryAction?: BarTitlePrimaryAction;
   actions?: BarTitleActionItem[];
-  mode?: BarTitleMode;
 }
 
 const pageCases: BarTitleReviewCase[] = [
@@ -98,22 +97,6 @@ const pageCases: BarTitleReviewCase[] = [
       { id: 'archive-report', label: 'Archive report' },
     ],
   },
-  {
-    id: 'create-edit',
-    label: 'Create or edit',
-    rationale: 'Editor mode uses Exit plus an always-visible Save action on bold-brand chrome.',
-    heading: 'Create driver',
-    description: 'Add identity, contact, and employment details for the new driver.',
-    showBack: true,
-    backAriaLabel: 'Exit driver creation',
-    backLabel: 'Exit',
-    mode: 'editor',
-    primaryAction: {
-      id: 'save-driver',
-      label: 'Save',
-      type: 'submit',
-    },
-  },
 ];
 
 const meta: Meta = {
@@ -122,6 +105,7 @@ const meta: Meta = {
   parameters: {
     layout: 'padded',
     docs: {
+      ...isolatedOverlayDocs('560px'),
       description: {
         component:
           'BarTitle renders page identity and page-level commands. ShellPage chooses its presentation automatically from available capacity and scroll state. Story examples add a faint-neutral review canvas below BarTitle to expose its exact boundary; that framing is not part of the component.',
@@ -135,7 +119,6 @@ const meta: Meta = {
     backAriaLabel: { control: 'text' },
     backLabel: { control: 'text' },
     variant: { control: 'select', options: ['expanded', 'compact', 'constrained'] },
-    mode: { control: 'select', options: ['default', 'editor'] },
   },
   args: {
     heading: 'John Smith',
@@ -144,7 +127,6 @@ const meta: Meta = {
     backAriaLabel: 'Back to Drivers',
     backLabel: 'Drivers',
     variant: 'expanded',
-    mode: 'default',
   },
 };
 
@@ -240,7 +222,6 @@ function renderHeader(reviewCase: BarTitleReviewCase, variant: BarTitleVariant =
       back-aria-label=${reviewCase.backAriaLabel ?? 'Back'}
       back-label=${reviewCase.backLabel ?? 'Back'}
       variant=${variant}
-      mode=${reviewCase.mode ?? 'default'}
       .sections=${reviewCase.sections ?? []}
       value=${reviewCase.value ?? ''}
       .primaryAction=${reviewCase.primaryAction ?? null}
@@ -308,7 +289,6 @@ export const Playground: Story = {
         back-aria-label=${args['backAriaLabel']}
         back-label=${args['backLabel']}
         variant=${args['variant']}
-        mode=${args['mode']}
         .sections=${detailSections}
         value="summary"
         .primaryAction=${detailPrimaryAction}
@@ -374,11 +354,6 @@ export const DetailWithSections: Story = {
 export const DetailWithoutSections: Story = {
   name: 'Page type · Detail without sections',
   render: () => renderFocusedCase(pageCases[3]),
-};
-
-export const CreateOrEdit: Story = {
-  name: 'Page type · Create or edit',
-  render: () => renderFocusedCase(pageCases[4]),
 };
 
 export const Variants: Story = {
@@ -480,7 +455,7 @@ export const ConstrainedPrimaryPolicies: Story = {
         {
           id: 'never-collapse',
           label: 'Always-visible primary',
-          rationale: 'Use sparingly for create/edit submit actions.',
+          rationale: 'Use sparingly for actions whose hierarchy requires persistent visibility.',
           heading: 'Create driver',
           showBack: true,
           backAriaLabel: 'Cancel and return to Drivers',

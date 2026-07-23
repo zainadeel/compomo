@@ -429,6 +429,9 @@ test('has no automatically detectable accessibility violations', async ({ page }
       timeout: 0,
     });
   });
+  await expect(
+    page.locator('[data-toast-id="accessible"] .toast-surface'),
+  ).toHaveCSS('opacity', '1');
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });

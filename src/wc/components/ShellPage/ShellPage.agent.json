@@ -7,10 +7,11 @@
   "tag": "ds-shell-page",
   "audience": "general",
   "status": "stable",
-  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, container-aware BarTitle variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
   "useWhen": [
     "Rendering a standard routed page inside ShellApp's default content region.",
     "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the page column narrows.",
+    "BarWorkflow needs sticky page-level placement while remaining compact.",
     "Pages need consistent content gutters with an explicit full-bleed option."
   ],
   "avoidWhen": [
@@ -33,12 +34,13 @@
   "commonlyComposedWith": [
     "component:ds-shell-app",
     "component:ds-bar-title",
+    "component:ds-bar-workflow",
     "component:ds-tab-group"
   ],
   "patterns": ["pattern:shell-page"],
   "accessibility": [
     "ShellPage exposes the routed page as the main landmark; render exactly one active ShellPage inside ShellApp.",
-    "Provide exactly one BarTitle through the header slot so the page has one h1.",
+    "Provide exactly one BarTitle or BarWorkflow through the header slot so the page has one h1.",
     "Keep loading, empty, validation, error, progress, success, and failure communication in the default product-content slot.",
     "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
   ],
@@ -46,7 +48,7 @@
     "headerPresentation=auto selects expanded, compact, or constrained from ShellPage's own inline capacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
-    "The required header slot accepts one BarTitle. The default slot owns router output and all page product content."
+    "The required header slot accepts one BarTitle or BarWorkflow. The default slot owns router output and all page product content."
   ],
   "responsiveBehavior": [
     "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
@@ -54,19 +56,20 @@
     "A newly navigated header resolves current page capacity before it is revealed, so persistent tool or navigation chrome cannot flash the expanded presentation first.",
     "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
-    "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling."
+    "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
+    "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Import ShellPage and BarTitle, place one ds-bar-title in slot=header, and render route content as default children.",
+      "Import ShellPage with BarTitle or BarWorkflow, place one header in slot=header, and render route content as default children.",
       "Do not set BarTitle.variant while ShellPage owns headerPresentation."
     ],
     "react": [
-      "Render DsBarTitle with slot=header inside DsShellPage and keep routed content as the remaining children.",
+      "Render DsBarTitle or DsBarWorkflow with slot=header inside DsShellPage and keep routed content as the remaining children.",
       "Use contentInset none only for deliberately full-bleed page products."
     ],
     "angular": [
-      "Import the generated standalone DsShellPage and DsBarTitle adapters, preserve slot=header, and place router-outlet in the ShellPage default slot.",
+      "Import the generated standalone DsShellPage adapter with DsBarTitle or DsBarWorkflow, preserve slot=header, and place router-outlet in the ShellPage default slot.",
       "Do not add another overflow auto wrapper around the routed page."
     ]
   },

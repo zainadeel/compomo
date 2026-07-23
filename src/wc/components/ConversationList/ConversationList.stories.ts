@@ -18,7 +18,7 @@ type Story = StoryObj;
 export const GroupedHistory: Story = {
   render: () => html`
     <div style="height:640px; width:var(--dimension-panel-width-xs);">
-      <ds-conversation-list>
+      <ds-conversation-list action-layout="footer">
         <ds-conversation-list-section heading="Pinned chats">
           <ds-conversation-list-item
             conversation-id="route-plan"
@@ -59,9 +59,11 @@ export const GroupedHistory: Story = {
         </ds-conversation-list-section>
         <ds-button-filled
           slot="actions"
-          variant="icon"
+          variant="icon-label"
           icon="SquarePencil"
+          label="New conversation"
           rounded
+          width="fill"
           aria-label="New conversation"
         ></ds-button-filled>
       </ds-conversation-list>

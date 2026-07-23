@@ -7,6 +7,13 @@
   user-select: none;
 }
 
+:host(:hover),
+:host(:focus-within),
+:host(.conversation-list-item--actions-open) {
+  position: relative;
+  z-index: var(--dimension-z-index-floating);
+}
+
 .conversation-list-item__row {
   position: relative;
   isolation: isolate;

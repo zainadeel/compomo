@@ -2,11 +2,15 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-message-composer.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const meta = {
   title: 'Conversation/Message composer',
   tags: ['autodocs'],
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: isolatedOverlayDocs('360px'),
+  },
 } satisfies Meta;
 
 export default meta;

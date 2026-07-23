@@ -23,7 +23,7 @@
   pointer-events: none;
 }
 
-/* Inactive: `.ds-control-inactive` (25% opacity). */
+/* Inactive: `.ds-control-inactive` (50% opacity). */
 
 :host(.checkbox--md) {
   --_checkbox-box: var(--dimension-iconography-sm);

@@ -9,14 +9,15 @@ import type { Components } from '@ds-mo/ui/components';
 import { defineCustomElement as defineDsConversationList } from '@ds-mo/ui/components/ds-conversation-list.js';
 
 @ProxyCmp({
-  defineCustomElementFn: defineDsConversationList
+  defineCustomElementFn: defineDsConversationList,
+  inputs: ['actionLayout']
 })
 @Component({
   selector: 'ds-conversation-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: [],
+  inputs: ['actionLayout'],
 })
 export class DsConversationList {
   protected el: HTMLDsConversationListElement;

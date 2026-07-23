@@ -14,7 +14,53 @@ export interface AnchoredPopupPositionInput {
   viewportHeight: number;
 }
 
-/** Pure viewport-fixed anchored-popup layout math shared by menus and selects. */
+const OPPOSITE_SIDE: Record<AnchoredPopupSide, AnchoredPopupSide> = {
+  top: 'bottom',
+  right: 'left',
+  bottom: 'top',
+  left: 'right',
+};
+
+function availableMainAxisSpace(
+  side: AnchoredPopupSide,
+  input: AnchoredPopupPositionInput,
+): number {
+  const { anchorRect: anchor, sideOffsetPx, viewportPadPx, viewportWidth, viewportHeight } = input;
+  switch (side) {
+    case 'top':
+      return anchor.top - viewportPadPx - sideOffsetPx;
+    case 'right':
+      return viewportWidth - viewportPadPx - anchor.right - sideOffsetPx;
+    case 'bottom':
+      return viewportHeight - viewportPadPx - anchor.bottom - sideOffsetPx;
+    case 'left':
+      return anchor.left - viewportPadPx - sideOffsetPx;
+  }
+}
+
+function resolveAnchoredPopupSide(input: AnchoredPopupPositionInput): AnchoredPopupSide {
+  const preferredSpace = availableMainAxisSpace(input.side, input);
+  const oppositeSide = OPPOSITE_SIDE[input.side];
+  const oppositeSpace = availableMainAxisSpace(oppositeSide, input);
+  const popupSize = input.side === 'top' || input.side === 'bottom'
+    ? input.popupHeight
+    : input.popupWidth;
+
+  return popupSize > preferredSpace && oppositeSpace > preferredSpace
+    ? oppositeSide
+    : input.side;
+}
+
+function clampToViewport(value: number, size: number, viewportSize: number, padding: number): number {
+  const maximum = Math.max(padding, viewportSize - size - padding);
+  return Math.min(Math.max(value, padding), maximum);
+}
+
+/**
+ * Pure viewport-fixed anchored-popup layout math shared by menus and selects.
+ * `side` is preferred: when the popup does not fit there and the opposite side
+ * has more room, placement flips on the main axis before viewport clamping.
+ */
 export function computeAnchoredPopupPosition(
   input: AnchoredPopupPositionInput,
 ): { x: number; y: number } {
@@ -22,7 +68,6 @@ export function computeAnchoredPopupPosition(
     anchorRect: anchor,
     popupWidth,
     popupHeight,
-    side,
     align,
     sideOffsetPx,
     alignOffsetPx,
@@ -30,6 +75,7 @@ export function computeAnchoredPopupPosition(
     viewportWidth,
     viewportHeight,
   } = input;
+  const side = resolveAnchoredPopupSide(input);
 
   let x = 0;
   let y = 0;
@@ -74,7 +120,7 @@ export function computeAnchoredPopupPosition(
   }
 
   return {
-    x: Math.min(Math.max(x, viewportPadPx), viewportWidth - popupWidth - viewportPadPx),
-    y: Math.min(Math.max(y, viewportPadPx), viewportHeight - popupHeight - viewportPadPx),
+    x: clampToViewport(x, popupWidth, viewportWidth, viewportPadPx),
+    y: clampToViewport(y, popupHeight, viewportHeight, viewportPadPx),
   };
 }

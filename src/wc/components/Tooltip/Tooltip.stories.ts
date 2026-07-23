@@ -6,12 +6,16 @@ import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-text.js';
 import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const SIZES = ['md', 'sm', 'xs'] as const;
 
 const meta: Meta = {
   title: 'Overlay/Tooltip',
   tags: ['autodocs'],
+  parameters: {
+    docs: isolatedOverlayDocs('520px'),
+  },
   argTypes: {
     label: { control: 'text' },
     size: { control: 'select', options: [...SIZES] },

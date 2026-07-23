@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "shell-page",
   "title": "ShellPage",
-  "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+  "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, container-aware BarTitle variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,10 +13,11 @@
     "intent": {
       "audience": "general",
       "status": "stable",
-      "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle placement, container-aware header variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+      "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, container-aware BarTitle variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
       "useWhen": [
         "Rendering a standard routed page inside ShellApp's default content region.",
         "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the page column narrows.",
+        "BarWorkflow needs sticky page-level placement while remaining compact.",
         "Pages need consistent content gutters with an explicit full-bleed option."
       ],
       "avoidWhen": [
@@ -39,6 +40,7 @@
       "commonlyComposedWith": [
         "component:ds-shell-app",
         "component:ds-bar-title",
+        "component:ds-bar-workflow",
         "component:ds-tab-group"
       ],
       "patterns": [
@@ -46,7 +48,7 @@
       ],
       "accessibility": [
         "ShellPage exposes the routed page as the main landmark; render exactly one active ShellPage inside ShellApp.",
-        "Provide exactly one BarTitle through the header slot so the page has one h1.",
+        "Provide exactly one BarTitle or BarWorkflow through the header slot so the page has one h1.",
         "Keep loading, empty, validation, error, progress, success, and failure communication in the default product-content slot.",
         "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
       ],
@@ -54,7 +56,7 @@
         "headerPresentation=auto selects expanded, compact, or constrained from ShellPage's own inline capacity and scroll position.",
         "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
         "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
-        "The required header slot accepts one BarTitle. The default slot owns router output and all page product content."
+        "The required header slot accepts one BarTitle or BarWorkflow. The default slot owns router output and all page product content."
       ],
       "responsiveBehavior": [
         "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
@@ -62,19 +64,20 @@
         "A newly navigated header resolves current page capacity before it is revealed, so persistent tool or navigation chrome cannot flash the expanded presentation first.",
         "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
         "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
-        "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling."
+        "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
+        "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Import ShellPage and BarTitle, place one ds-bar-title in slot=header, and render route content as default children.",
+          "Import ShellPage with BarTitle or BarWorkflow, place one header in slot=header, and render route content as default children.",
           "Do not set BarTitle.variant while ShellPage owns headerPresentation."
         ],
         "react": [
-          "Render DsBarTitle with slot=header inside DsShellPage and keep routed content as the remaining children.",
+          "Render DsBarTitle or DsBarWorkflow with slot=header inside DsShellPage and keep routed content as the remaining children.",
           "Use contentInset none only for deliberately full-bleed page products."
         ],
         "angular": [
-          "Import the generated standalone DsShellPage and DsBarTitle adapters, preserve slot=header, and place router-outlet in the ShellPage default slot.",
+          "Import the generated standalone DsShellPage adapter with DsBarTitle or DsBarWorkflow, preserve slot=header, and place router-outlet in the ShellPage default slot.",
           "Do not add another overflow auto wrapper around the routed page."
         ]
       },
@@ -178,7 +181,7 @@
   "files": [
     {
       "path": "src/wc/components/ShellPage/ShellPage.css",
-      "content": ":host {\n  display: block;\n  position: relative;\n  min-width: 0;\n  min-height: 100%;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n.shell-page__scroll-sentinel {\n  position: absolute;\n  inset-block-start: 0;\n  inset-inline-start: 0;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-stroke-width-012);\n  pointer-events: none;\n}\n\n.shell-page__sticky-header {\n  position: sticky;\n  inset-block-start: 0;\n  z-index: var(--dimension-z-index-raised);\n  min-width: 0;\n  background: var(--color-background-primary);\n  overflow: visible;\n  overflow-anchor: none;\n}\n\n.shell-page__sticky-header ::slotted(ds-bar-title) {\n  display: block;\n  min-width: 0;\n}\n\n.shell-page__flow-spacer {\n  height: var(--ds-shell-page-flow-spacer, 0);\n  background: var(--color-background-primary);\n}\n\n.shell-page__content {\n  min-width: 0;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n:host(.shell-page-host--inset-default) .shell-page__content {\n  padding: var(--dimension-space-400) var(--dimension-space-400) var(--dimension-space-800);\n}\n\n:host(.shell-page-host--inset-none) .shell-page__content {\n  padding: 0;\n}\n",
+      "content": ":host {\n  display: block;\n  position: relative;\n  min-width: 0;\n  min-height: 100%;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n.shell-page__scroll-sentinel {\n  position: absolute;\n  inset-block-start: 0;\n  inset-inline-start: 0;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-stroke-width-012);\n  pointer-events: none;\n}\n\n.shell-page__sticky-header {\n  position: sticky;\n  inset-block-start: 0;\n  z-index: var(--dimension-z-index-raised);\n  min-width: 0;\n  background: var(--color-background-primary);\n  overflow: visible;\n  overflow-anchor: none;\n}\n\n.shell-page__sticky-header ::slotted(ds-bar-title),\n.shell-page__sticky-header ::slotted(ds-bar-workflow) {\n  display: block;\n  min-width: 0;\n}\n\n.shell-page__flow-spacer {\n  height: var(--ds-shell-page-flow-spacer, 0);\n  background: var(--color-background-primary);\n}\n\n.shell-page__content {\n  min-width: 0;\n  box-sizing: border-box;\n  background: var(--color-background-primary);\n}\n\n:host(.shell-page-host--inset-default) .shell-page__content {\n  padding: var(--dimension-space-400) var(--dimension-space-400) var(--dimension-space-800);\n}\n\n:host(.shell-page-host--inset-none) .shell-page__content {\n  padding: 0;\n}\n",
       "type": "registry:ui"
     },
     {

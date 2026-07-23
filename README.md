@@ -94,7 +94,7 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 
 ### Navigation
 - **TabGroup** (horizontal local views), **PanelSubNav** (vertical local views)
-- **ShellApp**, **PanelNav**, **BarNav**, **PanelTools**
+- **ShellApp**, **ShellPage**, **PanelNav**, **BarNav**, **BarTitle**, **BarWorkflow**, **PanelTools**
 
 ### Status & layout
 - **EmptyState**, **Loader**, **Skeleton**, **CardSetting**, **CardDataVizDonut**
@@ -102,6 +102,23 @@ All tags are `ds-*` custom elements. Grouped by role (see Storybook for props an
 ## Token dependency
 
 All styling uses TokoMo CSS custom properties. No hardcoded colors, sizes, or shadows — everything maps to the token system. Components will render unstyled if `@ds-mo/tokens` is not imported.
+
+## Semantic prose
+
+Safe semantic DOM produced by Markdown, CMS, or documentation renderers can use the renderer-neutral prose stylesheet:
+
+```css
+@import '@ds-mo/ui/prose.css';
+```
+
+```html
+<article class="ds-prose">
+  <h2>Summary</h2>
+  <p>Renderer-owned semantic content.</p>
+</article>
+```
+
+The application remains responsible for parsing and content safety. Use `data-ds-prose="off"` on embedded product UI, and wrap wide tables in `.ds-prose__table-scroll`. See the [prose foundation decision](docs/prose-foundation.md).
 
 ## Icon pattern
 

@@ -1,8 +1,22 @@
+@import '../../utils/control-density.css';
+
 :host {
   display: inline-flex;
   flex-shrink: 0;
-  width: var(--dimension-size-400);
-  height: var(--dimension-size-400);
+  width: var(--ds-control-height);
+  height: var(--ds-control-height);
+}
+
+:host(.avatar--md) {
+  --_avatar-stroke: var(--dimension-stroke-width-015);
+}
+
+:host(.avatar--sm) {
+  --_avatar-stroke: var(--dimension-stroke-width-012);
+}
+
+:host(.avatar--xs) {
+  --_avatar-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);
 }
 
 .avatar {
@@ -13,5 +27,5 @@
   width: 100%;
   height: 100%;
   border-radius: var(--dimension-radius-half);
-  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) var(--color-foreground-quaternary);
+  box-shadow: inset 0 0 0 var(--_avatar-stroke) var(--color-foreground-quaternary);
 }

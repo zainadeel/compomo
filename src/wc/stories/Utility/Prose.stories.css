@@ -1,0 +1,58 @@
+.prose-demo-document {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--dimension-panel-width-lg);
+  padding: var(--dimension-space-300);
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  border-radius: var(--dimension-radius-100);
+  background: var(--color-background-primary);
+  color: var(--color-foreground-primary);
+}
+
+.prose-demo-document--narrow {
+  max-width: var(--dimension-panel-width-xs);
+}
+
+.prose-demo-wide-table {
+  min-inline-size: var(--dimension-panel-width-sm);
+}
+
+.prose-demo-product-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dimension-space-150);
+  padding: var(--dimension-space-150);
+  border-radius: var(--dimension-radius-075);
+  background: var(--color-background-secondary);
+  color: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+}
+
+.prose-demo-product-card__title,
+.prose-demo-product-card__description {
+  margin: 0;
+}
+
+.prose-demo-product-card__title {
+  font-size: var(--typography-fontsize-sm);
+  font-weight: var(--typography-weight-medium);
+  line-height: var(--typography-lineheight-sm);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+.prose-demo-product-card__description {
+  margin-block-start: var(--dimension-space-025);
+  color: var(--color-foreground-secondary);
+  font-size: var(--typography-fontsize-xs);
+  font-weight: var(--typography-weight-regular);
+  line-height: var(--typography-lineheight-xs);
+  letter-spacing: var(--typography-letterspacing-none);
+}
+
+.prose-demo-stream {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--dimension-space-150);
+}

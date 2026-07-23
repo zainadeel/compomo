@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsBarTitle } from '@ds-mo/ui/components/ds
 
 @ProxyCmp({
   defineCustomElementFn: defineDsBarTitle,
-  inputs: ['actions', 'actionsAriaLabel', 'backAriaLabel', 'backLabel', 'description', 'heading', 'mode', 'primaryAction', 'sections', 'sectionsAriaLabel', 'showBack', 'value', 'variant']
+  inputs: ['actions', 'actionsAriaLabel', 'backAriaLabel', 'backLabel', 'description', 'heading', 'primaryAction', 'sections', 'sectionsAriaLabel', 'showBack', 'value', 'variant']
 })
 @Component({
   selector: 'ds-bar-title',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['actions', 'actionsAriaLabel', 'backAriaLabel', 'backLabel', 'description', { name: 'heading', required: true }, 'mode', 'primaryAction', 'sections', 'sectionsAriaLabel', 'showBack', 'value', 'variant'],
+  inputs: ['actions', 'actionsAriaLabel', 'backAriaLabel', 'backLabel', 'description', { name: 'heading', required: true }, 'primaryAction', 'sections', 'sectionsAriaLabel', 'showBack', 'value', 'variant'],
   outputs: ['dsBack', 'dsSectionChange', 'dsAction'],
 })
 export class DsBarTitle {

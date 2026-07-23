@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-select.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const OPTIONS = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
@@ -37,6 +38,9 @@ const BACKGROUNDS = [
 const meta: Meta = {
   title: 'Form/Select',
   tags: ['autodocs'],
+  parameters: {
+    docs: isolatedOverlayDocs('420px'),
+  },
   argTypes: {
     value: { control: 'select', options: ['', 'apple', 'cherry', 'date'] },
     placeholder: { control: 'text' },

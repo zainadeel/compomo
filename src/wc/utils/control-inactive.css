@@ -2,7 +2,7 @@
  * Control inactive — shared disabled/inactive visual for interactive controls.
  *
  * Apply `.ds-control-inactive` when the control’s `isInactive` prop (or item
- * `isInactive` field) is true. Opacity is 25% so inactive chrome stays
+ * `isInactive` field) is true. Opacity is 50% so inactive chrome stays
  * recognizable but clearly non-interactive.
  *
  * Both `:host(.ds-control-inactive)` and `.ds-control-inactive` are listed so
@@ -14,7 +14,7 @@
 
 :host(.ds-control-inactive),
 .ds-control-inactive {
-  opacity: 0.25;
+  opacity: 0.5;
   pointer-events: none;
   cursor: not-allowed;
 }

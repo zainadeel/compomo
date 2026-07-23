@@ -30,7 +30,7 @@
       ],
       "accessibility": [
         "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
-        "The standard search clear action restores focus, exposes its localized name in a tooltip, and emits both the empty query and dsClear.",
+        "The standard search clear action restores focus, uses the concise localized clearLabel by itself for both its tooltip and accessible name, and emits both the empty query and dsClear.",
         "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection; filterAriaLabel also labels its tooltip."
       ],
       "states": [

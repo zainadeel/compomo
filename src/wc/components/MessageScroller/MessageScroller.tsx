@@ -10,6 +10,7 @@ import {
   State,
 } from '@stencil/core';
 import type { MessageScrollerPosition } from '../conversation-types';
+import { ScrollOverlayController } from '../../utils/scroll-overlay-controller';
 
 const LIVE_EDGE_THRESHOLD = 24;
 
@@ -34,15 +35,12 @@ export class MessageScroller {
   private viewport?: HTMLElement;
   private content?: HTMLElement;
   private overlay?: HTMLElement;
-  private resizeObserver?: ResizeObserver;
-  private overlayResizeObserver?: ResizeObserver;
+  private scrollOverlayController?: ScrollOverlayController;
   private mutationObserver?: MutationObserver;
   private following = true;
   private atStart = false;
   private programmatic = false;
   private previousScrollHeight = 0;
-  private overlayBlockSize = 0;
-  private overlayContentBlockSize = 0;
 
   componentDidLoad() {
     this.connectObservers();
@@ -51,8 +49,7 @@ export class MessageScroller {
   }
 
   disconnectedCallback() {
-    this.resizeObserver?.disconnect();
-    this.overlayResizeObserver?.disconnect();
+    this.scrollOverlayController?.disconnect();
     this.mutationObserver?.disconnect();
     document.removeEventListener('selectionchange', this.handleSelectionChange);
   }
@@ -99,21 +96,16 @@ export class MessageScroller {
   }
 
   private connectObservers() {
-    if (!this.viewport || !this.content) return;
+    if (!this.viewport || !this.content || !this.overlay) return;
     this.previousScrollHeight = this.viewport.scrollHeight;
-    this.resizeObserver = new ResizeObserver(() => this.handleContentGrowth());
-    this.resizeObserver.observe(this.content);
-    this.resizeObserver.observe(this.viewport);
-    if (this.overlay) {
-      this.overlayResizeObserver = new ResizeObserver(entries => {
-        const blockSize = Math.ceil(entries[0]?.contentRect.height ?? 0);
-        this.overlayBlockSize = blockSize;
-        this.el.style.setProperty('--ds-message-scroller-overlay-block-size', `${blockSize}px`);
-        this.syncOverlayContentBlockSize();
-        this.handleContentGrowth();
-      });
-      this.overlayResizeObserver.observe(this.overlay);
-    }
+    this.scrollOverlayController = new ScrollOverlayController({
+      host: this.el,
+      viewport: this.viewport,
+      content: this.content,
+      overlay: this.overlay,
+      onGeometryChange: () => this.handleContentGrowth(),
+    });
+    this.scrollOverlayController.connect();
     this.mutationObserver = new MutationObserver(() => this.handleContentGrowth());
     this.mutationObserver.observe(this.content, {
       childList: true,
@@ -133,35 +125,7 @@ export class MessageScroller {
     }
     this.previousScrollHeight = nextHeight;
     this.showScrollToLatest = !this.following && !this.isAtLiveEdge();
-    this.syncContentFade();
-  }
-
-  private syncContentFade() {
-    if (!this.viewport || !this.content) return;
-    const fadeEnd = Math.max(this.viewport.scrollTop + this.viewport.clientHeight, 0);
-    const fadeStart = Math.max(fadeEnd - this.overlayContentBlockSize, 0);
-    this.content.style.setProperty('--ds-scroll-edge-fade-window-start', `${fadeStart}px`);
-    this.content.style.setProperty('--ds-scroll-edge-fade-window-end', `${fadeEnd}px`);
-  }
-
-  private syncOverlayContentBlockSize() {
-    if (!this.overlay) return;
-    const assigned = this.el.querySelector<HTMLElement>('[slot="overlay"]');
-    if (!(assigned instanceof HTMLElement)) {
-      this.overlayContentBlockSize = this.overlayBlockSize;
-    } else {
-      const visibleContent =
-        assigned.firstElementChild instanceof HTMLElement ? assigned.firstElementChild : assigned;
-      const topInset = Math.max(
-        Math.ceil(visibleContent.getBoundingClientRect().top - this.overlay.getBoundingClientRect().top),
-        0
-      );
-      this.overlayContentBlockSize = Math.max(this.overlayBlockSize - topInset, 0);
-    }
-    this.el.style.setProperty(
-      '--ds-message-scroller-overlay-content-block-size',
-      `${this.overlayContentBlockSize}px`
-    );
+    this.scrollOverlayController?.sync();
   }
 
   private applyDefaultPosition() {
@@ -170,7 +134,7 @@ export class MessageScroller {
       this.viewport.scrollTop = 0;
       this.following = false;
       this.showScrollToLatest = this.viewport.scrollHeight > this.viewport.clientHeight;
-      this.syncContentFade();
+      this.scrollOverlayController?.sync();
       return;
     }
     if (this.defaultPosition === 'last-anchor') {
@@ -180,14 +144,14 @@ export class MessageScroller {
         last.scrollIntoView({ block: 'start' });
         this.following = this.isAtLiveEdge();
         this.showScrollToLatest = !this.following;
-        this.syncContentFade();
+        this.scrollOverlayController?.sync();
         return;
       }
     }
     this.viewport.scrollTop = this.viewport.scrollHeight;
     this.following = true;
     this.showScrollToLatest = false;
-    this.syncContentFade();
+    this.scrollOverlayController?.sync();
   }
 
   private isAtLiveEdge(): boolean {
@@ -200,7 +164,7 @@ export class MessageScroller {
 
   private handleScroll = () => {
     if (!this.viewport) return;
-    this.syncContentFade();
+    this.scrollOverlayController?.sync();
     if (this.programmatic) return;
     this.following = this.isAtLiveEdge();
     this.showScrollToLatest = !this.following;

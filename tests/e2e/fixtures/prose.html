@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prose foundation e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <link rel="stylesheet" href="/dist/styles/prose.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--color-background-primary);
+        color: var(--color-foreground-primary);
+      }
+
+      .fixture {
+        box-sizing: border-box;
+        width: 320px;
+      }
+
+      .consumer-override p {
+        font-size: var(--typography-fontsize-sm);
+        line-height: var(--typography-lineheight-sm);
+      }
+
+      .product-ui p {
+        margin: 11px;
+        color: rgb(123, 45, 67);
+        font-family: serif;
+        font-size: 17px;
+        line-height: 23px;
+      }
+
+      #wide-table {
+        min-width: 640px;
+      }
+    </style>
+  </head>
+  <body>
+    <article id="semantic-prose" class="fixture ds-prose">
+      <h2>Service summary</h2>
+      <p id="stable-block">
+        The result includes a <a href="https://example.com">source</a> and
+        <code>inlineCode()</code>.
+      </p>
+      <ol>
+        <li>
+          Inspect affected vehicles.
+          <ul>
+            <li>Confirm battery age.</li>
+            <li>Record charging voltage.</li>
+          </ul>
+        </li>
+        <li>Schedule follow-up service.</li>
+      </ol>
+      <blockquote><p>Three failures share the same charging signature.</p></blockquote>
+      <pre tabindex="0"><code>const affected = records.filter(record =&gt; record.issue === 'battery');</code></pre>
+      <div class="ds-prose__table-scroll" id="table-scroll" tabindex="0">
+        <table id="wide-table">
+          <thead><tr><th scope="col">Vehicle</th><th scope="col">Next step</th></tr></thead>
+          <tbody><tr><td>Unit 104</td><td>Charging-system test</td></tr></tbody>
+        </table>
+      </div>
+      <p id="long-content">battery_drain_follow_up_required_for_vehicle_unit_104_without_breaks</p>
+      <section class="product-ui" data-ds-prose="off">
+        <p id="opted-out-copy">Product-owned copy</p>
+        <div class="ds-prose"><p id="nested-opted-out-copy">Nested prose stays opted out</p></div>
+        <ds-button-filled label="Product action"></ds-button-filled>
+      </section>
+    </article>
+
+    <article id="override-prose" class="fixture ds-prose consumer-override">
+      <p>Consumer override</p>
+    </article>
+
+    <article id="stream-prose" class="fixture ds-prose">
+      <p id="stream-first">Earlier streamed block remains stable.</p>
+    </article>
+
+    <ds-markdown
+      id="markdown-renderer"
+      class="fixture"
+      content="# Renderer heading&#10;&#10;Renderer paragraph with `inline code`.&#10;&#10;```ts&#10;const safe = true&#10;```"
+    ></ds-markdown>
+
+    <script type="module" src="/prose-setup.mjs"></script>
+  </body>
+</html>

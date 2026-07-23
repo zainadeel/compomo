@@ -10,11 +10,13 @@ const meta: Meta = {
   argTypes: {
     icon: { control: 'select', options: ICONS },
     iconColor: { control: 'select', options: ['primary', 'secondary'] },
+    size: { control: 'select', options: ['md', 'sm', 'xs'] },
     label: { control: 'text' },
   },
   args: {
     icon: 'Person',
     iconColor: 'secondary',
+    size: 'md',
     label: '',
   },
 };
@@ -27,8 +29,19 @@ export const Playground: Story = {
     <ds-avatar
       icon=${args['icon']}
       icon-color=${args['iconColor']}
+      size=${args['size']}
       label=${args['label'] || undefined}
     ></ds-avatar>
+  `,
+};
+
+export const Sizes: Story = {
+  render: () => html`
+    <div style="display:flex;align-items:center;gap:var(--dimension-space-100)">
+      <ds-avatar size="md" icon="Person" label="Medium avatar"></ds-avatar>
+      <ds-avatar size="sm" icon="Person" label="Small avatar"></ds-avatar>
+      <ds-avatar size="xs" icon="Person" label="Extra-small avatar"></ds-avatar>
+    </div>
   `,
 };
 
@@ -42,11 +55,11 @@ export const ConversationTypes: Story = {
   `,
 };
 
-export const ReadAndUnread: Story = {
+export const IconHierarchy: Story = {
   render: () => html`
     <div style="display:flex;align-items:center;gap:var(--dimension-space-100)">
-      <ds-avatar icon="Person" icon-color="primary" label="Unread direct chat"></ds-avatar>
-      <ds-avatar icon="Person" icon-color="secondary" label="Read direct chat"></ds-avatar>
+      <ds-avatar icon="Person" icon-color="primary" label="Prominent identity"></ds-avatar>
+      <ds-avatar icon="Person" icon-color="secondary" label="Default identity"></ds-avatar>
     </div>
   `,
 };

@@ -3,6 +3,7 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-field.js';
 import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-select.js';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const STATUS_OPTIONS = [
   { label: 'Active', value: 'active' },
@@ -60,6 +61,9 @@ export const WithInput: Story = {
 };
 
 export const WithSelect: Story = {
+  parameters: {
+    docs: isolatedOverlayDocs('420px'),
+  },
   render: () => html`
     <div style="width:320px;">
       <ds-field label="Status" description="Choose the vehicle's current operating status.">

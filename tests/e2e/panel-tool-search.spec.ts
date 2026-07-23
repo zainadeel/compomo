@@ -42,6 +42,21 @@ test('keeps the search icon secondary while focused and filled', async ({ page }
   await expect(icon).toHaveCSS('color', secondaryColor);
 });
 
+test('uses the concise clear label without appending search guidance', async ({ page }) => {
+  const search = page.locator('#search');
+  const input = search.getByRole('searchbox', { name: 'Search chats' });
+
+  await input.fill('service');
+
+  const clearTooltip = search.locator('ds-tooltip.select-search__clear-tooltip');
+  const clear = search.getByRole('button', { name: 'Clear', exact: true });
+  await expect(clearTooltip).toHaveJSProperty('label', 'Clear');
+  await expect(clear).toBeVisible();
+  await expect(search.getByRole('button', { name: 'Clear Search chats', exact: true })).toHaveCount(
+    0,
+  );
+});
+
 test('keeps the container divider unchanged while the input is focused', async ({ page }) => {
   const search = page.locator('#search');
   const input = search.getByRole('searchbox', { name: 'Search chats' });

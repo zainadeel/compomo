@@ -1,0 +1,52 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-scroll-overlay",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-scroll-overlay",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Generic scroll owner for content that moves behind a persistent footer action or composer with an always-active alpha fade.",
+  "useWhen": [
+    "A bounded region owns scrolling while footer actions remain overlaid and continuously visible.",
+    "The final content must clear a live-height footer while earlier content can move behind it."
+  ],
+  "avoidWhen": [
+    "The footer belongs in normal document flow rather than overlaying content.",
+    "Another component already owns scrolling and cannot delegate its scrollport to this component."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-filled",
+    "component:ds-message-composer"
+  ],
+  "accessibility": [
+    "Provide scrollLabel when the scrollport needs its own named, keyboard-focusable region.",
+    "Keep footer actions keyboard accessible and explicitly named; the fade is decorative and never intercepts pointer input."
+  ],
+  "states": [
+    "The alpha mask remains active at every scroll position and moves in content coordinates so it stays pinned behind the footer without masking native scrollbars.",
+    "The component measures the complete overlay for end clearance, measures its visible child for fade depth, and begins the fade 8px before that visible content.",
+    "An md 32px footer action with 8px bottom inset therefore produces a 48px fade; variable-height composers produce a correspondingly taller measured fade."
+  ],
+  "responsiveBehavior": [
+    "The scrollport and overlay fill the available width and height; the owner supplies responsive sizing and overlay insets."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Place scrollable content in the default slot and one footer wrapper in the overlay slot; use dsScroll only when the application needs position data."
+    ],
+    "react": [
+      "Use DsScrollOverlay with ordinary children plus an element carrying slot=\"overlay\"."
+    ],
+    "angular": [
+      "Import DsScrollOverlay and project the persistent footer wrapper with slot=\"overlay\"."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ScrollOverlay/ScrollOverlay.stories.ts"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-bar-workflow",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-bar-workflow",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact bold-brand create/edit workflow chrome with Exit, controlled previous and next step navigation, and a final Save or Submit action.",
+  "useWhen": [
+    "A create or edit flow needs persistent page-level Exit and step navigation.",
+    "A single-step form needs the same compact workflow chrome and final Save or Submit action.",
+    "Next or Submit must remain visible while the application owns validation and the current step."
+  ],
+  "avoidWhen": [
+    "The header identifies a routed page, list, or detail view; use BarTitle instead.",
+    "The steps must be visibly enumerated or expose progress; BarWorkflow uses steps only to resolve its navigation controls.",
+    "The header belongs to a PanelTools drawer or fullscreen pane; use PanelToolHeader through PanelTools instead.",
+    "The interaction is a local wizard inside page content rather than page-level workflow chrome."
+  ],
+  "alternatives": [
+    {
+      "when": "A routed page needs responsive title, section, Back, and page-action presentations.",
+      "component": "component:ds-bar-title",
+      "reason": "BarTitle owns page identity and capacity variants rather than workflow progression."
+    },
+    {
+      "when": "The workflow belongs to a tool drawer or fullscreen tool pane.",
+      "component": "component:ds-panel-tool-header",
+      "reason": "PanelToolHeader owns tool-pane navigation and actions within PanelTools."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-shell-page",
+    "component:ds-button-filled",
+    "component:ds-button-unfilled",
+    "component:ds-text",
+    "component:ds-tooltip"
+  ],
+  "patterns": [],
+  "accessibility": [
+    "Provide one concise workflow heading; BarWorkflow renders exactly one h1 and appends the controlled current-step count as heading · X/N only for multi-step workflows.",
+    "Provide a workflow-specific Exit accessible name that describes the consequence or destination.",
+    "Give every step a stable id and concise label even though step labels are not rendered as visible progress.",
+    "Previous is omitted on the first step; it appears from step two onward. Next remains visible on intermediate steps and becomes the final labeled Check action on the last step.",
+    "Use submitAction.type=submit inside a form so the final action preserves native submission semantics."
+  ],
+  "states": [
+    "BarWorkflow always renders compact 48px bold-brand chrome and has no expanded, constrained, or responsive variant.",
+    "An unrecognized value resolves navigation from the first step without mutating the controlled value.",
+    "The first step omits Previous. Intermediate steps show Previous and Next. The last step replaces Next with the Check Save or Submit action.",
+    "The default empty steps array is a single-step flow with the plain heading, no Previous control, and the final action visible. An explicit one-step array behaves the same way.",
+    "isNextInactive blocks forward navigation while preserving the Next control; the target step's isInactive state also blocks entry.",
+    "submitAction owns the final label, native button type, inactive state, and loading state."
+  ],
+  "responsiveBehavior": [
+    "BarWorkflow does not expose a presentation variant and never collapses its navigation actions.",
+    "The heading truncates before Exit, Previous, and Next or Submit lose their complete hit targets.",
+    "When slotted into ShellPage, BarWorkflow remains compact while ShellPage continues to provide sticky placement."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign steps and submitAction as JavaScript properties and replace their identities when controlled state changes.",
+      "Update value after dsStepChange, handle dsExit in the workflow owner, and use dsSubmit only when product behavior supplements native form submission."
+    ],
+    "react": [
+      "Pass steps and submitAction directly to DsBarWorkflow and keep value controlled in the workflow route.",
+      "Place DsBarWorkflow in DsShellPage with slot=header when sticky page placement is required."
+    ],
+    "angular": [
+      "Bind steps and submitAction on the standalone DsBarWorkflow adapter and update value from dsStepChange.",
+      "Place ds-bar-workflow in ds-shell-page with slot=header and keep the form or router outlet in ShellPage content."
+    ]
+  },
+  "references": [
+    {
+      "label": "Workflow states and controlled navigation",
+      "path": "src/wc/components/BarWorkflow/BarWorkflow.stories.ts"
+    },
+    {
+      "label": "Cross-browser workflow behavior",
+      "path": "tests/e2e/bar-workflow.spec.ts"
+    }
+  ]
+}

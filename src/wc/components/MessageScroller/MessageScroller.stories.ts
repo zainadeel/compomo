@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-message-scroller.js';
 import '../../../../dist/components/ds-message.js';
 import '../../../../dist/components/ds-message-bubble.js';
@@ -11,7 +12,10 @@ import '../../../../dist/components/ds-text.js';
 const meta: Meta = {
   title: 'Conversation/Message scroller',
   tags: ['autodocs'],
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: isolatedOverlayDocs('800px'),
+  },
 };
 export default meta;
 type Story = StoryObj;

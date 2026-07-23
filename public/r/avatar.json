@@ -15,7 +15,7 @@
       "status": "experimental",
       "summary": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
       "useWhen": [
-        "A list or message composition needs a consistent 32px circular identity marker represented by an icon."
+        "A list or message composition needs a consistent circular identity marker represented by an icon at md, sm, or xs control density."
       ],
       "avoidWhen": [
         "The identity has a supplied photograph, initials, presence state, or editable profile behavior; those variants are not part of this primitive."
@@ -26,10 +26,11 @@
       ],
       "accessibility": [
         "Provide label only when the icon communicates meaning that surrounding text does not already convey.",
-        "Omit label when the owning row or message already provides an equivalent accessible name."
+        "Omit label when the owning row or message already provides an equivalent accessible name.",
+        "Treat primary and secondary as general icon hierarchy; an owning product may map that hierarchy to states such as unread and read, but Avatar does not own those states."
       ],
       "responsiveBehavior": [
-        "The avatar keeps its fixed 32px circle and 20px icon at every viewport size."
+        "The selected size stays fixed across viewports: md is a 32px circle with a 20px icon, sm is 24px with 16px, and xs is 16px with 12px."
       ],
       "references": [
         {
@@ -56,7 +57,7 @@
           "default": "'secondary'",
           "required": false,
           "mutable": false,
-          "description": "Semantic color for the icon. Use primary to surface unread or current identity state."
+          "description": "Semantic icon hierarchy. Use primary for stronger emphasis; secondary is the default."
         },
         "label": {
           "type": "string | undefined",
@@ -65,6 +66,15 @@
           "required": false,
           "mutable": false,
           "description": "Optional accessible label. Omit when the surrounding content already conveys the meaning."
+        },
+        "size": {
+          "type": "AvatarSize",
+          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Circle and icon density. Maps to 32/20, 24/16, or 16/12 px."
         }
       },
       "events": [],
@@ -88,7 +98,7 @@
         "default": "'secondary'",
         "required": false,
         "mutable": false,
-        "description": "Semantic color for the icon. Use primary to surface unread or current identity state."
+        "description": "Semantic icon hierarchy. Use primary for stronger emphasis; secondary is the default."
       },
       "label": {
         "type": "string | undefined",
@@ -97,6 +107,15 @@
         "required": false,
         "mutable": false,
         "description": "Optional accessible label. Omit when the surrounding content already conveys the meaning."
+      },
+      "size": {
+        "type": "AvatarSize",
+        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Circle and icon density. Maps to 32/20, 24/16, or 16/12 px."
       }
     },
     "events": [],
@@ -142,12 +161,12 @@
   "files": [
     {
       "path": "src/wc/components/Avatar/Avatar.css",
-      "content": ":host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--dimension-size-400);\n  height: var(--dimension-size-400);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) var(--color-foreground-quaternary);\n}\n",
+      "content": "@import '../../utils/control-density.css';\n\n:host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--ds-control-height);\n  height: var(--ds-control-height);\n}\n\n:host(.avatar--md) {\n  --_avatar-stroke: var(--dimension-stroke-width-015);\n}\n\n:host(.avatar--sm) {\n  --_avatar-stroke: var(--dimension-stroke-width-012);\n}\n\n:host(.avatar--xs) {\n  --_avatar-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--_avatar-stroke) var(--color-foreground-quaternary);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Avatar/Avatar.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\nimport type { IconColor } from '../Icon/Icon';\n\n@Component({\n  tag: 'ds-avatar',\n  styleUrl: 'Avatar.css',\n  scoped: true,\n})\nexport class Avatar {\n  /** Canonical IcoMo icon name displayed inside the avatar. */\n  @Prop() icon: string = '';\n\n  /** Semantic color for the icon. Use primary to surface unread or current identity state. */\n  @Prop() iconColor: IconColor = 'secondary';\n\n  /** Optional accessible label. Omit when the surrounding content already conveys the meaning. */\n  @Prop() label: string | undefined;\n\n  render() {\n    return (\n      <Host>\n        <span\n          class=\"avatar\"\n          role={this.label ? 'img' : 'presentation'}\n          aria-label={this.label}\n          aria-hidden={!this.label ? 'true' : undefined}\n        >\n          <ds-icon name={this.icon} size=\"md\" color={this.iconColor} />\n        </span>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\nimport type { IconColor } from '../Icon/Icon';\n\nexport type AvatarSize = 'md' | 'sm' | 'xs';\n\n@Component({\n  tag: 'ds-avatar',\n  styleUrl: 'Avatar.css',\n  scoped: true,\n})\nexport class Avatar {\n  /** Canonical IcoMo icon name displayed inside the avatar. */\n  @Prop() icon: string = '';\n\n  /** Semantic icon hierarchy. Use primary for stronger emphasis; secondary is the default. */\n  @Prop() iconColor: IconColor = 'secondary';\n\n  /** Circle and icon density. Maps to 32/20, 24/16, or 16/12 px. */\n  @Prop() size: AvatarSize = 'md';\n\n  /** Optional accessible label. Omit when the surrounding content already conveys the meaning. */\n  @Prop() label: string | undefined;\n\n  render() {\n    return (\n      <Host class={{ [`ds-control--${this.size}`]: true, [`avatar--${this.size}`]: true }}>\n        <span\n          class=\"avatar\"\n          role={this.label ? 'img' : 'presentation'}\n          aria-label={this.label}\n          aria-hidden={!this.label ? 'true' : undefined}\n        >\n          <ds-icon name={this.icon} size={this.size} color={this.iconColor} />\n        </span>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -40,6 +40,31 @@
         status-label="Working…"
       ></ds-conversation-list-item>
     </div>
+    <ds-conversation-list
+      id="conversation-list"
+      action-layout="footer"
+      style="display:block; width:300px; height:120px; margin-top:16px;"
+    >
+      <ds-conversation-list-item
+        id="overlay-conversation"
+        conversation-id="overlay-regression"
+        conversation-title="Backdrop blur regression"
+        preview="This text must remain available to the contextual action backdrop."
+        updated-at="2026-07-18T14:00:00Z"
+      >
+        <ds-button-unfilled
+          slot="actions"
+          variant="icon"
+          icon="Ellipses"
+          rounded
+          has-border="false"
+          aria-label="Overlay chat options"
+        ></ds-button-unfilled>
+      </ds-conversation-list-item>
+      <button slot="actions" type="button" style="display:block; width:100%; height:32px;">
+        New chat
+      </button>
+    </ds-conversation-list>
     <script type="module" src="/conversation-list-item-setup.mjs"></script>
   </body>
 </html>
