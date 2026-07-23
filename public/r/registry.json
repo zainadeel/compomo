@@ -2751,7 +2751,7 @@
     {
       "name": "conversation-list",
       "title": "ConversationList",
-      "description": "Scrollable conversation-list region with dedicated empty and floating-action placement.",
+      "description": "Scrollable conversation-list region with dedicated empty and persistent action placement.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2762,7 +2762,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Scrollable conversation-list region with dedicated empty and floating-action placement.",
+          "summary": "Scrollable conversation-list region with dedicated empty and persistent action placement.",
           "useWhen": [
             "A messaging-like surface needs a reusable history list with empty and action regions."
           ],
@@ -2772,17 +2772,24 @@
           "commonlyComposedWith": [
             "component:ds-conversation-list-section",
             "component:ds-conversation-list-item",
-            "component:ds-empty-state"
+            "component:ds-empty-state",
+            "component:ds-scroll-overlay"
           ],
           "patterns": [
             "pattern:conversation"
           ],
           "accessibility": [
             "Provide an accessible list label through the surrounding heading or region.",
-            "Keep the empty message descriptive and the floating action explicitly named."
+            "Keep the empty message descriptive and every persistent action explicitly named."
+          ],
+          "states": [
+            "The default floating action stays at the lower end corner.",
+            "actionLayout footer stretches a long action between 8px side and bottom insets.",
+            "Both action layouts share the always-active scroll-overlay fade controller, reserve measured end clearance, and begin fading 8px before the visible action.",
+            "ConversationList paints its measured fade on a separate surface-aware layer so contextual row actions retain a real backdrop for blur; hovered, focused, and menu-open rows rise above that decorative fade."
           ],
           "responsiveBehavior": [
-            "The list fills its owner, scrolls independently, and keeps its action at the lower end corner."
+            "The list fills its owner, scrolls independently, and keeps its persistent action above scrolling rows."
           ],
           "references": [
             {
@@ -2791,7 +2798,12 @@
             }
           ]
         },
-        "props": {},
+        "props": {
+          "actionLayout": {
+            "type": "ConversationListActionLayout",
+            "required": false
+          }
+        },
         "events": [],
         "slots": [],
         "exports": {
@@ -4378,7 +4390,7 @@
             "Selection and transcript interaction release automatic following.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
             "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
-            "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the scroller measures its live height, reserves matching transcript clearance, and keeps scroll-to-latest above it."
+            "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
             "Transcript width is readable while the scroll region fills available height."
@@ -5102,7 +5114,7 @@
           ],
           "accessibility": [
             "Provide an aria-label that names the searched domain, such as Search agent chats or Search messages.",
-            "The standard search clear action restores focus, exposes its localized name in a tooltip, and emits both the empty query and dsClear.",
+            "The standard search clear action restores focus, uses the concise localized clearLabel by itself for both its tooltip and accessible name, and emits both the empty query and dsClear.",
             "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection; filterAriaLabel also labels its tooltip."
           ],
           "states": [
@@ -5581,6 +5593,88 @@
       "registryDependencies": [
         "text"
       ]
+    },
+    {
+      "name": "scroll-overlay",
+      "title": "ScrollOverlay",
+      "description": "Generic scroll owner for content that moves behind a persistent footer action or composer with an always-active alpha fade.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/scroll-overlay",
+        "source": "src/wc/components/ScrollOverlay/ScrollOverlay.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Generic scroll owner for content that moves behind a persistent footer action or composer with an always-active alpha fade.",
+          "useWhen": [
+            "A bounded region owns scrolling while footer actions remain overlaid and continuously visible.",
+            "The final content must clear a live-height footer while earlier content can move behind it."
+          ],
+          "avoidWhen": [
+            "The footer belongs in normal document flow rather than overlaying content.",
+            "Another component already owns scrolling and cannot delegate its scrollport to this component."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-filled",
+            "component:ds-message-composer"
+          ],
+          "accessibility": [
+            "Provide scrollLabel when the scrollport needs its own named, keyboard-focusable region.",
+            "Keep footer actions keyboard accessible and explicitly named; the fade is decorative and never intercepts pointer input."
+          ],
+          "states": [
+            "The alpha mask remains active at every scroll position and moves in content coordinates so it stays pinned behind the footer without masking native scrollbars.",
+            "The component measures the complete overlay for end clearance, measures its visible child for fade depth, and begins the fade 8px before that visible content.",
+            "An md 32px footer action with 8px bottom inset therefore produces a 48px fade; variable-height composers produce a correspondingly taller measured fade."
+          ],
+          "responsiveBehavior": [
+            "The scrollport and overlay fill the available width and height; the owner supplies responsive sizing and overlay insets."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Place scrollable content in the default slot and one footer wrapper in the overlay slot; use dsScroll only when the application needs position data."
+            ],
+            "react": [
+              "Use DsScrollOverlay with ordinary children plus an element carrying slot=\"overlay\"."
+            ],
+            "angular": [
+              "Import DsScrollOverlay and project the persistent footer wrapper with slot=\"overlay\"."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ScrollOverlay/ScrollOverlay.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "scrollLabel": {
+            "type": "string | undefined",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsScroll",
+            "detail": "ScrollOverlayScrollDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-scroll-overlay",
+          "react": "DsScrollOverlay",
+          "angular": "DsScrollOverlay"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
     },
     {
       "name": "select",

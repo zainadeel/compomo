@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Scroll overlay e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body { margin: 0; }
+      #frame { display: block; width: 300px; height: 240px; }
+      #items { display: flex; flex-direction: column; gap: 4px; padding: 8px; }
+      #items > div { height: 24px; flex: 0 0 24px; }
+      #footer { padding: 8px; }
+      #action { display: block; width: 100%; height: 32px; }
+    </style>
+  </head>
+  <body>
+    <ds-scroll-overlay id="frame" scroll-label="Scrollable results">
+      <div id="items">
+        <div>Item 1</div><div>Item 2</div><div>Item 3</div><div>Item 4</div>
+        <div>Item 5</div><div>Item 6</div><div>Item 7</div><div>Item 8</div>
+        <div>Item 9</div><div>Item 10</div><div>Item 11</div><div>Item 12</div>
+      </div>
+      <div id="footer" slot="overlay">
+        <button id="action" type="button">Persistent action</button>
+      </div>
+    </ds-scroll-overlay>
+    <script type="module" src="/scroll-overlay-setup.mjs"></script>
+  </body>
+</html>

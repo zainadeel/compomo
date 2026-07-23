@@ -38,7 +38,7 @@
   padding-block-start: var(--dimension-space-200);
   padding-inline: var(--dimension-space-200);
   padding-block-end: calc(
-    var(--dimension-space-200) + var(--ds-message-scroller-overlay-block-size, 0px)
+    var(--dimension-space-200) + var(--ds-scroll-overlay-block-size, 0px)
   );
   box-sizing: border-box;
 }
@@ -54,7 +54,7 @@
 .message-scroller__control {
   position: absolute;
   bottom: calc(
-    var(--ds-message-scroller-overlay-content-block-size, 0px) + var(--dimension-space-200)
+    var(--ds-scroll-overlay-content-block-size, 0px) + var(--dimension-space-200)
   );
   left: 50%;
   z-index: var(--dimension-z-index-floating);

@@ -46,6 +46,7 @@ export const DIRECTIVES = [
   d.DsPanelToolSearch,
   d.DsPanelTools,
   d.DsRadio,
+  d.DsScrollOverlay,
   d.DsSelect,
   d.DsSelectMulti,
   d.DsShellApp,

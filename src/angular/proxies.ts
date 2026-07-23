@@ -48,6 +48,7 @@ export { DsPanelToolHeader } from './ds-panel-tool-header';
 export { DsPanelToolSearch } from './ds-panel-tool-search';
 export { DsPanelTools } from './ds-panel-tools';
 export { DsRadio } from './ds-radio';
+export { DsScrollOverlay } from './ds-scroll-overlay';
 export { DsSelect } from './ds-select';
 export { DsSelectMulti } from './ds-select-multi';
 export { DsShellApp } from './ds-shell-app';

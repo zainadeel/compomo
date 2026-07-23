@@ -308,7 +308,7 @@ test('shares a rounded sm search clear button across single and multi selects', 
     await search.fill('app');
 
     const clearHost = select.locator('ds-button-unfilled.select-search__clear');
-    const clear = select.getByRole('button', { name: 'Clear Search' });
+    const clear = clearHost.getByRole('button', { name: 'Clear', exact: true });
     await expect(clearHost).toHaveJSProperty('variant', 'icon');
     await expect(clearHost).toHaveJSProperty('size', 'sm');
     await expect(clearHost).toHaveJSProperty('icon', 'CrossCircle');

@@ -1,0 +1,183 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scroll-overlay",
+  "title": "ScrollOverlay",
+  "description": "Generic scroll owner for content that moves behind a persistent footer action or composer with an always-active alpha fade.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/scroll-overlay",
+    "source": "src/wc/components/ScrollOverlay/ScrollOverlay.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Generic scroll owner for content that moves behind a persistent footer action or composer with an always-active alpha fade.",
+      "useWhen": [
+        "A bounded region owns scrolling while footer actions remain overlaid and continuously visible.",
+        "The final content must clear a live-height footer while earlier content can move behind it."
+      ],
+      "avoidWhen": [
+        "The footer belongs in normal document flow rather than overlaying content.",
+        "Another component already owns scrolling and cannot delegate its scrollport to this component."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-button-filled",
+        "component:ds-message-composer"
+      ],
+      "accessibility": [
+        "Provide scrollLabel when the scrollport needs its own named, keyboard-focusable region.",
+        "Keep footer actions keyboard accessible and explicitly named; the fade is decorative and never intercepts pointer input."
+      ],
+      "states": [
+        "The alpha mask remains active at every scroll position and moves in content coordinates so it stays pinned behind the footer without masking native scrollbars.",
+        "The component measures the complete overlay for end clearance, measures its visible child for fade depth, and begins the fade 8px before that visible content.",
+        "An md 32px footer action with 8px bottom inset therefore produces a 48px fade; variable-height composers produce a correspondingly taller measured fade."
+      ],
+      "responsiveBehavior": [
+        "The scrollport and overlay fill the available width and height; the owner supplies responsive sizing and overlay insets."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Place scrollable content in the default slot and one footer wrapper in the overlay slot; use dsScroll only when the application needs position data."
+        ],
+        "react": [
+          "Use DsScrollOverlay with ordinary children plus an element carrying slot=\"overlay\"."
+        ],
+        "angular": [
+          "Import DsScrollOverlay and project the persistent footer wrapper with slot=\"overlay\"."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/ScrollOverlay/ScrollOverlay.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "scrollLabel": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "scroll-label",
+          "required": false,
+          "mutable": false,
+          "description": "Optional accessible name. When provided, the scrollport is a focusable region."
+        }
+      },
+      "events": [
+        {
+          "name": "dsScroll",
+          "detail": "ScrollOverlayScrollDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Reports scroll position without exposing the internal scrollport element."
+        }
+      ],
+      "methods": [
+        {
+          "name": "refreshOverlay",
+          "signature": "refreshOverlay() => Promise<void>",
+          "description": "Re-measure footer geometry after an imperative slotted-content update."
+        },
+        {
+          "name": "scrollToEnd",
+          "signature": "scrollToEnd() => Promise<void>",
+          "description": "Move the owned scrollport to its live end."
+        },
+        {
+          "name": "scrollToStart",
+          "signature": "scrollToStart() => Promise<void>",
+          "description": "Move the owned scrollport to its beginning."
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "scrollLabel": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "scroll-label",
+        "required": false,
+        "mutable": false,
+        "description": "Optional accessible name. When provided, the scrollport is a focusable region."
+      }
+    },
+    "events": [
+      {
+        "name": "dsScroll",
+        "detail": "ScrollOverlayScrollDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Reports scroll position without exposing the internal scrollport element."
+      }
+    ],
+    "methods": [
+      {
+        "name": "refreshOverlay",
+        "signature": "refreshOverlay() => Promise<void>",
+        "description": "Re-measure footer geometry after an imperative slotted-content update."
+      },
+      {
+        "name": "scrollToEnd",
+        "signature": "scrollToEnd() => Promise<void>",
+        "description": "Move the owned scrollport to its live end."
+      },
+      {
+        "name": "scrollToStart",
+        "signature": "scrollToStart() => Promise<void>",
+        "description": "Move the owned scrollport to its beginning."
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-scroll-overlay",
+      "react": "DsScrollOverlay",
+      "angular": "DsScrollOverlay"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-scroll-overlay.js';",
+        "example": "<ds-scroll-overlay></ds-scroll-overlay>"
+      },
+      "react": {
+        "import": "import { DsScrollOverlay } from '@ds-mo/ui/react';",
+        "example": "<DsScrollOverlay />"
+      },
+      "angular": {
+        "import": "import { DsScrollOverlay } from '@ds-mo/ui/angular/ds-scroll-overlay';",
+        "example": "<ds-scroll-overlay></ds-scroll-overlay>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/ScrollOverlay/ScrollOverlay.css",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  height: 100%;\n  min-width: 0;\n  min-height: 0;\n  box-sizing: border-box;\n}\n\n.scroll-overlay {\n  position: relative;\n  width: 100%;\n  height: 100%;\n  min-width: 0;\n  min-height: 0;\n}\n\n.scroll-overlay__viewport {\n  width: 100%;\n  height: 100%;\n  min-width: 0;\n  min-height: 0;\n  overflow: auto;\n  overscroll-behavior: contain;\n  box-sizing: border-box;\n}\n\n.scroll-overlay__viewport:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);\n  outline-offset: calc(-1 * var(--dimension-stroke-width-025));\n}\n\n.scroll-overlay__content {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);\n  min-height: 100%;\n  padding-block-end: var(--ds-scroll-overlay-block-size, 0);\n  box-sizing: border-box;\n}\n\n.scroll-overlay__overlay {\n  position: absolute;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: var(--dimension-z-index-floating);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ScrollOverlay/ScrollOverlay.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\nimport { ScrollOverlayController } from '../../utils/scroll-overlay-controller';\n\nexport interface ScrollOverlayScrollDetail {\n  scrollTop: number;\n  scrollHeight: number;\n  clientHeight: number;\n}\n\n@Component({\n  tag: 'ds-scroll-overlay',\n  styleUrl: 'ScrollOverlay.css',\n  styleUrls: ['../../utils/scroll-edge-fade.css'],\n  scoped: true,\n})\nexport class ScrollOverlay {\n  @Element() el!: HTMLElement;\n\n  /** Optional accessible name. When provided, the scrollport is a focusable region. */\n  @Prop() scrollLabel: string | undefined;\n\n  /** Reports scroll position without exposing the internal scrollport element. */\n  @Event() dsScroll!: EventEmitter<ScrollOverlayScrollDetail>;\n\n  private viewport?: HTMLElement;\n  private content?: HTMLElement;\n  private overlay?: HTMLElement;\n  private controller?: ScrollOverlayController;\n\n  componentDidLoad(): void {\n    if (!this.viewport || !this.content || !this.overlay) return;\n    this.controller = new ScrollOverlayController({\n      host: this.el,\n      viewport: this.viewport,\n      content: this.content,\n      overlay: this.overlay,\n    });\n    this.controller.connect();\n  }\n\n  disconnectedCallback(): void {\n    this.controller?.disconnect();\n  }\n\n  /** Move the owned scrollport to its beginning. */\n  @Method()\n  async scrollToStart(): Promise<void> {\n    this.viewport?.scrollTo({ top: 0, behavior: 'auto' });\n    this.controller?.sync();\n  }\n\n  /** Move the owned scrollport to its live end. */\n  @Method()\n  async scrollToEnd(): Promise<void> {\n    this.viewport?.scrollTo({ top: this.viewport.scrollHeight, behavior: 'auto' });\n    this.controller?.sync();\n  }\n\n  /** Re-measure footer geometry after an imperative slotted-content update. */\n  @Method()\n  async refreshOverlay(): Promise<void> {\n    this.controller?.sync();\n  }\n\n  private handleScroll = (): void => {\n    if (!this.viewport) return;\n    this.controller?.sync();\n    this.dsScroll.emit({\n      scrollTop: this.viewport.scrollTop,\n      scrollHeight: this.viewport.scrollHeight,\n      clientHeight: this.viewport.clientHeight,\n    });\n  };\n\n  render() {\n    const labelled = Boolean(this.scrollLabel?.trim());\n    return (\n      <Host>\n        <div class=\"scroll-overlay\">\n          <div\n            class=\"scroll-overlay__viewport\"\n            ref={element => {\n              this.viewport = element;\n            }}\n            role={labelled ? 'region' : undefined}\n            aria-label={labelled ? this.scrollLabel : undefined}\n            tabIndex={labelled ? 0 : undefined}\n            onScroll={this.handleScroll}\n          >\n            <div\n              class=\"scroll-overlay__content scroll-edge-fade--block-window\"\n              ref={element => {\n                this.content = element;\n              }}\n            >\n              <slot />\n            </div>\n          </div>\n          <div\n            class=\"scroll-overlay__overlay\"\n            ref={element => {\n              this.overlay = element;\n            }}\n          >\n            <slot name=\"overlay\" />\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -143,7 +143,7 @@
   transform: scale(1);
 }
 
-/* Inactive: `.ds-control-inactive` (25% opacity). */
+/* Inactive: `.ds-control-inactive` (50% opacity). */
 
 @media (prefers-reduced-motion: reduce) {
   .shell-gradient-swatch__fill,

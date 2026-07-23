@@ -288,7 +288,7 @@ test('keeps inactive buttons disabled, styled, and non-activating', async ({ pag
     const button = host.locator('button');
     await expect(button).toBeDisabled();
     await expect(button).toHaveClass(/ds-control-inactive/);
-    await expect(button).toHaveCSS('opacity', '0.25');
+    await expect(button).toHaveCSS('opacity', '0.5');
     await button.click({ force: true });
   }
 

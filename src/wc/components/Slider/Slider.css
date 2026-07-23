@@ -67,7 +67,7 @@
   cursor: default;
 }
 
-/* Inactive: `.ds-control-inactive` (25% opacity) on the host. */
+/* Inactive: `.ds-control-inactive` (50% opacity) on the host. */
 :host(.ds-control-inactive) .slider__control {
   cursor: not-allowed;
 }

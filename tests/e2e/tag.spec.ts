@@ -60,7 +60,7 @@ test('disables inactive interactive Tags without changing static Tag behavior', 
 
   await expect(button).toBeDisabled();
   await expect(tag).toHaveClass(/ds-control-inactive/);
-  await expect(tag).toHaveCSS('opacity', '0.25');
+  await expect(tag).toHaveCSS('opacity', '0.5');
   await button.click({ force: true });
   await expect.poll(() => page.evaluate(() => (
     (window as Window & { tagClicks: string[] }).tagClicks
