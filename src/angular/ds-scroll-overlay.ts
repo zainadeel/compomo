@@ -40,3 +40,5 @@ export declare interface DsScrollOverlay extends Components.DsScrollOverlay {
    */
   dsScroll: EventEmitter<DsScrollOverlayCustomEvent<IDsScrollOverlayScrollOverlayScrollDetail>>;
 }
+
+
