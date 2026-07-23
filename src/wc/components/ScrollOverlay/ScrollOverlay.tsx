@@ -93,7 +93,9 @@ export class ScrollOverlay {
                 this.content = element;
               }}
             >
-              <slot />
+              <div class="scroll-overlay__body">
+                <slot />
+              </div>
             </div>
           </div>
           <div

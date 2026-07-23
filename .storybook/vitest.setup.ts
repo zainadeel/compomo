@@ -47,8 +47,10 @@ function describeFindings(findings: Result[]): string {
   return findings
     .flatMap((finding) =>
       finding.nodes.map(
-        (node) =>
-          `${finding.impact ?? 'unknown'}/${finding.id}: ${finding.help} — ${node.target.join(' >>> ')}`,
+        (node) => {
+          const target = node.target.length > 0 ? node.target.join(' >>> ') : node.html;
+          return `${finding.impact ?? 'unknown'}/${finding.id}: ${finding.help} — ${target}`;
+        },
       ),
     )
     .join('\n');
@@ -67,6 +69,7 @@ afterEach(async ({ task }) => {
     },
     {
       resultTypes: ['violations'],
+      selectors: false,
       rules: {
         region: { enabled: false },
       },

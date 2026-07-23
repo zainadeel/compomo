@@ -109,6 +109,9 @@ const preview: Preview = {
       // TODOs. The Vitest browser setup preserves the release gate's established
       // serious/critical threshold.
       test: 'todo',
+      options: {
+        selectors: false,
+      },
       // The region rule is noisy for isolated components without page landmarks.
       config: {
         rules: [{ id: 'region', enabled: false }],

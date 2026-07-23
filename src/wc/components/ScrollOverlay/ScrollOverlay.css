@@ -31,11 +31,18 @@
 }
 
 .scroll-overlay__content {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 100%;
   padding-block-end: var(--ds-scroll-overlay-block-size, 0);
   box-sizing: border-box;
+}
+
+.scroll-overlay__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1 0 auto;
+  min-height: 0;
 }
 
 .scroll-overlay__overlay {
