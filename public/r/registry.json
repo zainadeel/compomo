@@ -815,7 +815,7 @@
     {
       "name": "bar-title",
       "title": "BarTitle",
-      "description": "Page-level title chrome with optional route navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+      "description": "Page-level title chrome with an optional expanded route breadcrumb, compact Back action, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -826,11 +826,11 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Page-level title chrome with optional route navigation, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+          "summary": "Page-level title chrome with an optional expanded route breadcrumb, compact Back action, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
           "useWhen": [
             "A top-level page needs one h1 above its content.",
             "A list or detail page has multiple route-level sections that belong in the inline active-section menu.",
-            "A detail page needs a page-level Back action.",
+            "A detail page needs route ancestors in expanded presentation and a page-level Back action in compact chrome.",
             "A page needs one primary action plus optional secondary or destructive overflow commands."
           ],
           "avoidWhen": [
@@ -861,6 +861,7 @@
             "component:ds-shell-page",
             "component:ds-button-filled",
             "component:ds-button-unfilled",
+            "component:ds-breadcrumb",
             "component:ds-menu",
             "component:ds-text"
           ],
@@ -869,7 +870,8 @@
           ],
           "accessibility": [
             "Provide one concise heading; BarTitle renders exactly one h1 and changes only its visual recipe between variants.",
-            "Give Back a destination-specific accessible name such as Back to Drivers, provide the concise parent label such as Drivers for the expanded breadcrumb, and handle dsBack in the route owner.",
+            "Give compact Back a destination-specific accessible name such as Back to Drivers and handle dsBack in the route owner.",
+            "Provide ordered breadcrumb items for deeper expanded paths and handle dsBreadcrumbSelect when native href navigation is not used; backLabel remains the single-parent expanded fallback.",
             "Keep value synchronized with the current child route; dsSectionChange returns the selected section id.",
             "Section and overflow triggers expose menu relationships and restore focus after selection or dismissal.",
             "Use one filled primary action in the page decision area and mark destructive overflow actions explicitly."
@@ -878,7 +880,8 @@
             "Omitting Back, sections, primaryAction, and actions produces the top-level title-only header.",
             "Two or more selectable sections add the inline section trigger; one section does not render a redundant menu.",
             "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
-            "expanded renders the larger heading, optional description, inset divider, and an xs icon-label Back breadcrumb in the top inset. The title and right-side actions share one top alignment whether Back is present, while the description remains in the left title column; compact renders 48px chrome with inline Back; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
+            "The overflow trigger uses its bordered treatment whenever the primary action is visible beside it; overflow-only and auto-collapsed-primary presentations keep the trigger borderless.",
+            "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
             "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts."
           ],
           "responsiveBehavior": [
@@ -889,15 +892,15 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
-              "Handle dsBack in the router owner, update value after dsSectionChange, and execute product commands from dsAction."
+              "Assign breadcrumbs, sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+              "Handle dsBack for compact navigation and dsBreadcrumbSelect for application-owned expanded breadcrumb navigation, update value after dsSectionChange, and execute product commands from dsAction."
             ],
             "react": [
-              "Pass arrays and objects directly to DsBarTitle and keep value controlled from route state.",
+              "Pass breadcrumb, section, and action arrays directly to DsBarTitle and keep value controlled from route state.",
               "Place DsBarTitle in DsShellPage with slot=header when automatic page behavior is required."
             ],
             "angular": [
-              "Bind complex values on the standalone DsBarTitle adapter and handle the three intent events in the route shell.",
+              "Bind complex values on the standalone DsBarTitle adapter and handle Back, breadcrumb, section, and action intent events in the route shell.",
               "Place ds-bar-title in ds-shell-page with slot=header; do not render router-outlet inside BarTitle."
             ]
           },
@@ -931,6 +934,14 @@
           },
           "backLabel": {
             "type": "string",
+            "required": false
+          },
+          "breadcrumbAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "breadcrumbs": {
+            "type": "BreadcrumbItem[]",
             "required": false
           },
           "description": {
@@ -976,6 +987,10 @@
             "detail": "MouseEvent"
           },
           {
+            "name": "dsBreadcrumbSelect",
+            "detail": "BreadcrumbSelectDetail"
+          },
+          {
             "name": "dsSectionChange",
             "detail": "string"
           }
@@ -993,6 +1008,7 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "breadcrumb",
         "button-filled",
         "button-unfilled",
         "icon",
@@ -1160,6 +1176,122 @@
         "button-unfilled",
         "text",
         "tooltip"
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "title": "Breadcrumb",
+      "description": "Compact hierarchical page navigation with native links or application-owned selection, optional current-page semantics, and slash separators.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/breadcrumb",
+        "source": "src/wc/components/Breadcrumb/Breadcrumb.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Compact hierarchical page navigation with native links or application-owned selection, optional current-page semantics, and slash separators.",
+          "useWhen": [
+            "A page needs to expose its hierarchical ancestors above the current page title.",
+            "Users need to move directly to a broader page in the current route hierarchy.",
+            "BarTitle expanded presentation needs an ancestor path instead of a directional Back button."
+          ],
+          "avoidWhen": [
+            "The navigation represents primary application destinations; use PanelNav or BarNav.",
+            "The choices switch peer views within the current page; use TabGroup or the BarTitle section selector.",
+            "Only a directional return command is needed in compact chrome; use the owning header's Back action.",
+            "The path would repeat the same current-page label already communicated by a nearby h1 without adding useful ancestors."
+          ],
+          "alternatives": [
+            {
+              "when": "The title and breadcrumb belong to responsive page chrome with page-level actions.",
+              "component": "component:ds-bar-title",
+              "reason": "BarTitle composes Breadcrumb in expanded mode and preserves compact Back behavior."
+            },
+            {
+              "when": "A small set of peer content views should remain directly selectable.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup communicates peer selection rather than route ancestry."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-bar-title",
+            "component:ds-text",
+            "component:ds-shell-page"
+          ],
+          "accessibility": [
+            "The component renders a named navigation landmark containing an ordered list.",
+            "Provide href for native navigation or handle dsSelect when the application router owns navigation.",
+            "Mark at most one item current; it renders without interaction and exposes aria-current=page.",
+            "Visible caption labels use secondary foreground and slash separators are decorative and hidden from assistive technology.",
+            "Every interactive item remains keyboard reachable and receives the shared focus ring."
+          ],
+          "states": [
+            "Items with href render native anchors; items without href render buttons and emit the same dsSelect detail.",
+            "Preventing dsSelect cancels native anchor navigation.",
+            "A current item is static text and never emits selection.",
+            "Links have no resting underline and add a quaternary-foreground solid underline on hover; focus remains communicated by the shared focus ring."
+          ],
+          "responsiveBehavior": [
+            "The path stays on one caption line and truncates long labels within the available width.",
+            "Width is protected newest-to-oldest: the oldest ancestor collapses to a literal ellipsis before the next ancestor yields width, and the current location truncates only after every ancestor reaches its minimum.",
+            "A fully collapsed item keeps its complete label available to assistive technology while rendering only the literal ellipsis visually.",
+            "Separators remain visible while labels yield width."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign items as a JavaScript property and replace its array identity when the route changes.",
+              "Use relative or absolute href values for native navigation; omit href when the host router handles dsSelect."
+            ],
+            "react": [
+              "Pass items to DsBreadcrumb and handle onDsSelect when navigation is application-owned."
+            ],
+            "angular": [
+              "Bind items on the standalone DsBreadcrumb adapter and handle dsSelect when navigation is application-owned."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Breadcrumb/Breadcrumb.stories.ts"
+            },
+            {
+              "label": "Expanded page-header composition",
+              "path": "src/wc/components/BarTitle/BarTitle.tsx"
+            }
+          ]
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "items": {
+            "type": "BreadcrumbItem[]",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsSelect",
+            "detail": "BreadcrumbSelectDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-breadcrumb",
+          "react": "DsBreadcrumb",
+          "angular": "DsBreadcrumb"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
       ]
     },
     {
@@ -1528,6 +1660,123 @@
       ]
     },
     {
+      "name": "card-data-viz-bar",
+      "title": "CardDataVizBar",
+      "description": "Canonical bar-chart dashboard card with shared data-viz chrome, a filter action, a fill chart region, and an optional static legend.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-bar",
+        "source": "src/wc/components/CardDataVizBar/CardDataVizBar.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Canonical bar-chart dashboard card with shared data-viz chrome, a filter action, a fill chart region, and an optional static legend.",
+          "useWhen": [
+            "A dashboard widget needs a regular, stacked, or percentage bar chart in the standard data-viz card.",
+            "A stacked bar chart needs a visible static series key beneath the chart."
+          ],
+          "avoidWhen": [
+            "The visualization needs selectable legend rows or chart-to-legend hover synchronization.",
+            "The product needs supporting metrics or an alternate chart layout beyond the chart and optional legend."
+          ],
+          "alternatives": [
+            {
+              "when": "The bar chart needs a custom layout without card chrome.",
+              "component": "component:ds-chart-bar",
+              "reason": "Compose ChartBar directly in the product-owned layout."
+            },
+            {
+              "when": "The visualization communicates change as continuous lines.",
+              "component": "component:ds-card-data-viz-line",
+              "reason": "CardDataVizLine owns the canonical line-chart card layout."
+            },
+            {
+              "when": "The visualization communicates parts of one total with synchronized slice emphasis.",
+              "component": "component:ds-card-data-viz-donut",
+              "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-shell-data-viz",
+            "component:ds-chart-bar",
+            "component:ds-chart-bar-stacked",
+            "component:ds-chart-legend",
+            "component:ds-button-unfilled"
+          ],
+          "accessibility": [
+            "Provide a concise heading that identifies the measure and meaningful visible labels for every legend entry.",
+            "Keep essential series and value context available textually rather than relying on bar color alone.",
+            "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
+          ],
+          "states": [
+            "The chart region fills the remaining card body while an optional legend remains content-sized.",
+            "The card disables local hover highlighting on a slotted ChartLegend because bar legends are static keys.",
+            "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
+            "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
+          ],
+          "responsiveBehavior": [
+            "The selected sm, md, or lg shell size controls the card dimensions while the bar chart shrinks within its chart region.",
+            "The horizontal legend wraps complete entries when the available width is constrained.",
+            "The parent dashboard owns card wrapping and breakpoint changes."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign data or series and categories as JavaScript properties, then place the bar chart and optional legend in their named slots."
+            ],
+            "react": [
+              "Keep filter and dataset state in the owner; pass the chart and optional legend with chart and legend slot attributes."
+            ],
+            "angular": [
+              "Keep filter and dataset state in the owner; project the chart and optional legend into the chart and legend slots."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/CardDataVizBar/CardDataVizBar.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "cardWidth": {
+            "type": "CardDataVizBarWidth",
+            "required": false
+          },
+          "filterLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsFilterClick",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-data-viz-bar",
+          "react": "DsCardDataVizBar",
+          "angular": "DsCardDataVizBar"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "card-shell-data-viz"
+      ]
+    },
+    {
       "name": "card-data-viz-donut",
       "title": "CardDataVizDonut",
       "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
@@ -1633,6 +1882,117 @@
           "customElement": "ds-card-data-viz-donut",
           "react": "DsCardDataVizDonut",
           "angular": "DsCardDataVizDonut"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "card-shell-data-viz"
+      ]
+    },
+    {
+      "name": "card-data-viz-line",
+      "title": "CardDataVizLine",
+      "description": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-line",
+        "source": "src/wc/components/CardDataVizLine/CardDataVizLine.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
+          "useWhen": [
+            "A dashboard widget needs the standard line chart and visible series key in one data-viz card.",
+            "The legend identifies static line series and should not highlight or dim rows on hover."
+          ],
+          "avoidWhen": [
+            "The visualization needs chart-to-legend hover synchronization or selectable series controls.",
+            "The product needs a custom legend treatment, supporting metrics, or an alternate chart layout."
+          ],
+          "alternatives": [
+            {
+              "when": "The line chart and legend need a custom layout without card chrome.",
+              "component": "component:ds-chart-line",
+              "reason": "Compose ChartLine and a static ChartLegend directly in the product-owned layout."
+            },
+            {
+              "when": "The visualization communicates parts of a total with synchronized slice emphasis.",
+              "component": "component:ds-card-data-viz-donut",
+              "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-shell-data-viz",
+            "component:ds-chart-line",
+            "component:ds-chart-legend",
+            "component:ds-button-unfilled"
+          ],
+          "accessibility": [
+            "Provide a concise heading that identifies the trend and meaningful visible labels for every legend entry.",
+            "Keep essential series and value context available textually rather than relying on line color alone.",
+            "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
+          ],
+          "states": [
+            "The chart region fills the remaining card body while the legend remains content-sized.",
+            "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
+            "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
+            "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
+          ],
+          "responsiveBehavior": [
+            "The selected sm, md, or lg shell size controls the card dimensions while the line chart shrinks within its chart region.",
+            "The horizontal legend wraps complete entries when the available width is constrained.",
+            "The parent dashboard owns card wrapping and breakpoint changes."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign series, categories, and legend items as JavaScript properties, then place the chart and legend in their named slots."
+            ],
+            "react": [
+              "Keep filter and dataset state in the owner; pass the chart and legend with chart and legend slot attributes."
+            ],
+            "angular": [
+              "Keep filter and dataset state in the owner; project the chart and legend into the chart and legend slots."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/CardDataVizLine/CardDataVizLine.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "cardWidth": {
+            "type": "CardDataVizLineWidth",
+            "required": false
+          },
+          "filterLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsFilterClick",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-data-viz-line",
+          "react": "DsCardDataVizLine",
+          "angular": "DsCardDataVizLine"
         }
       },
       "dependencies": [
@@ -1826,13 +2186,20 @@
               "when": "The composition is the standard donut chart plus synchronized legend.",
               "component": "component:ds-card-data-viz-donut",
               "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization."
+            },
+            {
+              "when": "The composition is the standard line chart plus static horizontal legend.",
+              "component": "component:ds-card-data-viz-line",
+              "reason": "CardDataVizLine composes this shell with line-specific regions and disables decorative legend hover."
             }
           ],
           "commonlyComposedWith": [
             "component:ds-chart-bar",
+            "component:ds-chart-bar-stacked",
             "component:ds-chart-donut",
             "component:ds-chart-line",
             "component:ds-chart-legend",
+            "component:ds-card-data-viz-line",
             "component:ds-button-unfilled"
           ],
           "accessibility": [
@@ -1922,6 +2289,11 @@
           ],
           "alternatives": [
             {
+              "when": "Each category contains several additive series or needs normalized composition.",
+              "component": "component:ds-chart-bar-stacked",
+              "reason": "ChartBarStacked compares raw stacked totals or normalized 0–100% composition."
+            },
+            {
               "when": "Users need to follow one or more trends across ordered categories.",
               "component": "component:ds-chart-line",
               "reason": "ChartLine connects ordered observations and supports multiple named series."
@@ -1933,6 +2305,7 @@
             }
           ],
           "commonlyComposedWith": [
+            "component:ds-chart-bar-stacked",
             "component:ds-card-shell-data-viz",
             "component:ds-tooltip-data-viz"
           ],
@@ -1944,6 +2317,7 @@
           "states": [
             "The chart is currently a static single-series rendering without hover, selection, loading, or empty-state policy.",
             "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
+            "Bars use 2px top corner radii while the lower corners touching the zero axis remain square.",
             "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
             "Authored datum colors override the shared categorical palette."
           ],
@@ -1990,6 +2364,126 @@
           "customElement": "ds-chart-bar",
           "react": "DsChartBar",
           "angular": "DsChartBar"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "chart-bar-stacked",
+      "title": "ChartBarStacked",
+      "description": "Multi-series stacked bar chart for comparing raw totals or normalized 0–100% composition across ordered categories and time buckets.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-bar-stacked",
+        "source": "src/wc/components/ChartBarStacked/ChartBarStacked.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Multi-series stacked bar chart for comparing raw totals or normalized 0–100% composition across ordered categories and time buckets.",
+          "useWhen": [
+            "Users need to compare both a category total and the contribution of several consistent series.",
+            "A time series needs to show how its composition changes across equal time buckets.",
+            "Every category should normalize to 100% so proportional composition can be compared independently of total magnitude."
+          ],
+          "avoidWhen": [
+            "Users need to compare individual series values precisely across categories; use grouped bars or separate charts.",
+            "The visualization has only one measure per category; use ChartBar.",
+            "The primary task is following continuous trends; use ChartLine.",
+            "Series contain negative values or do not align with the shared category list."
+          ],
+          "alternatives": [
+            {
+              "when": "Each category contains one independent value.",
+              "component": "component:ds-chart-bar",
+              "reason": "ChartBar provides the simpler single-series magnitude comparison."
+            },
+            {
+              "when": "Users need to follow one or more trends rather than compare stack composition.",
+              "component": "component:ds-chart-line",
+              "reason": "ChartLine preserves each series as a continuous path across the ordered axis."
+            },
+            {
+              "when": "One category's parts-to-whole composition is the focus.",
+              "component": "component:ds-chart-donut",
+              "reason": "ChartDonut provides the dedicated single-total composition treatment."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-chart-legend",
+            "component:ds-card-shell-data-viz",
+            "component:ds-tooltip-data-viz"
+          ],
+          "accessibility": [
+            "Provide a visible legend or adjacent textual summary that names every series; do not rely on segment color alone.",
+            "The chart image name includes each category and series value, using normalized percentages in percentage mode.",
+            "Use an adjacent data table when exact cross-category comparisons are necessary to complete the task."
+          ],
+          "states": [
+            "Stacked mode preserves raw magnitudes and scales the y-axis to the largest category total.",
+            "Percentage mode normalizes each non-empty category independently and renders a fixed 0%, 25%, 50%, 75%, and 100% axis.",
+            "Series render bottom-to-top in authored order; keep that order and color mapping stable across categories.",
+            "Stacked mode gives only the top visible segment 2px top corners. Percentage mode keeps every corner square because the normalized stack touches both axis edges.",
+            "Adjacent segments are separated by a non-scaling 1px gap; the stack's outer edges do not receive that separator.",
+            "Negative values are unsupported and render as zero; the owning product supplies loading, empty, and error states."
+          ],
+          "responsiveBehavior": [
+            "The SVG preserves its authored aspect ratio while shrinking to fit a narrower parent.",
+            "The parent supplies dimensions and chooses how many time buckets remain legible at each width.",
+            "Pre-format category labels and reduce bucket count before rendering when horizontal space becomes constrained."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
+            ],
+            "react": [
+              "Pass stable series and category arrays; choose percentage variant only when each category represents a meaningful whole."
+            ],
+            "angular": [
+              "Bind series and categories as properties; choose percentage variant only when each category represents a meaningful whole."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ChartBarStacked/ChartBarStacked.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "categories": {
+            "type": "string[]",
+            "required": false
+          },
+          "height": {
+            "type": "number",
+            "required": false
+          },
+          "series": {
+            "type": "ChartSeries[]",
+            "required": false
+          },
+          "variant": {
+            "type": "ChartBarStackedVariant",
+            "required": false
+          },
+          "width": {
+            "type": "number",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-chart-bar-stacked",
+          "react": "DsChartBarStacked",
+          "angular": "DsChartBarStacked"
         }
       },
       "dependencies": [
@@ -2178,12 +2672,19 @@
               "when": "The donut belongs in the canonical dashboard card.",
               "component": "component:ds-card-data-viz-donut",
               "reason": "The dedicated card places the legend and handles bidirectional highlight synchronization."
+            },
+            {
+              "when": "A static line chart and series key belong in the canonical dashboard card.",
+              "component": "component:ds-card-data-viz-line",
+              "reason": "The dedicated card places the horizontal legend and disables decorative local hover highlighting."
             }
           ],
           "commonlyComposedWith": [
             "component:ds-chart-donut",
+            "component:ds-chart-bar-stacked",
             "component:ds-chart-line",
             "component:ds-card-data-viz-donut",
+            "component:ds-card-data-viz-line",
             "component:ds-card-shell-data-viz"
           ],
           "accessibility": [
@@ -2193,7 +2694,8 @@
             "Do not rely on swatch color alone; every entry requires a meaningful visible label."
           ],
           "states": [
-            "Local pointer or focus interaction and external chart highlight remain separate; both may dim peers, but only a real link row receives interactive affordances.",
+            "Local pointer or focus interaction and external chart highlight remain separate; both may dim peers, but only a real link row receives navigation affordances.",
+            "Disable local hover highlighting for static keys such as a line-chart legend; externally controlled activeLabel highlighting and genuine link affordances remain available.",
             "Hover synchronization is temporary emphasis, never filtering, toggling, or selected state.",
             "Percentage values use one consistent precision across the complete legend.",
             "The list owns pointer leave so moving across row gaps does not clear and reapply highlight."
@@ -2232,6 +2734,10 @@
           },
           "direction": {
             "type": "ChartLegendDirection",
+            "required": false
+          },
+          "highlightOnHover": {
+            "type": "boolean",
             "required": false
           },
           "items": {
@@ -2316,6 +2822,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-chart-legend",
+            "component:ds-card-data-viz-line",
             "component:ds-card-shell-data-viz",
             "component:ds-tooltip-data-viz"
           ],
@@ -2326,11 +2833,12 @@
           ],
           "states": [
             "The chart is currently static and does not own hover, selection, loading, or empty-state policy.",
+            "Its standard horizontal legend is a static key with local hover highlighting disabled.",
             "Point markers may be shown or hidden without changing the underlying series meaning.",
             "Authored series colors override the shared categorical palette."
           ],
           "responsiveBehavior": [
-            "The owner supplies dimensions and updates them when its layout changes.",
+            "The owner supplies intrinsic dimensions; the SVG preserves its aspect ratio while shrinking to fit a narrower parent.",
             "Category positions are always equally spaced, even when labels represent time.",
             "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
           ],
@@ -2855,7 +3363,7 @@
           ],
           "states": [
             "Rows reuse the md choice-item label/subtext recipe used by Menu, including 6px row padding, 2px text inset, and the shared content gap. The enclosing conversation-list scroll region supplies the larger 8px outer container padding.",
-            "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording. A busy row pairs its body-small status with the sm 16px Loader at an 8px gap.",
+            "Busy and error are generic channel-neutral states; the owning product supplies suitable status wording. A busy row pairs its body-small status with the sm 16px Loader at a 4px gap.",
             "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
             "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
             "The title uses body-medium, not title-small, and the body-small preview truncates after one line. Unread titles use emphasis with primary foreground; read titles use regular weight with secondary foreground.",
@@ -4101,10 +4609,11 @@
           ],
           "accessibility": [
             "Author and time metadata remain textual when they are necessary to interpret the transcript.",
-            "Delivery failure uses negative Failed to send text in the footer while the message bubble keeps its normal outgoing treatment."
+            "Delivery failure uses negative Failed to send text in the footer while the message bubble keeps its normal outgoing treatment; when time is also visible, a tertiary middle dot separates the failure label and timestamp."
           ],
           "states": [
             "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+            "A visible incoming author uses body-small emphasis with primary foreground; timestamp and delivery metadata remain caption text.",
             "Visible author, bubble content, and timestamp or delivery footer use consistent 4px vertical gaps.",
             "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label.",
             "Set showAuthor false only when the product makes participant and assistant roles visually self-evident; continue passing author so the accessible message label remains specific."
@@ -4393,7 +4902,9 @@
             "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
-            "Transcript width is readable while the scroll region fills available height."
+            "Transcript width is readable while the scroll region fills available height.",
+            "For a narrower fullscreen conversation lane, set --ds-message-scroller-content-max-width on the host instead of constraining the host; the full-width viewport then keeps its scrollbar at the outer edge while the transcript remains centered.",
+            "The custom property sizes the padded transcript box. If the target is the usable conversation width, add the transcript's two 16px inline paddings and size the centered overlay container to the same target plus its two 8px paddings so messages and the visible composer align."
           ],
           "references": [
             {
@@ -6548,7 +7059,7 @@
     {
       "name": "shell-page",
       "title": "ShellPage",
-      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, container-aware BarTitle variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6559,10 +7070,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, container-aware BarTitle variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
           "useWhen": [
             "Rendering a standard routed page inside ShellApp's default content region.",
-            "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the page column narrows.",
+            "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the application shell reports reduced capacity.",
             "BarWorkflow needs sticky page-level placement while remaining compact.",
             "Pages need consistent content gutters with an explicit full-bleed option."
           ],
@@ -6599,16 +7110,18 @@
             "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
           ],
           "states": [
-            "headerPresentation=auto selects expanded, compact, or constrained from ShellPage's own inline capacity and scroll position.",
+            "headerCapacity=roomy, compact, or constrained is supplied before paint by the owning application shell and describes the page-header space available after viewport and shell-chrome policy are applied.",
+            "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
             "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
             "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
             "The required header slot accepts one BarTitle or BarWorkflow. The default slot owns router output and all page product content."
           ],
           "responsiveBehavior": [
-            "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
-            "Roomy pages expand at the top and compact after scroll; medium-capacity pages start compact; narrow pages use the constrained header variant.",
-            "A newly navigated header resolves current page capacity before it is revealed, so persistent tool or navigation chrome cannot flash the expanded presentation first.",
-            "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
+            "The owning application shell resolves viewport and persistent-chrome state into the explicit headerCapacity prop; ShellPage never guesses the cause of reduced width from its own rendered size.",
+            "Roomy capacity expands at the top and compacts after scroll; compact capacity stays compact; constrained capacity uses the constrained action layout.",
+            "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
+            "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
+            "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, then snaps variants without moving that shared visual anchor.",
             "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
             "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
             "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."
@@ -6645,6 +7158,10 @@
         "props": {
           "contentInset": {
             "type": "ShellPageContentInset",
+            "required": false
+          },
+          "headerCapacity": {
+            "type": "ShellPageCapacity",
             "required": false
           },
           "headerPresentation": {
@@ -8217,12 +8734,12 @@
             "pattern:conversation"
           ],
           "accessibility": [
-            "Provide concise localized status text that names the participant when that context is not otherwise clear.",
+            "Provide concise localized status text; the standard label is Typing followed by a three-dot ellipsis.",
             "The polite atomic status announces typing without representing it as a message bubble."
           ],
           "states": [
             "TypingIndicator is transient conversation status, never persisted message content.",
-            "Its body-small secondary text may shimmer, while reduced-motion preferences retain a static readable status."
+            "Its body-medium secondary text may shimmer, while reduced-motion preferences retain a static readable status."
           ],
           "responsiveBehavior": [
             "The indicator fills the message content width and wraps only when localized status text requires it."

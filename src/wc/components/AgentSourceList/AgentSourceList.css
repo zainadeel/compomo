@@ -5,6 +5,6 @@ summary::-webkit-details-marker { display: none; }
 details[open] summary ds-icon { transform: rotate(90deg); }
 ol { display: grid; gap: var(--dimension-space-075); margin: 0; padding: 0 0 var(--dimension-space-075) var(--dimension-space-150); }
 li { display: grid; gap: var(--dimension-space-025); }
-a { align-items: center; color: inherit; display: inline-flex; gap: var(--dimension-space-025); width: fit-content; }
+a { align-items: center; color: inherit; display: inline-flex; gap: var(--dimension-space-025); text-decoration-color: var(--color-foreground-tertiary); width: fit-content; }
 
 @media (prefers-reduced-motion: no-preference) { summary ds-icon { transition: transform var(--effect-motion-short-2); } }

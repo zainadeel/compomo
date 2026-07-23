@@ -32,7 +32,10 @@
   flex-direction: column;
   gap: var(--dimension-space-300);
   width: 100%;
-  max-width: var(--dimension-panel-width-2xl);
+  max-width: var(
+    --ds-message-scroller-content-max-width,
+    var(--dimension-panel-width-2xl)
+  );
   min-height: 100%;
   margin-inline: auto;
   padding-block-start: var(--dimension-space-200);

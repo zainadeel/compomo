@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsChartLegend } from '@ds-mo/ui/components
 
 @ProxyCmp({
   defineCustomElementFn: defineDsChartLegend,
-  inputs: ['activeLabel', 'direction', 'items', 'locale', 'percentageDecimals', 'showPercentage']
+  inputs: ['activeLabel', 'direction', 'highlightOnHover', 'items', 'locale', 'percentageDecimals', 'showPercentage']
 })
 @Component({
   selector: 'ds-chart-legend',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['activeLabel', 'direction', 'items', 'locale', 'percentageDecimals', 'showPercentage'],
+  inputs: ['activeLabel', 'direction', 'highlightOnHover', 'items', 'locale', 'percentageDecimals', 'showPercentage'],
   outputs: ['dsItemHover', 'dsItemClick'],
 })
 export class DsChartLegend {

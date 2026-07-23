@@ -7,10 +7,10 @@
   "tag": "ds-shell-page",
   "audience": "general",
   "status": "stable",
-  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, container-aware BarTitle variants, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
   "useWhen": [
     "Rendering a standard routed page inside ShellApp's default content region.",
-    "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the page column narrows.",
+    "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the application shell reports reduced capacity.",
     "BarWorkflow needs sticky page-level placement while remaining compact.",
     "Pages need consistent content gutters with an explicit full-bleed option."
   ],
@@ -45,16 +45,18 @@
     "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
   ],
   "states": [
-    "headerPresentation=auto selects expanded, compact, or constrained from ShellPage's own inline capacity and scroll position.",
+    "headerCapacity=roomy, compact, or constrained is supplied before paint by the owning application shell and describes the page-header space available after viewport and shell-chrome policy are applied.",
+    "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
     "The required header slot accepts one BarTitle or BarWorkflow. The default slot owns router output and all page product content."
   ],
   "responsiveBehavior": [
-    "ShellPage observes its own rendered width instead of viewport media queries or ShellApp desktop/tablet modes.",
-    "Roomy pages expand at the top and compact after scroll; medium-capacity pages start compact; narrow pages use the constrained header variant.",
-    "A newly navigated header resolves current page capacity before it is revealed, so persistent tool or navigation chrome cannot flash the expanded presentation first.",
-    "Token-based capacity bands use hysteresis so opening tools or resizing navigation cannot oscillate near a boundary.",
+    "The owning application shell resolves viewport and persistent-chrome state into the explicit headerCapacity prop; ShellPage never guesses the cause of reduced width from its own rendered size.",
+    "Roomy capacity expands at the top and compacts after scroll; compact capacity stays compact; constrained capacity uses the constrained action layout.",
+    "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
+    "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
+    "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, then snaps variants without moving that shared visual anchor.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
     "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
     "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."

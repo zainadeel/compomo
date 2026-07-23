@@ -9,7 +9,7 @@
 
 .shell-page__scroll-sentinel {
   position: absolute;
-  inset-block-start: 0;
+  inset-block-start: var(--ds-shell-page-header-travel, 0);
   inset-inline-start: 0;
   width: var(--dimension-stroke-width-012);
   height: var(--dimension-stroke-width-012);
@@ -18,7 +18,7 @@
 
 .shell-page__sticky-header {
   position: sticky;
-  inset-block-start: 0;
+  inset-block-start: var(--ds-shell-page-sticky-offset, 0);
   z-index: var(--dimension-z-index-raised);
   min-width: 0;
   background: var(--color-background-primary);

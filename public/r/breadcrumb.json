@@ -1,0 +1,205 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "breadcrumb",
+  "title": "Breadcrumb",
+  "description": "Compact hierarchical page navigation with native links or application-owned selection, optional current-page semantics, and slash separators.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/breadcrumb",
+    "source": "src/wc/components/Breadcrumb/Breadcrumb.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Compact hierarchical page navigation with native links or application-owned selection, optional current-page semantics, and slash separators.",
+      "useWhen": [
+        "A page needs to expose its hierarchical ancestors above the current page title.",
+        "Users need to move directly to a broader page in the current route hierarchy.",
+        "BarTitle expanded presentation needs an ancestor path instead of a directional Back button."
+      ],
+      "avoidWhen": [
+        "The navigation represents primary application destinations; use PanelNav or BarNav.",
+        "The choices switch peer views within the current page; use TabGroup or the BarTitle section selector.",
+        "Only a directional return command is needed in compact chrome; use the owning header's Back action.",
+        "The path would repeat the same current-page label already communicated by a nearby h1 without adding useful ancestors."
+      ],
+      "alternatives": [
+        {
+          "when": "The title and breadcrumb belong to responsive page chrome with page-level actions.",
+          "component": "component:ds-bar-title",
+          "reason": "BarTitle composes Breadcrumb in expanded mode and preserves compact Back behavior."
+        },
+        {
+          "when": "A small set of peer content views should remain directly selectable.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup communicates peer selection rather than route ancestry."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-bar-title",
+        "component:ds-text",
+        "component:ds-shell-page"
+      ],
+      "accessibility": [
+        "The component renders a named navigation landmark containing an ordered list.",
+        "Provide href for native navigation or handle dsSelect when the application router owns navigation.",
+        "Mark at most one item current; it renders without interaction and exposes aria-current=page.",
+        "Visible caption labels use secondary foreground and slash separators are decorative and hidden from assistive technology.",
+        "Every interactive item remains keyboard reachable and receives the shared focus ring."
+      ],
+      "states": [
+        "Items with href render native anchors; items without href render buttons and emit the same dsSelect detail.",
+        "Preventing dsSelect cancels native anchor navigation.",
+        "A current item is static text and never emits selection.",
+        "Links have no resting underline and add a quaternary-foreground solid underline on hover; focus remains communicated by the shared focus ring."
+      ],
+      "responsiveBehavior": [
+        "The path stays on one caption line and truncates long labels within the available width.",
+        "Width is protected newest-to-oldest: the oldest ancestor collapses to a literal ellipsis before the next ancestor yields width, and the current location truncates only after every ancestor reaches its minimum.",
+        "A fully collapsed item keeps its complete label available to assistive technology while rendering only the literal ellipsis visually.",
+        "Separators remain visible while labels yield width."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign items as a JavaScript property and replace its array identity when the route changes.",
+          "Use relative or absolute href values for native navigation; omit href when the host router handles dsSelect."
+        ],
+        "react": [
+          "Pass items to DsBreadcrumb and handle onDsSelect when navigation is application-owned."
+        ],
+        "angular": [
+          "Bind items on the standalone DsBreadcrumb adapter and handle dsSelect when navigation is application-owned."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Breadcrumb/Breadcrumb.stories.ts"
+        },
+        {
+          "label": "Expanded page-header composition",
+          "path": "src/wc/components/BarTitle/BarTitle.tsx"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "aria-label",
+          "default": "'Breadcrumb'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the breadcrumb navigation landmark."
+        },
+        "items": {
+          "type": "BreadcrumbItem[]",
+          "resolvedType": "BreadcrumbItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Ordered path from the broadest ancestor to the nearest page."
+        }
+      },
+      "events": [
+        {
+          "name": "dsSelect",
+          "detail": "BreadcrumbSelectDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when an interactive breadcrumb item is activated. Prevent to cancel native navigation."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "aria-label",
+        "default": "'Breadcrumb'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the breadcrumb navigation landmark."
+      },
+      "items": {
+        "type": "BreadcrumbItem[]",
+        "resolvedType": "BreadcrumbItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Ordered path from the broadest ancestor to the nearest page."
+      }
+    },
+    "events": [
+      {
+        "name": "dsSelect",
+        "detail": "BreadcrumbSelectDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when an interactive breadcrumb item is activated. Prevent to cancel native navigation."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-breadcrumb",
+      "react": "DsBreadcrumb",
+      "angular": "DsBreadcrumb"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-breadcrumb.js';",
+        "example": "<ds-breadcrumb></ds-breadcrumb>"
+      },
+      "react": {
+        "import": "import { DsBreadcrumb } from '@ds-mo/ui/react';",
+        "example": "<DsBreadcrumb />"
+      },
+      "angular": {
+        "import": "import { DsBreadcrumb } from '@ds-mo/ui/angular/ds-breadcrumb';",
+        "example": "<ds-breadcrumb></ds-breadcrumb>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Breadcrumb/Breadcrumb.css",
+      "content": "@import '../../utils/focus-ring.css';\n\n:host {\n  position: relative;\n  display: block;\n  min-width: 0;\n  box-sizing: border-box;\n}\n\n.breadcrumb {\n  inline-size: 100%;\n  min-width: 0;\n}\n\n.breadcrumb__list {\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  inline-size: 100%;\n  min-width: 0;\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  list-style: none;\n}\n\n.breadcrumb__item {\n  display: flex;\n  flex: 0 0 auto;\n  align-items: center;\n  min-width: 0;\n}\n\n.breadcrumb__separator {\n  flex: 0 0 auto;\n  margin-inline: var(--dimension-space-050);\n  user-select: none;\n}\n\n.breadcrumb__link,\n.breadcrumb__current {\n  display: inline-flex;\n  flex: 0 0 auto;\n  min-width: 0;\n  overflow: hidden;\n  padding: 0;\n  border: 0;\n  border-radius: var(--dimension-radius-025);\n  background: transparent;\n  color: var(--color-foreground-secondary);\n  font: inherit;\n  text-decoration: none;\n}\n\n.breadcrumb__link {\n  cursor: pointer;\n}\n\n.breadcrumb__link:hover .breadcrumb__label {\n  text-decoration: underline;\n  text-decoration-color: var(--color-foreground-quaternary);\n  text-underline-offset: var(--dimension-space-025);\n  text-decoration-thickness: var(--dimension-stroke-width-012);\n}\n\n.breadcrumb__label {\n  display: inline-block;\n  inline-size: var(--breadcrumb-label-width, auto);\n  min-width: 0;\n}\n\n.breadcrumb__measurements {\n  position: absolute;\n  inset: 0 auto auto 0;\n  visibility: hidden;\n  pointer-events: none;\n  white-space: nowrap;\n}\n\n.breadcrumb__measurement {\n  display: inline-block;\n  inline-size: max-content;\n  max-inline-size: none;\n}\n\n.breadcrumb__accessible-label {\n  position: absolute;\n  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n  /* stylelint-enable declaration-property-value-disallowed-list */\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Breadcrumb/Breadcrumb.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';\nimport type { BreadcrumbItem, BreadcrumbSelectDetail } from './breadcrumb-types';\n\n@Component({\n  tag: 'ds-breadcrumb',\n  styleUrl: 'Breadcrumb.css',\n  scoped: true,\n})\nexport class Breadcrumb {\n  /** Ordered path from the broadest ancestor to the nearest page. */\n  @Prop() items: BreadcrumbItem[] = [];\n\n  /** Accessible name for the breadcrumb navigation landmark. */\n  @Prop() ariaLabel: string = 'Breadcrumb';\n\n  /** Emitted when an interactive breadcrumb item is activated. Prevent to cancel native navigation. */\n  @Event({ cancelable: true }) dsSelect!: EventEmitter<BreadcrumbSelectDetail>;\n\n  @State() private labelWidths: number[] = [];\n  @State() private collapsedLabels: boolean[] = [];\n\n  private navElement?: HTMLElement;\n  private listElement?: HTMLOListElement;\n  private measurementElements: HTMLElement[] = [];\n  private separatorElements: HTMLElement[] = [];\n  private ellipsisMeasurement?: HTMLElement;\n  private resizeObserver?: ResizeObserver;\n  private observedElement?: HTMLElement;\n  private measurementFrame?: number;\n\n  componentDidLoad() {\n    this.observeContainer();\n    this.scheduleMeasurement();\n    void document.fonts?.ready.then(() => this.scheduleMeasurement());\n  }\n\n  componentDidRender() {\n    this.observeContainer();\n    this.scheduleMeasurement();\n  }\n\n  disconnectedCallback() {\n    this.resizeObserver?.disconnect();\n    this.observedElement = undefined;\n    if (this.measurementFrame !== undefined) cancelAnimationFrame(this.measurementFrame);\n  }\n\n  @Watch('items')\n  handleItemsChange() {\n    this.labelWidths = [];\n    this.collapsedLabels = [];\n    this.scheduleMeasurement();\n  }\n\n  private observeContainer() {\n    if (!this.navElement || this.observedElement === this.navElement) return;\n    this.resizeObserver ??= new ResizeObserver(() => this.scheduleMeasurement());\n    this.resizeObserver.disconnect();\n    this.resizeObserver.observe(this.navElement);\n    this.observedElement = this.navElement;\n  }\n\n  private scheduleMeasurement() {\n    if (this.measurementFrame !== undefined) return;\n    this.measurementFrame = requestAnimationFrame(() => {\n      this.measurementFrame = undefined;\n      this.measureLabels();\n    });\n  }\n\n  private measureLabels() {\n    if (\n      !this.navElement ||\n      !this.listElement ||\n      !this.ellipsisMeasurement ||\n      this.items.length === 0\n    ) return;\n\n    const naturalWidths = this.items.map(\n      (_, index) => this.measurementElements[index]?.getBoundingClientRect().width ?? 0\n    );\n    const ellipsisWidth = this.ellipsisMeasurement.getBoundingClientRect().width;\n    if (naturalWidths.some(width => width === 0) || ellipsisWidth === 0) return;\n\n    const separatorWidth = this.separatorElements.reduce((total, separator) => {\n      const styles = getComputedStyle(separator);\n      return (\n        total +\n        separator.getBoundingClientRect().width +\n        Number.parseFloat(styles.marginInlineStart) +\n        Number.parseFloat(styles.marginInlineEnd)\n      );\n    }, 0);\n    const availableWidth = Math.max(0, this.navElement.clientWidth - separatorWidth);\n    const minimumWidths = naturalWidths.map(width => Math.min(width, ellipsisWidth));\n    const nextWidths = [...minimumWidths];\n    let remainingWidth = Math.max(\n      0,\n      availableWidth - minimumWidths.reduce((total, width) => total + width, 0)\n    );\n\n    // Protect the current/newest location. Extra width is granted newest-to-oldest,\n    // so ancestors collapse in path order as the available space decreases.\n    for (let index = naturalWidths.length - 1; index >= 0 && remainingWidth > 0; index -= 1) {\n      const extraWidth = Math.min(\n        remainingWidth,\n        naturalWidths[index] - minimumWidths[index]\n      );\n      nextWidths[index] += extraWidth;\n      remainingWidth -= extraWidth;\n    }\n\n    const widthsChanged =\n      nextWidths.length !== this.labelWidths.length ||\n      nextWidths.some(\n        (width, index) => Math.abs(width - (this.labelWidths[index] ?? 0)) > 0.25\n      );\n    const nextCollapsedLabels = nextWidths.map(\n      (width, index) =>\n        naturalWidths[index] > minimumWidths[index] &&\n        Math.abs(width - minimumWidths[index]) <= 0.25\n    );\n    const collapsedLabelsChanged =\n      nextCollapsedLabels.length !== this.collapsedLabels.length ||\n      nextCollapsedLabels.some(\n        (isCollapsed, index) => isCollapsed !== this.collapsedLabels[index]\n      );\n    if (widthsChanged) this.labelWidths = nextWidths;\n    if (collapsedLabelsChanged) this.collapsedLabels = nextCollapsedLabels;\n  }\n\n  private handleSelect(item: BreadcrumbItem, originalEvent: MouseEvent) {\n    const event = this.dsSelect.emit({ item, originalEvent });\n    if (event.defaultPrevented) originalEvent.preventDefault();\n  }\n\n  private renderItem(item: BreadcrumbItem, index: number) {\n    const allocatedWidth = this.labelWidths[index];\n    const isCollapsed = this.collapsedLabels[index] ?? false;\n    const label = (\n      [\n        <ds-text\n          class=\"breadcrumb__label\"\n          as=\"span\"\n          variant=\"text-caption\"\n          color=\"inherit\"\n          lineTruncation={isCollapsed ? 'none' : 1}\n          aria-hidden={isCollapsed ? 'true' : undefined}\n          style={\n            allocatedWidth === undefined\n              ? undefined\n              : { '--breadcrumb-label-width': `${allocatedWidth}px` }\n          }\n        >\n          {isCollapsed ? '…' : item.label}\n        </ds-text>,\n        isCollapsed ? <span class=\"breadcrumb__accessible-label\">{item.label}</span> : null,\n      ]\n    );\n\n    if (item.isCurrent) {\n      return (\n        <span class=\"breadcrumb__current\" aria-current=\"page\" aria-label={item.ariaLabel}>\n          {label}\n        </span>\n      );\n    }\n\n    if (item.href) {\n      return (\n        <a\n          class=\"breadcrumb__link ds-focus-ring\"\n          href={item.href}\n          aria-label={item.ariaLabel}\n          onClick={(event: MouseEvent) => this.handleSelect(item, event)}\n        >\n          {label}\n        </a>\n      );\n    }\n\n    return (\n      <button\n        class=\"breadcrumb__link ds-focus-ring\"\n        type=\"button\"\n        aria-label={item.ariaLabel}\n        onClick={(event: MouseEvent) => this.handleSelect(item, event)}\n      >\n        {label}\n      </button>\n    );\n  }\n\n  render() {\n    if (this.items.length === 0) return null;\n\n    this.measurementElements = [];\n    this.separatorElements = [];\n\n    return (\n      <Host>\n        <nav\n          class=\"breadcrumb\"\n          aria-label={this.ariaLabel}\n          ref={element => {\n            this.navElement = element;\n          }}\n        >\n          <div class=\"breadcrumb__measurements\" aria-hidden=\"true\">\n            {this.items.map((item, index) => (\n              <ds-text\n                class=\"breadcrumb__measurement\"\n                as=\"span\"\n                variant=\"text-caption\"\n                color=\"inherit\"\n                ref={element => {\n                  if (element) this.measurementElements[index] = element;\n                }}\n              >\n                {item.label}\n              </ds-text>\n            ))}\n            <ds-text\n              class=\"breadcrumb__measurement\"\n              as=\"span\"\n              variant=\"text-caption\"\n              color=\"inherit\"\n              ref={element => {\n                this.ellipsisMeasurement = element;\n              }}\n            >\n              …\n            </ds-text>\n          </div>\n          <ol\n            class=\"breadcrumb__list\"\n            ref={element => {\n              this.listElement = element;\n            }}\n          >\n            {this.items.map((item, index) => (\n              <li class=\"breadcrumb__item\" key={item.id}>\n                {index > 0 ? (\n                  <ds-text\n                    class=\"breadcrumb__separator\"\n                    as=\"span\"\n                    variant=\"text-caption\"\n                    color=\"tertiary\"\n                    aria-hidden=\"true\"\n                    ref={element => {\n                      if (element) this.separatorElements[index - 1] = element;\n                    }}\n                  >\n                    /\n                  </ds-text>\n                ) : null}\n                {this.renderItem(item, index)}\n              </li>\n            ))}\n          </ol>\n        </nav>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Breadcrumb/breadcrumb-types.ts",
+      "content": "export interface BreadcrumbItem {\n  /** Stable value returned from dsSelect. */\n  id: string;\n  /** Visible caption label. */\n  label: string;\n  /** Optional accessible name when the visible label is not destination-specific enough. */\n  ariaLabel?: string;\n  /** Native destination. Omit when the route owner handles dsSelect. */\n  href?: string;\n  /** Marks this item as the current page and removes its interaction. */\n  isCurrent?: boolean;\n}\n\nexport interface BreadcrumbSelectDetail {\n  item: BreadcrumbItem;\n  originalEvent: MouseEvent;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

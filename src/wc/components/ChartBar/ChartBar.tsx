@@ -59,15 +59,27 @@ export class ChartBar {
               const barWidth = xScale.bandwidth();
               const barX = xScale(d.label) ?? 0;
               const barY = yScale(d.value);
+              const barHeight = innerHeight - barY;
+              const squareBaseY = barY + barHeight / 2;
+              const squareBaseHeight = barHeight / 2;
+              const fill = d.color ?? categoryColor(i);
               return (
                 <g key={d.label}>
                   <rect
-                    class="chart-bar__bar"
+                    class="chart-bar__bar chart-bar__bar--rounded"
                     x={barX}
                     y={barY}
                     width={barWidth}
-                    height={innerHeight - barY}
-                    fill={d.color ?? categoryColor(i)}
+                    height={barHeight}
+                    fill={fill}
+                  />
+                  <rect
+                    class="chart-bar__bar chart-bar__bar--square-base"
+                    x={barX}
+                    y={squareBaseY}
+                    width={barWidth}
+                    height={squareBaseHeight}
+                    fill={fill}
                   />
                   <text
                     class="chart-bar__axis-label"

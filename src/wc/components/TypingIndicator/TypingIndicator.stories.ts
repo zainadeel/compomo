@@ -9,7 +9,7 @@ const meta = {
     label: { control: 'text' },
   },
   args: {
-    label: 'Avery is typing…',
+    label: 'Typing...',
   },
 } satisfies Meta;
 
@@ -18,6 +18,6 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => html`
-    <ds-typing-indicator label=${args['label'] ?? 'Typing…'}></ds-typing-indicator>
+    <ds-typing-indicator label=${args['label'] ?? 'Typing...'}></ds-typing-indicator>
   `,
 };

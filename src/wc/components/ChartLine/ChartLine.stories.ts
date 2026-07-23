@@ -52,6 +52,7 @@ export const WithLegend: Story = {
             (el as any).items = legendItems;
           })}
           direction="horizontal"
+          .highlightOnHover=${false}
         ></ds-chart-legend>
       </div>
     `;

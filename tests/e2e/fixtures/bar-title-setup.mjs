@@ -6,6 +6,7 @@ await Promise.all([
   customElements.whenDefined('ds-shell-app'),
   customElements.whenDefined('ds-shell-page'),
   customElements.whenDefined('ds-bar-title'),
+  customElements.whenDefined('ds-breadcrumb'),
 ]);
 
 const sections = [
@@ -28,10 +29,20 @@ header.sections = sections;
 header.primaryAction = { id: 'call-driver', label: 'Call driver' };
 header.actions = actions;
 
+const longBreadcrumb = document.querySelector('#long-breadcrumb');
+longBreadcrumb.items = [
+  { id: 'operations', label: 'Operations and workforce management', href: '#operations' },
+  { id: 'drivers', label: 'Active commercial vehicle drivers', href: '#drivers' },
+  { id: 'profile', label: 'Driver profile and compliance details', isCurrent: true },
+];
+
 window.__barTitleEvents = [];
 
 header.addEventListener('dsBack', () => {
   window.__barTitleEvents.push({ type: 'back' });
+});
+header.addEventListener('dsBreadcrumbSelect', event => {
+  window.__barTitleEvents.push({ type: 'breadcrumb', id: event.detail.item.id });
 });
 header.addEventListener('dsSectionChange', event => {
   header.value = event.detail;

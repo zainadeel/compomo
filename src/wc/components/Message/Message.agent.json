@@ -16,10 +16,11 @@
   "patterns": ["pattern:conversation"],
   "accessibility": [
     "Author and time metadata remain textual when they are necessary to interpret the transcript.",
-    "Delivery failure uses negative Failed to send text in the footer while the message bubble keeps its normal outgoing treatment."
+    "Delivery failure uses negative Failed to send text in the footer while the message bubble keeps its normal outgoing treatment; when time is also visible, a tertiary middle dot separates the failure label and timestamp."
   ],
   "states": [
     "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+    "A visible incoming author uses body-small emphasis with primary foreground; timestamp and delivery metadata remain caption text.",
     "Visible author, bubble content, and timestamp or delivery footer use consistent 4px vertical gaps.",
     "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label.",
     "Set showAuthor false only when the product makes participant and assistant roles visually self-evident; continue passing author so the accessible message label remains specific."

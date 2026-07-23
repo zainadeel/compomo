@@ -29,8 +29,10 @@ test('composes one page main and semantic h1 with the default content inset', as
   await expect(header.locator('.bar-title__description')).toHaveText(
     'View and manage driver details, activity, timecards, and settings.'
   );
-  await expect(header.getByRole('button', { name: 'Back to Drivers' })).toBeVisible();
-  await expect(header.locator('.bar-title__breadcrumb-back')).toHaveJSProperty('label', 'Drivers');
+  const breadcrumb = header.getByRole('navigation', { name: 'Breadcrumb' });
+  await expect(breadcrumb.getByRole('button', { name: 'Back to Drivers' })).toHaveText('Drivers');
+  await expect(header.locator('.bar-title__back')).toHaveCount(0);
+  await expect(breadcrumb.locator('.breadcrumb__label')).toHaveClass(/ds-text--regular/);
 
   const geometry = await shell.evaluate(element => {
     const header = element.querySelector<HTMLElement>('ds-bar-title');
@@ -47,6 +49,18 @@ test('composes one page main and semantic h1 with the default content inset', as
         header && heading
           ? heading.getBoundingClientRect().left - header.getBoundingClientRect().left
           : 0,
+      breadcrumbTop:
+        header && breadcrumb
+          ? breadcrumb.getBoundingClientRect().top - header.getBoundingClientRect().top
+          : 0,
+      breadcrumbLeft:
+        header && breadcrumb
+          ? breadcrumb.getBoundingClientRect().left - header.getBoundingClientRect().left
+          : 0,
+      breadcrumbRightInset:
+        header && breadcrumb
+          ? header.getBoundingClientRect().right - breadcrumb.getBoundingClientRect().right
+          : 0,
       breadcrumbAboveHeading:
         breadcrumb && heading
           ? breadcrumb.getBoundingClientRect().bottom <= heading.getBoundingClientRect().top
@@ -59,12 +73,15 @@ test('composes one page main and semantic h1 with the default content inset', as
   expect(geometry.contentOffset).toBe(geometry.headerHeight);
   expect(geometry.paddingTop).toBe(32);
   expect(geometry.headingLeftInset).toBe(32);
+  expect(geometry.breadcrumbTop).toBe(32);
+  expect(geometry.breadcrumbLeft).toBe(32);
+  expect(geometry.breadcrumbRightInset).toBe(32);
   expect(geometry.breadcrumbAboveHeading).toBe(true);
   expect(geometry.dividerLeft).toBe(32);
   expect(geometry.dividerRight).toBe(32);
 });
 
-test('aligns expanded title and actions independently from the breadcrumb', async ({ page }) => {
+test('aligns expanded title and actions below a full-width breadcrumb row', async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
@@ -77,37 +94,182 @@ test('aligns expanded title and actions independently from the breadcrumb', asyn
     const host = element.getBoundingClientRect();
     const breadcrumb = element.querySelector<HTMLElement>('.bar-title__breadcrumb');
     const titleRow = element.querySelector<HTMLElement>('.bar-title__title-row');
+    const description = element.querySelector<HTMLElement>('.bar-title__description');
     const actions = element.querySelector<HTMLElement>('.bar-title__actions');
     const breadcrumbRect = breadcrumb?.getBoundingClientRect();
     const titleRowRect = titleRow?.getBoundingClientRect();
+    const descriptionRect = description?.getBoundingClientRect();
 
     return {
+      breadcrumbTop: breadcrumbRect ? breadcrumbRect.top - host.top : 0,
+      breadcrumbLeft: breadcrumbRect ? breadcrumbRect.left - host.left : 0,
+      breadcrumbRightInset: breadcrumbRect ? host.right - breadcrumbRect.right : 0,
       actionsTop: actions ? actions.getBoundingClientRect().top - host.top : 0,
       titleTop: titleRowRect ? titleRowRect.top - host.top : 0,
       breadcrumbToTitle:
         breadcrumbRect && titleRowRect ? titleRowRect.top - breadcrumbRect.bottom : 0,
+      titleToDescription:
+        titleRowRect && descriptionRect ? descriptionRect.top - titleRowRect.bottom : 0,
     };
   });
-  await expect(
-    header.locator('.bar-title__leading > .bar-title__description')
-  ).toHaveCount(1);
+  await expect(header.locator('.bar-title__leading > .bar-title__description')).toHaveCount(1);
 
   await header.evaluate((element: HTMLDsBarTitleElement) => {
     element.showBack = false;
   });
   await expect(header.locator('.bar-title__breadcrumb')).toHaveCount(0);
 
-  const withoutBreadcrumbActionsTop = await header.evaluate(element => {
+  const withoutBreadcrumb = await header.evaluate(element => {
     const host = element.getBoundingClientRect();
     const actions = element.querySelector<HTMLElement>('.bar-title__actions');
-    return actions ? actions.getBoundingClientRect().top - host.top : 0;
+    const titleRow = element.querySelector<HTMLElement>('.bar-title__title-row');
+    return {
+      actionsTop: actions ? actions.getBoundingClientRect().top - host.top : 0,
+      titleTop: titleRow ? titleRow.getBoundingClientRect().top - host.top : 0,
+    };
   });
 
-  expect(withBreadcrumb).toEqual({ actionsTop: 32, titleTop: 32, breadcrumbToTitle: 4 });
-  expect(withoutBreadcrumbActionsTop).toBe(withBreadcrumb.actionsTop);
+  expect(withBreadcrumb).toEqual({
+    breadcrumbTop: 32,
+    breadcrumbLeft: 32,
+    breadcrumbRightInset: 32,
+    actionsTop: 52,
+    titleTop: 52,
+    breadcrumbToTitle: 8,
+    titleToDescription: 8,
+  });
+  expect(withoutBreadcrumb).toEqual({ actionsTop: 32, titleTop: 32 });
 });
 
-test('adopts compact capacity before a newly navigated header can paint expanded', async ({
+test('supports multi-level expanded breadcrumbs without changing compact Back', async ({
+  page,
+}) => {
+  const shell = page.locator('#shell-page');
+  const header = page.locator('#detail-header');
+
+  await header.evaluate((element: HTMLDsBarTitleElement) => {
+    element.breadcrumbs = [
+      { id: 'workforce', label: 'Workforce', href: '#workforce' },
+      { id: 'drivers', label: 'Drivers' },
+      { id: 'john-smith', label: 'John Smith', isCurrent: true },
+    ];
+  });
+
+  const breadcrumb = header.getByRole('navigation', { name: 'Breadcrumb' });
+  const workforce = breadcrumb.getByRole('link', { name: 'Workforce' });
+  const workforceLabel = workforce.locator('.breadcrumb__label');
+  await expect(workforceLabel).toHaveCSS('text-decoration-line', 'none');
+  await workforce.hover();
+  await expect(workforceLabel).toHaveCSS('text-decoration-line', 'underline');
+  const underlineColors = await workforceLabel.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-quaternary)';
+    document.body.append(probe);
+    const result = {
+      underline: getComputedStyle(element).textDecorationColor,
+      quaternary: getComputedStyle(probe).color,
+    };
+    probe.remove();
+    return result;
+  });
+  expect(underlineColors.underline).toBe(underlineColors.quaternary);
+  await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText('John Smith');
+  await expect(breadcrumb.locator('.breadcrumb__separator')).toHaveCount(2);
+
+  await breadcrumb.getByRole('button', { name: 'Drivers' }).click();
+  expect(await readEvents(page)).toContainEqual({ type: 'breadcrumb', id: 'drivers' });
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerPresentation = 'compact';
+  });
+  await expect(header.getByRole('navigation', { name: 'Breadcrumb' })).toHaveCount(0);
+  await expect(header.getByRole('button', { name: 'Back to Drivers' })).toBeVisible();
+});
+
+test('truncates breadcrumb labels oldest-to-newest while protecting the current location', async ({
+  page,
+}) => {
+  const viewport = page.locator('#breadcrumb-viewport');
+  const breadcrumb = page.locator('#long-breadcrumb');
+
+  const measurements = await breadcrumb.evaluate(element => {
+    const labels = Array.from(element.querySelectorAll<HTMLElement>('.breadcrumb__measurement'));
+    const separators = Array.from(element.querySelectorAll<HTMLElement>('.breadcrumb__separator'));
+    const natural = labels.slice(0, -1).map(label => label.getBoundingClientRect().width);
+    const ellipsis = labels.at(-1)?.getBoundingClientRect().width ?? 0;
+    const separatorWidth = separators.reduce((total, separator) => {
+      const styles = getComputedStyle(separator);
+      return (
+        total +
+        separator.getBoundingClientRect().width +
+        Number.parseFloat(styles.marginInlineStart) +
+        Number.parseFloat(styles.marginInlineEnd)
+      );
+    }, 0);
+    return { natural, ellipsis, separatorWidth };
+  });
+
+  const readWidths = () =>
+    breadcrumb
+      .locator('.breadcrumb__label')
+      .evaluateAll(labels => labels.map(label => label.getBoundingClientRect().width));
+  const setWidth = async (width: number) => {
+    await viewport.evaluate((element, nextWidth) => {
+      (element as HTMLElement).style.width = `${nextWidth}px`;
+    }, width);
+    await expect
+      .poll(async () => {
+        const widths = await readWidths();
+        return widths.reduce((total, labelWidth) => total + labelWidth, 0);
+      })
+      .toBeCloseTo(width - measurements.separatorWidth, 0);
+  };
+  const [oldestNatural, middleNatural, latestNatural] = measurements.natural;
+  const minimum = measurements.ellipsis;
+
+  await setWidth(
+    measurements.separatorWidth +
+      minimum +
+      middleNatural +
+      latestNatural -
+      (middleNatural - minimum) / 2
+  );
+  let widths = await readWidths();
+  expect(widths[0]).toBeCloseTo(minimum, 0);
+  expect(widths[1]).toBeLessThan(middleNatural);
+  expect(widths[1]).toBeGreaterThan(minimum);
+  expect(widths[2]).toBeCloseTo(latestNatural, 0);
+  const firstStageLabels = await breadcrumb.locator('.breadcrumb__label').evaluateAll(labels =>
+    labels.map(label => ({
+      text: label.textContent,
+      ariaHidden: label.getAttribute('aria-hidden'),
+    }))
+  );
+  expect(firstStageLabels).toEqual([
+    { text: '…', ariaHidden: 'true' },
+    { text: 'Active commercial vehicle drivers', ariaHidden: null },
+    { text: 'Driver profile and compliance details', ariaHidden: null },
+  ]);
+  await expect(
+    breadcrumb.getByRole('link', { name: 'Operations and workforce management' })
+  ).toBeVisible();
+
+  await setWidth(
+    measurements.separatorWidth + minimum * 2 + latestNatural - (latestNatural - minimum) / 2
+  );
+  widths = await readWidths();
+  expect(widths[0]).toBeCloseTo(minimum, 0);
+  expect(widths[1]).toBeCloseTo(minimum, 0);
+  expect(widths[2]).toBeLessThan(latestNatural);
+  expect(widths[2]).toBeGreaterThan(minimum);
+  expect(oldestNatural).toBeGreaterThan(widths[0]);
+  const secondStageLabels = await breadcrumb
+    .locator('.breadcrumb__label')
+    .evaluateAll(labels => labels.map(label => label.textContent));
+  expect(secondStageLabels).toEqual(['…', '…', 'Driver profile and compliance details']);
+});
+
+test('adopts supplied compact capacity before a newly navigated header can paint expanded', async ({
   page,
 }) => {
   const firstPaint = await page.evaluate(
@@ -124,6 +286,7 @@ test('adopts compact capacity before a newly navigated header can paint expanded
             'calc(var(--dimension-panel-width-2xl) - var(--dimension-space-100))';
 
           const shell = document.createElement('ds-shell-page') as HTMLDsShellPageElement;
+          shell.headerCapacity = 'compact';
           const header = document.createElement('ds-bar-title') as HTMLDsBarTitleElement;
           header.slot = 'header';
           header.heading = 'Newly navigated page';
@@ -159,6 +322,63 @@ test('adopts compact capacity before a newly navigated header can paint expanded
     settledVariant: 'compact',
     settledVisibility: 'visible',
   });
+});
+
+test('keeps a routed header concealed until capacity and its rendered variant agree', async ({
+  page,
+}) => {
+  const result = await page.evaluate(
+    () =>
+      new Promise<{
+        initialVisibility: string;
+        visibleVariants: string[];
+        finalVisibility: string;
+        finalVariant: string;
+      }>(resolve => {
+        const fixture = document.createElement('div');
+        const shell = document.createElement('ds-shell-page') as HTMLDsShellPageElement;
+        const header = document.createElement('ds-bar-title') as HTMLDsBarTitleElement;
+        header.slot = 'header';
+        header.heading = 'Capacity pending';
+        shell.append(header);
+        fixture.append(shell);
+        document.body.append(fixture);
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const initialVisibility = getComputedStyle(header).visibility;
+            const visibleVariants: string[] = [];
+            shell.headerCapacity = 'compact';
+            let framesRemaining = 6;
+
+            const sample = () => {
+              if (getComputedStyle(header).visibility !== 'hidden') {
+                visibleVariants.push(header.variant);
+              }
+              framesRemaining -= 1;
+              if (framesRemaining > 0) {
+                requestAnimationFrame(sample);
+                return;
+              }
+              resolve({
+                initialVisibility,
+                visibleVariants,
+                finalVisibility: getComputedStyle(header).visibility,
+                finalVariant: header.variant,
+              });
+              fixture.remove();
+            };
+            requestAnimationFrame(sample);
+          });
+        });
+      })
+  );
+
+  expect(result.initialVisibility).toBe('hidden');
+  expect(result.visibleVariants).not.toHaveLength(0);
+  expect(new Set(result.visibleVariants)).toEqual(new Set(['compact']));
+  expect(result.finalVisibility).toBe('visible');
+  expect(result.finalVariant).toBe('compact');
 });
 
 test('keeps inline section state controlled and restores trigger focus', async ({ page }) => {
@@ -246,12 +466,9 @@ test('balances title and section-label spacing around the divider in every prese
   const header = page.locator('#detail-header');
 
   for (const variant of ['expanded', 'compact', 'constrained'] as const) {
-    await shell.evaluate(
-      (element: HTMLDsShellPageElement, nextVariant) => {
-        element.headerPresentation = nextVariant;
-      },
-      variant
-    );
+    await shell.evaluate((element: HTMLDsShellPageElement, nextVariant) => {
+      element.headerPresentation = nextVariant;
+    }, variant);
     await expect(header).toHaveClass(
       new RegExp(`bar-title-host--${variant === 'compact' ? 'compact' : variant}`)
     );
@@ -270,13 +487,9 @@ test('balances title and section-label spacing around the divider in every prese
 
       return {
         titleToDivider:
-          headingTextRect && dividerRect
-            ? Math.round(dividerRect.left - headingTextRect.right)
-            : 0,
+          headingTextRect && dividerRect ? Math.round(dividerRect.left - headingTextRect.right) : 0,
         dividerToLabel:
-          dividerRect && labelTextRect
-            ? Math.round(labelTextRect.left - dividerRect.right)
-            : 0,
+          dividerRect && labelTextRect ? Math.round(labelTextRect.left - dividerRect.right) : 0,
       };
     });
 
@@ -308,12 +521,61 @@ test('emits the same command ids from visible and overflow actions', async ({ pa
   ]);
 });
 
-test('selects compact and constrained variants from ShellPage capacity', async ({ page }) => {
+test('borders overflow only while a primary action is visible beside it', async ({ page }) => {
+  const shell = page.locator('#shell-page');
+  const header = page.locator('#detail-header');
+  const more = header.locator('.bar-title__more-actions');
+  const hasBorder = () =>
+    more.evaluate(element => (element as HTMLDsButtonUnfilledElement).hasBorder);
+
+  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+  await expect.poll(hasBorder).toBe(true);
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'compact';
+  });
+  await expect(header).toHaveClass(/bar-title-host--compact/);
+  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+  await expect.poll(hasBorder).toBe(true);
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'constrained';
+  });
+  await expect(header).toHaveClass(/bar-title-host--constrained/);
+  await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
+  await expect.poll(hasBorder).toBe(false);
+
+  await header.evaluate((element: HTMLDsBarTitleElement) => {
+    element.primaryAction = {
+      id: 'save-driver',
+      label: 'Save driver',
+      collapse: 'never',
+    };
+  });
+  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+  await expect.poll(hasBorder).toBe(true);
+
+  await header.evaluate((element: HTMLDsBarTitleElement) => {
+    element.primaryAction = null;
+  });
+  await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
+  await expect.poll(hasBorder).toBe(false);
+});
+
+test('selects compact and constrained variants from supplied ShellPage capacity', async ({
+  page,
+}) => {
   const viewport = page.locator('#app-viewport');
+  const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
   await viewport.evaluate((element: HTMLElement) => {
-    element.style.width = 'var(--dimension-panel-width-2xl)';
+    element.style.width = 'var(--dimension-panel-width-lg)';
+  });
+  await expect(header).toHaveClass(/bar-title-host--expanded/);
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'compact';
   });
   await expect(header).toHaveClass(/bar-title-host--compact/);
   await expect(header).not.toHaveClass(/bar-title-host--constrained/);
@@ -361,8 +623,8 @@ test('selects compact and constrained variants from ShellPage capacity', async (
   expect(compactGeometry.leadingMarginBlockStart).toBe('0px');
   expect(compactGeometry.headingCenterY).toBeCloseTo(compactGeometry.actionsCenterY, 0);
 
-  await viewport.evaluate((element: HTMLElement) => {
-    element.style.width = 'var(--dimension-panel-width-lg)';
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'constrained';
   });
   await expect(header).toHaveClass(/bar-title-host--constrained/);
   await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
@@ -373,11 +635,11 @@ test('selects compact and constrained variants from ShellPage capacity', async (
 });
 
 test('aligns a compact top-level title with BarNav control text', async ({ page }) => {
-  const viewport = page.locator('#app-viewport');
+  const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
-  await viewport.evaluate((element: HTMLElement) => {
-    element.style.width = 'var(--dimension-panel-width-2xl)';
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'compact';
   });
   await header.evaluate((element: HTMLDsBarTitleElement) => {
     element.showBack = false;
@@ -404,7 +666,7 @@ test('aligns a compact top-level title with BarNav control text', async ({ page 
 });
 
 test('keeps a never-collapse primary action visible when constrained', async ({ page }) => {
-  const viewport = page.locator('#app-viewport');
+  const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
   await header.evaluate((element: HTMLDsBarTitleElement) => {
@@ -415,8 +677,8 @@ test('keeps a never-collapse primary action visible when constrained', async ({ 
       collapse: 'never',
     };
   });
-  await viewport.evaluate((element: HTMLElement) => {
-    element.style.width = 'var(--dimension-panel-width-lg)';
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'constrained';
   });
 
   await expect(header).toHaveClass(/bar-title-host--constrained/);
@@ -426,29 +688,150 @@ test('keeps a never-collapse primary action visible when constrained', async ({ 
   await expect(page.getByRole('menuitem', { name: 'Save driver' })).toHaveCount(0);
 });
 
-test('compacts on ShellApp scroll without changing page content flow', async ({ page }) => {
+test('snaps only when the expanded title and actions reach their compact position', async ({
+  page,
+}) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
   const scroller = page.locator('#shell-app .shell-app__content');
   const initialOffset = await shell
     .locator('.shell-page__content')
     .evaluate(element => (element as HTMLElement).offsetTop);
-
-  await scroller.evaluate((element: HTMLElement) => {
-    element.scrollTop = 120;
+  await expect
+    .poll(() =>
+      shell.evaluate(element =>
+        Number.parseFloat(
+          getComputedStyle(element).getPropertyValue('--ds-shell-page-header-travel')
+        )
+      )
+    )
+    .toBeGreaterThan(0);
+  const snapScrollTop = await shell.evaluate(element => {
+    const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+    const sentinel = element.querySelector<HTMLElement>('.shell-page__scroll-sentinel');
+    return root && sentinel
+      ? root.scrollTop + sentinel.getBoundingClientRect().top - root.getBoundingClientRect().top
+      : 0;
   });
+
+  await scroller.evaluate((element: HTMLElement, distance) => {
+    element.scrollTop = distance - 1;
+  }, snapScrollTop);
+  await expect(header).toHaveClass(/bar-title-host--expanded/);
+
+  await scroller.evaluate((element: HTMLElement, distance) => {
+    element.scrollTop = distance;
+  }, snapScrollTop);
+  await expect(header).toHaveClass(/bar-title-host--expanded/);
+  const expandedAnchor = await header.evaluate(element => {
+    const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+    const title = element.querySelector<HTMLElement>('[data-shell-page-header-anchor]');
+    const action = element.querySelector<HTMLElement>('.bar-title__primary-action');
+    const rootTop = root?.getBoundingClientRect().top ?? 0;
+    return {
+      titleTop: (title?.getBoundingClientRect().top ?? 0) - rootTop,
+      actionTop: (action?.getBoundingClientRect().top ?? 0) - rootTop,
+    };
+  });
+
+  await scroller.evaluate((element: HTMLElement, distance) => {
+    element.scrollTop = distance + 1;
+  }, snapScrollTop);
 
   await expect(header).toHaveClass(/bar-title-host--compact/);
   await expect(header).not.toHaveClass(/bar-title-host--constrained/);
   await expect(shell.locator('.shell-page__flow-spacer')).not.toHaveCSS('height', '0px');
+  const compactAnchor = await header.evaluate(element => {
+    const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+    const title = element.querySelector<HTMLElement>('[data-shell-page-header-anchor]');
+    const action = element.querySelector<HTMLElement>('.bar-title__primary-action');
+    const rootTop = root?.getBoundingClientRect().top ?? 0;
+    return {
+      titleTop: (title?.getBoundingClientRect().top ?? 0) - rootTop,
+      actionTop: (action?.getBoundingClientRect().top ?? 0) - rootTop,
+    };
+  });
+  expect(compactAnchor.titleTop).toBeCloseTo(expandedAnchor.titleTop, 3);
+  expect(compactAnchor.actionTop).toBeCloseTo(expandedAnchor.actionTop, 3);
 
   const compactOffset = await shell
     .locator('.shell-page__content')
     .evaluate(element => (element as HTMLElement).offsetTop);
   expect(compactOffset).toBe(initialOffset);
+
+  const reverseSnapScrollTop = await shell.evaluate(element => {
+    const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+    const sentinel = element.querySelector<HTMLElement>('.shell-page__scroll-sentinel');
+    return root && sentinel
+      ? root.scrollTop + sentinel.getBoundingClientRect().top - root.getBoundingClientRect().top
+      : 0;
+  });
+  await scroller.evaluate((element: HTMLElement, distance) => {
+    element.scrollTop = distance - 2;
+  }, reverseSnapScrollTop);
+  await expect(header).toHaveClass(/bar-title-host--expanded/);
+  const restoredAnchorTop = await header
+    .locator('[data-shell-page-header-anchor]')
+    .evaluate(element => element.getBoundingClientRect().top);
+  const rootTop = await scroller.evaluate(element => element.getBoundingClientRect().top);
+  expect(restoredAnchorTop - rootTop).toBeCloseTo(compactAnchor.titleTop + 2, 3);
 });
 
-test('keeps an open header menu in the top layer while the sticky header compacts', async ({ page }) => {
+test('measures a shorter snap distance when the expanded header has no breadcrumb', async ({
+  page,
+}) => {
+  const shell = page.locator('#shell-page');
+  const header = page.locator('#detail-header');
+  const scroller = page.locator('#shell-app .shell-app__content');
+
+  await header.evaluate((element: HTMLDsBarTitleElement) => {
+    element.showBack = false;
+  });
+  await expect(header.locator('.bar-title__breadcrumb')).toHaveCount(0);
+
+  await expect
+    .poll(() =>
+      header.evaluate(element => {
+        const anchor = element.querySelector<HTMLElement>('[data-shell-page-header-anchor]');
+        const headerRect = element.getBoundingClientRect();
+        const anchorRect = anchor?.getBoundingClientRect();
+        const travel = Number.parseFloat(
+          getComputedStyle(element.closest('ds-shell-page')!).getPropertyValue(
+            '--ds-shell-page-header-travel'
+          )
+        );
+        return {
+          travel,
+          expected:
+            anchorRect && anchorRect.height > 0
+              ? anchorRect.top - headerRect.top - (48 - anchorRect.height) / 2
+              : 0,
+        };
+      })
+    )
+    .toEqual({ travel: 24, expected: 24 });
+  const snapScrollTop = await shell.evaluate(element => {
+    const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+    const sentinel = element.querySelector<HTMLElement>('.shell-page__scroll-sentinel');
+    return root && sentinel
+      ? root.scrollTop + sentinel.getBoundingClientRect().top - root.getBoundingClientRect().top
+      : 0;
+  });
+
+  await scroller.evaluate((element: HTMLElement, distance) => {
+    element.scrollTop = distance - 1;
+  }, snapScrollTop);
+  await expect(header).toHaveClass(/bar-title-host--expanded/);
+
+  await scroller.evaluate((element: HTMLElement, distance) => {
+    element.scrollTop = distance + 1;
+  }, snapScrollTop);
+  await expect(header).toHaveClass(/bar-title-host--compact/);
+});
+
+test('keeps an open header menu in the top layer while the sticky header compacts', async ({
+  page,
+}) => {
   const viewport = page.locator('#app-viewport');
   const header = page.locator('#detail-header');
   const scroller = page.locator('#shell-app .shell-app__content');
@@ -470,10 +853,7 @@ test('keeps an open header menu in the top layer while the sticky header compact
   await expect(header).toHaveClass(/bar-title-host--compact/);
   await expect(menu).toBeVisible();
 
-  const compactGeometry = await Promise.all([
-    trigger.boundingBox(),
-    menu.boundingBox(),
-  ]);
+  const compactGeometry = await Promise.all([trigger.boundingBox(), menu.boundingBox()]);
   expect(compactGeometry[0]).not.toBeNull();
   expect(compactGeometry[1]).not.toBeNull();
   expect(compactGeometry[1]!.y - (compactGeometry[0]!.y + compactGeometry[0]!.height)).toBe(4);
@@ -481,7 +861,9 @@ test('keeps an open header menu in the top layer while the sticky header compact
   await scroller.evaluate((element: HTMLElement) => {
     element.scrollTop = 240;
   });
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await page.evaluate(
+    () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  );
 
   expect(await trigger.boundingBox()).toEqual(compactGeometry[0]);
   expect(await menu.boundingBox()).toEqual(compactGeometry[1]);

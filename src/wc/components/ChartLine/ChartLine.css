@@ -1,6 +1,13 @@
 :host {
   display: inline-block;
+  max-width: 100%;
   font-family: var(--typography-font-family);
+}
+
+.chart-line__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .chart-line__gridline {

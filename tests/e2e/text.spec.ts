@@ -52,6 +52,19 @@ test('uses solid underline for links and dotted underline for hidden interaction
   await expect(tooltipText).toHaveClass(/ds-text--decoration-dotted-underline/);
   await expect(tooltipText.locator('xpath=..')).toHaveAttribute('aria-describedby', 'term-tooltip');
   await expect(page.locator('#term-tooltip')).toHaveRole('tooltip');
+  const decorationColors = await linkText.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-tertiary)';
+    document.body.append(probe);
+    const result = {
+      solid: getComputedStyle(element).textDecorationColor,
+      tertiary: getComputedStyle(probe).color,
+    };
+    probe.remove();
+    return result;
+  });
+  await expect(tooltipText).toHaveCSS('text-decoration-color', decorationColors.tertiary);
+  expect(decorationColors.solid).toBe(decorationColors.tertiary);
 });
 
 test('keeps generating text readable and static under reduced motion', async ({ page }) => {

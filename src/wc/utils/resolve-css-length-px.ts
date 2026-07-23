@@ -61,6 +61,12 @@ export function resolveCssLengthPx(
   probe.style.width = cssLength;
   const px = probe.getBoundingClientRect().width;
   probe.style.width = '';
-  lengthPxCache.set(trimmed, px);
+  // A stylesheet can finish loading after a custom element's first layout
+  // pass (notably in WebKit). Do not permanently cache the probe's temporary
+  // zero when the length depends on a custom property; a later call must be
+  // able to resolve the now-available token.
+  if (px !== 0 || !cssLength.includes('var(')) {
+    lengthPxCache.set(trimmed, px);
+  }
   return px;
 }

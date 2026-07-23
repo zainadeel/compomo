@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsShellPage } from '@ds-mo/ui/components/d
 
 @ProxyCmp({
   defineCustomElementFn: defineDsShellPage,
-  inputs: ['contentInset', 'headerPresentation']
+  inputs: ['contentInset', 'headerCapacity', 'headerPresentation']
 })
 @Component({
   selector: 'ds-shell-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['contentInset', 'headerPresentation'],
+  inputs: ['contentInset', 'headerCapacity', 'headerPresentation'],
 })
 export class DsShellPage {
   protected el: HTMLDsShellPageElement;

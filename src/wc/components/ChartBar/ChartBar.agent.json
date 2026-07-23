@@ -21,6 +21,11 @@
   ],
   "alternatives": [
     {
+      "when": "Each category contains several additive series or needs normalized composition.",
+      "component": "component:ds-chart-bar-stacked",
+      "reason": "ChartBarStacked compares raw stacked totals or normalized 0–100% composition."
+    },
+    {
       "when": "Users need to follow one or more trends across ordered categories.",
       "component": "component:ds-chart-line",
       "reason": "ChartLine connects ordered observations and supports multiple named series."
@@ -32,6 +37,7 @@
     }
   ],
   "commonlyComposedWith": [
+    "component:ds-chart-bar-stacked",
     "component:ds-card-shell-data-viz",
     "component:ds-tooltip-data-viz"
   ],
@@ -43,6 +49,7 @@
   "states": [
     "The chart is currently a static single-series rendering without hover, selection, loading, or empty-state policy.",
     "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
+    "Bars use 2px top corner radii while the lower corners touching the zero axis remain square.",
     "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
     "Authored datum colors override the shared categorical palette."
   ],

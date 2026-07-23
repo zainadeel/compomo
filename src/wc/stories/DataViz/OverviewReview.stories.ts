@@ -3,6 +3,7 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-card-shell-data-viz.js';
 import '../../../../dist/components/ds-card-data-viz-donut.js';
+import '../../../../dist/components/ds-card-data-viz-line.js';
 import '../../../../dist/components/ds-chart-donut.js';
 import '../../../../dist/components/ds-chart-line.js';
 import '../../../../dist/components/ds-chart-bar.js';
@@ -14,8 +15,8 @@ import type { ChartDatum, ChartSeries, ChartLegendItem } from '../../utils/chart
  * against realistic shapes rather than generic placeholder numbers. Scaffold only —
  * visual design (card layout, chart styling, legend treatment) is intentionally undecided.
  *
- * Donut uses `ds-card-data-viz-donut`. Bar/line compose `ds-card-shell-data-viz`
- * directly until their dedicated data-viz card compositions land.
+ * Donut and line use their dedicated data-viz card compositions. Bar composes
+ * `ds-card-shell-data-viz` directly until its dedicated composition lands.
  */
 
 const AVAILABILITY_STATUS: ChartDatum[] = [
@@ -70,26 +71,26 @@ export const Review: Story = {
         ></ds-chart-legend>
       </ds-card-data-viz-donut>
 
-      <ds-card-shell-data-viz heading="Fuel trend" card-width="lg">
-        <div style="display:flex;flex-direction:column;gap:var(--dimension-space-200);padding:var(--dimension-space-400);box-sizing:border-box;flex:1;min-height:0">
-          <ds-chart-line
-            ${ref(el => {
-              if (!el) return;
-              (el as any).series = FUEL_TREND_SERIES;
-              (el as any).categories = FUEL_TREND_CATEGORIES;
-            })}
-            width="380"
-            height="200"
-          ></ds-chart-line>
-          <ds-chart-legend
-            ${ref(el => {
-              if (!el) return;
-              (el as any).items = FUEL_TREND_LEGEND;
-            })}
-            direction="horizontal"
-          ></ds-chart-legend>
-        </div>
-      </ds-card-shell-data-viz>
+      <ds-card-data-viz-line heading="Fuel trend" card-width="lg">
+        <ds-chart-line
+          slot="chart"
+          ${ref(el => {
+            if (!el) return;
+            (el as any).series = FUEL_TREND_SERIES;
+            (el as any).categories = FUEL_TREND_CATEGORIES;
+          })}
+          width="480"
+          height="240"
+        ></ds-chart-line>
+        <ds-chart-legend
+          slot="legend"
+          ${ref(el => {
+            if (!el) return;
+            (el as any).items = FUEL_TREND_LEGEND;
+          })}
+          direction="horizontal"
+        ></ds-chart-legend>
+      </ds-card-data-viz-line>
 
       <ds-card-shell-data-viz heading="Safety risk factors" card-width="lg">
         <div style="padding:var(--dimension-space-400);box-sizing:border-box;flex:1;min-height:0">

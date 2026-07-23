@@ -47,7 +47,7 @@
   <body>
     <div id="app-viewport">
       <ds-shell-app id="shell-app">
-        <ds-shell-page id="shell-page">
+        <ds-shell-page id="shell-page" header-capacity="roomy">
           <ds-bar-title
             id="detail-header"
             slot="header"
@@ -69,6 +69,9 @@
         </ds-shell-page>
       </ds-shell-app>
     </div>
+    <section id="breadcrumb-viewport" aria-label="Breadcrumb truncation fixture">
+      <ds-breadcrumb id="long-breadcrumb" aria-label="Long path breadcrumb"></ds-breadcrumb>
+    </section>
 
     <script type="module" src="/bar-title-setup.mjs"></script>
   </body>

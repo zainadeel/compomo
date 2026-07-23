@@ -122,6 +122,7 @@
   :where(a):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   color: var(--color-foreground-brand);
   text-decoration: underline;
+  text-decoration-color: var(--color-foreground-tertiary);
 }
 
 :where(.ds-prose)

@@ -1,0 +1,206 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-data-viz-line",
+  "title": "CardDataVizLine",
+  "description": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-line",
+    "source": "src/wc/components/CardDataVizLine/CardDataVizLine.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
+      "useWhen": [
+        "A dashboard widget needs the standard line chart and visible series key in one data-viz card.",
+        "The legend identifies static line series and should not highlight or dim rows on hover."
+      ],
+      "avoidWhen": [
+        "The visualization needs chart-to-legend hover synchronization or selectable series controls.",
+        "The product needs a custom legend treatment, supporting metrics, or an alternate chart layout."
+      ],
+      "alternatives": [
+        {
+          "when": "The line chart and legend need a custom layout without card chrome.",
+          "component": "component:ds-chart-line",
+          "reason": "Compose ChartLine and a static ChartLegend directly in the product-owned layout."
+        },
+        {
+          "when": "The visualization communicates parts of a total with synchronized slice emphasis.",
+          "component": "component:ds-card-data-viz-donut",
+          "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card-shell-data-viz",
+        "component:ds-chart-line",
+        "component:ds-chart-legend",
+        "component:ds-button-unfilled"
+      ],
+      "accessibility": [
+        "Provide a concise heading that identifies the trend and meaningful visible labels for every legend entry.",
+        "Keep essential series and value context available textually rather than relying on line color alone.",
+        "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
+      ],
+      "states": [
+        "The chart region fills the remaining card body while the legend remains content-sized.",
+        "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
+        "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
+        "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
+      ],
+      "responsiveBehavior": [
+        "The selected sm, md, or lg shell size controls the card dimensions while the line chart shrinks within its chart region.",
+        "The horizontal legend wraps complete entries when the available width is constrained.",
+        "The parent dashboard owns card wrapping and breakpoint changes."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign series, categories, and legend items as JavaScript properties, then place the chart and legend in their named slots."
+        ],
+        "react": [
+          "Keep filter and dataset state in the owner; pass the chart and legend with chart and legend slot attributes."
+        ],
+        "angular": [
+          "Keep filter and dataset state in the owner; project the chart and legend into the chart and legend slots."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/CardDataVizLine/CardDataVizLine.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "cardWidth": {
+          "type": "CardDataVizLineWidth",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "card-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Card width token — also sets matching min-height."
+        },
+        "filterLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "filter-label",
+          "default": "'Filter'",
+          "required": false,
+          "mutable": false
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "Widget heading shown in the card header."
+        }
+      },
+      "events": [
+        {
+          "name": "dsFilterClick",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emits when the header filter control is activated."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "cardWidth": {
+        "type": "CardDataVizLineWidth",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "card-width",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Card width token — also sets matching min-height."
+      },
+      "filterLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "filter-label",
+        "default": "'Filter'",
+        "required": false,
+        "mutable": false
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "Widget heading shown in the card header."
+      }
+    },
+    "events": [
+      {
+        "name": "dsFilterClick",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emits when the header filter control is activated."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-data-viz-line",
+      "react": "DsCardDataVizLine",
+      "angular": "DsCardDataVizLine"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-data-viz-line.js';",
+        "example": "<ds-card-data-viz-line></ds-card-data-viz-line>"
+      },
+      "react": {
+        "import": "import { DsCardDataVizLine } from '@ds-mo/ui/react';",
+        "example": "<DsCardDataVizLine />"
+      },
+      "angular": {
+        "import": "import { DsCardDataVizLine } from '@ds-mo/ui/angular/ds-card-data-viz-line';",
+        "example": "<ds-card-data-viz-line></ds-card-data-viz-line>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "card-shell-data-viz"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CardDataVizLine/CardDataVizLine.css",
+      "content": ":host {\n  display: contents;\n}\n\n.card-data-viz-line__layout {\n  display: flex;\n  flex: 1 1 auto;\n  flex-direction: column;\n  box-sizing: border-box;\n  height: 100%;\n  min-height: 0;\n  gap: var(--dimension-space-200);\n}\n\n.card-data-viz-line__chart-region {\n  display: grid;\n  flex: 1 1 auto;\n  align-items: center;\n  box-sizing: border-box;\n  min-height: 0;\n  padding: var(--dimension-space-400) var(--dimension-space-400) 0\n    var(--dimension-space-400);\n}\n\n.card-data-viz-line__chart-region > * {\n  width: 100%;\n  min-width: 0;\n  max-width: 100%;\n}\n\n.card-data-viz-line__legend-region {\n  flex: 0 0 auto;\n  box-sizing: border-box;\n  padding: 0 var(--dimension-space-100) var(--dimension-space-100)\n    var(--dimension-space-100);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CardDataVizLine/CardDataVizLine.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';\nimport type { CardShellDataVizWidth } from '../CardShellDataViz/CardShellDataViz';\n\nexport type CardDataVizLineWidth = CardShellDataVizWidth;\n\ntype StaticLegendSlot = HTMLElement & {\n  highlightOnHover?: boolean;\n};\n\n/**\n * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart\n * region and a content-sized, static legend.\n */\n@Component({\n  tag: 'ds-card-data-viz-line',\n  styleUrl: 'CardDataVizLine.css',\n  scoped: true,\n})\nexport class CardDataVizLine {\n  @Element() el!: HTMLElement;\n\n  /** Widget heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Card width token — also sets matching min-height. */\n  @Prop() cardWidth: CardDataVizLineWidth = 'md';\n  @Prop() filterLabel: string = 'Filter';\n\n  /** Emits when the header filter control is activated. */\n  @Event() dsFilterClick!: EventEmitter<void>;\n\n  @State() private hasChartSlot = false;\n  @State() private hasLegendSlot = false;\n\n  componentWillRender() {\n    this.hasChartSlot = !!this.el.querySelector('[slot=\"chart\"]');\n    this.hasLegendSlot = !!this.el.querySelector('[slot=\"legend\"]');\n  }\n\n  componentDidRender() {\n    const legend = this.el.querySelector(\n      'ds-chart-legend[slot=\"legend\"]'\n    ) as StaticLegendSlot | null;\n    if (!legend) return;\n    legend.setAttribute('highlight-on-hover', 'false');\n    if ('highlightOnHover' in legend) legend.highlightOnHover = false;\n  }\n\n  private handleFilterClick = () => {\n    this.dsFilterClick.emit();\n  };\n\n  render() {\n    return (\n      <Host class=\"card-data-viz-line\">\n        <ds-card-shell-data-viz heading={this.heading} cardWidth={this.cardWidth}>\n          <ds-button-unfilled\n            slot=\"actions\"\n            variant=\"icon\"\n            type=\"button\"\n            icon=\"Filters\"\n            aria-label={this.filterLabel}\n            onDsClick={this.handleFilterClick}\n          />\n          <div class=\"card-data-viz-line__layout\">\n            {this.hasChartSlot && (\n              <div class=\"card-data-viz-line__chart-region\">\n                <slot name=\"chart\" />\n              </div>\n            )}\n            {this.hasLegendSlot && (\n              <div class=\"card-data-viz-line__legend-region\">\n                <slot name=\"legend\" />\n              </div>\n            )}\n          </div>\n        </ds-card-shell-data-viz>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

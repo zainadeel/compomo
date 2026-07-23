@@ -49,28 +49,26 @@ export const FailedOutgoing: Story = {
 
 export const Grouped: Story = {
   render: () => html`
-    <div style="display:grid; gap:var(--dimension-space-150); width:min(600px, 90vw);">
-      <div>
-        <ds-message
-          message-id="group-one"
-          direction="incoming"
-          author="Avery"
-          group-position="first"
+    <div style="display:grid; gap:var(--dimension-space-300); width:min(600px, 90vw);">
+      <ds-message
+        message-id="group-one"
+        direction="incoming"
+        author="Avery"
+        group-position="first"
+      >
+        <ds-message-bubble variant="received">The route is updated.</ds-message-bubble>
+      </ds-message>
+      <ds-message
+        message-id="group-two"
+        direction="incoming"
+        author="Avery"
+        group-position="last"
+        timestamp="9:42 AM"
+      >
+        <ds-message-bubble variant="received"
+          >The customer confirmed the new window.</ds-message-bubble
         >
-          <ds-message-bubble variant="received">The route is updated.</ds-message-bubble>
-        </ds-message>
-        <ds-message
-          message-id="group-two"
-          direction="incoming"
-          author="Avery"
-          group-position="last"
-          timestamp="9:42 AM"
-        >
-          <ds-message-bubble variant="received"
-            >The customer confirmed the new window.</ds-message-bubble
-          >
-        </ds-message>
-      </div>
+      </ds-message>
       <ds-message
         message-id="group-three"
         direction="outgoing"

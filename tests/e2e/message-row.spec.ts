@@ -6,6 +6,10 @@ test('starts incoming message content without an avatar prefix column', async ({
 
   const message = page.locator('ds-message').first();
   await expect(message.locator('.message__avatar')).toHaveCount(0);
+  const author = message.locator('.message__header ds-text').filter({ hasText: 'Avery' });
+  await expect(author).toHaveJSProperty('variant', 'text-body-small');
+  await expect(author).toHaveJSProperty('emphasis', true);
+  await expect(author).toHaveJSProperty('color', 'primary');
 
   const [rowBox, bodyBox] = await Promise.all([
     message.locator('.message').boundingBox(),
@@ -26,9 +30,7 @@ test('starts incoming message content without an avatar prefix column', async ({
   expect(footerBox.y - (contentBox.y + contentBox.height)).toBeCloseTo(4, 0);
 });
 
-test('reports failed delivery in footer metadata without changing the bubble', async ({
-  page,
-}) => {
+test('reports failed delivery in footer metadata without changing the bubble', async ({ page }) => {
   await page.goto('/message-row.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 
@@ -37,10 +39,13 @@ test('reports failed delivery in footer metadata without changing the bubble', a
   const failure = message.locator('.message__footer ds-text').filter({
     hasText: 'Failed to send',
   });
+  const separator = message.locator('.message__footer ds-text').filter({ hasText: '·' });
 
   await expect(bubble).toHaveClass(/message-bubble--user/);
   await expect(bubble).not.toHaveClass(/message-bubble--error/);
   await expect(failure).toHaveJSProperty('color', 'negative');
+  await expect(separator).toHaveJSProperty('color', 'tertiary');
+  await expect(separator).toHaveAttribute('aria-hidden', 'true');
 
   const [contentBox, failureBox] = await Promise.all([
     message.locator('.message__content').boundingBox(),

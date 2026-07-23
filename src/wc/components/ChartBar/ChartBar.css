@@ -18,6 +18,6 @@
   text-transform: uppercase;
 }
 
-.chart-bar__bar {
-  rx: var(--dimension-radius-050);
+.chart-bar__bar--rounded {
+  rx: var(--dimension-radius-025);
 }

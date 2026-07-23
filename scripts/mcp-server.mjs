@@ -48,6 +48,56 @@ const REGISTRY_DIR = IS_SOURCE_CHECKOUT
   : path.resolve(__dirname, '..', 'mcp-data', 'registry');
 const PATTERN_DIR = path.resolve(SOURCE_ROOT, 'agent', 'patterns');
 const PATTERN_MANIFEST = path.resolve(__dirname, '..', 'agent-patterns.json');
+const PACKAGE_ROOT = IS_SOURCE_CHECKOUT ? SOURCE_ROOT : path.resolve(__dirname, '..', '..');
+const PACKAGE_VERSION = JSON.parse(
+  fs.readFileSync(path.join(PACKAGE_ROOT, 'package.json'), 'utf8')
+).version;
+
+const READ_ONLY_TOOL_ANNOTATIONS = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
+const JSON_OBJECT_SCHEMA = z.record(z.string(), z.unknown());
+const COMPONENT_SUMMARY_SCHEMA = z.object({
+  name: z.string(),
+  title: z.string(),
+  description: z.string(),
+  type: z.string(),
+  status: z.string(),
+  audience: z.string(),
+  dependencies: z.array(z.string()),
+  registryDependencies: z.array(z.string()),
+  patterns: z.array(z.string()),
+});
+const COMPONENT_LIST_OUTPUT_SCHEMA = z.object({
+  count: z.number().int().nonnegative(),
+  query: z.string().nullable(),
+  components: z.array(COMPONENT_SUMMARY_SCHEMA),
+});
+const COMPONENT_OUTPUT_SCHEMA = z.object({
+  component: JSON_OBJECT_SCHEMA,
+});
+const PATTERN_SUMMARY_SCHEMA = z.object({
+  id: z.string(),
+  status: z.string(),
+  summary: z.string(),
+  useWhen: z.array(z.string()),
+  avoidWhen: z.array(z.string()),
+  components: z.array(z.string()),
+  frameworks: z.array(z.string()),
+});
+const PATTERN_LIST_OUTPUT_SCHEMA = z.object({
+  count: z.number().int().nonnegative(),
+  query: z.string().nullable(),
+  patterns: z.array(PATTERN_SUMMARY_SCHEMA),
+});
+const PATTERN_OUTPUT_SCHEMA = z.object({
+  framework: z.enum(['customElements', 'react', 'angular']).nullable(),
+  pattern: JSON_OBJECT_SCHEMA,
+});
 
 // ─── Load registry (fresh read every call) ──────────────────────────────────────
 
@@ -104,6 +154,49 @@ function loadPatterns() {
 function loadPattern(name) {
   const normalized = name.replace(/^pattern:/, '').toLowerCase();
   return loadPatterns().find(pattern => pattern.id === `pattern:${normalized}`) ?? null;
+}
+
+function componentSummary(component) {
+  return {
+    name: component.name,
+    title: component.title,
+    description: component.description,
+    type: component.type,
+    status: component.meta?.intent?.status ?? 'unknown',
+    audience: component.meta?.intent?.audience ?? 'unknown',
+    dependencies: component.dependencies ?? [],
+    registryDependencies: component.registryDependencies ?? [],
+    patterns: component.meta?.intent?.patterns ?? [],
+  };
+}
+
+function componentDetail(component) {
+  const { files: _files, ...detail } = component;
+  return detail;
+}
+
+function patternSummary(pattern) {
+  return {
+    id: pattern.id,
+    status: pattern.status,
+    summary: pattern.summary,
+    useWhen: pattern.useWhen ?? [],
+    avoidWhen: pattern.avoidWhen ?? [],
+    components: (pattern.components ?? []).map(entry => entry.component),
+    frameworks: Object.entries(pattern.implementations ?? {})
+      .filter(([, implementation]) => implementation.recipes?.length)
+      .map(([framework]) => framework),
+  };
+}
+
+function patternDetail(pattern, framework) {
+  if (!framework) return pattern;
+  return {
+    ...pattern,
+    implementations: pattern.implementations?.[framework]
+      ? { [framework]: pattern.implementations[framework] }
+      : {},
+  };
 }
 
 function formatSetupGuide() {
@@ -187,7 +280,7 @@ Never hardcode these values. The tokens support light/dark theming automatically
 
 const server = new McpServer({
   name: 'compomo',
-  version: '1.0.0',
+  version: PACKAGE_VERSION,
 });
 
 // Tool 1: List components
@@ -196,9 +289,11 @@ server.registerTool(
   {
     title: 'List Components',
     description: 'List all available components in the @ds-mo/ui design system library. Returns component names, descriptions, and required packages.',
-    inputSchema: {
+    inputSchema: z.object({
       search: z.string().optional().describe('Optional text to filter components by name or description.'),
-    },
+    }),
+    outputSchema: COMPONENT_LIST_OUTPUT_SCHEMA,
+    annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async ({ search }) => {
     let items = loadRegistry().items;
@@ -215,12 +310,24 @@ server.registerTool(
     if (items.length === 0) {
       return {
         content: [{ type: 'text', text: `No components found${search ? ` matching "${search}"` : ''}.` }],
+        structuredContent: {
+          count: 0,
+          query: search ?? null,
+          components: [],
+        },
       };
     }
 
     const text = `# @ds-mo/ui — ${items.length} component${items.length === 1 ? '' : 's'}${search ? ` matching "${search}"` : ''}\n\n${formatComponentList(items)}`;
 
-    return { content: [{ type: 'text', text }] };
+    return {
+      content: [{ type: 'text', text }],
+      structuredContent: {
+        count: items.length,
+        query: search ?? null,
+        components: items.map(componentSummary),
+      },
+    };
   }
 );
 
@@ -230,9 +337,11 @@ server.registerTool(
   {
     title: 'Get Component',
     description: 'Get detailed information about a specific @ds-mo/ui component including props API, import statements, setup instructions, peer dependencies, and full source code for reference.',
-    inputSchema: {
+    inputSchema: z.object({
       name: z.string().describe('Component name in kebab-case (e.g., "button", "tab-group", "toggle-button") or PascalCase (e.g., "Button", "TabGroup").'),
-    },
+    }),
+    outputSchema: COMPONENT_OUTPUT_SCHEMA,
+    annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async ({ name }) => {
     // Normalize to kebab-case
@@ -257,7 +366,10 @@ server.registerTool(
       };
     }
 
-    return { content: [{ type: 'text', text: formatComponentDetail(comp) }] };
+    return {
+      content: [{ type: 'text', text: formatComponentDetail(comp) }],
+      structuredContent: { component: componentDetail(comp) },
+    };
   }
 );
 
@@ -267,6 +379,7 @@ server.registerTool(
   {
     title: 'Get Setup Guide',
     description: 'Get the full project setup guide for @ds-mo/ui — install commands, CSS imports, theme configuration, and design token architecture.',
+    annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async () => {
     return { content: [{ type: 'text', text: formatSetupGuide() }] };
@@ -279,9 +392,10 @@ server.registerTool(
   {
     title: 'Get Component Source',
     description: 'Get the full source code of a @ds-mo/ui component for reference. Use this to understand implementation patterns, not to copy the code into a project.',
-    inputSchema: {
+    inputSchema: z.object({
       name: z.string().describe('Component name in kebab-case (e.g., "button", "modal").'),
-    },
+    }),
+    annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async ({ name }) => {
     const kebab = name
@@ -314,9 +428,11 @@ server.registerTool(
   {
     title: 'List Patterns',
     description: 'List supported @ds-mo/ui multi-component composition patterns with executable framework recipes.',
-    inputSchema: {
+    inputSchema: z.object({
       search: z.string().optional().describe('Optional text to filter patterns by id, summary, or use case.'),
-    },
+    }),
+    outputSchema: PATTERN_LIST_OUTPUT_SCHEMA,
+    annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async ({ search }) => {
     let patterns = loadPatterns();
@@ -332,10 +448,20 @@ server.registerTool(
     if (!patterns.length) {
       return {
         content: [{ type: 'text', text: `No composition patterns found${search ? ` matching "${search}"` : ''}.` }],
+        structuredContent: {
+          count: 0,
+          query: search ?? null,
+          patterns: [],
+        },
       };
     }
     return {
       content: [{ type: 'text', text: `# @ds-mo/ui — ${patterns.length} composition pattern${patterns.length === 1 ? '' : 's'}\n\n${formatPatternList(patterns)}` }],
+      structuredContent: {
+        count: patterns.length,
+        query: search ?? null,
+        patterns: patterns.map(patternSummary),
+      },
     };
   }
 );
@@ -346,10 +472,12 @@ server.registerTool(
   {
     title: 'Get Pattern',
     description: 'Get design intent, state ownership, accessibility requirements, and executable Custom Elements, React, or Angular recipes for an @ds-mo/ui composition.',
-    inputSchema: {
+    inputSchema: z.object({
       name: z.string().describe('Pattern id or name, for example "menu-trigger" or "pattern:menu-trigger".'),
       framework: z.enum(['customElements', 'react', 'angular']).optional().describe('Return recipes only for this framework. Omit to return every implementation.'),
-    },
+    }),
+    outputSchema: PATTERN_OUTPUT_SCHEMA,
+    annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async ({ name, framework }) => {
     const pattern = loadPattern(name);
@@ -360,7 +488,13 @@ server.registerTool(
         isError: true,
       };
     }
-    return { content: [{ type: 'text', text: formatPatternDetail(pattern, framework) }] };
+    return {
+      content: [{ type: 'text', text: formatPatternDetail(pattern, framework) }],
+      structuredContent: {
+        framework: framework ?? null,
+        pattern: patternDetail(pattern, framework),
+      },
+    };
   }
 );
 

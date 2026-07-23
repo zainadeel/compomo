@@ -1,8 +1,7 @@
-import { Component, Element, h, Host, Prop, State } from '@stencil/core';
-import { createRafCoalescer } from '../../shell/chrome-transition';
+import { Component, Element, h, Host, Prop, State, Watch } from '@stencil/core';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import type { BarTitleVariant } from '../BarTitle/bar-title-types';
-import { resolveShellPageCapacity, resolveShellPageHeaderVariant } from './shell-page-responsive';
+import { resolveShellPageHeaderVariant } from './shell-page-responsive';
 import type {
   ShellPageCapacity,
   ShellPageContentInset,
@@ -18,38 +17,43 @@ type BarTitleElement = HTMLElement & { variant: BarTitleVariant };
 })
 export class ShellPage {
   private static readonly MAX_HEADER_REVEAL_FRAMES = 12;
+  private static readonly MAX_HEADER_GEOMETRY_FRAMES = 12;
 
   @Element() el!: HTMLElement;
 
-  /** Automatic container/scroll behavior, or an explicit header variant override. */
+  /** Automatic capacity/scroll behavior, or an explicit header variant override. */
   @Prop() headerPresentation: ShellPageHeaderPresentation = 'auto';
+
+  /** Available page-header capacity supplied by the owning application shell. */
+  @Prop() headerCapacity?: ShellPageCapacity;
 
   /** Standard page gutters, or no inset for full-bleed page content. */
   @Prop() contentInset: ShellPageContentInset = 'default';
 
-  @State() private capacity: ShellPageCapacity | null = null;
   @State() private pageTopVisible = true;
 
   private sentinelEl: HTMLElement | null = null;
   private spacerEl: HTMLElement | null = null;
+  private stickyHeaderEl: HTMLElement | null = null;
   private headerEl: BarTitleElement | null = null;
   private expandedHeaderHeight = 0;
-  private resizeObserver: ResizeObserver | null = null;
+  private headerTravel = 0;
+  private expandedGeometryFrozen = false;
   private headerResizeObserver: ResizeObserver | null = null;
+  private headerMutationObserver: MutationObserver | null = null;
   private headerRevealFrame: number | null = null;
+  private headerGeometryFrame: number | null = null;
   private scrollRoot: HTMLElement | Window | null = null;
-  private readonly layoutCoalescer = createRafCoalescer(() => this.syncCapacity());
+
+  @Watch('headerCapacity')
+  @Watch('headerPresentation')
+  handleHeaderContractChange() {
+    this.syncHeaderVariant(true);
+  }
 
   componentDidLoad() {
-    // Resolve the already-laid-out page width before adopting a slotted header.
-    // Waiting for the first ResizeObserver/RAF lets BarTitle paint its default
-    // expanded variant for one frame when persistent shell chrome narrows a
-    // newly navigated page.
-    this.syncCapacity();
     this.observeHeader(this.findHeader());
-    this.connectObservers();
     this.connectScrollRoot();
-    this.layoutCoalescer.schedule();
   }
 
   componentDidRender() {
@@ -57,33 +61,32 @@ export class ShellPage {
   }
 
   disconnectedCallback() {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
     this.headerResizeObserver?.disconnect();
     this.headerResizeObserver = null;
+    this.headerMutationObserver?.disconnect();
+    this.headerMutationObserver = null;
     this.cancelHeaderReveal();
+    this.cancelHeaderGeometrySync();
     this.scrollRoot?.removeEventListener('scroll', this.handleScroll);
     this.scrollRoot = null;
-    this.layoutCoalescer.cancel();
   }
 
   private get effectiveVariant(): BarTitleVariant {
     return resolveShellPageHeaderVariant(
       this.headerPresentation,
-      this.capacity ?? 'roomy',
+      this.headerCapacity ?? 'roomy',
       this.pageTopVisible
     );
   }
 
-  private get isScrollCompacted(): boolean {
-    return this.headerPresentation === 'auto' && this.capacity === 'roomy' && !this.pageTopVisible;
+  private get headerContractResolved(): boolean {
+    return this.headerPresentation !== 'auto' || this.headerCapacity !== undefined;
   }
 
-  private connectObservers() {
-    if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => this.layoutCoalescer.schedule());
-      this.resizeObserver.observe(this.el);
-    }
+  private get isScrollCompacted(): boolean {
+    return (
+      this.headerPresentation === 'auto' && this.headerCapacity === 'roomy' && !this.pageTopVisible
+    );
   }
 
   private composedParent(element: Element): Element | null {
@@ -94,15 +97,19 @@ export class ShellPage {
     let ancestor = this.composedParent(this.el);
     while (ancestor && ancestor !== document.documentElement) {
       const overflow = getComputedStyle(ancestor).overflowY;
-      if (overflow === 'auto' || overflow === 'scroll') return ancestor as HTMLElement;
+      if (overflow === 'auto' || overflow === 'scroll' || overflow === 'overlay') {
+        return ancestor as HTMLElement;
+      }
       ancestor = this.composedParent(ancestor);
     }
     return window;
   }
 
   private connectScrollRoot() {
+    const next = this.findScrollRoot();
+    if (next === this.scrollRoot) return;
     this.scrollRoot?.removeEventListener('scroll', this.handleScroll);
-    this.scrollRoot = this.findScrollRoot();
+    this.scrollRoot = next;
     this.scrollRoot.addEventListener('scroll', this.handleScroll, { passive: true });
     this.handleScroll();
   }
@@ -111,35 +118,61 @@ export class ShellPage {
     if (!this.sentinelEl || !this.scrollRoot) return;
     const rootTop =
       this.scrollRoot === window ? 0 : (this.scrollRoot as HTMLElement).getBoundingClientRect().top;
-    this.pageTopVisible = this.sentinelEl.getBoundingClientRect().top >= rootTop;
+    const nextPageTopVisible = this.sentinelEl.getBoundingClientRect().top >= rootTop;
+    if (
+      !nextPageTopVisible &&
+      this.pageTopVisible &&
+      this.headerEl?.classList.contains(this.variantClass('expanded'))
+    ) {
+      this.captureExpandedHeaderGeometry(this.headerEl);
+      this.expandedGeometryFrozen = true;
+    }
+    if (
+      nextPageTopVisible &&
+      this.expandedGeometryFrozen &&
+      this.el.getBoundingClientRect().top >= rootTop
+    ) {
+      this.expandedGeometryFrozen = false;
+      if (this.headerEl?.classList.contains(this.variantClass('expanded'))) {
+        this.captureExpandedHeaderGeometry(this.headerEl);
+      }
+    }
+    this.pageTopVisible = nextPageTopVisible;
   };
 
   private findHeader(): BarTitleElement | null {
     return this.el.querySelector<BarTitleElement>('ds-bar-title');
   }
 
-  private syncCapacity() {
-    const inlineSize = this.el.getBoundingClientRect().width;
-    if (inlineSize <= 0) return;
-
-    const compactAt = resolveCssLengthPx('--dimension-panel-width-2xl', 0);
-    const constrainedAt = resolveCssLengthPx('--dimension-panel-width-lg', 0);
-    const hysteresis = resolveCssLengthPx('--dimension-space-100', 0);
-    if (compactAt <= 0 || constrainedAt <= 0) return;
-
-    const next = resolveShellPageCapacity({
-      inlineSize,
-      compactAt,
-      constrainedAt,
-      hysteresis,
-      previous: this.capacity,
-    });
-    if (next !== this.capacity) this.capacity = next;
-    else this.syncHeaderVariant();
-  }
-
   private get compactHeaderHeight(): number {
     return resolveCssLengthPx('--dimension-size-600', 0);
+  }
+
+  private setHeaderTravel(distance: number) {
+    const next = Math.max(0, distance);
+    if (Math.abs(next - this.headerTravel) < 0.5) return;
+    this.headerTravel = next;
+    this.el.style.setProperty('--ds-shell-page-header-travel', `${next}px`);
+    this.handleScroll();
+  }
+
+  private measureHeaderTravel(header: BarTitleElement) {
+    const anchor = header.querySelector<HTMLElement>('[data-shell-page-header-anchor]');
+    const compactHeight = this.compactHeaderHeight;
+    if (!anchor || compactHeight <= 0) return;
+
+    const headerRect = header.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    if (headerRect.height <= 0 || anchorRect.height <= 0) return;
+
+    const expandedAnchorTop = anchorRect.top - headerRect.top;
+    const compactAnchorTop = Math.max(0, (compactHeight - anchorRect.height) / 2);
+    this.setHeaderTravel(expandedAnchorTop - compactAnchorTop);
+  }
+
+  private captureExpandedHeaderGeometry(header: BarTitleElement) {
+    this.expandedHeaderHeight = header.getBoundingClientRect().height;
+    this.measureHeaderTravel(header);
   }
 
   private setSpacerHeight(height: number) {
@@ -151,6 +184,66 @@ export class ShellPage {
     return `bar-title-host--${variant}`;
   }
 
+  private setStickyHeaderOffset(renderedVariant: BarTitleVariant) {
+    this.stickyHeaderEl?.style.setProperty(
+      '--ds-shell-page-sticky-offset',
+      renderedVariant === 'expanded' &&
+        this.headerPresentation === 'auto' &&
+        this.headerCapacity === 'roomy'
+        ? `${-this.headerTravel}px`
+        : '0px'
+    );
+  }
+
+  private syncRenderedHeaderGeometry(header: BarTitleElement) {
+    const renderedVariant = this.effectiveVariant;
+    if (!header.classList.contains(this.variantClass(renderedVariant))) return;
+
+    // Update both flow-preservation pieces before reading layout. Otherwise a
+    // reverse compact → expanded render can briefly contain the tall header and
+    // the compact spacer together, giving browser scroll anchoring a transient
+    // height change to compensate.
+    this.setSpacerHeight(
+      this.isScrollCompacted ? this.expandedHeaderHeight - this.compactHeaderHeight : 0
+    );
+    this.setStickyHeaderOffset(renderedVariant);
+
+    if (renderedVariant === 'expanded' && !this.expandedGeometryFrozen) {
+      this.captureExpandedHeaderGeometry(header);
+      this.setStickyHeaderOffset(renderedVariant);
+    }
+  }
+
+  private cancelHeaderGeometrySync() {
+    if (this.headerGeometryFrame !== null) cancelAnimationFrame(this.headerGeometryFrame);
+    this.headerGeometryFrame = null;
+  }
+
+  private scheduleHeaderGeometrySync(header: BarTitleElement) {
+    this.cancelHeaderGeometrySync();
+    let framesRemaining = ShellPage.MAX_HEADER_GEOMETRY_FRAMES;
+    let framesElapsed = 0;
+    const sync = () => {
+      if (this.headerEl !== header) return;
+      framesRemaining -= 1;
+      framesElapsed += 1;
+      // In WebKit a child's componentDidLoad can precede its assignment into
+      // the parent's rendered slot. Revalidate after ShellApp has had a frame
+      // to expose the actual content scroller.
+      this.connectScrollRoot();
+      this.syncRenderedHeaderGeometry(header);
+      const geometryReady =
+        this.effectiveVariant !== 'expanded' ||
+        (this.expandedHeaderHeight > 0 && this.headerTravel > 0);
+      if ((geometryReady && framesElapsed >= 2) || framesRemaining <= 0) {
+        this.headerGeometryFrame = null;
+        return;
+      }
+      this.headerGeometryFrame = requestAnimationFrame(sync);
+    };
+    this.headerGeometryFrame = requestAnimationFrame(sync);
+  }
+
   private cancelHeaderReveal() {
     if (this.headerRevealFrame !== null) cancelAnimationFrame(this.headerRevealFrame);
     this.headerRevealFrame = null;
@@ -158,9 +251,8 @@ export class ShellPage {
   }
 
   private revealHeaderWhenSynced(header: BarTitleElement, variant: BarTitleVariant) {
-    // Stencil re-renders within a frame or two of a prop change, but this cap
-    // guarantees the header can never stay hidden indefinitely if that
-    // assumption ever breaks.
+    // Stencil normally re-renders within a frame or two of a prop change. Stop
+    // polling at the cap, but fail closed: a stale variant must never paint.
     let framesRemaining = ShellPage.MAX_HEADER_REVEAL_FRAMES;
     const reveal = () => {
       if (this.headerEl !== header) {
@@ -168,8 +260,12 @@ export class ShellPage {
         return;
       }
       framesRemaining -= 1;
-      if (framesRemaining <= 0 || header.classList.contains(this.variantClass(variant))) {
+      if (header.classList.contains(this.variantClass(variant))) {
         header.removeAttribute('data-shell-page-syncing');
+        this.headerRevealFrame = null;
+        return;
+      }
+      if (framesRemaining <= 0) {
         this.headerRevealFrame = null;
         return;
       }
@@ -182,43 +278,60 @@ export class ShellPage {
     const header = this.headerEl;
     if (!header) return;
 
-    const next = this.effectiveVariant;
-    if (header.variant === 'expanded') {
-      this.expandedHeaderHeight = header.getBoundingClientRect().height;
+    if (!this.headerContractResolved) {
+      this.cancelHeaderReveal();
+      header.setAttribute('data-shell-page-syncing', '');
+      return;
     }
 
-    this.setSpacerHeight(
-      this.isScrollCompacted ? this.expandedHeaderHeight - this.compactHeaderHeight : 0
-    );
-
+    const next = this.effectiveVariant;
     const renderedVariantIsStale = !header.classList.contains(this.variantClass(next));
-    if (concealUntilSynced && renderedVariantIsStale) {
+    if (!renderedVariantIsStale) this.syncRenderedHeaderGeometry(header);
+    if (concealUntilSynced) {
+      this.cancelHeaderReveal();
       header.setAttribute('data-shell-page-syncing', '');
     }
     if (header.variant !== next) header.variant = next;
-    if (concealUntilSynced && renderedVariantIsStale) {
+    if (concealUntilSynced) {
       this.revealHeaderWhenSynced(header, next);
     }
   }
 
   private observeHeader(header: BarTitleElement | null) {
     this.cancelHeaderReveal();
+    this.cancelHeaderGeometrySync();
     this.headerResizeObserver?.disconnect();
     this.headerResizeObserver = null;
+    this.headerMutationObserver?.disconnect();
+    this.headerMutationObserver = null;
     this.headerEl = header;
     this.expandedHeaderHeight = 0;
+    this.expandedGeometryFrozen = false;
+    this.setHeaderTravel(0);
     this.setSpacerHeight(0);
+    this.stickyHeaderEl?.style.setProperty('--ds-shell-page-sticky-offset', '0px');
 
     if (!header) return;
+    if (header.classList.contains(this.variantClass('expanded'))) {
+      this.captureExpandedHeaderGeometry(header);
+    }
     if (typeof ResizeObserver !== 'undefined') {
       this.headerResizeObserver = new ResizeObserver(() => {
-        if (header.variant === 'expanded') {
-          this.expandedHeaderHeight = header.getBoundingClientRect().height;
-        }
+        this.syncRenderedHeaderGeometry(header);
       });
       this.headerResizeObserver.observe(header);
     }
+    if (typeof MutationObserver !== 'undefined') {
+      this.headerMutationObserver = new MutationObserver(() => {
+        this.syncRenderedHeaderGeometry(header);
+      });
+      this.headerMutationObserver.observe(header, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    }
     this.syncHeaderVariant(true);
+    this.scheduleHeaderGeometrySync(header);
   }
 
   private handleHeaderSlotChange = (event: Event) => {
@@ -246,7 +359,12 @@ export class ShellPage {
           class="shell-page__scroll-sentinel"
           aria-hidden="true"
         />
-        <div class="shell-page__sticky-header">
+        <div
+          ref={el => {
+            this.stickyHeaderEl = el ?? null;
+          }}
+          class="shell-page__sticky-header"
+        >
           <slot name="header" onSlotchange={this.handleHeaderSlotChange} />
         </div>
         <div

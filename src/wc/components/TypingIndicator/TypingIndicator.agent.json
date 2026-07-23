@@ -23,12 +23,12 @@
     "pattern:conversation"
   ],
   "accessibility": [
-    "Provide concise localized status text that names the participant when that context is not otherwise clear.",
+    "Provide concise localized status text; the standard label is Typing followed by a three-dot ellipsis.",
     "The polite atomic status announces typing without representing it as a message bubble."
   ],
   "states": [
     "TypingIndicator is transient conversation status, never persisted message content.",
-    "Its body-small secondary text may shimmer, while reduced-motion preferences retain a static readable status."
+    "Its body-medium secondary text may shimmer, while reduced-motion preferences retain a static readable status."
   ],
   "responsiveBehavior": [
     "The indicator fills the message content width and wraps only when localized status text requires it."

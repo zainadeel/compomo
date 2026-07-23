@@ -63,7 +63,7 @@ export class Message {
             <div class="message__header">
               <slot name="header" />
               {this.author && this.showAuthor ? (
-                <ds-text as="span" variant="text-caption" emphasis color="primary">
+                <ds-text as="span" variant="text-body-small" emphasis color="primary">
                   {this.author}
                 </ds-text>
               ) : null}
@@ -80,6 +80,11 @@ export class Message {
                   color={this.deliveryState === 'failed' ? 'negative' : 'secondary'}
                 >
                   {delivery}
+                </ds-text>
+              ) : null}
+              {this.deliveryState === 'failed' && formattedTimestamp ? (
+                <ds-text as="span" variant="text-caption" color="tertiary" aria-hidden="true">
+                  ·
                 </ds-text>
               ) : null}
               {formattedTimestamp ? (

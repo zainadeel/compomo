@@ -12,4 +12,10 @@ const items = [
 
 document.getElementById('legend-one').items = items;
 document.getElementById('legend-two').items = items;
+const staticLegend = document.getElementById('legend-static');
+staticLegend.items = items;
+window.staticLegendHoverCount = 0;
+staticLegend.addEventListener('dsItemHover', () => {
+  window.staticLegendHoverCount += 1;
+});
 document.documentElement.dataset.ready = 'true';

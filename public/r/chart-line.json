@@ -39,6 +39,7 @@
       ],
       "commonlyComposedWith": [
         "component:ds-chart-legend",
+        "component:ds-card-data-viz-line",
         "component:ds-card-shell-data-viz",
         "component:ds-tooltip-data-viz"
       ],
@@ -49,11 +50,12 @@
       ],
       "states": [
         "The chart is currently static and does not own hover, selection, loading, or empty-state policy.",
+        "Its standard horizontal legend is a static key with local hover highlighting disabled.",
         "Point markers may be shown or hidden without changing the underlying series meaning.",
         "Authored series colors override the shared categorical palette."
       ],
       "responsiveBehavior": [
-        "The owner supplies dimensions and updates them when its layout changes.",
+        "The owner supplies intrinsic dimensions; the SVG preserves its aspect ratio while shrinking to fit a narrower parent.",
         "Category positions are always equally spaced, even when labels represent time.",
         "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
       ],
@@ -205,7 +207,7 @@
   "files": [
     {
       "path": "src/wc/components/ChartLine/ChartLine.css",
-      "content": ":host {\n  display: inline-block;\n  font-family: var(--typography-font-family);\n}\n\n.chart-line__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-line__axis-label {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-line__path {\n  fill: none;\n  stroke-width: 2;\n}\n\n.chart-line__point {\n  stroke: var(--color-background-primary);\n  stroke-width: 1.5;\n}\n",
+      "content": ":host {\n  display: inline-block;\n  max-width: 100%;\n  font-family: var(--typography-font-family);\n}\n\n.chart-line__svg {\n  display: block;\n  max-width: 100%;\n  height: auto;\n}\n\n.chart-line__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: 1;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-line__axis-label {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-line__path {\n  fill: none;\n  stroke-width: 2;\n}\n\n.chart-line__point {\n  stroke: var(--color-background-primary);\n  stroke-width: 1.5;\n}\n",
       "type": "registry:ui"
     },
     {

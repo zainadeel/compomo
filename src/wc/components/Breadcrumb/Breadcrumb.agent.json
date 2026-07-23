@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-breadcrumb",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-breadcrumb",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact hierarchical page navigation with native links or application-owned selection, optional current-page semantics, and slash separators.",
+  "useWhen": [
+    "A page needs to expose its hierarchical ancestors above the current page title.",
+    "Users need to move directly to a broader page in the current route hierarchy.",
+    "BarTitle expanded presentation needs an ancestor path instead of a directional Back button."
+  ],
+  "avoidWhen": [
+    "The navigation represents primary application destinations; use PanelNav or BarNav.",
+    "The choices switch peer views within the current page; use TabGroup or the BarTitle section selector.",
+    "Only a directional return command is needed in compact chrome; use the owning header's Back action.",
+    "The path would repeat the same current-page label already communicated by a nearby h1 without adding useful ancestors."
+  ],
+  "alternatives": [
+    {
+      "when": "The title and breadcrumb belong to responsive page chrome with page-level actions.",
+      "component": "component:ds-bar-title",
+      "reason": "BarTitle composes Breadcrumb in expanded mode and preserves compact Back behavior."
+    },
+    {
+      "when": "A small set of peer content views should remain directly selectable.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup communicates peer selection rather than route ancestry."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-bar-title",
+    "component:ds-text",
+    "component:ds-shell-page"
+  ],
+  "accessibility": [
+    "The component renders a named navigation landmark containing an ordered list.",
+    "Provide href for native navigation or handle dsSelect when the application router owns navigation.",
+    "Mark at most one item current; it renders without interaction and exposes aria-current=page.",
+    "Visible caption labels use secondary foreground and slash separators are decorative and hidden from assistive technology.",
+    "Every interactive item remains keyboard reachable and receives the shared focus ring."
+  ],
+  "states": [
+    "Items with href render native anchors; items without href render buttons and emit the same dsSelect detail.",
+    "Preventing dsSelect cancels native anchor navigation.",
+    "A current item is static text and never emits selection.",
+    "Links have no resting underline and add a quaternary-foreground solid underline on hover; focus remains communicated by the shared focus ring."
+  ],
+  "responsiveBehavior": [
+    "The path stays on one caption line and truncates long labels within the available width.",
+    "Width is protected newest-to-oldest: the oldest ancestor collapses to a literal ellipsis before the next ancestor yields width, and the current location truncates only after every ancestor reaches its minimum.",
+    "A fully collapsed item keeps its complete label available to assistive technology while rendering only the literal ellipsis visually.",
+    "Separators remain visible while labels yield width."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign items as a JavaScript property and replace its array identity when the route changes.",
+      "Use relative or absolute href values for native navigation; omit href when the host router handles dsSelect."
+    ],
+    "react": [
+      "Pass items to DsBreadcrumb and handle onDsSelect when navigation is application-owned."
+    ],
+    "angular": [
+      "Bind items on the standalone DsBreadcrumb adapter and handle dsSelect when navigation is application-owned."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Breadcrumb/Breadcrumb.stories.ts"
+    },
+    {
+      "label": "Expanded page-header composition",
+      "path": "src/wc/components/BarTitle/BarTitle.tsx"
+    }
+  ]
+}

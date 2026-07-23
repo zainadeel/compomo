@@ -214,4 +214,5 @@ ds-text.ds-choice-item__subtext {
 
 .ds-choice-footer__clear:hover {
   text-decoration: underline;
+  text-decoration-color: var(--color-foreground-tertiary);
 }

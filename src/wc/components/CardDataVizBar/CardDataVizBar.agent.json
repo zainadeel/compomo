@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-data-viz-bar",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-data-viz-bar",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Canonical bar-chart dashboard card with shared data-viz chrome, a filter action, a fill chart region, and an optional static legend.",
+  "useWhen": [
+    "A dashboard widget needs a regular, stacked, or percentage bar chart in the standard data-viz card.",
+    "A stacked bar chart needs a visible static series key beneath the chart."
+  ],
+  "avoidWhen": [
+    "The visualization needs selectable legend rows or chart-to-legend hover synchronization.",
+    "The product needs supporting metrics or an alternate chart layout beyond the chart and optional legend."
+  ],
+  "alternatives": [
+    {
+      "when": "The bar chart needs a custom layout without card chrome.",
+      "component": "component:ds-chart-bar",
+      "reason": "Compose ChartBar directly in the product-owned layout."
+    },
+    {
+      "when": "The visualization communicates change as continuous lines.",
+      "component": "component:ds-card-data-viz-line",
+      "reason": "CardDataVizLine owns the canonical line-chart card layout."
+    },
+    {
+      "when": "The visualization communicates parts of one total with synchronized slice emphasis.",
+      "component": "component:ds-card-data-viz-donut",
+      "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-shell-data-viz",
+    "component:ds-chart-bar",
+    "component:ds-chart-bar-stacked",
+    "component:ds-chart-legend",
+    "component:ds-button-unfilled"
+  ],
+  "accessibility": [
+    "Provide a concise heading that identifies the measure and meaningful visible labels for every legend entry.",
+    "Keep essential series and value context available textually rather than relying on bar color alone.",
+    "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
+  ],
+  "states": [
+    "The chart region fills the remaining card body while an optional legend remains content-sized.",
+    "The card disables local hover highlighting on a slotted ChartLegend because bar legends are static keys.",
+    "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
+    "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
+  ],
+  "responsiveBehavior": [
+    "The selected sm, md, or lg shell size controls the card dimensions while the bar chart shrinks within its chart region.",
+    "The horizontal legend wraps complete entries when the available width is constrained.",
+    "The parent dashboard owns card wrapping and breakpoint changes."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign data or series and categories as JavaScript properties, then place the bar chart and optional legend in their named slots."
+    ],
+    "react": [
+      "Keep filter and dataset state in the owner; pass the chart and optional legend with chart and legend slot attributes."
+    ],
+    "angular": [
+      "Keep filter and dataset state in the owner; project the chart and optional legend into the chart and legend slots."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CardDataVizBar/CardDataVizBar.stories.ts"
+    }
+  ]
+}
