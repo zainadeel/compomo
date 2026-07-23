@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.2.0](https://github.com/zainadeel/compomo/compare/v12.1.0...v12.2.0) (2026-07-23)
+
+
+### Added
+
+* expand prose and panel workflow foundations ([#368](https://github.com/zainadeel/compomo/issues/368)) ([48896a7](https://github.com/zainadeel/compomo/commit/48896a7484073f7e62a98e77d54fecafb2012d93))
+
 ## [12.1.0](https://github.com/zainadeel/compomo/compare/v12.0.0...v12.1.0) (2026-07-22)
 
 
