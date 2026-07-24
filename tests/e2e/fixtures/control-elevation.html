@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Control elevation e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <link rel="stylesheet" href="/dist/styles/control-elevation.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: var(--dimension-space-300);
+        background: var(--color-background-primary);
+        color: var(--color-foreground-primary);
+      }
+
+      .fixture-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: var(--dimension-space-300);
+      }
+
+      .fixture {
+        display: inline-flex;
+        box-sizing: border-box;
+        border-radius: var(--dimension-radius-half);
+      }
+
+      .fixture--wide {
+        inline-size: var(--dimension-menu-width-sm);
+      }
+
+      .fixture--blurred {
+        background: var(--color-background-transparent);
+        -webkit-backdrop-filter: blur(var(--effect-blur-sm));
+        backdrop-filter: blur(var(--effect-blur-sm));
+      }
+
+      .fixture--input {
+        border-radius: var(--dimension-radius-025);
+        background: var(--color-background-primary);
+      }
+
+      .fixture--input ds-input {
+        inline-size: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="fixture-grid">
+      <div
+        id="opaque-wrapper"
+        class="fixture fixture--wide ds-control-elevation ds-control-elevation--md"
+      >
+        <ds-button-filled
+          id="opaque-control"
+          variant="icon-label"
+          icon="Plus"
+          label="New conversation"
+          width="fill"
+          rounded
+          aria-label="New conversation"
+        ></ds-button-filled>
+      </div>
+
+      <div
+        id="blur-wrapper"
+        class="fixture fixture--blurred ds-control-elevation ds-control-elevation--md"
+      >
+        <ds-button-unfilled
+          id="blur-control"
+          variant="icon"
+          icon="ChevronDown"
+          rounded
+          aria-label="Scroll to latest"
+        ></ds-button-unfilled>
+      </div>
+
+      <div
+        id="input-rest-wrapper"
+        class="fixture fixture--wide fixture--input ds-control-elevation ds-control-elevation--md"
+      >
+        <ds-input
+          id="input-rest"
+          placeholder="Resting input"
+          aria-label="Resting wrapped input"
+        ></ds-input>
+      </div>
+
+      <div
+        id="input-focus-wrapper"
+        class="fixture fixture--wide fixture--input ds-control-elevation ds-control-elevation--md"
+      >
+        <ds-input
+          id="input-focus"
+          placeholder="Focused input"
+          aria-label="Focused wrapped input"
+        ></ds-input>
+      </div>
+
+      <div
+        id="input-error-wrapper"
+        class="fixture fixture--wide fixture--input ds-control-elevation ds-control-elevation--md"
+      >
+        <ds-input
+          id="input-error"
+          placeholder="Error input"
+          aria-label="Invalid wrapped input"
+        ></ds-input>
+      </div>
+    </main>
+    <script type="module" src="/control-elevation-setup.mjs"></script>
+  </body>
+</html>

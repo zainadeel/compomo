@@ -1,3 +1,5 @@
+@import '../../styles/control-elevation.css';
+
 :host {
   display: block;
   width: 100%;
@@ -66,7 +68,6 @@
   justify-content: center;
   border-radius: var(--dimension-radius-half);
   background: var(--color-background-transparent);
-  box-shadow: var(--effect-elevation-elevated-md);
   transform: translateX(-50%);
   -webkit-backdrop-filter: blur(var(--effect-blur-sm));
   backdrop-filter: blur(var(--effect-blur-sm));

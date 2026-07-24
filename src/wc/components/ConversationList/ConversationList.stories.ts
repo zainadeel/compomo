@@ -64,6 +64,7 @@ export const GroupedHistory: Story = {
           label="New conversation"
           rounded
           width="fill"
+          .hasBorder=${false}
           aria-label="New conversation"
         ></ds-button-filled>
       </ds-conversation-list>
@@ -85,6 +86,7 @@ export const Empty: Story = {
           variant="icon"
           icon="SquarePencil"
           rounded
+          .hasBorder=${false}
           aria-label="New conversation"
         ></ds-button-filled>
       </ds-conversation-list>

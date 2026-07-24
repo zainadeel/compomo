@@ -159,6 +159,11 @@ try {
     const utils = await import('@ds-mo/ui/utils');
     const agent = await import('@ds-mo/ui/agent', { with: { type: 'json' } });
     const patterns = await import('@ds-mo/ui/agent/patterns', { with: { type: 'json' } });
+    const { readFileSync } = await import('node:fs');
+    const controlElevationCss = readFileSync(
+      new URL(import.meta.resolve('@ds-mo/ui/control-elevation.css')),
+      'utf8',
+    );
     for (const [surface, value] of [
       ['native', native.DsButtonFilled],
       ['angular', angular.DsButtonFilled],
@@ -170,6 +175,10 @@ try {
       ['toast manager', toast.toastManager?.add],
       ['toast manager factory', toast.createToastManager],
       ['utils', utils.resolveCssLengthPx],
+      [
+        'control elevation stylesheet',
+        controlElevationCss.includes('.ds-control-elevation--floating'),
+      ],
       ['agent manifest', agent.default?.entries?.length],
       ['agent pattern manifest', patterns.default?.entries?.length],
     ]) {

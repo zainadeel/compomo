@@ -28,7 +28,8 @@
     "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
     "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
     "The title uses body-medium, not title-small, and the body-small preview truncates after one line. Unread titles use emphasis with primary foreground; read titles use regular weight with secondary foreground.",
-    "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
+    "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active.",
+    "Contextual actions use the shared md control-elevation wrapper so their transparent backdrop blur is unchanged while the split inset highlight remains above the borderless slotted action."
   ],
   "responsiveBehavior": ["Long titles and previews truncate without displacing trailing status."],
   "references": [

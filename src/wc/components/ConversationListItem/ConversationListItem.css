@@ -1,4 +1,5 @@
 @import '../../utils/choice-list.css';
+@import '../../styles/control-elevation.css';
 
 :host {
   display: block;
@@ -96,7 +97,6 @@ ds-text.conversation-list-item__preview.ds-choice-item__subtext {
   justify-content: center;
   border-radius: var(--dimension-radius-half);
   background: var(--color-background-transparent);
-  box-shadow: var(--effect-elevation-elevated-md);
   -webkit-backdrop-filter: blur(var(--effect-blur-sm));
   backdrop-filter: blur(var(--effect-blur-sm));
   opacity: 0;

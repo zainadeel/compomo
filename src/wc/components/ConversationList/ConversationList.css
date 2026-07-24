@@ -1,3 +1,5 @@
+@import '../../styles/control-elevation.css';
+
 :host {
   display: block;
   position: relative;
@@ -93,7 +95,6 @@
 .conversation-list__actions-surface {
   display: flex;
   border-radius: var(--dimension-radius-half);
-  box-shadow: var(--effect-elevation-elevated-md);
 }
 
 .conversation-list__actions--footer .conversation-list__actions-surface {

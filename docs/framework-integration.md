@@ -14,7 +14,23 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 | Angular | `@ds-mo/ui/angular/ds-*` | Standalone adapter per component; preferred for tree shaking |
 | React | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … |
 
-There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. The deliberate exception is the renderer-neutral `@ds-mo/ui/prose.css` export for safe semantic document trees.
+There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. Deliberate renderer-neutral exports include `@ds-mo/ui/prose.css` for safe semantic document trees and `@ds-mo/ui/control-elevation.css` for elevated wrappers around controls.
+
+## Elevated control wrappers
+
+Import the stylesheet once, then apply the base class plus one `sm`, `md`, or `floating` level to an application-owned wrapper:
+
+```css
+@import '@ds-mo/ui/control-elevation.css';
+```
+
+```html
+<div class="contact-action ds-control-elevation ds-control-elevation--md">
+  <ds-button-filled label="Contact support" has-border="false"></ds-button-filled>
+</div>
+```
+
+The utility places the split outer shadow on the wrapper and TokoMo's inset highlight on a non-interactive top overlay. It does not impose layout, radius, background, blur, or animation. The owner keeps those concerns and disables optional resting borders on wrapped controls. A wrapped Input uses `hasBorder="false"` at rest while its own focus and error strokes remain rendered beneath the topmost elevation highlight.
 
 ## Renderer-neutral prose
 

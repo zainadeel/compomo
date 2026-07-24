@@ -1,1 +1,42 @@
-{"$schema":"../../../../agent/schemas/component-agent.schema.json","schemaVersion":"1.0.0","id":"component:ds-conversation-list","kind":"component","package":"@ds-mo/ui","tag":"ds-conversation-list","audience":"general","status":"experimental","summary":"Scrollable conversation-list region with dedicated empty and persistent action placement.","useWhen":["A messaging-like surface needs a reusable history list with empty and action regions."],"avoidWhen":["The content is not a collection of conversations or threads."],"commonlyComposedWith":["component:ds-conversation-list-section","component:ds-conversation-list-item","component:ds-empty-state","component:ds-scroll-overlay"],"patterns":["pattern:conversation"],"accessibility":["Provide an accessible list label through the surrounding heading or region.","Keep the empty message descriptive and every persistent action explicitly named."],"states":["The default floating action stays at the lower end corner.","actionLayout footer stretches a long action between 8px side and bottom insets.","Both action layouts share the always-active scroll-overlay fade controller, reserve measured end clearance, and begin fading 8px before the visible action.","ConversationList paints its measured fade on a separate surface-aware layer so contextual row actions retain a real backdrop for blur; hovered, focused, and menu-open rows rise above that decorative fade."],"responsiveBehavior":["The list fills its owner, scrolls independently, and keeps its persistent action above scrolling rows."],"references":[{"label":"Storybook examples","path":"src/wc/components/ConversationList/ConversationList.stories.ts"}]}
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-conversation-list",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-conversation-list",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Scrollable conversation-list region with dedicated empty and persistent action placement.",
+  "useWhen": [
+    "A messaging-like surface needs a reusable history list with empty and action regions."
+  ],
+  "avoidWhen": ["The content is not a collection of conversations or threads."],
+  "commonlyComposedWith": [
+    "component:ds-conversation-list-section",
+    "component:ds-conversation-list-item",
+    "component:ds-empty-state",
+    "component:ds-scroll-overlay"
+  ],
+  "patterns": ["pattern:conversation"],
+  "accessibility": [
+    "Provide an accessible list label through the surrounding heading or region.",
+    "Keep the empty message descriptive and every persistent action explicitly named."
+  ],
+  "states": [
+    "The default floating action stays at the lower end corner.",
+    "actionLayout footer stretches a long action between 8px side and bottom insets.",
+    "Both action layouts share the always-active scroll-overlay fade controller, reserve measured end clearance, and begin fading 8px before the visible action.",
+    "ConversationList paints its measured fade on a separate surface-aware layer so contextual row actions retain a real backdrop for blur; hovered, focused, and menu-open rows rise above that decorative fade.",
+    "The persistent action wrapper splits its md outer shadow from a top inset-highlight overlay so opaque filled actions keep the complete TokoMo elevation; slotted controls must disable optional resting borders."
+  ],
+  "responsiveBehavior": [
+    "The list fills its owner, scrolls independently, and keeps its persistent action above scrolling rows."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
+    }
+  ]
+}

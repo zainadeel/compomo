@@ -1,0 +1,40 @@
+/*
+ * Elevated wrapper chrome for controls whose opaque child surface can cover
+ * the inset highlight in a combined `--effect-elevation-*` box shadow.
+ *
+ * Import `@ds-mo/ui/control-elevation.css`, apply `.ds-control-elevation`, and
+ * select one level modifier. The owner still supplies layout, radius, surface,
+ * and any backdrop blur. Keep wrapped controls' optional resting borders off.
+ */
+
+.ds-control-elevation {
+  position: relative;
+  overflow: visible;
+  box-shadow: var(--ds-control-elevation-shadow, none);
+}
+
+.ds-control-elevation::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Topmost local chrome: above selected, focus, error, hover, and press strokes. */
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow: var(--ds-control-elevation-highlight, none);
+  pointer-events: none;
+}
+
+.ds-control-elevation--sm {
+  --ds-control-elevation-shadow: var(--effect-shadow-elevated-sm);
+  --ds-control-elevation-highlight: var(--effect-highlight-elevated-sm);
+}
+
+.ds-control-elevation--md {
+  --ds-control-elevation-shadow: var(--effect-shadow-elevated-md);
+  --ds-control-elevation-highlight: var(--effect-highlight-elevated-md);
+}
+
+.ds-control-elevation--floating {
+  --ds-control-elevation-shadow: var(--effect-shadow-elevated-floating);
+  --ds-control-elevation-highlight: var(--effect-highlight-elevated-floating);
+}

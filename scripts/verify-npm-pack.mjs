@@ -14,6 +14,7 @@ const REQUIRED_PATHS = [
   'dist/lib/toast/index.d.ts',
   'dist/lib/utils/index.js',
   'dist/lib/utils/index.d.ts',
+  'dist/styles/control-elevation.css',
   'dist/styles/prose.css',
   'dist/react/components.js',
   'dist/react/components.d.ts',

@@ -105,7 +105,7 @@ The Stencil compiler (`stencil.config.ts`) builds from `src/wc/`:
 6. Runs React output target → regenerates `src/react/`, verifies the proxy inventory, and compiles it to `dist/react/`; the inventory is verified again at the end of the build
 7. Compiles `src/framework/angular.ts` to the public Angular barrel in `dist/framework/`
 8. Compiles the framework-neutral toast manager from `src/wc/toast/` to the public `@ds-mo/ui/toast` subpath
-9. Copies renderer-neutral public CSS surfaces from `src/wc/styles/` to `dist/styles/`; `@ds-mo/ui/prose.css` is the safe-semantic-DOM prose recipe
+9. Copies renderer-neutral public CSS surfaces from `src/wc/styles/` to `dist/styles/`; `@ds-mo/ui/prose.css` is the safe-semantic-DOM prose recipe and `@ds-mo/ui/control-elevation.css` is the elevated control-wrapper recipe
 10. Regenerates `public/r/` from compiler facts + component intent and emits component and executable-pattern manifests at `dist/agent.json` and `dist/agent-patterns.json`
 11. Bundles the local stdio MCP executable and its generated registry snapshot into `dist/mcp/` and `dist/mcp-data/`; consumers run it through the published `compomo-mcp` binary
 
@@ -130,6 +130,7 @@ Package `exports`:
   },
   "./shell": { "import": "./dist/lib/shell/index.js", "types": "./dist/lib/shell/index.d.ts" },
  "./toast": { "import": "./dist/lib/toast/index.js", "types": "./dist/lib/toast/index.d.ts" },
+ "./control-elevation.css": "./dist/styles/control-elevation.css",
  "./prose.css": "./dist/styles/prose.css",
  "./utils": { "import": "./dist/lib/utils/index.js", "types": "./dist/lib/utils/index.d.ts" },
   "./dist/components/*": "./dist/components/*"
@@ -584,6 +585,17 @@ Rules:
 - Omit `.ds-interaction-fill` when `isInactive`, or rely on `:disabled` (util skips hover/press on `:disabled`).
 - Persistent selected _product_ state (e.g. Menu item `--selected`) may still use `::before` / a real background; hover continues to overlay via `::after`. Chip is dismiss-only, has no select/toggle state, and is used only on primary surfaces.
 - **Inset borders on interaction targets:** paint the stroke on `::after` via `--ds-interaction-border-*` or `.ds-interaction-fill--bordered` so it stays visible **above** selected and hover washes. Do **not** put an inset `box-shadow` on the element itself (that layer sits under `::before` and gets covered when selected). Do **not** use a layout `border` on elements that also use `.ds-interaction-fill` — a real border paints outside the padding box and leaves a 1px halo outside the fill. Outer shells that are _not_ interaction targets (e.g. TabGroup `.tab-list` track) may keep a real border if they already compensate with padding math; interactive children must still use the util stroke.
+
+**Control elevation wrappers**
+
+Use `src/wc/styles/control-elevation.css` inside CompoMo or import the public `@ds-mo/ui/control-elevation.css` surface in an application. Apply `.ds-control-elevation` plus exactly one level: `--sm`, `--md`, or `--floating`.
+
+- The wrapper paints only `--effect-shadow-elevated-*`; its `::after` overlay paints the matching `--effect-highlight-elevated-*` above opaque children with `pointer-events: none`. Never also apply the combined `--effect-elevation-*` token.
+- The utility owns no layout, radius, background, blur, clipping, or motion. The owning wrapper sets those properties, and the overlay inherits its radius.
+- Use it only when elevation lives on a wrapper around a separate control surface, such as ConversationList actions, MessageScroller's Scroll to latest control, or ConversationListItem contextual actions. Do not migrate surfaces that paint their own background and elevation on the same element unless rendering proves their highlight is obscured.
+- Wrapped `ds-button-filled` and `ds-button-unfilled` controls pass `hasBorder={false}` explicitly; the elevation wrapper owns the resting edge. Other wrapped controls likewise disable optional resting borders.
+- A wrapped `ds-input` uses `hasBorder={false}` at rest. Its internal focus/error interaction stroke must stay complete beneath the wrapper highlight; never remove those state indicators. The wrapper highlight is the topmost local chrome layer, including above selected, focus, error, hover, and press strokes.
+- Do not add masks, filters, or a new backdrop root to the utility. Contextual wrappers continue to own their existing `backdrop-filter`, geometry, tooltip anchoring, and click/focus behavior.
 
 **Control inactive**
 
