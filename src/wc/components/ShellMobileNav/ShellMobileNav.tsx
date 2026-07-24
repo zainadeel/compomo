@@ -123,12 +123,29 @@ export class ShellMobileNav {
                 aria-current={selected ? 'page' : undefined}
                 onClick={() => this.dsAreaSelect.emit(item.id)}
               >
-                <ds-icon name={item.icon} size="md" color="inherit" />
-                <ds-text as="span" variant="text-body-medium" emphasis color="inherit">
+                <ds-icon
+                  class="ds-interaction-fill__content"
+                  name={item.icon}
+                  size="md"
+                  color="inherit"
+                />
+                <ds-text
+                  class="ds-interaction-fill__content"
+                  as="span"
+                  variant="text-body-medium"
+                  emphasis
+                  color="inherit"
+                >
                   {item.label}
                 </ds-text>
                 {item.dot && (
-                  <ds-badge class="shell-mobile-nav__dot" variant="dot" hasRing={false} label="" aria-hidden="true" />
+                  <ds-badge
+                    class="shell-mobile-nav__dot ds-interaction-fill__content"
+                    variant="dot"
+                    hasRing={false}
+                    label=""
+                    aria-hidden="true"
+                  />
                 )}
               </button>
             );
@@ -173,8 +190,19 @@ export class ShellMobileNav {
               class="shell-mobile-nav__auxiliary ds-control--md ds-focus-ring-inset ds-interaction-fill"
               onClick={event => this.selectAuxiliary('help', event)}
             >
-              <ds-icon name="CircleQuestion" size="md" color="inherit" />
-              <ds-text as="span" variant="text-body-medium" emphasis color="inherit">
+              <ds-icon
+                class="ds-interaction-fill__content"
+                name="CircleQuestion"
+                size="md"
+                color="inherit"
+              />
+              <ds-text
+                class="ds-interaction-fill__content"
+                as="span"
+                variant="text-body-medium"
+                emphasis
+                color="inherit"
+              >
                 {this.helpLabel}
               </ds-text>
             </button>
@@ -183,8 +211,19 @@ export class ShellMobileNav {
               class="shell-mobile-nav__auxiliary ds-control--md ds-focus-ring-inset ds-interaction-fill"
               onClick={event => this.selectAuxiliary('account', event)}
             >
-              <ds-icon name="Avatar" size="md" color="inherit" />
-              <ds-text as="span" variant="text-body-medium" emphasis color="inherit">
+              <ds-icon
+                class="ds-interaction-fill__content"
+                name="Avatar"
+                size="md"
+                color="inherit"
+              />
+              <ds-text
+                class="ds-interaction-fill__content"
+                as="span"
+                variant="text-body-medium"
+                emphasis
+                color="inherit"
+              >
                 {this.accountLabel}
               </ds-text>
             </button>

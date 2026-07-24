@@ -13,14 +13,19 @@
   "commonlyComposedWith": ["component:ds-shell-app"],
   "patterns": ["pattern:application-shell"],
   "accessibility": [
-    "Every item keeps a visible label and accessible name.",
+    "Every icon-only item keeps a localized accessible name.",
     "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
   ],
   "states": [
-    "The item order is fixed: Menu, current area, Search, Agents, Inbox.",
+    "The fixed groups are Menu plus current area, followed by Search, Inbox, and Agents.",
+    "Selection promotes foreground to primary without painting a selected fill; unselected destinations use tertiary foreground.",
+    "Opening navigation replaces the Menu glyph with Cross while preserving its accessible name.",
     "Reselecting an active destination does not reset its nested state."
   ],
-  "responsiveBehavior": ["Render only below the mobile breakpoint and preserve safe-area clearance."],
+  "responsiveBehavior": [
+    "Render only below the mobile breakpoint and preserve safe-area clearance.",
+    "The two icon-only control groups remain centered with fixed 40px targets and a divider between Menu and current area."
+  ],
   "references": [
     {
       "label": "Storybook",

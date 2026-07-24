@@ -26,7 +26,12 @@
   background: var(--color-background-primary);
 }
 
+.shell-tools__mobile-header {
+  grid-row: 1;
+}
+
 .shell-tools__inbox-nav {
+  grid-row: 2;
   padding: var(--dimension-space-100);
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   background: var(--color-background-primary);
@@ -40,6 +45,7 @@
 }
 
 .shell-tools__mobile-body {
+  grid-row: 3;
   overflow: hidden;
 }
 

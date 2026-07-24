@@ -57,8 +57,8 @@ export class ShellMobileBar {
         dot: false,
       },
       { id: 'search', icon: 'MagnifyingGlass', label: this.searchLabel, dot: this.searchDot },
-      { id: 'agents', icon: 'AI', label: this.agentsLabel, dot: this.agentsDot },
       { id: 'inbox', icon: 'Inbox', label: this.inboxLabel, dot: this.inboxDot },
+      { id: 'agents', icon: 'AI', label: this.agentsLabel, dot: this.agentsDot },
     ];
   }
 
@@ -98,55 +98,56 @@ export class ShellMobileBar {
           'shell-mobile-bar__item--selected': selected,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
-          'ds-interaction-fill--selected': selected,
         }}
+        aria-label={item.label}
         aria-current={selected ? 'page' : undefined}
         onClick={() => this.selectDestination(item.id)}
       >
-        <span class="shell-mobile-bar__icon">
-          <ds-icon name={item.icon} size="md" color="inherit" />
+        <span class="shell-mobile-bar__icon ds-interaction-fill__content">
+          <ds-icon name={item.icon} size="lg" color="inherit" />
           {item.dot && (
             <ds-badge class="shell-mobile-bar__dot" variant="dot" label="" aria-hidden="true" />
           )}
         </span>
-        <ds-text as="span" variant="text-caption" color="inherit" lineTruncation={1}>
-          {item.label}
-        </ds-text>
       </button>
     );
   }
 
   render() {
+    const [currentArea, ...tools] = this.destinationConfig();
+
     return (
       <Host>
         <nav class="shell-mobile-bar" aria-label="Primary">
-          <button
-            id="ds-shell-mobile-navigation-trigger"
-            type="button"
-            class={{
-              'shell-mobile-bar__item': true,
-              'shell-mobile-bar__item--selected': this.navigationExpanded,
-              'ds-focus-ring-inset': true,
-              'ds-interaction-fill': true,
-              'ds-interaction-fill--selected': this.navigationExpanded,
-            }}
-            aria-expanded={String(this.navigationExpanded)}
-            aria-controls="ds-shell-mobile-navigation"
-            onClick={() => this.dsNavigationToggle.emit(!this.navigationExpanded)}
-          >
-            <span class="shell-mobile-bar__icon">
-              <ds-icon name="Hamburger" size="md" color="inherit" />
-            </span>
-            <ds-text
-              as="span"
-              variant="text-caption"
-              color="inherit"
-              lineTruncation={1}
+          <div class="shell-mobile-bar__group shell-mobile-bar__group--context">
+            <button
+              id="ds-shell-mobile-navigation-trigger"
+              type="button"
+              class={{
+                'shell-mobile-bar__item': true,
+                'shell-mobile-bar__item--selected': this.navigationExpanded,
+                'ds-focus-ring-inset': true,
+                'ds-interaction-fill': true,
+              }}
+              aria-label={this.menuLabel}
+              aria-expanded={String(this.navigationExpanded)}
+              aria-controls="ds-shell-mobile-navigation"
+              onClick={() => this.dsNavigationToggle.emit(!this.navigationExpanded)}
             >
-              {this.menuLabel}
-            </ds-text>
-          </button>
-          {this.destinationConfig().map(item => this.renderDestination(item))}
+              <span class="shell-mobile-bar__icon ds-interaction-fill__content">
+                <ds-icon
+                  name={this.navigationExpanded ? 'Cross' : 'Hamburger'}
+                  size="lg"
+                  color="inherit"
+                />
+              </span>
+            </button>
+            <span class="shell-mobile-bar__divider" aria-hidden="true" />
+            {this.renderDestination(currentArea)}
+          </div>
+          <div class="shell-mobile-bar__group shell-mobile-bar__group--tools">
+            {tools.map(item => this.renderDestination(item))}
+          </div>
         </nav>
       </Host>
     );

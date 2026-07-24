@@ -110,6 +110,7 @@ export class ShellMobileSectionNav {
                       'shell-mobile-section-nav__tab--selected': selected,
                       'ds-focus-ring-inset': true,
                       'ds-interaction-fill': true,
+                      'ds-interaction-fill--selected': selected,
                     }}
                     data-section-id={tab.id}
                     disabled={tab.isInactive}
@@ -117,15 +118,21 @@ export class ShellMobileSectionNav {
                     onClick={() => this.selectTab(tab.id, tab.isInactive)}
                   >
                     <ds-text
+                      class="ds-interaction-fill__content"
                       as="span"
                       variant="text-body-medium"
-                      emphasis={selected}
                       color="inherit"
                     >
                       {tab.label}
                     </ds-text>
                     {tab.dot && (
-                      <ds-badge class="shell-mobile-section-nav__dot" variant="dot" hasRing={false} label="" aria-hidden="true" />
+                      <ds-badge
+                        class="shell-mobile-section-nav__dot ds-interaction-fill__content"
+                        variant="dot"
+                        hasRing={false}
+                        label=""
+                        aria-hidden="true"
+                      />
                     )}
                   </button>
                 );
