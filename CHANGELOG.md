@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.0](https://github.com/zainadeel/compomo/compare/v12.4.1...v12.5.0) (2026-07-24)
+
+
+### Added
+
+* add shared control elevation utility ([#377](https://github.com/zainadeel/compomo/issues/377)) ([cd7235f](https://github.com/zainadeel/compomo/commit/cd7235f9928c0d4bd23b438e8da182635813c418)), closes [#367](https://github.com/zainadeel/compomo/issues/367)
+
 ## [12.4.1](https://github.com/zainadeel/compomo/compare/v12.4.0...v12.4.1) (2026-07-24)
 
 
