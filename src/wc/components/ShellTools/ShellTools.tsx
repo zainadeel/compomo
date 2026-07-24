@@ -245,7 +245,7 @@ export class ShellTools {
         ? configuredTitle
         : this.inboxLabel
       : configuredTitle || PANEL_TOOLS_LABELS[tool];
-    const actions = header.actions ?? [];
+    const actions = (header.actions ?? []).filter(action => action.id !== 'fullscreen');
 
     return (
       <ds-panel-tool-header
@@ -317,13 +317,20 @@ export class ShellTools {
   }
 
   render() {
+    const mobile = this.responsiveMode === 'mobile';
     return (
       <Host
-        role={this.presentation === 'fullscreen' ? 'dialog' : 'complementary'}
-        aria-modal={this.presentation === 'fullscreen' ? 'true' : undefined}
-        aria-label={this.toolsLabel}
+        role={
+          mobile
+            ? this.presentation === 'fullscreen'
+              ? 'dialog'
+              : 'complementary'
+            : undefined
+        }
+        aria-modal={mobile && this.presentation === 'fullscreen' ? 'true' : undefined}
+        aria-label={mobile ? this.toolsLabel : undefined}
       >
-        {this.responsiveMode === 'mobile' ? this.renderMobile() : this.renderDesktop()}
+        {mobile ? this.renderMobile() : this.renderDesktop()}
       </Host>
     );
   }

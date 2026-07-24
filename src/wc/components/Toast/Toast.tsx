@@ -87,6 +87,9 @@ export class Toast {
   @Prop() label: string = 'Notifications';
   /** Localized accessible label for every toast close action. */
   @Prop() closeLabel: string = 'Close notification';
+  /** Keep the global stack 16px above the persistent mobile shell bar below 768px. */
+  @Prop({ attribute: 'avoid-mobile-shell-bar', reflect: true })
+  avoidMobileShellBar: boolean = false;
   /** Allowed swipe-to-dismiss directions. Assign as a JavaScript property. */
   @Prop() swipeDirections: ToastSwipeDirection[] = ['down', 'right'];
 

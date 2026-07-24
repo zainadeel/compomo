@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsToast } from '@ds-mo/ui/components/ds-to
 
 @ProxyCmp({
   defineCustomElementFn: defineDsToast,
-  inputs: ['closeLabel', 'label', 'limit', 'manager', 'swipeDirections', 'timeout']
+  inputs: ['avoidMobileShellBar', 'closeLabel', 'label', 'limit', 'manager', 'swipeDirections', 'timeout']
 })
 @Component({
   selector: 'ds-toast',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['closeLabel', 'label', 'limit', 'manager', 'swipeDirections', 'timeout'],
+  inputs: ['avoidMobileShellBar', 'closeLabel', 'label', 'limit', 'manager', 'swipeDirections', 'timeout'],
   outputs: ['dsToastClose', 'dsToastRemove', 'dsToastAction'],
 })
 export class DsToast {
