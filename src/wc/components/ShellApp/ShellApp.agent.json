@@ -10,7 +10,7 @@
   "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
   "useWhen": [
     "Building any standard authenticated product or workspace page with CompoMo.",
-    "PanelNav, BarNav, PanelTools, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
+    "PanelNav, BarNav, ShellTools, mobile navigation, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
     "Future application templates need the supported base-page composition boundary."
   ],
   "avoidWhen": [
@@ -22,6 +22,10 @@
     "component:ds-panel-nav",
     "component:ds-bar-nav",
     "component:ds-panel-tools",
+    "component:ds-shell-tools",
+    "component:ds-shell-mobile-nav",
+    "component:ds-shell-mobile-section-nav",
+    "component:ds-shell-mobile-bar",
     "component:ds-shell-page",
     "component:ds-swatch-picker"
   ],
@@ -29,16 +33,17 @@
   "accessibility": [
     "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
     "Ensure the default content region contains the page's single main landmark.",
-    "Keep PanelNav, BarNav, and PanelTools chrome available in the shell's supported desktop and tablet compositions.",
+    "Keep PanelNav, BarNav, and PanelTools-compatible chrome available in desktop and tablet compositions and the persistent mobile bar available below 768px.",
     "Do not override browser keyboard chords when enabling shell shortcuts.",
     "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
     "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
   ],
   "states": [
     "Render exactly one ShellApp as the workspace root and never nest it.",
-    "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
+    "PanelNav, BarNav, and ShellTools are the responsive shell regions; ShellTools contains at least Search and Help even when no additional product tools apply.",
     "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-    "ShellApp propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
+    "ShellApp propagates navStyle and resolved responsive mode and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and mobile-stage visibility.",
+    "The application controls mobileDestination and mobileNavigationOpen and keeps router state independent from global tool-surface changes.",
     "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
     "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
     "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
@@ -51,9 +56,10 @@
     "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
     "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
     "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
-    "On mobile, ShellApp remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
+    "On mobile, ShellApp hides and inerts PanelNav and BarNav, uses a solid primary stage, and composes MobileNav, MobileSectionNav, ShellTools, and the persistent five-item MobileBar.",
+    "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
     "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
-    "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until ShellApp provides it."
+    "The bottom bar remains visible at all route and tool depths in the foundation release."
   ],
   "frameworkCaveats": {
     "customElements": [
@@ -61,7 +67,7 @@
       "Stamp route-derived nav-style before components connect when deterministic first paint is required."
     ],
     "react": [
-      "Use generated wrappers and preserve native slot names for PanelNav, BarNav, PanelTools, and main content.",
+      "Use generated wrappers and preserve native slot names for desktop navigation, responsive tools, mobile navigation, and main content.",
       "Resolve all shell inputs from one router state before rendering the composition."
     ],
     "angular": [

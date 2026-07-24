@@ -1,0 +1,86 @@
+@import '../../utils/control-density.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--color-background-primary);
+}
+
+:host(:not([open])) {
+  display: none;
+}
+
+.shell-mobile-nav {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-background-primary);
+}
+
+.shell-mobile-nav__header {
+  display: grid;
+  gap: var(--dimension-space-100);
+  padding: var(--dimension-space-200);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.shell-mobile-nav__body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: var(--dimension-space-100);
+}
+
+.shell-mobile-nav__group + .shell-mobile-nav__group {
+  margin-block-start: var(--dimension-space-200);
+}
+
+.shell-mobile-nav__group-label {
+  display: block;
+  padding: 0 var(--dimension-space-100) var(--dimension-space-050);
+}
+
+.shell-mobile-nav__items {
+  display: grid;
+  gap: var(--dimension-space-025);
+}
+
+.shell-mobile-nav__area,
+.shell-mobile-nav__auxiliary {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--color-foreground-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--ds-control-content-gap);
+  padding-inline: var(--dimension-space-100);
+  cursor: pointer;
+  text-align: start;
+}
+
+.shell-mobile-nav__area--selected {
+  color: var(--color-foreground-primary);
+}
+
+.shell-mobile-nav__dot {
+  width: var(--dimension-size-075);
+  height: var(--dimension-size-075);
+  margin-inline-start: auto;
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-background-bold-brand);
+}
+
+.shell-mobile-nav__footer {
+  display: grid;
+  gap: var(--dimension-space-025);
+  padding: var(--dimension-space-100);
+  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}

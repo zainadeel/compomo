@@ -87,6 +87,12 @@
   z-index: 1;
 }
 
+.shell-app__mobile-section,
+.shell-app__mobile-navigation,
+.shell-app__mobile-bar {
+  display: none;
+}
+
 .shell-app__bar {
   grid-area: bar;
   flex: 0 0 auto;
@@ -133,8 +139,93 @@
   min-height: 0;
 }
 
+.shell-app__tools ::slotted(ds-shell-tools) {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
 :host(.shell-app--tools-fullscreen) .shell-app__panel,
 :host(.shell-app--tools-fullscreen) .shell-app__bar,
 :host(.shell-app--tools-fullscreen) .shell-app__content {
+  visibility: hidden;
+}
+
+:host(.shell-app--mobile) {
+  --_shell-chrome-bg: var(--color-background-primary);
+}
+
+:host(.shell-app--mobile) .shell-app__chrome,
+:host(.shell-app--mobile) .shell-app__panel,
+:host(.shell-app--mobile) .shell-app__bar {
+  display: none;
+}
+
+:host(.shell-app--mobile) .shell-app__main {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'mobile-section'
+    'stage'
+    'mobile-bar';
+  background: var(--color-background-primary);
+}
+
+:host(.shell-app--mobile) .shell-app__mobile-section {
+  grid-area: mobile-section;
+  display: block;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+:host(.shell-app--mobile) .shell-app__content,
+:host(.shell-app--mobile) .shell-app__tools,
+:host(.shell-app--mobile) .shell-app__mobile-navigation {
+  grid-area: stage;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  position: relative;
+}
+
+:host(.shell-app--mobile) .shell-app__content {
+  z-index: 1;
+  overflow: auto;
+}
+
+:host(.shell-app--mobile) .shell-app__tools {
+  z-index: 2;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-background-primary);
+}
+
+:host(.shell-app--mobile) .shell-app__mobile-navigation {
+  display: block;
+  z-index: 3;
+  overflow: hidden;
+  background: var(--color-background-primary);
+}
+
+:host(.shell-app--mobile) .shell-app__mobile-bar {
+  grid-area: mobile-bar;
+  display: block;
+  min-width: 0;
+  position: relative;
+  z-index: 4;
+}
+
+:host(.shell-app--mobile) .shell-app__mobile-section[hidden],
+:host(.shell-app--mobile) .shell-app__tools[hidden],
+:host(.shell-app--mobile) .shell-app__mobile-navigation[hidden],
+:host(.shell-app--mobile) .shell-app__mobile-bar[hidden] {
+  display: none;
+}
+
+:host(.shell-app--mobile-tool-active) .shell-app__content,
+:host(.shell-app--mobile-navigation-open) .shell-app__content,
+:host(.shell-app--mobile-navigation-open) .shell-app__tools {
   visibility: hidden;
 }

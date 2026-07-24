@@ -5,7 +5,7 @@ import * as ShellAppStories from './ShellApp.stories';
 
 # App Shell
 
-`ds-shell-app` is the workspace layout primitive for Motive dashboard shells. It slots **panel nav**, **bar nav**, **panel tools**, and page content, and paints the selected shared chrome treatment behind the nav surfaces.
+`ds-shell-app` is the workspace layout primitive for Motive dashboard shells. It keeps one routed workspace mounted while adapting desktop/tablet chrome to a dedicated mobile stage below 768px.
 
 ## Slots
 
@@ -13,7 +13,10 @@ import * as ShellAppStories from './ShellApp.stories';
 | --- | --- | --- |
 | `panel` | `ds-panel-nav` | Left navigation rail |
 | `bar` | `ds-bar-nav` | Top tab bar / heading row |
-| `tools` | `ds-panel-tools` | Right tool rail + drawer |
+| `tools` | `ds-shell-tools` or `ds-panel-tools` | Responsive tool host, or the backward-compatible desktop/tablet tool rail |
+| `mobile-navigation` | `ds-shell-mobile-nav` | Full-stage primary-area browser below 768px |
+| `mobile-section-nav` | `ds-shell-mobile-section-nav` | Horizontally scrollable secondary route row below 768px |
+| `mobile-bar` | `ds-shell-mobile-bar` | Persistent five-item bottom navigation below 768px |
 | *(default)* | — | Scrollable page content on an opaque primary surface |
 
 ## Props
@@ -23,6 +26,10 @@ import * as ShellAppStories from './ShellApp.stories';
 | `navStyle` | `dashboard` | Propagated to slotted `ds-panel-nav` and `ds-bar-nav` |
 | `gradientPreset` | `neutral` | Chrome treatment: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh`. Color tokens adapt each wash to light and dark themes |
 | `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers, `/` Help) |
+| `mobileDestination` | `area` | Controlled mobile stage: current area, Search, Agents, or Inbox |
+| `mobileNavigationOpen` | `false` | Controlled mobile navigation-pane state |
+
+ShellApp resolves and reflects `responsive-mode="desktop | tablet | mobile"` at the fixed 1200px and 768px boundaries and emits `dsResponsiveModeChange` only when that mode changes. Mobile paints a solid primary surface, removes the chrome wash, makes hidden stages inert, and reserves safe-area-aware bottom-bar space without unmounting route or tool owners.
 
 ## Gradient presets
 

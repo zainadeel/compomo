@@ -7,20 +7,21 @@
 
 /* eslint-disable */
 
-import type { StencilReactComponent } from '@stencil/react-output-target/runtime';
+import type { EventName, StencilReactComponent } from '@stencil/react-output-target/runtime';
 import { createComponent } from '@stencil/react-output-target/runtime';
 import React from 'react';
 
+import { type DsShellAppCustomEvent, type ShellResponsiveMode } from "@ds-mo/ui";
 import type { Components } from "@ds-mo/ui/dist/components";
 import { DsShellApp as DsShellAppElement, defineCustomElement as defineDsShellApp } from "@ds-mo/ui/dist/components/ds-shell-app.js";
 
-export type DsShellAppEvents = NonNullable<unknown>;
+export type DsShellAppEvents = { onDsResponsiveModeChange: EventName<DsShellAppCustomEvent<{ mode: ShellResponsiveMode }>> };
 
 export const DsShellApp: StencilReactComponent<DsShellAppElement, DsShellAppEvents, Components.DsShellApp> = /*@__PURE__*/ createComponent<DsShellAppElement, DsShellAppEvents, Components.DsShellApp>({
     tagName: 'ds-shell-app',
     elementClass: DsShellAppElement,
     // @ts-ignore - ignore potential React type mismatches between the Stencil Output Target and your project.
     react: React,
-    events: {} as DsShellAppEvents,
+    events: { onDsResponsiveModeChange: 'dsResponsiveModeChange' } as DsShellAppEvents,
     defineCustomElement: defineDsShellApp
 });

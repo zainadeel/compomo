@@ -30,7 +30,7 @@ export class ConversationListItem {
     const slot = event.target as HTMLSlotElement;
     this.el.classList.toggle(
       'conversation-list-item--has-actions',
-      slot.assignedElements({ flatten: true }).length > 0
+      slot.assignedElements().length > 0
     );
   };
 

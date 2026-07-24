@@ -1,0 +1,314 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shell-mobile-bar",
+  "title": "ShellMobileBar",
+  "description": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-mobile-bar",
+    "source": "src/wc/components/ShellMobileBar/ShellMobileBar.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+      "useWhen": [
+        "ShellApp is rendering its dedicated below-768px application composition."
+      ],
+      "avoidWhen": [
+        "Rendering desktop or tablet shell chrome.",
+        "An arbitrary set of product tabs is required."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-app"
+      ],
+      "patterns": [
+        "pattern:application-shell"
+      ],
+      "accessibility": [
+        "Every item keeps a visible label and accessible name.",
+        "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
+      ],
+      "states": [
+        "The item order is fixed: Menu, current area, Search, Agents, Inbox.",
+        "Reselecting an active destination does not reset its nested state."
+      ],
+      "responsiveBehavior": [
+        "Render only below the mobile breakpoint and preserve safe-area clearance."
+      ],
+      "references": [
+        {
+          "label": "Storybook",
+          "path": "src/wc/components/ShellMobileBar/ShellMobileBar.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "activeDestination": {
+          "type": "ShellMobileDestination",
+          "resolvedType": "\"agents\" | \"area\" | \"inbox\" | \"search\"",
+          "attribute": "active-destination",
+          "default": "'area'",
+          "required": false,
+          "mutable": false
+        },
+        "agentsDot": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "agents-dot",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "agentsLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "agents-label",
+          "default": "'Agents'",
+          "required": false,
+          "mutable": false
+        },
+        "currentArea": {
+          "type": "PanelNavItem",
+          "resolvedType": "PanelNavItem",
+          "default": "{\n    id: 'tracking',\n    icon: 'MapPage',\n    label: 'Tracking',\n  }",
+          "required": false,
+          "mutable": false
+        },
+        "inboxDot": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "inbox-dot",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "inboxLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "inbox-label",
+          "default": "'Inbox'",
+          "required": false,
+          "mutable": false
+        },
+        "menuLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "menu-label",
+          "default": "'Menu'",
+          "required": false,
+          "mutable": false
+        },
+        "navigationExpanded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "navigation-expanded",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "searchDot": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "search-dot",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "searchLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "search-label",
+          "default": "'Search'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsDestinationChange",
+          "detail": "ShellMobileBarDestinationDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsNavigationToggle",
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "focusDestination",
+          "signature": "focusDestination(destination: ShellMobileDestination | \"navigation\") => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "activeDestination": {
+        "type": "ShellMobileDestination",
+        "resolvedType": "\"agents\" | \"area\" | \"inbox\" | \"search\"",
+        "attribute": "active-destination",
+        "default": "'area'",
+        "required": false,
+        "mutable": false
+      },
+      "agentsDot": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "agents-dot",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "agentsLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "agents-label",
+        "default": "'Agents'",
+        "required": false,
+        "mutable": false
+      },
+      "currentArea": {
+        "type": "PanelNavItem",
+        "resolvedType": "PanelNavItem",
+        "default": "{\n    id: 'tracking',\n    icon: 'MapPage',\n    label: 'Tracking',\n  }",
+        "required": false,
+        "mutable": false
+      },
+      "inboxDot": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "inbox-dot",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "inboxLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "inbox-label",
+        "default": "'Inbox'",
+        "required": false,
+        "mutable": false
+      },
+      "menuLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "menu-label",
+        "default": "'Menu'",
+        "required": false,
+        "mutable": false
+      },
+      "navigationExpanded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "navigation-expanded",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "searchDot": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "search-dot",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "searchLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "search-label",
+        "default": "'Search'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsDestinationChange",
+        "detail": "ShellMobileBarDestinationDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsNavigationToggle",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "focusDestination",
+        "signature": "focusDestination(destination: ShellMobileDestination | \"navigation\") => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-shell-mobile-bar",
+      "react": "DsShellMobileBar",
+      "angular": "DsShellMobileBar"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-shell-mobile-bar.js';",
+        "example": "<ds-shell-mobile-bar></ds-shell-mobile-bar>"
+      },
+      "react": {
+        "import": "import { DsShellMobileBar } from '@ds-mo/ui/react';",
+        "example": "<DsShellMobileBar />"
+      },
+      "angular": {
+        "import": "import { DsShellMobileBar } from '@ds-mo/ui/angular/ds-shell-mobile-bar';",
+        "example": "<ds-shell-mobile-bar></ds-shell-mobile-bar>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: currentArea.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ShellMobileBar/ShellMobileBar.css",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  background: var(--color-background-primary);\n  color: var(--color-foreground-secondary);\n}\n\n.shell-mobile-bar {\n  display: grid;\n  grid-template-columns: repeat(5, minmax(0, 1fr));\n  align-items: stretch;\n  min-width: 0;\n  padding: var(--dimension-space-050) var(--dimension-space-050)\n    max(var(--dimension-space-050), env(safe-area-inset-bottom));\n  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  background: var(--color-background-primary);\n  box-sizing: border-box;\n}\n\n.shell-mobile-bar__item {\n  appearance: none;\n  min-width: 0;\n  min-height: var(--dimension-size-600);\n  padding: var(--dimension-space-050) var(--dimension-space-025);\n  border: 0;\n  border-radius: var(--dimension-radius-100);\n  background: transparent;\n  color: inherit;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n  gap: var(--dimension-space-025);\n  cursor: pointer;\n}\n\n.shell-mobile-bar__item--selected {\n  color: var(--color-foreground-primary);\n}\n\n.shell-mobile-bar__item ds-text {\n  display: block;\n  max-width: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.shell-mobile-bar__icon {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: var(--dimension-iconography-md);\n  height: var(--dimension-iconography-md);\n}\n\n.shell-mobile-bar__dot {\n  position: absolute;\n  inset-block-start: calc(var(--dimension-space-025) * -1);\n  inset-inline-end: calc(var(--dimension-space-025) * -1);\n  width: var(--dimension-size-075);\n  height: var(--dimension-size-075);\n  border-radius: var(--dimension-radius-half);\n  background: var(--color-background-bold-brand);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-background-primary);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellMobileBar/ShellMobileBar.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n} from '@stencil/core';\nimport {\n  shouldEmitMobileDestinationChange,\n  type ShellMobileDestination,\n} from '../../shell/shell-responsive';\nimport type { PanelNavItem } from '../PanelNav/panel-nav-types';\nimport type { ShellMobileBarDestinationDetail } from './shell-mobile-bar-types';\n\ninterface DestinationConfig {\n  id: ShellMobileDestination;\n  icon: string;\n  label: string;\n  dot: boolean;\n}\n\n@Component({\n  tag: 'ds-shell-mobile-bar',\n  styleUrl: 'ShellMobileBar.css',\n  scoped: true,\n})\nexport class ShellMobileBar {\n  @Element() el!: HTMLElement;\n\n  @Prop() activeDestination: ShellMobileDestination = 'area';\n  @Prop() currentArea: PanelNavItem = {\n    id: 'tracking',\n    icon: 'MapPage',\n    label: 'Tracking',\n  };\n  @Prop() navigationExpanded: boolean = false;\n  @Prop() menuLabel: string = 'Menu';\n  @Prop() searchLabel: string = 'Search';\n  @Prop() agentsLabel: string = 'Agents';\n  @Prop() inboxLabel: string = 'Inbox';\n  @Prop() searchDot: boolean = false;\n  @Prop() agentsDot: boolean = false;\n  @Prop() inboxDot: boolean = false;\n\n  @Event() dsNavigationToggle!: EventEmitter<boolean>;\n  @Event() dsDestinationChange!: EventEmitter<ShellMobileBarDestinationDetail>;\n\n  private destinationConfig(): DestinationConfig[] {\n    return [\n      {\n        id: 'area',\n        icon: this.currentArea.icon || 'MapPage',\n        label: this.currentArea.label || 'Area',\n        dot: false,\n      },\n      { id: 'search', icon: 'MagnifyingGlass', label: this.searchLabel, dot: this.searchDot },\n      { id: 'agents', icon: 'AI', label: this.agentsLabel, dot: this.agentsDot },\n      { id: 'inbox', icon: 'Inbox', label: this.inboxLabel, dot: this.inboxDot },\n    ];\n  }\n\n  private selectDestination(destination: ShellMobileDestination) {\n    if (\n      !shouldEmitMobileDestinationChange(\n        this.activeDestination,\n        destination,\n        this.navigationExpanded\n      )\n    ) {\n      return;\n    }\n    this.dsDestinationChange.emit({ destination });\n  }\n\n  @Method()\n  async focusDestination(destination: ShellMobileDestination | 'navigation') {\n    const target = this.el.querySelector<HTMLElement>(\n      `#${\n        destination === 'navigation'\n          ? 'ds-shell-mobile-navigation-trigger'\n          : `ds-shell-mobile-${destination}-trigger`\n      }`\n    );\n    target?.focus({ preventScroll: true });\n  }\n\n  private renderDestination(item: DestinationConfig) {\n    const selected = !this.navigationExpanded && item.id === this.activeDestination;\n    return (\n      <button\n        id={`ds-shell-mobile-${item.id}-trigger`}\n        type=\"button\"\n        class={{\n          'shell-mobile-bar__item': true,\n          'shell-mobile-bar__item--selected': selected,\n          'ds-focus-ring-inset': true,\n          'ds-interaction-fill': true,\n          'ds-interaction-fill--selected': selected,\n        }}\n        aria-current={selected ? 'page' : undefined}\n        onClick={() => this.selectDestination(item.id)}\n      >\n        <span class=\"shell-mobile-bar__icon\">\n          <ds-icon name={item.icon} size=\"md\" color=\"inherit\" />\n          {item.dot && (\n            <span class=\"shell-mobile-bar__dot\" aria-hidden=\"true\" />\n          )}\n        </span>\n        <ds-text as=\"span\" variant=\"text-caption\" color=\"inherit\">\n          {item.label}\n        </ds-text>\n      </button>\n    );\n  }\n\n  render() {\n    return (\n      <Host>\n        <nav class=\"shell-mobile-bar\" aria-label=\"Primary\">\n          <button\n            id=\"ds-shell-mobile-navigation-trigger\"\n            type=\"button\"\n            class={{\n              'shell-mobile-bar__item': true,\n              'shell-mobile-bar__item--selected': this.navigationExpanded,\n              'ds-focus-ring-inset': true,\n              'ds-interaction-fill': true,\n              'ds-interaction-fill--selected': this.navigationExpanded,\n            }}\n            aria-expanded={String(this.navigationExpanded)}\n            aria-controls=\"ds-shell-mobile-navigation\"\n            onClick={() => this.dsNavigationToggle.emit(!this.navigationExpanded)}\n          >\n            <span class=\"shell-mobile-bar__icon\">\n              <ds-icon name=\"Hamburger\" size=\"md\" color=\"inherit\" />\n            </span>\n            <ds-text\n              as=\"span\"\n              variant=\"text-caption\"\n              color=\"inherit\"\n            >\n              {this.menuLabel}\n            </ds-text>\n          </button>\n          {this.destinationConfig().map(item => this.renderDestination(item))}\n        </nav>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellMobileBar/shell-mobile-bar-types.ts",
+      "content": "import type { ShellMobileDestination } from '../../shell/shell-responsive';\n\nexport interface ShellMobileBarDestinationDetail {\n  destination: ShellMobileDestination;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

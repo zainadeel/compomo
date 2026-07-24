@@ -1,0 +1,59 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-shell-mobile-section-nav",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-shell-mobile-section-nav",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Horizontally scrollable mobile route navigation corresponding to the active area's desktop BarNav.",
+  "useWhen": [
+    "ShellApp is rendering the below-768px routed workspace and the active area has peer route sections."
+  ],
+  "avoidWhen": [
+    "Choices switch local content without navigation; use TabGroup.",
+    "Rendering the desktop or tablet secondary navigation; use BarNav."
+  ],
+  "alternatives": [
+    {
+      "when": "The choices switch local content without changing routes.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup owns local view selection."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-shell-app",
+    "component:ds-shell-mobile-bar",
+    "component:ds-bar-nav"
+  ],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "The row is a named navigation landmark and the selected section exposes aria-current.",
+    "Disabled route sections remain visible but cannot emit navigation intent."
+  ],
+  "states": [
+    "The host router owns the current URL and handles dsTabChange.",
+    "Detail routes that do not match a section show the active-area heading."
+  ],
+  "responsiveBehavior": [
+    "The row scrolls horizontally without wrapping and centers the selected section when selection changes."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign tabs as a JavaScript property and update currentUrl and basePath with router state."
+    ],
+    "react": [
+      "Pass the same BarNavTab array used by the desktop BarNav through the generated React wrapper."
+    ],
+    "angular": [
+      "Import the generated standalone adapter and bind tabs as a property."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.stories.ts"
+    }
+  ]
+}

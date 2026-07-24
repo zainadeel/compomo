@@ -72,22 +72,22 @@ Bind the **same** `navStyle` on shell, panel, and bar so they stay in sync.
 
 Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). Tool shortcuts (search, messages, agents, …) live on **`ds-panel-tools`**, not inline on the bar.
 
-### `ds-panel-tools` — one named slot per tool
+### `ds-shell-tools` — one persistent named slot per tool
 
-Each fixed rail tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a **named slot** for its own composed UI. Mount all available tool panels once at ShellApp scope; `ds-panel-tools` shows the slot matching `active-tool` while the drawer is open and keeps every slot mounted so independent tool state survives route and tool changes. Search is required and pinned to the rail header; **Help & Support** is required and pinned to the rail footer. Optional tools retain canonical order when authorization or entitlement filters them out.
+Each fixed tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a persistent **`*-view` named slot**. Mount every available product owner once at ShellApp scope. `ds-shell-tools` adapts those owners to PanelTools-compatible desktop/tablet chrome and full-stage mobile chrome without recreating application children. Search is required and pinned to the desktop rail header; **Help & Support** is required and pinned to its footer. Mobile groups Messages, Stacks, and Activity under Inbox.
 
 ```html
-<ds-panel-tools slot="tools" open active-tool="agents" .items=${railItems}>
-  <app-search-panel slot="search" />
-  <app-agents-panel slot="agents" />
-  <app-messages-panel slot="messages" />
-  <app-stacks-panel slot="stacks" />
-  <app-activity-panel slot="activity" />
-  <app-help-panel slot="help" />
-</ds-panel-tools>
+<ds-shell-tools slot="tools" open active-tool="agents" .items=${railItems}>
+  <app-search-panel slot="search-view" />
+  <app-agents-panel slot="agents-view" />
+  <app-messages-panel slot="messages-view" />
+  <app-stacks-panel slot="stacks-view" />
+  <app-activity-panel slot="activity-view" />
+  <app-help-panel slot="help-view" />
+</ds-shell-tools>
 ```
 
-The drawer header title comes from `PANEL_TOOLS_LABELS[active-tool]`. Closing the drawer (`open=false`) slides the panel shut; slotted tool content stays in the DOM so state survives the next open. Set `storage-key` to remember only the last active tool in the current browser; the drawer still restores closed after reload. ShellApp supplies the same fixed `--dimension-panel-width-xs` (300px) drawer width on desktop and tablet.
+`ds-panel-tools` remains backward compatible for applications that only need the existing desktop/tablet rail and drawer. New responsive shells should use `ds-shell-tools`.
 
 Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages (`M`), Activity (`N`), and Help (`/`); `]` closes the drawer. They are skipped while the user is typing in an editable control.
 
@@ -96,20 +96,23 @@ Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages
 ```html
 <ds-shell-app nav-style="dashboard" gradient>
   <ds-panel-nav slot="panel" …></ds-panel-nav>
+  <ds-shell-mobile-nav slot="mobile-navigation" …></ds-shell-mobile-nav>
   <ds-bar-nav slot="bar" …></ds-bar-nav>
-  <ds-panel-tools slot="tools" …></ds-panel-tools>
+  <ds-shell-mobile-section-nav slot="mobile-section-nav" …></ds-shell-mobile-section-nav>
+  <ds-shell-tools slot="tools" …></ds-shell-tools>
   <main>…page content…</main>
+  <ds-shell-mobile-bar slot="mobile-bar" …></ds-shell-mobile-bar>
 </ds-shell-app>
 ```
 
 | Prop | Default | Behavior |
 | --- | --- | --- |
 | `navStyle` | `dashboard` | Shell propagates to slotted `ds-panel-nav` and `ds-bar-nav` |
-| `gradient` | `false` | Radial wash on the shared chrome layer + JS sync of `--ds-shell-gradient-*` vars to shell, panel, and bar |
-| `gradientPreset` | `neutral` | Built-in wash when `gradient` is true: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh` |
-| `gradientSrc` | `''` | Optional `url(...)` image override for the wash |
+| `gradientPreset` | `neutral` | Desktop/tablet chrome wash: `none`, `cool`, `neutral`, `warm`, or `fresh`; mobile always uses a solid primary stage |
+| `mobileDestination` | `area` | Controlled mobile Area, Search, Agents, or Inbox stage |
+| `mobileNavigationOpen` | `false` | Controlled mobile navigation-pane state |
 
-The chrome layer mounts when **`gradient`** is true. Panel, bar, and tools drawer surfaces are **transparent** under gradient so the chrome shows through. Page content (`default` slot) stays on an opaque `--color-background-primary` surface.
+ShellApp reflects `responsive-mode` and emits `dsResponsiveModeChange` at the fixed boundaries: mobile below 768px, tablet from 768px through 1199px, and desktop at 1200px and wider. In mobile mode, the routed workspace stays mounted but becomes hidden and inert whenever Menu or a global tool occupies the stage. The bottom bar stays visible and owns its safe-area padding.
 
 Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`cool` / `neutral` / `warm`), layer opacity **10%**. Preset **`none`** skips the wash and leaves the secondary chrome surface only. Bar wash position is offset by panel width so the L-shape stays continuous when the panel collapses.
 

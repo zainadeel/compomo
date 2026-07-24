@@ -1,0 +1,450 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shell-tools",
+  "title": "ShellTools",
+  "description": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-tools",
+    "source": "src/wc/components/ShellTools/ShellTools.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+      "useWhen": [
+        "A ShellApp must preserve the same Search, Agents, Messages, Stacks, Activity, and Help product owners across desktop, tablet, and mobile."
+      ],
+      "avoidWhen": [
+        "The tools exist only in desktop and tablet chrome; PanelTools remains supported for that case.",
+        "The content is a routed primary application area."
+      ],
+      "alternatives": [
+        {
+          "when": "Only legacy rail and drawer behavior is required.",
+          "component": "component:ds-panel-tools",
+          "reason": "PanelTools remains the backward-compatible desktop and tablet primitive."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-app",
+        "component:ds-panel-tool-header",
+        "component:ds-shell-mobile-bar"
+      ],
+      "patterns": [
+        "pattern:application-shell"
+      ],
+      "accessibility": [
+        "Only the active mobile tool view participates in focus or the accessibility tree.",
+        "Header Back and application-owned header actions preserve the PanelTools event contract.",
+        "Inbox uses TabGroup semantics for Messages, Stacks, and Activity."
+      ],
+      "states": [
+        "The application owns open and activeTool and replaces headers when tool depth changes.",
+        "Messages, Stacks, and Activity map to one mobile Inbox destination while retaining the actual active tool id.",
+        "Switching responsive mode must not recreate application-owned slotted product elements."
+      ],
+      "responsiveBehavior": [
+        "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
+        "Mobile renders the active tool across the shell stage and groups available inbox tools in a segmented control."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign items and headers as JavaScript properties and place each persistent owner in its named *-view slot."
+        ],
+        "react": [
+          "Keep stable keyed product owner elements in the generated wrapper's named slots."
+        ],
+        "angular": [
+          "Bind structured items and headers as properties and keep each tool owner mounted under a named *-view slot."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook",
+          "path": "src/wc/components/ShellTools/ShellTools.stories.ts"
+        },
+        {
+          "label": "PanelTools contract",
+          "path": "src/wc/components/PanelTools/PanelTools.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "activeTool": {
+          "type": "PanelToolsToolId | ''",
+          "resolvedType": "\"\" | \"activity\" | \"agents\" | \"help\" | \"messages\" | \"search\" | \"stacks\"",
+          "attribute": "active-tool",
+          "default": "''",
+          "required": false,
+          "mutable": true
+        },
+        "fullscreenHeaderMode": {
+          "type": "'shared' | 'split'",
+          "resolvedType": "\"shared\" | \"split\"",
+          "attribute": "fullscreen-header-mode",
+          "default": "'shared'",
+          "required": false,
+          "mutable": false
+        },
+        "headers": {
+          "type": "PanelToolsHeaders",
+          "resolvedType": "\"activity\" | \"agents\" | \"help\" | \"messages\" | \"search\" | \"stacks\" | PanelToolsHeaderConfig",
+          "default": "{}",
+          "required": false,
+          "mutable": false
+        },
+        "headersJson": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "headers-json",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "inboxLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "inbox-label",
+          "default": "'Inbox'",
+          "required": false,
+          "mutable": false
+        },
+        "inboxNavigationLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "inbox-navigation-label",
+          "default": "'Inbox sections'",
+          "required": false,
+          "mutable": false
+        },
+        "items": {
+          "type": "PanelToolsItem[]",
+          "resolvedType": "PanelToolsItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "itemsJson": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "items-json",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": true
+        },
+        "presentation": {
+          "type": "'drawer' | 'fullscreen'",
+          "resolvedType": "\"drawer\" | \"fullscreen\"",
+          "attribute": "presentation",
+          "default": "'drawer'",
+          "required": false,
+          "mutable": true
+        },
+        "responsiveMode": {
+          "type": "ShellResponsiveMode",
+          "resolvedType": "\"desktop\" | \"mobile\" | \"tablet\"",
+          "attribute": "responsive-mode",
+          "default": "'desktop'",
+          "required": false,
+          "mutable": false,
+          "description": "Resolved by ShellApp; mobile uses a full-stage tool presentation."
+        },
+        "storageKey": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "storage-key",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        },
+        "toolShortcutsLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "tool-shortcuts-label",
+          "default": "'Tool shortcuts'",
+          "required": false,
+          "mutable": false
+        },
+        "toolsLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "tools-label",
+          "default": "'Tools'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsHeaderAction",
+          "detail": "{\n    tool: PanelToolsToolId;\n    id: string;\n  }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsHeaderBack",
+          "detail": "{\n    tool: PanelToolsToolId;\n  }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsPresentationChange",
+          "detail": "{\n    presentation: 'drawer' | 'fullscreen';\n  }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsToolChange",
+          "detail": "{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "activateTool",
+          "signature": "activateTool(id: PanelToolsToolId) => Promise<void>",
+          "description": "Match PanelTools' imperative activation contract in every responsive mode."
+        },
+        {
+          "name": "closeDrawer",
+          "signature": "closeDrawer() => Promise<void>",
+          "description": "Close the active global tool surface."
+        },
+        {
+          "name": "focusHeaderAction",
+          "signature": "focusHeaderAction(id: string) => Promise<void>",
+          "description": "Focus an application-owned action in the visible shared tool header."
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "activeTool": {
+        "type": "PanelToolsToolId | ''",
+        "resolvedType": "\"\" | \"activity\" | \"agents\" | \"help\" | \"messages\" | \"search\" | \"stacks\"",
+        "attribute": "active-tool",
+        "default": "''",
+        "required": false,
+        "mutable": true
+      },
+      "fullscreenHeaderMode": {
+        "type": "'shared' | 'split'",
+        "resolvedType": "\"shared\" | \"split\"",
+        "attribute": "fullscreen-header-mode",
+        "default": "'shared'",
+        "required": false,
+        "mutable": false
+      },
+      "headers": {
+        "type": "PanelToolsHeaders",
+        "resolvedType": "\"activity\" | \"agents\" | \"help\" | \"messages\" | \"search\" | \"stacks\" | PanelToolsHeaderConfig",
+        "default": "{}",
+        "required": false,
+        "mutable": false
+      },
+      "headersJson": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "headers-json",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "inboxLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "inbox-label",
+        "default": "'Inbox'",
+        "required": false,
+        "mutable": false
+      },
+      "inboxNavigationLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "inbox-navigation-label",
+        "default": "'Inbox sections'",
+        "required": false,
+        "mutable": false
+      },
+      "items": {
+        "type": "PanelToolsItem[]",
+        "resolvedType": "PanelToolsItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "itemsJson": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "items-json",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": true
+      },
+      "presentation": {
+        "type": "'drawer' | 'fullscreen'",
+        "resolvedType": "\"drawer\" | \"fullscreen\"",
+        "attribute": "presentation",
+        "default": "'drawer'",
+        "required": false,
+        "mutable": true
+      },
+      "responsiveMode": {
+        "type": "ShellResponsiveMode",
+        "resolvedType": "\"desktop\" | \"mobile\" | \"tablet\"",
+        "attribute": "responsive-mode",
+        "default": "'desktop'",
+        "required": false,
+        "mutable": false,
+        "description": "Resolved by ShellApp; mobile uses a full-stage tool presentation."
+      },
+      "storageKey": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "storage-key",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      },
+      "toolShortcutsLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "tool-shortcuts-label",
+        "default": "'Tool shortcuts'",
+        "required": false,
+        "mutable": false
+      },
+      "toolsLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "tools-label",
+        "default": "'Tools'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsHeaderAction",
+        "detail": "{\n    tool: PanelToolsToolId;\n    id: string;\n  }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsHeaderBack",
+        "detail": "{\n    tool: PanelToolsToolId;\n  }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsPresentationChange",
+        "detail": "{\n    presentation: 'drawer' | 'fullscreen';\n  }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsToolChange",
+        "detail": "{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "activateTool",
+        "signature": "activateTool(id: PanelToolsToolId) => Promise<void>",
+        "description": "Match PanelTools' imperative activation contract in every responsive mode."
+      },
+      {
+        "name": "closeDrawer",
+        "signature": "closeDrawer() => Promise<void>",
+        "description": "Close the active global tool surface."
+      },
+      {
+        "name": "focusHeaderAction",
+        "signature": "focusHeaderAction(id: string) => Promise<void>",
+        "description": "Focus an application-owned action in the visible shared tool header."
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-shell-tools",
+      "react": "DsShellTools",
+      "angular": "DsShellTools"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-shell-tools.js';",
+        "example": "<ds-shell-tools></ds-shell-tools>"
+      },
+      "react": {
+        "import": "import { DsShellTools } from '@ds-mo/ui/react';",
+        "example": "<DsShellTools />"
+      },
+      "angular": {
+        "import": "import { DsShellTools } from '@ds-mo/ui/angular/ds-shell-tools';",
+        "example": "<ds-shell-tools></ds-shell-tools>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: headers, items.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "panel-tool-header",
+    "panel-tools",
+    "tab-group"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ShellTools/ShellTools.css",
+      "content": ":host {\n  display: block;\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n  background: var(--color-background-primary);\n}\n\n.shell-tools__desktop,\n.shell-tools__desktop ds-panel-tools,\n.shell-tools__mobile {\n  display: block;\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n\n.shell-tools__mobile {\n  display: grid;\n  grid-template-rows: auto auto minmax(0, 1fr);\n  background: var(--color-background-primary);\n}\n\n.shell-tools__inbox-nav {\n  padding: var(--dimension-space-100);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  background: var(--color-background-primary);\n}\n\n.shell-tools__mobile-body,\n.shell-tools__view {\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n\n.shell-tools__mobile-body {\n  overflow: hidden;\n}\n\n.shell-tools__view {\n  overflow: auto;\n  overscroll-behavior: contain;\n}\n\n.shell-tools__view[hidden] {\n  display: none;\n}\n\n.shell-tools__view ::slotted(*) {\n  min-height: 0;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellTools/ShellTools.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  Watch,\n} from '@stencil/core';\nimport {\n  PANEL_TOOLS_LABELS,\n  PANEL_TOOLS_TOOL_IDS,\n  type PanelToolsHeaderAction,\n  type PanelToolsHeaderConfig,\n  type PanelToolsHeaders,\n  type PanelToolsItem,\n  type PanelToolsToolId,\n} from '../PanelTools/panel-tools-types';\nimport {\n  parsePanelToolsItems,\n  reconcilePanelToolsAvailability,\n  resolvePanelToolActivation,\n} from '../PanelTools/panel-tools-utils';\nimport {\n  isShellInboxTool,\n  resolveAvailableInboxTool,\n  type ShellInboxToolId,\n  type ShellResponsiveMode,\n} from '../../shell/shell-responsive';\n\nconst MOBILE_VIEW_ORDER: PanelToolsToolId[] = [\n  'search',\n  'agents',\n  'messages',\n  'stacks',\n  'activity',\n  'help',\n];\n\n@Component({\n  tag: 'ds-shell-tools',\n  styleUrl: 'ShellTools.css',\n  scoped: true,\n})\nexport class ShellTools {\n  @Element() el!: HTMLElement;\n\n  /** Resolved by ShellApp; mobile uses a full-stage tool presentation. */\n  @Prop({ attribute: 'responsive-mode', reflect: true })\n  responsiveMode: ShellResponsiveMode = 'desktop';\n  @Prop({ mutable: true, reflect: true }) open: boolean = false;\n  @Prop({ mutable: true, attribute: 'active-tool', reflect: true })\n  activeTool: PanelToolsToolId | '' = '';\n  @Prop({ mutable: true, reflect: true }) presentation: 'drawer' | 'fullscreen' = 'drawer';\n  @Prop({ attribute: 'fullscreen-header-mode', reflect: true })\n  fullscreenHeaderMode: 'shared' | 'split' = 'shared';\n  @Prop() items: PanelToolsItem[] = [];\n  @Prop({ attribute: 'items-json' }) itemsJson: string = '';\n  @Prop() headers: PanelToolsHeaders = {};\n  @Prop({ attribute: 'headers-json' }) headersJson: string = '';\n  @Prop({ attribute: 'storage-key' }) storageKey: string = '';\n  @Prop() toolsLabel: string = 'Tools';\n  @Prop() toolShortcutsLabel: string = 'Tool shortcuts';\n  @Prop() inboxLabel: string = 'Inbox';\n  @Prop() inboxNavigationLabel: string = 'Inbox sections';\n\n  @Event({ bubbles: true, composed: true }) dsToolChange!: EventEmitter<{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }>;\n  @Event({ bubbles: true, composed: true }) dsPresentationChange!: EventEmitter<{\n    presentation: 'drawer' | 'fullscreen';\n  }>;\n  @Event({ bubbles: true, composed: true }) dsHeaderBack!: EventEmitter<{\n    tool: PanelToolsToolId;\n  }>;\n  @Event({ bubbles: true, composed: true }) dsHeaderAction!: EventEmitter<{\n    tool: PanelToolsToolId;\n    id: string;\n  }>;\n\n  private panelToolsEl: HTMLDsPanelToolsElement | null = null;\n\n  private get resolvedItems(): PanelToolsItem[] {\n    return parsePanelToolsItems(this.items, this.itemsJson);\n  }\n\n  private get availableInboxTools(): ShellInboxToolId[] {\n    return this.resolvedItems\n      .filter(item => !item.isInactive && isShellInboxTool(item.id))\n      .map(item => item.id as ShellInboxToolId);\n  }\n\n  private get mobileActiveTool(): PanelToolsToolId | '' {\n    if (!isShellInboxTool(this.activeTool)) return this.activeTool;\n    return resolveAvailableInboxTool(this.activeTool, this.availableInboxTools);\n  }\n\n  componentWillLoad() {\n    this.reconcileAvailability();\n  }\n\n  @Watch('items')\n  @Watch('itemsJson')\n  handleItemsChange() {\n    this.reconcileAvailability();\n  }\n\n  private reconcileAvailability() {\n    const next = reconcilePanelToolsAvailability(this.resolvedItems, this.open, this.activeTool);\n    this.open = next.open;\n    this.activeTool = next.activeTool;\n  }\n\n  private resolvedHeaders(): PanelToolsHeaders {\n    if (Object.keys(this.headers).length) return this.headers;\n    if (!this.headersJson.trim()) return {};\n    try {\n      const parsed = JSON.parse(this.headersJson);\n      return parsed && typeof parsed === 'object' && !Array.isArray(parsed)\n        ? (parsed as PanelToolsHeaders)\n        : {};\n    } catch {\n      return {};\n    }\n  }\n\n  private activeHeader(tool: PanelToolsToolId): PanelToolsHeaderConfig {\n    return this.resolvedHeaders()[tool] ?? {};\n  }\n\n  private activateMobileTool(id: PanelToolsToolId) {\n    const item = this.resolvedItems.find(entry => entry.id === id);\n    if (!item || item.isInactive) return;\n    const next = resolvePanelToolActivation(this.open, this.activeTool, id);\n    this.open = next.open;\n    this.activeTool = next.activeTool;\n    this.dsToolChange.emit({ id, selected: next.selected });\n  }\n\n  private selectInboxTool = (event: CustomEvent<string>) => {\n    const id = event.detail;\n    if (!isShellInboxTool(id) || id === this.mobileActiveTool) return;\n    this.open = true;\n    this.activeTool = id;\n    this.dsToolChange.emit({ id, selected: true });\n  };\n\n  private handlePanelToolChange = (\n    event: CustomEvent<{ id: PanelToolsToolId; selected: boolean }>\n  ) => {\n    this.activeTool = event.detail.id;\n    this.open = event.detail.selected;\n  };\n\n  private handlePanelPresentationChange = (\n    event: CustomEvent<{ presentation: 'drawer' | 'fullscreen' }>\n  ) => {\n    this.presentation = event.detail.presentation;\n  };\n\n  private handleMobileHeaderAction = (\n    tool: PanelToolsToolId,\n    event: CustomEvent<{ id: string }>\n  ) => {\n    event.stopPropagation();\n    this.dsHeaderAction.emit({ tool, id: event.detail.id });\n  };\n\n  /** Match PanelTools' imperative activation contract in every responsive mode. */\n  @Method()\n  async activateTool(id: PanelToolsToolId) {\n    if (this.responsiveMode !== 'mobile') {\n      await this.panelToolsEl?.activateTool(id);\n      return;\n    }\n    this.activateMobileTool(id);\n  }\n\n  /** Close the active global tool surface. */\n  @Method()\n  async closeDrawer() {\n    if (this.responsiveMode !== 'mobile') {\n      await this.panelToolsEl?.closeDrawer();\n      return;\n    }\n    if (!this.open) return;\n    const id = this.activeTool;\n    this.open = false;\n    if (id) this.dsToolChange.emit({ id, selected: false });\n  }\n\n  /** Focus an application-owned action in the visible shared tool header. */\n  @Method()\n  async focusHeaderAction(id: string) {\n    if (this.responsiveMode !== 'mobile') {\n      await this.panelToolsEl?.focusHeaderAction(id);\n      return;\n    }\n    const action = this.el.querySelector(`[data-header-action-id=\"${CSS.escape(id)}\"]`) as\n      | (HTMLElement & { setFocus?: () => Promise<void> })\n      | null;\n    await action?.setFocus?.();\n  }\n\n  private renderForwardedSlots() {\n    return PANEL_TOOLS_TOOL_IDS.flatMap(id => [\n      <slot name={id} slot={id} />,\n      <slot name={`${id}-view`} slot={`${id}-view`} />,\n    ]);\n  }\n\n  private renderDesktop() {\n    return (\n      <div class=\"shell-tools__desktop\">\n        <ds-panel-tools\n          open={this.open}\n          activeTool={this.activeTool}\n          presentation={this.presentation}\n          fullscreenHeaderMode={this.fullscreenHeaderMode}\n          items={this.resolvedItems}\n          headers={this.resolvedHeaders()}\n          storageKey={this.storageKey}\n          toolsLabel={this.toolsLabel}\n          toolShortcutsLabel={this.toolShortcutsLabel}\n          ref={element => {\n            this.panelToolsEl = element as HTMLDsPanelToolsElement | null;\n          }}\n          onDsToolChange={this.handlePanelToolChange}\n          onDsPresentationChange={this.handlePanelPresentationChange}\n        >\n          {this.renderForwardedSlots()}\n        </ds-panel-tools>\n      </div>\n    );\n  }\n\n  private renderMobileHeader(tool: PanelToolsToolId) {\n    const header = this.activeHeader(tool);\n    const configuredTitle = header.title?.trim();\n    const title = isShellInboxTool(tool)\n      ? header.showBack && configuredTitle\n        ? configuredTitle\n        : this.inboxLabel\n      : configuredTitle || PANEL_TOOLS_LABELS[tool];\n    const actions = header.actions ?? [];\n\n    return (\n      <ds-panel-tool-header\n        class=\"shell-tools__mobile-header\"\n        heading={title}\n        showBack={header.showBack ?? false}\n        backIcon={header.backIcon || 'ChevronLeft'}\n        backAriaLabel={header.backAriaLabel || 'Back'}\n        showMenu={false}\n        ref={element => {\n          const toolHeader = element as\n            | (HTMLDsPanelToolHeaderElement & { actions: PanelToolsHeaderAction[] })\n            | undefined;\n          if (toolHeader) toolHeader.actions = actions;\n        }}\n        onDsBack={() => this.dsHeaderBack.emit({ tool })}\n        onDsAction={(event: CustomEvent<{ id: string }>) =>\n          this.handleMobileHeaderAction(tool, event)}\n      />\n    );\n  }\n\n  private renderMobile() {\n    const tool = this.mobileActiveTool;\n    const inboxTabs = this.availableInboxTools.map(id => ({\n      id,\n      label: PANEL_TOOLS_LABELS[id],\n    }));\n\n    return (\n      <div\n        class=\"shell-tools__mobile\"\n        aria-hidden={this.open && tool ? undefined : 'true'}\n        inert={this.open && tool ? undefined : true}\n      >\n        {tool ? this.renderMobileHeader(tool) : null}\n        {tool && isShellInboxTool(tool) && inboxTabs.length ? (\n          <div class=\"shell-tools__inbox-nav\">\n            <ds-tab-group\n              tabs={inboxTabs}\n              value={tool}\n              aria-label={this.inboxNavigationLabel}\n              onDsChange={this.selectInboxTool}\n            />\n          </div>\n        ) : null}\n        <div class=\"shell-tools__mobile-body\">\n          {MOBILE_VIEW_ORDER.map(id => {\n            const active = this.open && id === tool;\n            return (\n              <div\n                class={{\n                  'shell-tools__view': true,\n                  'shell-tools__view--active': active,\n                }}\n                hidden={!active}\n                aria-hidden={active ? undefined : 'true'}\n                inert={active ? undefined : true}\n              >\n                <slot name={`${id}-view`}>\n                  <slot name={id} />\n                </slot>\n              </div>\n            );\n          })}\n        </div>\n      </div>\n    );\n  }\n\n  render() {\n    return (\n      <Host\n        role={this.presentation === 'fullscreen' ? 'dialog' : 'complementary'}\n        aria-modal={this.presentation === 'fullscreen' ? 'true' : undefined}\n        aria-label={this.toolsLabel}\n      >\n        {this.responsiveMode === 'mobile' ? this.renderMobile() : this.renderDesktop()}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

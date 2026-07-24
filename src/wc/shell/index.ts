@@ -1,4 +1,16 @@
 export type { NavChromeStyle } from './nav-chrome';
+export type {
+  PanelNavGroup,
+  PanelNavItem,
+} from '../components/PanelNav/panel-nav-types';
+export type { BarNavTab } from '../components/BarNav/bar-nav-types';
+export type {
+  PanelToolsHeaderAction,
+  PanelToolsHeaderConfig,
+  PanelToolsHeaders,
+  PanelToolsItem,
+  PanelToolsToolId,
+} from '../components/PanelTools/panel-tools-types';
 export {
   NAV_STYLE_HINT_ATTR,
   readNavStyleAttr,
@@ -74,6 +86,21 @@ export {
   readPanelNavWidthTokens,
 } from './shell-chrome-metrics';
 export type { PanelNavWidthTokens } from './shell-chrome-metrics';
+export {
+  SHELL_DEFAULT_INBOX_TOOL,
+  SHELL_DESKTOP_BREAKPOINT,
+  SHELL_MOBILE_BREAKPOINT,
+  isShellInboxTool,
+  resolveAvailableInboxTool,
+  resolveShellResponsiveMode,
+  shellMobileDestinationForTool,
+  shouldEmitMobileDestinationChange,
+} from './shell-responsive';
+export type {
+  ShellInboxToolId,
+  ShellMobileDestination,
+  ShellResponsiveMode,
+} from './shell-responsive';
 export {
   BADGE_GRADIENT_POSITION_VAR,
   badgeGradientPosition,

@@ -6,6 +6,10 @@ import '../../../../dist/components/ds-shell-app.js';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
+import '../../../../dist/components/ds-shell-tools.js';
+import '../../../../dist/components/ds-shell-mobile-bar.js';
+import '../../../../dist/components/ds-shell-mobile-nav.js';
+import '../../../../dist/components/ds-shell-mobile-section-nav.js';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
 import type { PanelToolsItem } from '../PanelTools/panel-tools-types';
 import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
@@ -117,4 +121,56 @@ export const WithGradient: Story = {
 export const WithoutGradient: Story = {
   name: 'Without gradient',
   render: () => shellLayout('none'),
+};
+
+export const MobileFoundation: Story = {
+  name: 'Mobile foundation',
+  parameters: {
+    viewport: { defaultViewport: 'mobile1' },
+  },
+  render: () => html`
+    <div style="height: 100vh;">
+      <ds-shell-app
+        nav-style="dashboard"
+        gradient-preset="warm"
+        mobile-destination="area"
+        style="height: 100%;"
+      >
+        <ds-panel-nav slot="panel" .groups=${PANEL_GROUPS}></ds-panel-nav>
+        <ds-shell-mobile-nav
+          slot="mobile-navigation"
+          .dashboardGroups=${PANEL_GROUPS}
+          .settingsGroups=${[]}
+          current-url="/dashboard/area-a/tab-2"
+        ></ds-shell-mobile-nav>
+        <ds-bar-nav
+          slot="bar"
+          .tabs=${BAR_TABS}
+          base-path="/dashboard/area-a"
+          current-url="/dashboard/area-a/tab-2"
+        ></ds-bar-nav>
+        <ds-shell-mobile-section-nav
+          slot="mobile-section-nav"
+          .tabs=${BAR_TABS}
+          base-path="/dashboard/area-a"
+          current-url="/dashboard/area-a/tab-2"
+          heading="Area A"
+        ></ds-shell-mobile-section-nav>
+        <ds-shell-tools slot="tools" .items=${PANEL_TOOLS_ITEMS}>
+          <div slot="search-view">Search tool</div>
+          <div slot="agents-view">Agents tool</div>
+          <div slot="messages-view">Messages tool</div>
+        </ds-shell-tools>
+        <main style="min-height: 100%; padding: var(--dimension-space-200); box-sizing: border-box;">
+          Routed Area A content
+        </main>
+        <ds-shell-mobile-bar
+          slot="mobile-bar"
+          .currentArea=${{ id: 'area-a', icon: 'MapPage', label: 'Area A' }}
+          active-destination="area"
+          inbox-dot
+        ></ds-shell-mobile-bar>
+      </ds-shell-app>
+    </div>
+  `,
 };

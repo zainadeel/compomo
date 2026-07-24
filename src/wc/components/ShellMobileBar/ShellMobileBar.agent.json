@@ -1,0 +1,30 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-shell-mobile-bar",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-shell-mobile-bar",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+  "useWhen": ["ShellApp is rendering its dedicated below-768px application composition."],
+  "avoidWhen": ["Rendering desktop or tablet shell chrome.", "An arbitrary set of product tabs is required."],
+  "commonlyComposedWith": ["component:ds-shell-app"],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "Every item keeps a visible label and accessible name.",
+    "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
+  ],
+  "states": [
+    "The item order is fixed: Menu, current area, Search, Agents, Inbox.",
+    "Reselecting an active destination does not reset its nested state."
+  ],
+  "responsiveBehavior": ["Render only below the mobile breakpoint and preserve safe-area clearance."],
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/ShellMobileBar/ShellMobileBar.stories.ts"
+    }
+  ]
+}
