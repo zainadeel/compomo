@@ -1,0 +1,30 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-shell-mobile-nav",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-shell-mobile-nav",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Full-height mobile primary navigation pane with local Dashboard and Settings browsing.",
+  "useWhen": ["The mobile ShellApp Menu control needs to expose the complete primary navigation collection."],
+  "avoidWhen": ["Rendering desktop PanelNav.", "Switching local page content."],
+  "commonlyComposedWith": ["component:ds-shell-app", "component:ds-shell-mobile-bar"],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "The pane is a named navigation landmark and retains visible labels for every destination.",
+    "Escape requests dismissal and opening moves focus to the selected or first available area."
+  ],
+  "states": [
+    "Dashboard and Settings change only the collection being browsed.",
+    "Area, Help, and Account events express intent while the application owns navigation and product behavior."
+  ],
+  "responsiveBehavior": ["The pane fills the mobile content stage while the bottom bar remains available."],
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/ShellMobileNav/ShellMobileNav.stories.ts"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  background: var(--color-background-primary);
+  color: var(--color-foreground-secondary);
+}
+
+.shell-mobile-section-nav {
+  min-width: 0;
+  min-height: var(--dimension-size-600);
+  display: flex;
+  align-items: center;
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+}
+
+.shell-mobile-section-nav__scroller {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--dimension-size-600);
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  padding-inline: var(--dimension-space-100);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+.shell-mobile-section-nav__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.shell-mobile-section-nav__tab {
+  appearance: none;
+  flex: 0 0 auto;
+  min-height: var(--dimension-size-400);
+  padding-inline: var(--dimension-space-100);
+  border: 0;
+  border-radius: var(--dimension-radius-100);
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  cursor: pointer;
+}
+
+.shell-mobile-section-nav__tab--selected {
+  color: var(--color-foreground-primary);
+}
+
+.shell-mobile-section-nav__tab:disabled {
+  color: var(--color-foreground-tertiary);
+  cursor: default;
+}
+
+.shell-mobile-section-nav__divider {
+  flex: 0 0 auto;
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-size-300);
+  background: var(--color-border-tertiary);
+}
+
+.shell-mobile-section-nav__dot {
+  width: var(--dimension-size-075);
+  height: var(--dimension-size-075);
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-background-bold-brand);
+}
+
+.shell-mobile-section-nav__heading {
+  display: block;
+  min-width: 0;
+  padding-inline: var(--dimension-space-200);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

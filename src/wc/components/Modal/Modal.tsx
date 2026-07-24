@@ -114,7 +114,7 @@ export class Modal {
   }
 
   private updateFooterPresence(slot?: HTMLSlotElement) {
-    const assignedNodes = slot?.assignedNodes({ flatten: true }) ?? [];
+    const assignedNodes = slot?.assignedNodes() ?? [];
     this.hasFooter =
       assignedNodes.some(node => node.nodeType !== Node.TEXT_NODE || !!node.textContent?.trim()) ||
       this.el.querySelector('[slot="footer"]') !== null;

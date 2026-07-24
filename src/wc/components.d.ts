@@ -39,7 +39,7 @@ import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
-import { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+import { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
@@ -48,7 +48,10 @@ import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
+import { ShellMobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
+import { ShellMobileBarDestinationDetail } from "./components/ShellMobileBar/shell-mobile-bar-types";
+import { ShellMobileNavAuxiliaryDetail } from "./components/ShellMobileNav/shell-mobile-nav-types";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
@@ -95,7 +98,7 @@ export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
-export { PanelNavGroup, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+export { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
@@ -104,7 +107,10 @@ export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
 export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
+export { ShellMobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
+export { ShellMobileBarDestinationDetail } from "./components/ShellMobileBar/shell-mobile-bar-types";
+export { ShellMobileNavAuxiliaryDetail } from "./components/ShellMobileNav/shell-mobile-nav-types";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
@@ -2043,6 +2049,16 @@ export namespace Components {
          */
         "gradientPreset": ShellGradientPreset;
         /**
+          * Controlled mobile surface shown above the persistent bottom bar.
+          * @default 'area'
+         */
+        "mobileDestination": ShellMobileDestination;
+        /**
+          * Controlled full-stage mobile navigation-pane state.
+          * @default false
+         */
+        "mobileNavigationOpen": boolean;
+        /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
          */
@@ -2090,6 +2106,130 @@ export namespace Components {
          */
         "selected": boolean;
     }
+    interface DsShellMobileBar {
+        /**
+          * @default 'area'
+         */
+        "activeDestination": ShellMobileDestination;
+        /**
+          * @default false
+         */
+        "agentsDot": boolean;
+        /**
+          * @default 'Agents'
+         */
+        "agentsLabel": string;
+        /**
+          * @default {     id: 'tracking',     icon: 'MapPage',     label: 'Tracking',   }
+         */
+        "currentArea": PanelNavItem;
+        "focusDestination": (destination: ShellMobileDestination | "navigation") => Promise<void>;
+        /**
+          * @default false
+         */
+        "inboxDot": boolean;
+        /**
+          * @default 'Inbox'
+         */
+        "inboxLabel": string;
+        /**
+          * @default 'Menu'
+         */
+        "menuLabel": string;
+        /**
+          * @default false
+         */
+        "navigationExpanded": boolean;
+        /**
+          * @default false
+         */
+        "searchDot": boolean;
+        /**
+          * @default 'Search'
+         */
+        "searchLabel": string;
+    }
+    interface DsShellMobileNav {
+        /**
+          * @default 'Account'
+         */
+        "accountLabel": string;
+        /**
+          * @default 'dashboard'
+         */
+        "browseContext": NavChromeStyle;
+        /**
+          * @default ''
+         */
+        "currentUrl": string;
+        /**
+          * @default []
+         */
+        "dashboardGroups": PanelNavGroup[];
+        /**
+          * @default 'Dashboard'
+         */
+        "dashboardLabel": string;
+        /**
+          * @default 'Navigation'
+         */
+        "heading": string;
+        /**
+          * @default 'Help & Support'
+         */
+        "helpLabel": string;
+        /**
+          * @default 'Application navigation'
+         */
+        "navigationLabel": string;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default []
+         */
+        "settingsGroups": PanelNavGroup[];
+        /**
+          * @default 'Settings'
+         */
+        "settingsLabel": string;
+    }
+    interface DsShellMobileSectionNav {
+        /**
+          * Section base path used to derive the selected route tab.
+          * @default ''
+         */
+        "basePath": string;
+        /**
+          * Current application route.
+          * @default ''
+         */
+        "currentUrl": string;
+        /**
+          * Active primary-area label shown when the route has no section row.
+         */
+        "heading": string | undefined;
+        /**
+          * @default 'Section navigation'
+         */
+        "navigationLabel": string;
+        /**
+          * Route sections shared with the corresponding desktop BarNav.
+          * @default []
+         */
+        "tabs": BarNavTab[];
+        /**
+          * JSON fallback for `tabs`.
+          * @default ''
+         */
+        "tabsJson": string;
+        /**
+          * Controlled selected tab when URL-derived selection is unavailable.
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsShellPage {
         /**
           * Standard page gutters, or no inset for full-bleed page content.
@@ -2105,6 +2245,77 @@ export namespace Components {
           * @default 'auto'
          */
         "headerPresentation": ShellPageHeaderPresentation;
+    }
+    interface DsShellTools {
+        /**
+          * Match PanelTools' imperative activation contract in every responsive mode.
+         */
+        "activateTool": (id: PanelToolsToolId) => Promise<void>;
+        /**
+          * @default ''
+         */
+        "activeTool": PanelToolsToolId | '';
+        /**
+          * Close the active global tool surface.
+         */
+        "closeDrawer": () => Promise<void>;
+        /**
+          * Focus an application-owned action in the visible shared tool header.
+         */
+        "focusHeaderAction": (id: string) => Promise<void>;
+        /**
+          * @default 'shared'
+         */
+        "fullscreenHeaderMode": 'shared' | 'split';
+        /**
+          * @default {}
+         */
+        "headers": PanelToolsHeaders;
+        /**
+          * @default ''
+         */
+        "headersJson": string;
+        /**
+          * @default 'Inbox'
+         */
+        "inboxLabel": string;
+        /**
+          * @default 'Inbox sections'
+         */
+        "inboxNavigationLabel": string;
+        /**
+          * @default []
+         */
+        "items": PanelToolsItem[];
+        /**
+          * @default ''
+         */
+        "itemsJson": string;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'drawer'
+         */
+        "presentation": 'drawer' | 'fullscreen';
+        /**
+          * Resolved by ShellApp; mobile uses a full-stage tool presentation.
+          * @default 'desktop'
+         */
+        "responsiveMode": ShellResponsiveMode;
+        /**
+          * @default ''
+         */
+        "storageKey": string;
+        /**
+          * @default 'Tool shortcuts'
+         */
+        "toolShortcutsLabel": string;
+        /**
+          * @default 'Tools'
+         */
+        "toolsLabel": string;
     }
     interface DsSkeleton {
         /**
@@ -2685,6 +2896,10 @@ export interface DsSelectMultiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectMultiElement;
 }
+export interface DsShellAppCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellAppElement;
+}
 export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsShellGradientPickerElement;
@@ -2692,6 +2907,22 @@ export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
 export interface DsShellGradientSwatchCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsShellGradientSwatchElement;
+}
+export interface DsShellMobileBarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellMobileBarElement;
+}
+export interface DsShellMobileNavCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellMobileNavElement;
+}
+export interface DsShellMobileSectionNavCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellMobileSectionNavElement;
+}
+export interface DsShellToolsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsShellToolsElement;
 }
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -3414,7 +3645,18 @@ declare global {
         prototype: HTMLDsSelectMultiElement;
         new (): HTMLDsSelectMultiElement;
     };
+    interface HTMLDsShellAppElementEventMap {
+        "dsResponsiveModeChange": { mode: ShellResponsiveMode };
+    }
     interface HTMLDsShellAppElement extends Components.DsShellApp, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellAppElementEventMap>(type: K, listener: (this: HTMLDsShellAppElement, ev: DsShellAppCustomEvent<HTMLDsShellAppElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellAppElementEventMap>(type: K, listener: (this: HTMLDsShellAppElement, ev: DsShellAppCustomEvent<HTMLDsShellAppElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsShellAppElement: {
         prototype: HTMLDsShellAppElement;
@@ -3460,11 +3702,96 @@ declare global {
         prototype: HTMLDsShellGradientSwatchElement;
         new (): HTMLDsShellGradientSwatchElement;
     };
+    interface HTMLDsShellMobileBarElementEventMap {
+        "dsNavigationToggle": boolean;
+        "dsDestinationChange": ShellMobileBarDestinationDetail;
+    }
+    interface HTMLDsShellMobileBarElement extends Components.DsShellMobileBar, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellMobileBarElementEventMap>(type: K, listener: (this: HTMLDsShellMobileBarElement, ev: DsShellMobileBarCustomEvent<HTMLDsShellMobileBarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellMobileBarElementEventMap>(type: K, listener: (this: HTMLDsShellMobileBarElement, ev: DsShellMobileBarCustomEvent<HTMLDsShellMobileBarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsShellMobileBarElement: {
+        prototype: HTMLDsShellMobileBarElement;
+        new (): HTMLDsShellMobileBarElement;
+    };
+    interface HTMLDsShellMobileNavElementEventMap {
+        "dsAreaSelect": string;
+        "dsBrowseContextChange": NavChromeStyle;
+        "dsAuxiliarySelect": ShellMobileNavAuxiliaryDetail;
+        "dsClose": void;
+    }
+    interface HTMLDsShellMobileNavElement extends Components.DsShellMobileNav, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellMobileNavElementEventMap>(type: K, listener: (this: HTMLDsShellMobileNavElement, ev: DsShellMobileNavCustomEvent<HTMLDsShellMobileNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellMobileNavElementEventMap>(type: K, listener: (this: HTMLDsShellMobileNavElement, ev: DsShellMobileNavCustomEvent<HTMLDsShellMobileNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsShellMobileNavElement: {
+        prototype: HTMLDsShellMobileNavElement;
+        new (): HTMLDsShellMobileNavElement;
+    };
+    interface HTMLDsShellMobileSectionNavElementEventMap {
+        "dsTabChange": string;
+    }
+    interface HTMLDsShellMobileSectionNavElement extends Components.DsShellMobileSectionNav, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellMobileSectionNavElementEventMap>(type: K, listener: (this: HTMLDsShellMobileSectionNavElement, ev: DsShellMobileSectionNavCustomEvent<HTMLDsShellMobileSectionNavElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellMobileSectionNavElementEventMap>(type: K, listener: (this: HTMLDsShellMobileSectionNavElement, ev: DsShellMobileSectionNavCustomEvent<HTMLDsShellMobileSectionNavElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsShellMobileSectionNavElement: {
+        prototype: HTMLDsShellMobileSectionNavElement;
+        new (): HTMLDsShellMobileSectionNavElement;
+    };
     interface HTMLDsShellPageElement extends Components.DsShellPage, HTMLStencilElement {
     }
     var HTMLDsShellPageElement: {
         prototype: HTMLDsShellPageElement;
         new (): HTMLDsShellPageElement;
+    };
+    interface HTMLDsShellToolsElementEventMap {
+        "dsToolChange": {
+    id: PanelToolsToolId;
+    selected: boolean;
+  };
+        "dsPresentationChange": {
+    presentation: 'drawer' | 'fullscreen';
+  };
+        "dsHeaderBack": {
+    tool: PanelToolsToolId;
+  };
+        "dsHeaderAction": {
+    tool: PanelToolsToolId;
+    id: string;
+  };
+    }
+    interface HTMLDsShellToolsElement extends Components.DsShellTools, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsShellToolsElementEventMap>(type: K, listener: (this: HTMLDsShellToolsElement, ev: DsShellToolsCustomEvent<HTMLDsShellToolsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsShellToolsElementEventMap>(type: K, listener: (this: HTMLDsShellToolsElement, ev: DsShellToolsCustomEvent<HTMLDsShellToolsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsShellToolsElement: {
+        prototype: HTMLDsShellToolsElement;
+        new (): HTMLDsShellToolsElement;
     };
     interface HTMLDsSkeletonElement extends Components.DsSkeleton, HTMLStencilElement {
     }
@@ -3676,7 +4003,11 @@ declare global {
         "ds-shell-app": HTMLDsShellAppElement;
         "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
         "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
+        "ds-shell-mobile-bar": HTMLDsShellMobileBarElement;
+        "ds-shell-mobile-nav": HTMLDsShellMobileNavElement;
+        "ds-shell-mobile-section-nav": HTMLDsShellMobileSectionNavElement;
         "ds-shell-page": HTMLDsShellPageElement;
+        "ds-shell-tools": HTMLDsShellToolsElement;
         "ds-skeleton": HTMLDsSkeletonElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-swatch-picker": HTMLDsSwatchPickerElement;
@@ -5785,10 +6116,24 @@ declare namespace LocalJSX {
          */
         "gradientPreset"?: ShellGradientPreset;
         /**
+          * Controlled mobile surface shown above the persistent bottom bar.
+          * @default 'area'
+         */
+        "mobileDestination"?: ShellMobileDestination;
+        /**
+          * Controlled full-stage mobile navigation-pane state.
+          * @default false
+         */
+        "mobileNavigationOpen"?: boolean;
+        /**
           * Chrome style propagated to slotted `ds-panel-nav` and `ds-bar-nav`.
           * @default 'dashboard'
          */
         "navStyle"?: NavChromeStyle;
+        /**
+          * Emitted after crossing the fixed 768px or 1200px shell boundaries.
+         */
+        "onDsResponsiveModeChange"?: (event: DsShellAppCustomEvent<{ mode: ShellResponsiveMode }>) => void;
         /**
           * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
@@ -5834,6 +6179,139 @@ declare namespace LocalJSX {
          */
         "selected"?: boolean;
     }
+    interface DsShellMobileBar {
+        /**
+          * @default 'area'
+         */
+        "activeDestination"?: ShellMobileDestination;
+        /**
+          * @default false
+         */
+        "agentsDot"?: boolean;
+        /**
+          * @default 'Agents'
+         */
+        "agentsLabel"?: string;
+        /**
+          * @default {     id: 'tracking',     icon: 'MapPage',     label: 'Tracking',   }
+         */
+        "currentArea"?: PanelNavItem;
+        /**
+          * @default false
+         */
+        "inboxDot"?: boolean;
+        /**
+          * @default 'Inbox'
+         */
+        "inboxLabel"?: string;
+        /**
+          * @default 'Menu'
+         */
+        "menuLabel"?: string;
+        /**
+          * @default false
+         */
+        "navigationExpanded"?: boolean;
+        "onDsDestinationChange"?: (event: DsShellMobileBarCustomEvent<ShellMobileBarDestinationDetail>) => void;
+        "onDsNavigationToggle"?: (event: DsShellMobileBarCustomEvent<boolean>) => void;
+        /**
+          * @default false
+         */
+        "searchDot"?: boolean;
+        /**
+          * @default 'Search'
+         */
+        "searchLabel"?: string;
+    }
+    interface DsShellMobileNav {
+        /**
+          * @default 'Account'
+         */
+        "accountLabel"?: string;
+        /**
+          * @default 'dashboard'
+         */
+        "browseContext"?: NavChromeStyle;
+        /**
+          * @default ''
+         */
+        "currentUrl"?: string;
+        /**
+          * @default []
+         */
+        "dashboardGroups"?: PanelNavGroup[];
+        /**
+          * @default 'Dashboard'
+         */
+        "dashboardLabel"?: string;
+        /**
+          * @default 'Navigation'
+         */
+        "heading"?: string;
+        /**
+          * @default 'Help & Support'
+         */
+        "helpLabel"?: string;
+        /**
+          * @default 'Application navigation'
+         */
+        "navigationLabel"?: string;
+        "onDsAreaSelect"?: (event: DsShellMobileNavCustomEvent<string>) => void;
+        "onDsAuxiliarySelect"?: (event: DsShellMobileNavCustomEvent<ShellMobileNavAuxiliaryDetail>) => void;
+        "onDsBrowseContextChange"?: (event: DsShellMobileNavCustomEvent<NavChromeStyle>) => void;
+        "onDsClose"?: (event: DsShellMobileNavCustomEvent<void>) => void;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default []
+         */
+        "settingsGroups"?: PanelNavGroup[];
+        /**
+          * @default 'Settings'
+         */
+        "settingsLabel"?: string;
+    }
+    interface DsShellMobileSectionNav {
+        /**
+          * Section base path used to derive the selected route tab.
+          * @default ''
+         */
+        "basePath"?: string;
+        /**
+          * Current application route.
+          * @default ''
+         */
+        "currentUrl"?: string;
+        /**
+          * Active primary-area label shown when the route has no section row.
+         */
+        "heading"?: string | undefined;
+        /**
+          * @default 'Section navigation'
+         */
+        "navigationLabel"?: string;
+        /**
+          * Route intent; the application owns navigation.
+         */
+        "onDsTabChange"?: (event: DsShellMobileSectionNavCustomEvent<string>) => void;
+        /**
+          * Route sections shared with the corresponding desktop BarNav.
+          * @default []
+         */
+        "tabs"?: BarNavTab[];
+        /**
+          * JSON fallback for `tabs`.
+          * @default ''
+         */
+        "tabsJson"?: string;
+        /**
+          * Controlled selected tab when URL-derived selection is unavailable.
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsShellPage {
         /**
           * Standard page gutters, or no inset for full-bleed page content.
@@ -5849,6 +6327,79 @@ declare namespace LocalJSX {
           * @default 'auto'
          */
         "headerPresentation"?: ShellPageHeaderPresentation;
+    }
+    interface DsShellTools {
+        /**
+          * @default ''
+         */
+        "activeTool"?: PanelToolsToolId | '';
+        /**
+          * @default 'shared'
+         */
+        "fullscreenHeaderMode"?: 'shared' | 'split';
+        /**
+          * @default {}
+         */
+        "headers"?: PanelToolsHeaders;
+        /**
+          * @default ''
+         */
+        "headersJson"?: string;
+        /**
+          * @default 'Inbox'
+         */
+        "inboxLabel"?: string;
+        /**
+          * @default 'Inbox sections'
+         */
+        "inboxNavigationLabel"?: string;
+        /**
+          * @default []
+         */
+        "items"?: PanelToolsItem[];
+        /**
+          * @default ''
+         */
+        "itemsJson"?: string;
+        "onDsHeaderAction"?: (event: DsShellToolsCustomEvent<{
+    tool: PanelToolsToolId;
+    id: string;
+  }>) => void;
+        "onDsHeaderBack"?: (event: DsShellToolsCustomEvent<{
+    tool: PanelToolsToolId;
+  }>) => void;
+        "onDsPresentationChange"?: (event: DsShellToolsCustomEvent<{
+    presentation: 'drawer' | 'fullscreen';
+  }>) => void;
+        "onDsToolChange"?: (event: DsShellToolsCustomEvent<{
+    id: PanelToolsToolId;
+    selected: boolean;
+  }>) => void;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'drawer'
+         */
+        "presentation"?: 'drawer' | 'fullscreen';
+        /**
+          * Resolved by ShellApp; mobile uses a full-stage tool presentation.
+          * @default 'desktop'
+         */
+        "responsiveMode"?: ShellResponsiveMode;
+        /**
+          * @default ''
+         */
+        "storageKey"?: string;
+        /**
+          * @default 'Tool shortcuts'
+         */
+        "toolShortcutsLabel"?: string;
+        /**
+          * @default 'Tools'
+         */
+        "toolsLabel"?: string;
     }
     interface DsSkeleton {
         /**
@@ -6799,6 +7350,8 @@ declare namespace LocalJSX {
         "navStyle": NavChromeStyle;
         "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
+        "mobileDestination": ShellMobileDestination;
+        "mobileNavigationOpen": boolean;
     }
     interface DsShellGradientPickerAttributes {
         "value": ShellGradientPreset;
@@ -6810,10 +7363,54 @@ declare namespace LocalJSX {
         "isInactive": boolean;
         "ariaLabel": string | null;
     }
+    interface DsShellMobileBarAttributes {
+        "activeDestination": ShellMobileDestination;
+        "navigationExpanded": boolean;
+        "menuLabel": string;
+        "searchLabel": string;
+        "agentsLabel": string;
+        "inboxLabel": string;
+        "searchDot": boolean;
+        "agentsDot": boolean;
+        "inboxDot": boolean;
+    }
+    interface DsShellMobileNavAttributes {
+        "open": boolean;
+        "browseContext": NavChromeStyle;
+        "currentUrl": string;
+        "heading": string;
+        "navigationLabel": string;
+        "dashboardLabel": string;
+        "settingsLabel": string;
+        "accountLabel": string;
+        "helpLabel": string;
+    }
+    interface DsShellMobileSectionNavAttributes {
+        "tabsJson": string;
+        "value": string;
+        "heading": string | undefined;
+        "basePath": string;
+        "currentUrl": string;
+        "navigationLabel": string;
+    }
     interface DsShellPageAttributes {
         "headerPresentation": ShellPageHeaderPresentation;
         "headerCapacity": ShellPageCapacity;
         "contentInset": ShellPageContentInset;
+    }
+    interface DsShellToolsAttributes {
+        "responsiveMode": ShellResponsiveMode;
+        "open": boolean;
+        "activeTool": PanelToolsToolId | '';
+        "presentation": 'drawer' | 'fullscreen';
+        "fullscreenHeaderMode": 'shared' | 'split';
+        "itemsJson": string;
+        "headersJson": string;
+        "storageKey": string;
+        "toolsLabel": string;
+        "toolShortcutsLabel": string;
+        "inboxLabel": string;
+        "inboxNavigationLabel": string;
     }
     interface DsSkeletonAttributes {
         "variant": SkeletonVariant;
@@ -6988,7 +7585,11 @@ declare namespace LocalJSX {
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
         "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
         "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
+        "ds-shell-mobile-bar": Omit<DsShellMobileBar, keyof DsShellMobileBarAttributes> & { [K in keyof DsShellMobileBar & keyof DsShellMobileBarAttributes]?: DsShellMobileBar[K] } & { [K in keyof DsShellMobileBar & keyof DsShellMobileBarAttributes as `attr:${K}`]?: DsShellMobileBarAttributes[K] } & { [K in keyof DsShellMobileBar & keyof DsShellMobileBarAttributes as `prop:${K}`]?: DsShellMobileBar[K] };
+        "ds-shell-mobile-nav": Omit<DsShellMobileNav, keyof DsShellMobileNavAttributes> & { [K in keyof DsShellMobileNav & keyof DsShellMobileNavAttributes]?: DsShellMobileNav[K] } & { [K in keyof DsShellMobileNav & keyof DsShellMobileNavAttributes as `attr:${K}`]?: DsShellMobileNavAttributes[K] } & { [K in keyof DsShellMobileNav & keyof DsShellMobileNavAttributes as `prop:${K}`]?: DsShellMobileNav[K] };
+        "ds-shell-mobile-section-nav": Omit<DsShellMobileSectionNav, keyof DsShellMobileSectionNavAttributes> & { [K in keyof DsShellMobileSectionNav & keyof DsShellMobileSectionNavAttributes]?: DsShellMobileSectionNav[K] } & { [K in keyof DsShellMobileSectionNav & keyof DsShellMobileSectionNavAttributes as `attr:${K}`]?: DsShellMobileSectionNavAttributes[K] } & { [K in keyof DsShellMobileSectionNav & keyof DsShellMobileSectionNavAttributes as `prop:${K}`]?: DsShellMobileSectionNav[K] };
         "ds-shell-page": Omit<DsShellPage, keyof DsShellPageAttributes> & { [K in keyof DsShellPage & keyof DsShellPageAttributes]?: DsShellPage[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `attr:${K}`]?: DsShellPageAttributes[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `prop:${K}`]?: DsShellPage[K] };
+        "ds-shell-tools": Omit<DsShellTools, keyof DsShellToolsAttributes> & { [K in keyof DsShellTools & keyof DsShellToolsAttributes]?: DsShellTools[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `attr:${K}`]?: DsShellToolsAttributes[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `prop:${K}`]?: DsShellTools[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-swatch-picker": Omit<DsSwatchPicker, keyof DsSwatchPickerAttributes> & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes]?: DsSwatchPicker[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `attr:${K}`]?: DsSwatchPickerAttributes[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `prop:${K}`]?: DsSwatchPicker[K] };
@@ -7094,7 +7695,11 @@ declare module "@stencil/core" {
              * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
              */
             "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
+            "ds-shell-mobile-bar": LocalJSX.IntrinsicElements["ds-shell-mobile-bar"] & JSXBase.HTMLAttributes<HTMLDsShellMobileBarElement>;
+            "ds-shell-mobile-nav": LocalJSX.IntrinsicElements["ds-shell-mobile-nav"] & JSXBase.HTMLAttributes<HTMLDsShellMobileNavElement>;
+            "ds-shell-mobile-section-nav": LocalJSX.IntrinsicElements["ds-shell-mobile-section-nav"] & JSXBase.HTMLAttributes<HTMLDsShellMobileSectionNavElement>;
             "ds-shell-page": LocalJSX.IntrinsicElements["ds-shell-page"] & JSXBase.HTMLAttributes<HTMLDsShellPageElement>;
+            "ds-shell-tools": LocalJSX.IntrinsicElements["ds-shell-tools"] & JSXBase.HTMLAttributes<HTMLDsShellToolsElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-swatch-picker": LocalJSX.IntrinsicElements["ds-swatch-picker"] & JSXBase.HTMLAttributes<HTMLDsSwatchPickerElement>;

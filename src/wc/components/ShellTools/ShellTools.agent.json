@@ -1,0 +1,66 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-shell-tools",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-shell-tools",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+  "useWhen": [
+    "A ShellApp must preserve the same Search, Agents, Messages, Stacks, Activity, and Help product owners across desktop, tablet, and mobile."
+  ],
+  "avoidWhen": [
+    "The tools exist only in desktop and tablet chrome; PanelTools remains supported for that case.",
+    "The content is a routed primary application area."
+  ],
+  "alternatives": [
+    {
+      "when": "Only legacy rail and drawer behavior is required.",
+      "component": "component:ds-panel-tools",
+      "reason": "PanelTools remains the backward-compatible desktop and tablet primitive."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-shell-app",
+    "component:ds-panel-tool-header",
+    "component:ds-shell-mobile-bar"
+  ],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "Only the active mobile tool view participates in focus or the accessibility tree.",
+    "Header Back and application-owned header actions preserve the PanelTools event contract.",
+    "Inbox uses TabGroup semantics for Messages, Stacks, and Activity."
+  ],
+  "states": [
+    "The application owns open and activeTool and replaces headers when tool depth changes.",
+    "Messages, Stacks, and Activity map to one mobile Inbox destination while retaining the actual active tool id.",
+    "Switching responsive mode must not recreate application-owned slotted product elements."
+  ],
+  "responsiveBehavior": [
+    "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
+    "Mobile renders the active tool across the shell stage and groups available inbox tools in a segmented control."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign items and headers as JavaScript properties and place each persistent owner in its named *-view slot."
+    ],
+    "react": [
+      "Keep stable keyed product owner elements in the generated wrapper's named slots."
+    ],
+    "angular": [
+      "Bind structured items and headers as properties and keep each tool owner mounted under a named *-view slot."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/ShellTools/ShellTools.stories.ts"
+    },
+    {
+      "label": "PanelTools contract",
+      "path": "src/wc/components/PanelTools/PanelTools.agent.json"
+    }
+  ]
+}

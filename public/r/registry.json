@@ -6729,7 +6729,7 @@
           "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
           "useWhen": [
             "Building any standard authenticated product or workspace page with CompoMo.",
-            "PanelNav, BarNav, PanelTools, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
+            "PanelNav, BarNav, ShellTools, mobile navigation, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
             "Future application templates need the supported base-page composition boundary."
           ],
           "avoidWhen": [
@@ -6741,6 +6741,10 @@
             "component:ds-panel-nav",
             "component:ds-bar-nav",
             "component:ds-panel-tools",
+            "component:ds-shell-tools",
+            "component:ds-shell-mobile-nav",
+            "component:ds-shell-mobile-section-nav",
+            "component:ds-shell-mobile-bar",
             "component:ds-shell-page",
             "component:ds-swatch-picker"
           ],
@@ -6751,16 +6755,17 @@
           "accessibility": [
             "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
             "Ensure the default content region contains the page's single main landmark.",
-            "Keep PanelNav, BarNav, and PanelTools chrome available in the shell's supported desktop and tablet compositions.",
+            "Keep PanelNav, BarNav, and PanelTools-compatible chrome available in desktop and tablet compositions and the persistent mobile bar available below 768px.",
             "Do not override browser keyboard chords when enabling shell shortcuts.",
             "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
             "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
           ],
           "states": [
             "Render exactly one ShellApp as the workspace root and never nest it.",
-            "PanelNav, BarNav, and PanelTools are required shell regions; PanelTools contains at least Search and Help even when no additional product tools apply.",
+            "PanelNav, BarNav, and ShellTools are the responsive shell regions; ShellTools contains at least Search and Help even when no additional product tools apply.",
             "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-            "ShellApp propagates navStyle and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and responsive composition.",
+            "ShellApp propagates navStyle and resolved responsive mode and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and mobile-stage visibility.",
+            "The application controls mobileDestination and mobileNavigationOpen and keeps router state independent from global tool-surface changes.",
             "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
@@ -6773,9 +6778,10 @@
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
-            "On mobile, ShellApp remains the page root but replaces PanelNav and desktop navigation composition with a future dedicated mobile navigation design.",
+            "On mobile, ShellApp hides and inerts PanelNav and BarNav, uses a solid primary stage, and composes MobileNav, MobileSectionNav, ShellTools, and the persistent five-item MobileBar.",
+            "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
-            "The current runtime does not yet implement the complete desktop, tablet, and mobile composition contract; consuming applications must enforce missing breakpoint behavior until ShellApp provides it."
+            "The bottom bar remains visible at all route and tool depths in the foundation release."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -6783,7 +6789,7 @@
               "Stamp route-derived nav-style before components connect when deterministic first paint is required."
             ],
             "react": [
-              "Use generated wrappers and preserve native slot names for PanelNav, BarNav, PanelTools, and main content.",
+              "Use generated wrappers and preserve native slot names for desktop navigation, responsive tools, mobile navigation, and main content.",
               "Resolve all shell inputs from one router state before rendering the composition."
             ],
             "angular": [
@@ -6816,6 +6822,14 @@
             "type": "ShellGradientPreset",
             "required": false
           },
+          "mobileDestination": {
+            "type": "ShellMobileDestination",
+            "required": false
+          },
+          "mobileNavigationOpen": {
+            "type": "boolean",
+            "required": false
+          },
           "navStyle": {
             "type": "NavChromeStyle",
             "required": false
@@ -6825,7 +6839,12 @@
             "required": false
           }
         },
-        "events": [],
+        "events": [
+          {
+            "name": "dsResponsiveModeChange",
+            "detail": "{ mode: ShellResponsiveMode }"
+          }
+        ],
         "slots": [],
         "exports": {
           "customElement": "ds-shell-app",
@@ -7057,6 +7076,367 @@
       "registryDependencies": []
     },
     {
+      "name": "shell-mobile-bar",
+      "title": "ShellMobileBar",
+      "description": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-mobile-bar",
+        "source": "src/wc/components/ShellMobileBar/ShellMobileBar.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+          "useWhen": [
+            "ShellApp is rendering its dedicated below-768px application composition."
+          ],
+          "avoidWhen": [
+            "Rendering desktop or tablet shell chrome.",
+            "An arbitrary set of product tabs is required."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Every item keeps a visible label and accessible name.",
+            "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
+          ],
+          "states": [
+            "The item order is fixed: Menu, current area, Search, Agents, Inbox.",
+            "Reselecting an active destination does not reset its nested state."
+          ],
+          "responsiveBehavior": [
+            "Render only below the mobile breakpoint and preserve safe-area clearance."
+          ],
+          "references": [
+            {
+              "label": "Storybook",
+              "path": "src/wc/components/ShellMobileBar/ShellMobileBar.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "activeDestination": {
+            "type": "ShellMobileDestination",
+            "required": false
+          },
+          "agentsDot": {
+            "type": "boolean",
+            "required": false
+          },
+          "agentsLabel": {
+            "type": "string",
+            "required": false
+          },
+          "currentArea": {
+            "type": "PanelNavItem",
+            "required": false
+          },
+          "inboxDot": {
+            "type": "boolean",
+            "required": false
+          },
+          "inboxLabel": {
+            "type": "string",
+            "required": false
+          },
+          "menuLabel": {
+            "type": "string",
+            "required": false
+          },
+          "navigationExpanded": {
+            "type": "boolean",
+            "required": false
+          },
+          "searchDot": {
+            "type": "boolean",
+            "required": false
+          },
+          "searchLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsDestinationChange",
+            "detail": "ShellMobileBarDestinationDetail"
+          },
+          {
+            "name": "dsNavigationToggle",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-mobile-bar",
+          "react": "DsShellMobileBar",
+          "angular": "DsShellMobileBar"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "shell-mobile-nav",
+      "title": "ShellMobileNav",
+      "description": "Full-height mobile primary navigation pane with local Dashboard and Settings browsing.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-mobile-nav",
+        "source": "src/wc/components/ShellMobileNav/ShellMobileNav.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Full-height mobile primary navigation pane with local Dashboard and Settings browsing.",
+          "useWhen": [
+            "The mobile ShellApp Menu control needs to expose the complete primary navigation collection."
+          ],
+          "avoidWhen": [
+            "Rendering desktop PanelNav.",
+            "Switching local page content."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-shell-mobile-bar"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "The pane is a named navigation landmark and retains visible labels for every destination.",
+            "Escape requests dismissal and opening moves focus to the selected or first available area."
+          ],
+          "states": [
+            "Dashboard and Settings change only the collection being browsed.",
+            "Area, Help, and Account events express intent while the application owns navigation and product behavior."
+          ],
+          "responsiveBehavior": [
+            "The pane fills the mobile content stage while the bottom bar remains available."
+          ],
+          "references": [
+            {
+              "label": "Storybook",
+              "path": "src/wc/components/ShellMobileNav/ShellMobileNav.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "accountLabel": {
+            "type": "string",
+            "required": false
+          },
+          "browseContext": {
+            "type": "NavChromeStyle",
+            "required": false
+          },
+          "currentUrl": {
+            "type": "string",
+            "required": false
+          },
+          "dashboardGroups": {
+            "type": "PanelNavGroup[]",
+            "required": false
+          },
+          "dashboardLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "helpLabel": {
+            "type": "string",
+            "required": false
+          },
+          "navigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "settingsGroups": {
+            "type": "PanelNavGroup[]",
+            "required": false
+          },
+          "settingsLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAreaSelect",
+            "detail": "string"
+          },
+          {
+            "name": "dsAuxiliarySelect",
+            "detail": "ShellMobileNavAuxiliaryDetail"
+          },
+          {
+            "name": "dsBrowseContextChange",
+            "detail": "NavChromeStyle"
+          },
+          {
+            "name": "dsClose",
+            "detail": "void"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-mobile-nav",
+          "react": "DsShellMobileNav",
+          "angular": "DsShellMobileNav"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "tab-group",
+        "text"
+      ]
+    },
+    {
+      "name": "shell-mobile-section-nav",
+      "title": "ShellMobileSectionNav",
+      "description": "Horizontally scrollable mobile route navigation corresponding to the active area's desktop BarNav.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-mobile-section-nav",
+        "source": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Horizontally scrollable mobile route navigation corresponding to the active area's desktop BarNav.",
+          "useWhen": [
+            "ShellApp is rendering the below-768px routed workspace and the active area has peer route sections."
+          ],
+          "avoidWhen": [
+            "Choices switch local content without navigation; use TabGroup.",
+            "Rendering the desktop or tablet secondary navigation; use BarNav."
+          ],
+          "alternatives": [
+            {
+              "when": "The choices switch local content without changing routes.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup owns local view selection."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-shell-mobile-bar",
+            "component:ds-bar-nav"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "The row is a named navigation landmark and the selected section exposes aria-current.",
+            "Disabled route sections remain visible but cannot emit navigation intent."
+          ],
+          "states": [
+            "The host router owns the current URL and handles dsTabChange.",
+            "Detail routes that do not match a section show the active-area heading."
+          ],
+          "responsiveBehavior": [
+            "The row scrolls horizontally without wrapping and centers the selected section when selection changes."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign tabs as a JavaScript property and update currentUrl and basePath with router state."
+            ],
+            "react": [
+              "Pass the same BarNavTab array used by the desktop BarNav through the generated React wrapper."
+            ],
+            "angular": [
+              "Import the generated standalone adapter and bind tabs as a property."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook",
+              "path": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "basePath": {
+            "type": "string",
+            "required": false
+          },
+          "currentUrl": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "navigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "tabs": {
+            "type": "BarNavTab[]",
+            "required": false
+          },
+          "tabsJson": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsTabChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-mobile-section-nav",
+          "react": "DsShellMobileSectionNav",
+          "angular": "DsShellMobileSectionNav"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "shell-page",
       "title": "ShellPage",
       "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
@@ -7182,6 +7562,172 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
+    },
+    {
+      "name": "shell-tools",
+      "title": "ShellTools",
+      "description": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-tools",
+        "source": "src/wc/components/ShellTools/ShellTools.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+          "useWhen": [
+            "A ShellApp must preserve the same Search, Agents, Messages, Stacks, Activity, and Help product owners across desktop, tablet, and mobile."
+          ],
+          "avoidWhen": [
+            "The tools exist only in desktop and tablet chrome; PanelTools remains supported for that case.",
+            "The content is a routed primary application area."
+          ],
+          "alternatives": [
+            {
+              "when": "Only legacy rail and drawer behavior is required.",
+              "component": "component:ds-panel-tools",
+              "reason": "PanelTools remains the backward-compatible desktop and tablet primitive."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-panel-tool-header",
+            "component:ds-shell-mobile-bar"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Only the active mobile tool view participates in focus or the accessibility tree.",
+            "Header Back and application-owned header actions preserve the PanelTools event contract.",
+            "Inbox uses TabGroup semantics for Messages, Stacks, and Activity."
+          ],
+          "states": [
+            "The application owns open and activeTool and replaces headers when tool depth changes.",
+            "Messages, Stacks, and Activity map to one mobile Inbox destination while retaining the actual active tool id.",
+            "Switching responsive mode must not recreate application-owned slotted product elements."
+          ],
+          "responsiveBehavior": [
+            "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
+            "Mobile renders the active tool across the shell stage and groups available inbox tools in a segmented control."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign items and headers as JavaScript properties and place each persistent owner in its named *-view slot."
+            ],
+            "react": [
+              "Keep stable keyed product owner elements in the generated wrapper's named slots."
+            ],
+            "angular": [
+              "Bind structured items and headers as properties and keep each tool owner mounted under a named *-view slot."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook",
+              "path": "src/wc/components/ShellTools/ShellTools.stories.ts"
+            },
+            {
+              "label": "PanelTools contract",
+              "path": "src/wc/components/PanelTools/PanelTools.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "activeTool": {
+            "type": "PanelToolsToolId | ''",
+            "required": false
+          },
+          "fullscreenHeaderMode": {
+            "type": "'shared' | 'split'",
+            "required": false
+          },
+          "headers": {
+            "type": "PanelToolsHeaders",
+            "required": false
+          },
+          "headersJson": {
+            "type": "string",
+            "required": false
+          },
+          "inboxLabel": {
+            "type": "string",
+            "required": false
+          },
+          "inboxNavigationLabel": {
+            "type": "string",
+            "required": false
+          },
+          "items": {
+            "type": "PanelToolsItem[]",
+            "required": false
+          },
+          "itemsJson": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "presentation": {
+            "type": "'drawer' | 'fullscreen'",
+            "required": false
+          },
+          "responsiveMode": {
+            "type": "ShellResponsiveMode",
+            "required": false
+          },
+          "storageKey": {
+            "type": "string",
+            "required": false
+          },
+          "toolShortcutsLabel": {
+            "type": "string",
+            "required": false
+          },
+          "toolsLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsHeaderAction",
+            "detail": "{\n    tool: PanelToolsToolId;\n    id: string;\n  }"
+          },
+          {
+            "name": "dsHeaderBack",
+            "detail": "{\n    tool: PanelToolsToolId;\n  }"
+          },
+          {
+            "name": "dsPresentationChange",
+            "detail": "{\n    presentation: 'drawer' | 'fullscreen';\n  }"
+          },
+          {
+            "name": "dsToolChange",
+            "detail": "{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-shell-tools",
+          "react": "DsShellTools",
+          "angular": "DsShellTools"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "panel-tool-header",
+        "panel-tools",
+        "tab-group"
+      ]
     },
     {
       "name": "skeleton",

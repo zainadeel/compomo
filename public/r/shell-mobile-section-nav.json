@@ -1,0 +1,267 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shell-mobile-section-nav",
+  "title": "ShellMobileSectionNav",
+  "description": "Horizontally scrollable mobile route navigation corresponding to the active area's desktop BarNav.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-mobile-section-nav",
+    "source": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Horizontally scrollable mobile route navigation corresponding to the active area's desktop BarNav.",
+      "useWhen": [
+        "ShellApp is rendering the below-768px routed workspace and the active area has peer route sections."
+      ],
+      "avoidWhen": [
+        "Choices switch local content without navigation; use TabGroup.",
+        "Rendering the desktop or tablet secondary navigation; use BarNav."
+      ],
+      "alternatives": [
+        {
+          "when": "The choices switch local content without changing routes.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup owns local view selection."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-app",
+        "component:ds-shell-mobile-bar",
+        "component:ds-bar-nav"
+      ],
+      "patterns": [
+        "pattern:application-shell"
+      ],
+      "accessibility": [
+        "The row is a named navigation landmark and the selected section exposes aria-current.",
+        "Disabled route sections remain visible but cannot emit navigation intent."
+      ],
+      "states": [
+        "The host router owns the current URL and handles dsTabChange.",
+        "Detail routes that do not match a section show the active-area heading."
+      ],
+      "responsiveBehavior": [
+        "The row scrolls horizontally without wrapping and centers the selected section when selection changes."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign tabs as a JavaScript property and update currentUrl and basePath with router state."
+        ],
+        "react": [
+          "Pass the same BarNavTab array used by the desktop BarNav through the generated React wrapper."
+        ],
+        "angular": [
+          "Import the generated standalone adapter and bind tabs as a property."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook",
+          "path": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "basePath": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "base-path",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Section base path used to derive the selected route tab."
+        },
+        "currentUrl": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "current-url",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Current application route."
+        },
+        "heading": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "heading",
+          "required": false,
+          "mutable": false,
+          "description": "Active primary-area label shown when the route has no section row."
+        },
+        "navigationLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "navigation-label",
+          "default": "'Section navigation'",
+          "required": false,
+          "mutable": false
+        },
+        "tabs": {
+          "type": "BarNavTab[]",
+          "resolvedType": "TabItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Route sections shared with the corresponding desktop BarNav."
+        },
+        "tabsJson": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "tabs-json",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "JSON fallback for `tabs`."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled selected tab when URL-derived selection is unavailable."
+        }
+      },
+      "events": [
+        {
+          "name": "dsTabChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Route intent; the application owns navigation."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "basePath": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "base-path",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Section base path used to derive the selected route tab."
+      },
+      "currentUrl": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "current-url",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Current application route."
+      },
+      "heading": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "heading",
+        "required": false,
+        "mutable": false,
+        "description": "Active primary-area label shown when the route has no section row."
+      },
+      "navigationLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "navigation-label",
+        "default": "'Section navigation'",
+        "required": false,
+        "mutable": false
+      },
+      "tabs": {
+        "type": "BarNavTab[]",
+        "resolvedType": "TabItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Route sections shared with the corresponding desktop BarNav."
+      },
+      "tabsJson": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "tabs-json",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "JSON fallback for `tabs`."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled selected tab when URL-derived selection is unavailable."
+      }
+    },
+    "events": [
+      {
+        "name": "dsTabChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Route intent; the application owns navigation."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-shell-mobile-section-nav",
+      "react": "DsShellMobileSectionNav",
+      "angular": "DsShellMobileSectionNav"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-shell-mobile-section-nav.js';",
+        "example": "<ds-shell-mobile-section-nav></ds-shell-mobile-section-nav>"
+      },
+      "react": {
+        "import": "import { DsShellMobileSectionNav } from '@ds-mo/ui/react';",
+        "example": "<DsShellMobileSectionNav />"
+      },
+      "angular": {
+        "import": "import { DsShellMobileSectionNav } from '@ds-mo/ui/angular/ds-shell-mobile-section-nav';",
+        "example": "<ds-shell-mobile-section-nav></ds-shell-mobile-section-nav>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: tabs.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.css",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  background: var(--color-background-primary);\n  color: var(--color-foreground-secondary);\n}\n\n.shell-mobile-section-nav {\n  min-width: 0;\n  min-height: var(--dimension-size-600);\n  display: flex;\n  align-items: center;\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  background: var(--color-background-primary);\n}\n\n.shell-mobile-section-nav__scroller {\n  width: 100%;\n  min-width: 0;\n  min-height: var(--dimension-size-600);\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  padding-inline: var(--dimension-space-100);\n  overflow-x: auto;\n  overflow-y: hidden;\n  overscroll-behavior-inline: contain;\n  scrollbar-width: none;\n  box-sizing: border-box;\n}\n\n.shell-mobile-section-nav__scroller::-webkit-scrollbar {\n  display: none;\n}\n\n.shell-mobile-section-nav__tab {\n  appearance: none;\n  flex: 0 0 auto;\n  min-height: var(--dimension-size-400);\n  padding-inline: var(--dimension-space-100);\n  border: 0;\n  border-radius: var(--dimension-radius-100);\n  background: transparent;\n  color: inherit;\n  display: inline-flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  cursor: pointer;\n}\n\n.shell-mobile-section-nav__tab--selected {\n  color: var(--color-foreground-primary);\n}\n\n.shell-mobile-section-nav__tab:disabled {\n  color: var(--color-foreground-tertiary);\n  cursor: default;\n}\n\n.shell-mobile-section-nav__divider {\n  flex: 0 0 auto;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-size-300);\n  background: var(--color-border-tertiary);\n}\n\n.shell-mobile-section-nav__dot {\n  width: var(--dimension-size-075);\n  height: var(--dimension-size-075);\n  border-radius: var(--dimension-radius-half);\n  background: var(--color-background-bold-brand);\n}\n\n.shell-mobile-section-nav__heading {\n  display: block;\n  min-width: 0;\n  padding-inline: var(--dimension-space-200);\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/ShellMobileSectionNav/ShellMobileSectionNav.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n} from '@stencil/core';\nimport type { BarNavTab } from '../BarNav/bar-nav-types';\nimport {\n  deriveBarNavValueFromUrl,\n  parseJsonArrayProp,\n} from '../BarNav/bar-nav-utils';\nimport { getSelectableTabs, isTabDivider } from '../TabGroup/tab-item-utils';\n\n@Component({\n  tag: 'ds-shell-mobile-section-nav',\n  styleUrl: 'ShellMobileSectionNav.css',\n  scoped: true,\n})\nexport class ShellMobileSectionNav {\n  @Element() el!: HTMLElement;\n\n  /** Route sections shared with the corresponding desktop BarNav. */\n  @Prop() tabs: BarNavTab[] = [];\n  /** JSON fallback for `tabs`. */\n  @Prop({ attribute: 'tabs-json' }) tabsJson: string = '';\n  /** Controlled selected tab when URL-derived selection is unavailable. */\n  @Prop() value: string = '';\n  /** Active primary-area label shown when the route has no section row. */\n  @Prop() heading: string | undefined;\n  /** Section base path used to derive the selected route tab. */\n  @Prop() basePath: string = '';\n  /** Current application route. */\n  @Prop() currentUrl: string = '';\n  @Prop() navigationLabel: string = 'Section navigation';\n\n  /** Route intent; the application owns navigation. */\n  @Event() dsTabChange!: EventEmitter<string>;\n\n  private lastScrolledValue = '';\n\n  private get resolvedTabs(): BarNavTab[] {\n    return this.tabsJson\n      ? parseJsonArrayProp<BarNavTab>(this.tabsJson, [])\n      : (this.tabs ?? []);\n  }\n\n  private get urlState() {\n    return deriveBarNavValueFromUrl(this.currentUrl, this.basePath, this.resolvedTabs);\n  }\n\n  private get effectiveValue(): string {\n    if (this.currentUrl && this.basePath) return this.urlState.value;\n    return this.value;\n  }\n\n  componentDidLoad() {\n    this.scrollSelectedIntoView();\n  }\n\n  componentDidRender() {\n    this.scrollSelectedIntoView();\n  }\n\n  private scrollSelectedIntoView() {\n    const selectedValue = this.effectiveValue;\n    if (!selectedValue || selectedValue === this.lastScrolledValue) return;\n    this.lastScrolledValue = selectedValue;\n    requestAnimationFrame(() => {\n      this.el\n        .querySelector<HTMLElement>(`[data-section-id=\"${CSS.escape(selectedValue)}\"]`)\n        ?.scrollIntoView({ block: 'nearest', inline: 'center' });\n    });\n  }\n\n  private selectTab(id: string, isInactive: boolean | undefined) {\n    if (isInactive || id === this.effectiveValue) return;\n    this.dsTabChange.emit(id);\n  }\n\n  render() {\n    const tabs = this.resolvedTabs;\n    const selectableTabs = getSelectableTabs(tabs);\n    const showTabs = selectableTabs.length > 0 && !this.urlState.hideTabs;\n\n    return (\n      <Host>\n        <nav class=\"shell-mobile-section-nav\" aria-label={this.navigationLabel}>\n          {showTabs ? (\n            <div class=\"shell-mobile-section-nav__scroller\">\n              {tabs.map((tab, index) => {\n                if (isTabDivider(tab)) {\n                  return (\n                    <span\n                      class=\"shell-mobile-section-nav__divider\"\n                      aria-hidden=\"true\"\n                      key={`divider-${index}`}\n                    />\n                  );\n                }\n\n                const selected = tab.id === this.effectiveValue;\n                return (\n                  <button\n                    type=\"button\"\n                    class={{\n                      'shell-mobile-section-nav__tab': true,\n                      'shell-mobile-section-nav__tab--selected': selected,\n                      'ds-focus-ring-inset': true,\n                      'ds-interaction-fill': true,\n                    }}\n                    data-section-id={tab.id}\n                    disabled={tab.isInactive}\n                    aria-current={selected ? 'page' : undefined}\n                    onClick={() => this.selectTab(tab.id, tab.isInactive)}\n                  >\n                    <ds-text\n                      as=\"span\"\n                      variant=\"text-body-medium\"\n                      emphasis={selected}\n                      color=\"inherit\"\n                    >\n                      {tab.label}\n                    </ds-text>\n                    {tab.dot && (\n                      <span class=\"shell-mobile-section-nav__dot\" aria-hidden=\"true\" />\n                    )}\n                  </button>\n                );\n              })}\n            </div>\n          ) : (\n            <ds-text\n              class=\"shell-mobile-section-nav__heading\"\n              as=\"span\"\n              variant=\"text-body-medium\"\n              emphasis\n            >\n              {this.heading ?? ''}\n            </ds-text>\n          )}\n        </nav>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

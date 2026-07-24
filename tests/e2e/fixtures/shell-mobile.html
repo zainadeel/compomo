@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mobile shell e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        font-family: var(--typography-font-family, system-ui);
+        background: var(--color-background-primary);
+      }
+      ds-shell-app {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .fixture-view {
+        box-sizing: border-box;
+        min-height: 100%;
+        padding: var(--dimension-space-200);
+      }
+    </style>
+  </head>
+  <body>
+    <ds-shell-app
+      id="shell"
+      nav-style="dashboard"
+      gradient-preset="warm"
+      mobile-destination="area"
+    >
+      <ds-panel-nav slot="panel" id="panel"></ds-panel-nav>
+      <ds-shell-mobile-nav slot="mobile-navigation" id="mobile-nav"></ds-shell-mobile-nav>
+      <ds-bar-nav slot="bar" id="bar"></ds-bar-nav>
+      <ds-shell-mobile-section-nav
+        slot="mobile-section-nav"
+        id="mobile-sections"
+      ></ds-shell-mobile-section-nav>
+      <ds-shell-tools slot="tools" id="tools">
+        <section slot="search-view" id="search-view" class="fixture-view">
+          <label for="persistent-value">Persistent search value</label>
+          <input id="persistent-value" />
+        </section>
+        <section slot="agents-view" class="fixture-view">Agents view</section>
+        <section slot="messages-view" class="fixture-view">Messages view</section>
+        <section slot="stacks-view" class="fixture-view">Stacks view</section>
+        <section slot="activity-view" class="fixture-view">Activity view</section>
+        <section slot="help-view" class="fixture-view">Help view</section>
+      </ds-shell-tools>
+      <main id="workspace" class="fixture-view">
+        <h1>Tracking workspace</h1>
+        <div style="height: 1200px;">Scrollable routed content</div>
+      </main>
+      <ds-shell-mobile-bar slot="mobile-bar" id="mobile-bar"></ds-shell-mobile-bar>
+    </ds-shell-app>
+    <script type="module" src="/shell-mobile-setup.mjs"></script>
+  </body>
+</html>

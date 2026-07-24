@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--color-background-primary);
+}
+
+.shell-tools__desktop,
+.shell-tools__desktop ds-panel-tools,
+.shell-tools__mobile {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.shell-tools__mobile {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  background: var(--color-background-primary);
+}
+
+.shell-tools__inbox-nav {
+  padding: var(--dimension-space-100);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+}
+
+.shell-tools__mobile-body,
+.shell-tools__view {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.shell-tools__mobile-body {
+  overflow: hidden;
+}
+
+.shell-tools__view {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.shell-tools__view[hidden] {
+  display: none;
+}
+
+.shell-tools__view ::slotted(*) {
+  min-height: 0;
+}

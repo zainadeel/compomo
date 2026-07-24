@@ -1,0 +1,70 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  background: var(--color-background-primary);
+  color: var(--color-foreground-secondary);
+}
+
+.shell-mobile-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+  min-width: 0;
+  padding: var(--dimension-space-050) var(--dimension-space-050)
+    max(var(--dimension-space-050), env(safe-area-inset-bottom));
+  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+  box-sizing: border-box;
+}
+
+.shell-mobile-bar__item {
+  appearance: none;
+  min-width: 0;
+  min-height: var(--dimension-size-600);
+  padding: var(--dimension-space-050) var(--dimension-space-025);
+  border: 0;
+  border-radius: var(--dimension-radius-100);
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  cursor: pointer;
+}
+
+.shell-mobile-bar__item--selected {
+  color: var(--color-foreground-primary);
+}
+
+.shell-mobile-bar__item ds-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell-mobile-bar__icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
+}
+
+.shell-mobile-bar__dot {
+  position: absolute;
+  inset-block-start: calc(var(--dimension-space-025) * -1);
+  inset-inline-end: calc(var(--dimension-space-025) * -1);
+  width: var(--dimension-size-075);
+  height: var(--dimension-size-075);
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-background-bold-brand);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-background-primary);
+}

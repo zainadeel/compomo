@@ -337,7 +337,7 @@ export class ShellPage {
   private handleHeaderSlotChange = (event: Event) => {
     const slot = event.target as HTMLSlotElement;
     const header = slot
-      .assignedElements({ flatten: true })
+      .assignedElements()
       .find(element => element.tagName.toLowerCase() === 'ds-bar-title');
     this.observeHeader((header as BarTitleElement | undefined) ?? null);
   };
