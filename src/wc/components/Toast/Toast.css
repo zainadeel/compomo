@@ -21,6 +21,18 @@
   );
 }
 
+@media (max-width: 767px) {
+  :host([avoid-mobile-shell-bar]) .toast-viewport {
+    bottom: calc(
+      var(--dimension-space-200) +
+      var(--dimension-stroke-width-012) +
+      var(--dimension-space-050) +
+      var(--dimension-size-600) +
+      max(var(--dimension-space-050), env(safe-area-inset-bottom))
+    );
+  }
+}
+
 .toast-positioner {
   grid-area: 1 / 1;
   align-self: end;

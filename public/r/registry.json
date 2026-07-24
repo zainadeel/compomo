@@ -8899,6 +8899,7 @@
           ],
           "responsiveBehavior": [
             "The global stack stays at the viewport bottom-end with token-based inset and never exceeds the available viewport width.",
+            "Set avoid-mobile-shell-bar when the application uses the persistent shell bottom bar. Below 768px the global stack clears the complete safe-area-aware bar container by 16px; tablet and desktop positioning remain unchanged.",
             "Anchored toasts flip on their placement axis and clamp to viewport padding when the preferred side does not fit.",
             "The owner does not create separate mobile and desktop managers; one queue preserves ordering across responsive layouts.",
             "Pointer swipe remains optional input. Close and action controls retain keyboard access through the notification region."
@@ -8933,6 +8934,10 @@
           ]
         },
         "props": {
+          "avoidMobileShellBar": {
+            "type": "boolean",
+            "required": false
+          },
           "closeLabel": {
             "type": "string",
             "required": false

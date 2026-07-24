@@ -1,7 +1,11 @@
 import '/dist/components/ds-toast.js';
+import '/dist/components/ds-shell-mobile-bar.js';
 import { createToastManager } from '/dist/lib/toast/index.js';
 
-await customElements.whenDefined('ds-toast');
+await Promise.all([
+  customElements.whenDefined('ds-toast'),
+  customElements.whenDefined('ds-shell-mobile-bar'),
+]);
 
 const toast = document.getElementById('toast');
 const manager = createToastManager();

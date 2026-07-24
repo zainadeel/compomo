@@ -4,6 +4,20 @@
     <meta charset="utf-8">
     <title>Toast system</title>
     <link rel="stylesheet" href="/tokens/index.css">
+    <style>
+      #mobile-bar {
+        display: none;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+      @media (max-width: 767px) {
+        #mobile-bar {
+          display: block;
+        }
+      }
+    </style>
   </head>
   <body>
     <main>
@@ -12,7 +26,8 @@
       <button id="anchor" style="margin-top:var(--dimension-panel-width-2xs)">Copy link</button>
       <button id="after">After notifications</button>
     </main>
-    <ds-toast id="toast" label="Notifications"></ds-toast>
+    <ds-toast id="toast" label="Notifications" avoid-mobile-shell-bar></ds-toast>
+    <ds-shell-mobile-bar id="mobile-bar"></ds-shell-mobile-bar>
     <script type="module" src="/toast-setup.mjs"></script>
   </body>
 </html>

@@ -85,8 +85,26 @@ mobileBar.inboxDot = true;
 tools.items = toolItems;
 tools.headers = {
   search: { title: 'Search' },
-  agents: { title: 'Agents' },
-  messages: { title: 'Messages' },
+  agents: {
+    title: 'Agents',
+    actions: [
+      {
+        id: 'fullscreen',
+        icon: 'PanelExpand',
+        ariaLabel: 'Enter fullscreen',
+      },
+    ],
+  },
+  messages: {
+    title: 'Messages',
+    actions: [
+      {
+        id: 'fullscreen',
+        icon: 'PanelExpand',
+        ariaLabel: 'Enter fullscreen',
+      },
+    ],
+  },
 };
 
 function applyShellState(destination, navigationOpen) {

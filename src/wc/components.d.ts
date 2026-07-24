@@ -2659,6 +2659,11 @@ export namespace Components {
     }
     interface DsToast {
         /**
+          * Keep the global stack 16px above the persistent mobile shell bar below 768px.
+          * @default false
+         */
+        "avoidMobileShellBar": boolean;
+        /**
           * Localized accessible label for every toast close action.
           * @default 'Close notification'
          */
@@ -6757,6 +6762,11 @@ declare namespace LocalJSX {
     }
     interface DsToast {
         /**
+          * Keep the global stack 16px above the persistent mobile shell bar below 768px.
+          * @default false
+         */
+        "avoidMobileShellBar"?: boolean;
+        /**
           * Localized accessible label for every toast close action.
           * @default 'Close notification'
          */
@@ -7507,6 +7517,7 @@ declare namespace LocalJSX {
         "timeout": string;
         "label": string;
         "closeLabel": string;
+        "avoidMobileShellBar": boolean;
     }
     interface DsTooltipAttributes {
         "label": string;
