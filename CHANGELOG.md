@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.4.1](https://github.com/zainadeel/compomo/compare/v12.4.0...v12.4.1) (2026-07-24)
+
+
+### Fixed
+
+* preserve shell behavior across breakpoints ([#375](https://github.com/zainadeel/compomo/issues/375)) ([b6a8791](https://github.com/zainadeel/compomo/commit/b6a87919c526cd0ba485247cc9c5b5256c923619))
+
 ## [12.4.0](https://github.com/zainadeel/compomo/compare/v12.3.0...v12.4.0) (2026-07-24)
 
 
