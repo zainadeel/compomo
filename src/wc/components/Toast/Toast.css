@@ -1,3 +1,5 @@
+@import '../../utils/visually-hidden.css';
+
 :host {
   display: contents;
 }
@@ -144,15 +146,6 @@
   opacity: 0;
 }
 
-.toast-assertive-announcer {
-  position: absolute;
-  width: var(--dimension-size-100);
-  height: var(--dimension-size-100);
-  padding: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  clip-path: inset(50%);
-}
 
 @keyframes toast-enter {
   from {

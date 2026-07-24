@@ -44,9 +44,6 @@
 .shell-mobile-bar__item ds-text {
   display: block;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .shell-mobile-bar__icon {
@@ -62,9 +59,4 @@
   position: absolute;
   inset-block-start: calc(var(--dimension-space-025) * -1);
   inset-inline-end: calc(var(--dimension-space-025) * -1);
-  width: var(--dimension-size-075);
-  height: var(--dimension-size-075);
-  border-radius: var(--dimension-radius-half);
-  background: var(--color-background-bold-brand);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-background-primary);
 }

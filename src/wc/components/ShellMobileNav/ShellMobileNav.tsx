@@ -127,7 +127,9 @@ export class ShellMobileNav {
                 <ds-text as="span" variant="text-body-medium" emphasis color="inherit">
                   {item.label}
                 </ds-text>
-                {item.dot && <span class="shell-mobile-nav__dot" aria-hidden="true" />}
+                {item.dot && (
+                  <ds-badge class="shell-mobile-nav__dot" variant="dot" hasRing={false} label="" aria-hidden="true" />
+                )}
               </button>
             );
           })}

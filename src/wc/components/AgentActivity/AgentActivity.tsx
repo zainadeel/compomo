@@ -81,7 +81,7 @@ export class AgentActivity {
                       {item.detail}
                     </ds-text>
                   ) : null}
-                  <span class="agent-activity__state">{this.stateLabel(item)}</span>
+                  <span class="agent-activity__state ds-visually-hidden">{this.stateLabel(item)}</span>
                 </span>
               </li>
             ))}

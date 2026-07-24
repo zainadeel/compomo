@@ -654,6 +654,7 @@ export class PanelNav {
           variant="text-body-medium"
           emphasis
           color="inherit"
+          lineTruncation={1}
         >
           {userName}
         </ds-text>
@@ -699,6 +700,7 @@ export class PanelNav {
         variant="text-body-medium"
         emphasis={isActive}
         color="inherit"
+        lineTruncation={1}
       >
         {item.label}
       </ds-text>,
@@ -816,6 +818,7 @@ export class PanelNav {
           <div
             class={{
               'panel-nav__body': true,
+              'ds-scrollbar-hidden': true,
               'ds-focus-ring': this.bodyScrollable,
               ...scrollEdgeFadeClassMap({ edges: 'bottom' }),
             }}

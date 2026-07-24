@@ -96,7 +96,7 @@ export class Loader {
       <Host style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
         <span role="status" aria-live="polite" class="status">
           {spinner}
-          <span class="visually-hidden">{this.label}</span>
+          <span class="visually-hidden ds-visually-hidden">{this.label}</span>
         </span>
       </Host>
     );

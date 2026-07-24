@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/scrollbar-hidden.css';
 
 :host {
   display: block;
@@ -191,11 +192,6 @@
   gap: var(--dimension-space-050);
   padding: var(--dimension-space-100);
   box-sizing: border-box;
-  scrollbar-width: none;
-}
-
-.panel-tools__rail-body::-webkit-scrollbar {
-  display: none;
 }
 
 /* Flush to the bottom of the rail — mirrors Search header pin. */

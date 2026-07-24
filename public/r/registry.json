@@ -7189,6 +7189,7 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "badge",
         "icon",
         "text"
       ]
@@ -7317,6 +7318,7 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "badge",
         "icon",
         "tab-group",
         "text"
@@ -7436,6 +7438,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "badge",
         "text"
       ]
     },

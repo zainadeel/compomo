@@ -71,11 +71,7 @@
 }
 
 .shell-mobile-nav__dot {
-  width: var(--dimension-size-075);
-  height: var(--dimension-size-075);
   margin-inline-start: auto;
-  border-radius: var(--dimension-radius-half);
-  background: var(--color-background-bold-brand);
 }
 
 .shell-mobile-nav__footer {

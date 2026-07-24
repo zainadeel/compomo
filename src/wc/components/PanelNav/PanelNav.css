@@ -1,6 +1,7 @@
 @import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/scrollbar-hidden.css';
 
 /* ── Theme variables ──────────────────────────────────────────────────────── */
 
@@ -177,10 +178,7 @@
   gap: var(--dimension-space-200, 16px);
   padding: var(--dimension-space-100, 8px);
   box-sizing: border-box;
-  scrollbar-width: none;
 }
-
-.panel-nav__body::-webkit-scrollbar { display: none; }
 
 /* ── Group ───────────────────────────────────────────────────────────────── */
 
@@ -264,9 +262,6 @@ ds-text.panel-nav__group-label {
   position: relative;
   z-index: 2;
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   min-width: 0;
   height: var(--typography-lineheight-md, 20px);
   opacity: 1;

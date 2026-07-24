@@ -300,6 +300,7 @@ export class BarTitle {
             variant="text-body-medium"
             emphasis
             color="primary"
+            lineTruncation={1}
           >
             {this.selectedSectionLabel}
           </ds-text>

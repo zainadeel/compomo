@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/scrollbar-hidden.css';
 
 :host {
   display: block;
@@ -28,12 +29,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-inline: contain;
-  scrollbar-width: none;
   box-sizing: border-box;
-}
-
-.shell-mobile-section-nav__scroller::-webkit-scrollbar {
-  display: none;
 }
 
 .shell-mobile-section-nav__tab {
@@ -67,18 +63,8 @@
   background: var(--color-border-tertiary);
 }
 
-.shell-mobile-section-nav__dot {
-  width: var(--dimension-size-075);
-  height: var(--dimension-size-075);
-  border-radius: var(--dimension-radius-half);
-  background: var(--color-background-bold-brand);
-}
-
 .shell-mobile-section-nav__heading {
   display: block;
   min-width: 0;
   padding-inline: var(--dimension-space-200);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

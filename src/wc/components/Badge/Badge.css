@@ -1,3 +1,5 @@
+@import '../../utils/visually-hidden.css';
+
 :host {
   display: inline-flex;
   align-items: center;
@@ -27,19 +29,6 @@
   --_badge-ring-width: 0;
 }
 
-.badge__a11y {
-  position: absolute;
-  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-  /* stylelint-enable declaration-property-value-disallowed-list */
-}
 
 :host(.badge--dot) .badge__mark {
   width: var(--dimension-size-075);

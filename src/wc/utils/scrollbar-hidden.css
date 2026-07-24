@@ -1,0 +1,18 @@
+/**
+ * Hidden scrollbar — suppress native scrollbar chrome on a container that
+ * remains scrollable (wheel, drag, keyboard), without removing scroll
+ * capability. Apply `.ds-scrollbar-hidden` directly to the scrolling element
+ * (the one with `overflow: auto|scroll`), not a non-scrolling ancestor.
+ *
+ * @see AGENTS.md — "Hidden scrollbars"
+ */
+
+:host(.ds-scrollbar-hidden),
+.ds-scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+:host(.ds-scrollbar-hidden)::-webkit-scrollbar,
+.ds-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}

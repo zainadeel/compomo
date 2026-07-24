@@ -829,6 +829,7 @@ export class BarNav {
             {!hasTabs && this.heading && (
               <ds-text
                 class="bar-nav__heading"
+                lineTruncation={1}
                 as="span"
                 variant="text-body-medium"
                 emphasis

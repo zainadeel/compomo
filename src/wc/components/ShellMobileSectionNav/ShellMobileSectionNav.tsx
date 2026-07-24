@@ -89,7 +89,7 @@ export class ShellMobileSectionNav {
       <Host>
         <nav class="shell-mobile-section-nav" aria-label={this.navigationLabel}>
           {showTabs ? (
-            <div class="shell-mobile-section-nav__scroller">
+            <div class="shell-mobile-section-nav__scroller ds-scrollbar-hidden">
               {tabs.map((tab, index) => {
                 if (isTabDivider(tab)) {
                   return (
@@ -125,7 +125,7 @@ export class ShellMobileSectionNav {
                       {tab.label}
                     </ds-text>
                     {tab.dot && (
-                      <span class="shell-mobile-section-nav__dot" aria-hidden="true" />
+                      <ds-badge class="shell-mobile-section-nav__dot" variant="dot" hasRing={false} label="" aria-hidden="true" />
                     )}
                   </button>
                 );
@@ -137,6 +137,7 @@ export class ShellMobileSectionNav {
               as="span"
               variant="text-body-medium"
               emphasis
+              lineTruncation={1}
             >
               {this.heading ?? ''}
             </ds-text>

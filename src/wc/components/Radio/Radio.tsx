@@ -1,4 +1,5 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
 
 export interface RadioOption {
   label: string;
@@ -39,7 +40,7 @@ export class Radio {
   /** Require one option to be selected for form validity. */
   @Prop({ reflect: true }) required: boolean = false;
   /** Validation message used when a required set has no selection. */
-  @Prop() requiredMessage: string = 'This field is required.';
+  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   /** Layout direction for the option set. */
   @Prop() direction: 'vertical' | 'horizontal' = 'vertical';
   /** Design-system inactive state for the complete set. */
@@ -68,7 +69,7 @@ export class Radio {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     this.internals.setFormValue(inactive ? null : this.value);
     const missing = this.required && !inactive && this.value.length === 0;
-    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
+    setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
 
   formDisabledCallback(disabled: boolean) {

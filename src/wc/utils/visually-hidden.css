@@ -1,0 +1,28 @@
+/**
+ * Visually hidden — accessible-only text present for assistive technology but
+ * removed from visual layout, without `display: none`/`visibility: hidden`
+ * (which would also remove it from the accessibility tree).
+ *
+ * Apply `.ds-visually-hidden` to the element carrying the hidden text. Both
+ * `:host(.ds-visually-hidden)` and `.ds-visually-hidden` are listed so Stencil
+ * scoped components work whether the class is on the host or an inner element.
+ * Keep the element's own semantic/hook class alongside this one — the utility
+ * only owns the clip recipe, not the element's identity.
+ *
+ * @see AGENTS.md — "Visually hidden text"
+ */
+
+:host(.ds-visually-hidden),
+.ds-visually-hidden {
+  position: absolute;
+  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  /* stylelint-enable declaration-property-value-disallowed-list */
+}

@@ -106,10 +106,10 @@ export class ShellMobileBar {
         <span class="shell-mobile-bar__icon">
           <ds-icon name={item.icon} size="md" color="inherit" />
           {item.dot && (
-            <span class="shell-mobile-bar__dot" aria-hidden="true" />
+            <ds-badge class="shell-mobile-bar__dot" variant="dot" label="" aria-hidden="true" />
           )}
         </span>
-        <ds-text as="span" variant="text-caption" color="inherit">
+        <ds-text as="span" variant="text-caption" color="inherit" lineTruncation={1}>
           {item.label}
         </ds-text>
       </button>
@@ -141,6 +141,7 @@ export class ShellMobileBar {
               as="span"
               variant="text-caption"
               color="inherit"
+              lineTruncation={1}
             >
               {this.menuLabel}
             </ds-text>

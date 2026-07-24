@@ -28,6 +28,7 @@ export type {
 } from './scroll-edge-fade';
 export { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from './token-defaults';
 export type { TokenDefaultKey } from './token-defaults';
+export { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from './required-validity';
 export { controlWidthClass } from './control-width';
 export type { ControlWidth } from './control-width';
 export { CONTROL_TEXT_VARIANT } from './control-text';

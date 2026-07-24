@@ -611,6 +611,20 @@ Rules:
 - Do not hand-roll inactive opacity on these controls — use the util.
 - Still set native `disabled` / `aria-disabled` where the element is a real button/control so a11y and `:disabled` interaction-fill skips keep working.
 
+**Visually hidden text**
+
+Shared accessible-only clip recipe for text present for assistive technology but removed from visual layout. Import `src/wc/utils/visually-hidden.css` and add `.ds-visually-hidden` alongside the element's own semantic/hook class — the utility only owns the clip declarations, not the element's identity or test hooks.
+
+| Class                 | Role                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `.ds-visually-hidden` | `position: absolute`, clipped to 1×1px, `overflow: hidden`, `border: 0`         |
+
+Rules:
+
+- Do not hand-roll the clip recipe (`clip: rect(0,0,0,0)` / `clip-path: inset(50%)` + 1px box) in component CSS — every occurrence duplicates the same stylelint-disable comment for raw `1px` values. Use the util so the disable/enable pair exists exactly once.
+- Never use `display: none` or `visibility: hidden` for accessible-only text — both remove the element from the accessibility tree, not just from view.
+- Keep the element's own class name (e.g. `badge__a11y`, `visually-hidden` on `ds-loader`) when it is referenced by tests or other selectors; add `.ds-visually-hidden` as an additional class rather than replacing it.
+
 **Focus states**
 
 - New interactive components must use the shared focus utility in `src/wc/utils/focus-ring.css`; do not hand-roll `:focus-visible` outlines in component CSS.
@@ -649,6 +663,16 @@ Rules:
 - Multiple physical edges (`top`, `bottom`, `left`, `right`) compose into one mask. When scroll state already exists in JavaScript, an `atEnd` edge map suppresses only the flush edges; boolean `true` removes the complete mask.
 - Keep overflow on the same element that receives the fade classes. Make standalone scroll regions keyboard-reachable when their off-screen content would otherwise be inaccessible.
 
+**Hidden scrollbars**
+
+Shared recipe for a scroll container that stays scrollable (wheel, drag, keyboard) but suppresses native scrollbar chrome — used by PanelNav's body, PanelTools' rail body, and ShellMobileSectionNav's scroller. Import `src/wc/utils/scrollbar-hidden.css` and apply `.ds-scrollbar-hidden` directly to the scrolling element (the one with `overflow: auto|scroll`), not a non-scrolling ancestor.
+
+| Class                    | Role                                                       |
+| ------------------------- | ------------------------------------------------------------ |
+| `.ds-scrollbar-hidden`   | `scrollbar-width: none` + `::-webkit-scrollbar { display: none; }` |
+
+Do not hand-roll `scrollbar-width: none` plus a `::-webkit-scrollbar` rule in component CSS — use the util so the two declarations stay paired and only exist once.
+
 **Anchored choice-popup alignment**
 
 - Every menu trigger must expose its popup relationship and keep the trigger's active/pressed visual state for the popup's full rendered lifetime, including exit motion. Do not clear the visual state as soon as `open` becomes false.
@@ -659,6 +683,18 @@ Rules:
 - Leave `ds-menu.anchorAlignment` at `choice-cell` for ordinary menus. Use `popup-frame` only when a deliberately custom layout must align the popup's outer frame, and treat `alignOffset` as an additional nudge after that policy.
 - Treat an anchored popup's `side` as its preferred side, not an unconditional physical placement. Shared positioning keeps that side when it fits; otherwise it flips to the opposite side only when the opposite offers more main-axis room, then clamps the result to the viewport. Do not add product-level bottom/top or right/left collision branches.
 - Do not copy section-padding offsets into stories or host components. New anchored choice popups must use `resolveChoicePopupAlignOffset` and `choicePopupMinWidth` instead of hand-tuned alignment math.
+
+**Required-field validity**
+
+Form-associated controls (`ds-checkbox`, `ds-radio`, `ds-switch`, `ds-input`, `ds-select`, `ds-select-multi`, …) each compute their own `missing` condition — what counts as empty differs per control — but must report it to `ElementInternals` identically. Use `setRequiredValidity(this.internals, missing, this.requiredMessage)` from `src/wc/utils/required-validity.ts` instead of hand-rolling the `setValidity({ valueMissing: true }, message)` call, and default the prop to the shared `DEFAULT_REQUIRED_MESSAGE` constant instead of a hardcoded string:
+
+```ts
+@Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
+// ...
+setRequiredValidity(this.internals, missing, this.requiredMessage);
+```
+
+This keeps the default copy (and the `setValidity` call shape) in one place across every form-associated control rather than six.
 
 **TypeScript**
 
@@ -724,6 +760,9 @@ render: () => html`<ds-modal ?open=${true} heading="Title">…</ds-modal>`;
 
 **`ds-text` is the layout box — don't wrap it just to style it.**
 Apply padding, flex/grid sizing, overflow width, z-index, and component classes directly to `<ds-text>`. Its inner native element exists only for semantics (`label`, headings, paragraph, IDs/`for`) and inherits the host's complete typography recipe. A neutral wrapper around only `ds-text` recreates the old split-box problem and is flagged by `local/prefer-direct-ds-text`. Keep a wrapper only when it owns real structure (mixed icon/dot/badge content, animation masks, semantic interaction targets).
+
+**Truncate a `ds-text` with its own `lineTruncation` prop — never hand-roll `text-overflow: ellipsis` in the owning component's CSS.**
+`ds-text` already implements single-line ellipsis and 2–5 line clamping internally (`lineTruncation={1..5}`, see `Text.css`). A consumer that also declares `overflow: hidden; text-overflow: ellipsis;` on that same `ds-text` element is, at best, dead CSS duplicating what the prop already does, and at worst drifts out of sync with it. Pass `lineTruncation={1}` and let the owning component's CSS handle only real layout (`min-width: 0`, `flex`, sizing) — not the ellipsis rendering itself. This exact duplication previously existed in BarNav, BarTitle, BarWorkflow, ChartLegend, PanelNav, Select, ShellMobileBar, and ShellMobileSectionNav.
 
 **`position: relative` alone does NOT create a stacking context — you also need a non-`auto` `z-index`.**
 `.ds-interaction-fill` sets `z-index: 0` on the control so its `::before`/`::after` fills stay inside that stacking context. Paint order: selected (`::before` z-index 1) → content (z-index 2) → hover/press (`::after` z-index 3, topmost — covers badge dots). Place label/icon with `.ds-interaction-fill__content` or `position: relative; z-index: 2` on children — never above `::after`. For genuinely floating elements that must sit above unrelated siblings (tooltips, popovers), use the `--dimension-z-index-*` token scale (`base` 0, `raised` 50, `overlay` 250, `modal` 450, `floating` 500, `tooltip` 750) rather than a magic number — see `TooltipDataViz.css`.
