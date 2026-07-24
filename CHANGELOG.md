@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.4.0](https://github.com/zainadeel/compomo/compare/v12.3.0...v12.4.0) (2026-07-24)
+
+
+### Added
+
+* add responsive mobile shell foundation ([#373](https://github.com/zainadeel/compomo/issues/373)) ([c2e1018](https://github.com/zainadeel/compomo/commit/c2e1018084ef0a7a1b9eb32b02b470cb785ca48e))
+
 ## [12.3.0](https://github.com/zainadeel/compomo/compare/v12.2.0...v12.3.0) (2026-07-23)
 
 
