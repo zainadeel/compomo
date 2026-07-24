@@ -41,3 +41,5 @@ export declare interface DsShellMobileBar extends Components.DsShellMobileBar {
 
   dsDestinationChange: EventEmitter<DsShellMobileBarCustomEvent<IDsShellMobileBarShellMobileBarDestinationDetail>>;
 }
+
+

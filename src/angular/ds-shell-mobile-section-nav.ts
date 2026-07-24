@@ -38,3 +38,5 @@ export declare interface DsShellMobileSectionNav extends Components.DsShellMobil
    */
   dsTabChange: EventEmitter<DsShellMobileSectionNavCustomEvent<string>>;
 }
+
+

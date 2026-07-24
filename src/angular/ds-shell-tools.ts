@@ -47,3 +47,5 @@ export declare interface DsShellTools extends Components.DsShellTools {
 
   dsHeaderAction: EventEmitter<DsShellToolsCustomEvent<{ tool: IDsShellToolsPanelToolsToolId; id: string; }>>;
 }
+
+

@@ -47,3 +47,5 @@ export declare interface DsShellMobileNav extends Components.DsShellMobileNav {
 
   dsClose: EventEmitter<DsShellMobileNavCustomEvent<void>>;
 }
+
+
