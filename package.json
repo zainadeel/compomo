@@ -64,6 +64,7 @@
       "types": "./dist/lib/toast/index.d.ts",
       "import": "./dist/lib/toast/index.js"
     },
+    "./control-elevation.css": "./dist/styles/control-elevation.css",
     "./prose.css": "./dist/styles/prose.css",
     "./agent": "./dist/agent.json",
     "./agent/patterns": "./dist/agent-patterns.json",

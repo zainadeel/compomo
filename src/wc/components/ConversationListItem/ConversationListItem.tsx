@@ -110,7 +110,7 @@ export class ConversationListItem {
               <slot name="trailing" />
             </span>
           </button>
-          <div class="conversation-list-item__actions">
+          <div class="conversation-list-item__actions ds-control-elevation ds-control-elevation--md">
             <slot name="actions" onSlotchange={this.handleActionsSlotChange} />
           </div>
         </div>

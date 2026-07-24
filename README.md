@@ -126,6 +126,22 @@ Safe semantic DOM produced by Markdown, CMS, or documentation renderers can use 
 
 The application remains responsible for parsing and content safety. Use `data-ds-prose="off"` on embedded product UI, and wrap wide tables in `.ds-prose__table-scroll`. See the [prose foundation decision](docs/prose-foundation.md).
 
+## Elevated control wrappers
+
+When a control needs elevation on an outer wrapper, use the split-shadow utility so an opaque child cannot cover TokoMo's inset highlight:
+
+```css
+@import '@ds-mo/ui/control-elevation.css';
+```
+
+```html
+<div class="my-control-shell ds-control-elevation ds-control-elevation--md">
+  <ds-button-filled label="Create" has-border="false"></ds-button-filled>
+</div>
+```
+
+The wrapper owns its radius, surface, outer shadow, and topmost highlight. Keep the wrapped control's optional resting border off; focus, error, selected, hover, and press strokes remain owned and rendered by the control beneath that highlight.
+
 ## Icon pattern
 
 Components that accept icons use a named `icon` slot:

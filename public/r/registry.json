@@ -3294,7 +3294,8 @@
             "The default floating action stays at the lower end corner.",
             "actionLayout footer stretches a long action between 8px side and bottom insets.",
             "Both action layouts share the always-active scroll-overlay fade controller, reserve measured end clearance, and begin fading 8px before the visible action.",
-            "ConversationList paints its measured fade on a separate surface-aware layer so contextual row actions retain a real backdrop for blur; hovered, focused, and menu-open rows rise above that decorative fade."
+            "ConversationList paints its measured fade on a separate surface-aware layer so contextual row actions retain a real backdrop for blur; hovered, focused, and menu-open rows rise above that decorative fade.",
+            "The persistent action wrapper splits its md outer shadow from a top inset-highlight overlay so opaque filled actions keep the complete TokoMo elevation; slotted controls must disable optional resting borders."
           ],
           "responsiveBehavior": [
             "The list fills its owner, scrolls independently, and keeps its persistent action above scrolling rows."
@@ -3367,7 +3368,8 @@
             "Any positive unreadCount renders one dot on the title row rather than a visible counter; the accessible row name may still announce the exact unread quantity.",
             "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
             "The title uses body-medium, not title-small, and the body-small preview truncates after one line. Unread titles use emphasis with primary foreground; read titles use regular weight with secondary foreground.",
-            "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active."
+            "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active.",
+            "Contextual actions use the shared md control-elevation wrapper so their transparent backdrop blur is unchanged while the split inset highlight remains above the borderless slotted action."
           ],
           "responsiveBehavior": [
             "Long titles and previews truncate without displacing trailing status."
@@ -4899,6 +4901,7 @@
             "Selection and transcript interaction release automatic following.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
             "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
+            "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action.",
             "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
