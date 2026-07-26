@@ -154,7 +154,7 @@ export class Breadcrumb {
         >
           {isCollapsed ? '…' : item.label}
         </ds-text>,
-        isCollapsed ? <span class="breadcrumb__accessible-label">{item.label}</span> : null,
+        isCollapsed ? <span class="breadcrumb__accessible-label ds-visually-hidden">{item.label}</span> : null,
       ]
     );
 

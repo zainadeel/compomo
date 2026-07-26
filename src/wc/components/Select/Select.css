@@ -81,9 +81,6 @@
   flex: 1 1 auto;
   min-width: 0;
   padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   text-align: left;
   color: inherit;
   transition: color var(--effect-motion-short-2);

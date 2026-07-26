@@ -36,7 +36,12 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-function renderWorkflow(value: string, heading = 'Create driver', isNextInactive = false) {
+function renderWorkflow(
+  value: string,
+  heading = 'Create driver',
+  isNextInactive = false,
+  responsiveMode: 'desktop' | 'mobile' = 'desktop'
+) {
   return html`
     <ds-bar-workflow
       heading=${heading}
@@ -48,6 +53,7 @@ function renderWorkflow(value: string, heading = 'Create driver', isNextInactive
       next-label="Next step"
       .submitAction=${{ label: 'Save driver', type: 'submit' }}
       .isNextInactive=${isNextInactive}
+      responsive-mode=${responsiveMode}
       @dsStepChange=${(event: CustomEvent<string>) => {
         (event.currentTarget as HTMLDsBarWorkflowElement).value = event.detail;
       }}
@@ -97,4 +103,12 @@ export const SingleStep: Story = {
       .submitAction=${{ label: 'Save changes', type: 'submit' }}
     ></ds-bar-workflow>
   `,
+};
+
+export const MobileMiddleStep: Story = {
+  name: 'Mobile · middle step',
+  parameters: {
+    viewport: { defaultViewport: 'mobile1' },
+  },
+  render: () => renderWorkflow('employment', 'Create driver', false, 'mobile'),
 };

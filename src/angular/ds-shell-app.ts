@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsShellApp } from '@ds-mo/ui/components/ds
 
 @ProxyCmp({
   defineCustomElementFn: defineDsShellApp,
-  inputs: ['gradientPreset', 'mobileDestination', 'mobileNavigationOpen', 'navStyle', 'shortcutsEnabled']
+  inputs: ['gradientPreset', 'mobileDestination', 'mobileSheetNavOpen', 'navStyle', 'shortcutsEnabled']
 })
 @Component({
   selector: 'ds-shell-app',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['gradientPreset', 'mobileDestination', 'mobileNavigationOpen', 'navStyle', 'shortcutsEnabled'],
+  inputs: ['gradientPreset', 'mobileDestination', 'mobileSheetNavOpen', 'navStyle', 'shortcutsEnabled'],
   outputs: ['dsResponsiveModeChange'],
 })
 export class DsShellApp {

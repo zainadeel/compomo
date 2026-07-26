@@ -188,7 +188,7 @@ export class Badge {
             </ds-text>
           )}
         </span>
-        {this.label && <span class="badge__a11y">{this.label}</span>}
+        {this.label && <span class="badge__a11y ds-visually-hidden">{this.label}</span>}
       </Host>
     );
   }

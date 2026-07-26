@@ -40,7 +40,7 @@
   "patterns": ["pattern:shell-page"],
   "accessibility": [
     "ShellPage exposes the routed page as the main landmark; render exactly one active ShellPage inside ShellApp.",
-    "Provide exactly one BarTitle or BarWorkflow through the header slot so the page has one h1.",
+    "Provide one BarTitle or BarWorkflow through the desktop header slot and one MobileHeader through mobile-header when the page participates in the mobile shell.",
     "Keep loading, empty, validation, error, progress, success, and failure communication in the default product-content slot.",
     "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
   ],
@@ -49,12 +49,13 @@
     "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
-    "The required header slot accepts one BarTitle or BarWorkflow. The default slot owns router output and all page product content."
+    "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
   ],
   "responsiveBehavior": [
     "The owning application shell resolves viewport and persistent-chrome state into the explicit headerCapacity prop; ShellPage never guesses the cause of reduced width from its own rendered size.",
     "Roomy capacity expands at the top and compacts after scroll; compact capacity stays compact; constrained capacity uses the constrained action layout.",
     "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
+    "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
     "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
     "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, then snaps variants without moving that shared visual anchor.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
@@ -63,15 +64,15 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Import ShellPage with BarTitle or BarWorkflow, place one header in slot=header, and render route content as default children.",
+      "Import ShellPage with BarTitle or BarWorkflow in slot=header and MobileHeader in slot=mobile-header, then render route content as default children.",
       "Do not set BarTitle.variant while ShellPage owns headerPresentation."
     ],
     "react": [
-      "Render DsBarTitle or DsBarWorkflow with slot=header inside DsShellPage and keep routed content as the remaining children.",
+      "Render the desktop header with slot=header and DsMobileHeader with slot=mobile-header inside DsShellPage.",
       "Use contentInset none only for deliberately full-bleed page products."
     ],
     "angular": [
-      "Import the generated standalone DsShellPage adapter with DsBarTitle or DsBarWorkflow, preserve slot=header, and place router-outlet in the ShellPage default slot.",
+      "Import the generated standalone DsShellPage adapter with the desktop header and DsMobileHeader, preserve both header slots, and place router-outlet in the default slot.",
       "Do not add another overflow auto wrapper around the routed page."
     ]
   },

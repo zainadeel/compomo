@@ -1,4 +1,5 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
+import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
 
 export type CheckboxSize = 'md' | 'sm' | 'xs';
 
@@ -35,7 +36,7 @@ export class Checkbox {
   /** Require the checkbox to be checked for form validity. */
   @Prop({ reflect: true }) required: boolean = false;
   /** Validation message used when a required checkbox is unchecked. */
-  @Prop() requiredMessage: string = 'This field is required.';
+  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   /** Mixed visual state. Activation clears it before toggling checked. */
   @Prop({ mutable: true }) indeterminate: boolean = false;
   /** Design-system inactive state. */
@@ -66,7 +67,7 @@ export class Checkbox {
     const inactive = this.isInactive || this.disabled || this.formDisabled || this.presentation;
     this.internals.setFormValue(!inactive && this.checked ? this.value : null);
     const missing = this.required && !inactive && !this.checked;
-    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
+    setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
 
   formDisabledCallback(disabled: boolean) {

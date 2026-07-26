@@ -9,6 +9,8 @@
 @import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/scroll-edge-fade.css';
+@import '../../utils/visually-hidden.css';
+@import '../../utils/scrollbar-hidden.css';
 
 .util-demo-page {
   font-family: var(--typography-font-family);

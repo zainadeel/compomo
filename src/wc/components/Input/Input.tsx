@@ -1,5 +1,11 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';
-import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
+import {
+  controlWidthClass,
+  CONTROL_TEXT_VARIANT,
+  DEFAULT_REQUIRED_MESSAGE,
+  setRequiredValidity,
+  type ControlWidth,
+} from '../../utils';
 
 export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
 export type InputSize = 'md' | 'sm' | 'xs';
@@ -39,7 +45,7 @@ export class Input {
   /** Keeps the value focusable and submittable while preventing edits. */
   @Prop({ reflect: true }) readOnly: boolean = false;
   @Prop({ reflect: true }) required: boolean = false;
-  @Prop() requiredMessage: string = 'This field is required.';
+  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   @Prop() clearLabel: string = 'Clear';
   @Prop() placeholder: string | undefined;
   @Prop() type: InputType = 'text';
@@ -95,7 +101,7 @@ export class Input {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     this.internals.setFormValue(inactive ? null : this.value);
     const missing = this.required && !inactive && this.value.length === 0;
-    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
+    setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
 
   formDisabledCallback(disabled: boolean) {

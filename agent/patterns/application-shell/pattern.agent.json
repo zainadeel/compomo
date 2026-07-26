@@ -37,17 +37,22 @@
       "required": true
     },
     {
-      "component": "component:ds-shell-mobile-nav",
+      "component": "component:ds-mobile-sheet-nav",
       "role": "Browses Dashboard and Settings primary areas in the mobile stage without navigating until an area is selected.",
       "required": true
     },
     {
-      "component": "component:ds-shell-mobile-section-nav",
-      "role": "Renders the active area's secondary routes in a horizontally scrollable mobile row.",
+      "component": "component:ds-shell-page",
+      "role": "Owns routed page header stickiness and selects the desktop or mobile header presentation from explicit shell state.",
       "required": true
     },
     {
-      "component": "component:ds-shell-mobile-bar",
+      "component": "component:ds-mobile-header",
+      "role": "Combines mobile page identity, peer-section switching, depth navigation, and contextual actions in one top bar.",
+      "required": true
+    },
+    {
+      "component": "component:ds-mobile-bar-nav",
       "role": "Provides persistent Menu, current area, Search, Agents, and Inbox destinations below 768px.",
       "required": true
     }
@@ -57,7 +62,9 @@
     "ShellApp owns desktop, tablet, and mobile composition, shell geometry, navStyle and responsive-mode propagation, gradient alignment, chrome transitions, metrics, inert stage boundaries, and shell shortcuts.",
     "PanelNav owns primary-destination presentation and the user-controlled desktop collapse preference.",
     "BarNav derives the active secondary route from currentUrl and basePath and receives the active PanelNav destination label as heading.",
-    "The application owns mobileDestination, mobileNavigationOpen, the actual active tool, and the last Inbox segment; ShellTools preserves product owners and presentation.",
+    "ShellPage receives responsiveMode explicitly and exposes the same route-derived peer-section collection through MobileHeader without creating parallel mobile route state.",
+    "Nested page tabs stay subordinate: MobileHeader sections preserve the selected area page, while subsections carry local child views without promoting them into destinations.",
+    "The application owns mobileDestination, mobileSheetNavOpen, the actual active tool, and the last Inbox segment; ShellTools preserves product owners and presentation.",
     "The application router owns only the routed workspace. Search, Agents, Inbox, and Menu changes never change router history.",
     "PanelNav groups and BarNav dividers visually organize peers and never introduce nested navigation hierarchy."
   ],
@@ -65,7 +72,8 @@
     "Render one main landmark in the default content region.",
     "Use PanelNav exclusively for primary destinations and BarNav exclusively for secondary route sections.",
     "Keep localized visible labels and accessible names available when navigation is collapsed or moved into overflow.",
-    "Provide visible labels for all five mobile-bar items and Search and Help in the available shell actions.",
+    "Provide localized accessible names for all five Mobile Bar Nav items and for every icon-only Mobile Sheet Nav header control.",
+    "Expose exactly one active page heading, preserve the current navigation level in MobileHeader, and keep peer-section and optional subsection switching available through separately named popup menus.",
     "Preserve keyboard focus and route state across responsive and Dashboard/Settings context changes."
   ],
   "responsiveBehavior": [
@@ -73,6 +81,7 @@
     "Desktop permits PanelNav expansion and collapse and restores the persisted user preference.",
     "Tablet keeps PanelNav permanently collapsed and does not overwrite the desktop preference.",
     "Mobile hides and inerts PanelNav and BarNav, removes the gradient wash, and uses a solid primary stage above a safe-area-aware persistent bottom bar.",
+    "Each routed ShellPage renders one sticky MobileHeader; nested local views use its subordinate subsection lane while the primary lane retains the page or entity identity.",
     "The routed workspace stays mounted and is only concealed and inert while a global surface or navigation pane occupies the stage.",
     "Messages, Stacks, and Activity map to mobile Inbox and preserve the selected segment across destination and breakpoint changes."
   ],
@@ -88,12 +97,12 @@
             {
               "path": "app-shell.html",
               "language": "html",
-              "content": "<ds-shell-app id=\"shell\" mobile-destination=\"area\">\n  <ds-panel-nav id=\"panel\" slot=\"panel\"></ds-panel-nav>\n  <ds-shell-mobile-nav id=\"mobile-nav\" slot=\"mobile-navigation\"></ds-shell-mobile-nav>\n  <ds-bar-nav id=\"bar\" slot=\"bar\"></ds-bar-nav>\n  <ds-shell-mobile-section-nav id=\"mobile-sections\" slot=\"mobile-section-nav\"></ds-shell-mobile-section-nav>\n  <ds-shell-tools id=\"tools\" slot=\"tools\">\n    <app-search slot=\"search-view\"></app-search>\n    <app-agents slot=\"agents-view\"></app-agents>\n    <app-messages slot=\"messages-view\"></app-messages>\n    <app-stacks slot=\"stacks-view\"></app-stacks>\n    <app-activity slot=\"activity-view\"></app-activity>\n    <app-help slot=\"help-view\"></app-help>\n  </ds-shell-tools>\n  <main><!-- routed workspace --></main>\n  <ds-shell-mobile-bar id=\"mobile-bar\" slot=\"mobile-bar\"></ds-shell-mobile-bar>\n</ds-shell-app>"
+              "content": "<ds-shell-app id=\"shell\" mobile-destination=\"area\">\n  <ds-panel-nav id=\"panel\" slot=\"panel\"></ds-panel-nav>\n  <ds-mobile-sheet-nav id=\"mobile-sheet-nav\" slot=\"mobile-sheet-nav\"></ds-mobile-sheet-nav>\n  <ds-bar-nav id=\"bar\" slot=\"bar\"></ds-bar-nav>\n  <ds-shell-tools id=\"tools\" slot=\"tools\">\n    <app-search slot=\"search-view\"></app-search>\n    <app-agents slot=\"agents-view\"></app-agents>\n    <app-messages slot=\"messages-view\"></app-messages>\n    <app-stacks slot=\"stacks-view\"></app-stacks>\n    <app-activity slot=\"activity-view\"></app-activity>\n    <app-help slot=\"help-view\"></app-help>\n  </ds-shell-tools>\n  <ds-shell-page id=\"page\" responsive-mode=\"mobile\">\n    <ds-bar-title slot=\"header\" heading=\"Live Map\"></ds-bar-title>\n    <ds-mobile-header slot=\"mobile-header\" heading=\"Live Map\"></ds-mobile-header>\n    <main><!-- routed workspace --></main>\n  </ds-shell-page>\n  <ds-mobile-bar-nav id=\"mobile-bar-nav\" slot=\"mobile-bar-nav\"></ds-mobile-bar-nav>\n</ds-shell-app>"
             },
             {
               "path": "app-shell.ts",
               "language": "typescript",
-              "content": "import '@ds-mo/ui/components/ds-shell-app.js'\nimport '@ds-mo/ui/components/ds-panel-nav.js'\nimport '@ds-mo/ui/components/ds-bar-nav.js'\nimport '@ds-mo/ui/components/ds-shell-tools.js'\nimport '@ds-mo/ui/components/ds-shell-mobile-nav.js'\nimport '@ds-mo/ui/components/ds-shell-mobile-section-nav.js'\nimport '@ds-mo/ui/components/ds-shell-mobile-bar.js'\nimport type { ShellMobileDestination } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('#shell')!\nconst bar = document.querySelector<HTMLDsShellMobileBarElement>('#mobile-bar')!\nconst mobileNav = document.querySelector<HTMLDsShellMobileNavElement>('#mobile-nav')!\n\nfunction setMobileState(destination: ShellMobileDestination, navigationOpen = false) {\n  shell.mobileDestination = destination\n  shell.mobileNavigationOpen = navigationOpen\n  bar.activeDestination = destination\n  bar.navigationExpanded = navigationOpen\n  mobileNav.open = navigationOpen\n}\n\nbar.addEventListener('dsNavigationToggle', event => setMobileState(shell.mobileDestination, event.detail))\nbar.addEventListener('dsDestinationChange', event => setMobileState(event.detail.destination))"
+              "content": "import '@ds-mo/ui/components/ds-shell-app.js'\nimport '@ds-mo/ui/components/ds-panel-nav.js'\nimport '@ds-mo/ui/components/ds-bar-nav.js'\nimport '@ds-mo/ui/components/ds-bar-title.js'\nimport '@ds-mo/ui/components/ds-shell-page.js'\nimport '@ds-mo/ui/components/ds-shell-tools.js'\nimport '@ds-mo/ui/components/ds-mobile-sheet-nav.js'\nimport '@ds-mo/ui/components/ds-mobile-header.js'\nimport '@ds-mo/ui/components/ds-mobile-bar-nav.js'\nimport type { MobileDestination } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('#shell')!\nconst bar = document.querySelector<HTMLDsMobileBarNavElement>('#mobile-bar-nav')!\nconst sheetNav = document.querySelector<HTMLDsMobileSheetNavElement>('#mobile-sheet-nav')!\n\nfunction setMobileState(destination: MobileDestination, sheetNavOpen = false) {\n  shell.mobileDestination = destination\n  shell.mobileSheetNavOpen = sheetNavOpen\n  bar.activeDestination = destination\n  bar.sheetNavExpanded = sheetNavOpen\n  sheetNav.open = sheetNavOpen\n}\n\nbar.addEventListener('dsSheetNavToggle', event => setMobileState(shell.mobileDestination, event.detail))\nbar.addEventListener('dsDestinationChange', event => setMobileState(event.detail.destination))"
             }
           ],
           "notes": [
@@ -118,7 +127,7 @@
             {
               "path": "AppShell.tsx",
               "language": "tsx",
-              "content": "import { useState } from 'react'\nimport type { ShellMobileDestination } from '@ds-mo/ui/shell'\nimport { DsBarNav, DsPanelNav, DsShellApp, DsShellMobileBar, DsShellMobileNav, DsShellMobileSectionNav, DsShellTools } from '@ds-mo/ui/react'\n\nexport function AppShell() {\n  const [destination, setDestination] = useState<ShellMobileDestination>('area')\n  const [navigationOpen, setNavigationOpen] = useState(false)\n  return (\n    <DsShellApp mobileDestination={destination} mobileNavigationOpen={navigationOpen}>\n      <DsPanelNav slot=\"panel\" />\n      <DsShellMobileNav slot=\"mobile-navigation\" open={navigationOpen} />\n      <DsBarNav slot=\"bar\" />\n      <DsShellMobileSectionNav slot=\"mobile-section-nav\" />\n      <DsShellTools slot=\"tools\"><div slot=\"search-view\">Search</div></DsShellTools>\n      <main>{/* routed workspace */}</main>\n      <DsShellMobileBar slot=\"mobile-bar\" activeDestination={destination} navigationExpanded={navigationOpen} onDsNavigationToggle={event => setNavigationOpen(event.detail)} onDsDestinationChange={event => { setNavigationOpen(false); setDestination(event.detail.destination) }} />\n    </DsShellApp>\n  )\n}"
+              "content": "import { useState } from 'react'\nimport type { MobileDestination } from '@ds-mo/ui/shell'\nimport { DsBarNav, DsBarTitle, DsMobileBarNav, DsMobileHeader, DsMobileSheetNav, DsPanelNav, DsShellApp, DsShellPage, DsShellTools } from '@ds-mo/ui/react'\n\nexport function AppShell() {\n  const [destination, setDestination] = useState<MobileDestination>('area')\n  const [sheetNavOpen, setSheetNavOpen] = useState(false)\n  return (\n    <DsShellApp mobileDestination={destination} mobileSheetNavOpen={sheetNavOpen}>\n      <DsPanelNav slot=\"panel\" />\n      <DsMobileSheetNav slot=\"mobile-sheet-nav\" open={sheetNavOpen} />\n      <DsBarNav slot=\"bar\" />\n      <DsShellTools slot=\"tools\"><div slot=\"search-view\">Search</div></DsShellTools>\n      <DsShellPage responsiveMode=\"mobile\"><DsBarTitle slot=\"header\" heading=\"Live Map\" /><DsMobileHeader slot=\"mobile-header\" heading=\"Live Map\" /><main>{/* routed workspace */}</main></DsShellPage>\n      <DsMobileBarNav slot=\"mobile-bar-nav\" activeDestination={destination} sheetNavExpanded={sheetNavOpen} onDsSheetNavToggle={event => setSheetNavOpen(event.detail)} onDsDestinationChange={event => { setSheetNavOpen(false); setDestination(event.detail.destination) }} />\n    </DsShellApp>\n  )\n}"
             }
           ],
           "notes": [
@@ -142,12 +151,12 @@
             {
               "path": "app-shell.component.html",
               "language": "html",
-              "content": "<ds-shell-app [mobileDestination]=\"destination\" [mobileNavigationOpen]=\"navigationOpen\">\n  <ds-panel-nav slot=\"panel\"></ds-panel-nav>\n  <ds-shell-mobile-nav slot=\"mobile-navigation\" [open]=\"navigationOpen\"></ds-shell-mobile-nav>\n  <ds-bar-nav slot=\"bar\"></ds-bar-nav>\n  <ds-shell-mobile-section-nav slot=\"mobile-section-nav\"></ds-shell-mobile-section-nav>\n  <ds-shell-tools slot=\"tools\"><app-search slot=\"search-view\" /></ds-shell-tools>\n  <router-outlet />\n  <ds-shell-mobile-bar slot=\"mobile-bar\" [activeDestination]=\"destination\" [navigationExpanded]=\"navigationOpen\" (dsNavigationToggle)=\"navigationOpen = $event.detail\" (dsDestinationChange)=\"selectDestination($event.detail.destination)\"></ds-shell-mobile-bar>\n</ds-shell-app>"
+              "content": "<ds-shell-app [mobileDestination]=\"destination\" [mobileSheetNavOpen]=\"sheetNavOpen\">\n  <ds-panel-nav slot=\"panel\"></ds-panel-nav>\n  <ds-mobile-sheet-nav slot=\"mobile-sheet-nav\" [open]=\"sheetNavOpen\"></ds-mobile-sheet-nav>\n  <ds-bar-nav slot=\"bar\"></ds-bar-nav>\n  <ds-shell-tools slot=\"tools\"><app-search slot=\"search-view\" /></ds-shell-tools>\n  <ds-shell-page [responsiveMode]=\"mode\"><ds-bar-title slot=\"header\" heading=\"Live Map\"></ds-bar-title><ds-mobile-header slot=\"mobile-header\" heading=\"Live Map\"></ds-mobile-header><router-outlet /></ds-shell-page>\n  <ds-mobile-bar-nav slot=\"mobile-bar-nav\" [activeDestination]=\"destination\" [sheetNavExpanded]=\"sheetNavOpen\" (dsSheetNavToggle)=\"sheetNavOpen = $event.detail\" (dsDestinationChange)=\"selectDestination($event.detail.destination)\"></ds-mobile-bar-nav>\n</ds-shell-app>"
             },
             {
               "path": "app-shell.component.ts",
               "language": "typescript",
-              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport type { ShellMobileDestination } from '@ds-mo/ui/shell'\nimport { DsBarNav } from '@ds-mo/ui/angular/ds-bar-nav'\nimport { DsPanelNav } from '@ds-mo/ui/angular/ds-panel-nav'\nimport { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app'\nimport { DsShellMobileBar } from '@ds-mo/ui/angular/ds-shell-mobile-bar'\nimport { DsShellMobileNav } from '@ds-mo/ui/angular/ds-shell-mobile-nav'\nimport { DsShellMobileSectionNav } from '@ds-mo/ui/angular/ds-shell-mobile-section-nav'\nimport { DsShellTools } from '@ds-mo/ui/angular/ds-shell-tools'\n\n@Component({ selector: 'app-shell', standalone: true, imports: [RouterOutlet, DsBarNav, DsPanelNav, DsShellApp, DsShellMobileBar, DsShellMobileNav, DsShellMobileSectionNav, DsShellTools], templateUrl: './app-shell.component.html' })\nexport class AppShellComponent {\n  destination: ShellMobileDestination = 'area'\n  navigationOpen = false\n  selectDestination(destination: ShellMobileDestination) { this.navigationOpen = false; this.destination = destination }\n}"
+              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport type { MobileDestination, ShellResponsiveMode } from '@ds-mo/ui/shell'\nimport { DsBarNav } from '@ds-mo/ui/angular/ds-bar-nav'\nimport { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title'\nimport { DsMobileBarNav } from '@ds-mo/ui/angular/ds-mobile-bar-nav'\nimport { DsMobileHeader } from '@ds-mo/ui/angular/ds-mobile-header'\nimport { DsMobileSheetNav } from '@ds-mo/ui/angular/ds-mobile-sheet-nav'\nimport { DsPanelNav } from '@ds-mo/ui/angular/ds-panel-nav'\nimport { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app'\nimport { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page'\nimport { DsShellTools } from '@ds-mo/ui/angular/ds-shell-tools'\n\n@Component({ selector: 'app-shell', standalone: true, imports: [RouterOutlet, DsBarNav, DsBarTitle, DsMobileBarNav, DsMobileHeader, DsMobileSheetNav, DsPanelNav, DsShellApp, DsShellPage, DsShellTools], templateUrl: './app-shell.component.html' })\nexport class AppShellComponent {\n  destination: MobileDestination = 'area'\n  sheetNavOpen = false\n  mode: ShellResponsiveMode = 'desktop'\n  selectDestination(destination: MobileDestination) { this.sheetNavOpen = false; this.destination = destination }\n}"
             }
           ],
           "notes": [

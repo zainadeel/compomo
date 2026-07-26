@@ -14,10 +14,9 @@ import * as ShellAppStories from './ShellApp.stories';
 | `panel` | `ds-panel-nav` | Left navigation rail |
 | `bar` | `ds-bar-nav` | Top tab bar / heading row |
 | `tools` | `ds-shell-tools` or `ds-panel-tools` | Responsive tool host, or the backward-compatible desktop/tablet tool rail |
-| `mobile-navigation` | `ds-shell-mobile-nav` | Full-stage primary-area browser below 768px |
-| `mobile-section-nav` | `ds-shell-mobile-section-nav` | Horizontally scrollable secondary route row below 768px |
-| `mobile-bar` | `ds-shell-mobile-bar` | Persistent five-item bottom navigation below 768px |
-| *(default)* | — | Scrollable page content on an opaque primary surface |
+| `mobile-sheet-nav` | `ds-mobile-sheet-nav` | Full-stage primary-area browser below 768px |
+| `mobile-bar-nav` | `ds-mobile-bar-nav` | Persistent five-item bottom navigation below 768px |
+| *(default)* | `ds-shell-page` | Scrollable routed page; ShellPage exposes its dedicated `mobile-header` presentation below 768px |
 
 ## Props
 
@@ -27,7 +26,7 @@ import * as ShellAppStories from './ShellApp.stories';
 | `gradientPreset` | `neutral` | Chrome treatment: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh`. Color tokens adapt each wash to light and dark themes |
 | `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers, `/` Help) |
 | `mobileDestination` | `area` | Controlled mobile stage: current area, Search, Agents, or Inbox |
-| `mobileNavigationOpen` | `false` | Controlled mobile navigation-pane state |
+| `mobileSheetNavOpen` | `false` | Controlled Mobile Sheet Nav state |
 
 ShellApp resolves and reflects `responsive-mode="desktop | tablet | mobile"` at the fixed 1200px and 768px boundaries and emits `dsResponsiveModeChange` only when that mode changes. Mobile paints a solid primary surface, removes the chrome wash, makes hidden stages inert, and reserves safe-area-aware bottom-bar space without unmounting route or tool owners.
 

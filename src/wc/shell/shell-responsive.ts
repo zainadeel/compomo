@@ -1,7 +1,7 @@
 import type { PanelToolsToolId } from '../components/PanelTools/panel-tools-types';
 
 export type ShellResponsiveMode = 'desktop' | 'tablet' | 'mobile';
-export type ShellMobileDestination = 'area' | 'search' | 'agents' | 'inbox';
+export type MobileDestination = 'area' | 'search' | 'agents' | 'inbox' | 'help';
 export type ShellInboxToolId = Extract<PanelToolsToolId, 'messages' | 'stacks' | 'activity'>;
 
 export const SHELL_DESKTOP_BREAKPOINT = 1200;
@@ -17,8 +17,9 @@ export function resolveShellResponsiveMode(width: number): ShellResponsiveMode {
 export function shellMobileDestinationForTool(
   open: boolean,
   tool: PanelToolsToolId | ''
-): ShellMobileDestination {
-  if (!open || !tool || tool === 'help') return 'area';
+): MobileDestination {
+  if (!open || !tool) return 'area';
+  if (tool === 'help') return 'help';
   if (tool === 'search') return 'search';
   if (tool === 'agents') return 'agents';
   return 'inbox';
@@ -40,8 +41,8 @@ export function resolveAvailableInboxTool(
 
 /** Active-destination reselects are inert unless they also dismiss the Menu pane. */
 export function shouldEmitMobileDestinationChange(
-  active: ShellMobileDestination,
-  next: ShellMobileDestination,
+  active: MobileDestination,
+  next: MobileDestination,
   navigationOpen: boolean
 ): boolean {
   return navigationOpen || active !== next;

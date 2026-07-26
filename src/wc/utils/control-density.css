@@ -1,9 +1,9 @@
 /**
- * Control density recipes — shared metrics for md / sm / xs control-like rows
+ * Control density recipes — shared metrics for lg / md / sm / xs control-like rows
  * (Tag, PanelNav items, BarNav tabs, Menu items, Chip, read-only header titles,
  * etc.). A row does not need to be interactive to use this geometry.
  *
- * Apply `.ds-control--md|sm|xs` on the control or presentational row (host or
+ * Apply `.ds-control--lg|md|sm|xs` on the control or presentational row (host or
  * inner element). Then use the `--ds-control-*` vars for height, padding, icon
  * box, label inset, gap, and radius.
  * Text line-height belongs exclusively to the selected `ds-text` variant.
@@ -14,6 +14,8 @@
  * @see AGENTS.md — "Control density recipes"
  */
 
+.ds-control--lg,
+:host(.ds-control--lg),
 :host(.ds-control--md),
 .ds-control--md,
 :host(.ds-control--sm),
@@ -21,6 +23,15 @@
 :host(.ds-control--xs),
 .ds-control--xs {
   --ds-control-radius: var(--dimension-radius-025);
+}
+
+:host(.ds-control--lg),
+.ds-control--lg {
+  --ds-control-height: var(--dimension-size-500);
+  --ds-control-icon: var(--dimension-iconography-lg);
+  --ds-control-padding-inline: var(--dimension-space-100);
+  --ds-control-label-inset: var(--dimension-space-050);
+  --ds-control-gap: var(--dimension-space-050);
 }
 
 :host(.ds-control--md),

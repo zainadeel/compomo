@@ -1,10 +1,10 @@
 import '/dist/components/ds-toast.js';
-import '/dist/components/ds-shell-mobile-bar.js';
+import '/dist/components/ds-mobile-bar-nav.js';
 import { createToastManager } from '/dist/lib/toast/index.js';
 
 await Promise.all([
   customElements.whenDefined('ds-toast'),
-  customElements.whenDefined('ds-shell-mobile-bar'),
+  customElements.whenDefined('ds-mobile-bar-nav'),
 ]);
 
 const toast = document.getElementById('toast');

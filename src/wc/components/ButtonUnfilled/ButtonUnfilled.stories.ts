@@ -3,7 +3,7 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-button-unfilled.js';
 
 const VARIANTS = ['label', 'icon', 'icon-label'] as const;
-const SIZES = ['md', 'sm', 'xs'] as const;
+const SIZES = ['lg', 'md', 'sm', 'xs'] as const;
 const WIDTHS = ['hug', 'fill'] as const;
 
 const meta: Meta = {

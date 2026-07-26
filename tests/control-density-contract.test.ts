@@ -13,7 +13,7 @@ test('all control densities share one default radius declaration', () => {
     css.match(/--ds-control-radius:\s*var\(--dimension-radius-025\);/g)?.length,
     1,
   );
-  for (const size of ['md', 'sm', 'xs']) {
+  for (const size of ['lg', 'md', 'sm', 'xs']) {
     assert.match(css, new RegExp(`:host\\(\\.ds-control--${size}\\)[\\s\\S]*?--ds-control-radius`));
   }
 });
@@ -31,6 +31,12 @@ test('shell navigation rows consume the shared control-density recipe', () => {
       css: read('src/wc/components/TabGroup/TabGroup.css'),
       source: read('src/wc/components/TabGroup/TabGroup.tsx'),
       sizeClass: /['"]ds-control--sm['"]: true/,
+    },
+    {
+      name: 'MobileSheetNav lg destinations',
+      css: read('src/wc/components/MobileSheetNav/MobileSheetNav.css'),
+      source: read('src/wc/components/MobileSheetNav/MobileSheetNav.tsx'),
+      sizeClass: /['"]ds-control--lg['"]: true/,
     },
   ];
 

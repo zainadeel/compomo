@@ -87,9 +87,8 @@
   z-index: 1;
 }
 
-.shell-app__mobile-section,
-.shell-app__mobile-navigation,
-.shell-app__mobile-bar {
+.shell-app__mobile-sheet-nav,
+.shell-app__mobile-bar-nav {
   display: none;
 }
 
@@ -164,25 +163,16 @@
 :host(.shell-app--mobile) .shell-app__main {
   width: 100%;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
-    'mobile-section'
     'stage'
-    'mobile-bar';
+    'mobile-bar-nav';
   background: var(--color-background-primary);
-}
-
-:host(.shell-app--mobile) .shell-app__mobile-section {
-  grid-area: mobile-section;
-  display: block;
-  min-width: 0;
-  position: relative;
-  z-index: 1;
 }
 
 :host(.shell-app--mobile) .shell-app__content,
 :host(.shell-app--mobile) .shell-app__tools,
-:host(.shell-app--mobile) .shell-app__mobile-navigation {
+:host(.shell-app--mobile) .shell-app__mobile-sheet-nav {
   grid-area: stage;
   min-width: 0;
   min-height: 0;
@@ -202,30 +192,29 @@
   background: var(--color-background-primary);
 }
 
-:host(.shell-app--mobile) .shell-app__mobile-navigation {
+:host(.shell-app--mobile) .shell-app__mobile-sheet-nav {
   display: block;
   z-index: 3;
   overflow: hidden;
   background: var(--color-background-primary);
 }
 
-:host(.shell-app--mobile) .shell-app__mobile-bar {
-  grid-area: mobile-bar;
+:host(.shell-app--mobile) .shell-app__mobile-bar-nav {
+  grid-area: mobile-bar-nav;
   display: block;
   min-width: 0;
   position: relative;
   z-index: 4;
 }
 
-:host(.shell-app--mobile) .shell-app__mobile-section[hidden],
 :host(.shell-app--mobile) .shell-app__tools[hidden],
-:host(.shell-app--mobile) .shell-app__mobile-navigation[hidden],
-:host(.shell-app--mobile) .shell-app__mobile-bar[hidden] {
+:host(.shell-app--mobile) .shell-app__mobile-sheet-nav[hidden],
+:host(.shell-app--mobile) .shell-app__mobile-bar-nav[hidden] {
   display: none;
 }
 
 :host(.shell-app--mobile-tool-active) .shell-app__content,
-:host(.shell-app--mobile-navigation-open) .shell-app__content,
-:host(.shell-app--mobile-navigation-open) .shell-app__tools {
+:host(.shell-app--mobile-sheet-nav-open) .shell-app__content,
+:host(.shell-app--mobile-sheet-nav-open) .shell-app__tools {
   visibility: hidden;
 }

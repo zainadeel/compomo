@@ -1,3 +1,5 @@
+@import '../../utils/visually-hidden.css';
+
 :host {
   display: block;
 }
@@ -56,14 +58,6 @@ ol {
   height: var(--dimension-size-050);
   border-radius: var(--dimension-radius-half);
   background: currentColor;
-}
-.agent-activity__state {
-  position: absolute;
-  width: var(--dimension-size-050);
-  height: var(--dimension-size-050);
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: no-preference) {

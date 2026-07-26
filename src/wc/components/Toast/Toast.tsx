@@ -1052,7 +1052,7 @@ export class Toast {
               this.renderToast(record, { index: 0, offset: 0, limited: false })
             )}
           </div>
-          <div class="toast-assertive-announcer">
+          <div class="toast-assertive-announcer ds-visually-hidden">
             {highPriority.map(record => (
               <div role="alert" aria-atomic="true">
                 {[record.title, record.description].filter(Boolean).join('. ')}

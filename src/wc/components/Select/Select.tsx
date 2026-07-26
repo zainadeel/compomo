@@ -19,6 +19,8 @@ import {
   resolveCssTimeMs,
   resolveChoicePopupAlignOffset,
   TOKEN_DEFAULTS,
+  DEFAULT_REQUIRED_MESSAGE,
+  setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
 import { computeAnchoredPopupPosition } from '../../utils/anchored-popup';
@@ -79,7 +81,7 @@ export class Select {
   /** Require one valid selected value. */
   @Prop({ reflect: true }) required: boolean = false;
   /** Validation message used when required is missing. */
-  @Prop() requiredMessage: string = 'This field is required.';
+  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   /** Trigger text shown when no valid value is selected. */
   @Prop() placeholder: string = 'Select';
   /** Control density. */
@@ -176,7 +178,7 @@ export class Select {
     const resolvedValue = this.hasSelection ? this.value : '';
     this.internals.setFormValue(inactive ? null : resolvedValue);
     const missing = this.required && !inactive && !resolvedValue;
-    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
+    setRequiredValidity(this.internals, missing, this.requiredMessage);
     if (this.open) {
       const enabled = enabledChoiceIndexes(this.visibleOptions);
       if (!enabled.includes(this.activeIndex)) this.activeIndex = enabled[0] ?? -1;

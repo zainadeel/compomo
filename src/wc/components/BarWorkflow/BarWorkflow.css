@@ -37,9 +37,6 @@
   height: var(--dimension-size-400);
   padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
   box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   user-select: none;
 }
 

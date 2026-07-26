@@ -589,7 +589,7 @@ export class PanelTools {
             {headerItem ? (
               <div class="panel-tools__rail-header">{this.renderRailAction(headerItem, 0)}</div>
             ) : null}
-            <div class="panel-tools__rail-body">
+            <div class="panel-tools__rail-body ds-scrollbar-hidden">
               {bodyItems.map((item, bodyIdx) =>
                 this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx)
               )}

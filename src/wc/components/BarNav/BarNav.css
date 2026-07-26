@@ -215,9 +215,6 @@ ds-text.bar-nav__heading {
   align-items: center;
   height: var(--ds-control-height);
   padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   -webkit-user-select: none;
   user-select: none;
 }

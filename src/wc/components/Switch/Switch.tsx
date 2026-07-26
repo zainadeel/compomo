@@ -1,4 +1,5 @@
 import { AttachInternals, Component, Element, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
+import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
 
 export type SwitchSize = 'md' | 'sm' | 'xs';
 
@@ -29,7 +30,7 @@ export class Switch {
   @Prop({ reflect: true }) disabled: boolean = false;
   @Prop({ reflect: true }) readOnly: boolean = false;
   @Prop({ reflect: true }) required: boolean = false;
-  @Prop() requiredMessage: string = 'This field is required.';
+  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   @Prop() isInactive: boolean = false;
 
   /** Compact track size for placement inside controls, menus, and form rows. */
@@ -71,7 +72,7 @@ export class Switch {
     this.internals.setFormValue(inactive ? null : submissionValue, state);
 
     const missing = this.required && !inactive && !this.checked;
-    this.internals.setValidity(missing ? { valueMissing: true } : {}, missing ? this.requiredMessage : '');
+    setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
 
   formDisabledCallback(disabled: boolean) {

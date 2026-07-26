@@ -49,7 +49,7 @@ import {
 } from '../../shell/shell-gradient';
 import {
   resolveShellResponsiveMode,
-  type ShellMobileDestination,
+  type MobileDestination,
   type ShellResponsiveMode,
 } from '../../shell/shell-responsive';
 
@@ -74,11 +74,11 @@ export class ShellApp {
 
   /** Controlled mobile surface shown above the persistent bottom bar. */
   @Prop({ attribute: 'mobile-destination' })
-  mobileDestination: ShellMobileDestination = 'area';
+  mobileDestination: MobileDestination = 'area';
 
-  /** Controlled full-stage mobile navigation-pane state. */
-  @Prop({ attribute: 'mobile-navigation-open' })
-  mobileNavigationOpen: boolean = false;
+  /** Controlled full-stage Mobile Sheet Nav state. */
+  @Prop({ attribute: 'mobile-sheet-nav-open' })
+  mobileSheetNavOpen: boolean = false;
 
   /** Emitted after crossing the fixed 768px or 1200px shell boundaries. */
   @Event() dsResponsiveModeChange!: EventEmitter<{ mode: ShellResponsiveMode }>;
@@ -148,25 +148,25 @@ export class ShellApp {
   }
 
   @Watch('mobileDestination')
-  @Watch('mobileNavigationOpen')
+  @Watch('mobileSheetNavOpen')
   onMobileStateChange(_next: unknown, previous: unknown) {
     this.syncSlottedMobileState();
     if (
       previous === true &&
-      !this.mobileNavigationOpen &&
+      !this.mobileSheetNavOpen &&
       this.resolvedMode === 'mobile'
     ) {
       requestAnimationFrame(() => {
-        const bar = this.el.querySelector('ds-shell-mobile-bar') as
+        const bar = this.el.querySelector('ds-mobile-bar-nav') as
           | (HTMLElement & {
               focusDestination?: (
-                destination: ShellMobileDestination | 'navigation'
+                destination: MobileDestination | 'sheet-nav'
               ) => Promise<void>;
             })
           | null;
         const activeElement = document.activeElement;
         if (activeElement instanceof HTMLElement && bar?.contains(activeElement)) return;
-        void bar?.focusDestination?.('navigation');
+        void bar?.focusDestination?.('sheet-nav');
       });
     }
   }
@@ -222,13 +222,13 @@ export class ShellApp {
     const tools = this.el.querySelector('ds-shell-tools') as
       | (HTMLElement & { responsiveMode: ShellResponsiveMode })
       | null;
-    const bar = this.el.querySelector('ds-shell-mobile-bar') as
+    const bar = this.el.querySelector('ds-mobile-bar-nav') as
       | (HTMLElement & {
-          activeDestination: ShellMobileDestination;
-          navigationExpanded: boolean;
+          activeDestination: MobileDestination;
+          sheetNavExpanded: boolean;
         })
       | null;
-    const navigation = this.el.querySelector('ds-shell-mobile-nav') as
+    const sheetNav = this.el.querySelector('ds-mobile-sheet-nav') as
       | (HTMLElement & { open: boolean })
       | null;
 
@@ -238,10 +238,10 @@ export class ShellApp {
     }
     if (bar) {
       bar.activeDestination = this.mobileDestination;
-      bar.navigationExpanded = this.mobileNavigationOpen;
+      bar.sheetNavExpanded = this.mobileSheetNavOpen;
     }
-    if (navigation) {
-      navigation.open = this.mobileNavigationOpen;
+    if (sheetNav) {
+      sheetNav.open = this.mobileSheetNavOpen;
     }
   }
 
@@ -452,7 +452,7 @@ export class ShellApp {
     const chromeActive = this.chromeLayerActive();
     const mobile = this.resolvedMode === 'mobile';
     const mobileToolActive = mobile && this.mobileDestination !== 'area';
-    const mobileStageBlocked = mobile && (mobileToolActive || this.mobileNavigationOpen);
+    const mobileStageBlocked = mobile && (mobileToolActive || this.mobileSheetNavOpen);
     const fullscreen = !mobile && this.toolsFullscreen;
     const shellCls: Record<string, boolean> = {
       'shell-app': true,
@@ -461,7 +461,7 @@ export class ShellApp {
       [`shell-app--${this.resolvedMode}`]: true,
       'shell-app--tools-fullscreen': fullscreen,
       'shell-app--mobile-tool-active': mobileToolActive,
-      'shell-app--mobile-navigation-open': mobile && this.mobileNavigationOpen,
+      'shell-app--mobile-sheet-nav-open': mobile && this.mobileSheetNavOpen,
     };
 
     return (
@@ -476,15 +476,9 @@ export class ShellApp {
               <slot name="bar" />
             </div>
             <div
-              class="shell-app__mobile-section"
-              hidden={!mobile || this.mobileDestination !== 'area' || this.mobileNavigationOpen}
-            >
-              <slot name="mobile-section-nav" />
-            </div>
-            <div
               class="shell-app__tools"
-              aria-hidden={mobile && (!mobileToolActive || this.mobileNavigationOpen) ? 'true' : undefined}
-              inert={mobile && (!mobileToolActive || this.mobileNavigationOpen) ? true : undefined}
+              aria-hidden={mobile && (!mobileToolActive || this.mobileSheetNavOpen) ? 'true' : undefined}
+              inert={mobile && (!mobileToolActive || this.mobileSheetNavOpen) ? true : undefined}
               hidden={mobile && !mobileToolActive}
             >
               <slot name="tools" />
@@ -497,15 +491,15 @@ export class ShellApp {
               <slot />
             </div>
             <div
-              class="shell-app__mobile-navigation"
-              hidden={!mobile || !this.mobileNavigationOpen}
-              aria-hidden={mobile && this.mobileNavigationOpen ? undefined : 'true'}
-              inert={mobile && this.mobileNavigationOpen ? undefined : true}
+              class="shell-app__mobile-sheet-nav"
+              hidden={!mobile || !this.mobileSheetNavOpen}
+              aria-hidden={mobile && this.mobileSheetNavOpen ? undefined : 'true'}
+              inert={mobile && this.mobileSheetNavOpen ? undefined : true}
             >
-              <slot name="mobile-navigation" />
+              <slot name="mobile-sheet-nav" />
             </div>
-            <div class="shell-app__mobile-bar" hidden={!mobile}>
-              <slot name="mobile-bar" />
+            <div class="shell-app__mobile-bar-nav" hidden={!mobile}>
+              <slot name="mobile-bar-nav" />
             </div>
           </div>
         </div>

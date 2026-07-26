@@ -101,7 +101,7 @@ export class ConversationListItem {
                 </ds-text>
               </span>
               {this.updatedAt ? (
-                <time class="conversation-list-item__time" dateTime={this.updatedAt}>
+                <time class="conversation-list-item__time ds-visually-hidden" dateTime={this.updatedAt}>
                   {this.updatedAt}
                 </time>
               ) : null}

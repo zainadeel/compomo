@@ -97,17 +97,11 @@
 
 .chart-legend__label {
   min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .chart-legend__percentage {
   width: 100%;
   min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   text-align: right;
 }
 
@@ -115,7 +109,4 @@
   width: 100%;
   text-align: right;
   min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }

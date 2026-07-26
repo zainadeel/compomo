@@ -1,0 +1,49 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--color-foreground-primary);
+}
+
+.mobile-section-switcher {
+  appearance: none;
+  display: grid;
+  grid-template-columns: var(--dimension-size-100) minmax(0, auto) var(--dimension-size-100);
+  align-items: center;
+  justify-content: center;
+  gap: var(--dimension-space-050);
+  max-width: 100%;
+  min-height: var(--dimension-size-400);
+  padding-inline: var(--dimension-space-100);
+  border: 0;
+  border-radius: var(--dimension-radius-100);
+  background: var(--color-background-secondary);
+  color: inherit;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.mobile-section-switcher--expanded {
+  background: var(--color-background-tertiary);
+}
+
+.mobile-section-switcher__label {
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+}
+
+.mobile-section-switcher__position {
+  width: var(--dimension-size-050);
+  height: var(--dimension-size-050);
+  border-radius: var(--dimension-radius-half);
+  background: currentColor;
+  opacity: 0;
+}
+
+.mobile-section-switcher__position--visible {
+  opacity: 1;
+}

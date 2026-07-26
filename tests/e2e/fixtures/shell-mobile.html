@@ -35,12 +35,8 @@
       mobile-destination="area"
     >
       <ds-panel-nav slot="panel" id="panel"></ds-panel-nav>
-      <ds-shell-mobile-nav slot="mobile-navigation" id="mobile-nav"></ds-shell-mobile-nav>
+      <ds-mobile-sheet-nav slot="mobile-sheet-nav" id="mobile-sheet-nav"></ds-mobile-sheet-nav>
       <ds-bar-nav slot="bar" id="bar"></ds-bar-nav>
-      <ds-shell-mobile-section-nav
-        slot="mobile-section-nav"
-        id="mobile-sections"
-      ></ds-shell-mobile-section-nav>
       <ds-shell-tools slot="tools" id="tools">
         <section slot="search-view" id="search-view" class="fixture-view">
           <label for="persistent-value">Persistent search value</label>
@@ -52,11 +48,14 @@
         <section slot="activity-view" class="fixture-view">Activity view</section>
         <section slot="help-view" class="fixture-view">Help view</section>
       </ds-shell-tools>
-      <main id="workspace" class="fixture-view">
-        <h1>Tracking workspace</h1>
-        <div style="height: 1200px;">Scrollable routed content</div>
-      </main>
-      <ds-shell-mobile-bar slot="mobile-bar" id="mobile-bar"></ds-shell-mobile-bar>
+      <ds-shell-page id="workspace-page">
+        <ds-bar-title slot="header" heading="Tracking"></ds-bar-title>
+        <ds-mobile-header slot="mobile-header" id="mobile-header"></ds-mobile-header>
+        <main id="workspace" class="fixture-view">
+          <div style="height: 1200px;">Scrollable routed content</div>
+        </main>
+      </ds-shell-page>
+      <ds-mobile-bar-nav slot="mobile-bar-nav" id="mobile-bar-nav"></ds-mobile-bar-nav>
     </ds-shell-app>
     <script type="module" src="/shell-mobile-setup.mjs"></script>
   </body>

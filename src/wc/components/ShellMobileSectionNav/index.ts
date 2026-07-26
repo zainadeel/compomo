@@ -1,1 +1,0 @@
-export { ShellMobileSectionNav } from './ShellMobileSectionNav';
