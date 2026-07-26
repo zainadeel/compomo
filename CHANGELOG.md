@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.0](https://github.com/zainadeel/compomo/compare/v12.5.0...v12.6.0) (2026-07-26)
+
+
+### Added
+
+* add responsive mobile navigation hierarchy ([#380](https://github.com/zainadeel/compomo/issues/380)) ([a05c9f5](https://github.com/zainadeel/compomo/commit/a05c9f58ba93ee686ebd7f9acaaa43072edd0695))
+
 ## [12.5.0](https://github.com/zainadeel/compomo/compare/v12.4.1...v12.5.0) (2026-07-24)
 
 
