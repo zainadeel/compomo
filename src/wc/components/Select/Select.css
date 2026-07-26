@@ -33,7 +33,7 @@
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   color: var(--ds-select-fg);
-  cursor: pointer;
+  cursor: default;
   font-family: inherit;
   -webkit-user-select: none;
   user-select: none;

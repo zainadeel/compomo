@@ -6,6 +6,9 @@
   min-width: 0;
   background: var(--color-background-secondary);
   color: var(--color-foreground-tertiary);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .mobile-bar-nav {
@@ -19,6 +22,9 @@
   border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   background: var(--color-background-secondary);
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .mobile-bar-nav__group {
@@ -40,11 +46,27 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  cursor: default;
 }
 
 .mobile-bar-nav__item--selected {
   color: var(--color-foreground-primary);
+}
+
+/*
+ * Safari can retain its native :active state after a direct touch. On coarse
+ * touch-only pointers, the component-owned class provides one deterministic
+ * press frame and clears it after release/cancel.
+ */
+@media (hover: none) and (pointer: coarse) {
+  .mobile-bar-nav__item.ds-interaction-fill:active:not(:disabled)::after {
+    background: transparent;
+  }
+
+  .mobile-bar-nav__item--pressed.ds-interaction-fill::after,
+  .mobile-bar-nav__item--pressed.ds-interaction-fill:active:not(:disabled)::after {
+    background: var(--ds-interaction-pressed);
+  }
 }
 
 .mobile-bar-nav__divider {
@@ -52,6 +74,9 @@
   width: var(--dimension-stroke-width-012);
   height: var(--dimension-iconography-lg);
   background: var(--color-border-tertiary);
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .mobile-bar-nav__icon {

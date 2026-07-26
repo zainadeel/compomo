@@ -19,6 +19,17 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('uses the default cursor for breadcrumb commands and pointer only for links', async ({
+  page,
+}) => {
+  await expect(
+    page.getByRole('button', { name: 'Back to Drivers' })
+  ).toHaveCSS('cursor', 'default');
+  await expect(
+    page.getByRole('link', { name: 'Operations and workforce management' })
+  ).toHaveCSS('cursor', 'pointer');
+});
+
 test('composes one page main and semantic h1 with the default content inset', async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');

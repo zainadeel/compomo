@@ -27,6 +27,23 @@ test.describe('App shell chrome', () => {
     await expect(nav.locator('.panel-nav__item').first()).toHaveCSS('border-radius', '10px');
   });
 
+  test('keeps one default cursor across desktop button hit areas', async ({ page }) => {
+    const targets = page.locator(
+      '.panel-nav__item, .bar-nav__tab, .panel-tools__rail-action .button-unfilled'
+    );
+
+    const cursors = await targets.evaluateAll(elements =>
+      elements.flatMap(element => [
+        getComputedStyle(element).cursor,
+        ...Array.from(element.querySelectorAll('*')).map(
+          descendant => getComputedStyle(descendant).cursor
+        ),
+      ])
+    );
+
+    expect(new Set(cursors)).toEqual(new Set(['default']));
+  });
+
   test('contains page scrolling without moving the shell viewport', async ({ page }) => {
     const shell = page.locator('ds-shell-app');
     const shellRoot = page.locator('.shell-app');

@@ -9,7 +9,7 @@
 summary {
   align-items: center;
   color: var(--color-foreground-secondary);
-  cursor: pointer;
+  cursor: default;
   display: flex;
   gap: var(--dimension-space-050);
   list-style: none;

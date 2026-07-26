@@ -24,7 +24,7 @@
   box-sizing: border-box;
   flex-shrink: 0;
   overflow: visible;
-  cursor: pointer;
+  cursor: default;
   user-select: none;
   outline: none;
   background-color: transparent;

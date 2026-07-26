@@ -126,7 +126,7 @@
   box-sizing: border-box;
   background: transparent;
   color: var(--color-foreground-secondary);
-  cursor: pointer;
+  cursor: default;
   font-family: inherit;
   user-select: none;
   transition: color var(--effect-motion-short-2);

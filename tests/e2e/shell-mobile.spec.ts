@@ -143,6 +143,40 @@ test.describe('Responsive mobile shell foundation', () => {
     expect(barBox).not.toBeNull();
     expect(barBox!.x).toBeGreaterThanOrEqual(0);
     expect(barBox!.x + barBox!.width).toBeLessThanOrEqual(390);
+
+    const dividerInteraction = await page.locator('.mobile-bar-nav__divider').evaluate(
+      element => ({
+        pointerEvents: getComputedStyle(element).pointerEvents,
+        webkitUserSelect: getComputedStyle(element).webkitUserSelect,
+      })
+    );
+    expect(dividerInteraction).toEqual({
+      pointerEvents: 'none',
+      webkitUserSelect: 'none',
+    });
+  });
+
+  test('owns direct-touch press feedback and clears it after a quick tap', async ({ page }) => {
+    const menu = page.getByRole('button', { name: 'Menu' });
+
+    await menu.dispatchEvent('pointerdown', {
+      pointerId: 41,
+      pointerType: 'touch',
+      isPrimary: true,
+      button: 0,
+    });
+    await expect(menu).toHaveClass(/mobile-bar-nav__item--pressed/);
+
+    await menu.dispatchEvent('pointerup', {
+      pointerId: 41,
+      pointerType: 'touch',
+      isPrimary: true,
+      button: 0,
+    });
+    await expect(menu).toHaveClass(/mobile-bar-nav__item--pressed/);
+    await expect(menu).not.toHaveClass(/mobile-bar-nav__item--pressed/, {
+      timeout: 500,
+    });
   });
 
   test('keeps the bar available over navigation and browsing contexts does not navigate', async ({

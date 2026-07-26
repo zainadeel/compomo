@@ -59,3 +59,16 @@ test('uses the input-field active border for mouse and keyboard focus', async ({
   const keyboardShadow = await field.evaluate(element => getComputedStyle(element).boxShadow);
   expect(keyboardShadow).toBe(pointerShadow);
 });
+
+test.describe('direct-touch composer', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 760 } });
+
+  test('preserves body-medium text metrics', async ({ page }) => {
+    await page.goto('/message-composer.html');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+    const textarea = page.locator('#composer textarea');
+    await expect(textarea).toHaveCSS('font-size', '14px');
+    await expect(textarea).toHaveCSS('line-height', '20px');
+  });
+});

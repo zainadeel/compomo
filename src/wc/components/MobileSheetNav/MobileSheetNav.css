@@ -104,7 +104,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: var(--ds-control-gap);
-  cursor: pointer;
+  cursor: default;
   text-align: start;
   box-sizing: border-box;
 }

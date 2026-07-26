@@ -62,7 +62,7 @@
   gap: var(--ds-control-gap);
   border-radius: inherit;
   color: inherit;
-  cursor: pointer;
+  cursor: default;
 }
 
 .tag__button:disabled {

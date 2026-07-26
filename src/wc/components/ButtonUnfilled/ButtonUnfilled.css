@@ -42,7 +42,7 @@
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   color: var(--ds-button-unfilled-fg);
-  cursor: pointer;
+  cursor: default;
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;

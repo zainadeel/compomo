@@ -23,7 +23,7 @@
   background: var(--color-background-secondary);
   color: inherit;
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: default;
 }
 
 .mobile-section-switcher--expanded {

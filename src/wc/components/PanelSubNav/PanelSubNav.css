@@ -28,7 +28,7 @@
   border-radius: var(--ds-control-radius);
   background: transparent;
   color: var(--color-foreground-secondary);
-  cursor: pointer;
+  cursor: default;
   text-align: left;
   -webkit-user-select: none;
   user-select: none;
