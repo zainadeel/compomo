@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.1](https://github.com/zainadeel/compomo/compare/v12.6.0...v12.6.1) (2026-07-26)
+
+
+### Fixed
+
+* improve mobile and single-selection interactions ([#382](https://github.com/zainadeel/compomo/issues/382)) ([94bcb18](https://github.com/zainadeel/compomo/commit/94bcb187b1cb5b26fb4698e1afb5f447025cf493))
+
 ## [12.6.0](https://github.com/zainadeel/compomo/compare/v12.5.0...v12.6.0) (2026-07-26)
 
 
