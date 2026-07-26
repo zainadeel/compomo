@@ -197,7 +197,7 @@
   color: var(--color-foreground-primary);
   font-size: var(--typography-fontsize-sm);
   line-height: var(--typography-lineheight-sm);
-  cursor: pointer;
+  cursor: default;
   -webkit-user-select: none;
   user-select: none;
 }

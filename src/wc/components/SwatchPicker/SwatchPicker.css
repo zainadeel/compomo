@@ -33,7 +33,7 @@
   border: none;
   border-radius: var(--dimension-radius-half);
   background: transparent;
-  cursor: pointer;
+  cursor: default;
   isolation: isolate;
 }
 

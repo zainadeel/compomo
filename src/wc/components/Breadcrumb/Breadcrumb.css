@@ -54,6 +54,10 @@
 }
 
 .breadcrumb__link {
+  cursor: default;
+}
+
+a.breadcrumb__link {
   cursor: pointer;
 }
 
@@ -83,4 +87,3 @@
   inline-size: max-content;
   max-inline-size: none;
 }
-

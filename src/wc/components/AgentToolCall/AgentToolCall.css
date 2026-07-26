@@ -1,6 +1,6 @@
 :host { display: block; }
 .agent-tool { border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); border-radius: var(--dimension-radius-050); }
-summary { align-items: center; cursor: pointer; display: grid; gap: var(--dimension-space-050); grid-template-columns: auto minmax(0, 1fr) auto; list-style: none; padding: var(--dimension-space-075) var(--dimension-space-100); }
+summary { align-items: center; cursor: default; display: grid; gap: var(--dimension-space-050); grid-template-columns: auto minmax(0, 1fr) auto; list-style: none; padding: var(--dimension-space-075) var(--dimension-space-100); }
 summary::-webkit-details-marker { display: none; }
 .agent-tool__status { align-items: center; color: var(--color-foreground-faint-neutral); display: flex; }
 .agent-tool--running .agent-tool__status, .agent-tool--queued .agent-tool__status { color: var(--color-foreground-faint-brand); }

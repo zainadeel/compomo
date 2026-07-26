@@ -11,7 +11,7 @@
   height: var(--ds-control-height);
   padding: 0 var(--ds-control-padding-inline);
   border-radius: var(--ds-control-radius);
-  cursor: pointer;
+  cursor: default;
   user-select: none;
 }
 

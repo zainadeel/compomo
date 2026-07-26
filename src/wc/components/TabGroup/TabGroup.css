@@ -72,7 +72,7 @@
   background-color: transparent;
   border: none;
   border-radius: var(--dimension-radius-half);
-  cursor: pointer;
+  cursor: default;
   -webkit-user-select: none;
   user-select: none;
   color: var(--color-foreground-secondary);

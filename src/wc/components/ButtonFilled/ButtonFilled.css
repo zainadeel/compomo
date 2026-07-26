@@ -41,7 +41,7 @@
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   background-color: var(--ds-button-filled-bg);
   color: var(--ds-button-filled-fg);
-  cursor: pointer;
+  cursor: default;
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;

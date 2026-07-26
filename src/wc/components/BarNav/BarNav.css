@@ -121,7 +121,7 @@
   border-radius: var(--ds-control-radius);
   background-color: transparent;
   color: var(--_bar-nav-fg-secondary);
-  cursor: pointer;
+  cursor: default;
   position: relative;
   flex-shrink: 0;
   -webkit-user-select: none;
@@ -136,6 +136,7 @@
   border-radius: var(--ds-control-radius);
   background: transparent;
   pointer-events: none;
+  cursor: inherit;
 }
 
 .bar-nav__tab:hover::after {

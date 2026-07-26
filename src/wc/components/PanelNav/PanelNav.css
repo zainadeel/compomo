@@ -124,7 +124,7 @@
   justify-content: center;
   padding: var(--dimension-space-075, 6px);
   border-radius: var(--ds-control-radius, var(--dimension-radius-025, 2px));
-  cursor: pointer;
+  cursor: default;
   color: var(--_nav-fg-primary);
   flex-shrink: 0;
   box-sizing: border-box;
@@ -227,7 +227,7 @@ ds-text.panel-nav__group-label {
   padding: 0 var(--dimension-space-075, 6px);
   height: var(--dimension-size-400, 32px);
   border-radius: var(--ds-control-radius, var(--dimension-radius-025, 2px));
-  cursor: pointer;
+  cursor: default;
   color: var(--_nav-fg-secondary);
   box-sizing: border-box;
   width: 100%;

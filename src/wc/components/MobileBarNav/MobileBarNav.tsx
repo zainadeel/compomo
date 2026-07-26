@@ -7,6 +7,7 @@ import {
   Host,
   Method,
   Prop,
+  State,
 } from '@stencil/core';
 import {
   shouldEmitMobileDestinationChange,
@@ -21,6 +22,8 @@ interface DestinationConfig {
   label: string;
   dot: boolean;
 }
+
+const MINIMUM_DIRECT_PRESS_MS = 120;
 
 @Component({
   tag: 'ds-mobile-bar-nav',
@@ -46,8 +49,76 @@ export class MobileBarNav {
   @Prop() agentsDot: boolean = false;
   @Prop() inboxDot: boolean = false;
 
+  @State() private pressedItemId: string | null = null;
+
   @Event() dsSheetNavToggle!: EventEmitter<boolean>;
   @Event() dsDestinationChange!: EventEmitter<MobileBarNavDestinationDetail>;
+
+  private activePointerId: number | null = null;
+  private pressedAt = 0;
+  private pressClearTimer: ReturnType<typeof setTimeout> | null = null;
+
+  disconnectedCallback() {
+    this.clearPressedItem();
+  }
+
+  private clearPressTimer() {
+    if (this.pressClearTimer === null) return;
+    clearTimeout(this.pressClearTimer);
+    this.pressClearTimer = null;
+  }
+
+  private clearPressedItem() {
+    this.clearPressTimer();
+    this.activePointerId = null;
+    this.pressedItemId = null;
+  }
+
+  private beginDirectPress(itemId: string, event: PointerEvent) {
+    if (!event.isPrimary || event.pointerType === 'mouse' || event.button !== 0) return;
+
+    this.clearPressTimer();
+    this.activePointerId = event.pointerId;
+    this.pressedAt = performance.now();
+    this.pressedItemId = itemId;
+
+    const target = event.currentTarget as HTMLElement;
+    try {
+      target.setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture can fail if Safari has already cancelled the stream.
+    }
+  }
+
+  private finishDirectPress(event: PointerEvent) {
+    if (event.pointerId !== this.activePointerId) return;
+
+    this.activePointerId = null;
+    const remaining = Math.max(
+      0,
+      MINIMUM_DIRECT_PRESS_MS - (performance.now() - this.pressedAt)
+    );
+
+    this.clearPressTimer();
+    this.pressClearTimer = setTimeout(() => {
+      this.pressClearTimer = null;
+      this.pressedItemId = null;
+    }, remaining);
+  }
+
+  private cancelDirectPress(event: PointerEvent) {
+    if (event.pointerId !== this.activePointerId) return;
+    this.clearPressedItem();
+  }
+
+  private pressHandlers(itemId: string) {
+    return {
+      onPointerDown: (event: PointerEvent) => this.beginDirectPress(itemId, event),
+      onPointerUp: (event: PointerEvent) => this.finishDirectPress(event),
+      onPointerCancel: (event: PointerEvent) => this.cancelDirectPress(event),
+      onLostPointerCapture: (event: PointerEvent) => this.finishDirectPress(event),
+    };
+  }
 
   private destinationConfig(): DestinationConfig[] {
     const currentArea =
@@ -107,12 +178,14 @@ export class MobileBarNav {
         class={{
           'mobile-bar-nav__item': true,
           'mobile-bar-nav__item--selected': selected,
+          'mobile-bar-nav__item--pressed': this.pressedItemId === item.id,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
         }}
         aria-label={item.label}
         aria-current={selected ? 'page' : undefined}
         onClick={() => this.selectDestination(item.id)}
+        {...this.pressHandlers(item.id)}
       >
         <span class="mobile-bar-nav__icon ds-interaction-fill__content">
           <ds-icon name={item.icon} size="lg" color="inherit" />
@@ -137,6 +210,8 @@ export class MobileBarNav {
               class={{
                 'mobile-bar-nav__item': true,
                 'mobile-bar-nav__item--selected': this.sheetNavExpanded,
+                'mobile-bar-nav__item--pressed':
+                  this.pressedItemId === 'sheet-nav',
                 'ds-focus-ring-inset': true,
                 'ds-interaction-fill': true,
               }}
@@ -144,6 +219,7 @@ export class MobileBarNav {
               aria-expanded={String(this.sheetNavExpanded)}
               aria-controls="ds-mobile-sheet-nav"
               onClick={() => this.dsSheetNavToggle.emit(!this.sheetNavExpanded)}
+              {...this.pressHandlers('sheet-nav')}
             >
               <span class="mobile-bar-nav__icon ds-interaction-fill__content">
                 <ds-icon
