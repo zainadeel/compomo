@@ -1,0 +1,46 @@
+/**
+ * Shared structural chrome spacing.
+ *
+ * Spacing density and layout axis are intentionally separate. The utility
+ * never sets width or height: child controls and the owning component decide
+ * the resulting geometry.
+ */
+
+:host(.ds-chrome-space--sm),
+.ds-chrome-space--sm {
+  --ds-chrome-padding: var(--dimension-space-050);
+  --ds-chrome-gap: var(--dimension-space-050);
+}
+
+:host(.ds-chrome-space--md),
+.ds-chrome-space--md {
+  --ds-chrome-padding: var(--dimension-space-100);
+  --ds-chrome-gap: var(--dimension-space-100);
+}
+
+:host(.ds-chrome-space--lg),
+.ds-chrome-space--lg {
+  --ds-chrome-padding: var(--dimension-space-200);
+  --ds-chrome-gap: var(--dimension-space-200);
+}
+
+:host(.ds-chrome-row),
+.ds-chrome-row,
+:host(.ds-chrome-column),
+.ds-chrome-column {
+  display: flex;
+  box-sizing: border-box;
+  gap: var(--ds-chrome-gap, var(--dimension-space-100));
+  padding: var(--ds-chrome-padding, var(--dimension-space-100));
+}
+
+:host(.ds-chrome-row),
+.ds-chrome-row {
+  flex-direction: row;
+  align-items: center;
+}
+
+:host(.ds-chrome-column),
+.ds-chrome-column {
+  flex-direction: column;
+}

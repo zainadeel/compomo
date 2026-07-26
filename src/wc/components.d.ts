@@ -33,7 +33,7 @@ import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
-import { MenuSelectionMode } from "./components/Menu/Menu";
+import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment } from "./utils";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
@@ -92,7 +92,7 @@ export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
-export { MenuSelectionMode } from "./components/Menu/Menu";
+export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment } from "./utils";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
@@ -1276,6 +1276,11 @@ export namespace Components {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset": number | string;
+        /**
+          * Choice-row density.
+          * @default 'md'
+         */
+        "size": MenuSize;
     }
     interface DsMessage {
         /**
@@ -5350,6 +5355,11 @@ declare namespace LocalJSX {
           * @default TOKEN_CSS_LENGTHS.space050
          */
         "sideOffset"?: number | string;
+        /**
+          * Choice-row density.
+          * @default 'md'
+         */
+        "size"?: MenuSize;
     }
     interface DsMessage {
         /**
@@ -7310,6 +7320,7 @@ declare namespace LocalJSX {
     }
     interface DsMenuAttributes {
         "open": boolean;
+        "size": MenuSize;
         "selectionMode": MenuSelectionMode;
         "side": MenuSide;
         "align": MenuAlign;

@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/control-press.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
 @import '../../utils/control-width.css';
@@ -47,8 +48,7 @@
   overflow: hidden;
   transition:
     background-color var(--effect-motion-short-2),
-    color var(--effect-motion-short-2),
-    transform var(--effect-motion-short-2);
+    color var(--effect-motion-short-2);
   /* Hover/press: `.ds-interaction-fill` + contrast → `--on-*` (token overlay, not color-mix). */
 }
 
@@ -103,22 +103,6 @@
 
 .button-filled--background-always-dark {
   --ds-button-filled-border: var(--color-always-dark-border-secondary);
-}
-
-.button-filled:active:not(:disabled):not(.ds-control-inactive) {
-  transform: scale(var(--dimension-scale-subtle));
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .button-filled {
-    transition:
-      background-color var(--effect-motion-short-2),
-      color var(--effect-motion-short-2);
-  }
-
-  .button-filled:active:not(:disabled):not(.ds-control-inactive) {
-    transform: none;
-  }
 }
 
 /* Inactive: `.ds-control-inactive` (50% opacity). */

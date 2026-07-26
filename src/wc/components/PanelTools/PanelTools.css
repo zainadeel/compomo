@@ -112,6 +112,16 @@
   width: 100vw;
 }
 
+/*
+ * A framework can update the reflected presentation attribute before Stencil
+ * commits the matching render class. Conceal that single inconsistent frame so
+ * slotted master/detail content never paints against the previous geometry.
+ */
+:host([presentation='fullscreen']:not(.panel-tools--fullscreen)) .panel-tools__drawer-surface,
+:host(.panel-tools--fullscreen:not([presentation='fullscreen'])) .panel-tools__drawer-surface {
+  visibility: hidden;
+}
+
 :host(.panel-tools--presentation-snap) .panel-tools__drawer {
   transition: none;
 }

@@ -7,7 +7,7 @@
   "tag": "ds-input",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
+  "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
   "useWhen": [
     "A user must enter or edit one line of text, an email address, telephone number, URL, search query, or password.",
     "The value must participate in native, Angular, or React form state.",
@@ -59,7 +59,7 @@
   ],
   "responsiveBehavior": [
     "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
-    "Choose density from the containing layout: md for ordinary forms, sm or xs only where the surrounding controls use the same compact recipe.",
+    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
     "The owner supplies layout constraints and decides when a compact field moves to its own row."
   ],
   "frameworkCaveats": {

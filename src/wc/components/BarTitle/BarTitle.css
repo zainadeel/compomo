@@ -129,7 +129,6 @@
   cursor: default;
   font-family: inherit;
   user-select: none;
-  transition: color var(--effect-motion-short-2);
 }
 
 .bar-title__section-trigger--expanded {
@@ -194,10 +193,4 @@
   height: var(--dimension-size-400);
   padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
   box-sizing: border-box;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bar-title__section-trigger {
-    transition: none;
-  }
 }

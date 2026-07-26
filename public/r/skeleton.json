@@ -95,7 +95,7 @@
         },
         "controlSize": {
           "type": "ControlSize",
-          "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
           "attribute": "control-size",
           "default": "'md'",
           "required": false,
@@ -170,7 +170,7 @@
       },
       "controlSize": {
         "type": "ControlSize",
-        "resolvedType": "\"md\" | \"sm\" | \"xs\"",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
         "attribute": "control-size",
         "default": "'md'",
         "required": false,

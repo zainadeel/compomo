@@ -583,6 +583,36 @@ test.describe('Shell tablet and desktop compatibility', () => {
     await expect(innerTools).toHaveAttribute('open');
     await expect(page.locator('#persistent-value')).toBeVisible();
   });
+
+  test('forwards presentation before paint and conceals the nested handoff frame', async ({
+    page,
+  }) => {
+    const tools = page.locator('ds-shell-tools');
+    const innerTools = tools.locator('ds-panel-tools');
+    const surface = innerTools.locator('.panel-tools__drawer-surface');
+
+    await page.getByRole('button', { name: 'Agents' }).click();
+    await expect(surface).toBeVisible();
+
+    const entering = await tools.evaluate(element => {
+      element.setAttribute('presentation', 'fullscreen');
+      const panel = element.querySelector('ds-panel-tools');
+      const drawerSurface = panel?.querySelector('.panel-tools__drawer-surface');
+      return {
+        forwarded: panel?.getAttribute('presentation'),
+        committed: panel?.classList.contains('panel-tools--fullscreen'),
+        visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
+      };
+    });
+
+    expect(entering).toEqual({
+      forwarded: 'fullscreen',
+      committed: false,
+      visibility: 'hidden',
+    });
+    await expect(innerTools).toHaveClass(/panel-tools--fullscreen/);
+    await expect(surface).toHaveCSS('visibility', 'visible');
+  });
 });
 
 declare global {

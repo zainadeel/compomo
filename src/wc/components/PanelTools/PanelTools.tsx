@@ -163,6 +163,13 @@ export class PanelTools {
   @Watch('presentation')
   presentationChanged(next: 'drawer' | 'fullscreen', previous?: 'drawer' | 'fullscreen') {
     if (next === previous) return;
+    // Framework property bindings can update slotted master/detail content in
+    // the same render that requests fullscreen. Reflect the host selector
+    // immediately so that content cannot paint once in the drawer geometry
+    // while Stencil waits to commit its next render.
+    if (this.el.getAttribute('presentation') !== next) {
+      this.el.setAttribute('presentation', next);
+    }
     const presentationGeneration = ++this.presentationMotionGeneration;
     this.presentationMotionSuppressed = true;
     requestAnimationFrame(() => {

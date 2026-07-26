@@ -2,12 +2,16 @@ import '/dist/components/ds-input.js';
 import '/dist/components/ds-field.js';
 import '/dist/components/ds-checkbox.js';
 import '/dist/components/ds-select.js';
+import '/dist/components/ds-select-multi.js';
+import '/dist/components/ds-menu.js';
 import '/dist/components/ds-radio.js';
 import '/dist/components/ds-switch.js';
 import '/dist/components/ds-slider.js';
+import '/dist/components/ds-swatch-picker.js';
 
 await Promise.all([
-  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-radio', 'ds-switch', 'ds-slider',
+  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-select-multi', 'ds-menu',
+  'ds-radio', 'ds-switch', 'ds-slider', 'ds-swatch-picker',
 ].map(tag => customElements.whenDefined(tag)));
 
 document.getElementById('region').name = 'region';
@@ -15,11 +19,30 @@ document.getElementById('region').options = [
   { label: 'Canada', value: 'ca' },
   { label: 'United States', value: 'us' },
 ];
+const densityOptions = [
+  { label: 'Primary', value: 'primary', subtext: 'Supporting detail' },
+  { label: 'Secondary', value: 'secondary', subtext: 'Another detail' },
+];
+document.getElementById('select-lg').options = densityOptions;
+document.getElementById('select-multi-lg').options = densityOptions;
+document.getElementById('menu-xs').items = densityOptions;
 document.getElementById('tier').options = [
   { label: 'Standard', value: 'standard' },
   { label: 'Premium', value: 'premium' },
 ];
-for (const size of ['md', 'sm', 'xs']) {
+document.getElementById('press-policy-swatch').options = [
+  {
+    value: 'blue',
+    label: 'Blue',
+    preview: { backgroundColor: 'var(--color-color-intent-blue-bold-background)' },
+  },
+  {
+    value: 'green',
+    label: 'Green',
+    preview: { backgroundColor: 'var(--color-color-intent-green-bold-background)' },
+  },
+];
+for (const size of ['lg', 'md', 'sm', 'xs']) {
   document.getElementById(`radio-${size}`).options = [
     { label: `${size} selected`, value: 'selected' },
     { label: `${size} unselected`, value: 'unselected' },

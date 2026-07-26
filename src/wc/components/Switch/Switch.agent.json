@@ -7,7 +7,7 @@
   "tag": "ds-switch",
   "audience": "general",
   "status": "stable",
-  "summary": "Compact on/off setting control for changes that take effect immediately, with three sizes and form-associated behavior.",
+  "summary": "Compact on/off setting control for changes that take effect immediately, with four sizes and form-associated behavior.",
   "useWhen": [
     "A binary setting takes effect immediately when the user turns it on or off.",
     "A settings, form, or menu row needs a compact on/off control.",
@@ -50,7 +50,7 @@
   "states": [
     "Activation updates checked immediately and emits dsChange with the new boolean value.",
     "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
-    "Sizes are md 32×20 with a 12px thumb and 4px body inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
+    "Sizes are lg 40×24 with a 16px thumb and 4px body inset, md 32×20 with a 12px thumb and 4px inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
     "Unchecked uses a transparent track with a density-specific tertiary-foreground inset stroke and a solid tertiary-foreground thumb without a border. Checked uses a brand track and primary-background thumb with no strokes.",
     "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
   ],

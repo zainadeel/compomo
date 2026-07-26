@@ -3,8 +3,10 @@
  * the inset highlight in a combined `--effect-elevation-*` box shadow.
  *
  * Import `@ds-mo/ui/control-elevation.css`, apply `.ds-control-elevation`, and
- * select one level modifier. The owner still supplies layout, radius, surface,
- * and any backdrop blur. Keep wrapped controls' optional resting borders off.
+ * select one level modifier. Add `--press-scale` when the wrapper contains an
+ * approved press-scaling button so its surface and elevation move as one unit.
+ * The owner still supplies layout, radius, surface, and any backdrop blur.
+ * Keep wrapped controls' optional resting borders off.
  */
 
 .ds-control-elevation {
@@ -37,4 +39,27 @@
 .ds-control-elevation--floating {
   --ds-control-elevation-shadow: var(--effect-shadow-elevated-floating);
   --ds-control-elevation-highlight: var(--effect-highlight-elevated-floating);
+}
+
+/*
+ * Transfer an approved button's physical press feedback to the elevated
+ * wrapper. The inherited override keeps the nested native button at rest so
+ * the wrapper and control do not compound their scale.
+ */
+.ds-control-elevation--press-scale {
+  --ds-control-press-active-scale: var(--dimension-scale-default);
+
+  transition: scale var(--effect-motion-short-2);
+}
+
+.ds-control-elevation--press-scale[data-ds-press-active] {
+  scale: var(--dimension-scale-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-control-elevation--press-scale,
+  .ds-control-elevation--press-scale[data-ds-press-active] {
+    scale: none;
+    transition: none;
+  }
 }

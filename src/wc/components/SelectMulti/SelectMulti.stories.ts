@@ -25,7 +25,7 @@ const meta: Meta = {
   argTypes: {
     values: { control: 'object' },
     placeholder: { control: 'text' },
-    size: { control: 'select', options: ['md', 'sm', 'xs'] },
+    size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
     searchable: { control: 'boolean' },
@@ -135,7 +135,7 @@ export const SearchNoResults: Story = {
 export const SizesAndWidths: Story = {
   render: () => html`
     <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:360px;">
-      ${(['md', 'sm', 'xs'] as const).map(
+      ${(['lg', 'md', 'sm', 'xs'] as const).map(
         size => html`
           <ds-select-multi
             .options=${OPTIONS}

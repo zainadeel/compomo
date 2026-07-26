@@ -25,6 +25,7 @@
       <button id="reset" type="reset">Reset</button>
     </form>
     <div id="checkbox-sizes">
+      <ds-checkbox id="checkbox-lg" size="lg" label="Large checkbox" checked></ds-checkbox>
       <ds-checkbox id="checkbox-md" size="md" label="Medium checkbox" checked></ds-checkbox>
       <ds-checkbox id="checkbox-sm" size="sm" label="Small checkbox" checked></ds-checkbox>
       <ds-checkbox id="checkbox-xs" size="xs" label="Extra-small checkbox" checked></ds-checkbox>
@@ -32,16 +33,19 @@
       <ds-checkbox id="checkbox-presentation" label="" size="sm" checked presentation></ds-checkbox>
     </div>
     <div id="switch-sizes">
+      <ds-switch id="switch-lg" size="lg" aria-label="Large switch"></ds-switch>
       <ds-switch id="switch-md" size="md" aria-label="Medium switch"></ds-switch>
       <ds-switch id="switch-sm" size="sm" aria-label="Small switch"></ds-switch>
       <ds-switch id="switch-xs" size="xs" aria-label="Extra-small switch"></ds-switch>
     </div>
     <div id="radio-sizes">
+      <ds-radio id="radio-lg" size="lg" value="selected" aria-label="Large radio"></ds-radio>
       <ds-radio id="radio-md" size="md" value="selected" aria-label="Medium radio"></ds-radio>
       <ds-radio id="radio-sm" size="sm" value="selected" aria-label="Small radio"></ds-radio>
       <ds-radio id="radio-xs" size="xs" value="selected" aria-label="Extra-small radio"></ds-radio>
     </div>
     <div id="input-sizes">
+      <ds-input id="input-lg" size="lg" value="Large input" icon="MagnifyingGlass" aria-label="Large input"></ds-input>
       <ds-input id="input-md" size="md" value="Medium input" icon="MagnifyingGlass" aria-label="Medium input"></ds-input>
       <ds-input id="input-sm" size="sm" value="Small input" icon="MagnifyingGlass" aria-label="Small input"></ds-input>
       <ds-input id="input-xs" size="xs" value="Extra-small input" icon="MagnifyingGlass" aria-label="Extra-small input"></ds-input>
@@ -51,6 +55,12 @@
       <form id="readonly-input-form">
         <ds-input id="input-readonly" name="readonly-input" value="Kept value" read-only aria-label="Read-only input"></ds-input>
       </form>
+    </div>
+    <div id="choice-density">
+      <ds-select id="select-lg" size="lg" searchable aria-label="Large choices"></ds-select>
+      <ds-select-multi id="select-multi-lg" size="lg" aria-label="Large multi choices"></ds-select-multi>
+      <span id="menu-xs-anchor">Menu anchor</span>
+      <ds-menu id="menu-xs" size="xs" anchor-id="menu-xs-anchor" menu-label="Extra-small menu"></ds-menu>
     </div>
     <form id="switch-form">
       <span id="readonly-switch-label">Read-only switch</span>
@@ -106,6 +116,11 @@
       <ds-slider id="slider-xs" size="xs" value="40" label="Extra-small slider"></ds-slider>
     </div>
     <ds-slider id="slider-vertical" orientation="vertical" value="35" label="Vertical slider"></ds-slider>
+    <ds-swatch-picker
+      id="press-policy-swatch"
+      value="blue"
+      group-label="Press policy swatches"
+    ></ds-swatch-picker>
     <script type="module" src="/forms-setup.mjs"></script>
   </body>
 </html>

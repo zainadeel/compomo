@@ -93,7 +93,7 @@ export class ConversationList {
               this.overlay = element;
             }}
           >
-            <div class="conversation-list__actions-surface ds-control-elevation ds-control-elevation--md">
+            <div class="conversation-list__actions-surface ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale">
               <slot name="actions" />
             </div>
           </div>

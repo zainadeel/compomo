@@ -25,6 +25,11 @@
 
 /* Inactive: `.ds-control-inactive` (50% opacity). */
 
+:host(.checkbox--lg) {
+  --_checkbox-box: var(--dimension-iconography-md);
+  --_checkbox-stroke: var(--dimension-stroke-width-018);
+}
+
 :host(.checkbox--md) {
   --_checkbox-box: var(--dimension-iconography-sm);
   --_checkbox-stroke: var(--dimension-stroke-width-015);

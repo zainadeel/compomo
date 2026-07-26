@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/control-press.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
 @import '../../utils/control-width.css';
@@ -46,9 +47,8 @@
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;
-  transition: color var(--effect-motion-short-2);
   /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected` / `--on-*`).
-     Active always promotes foreground to primary (toggle mode). */
+     Active and popup-open foreground changes resolve atomically with the fill. */
 }
 
 .button-unfilled--icon {

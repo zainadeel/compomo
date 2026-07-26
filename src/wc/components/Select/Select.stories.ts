@@ -44,7 +44,7 @@ const meta: Meta = {
   argTypes: {
     value: { control: 'select', options: ['', 'apple', 'cherry', 'date'] },
     placeholder: { control: 'text' },
-    size: { control: 'select', options: ['md', 'sm', 'xs'] },
+    size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
     searchable: { control: 'boolean' },
@@ -213,7 +213,7 @@ export const Backgrounds: Story = {
 export const SizesAndStates: Story = {
   render: () => html`
     <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:260px;">
-      ${(['md', 'sm', 'xs'] as const).map(
+      ${(['lg', 'md', 'sm', 'xs'] as const).map(
         size => html`<ds-select .options=${OPTIONS} value="cherry" size=${size} aria-label="${size} fruit"></ds-select>`,
       )}
       <ds-select .options=${OPTIONS} is-inactive aria-label="Inactive fruit"></ds-select>

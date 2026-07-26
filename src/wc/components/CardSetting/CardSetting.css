@@ -1,3 +1,5 @@
+@import '../../utils/chrome-layout.css';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -18,14 +20,9 @@
 }
 
 .card-setting__header {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: var(--dimension-space-100);
   height: var(--dimension-size-600);
-  padding: var(--dimension-space-100);
   flex: 0 0 auto;
-  box-sizing: border-box;
   background-color: var(--color-background-secondary);
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
 }

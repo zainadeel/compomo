@@ -6,6 +6,42 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('non-button selection, editing, popup, continuous, and drag targets never scale', async ({
+  page,
+}) => {
+  const targets = [
+    page.locator('#terms'),
+    page.locator('#region .trigger'),
+    page.locator('#tier [role="radio"]').first(),
+    page.locator('#alerts'),
+    page.locator('#slider-single input[type="range"]'),
+    page.locator('#press-policy-swatch .swatch-picker__option').first(),
+  ];
+
+  for (const target of targets) {
+    await target.scrollIntoViewIfNeeded();
+    await expect(target).not.toHaveClass(/ds-control-press-scale/);
+    const box = await target.boundingBox();
+    expect(box).not.toBeNull();
+    if (!box) continue;
+
+    const before = await target.evaluate(element => ({
+      scale: getComputedStyle(element).scale,
+      width: element.getBoundingClientRect().width,
+      height: element.getBoundingClientRect().height,
+    }));
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    const pressed = await target.evaluate(element => ({
+      scale: getComputedStyle(element).scale,
+      width: element.getBoundingClientRect().width,
+      height: element.getBoundingClientRect().height,
+    }));
+    expect(pressed).toEqual(before);
+    await page.mouse.up();
+  }
+});
+
 test('submits, validates, and resets form-associated controls', async ({ page }) => {
   await page.locator('#submit').click();
   expect(await page.evaluate(() => (window as typeof window & { __submitted?: unknown }).__submitted)).toBeUndefined();
@@ -134,6 +170,7 @@ test('select search clear action has balanced top, right, and bottom insets', as
 
 test('input follows shared control density, focus, and search-clear recipes', async ({ page }) => {
   const expected = {
+    lg: { height: 40, icon: 24, textClass: 'ds-text--body-large' },
     md: { height: 32, icon: 20, textClass: 'ds-text--body-medium' },
     sm: { height: 24, icon: 16, textClass: 'ds-text--body-small' },
     xs: { height: 16, icon: 12, textClass: 'ds-text--caption' },
@@ -206,8 +243,39 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('ds-button-unfilled')).toHaveCount(0);
 });
 
+test('select, multi-select, and menu propagate density into choice rows', async ({ page }) => {
+  const select = page.locator('#select-lg');
+  await select.locator('.trigger').click();
+  const selectRow = select.getByRole('option', { name: /Primary/ });
+  await expect(selectRow).toHaveClass(/ds-control--lg/);
+  await expect(selectRow.locator('.ds-choice-item__label')).toHaveJSProperty(
+    'variant',
+    'text-body-large',
+  );
+  await expect(selectRow.locator('.ds-choice-item__subtext')).toHaveJSProperty(
+    'variant',
+    'text-body-medium',
+  );
+  await expect(select.locator('.select-search__control')).toHaveClass(/ds-control--lg/);
+
+  await select.locator('.trigger').click();
+  const multi = page.locator('#select-multi-lg');
+  await multi.locator('.trigger').click();
+  await expect(multi.getByRole('option', { name: /Primary/ })).toHaveClass(/ds-control--lg/);
+  await expect(multi.locator('ds-checkbox').first()).toHaveJSProperty('size', 'lg');
+
+  await page.locator('#menu-xs').evaluate((element: HTMLDsMenuElement) => {
+    element.open = true;
+  });
+  const menuRow = page.locator('#menu-xs .menu-item').first();
+  await expect(menuRow).toHaveClass(/ds-control--xs/);
+  await expect(menuRow.locator('.menu-item__label')).toHaveJSProperty('variant', 'text-caption');
+  await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty('variant', 'text-caption');
+});
+
 test('checkbox sizes center owned marks with density-specific strokes', async ({ page }) => {
   const expected = {
+    lg: { height: 40, placement: 24, box: 20, mark: 20, stroke: '1.5px' },
     md: { height: 32, placement: 20, box: 16, mark: 16, stroke: '1.25px' },
     sm: { height: 24, placement: 16, box: 12, mark: 12, stroke: '1px' },
     xs: { height: 16, placement: 12, box: 8, mark: 8, stroke: '0.75px' },
@@ -266,6 +334,7 @@ test('checkbox supports Enter and Space activation with mixed-state and presenta
 
 test('radio sizes match checkbox density and use a component-owned selected circle', async ({ page }) => {
   const expected = {
+    lg: { height: 40, placement: 24, circle: 20, dot: 10, stroke: '1.5px' },
     md: { height: 32, placement: 20, circle: 16, dot: 8, stroke: '1.25px' },
     sm: { height: 24, placement: 16, circle: 12, dot: 6, stroke: '1px' },
     xs: { height: 16, placement: 12, circle: 8, dot: 4, stroke: '0.75px' },
@@ -361,6 +430,7 @@ test('switch supports readonly, required, unchecked, and external form behavior'
 test('switch sizes preserve density-specific thumb insets and an outset focus ring', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const expected = {
+    lg: { width: 40, height: 24, thumb: 16, inset: 4, blockInset: 4, stroke: '1px' },
     md: { width: 32, height: 20, thumb: 12, inset: 4, blockInset: 4, stroke: '1px' },
     sm: { width: 24, height: 16, thumb: 10, inset: 3, blockInset: 3, stroke: '1px' },
     xs: { width: 20, height: 12, thumb: 8, inset: 2, blockInset: 2, stroke: '1px' },

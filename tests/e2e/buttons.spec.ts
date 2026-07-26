@@ -15,6 +15,95 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('filled lg consumes the complete 40px control recipe', async ({ page }) => {
+  const metrics = await page.locator('#filled-lg').evaluate(element => {
+    const button = element.querySelector<HTMLElement>('button')!;
+    const icon = element.querySelector<HTMLElement>('.button-filled__icon-wrap')!;
+    const label = element.querySelector<HTMLElement>('.button-filled__label')!;
+    const labelStyle = getComputedStyle(label);
+    return {
+      height: Math.round(button.getBoundingClientRect().height),
+      icon: Math.round(icon.getBoundingClientRect().width),
+      lineHeight: labelStyle.lineHeight,
+      paddingInlineStart: labelStyle.paddingInlineStart,
+    };
+  });
+
+  expect(metrics).toEqual({
+    height: 40,
+    icon: 24,
+    lineHeight: '24px',
+    paddingInlineStart: '4px',
+  });
+});
+
+test('physical press scales only eligible filled and unfilled buttons', async ({ page }) => {
+  for (const id of ['filled-label', 'unfilled-label']) {
+    const button = page.locator(`#${id} button`);
+    await expect(button).toHaveClass(/ds-control-press-scale/);
+    await expect(button).toHaveCSS('scale', 'none');
+
+    const box = await button.boundingBox();
+    expect(box).not.toBeNull();
+    await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+    await page.mouse.down();
+    await expect(button).toHaveCSS('scale', '0.99');
+    await page.mouse.up();
+    await expect(button).toHaveCSS('scale', 'none');
+  }
+
+  for (const id of ['filled-inactive', 'unfilled-inactive']) {
+    const button = page.locator(`#${id} button`);
+    await expect(button).toHaveCSS('scale', 'none');
+  }
+
+  await page.locator('#filled-label').evaluate(element => {
+    (element as HTMLElement & { isLoading: boolean }).isLoading = true;
+  });
+  const loadingButton = page.locator('#filled-label button');
+  const loadingBox = await loadingButton.boundingBox();
+  expect(loadingBox).not.toBeNull();
+  await page.mouse.move(
+    loadingBox!.x + loadingBox!.width / 2,
+    loadingBox!.y + loadingBox!.height / 2,
+  );
+  await page.mouse.down();
+  await expect(loadingButton).toHaveCSS('scale', 'none');
+  await page.mouse.up();
+});
+
+test('reduced motion keeps physical press at resting scale', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const button = page.locator('#filled-label button');
+  const box = await button.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.down();
+  await expect(button).toHaveCSS('scale', 'none');
+  await expect(button).toHaveCSS('transition', 'none');
+  await page.mouse.up();
+});
+
+test('release outside and keyboard activation always restore resting scale', async ({ page }) => {
+  const button = page.locator('#filled-label button');
+  const box = await button.boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) return;
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await expect(button).toHaveCSS('scale', '0.99');
+  await page.mouse.move(box.x + box.width + 40, box.y + box.height + 40);
+  await page.mouse.up();
+  await expect(button).toHaveCSS('scale', 'none');
+
+  await button.focus();
+  await button.press('Enter');
+  await expect(button).toHaveCSS('scale', 'none');
+  await button.press('Space');
+  await expect(button).toHaveCSS('scale', 'none');
+});
+
 test('loading preserves width, disables activation, and inherits foreground color', async ({ page }) => {
   const before = await page.evaluate(ids => Object.fromEntries(ids.map(id => {
     const host = document.getElementById(id) as HTMLElement;
@@ -276,6 +365,9 @@ test('keeps popup triggers visibly pressed when expanded without creating select
   await expect(button).toHaveAttribute('aria-expanded', 'true');
   await expect(button).toHaveClass(/button-unfilled--expanded/);
   await expect(button).not.toHaveClass(/ds-interaction-fill--selected/);
+  await expect
+    .poll(() => button.evaluate(element => getComputedStyle(element).transitionProperty))
+    .not.toContain('color');
   await expect(button).toHaveCSS('color', tokens.primary);
   await expect.poll(() => button.evaluate(element => (
     getComputedStyle(element, '::after').backgroundColor

@@ -292,7 +292,8 @@ export class MyComponent {
 
 **Buttons (filled / unfilled)**
 
-- Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'`. Both use `size`: `'md'` | `'sm'` | `'xs'` via control-density; ButtonUnfilled additionally supports `'lg'` for touch-primary shell chrome. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
+- Both button primitives opt into the shared `control-press.css` physical press-scale policy on their native interactive target. Do not add component-local `:active` transforms or apply that utility to navigation, selection, editing, popup, continuous, or drag controls without revisiting `docs/control-press-policy.md` and its inventory test.
+- Both support `variant`: `'label'` (default) | `'icon'` | `'icon-label'` and `size`: `'lg'` | `'md'` | `'sm'` | `'xs'` via control-density. Label text uses the **emphasis** type scale at every size (unlike Tag/Chip).
 - Both support `rounded` for the half-radius treatment. Rounded changes shape only; it does not alter hierarchy, intent, size, or interaction semantics.
 - Icon-only chrome (nav, tool rails, overflow) must pass `variant="icon"` plus `icon` / `aria-label`.
 - `isLoading` blocks activation without applying inactive opacity or dropping current keyboard focus, and exposes busy plus disabled semantics. Icon and icon-label variants replace the icon with an inherited-color loader; label-only variants center the loader while preserving the label's measured width.
@@ -523,11 +524,17 @@ Shared metrics for lg / md / sm / xs control-like rows (mobile destination lists
 
 **Default to md.** New controls and control-like rows use md unless their component contract explicitly requires sm or xs. A dense location such as shell chrome, a panel tool, a toolbar, or a popup is not by itself a reason to downsize content. For md, the complete content recipe is a 32px control, `text-body-medium` (14px/20px), and a 20px md icon. Do not choose these three values independently.
 
-**Use lg for touch-primary destination rows.** The lg recipe is a 40px row with a 24px icon, `text-body-large`, 8px row edges, and an 8px computed icon-to-text inset (`4px gap + 4px label inset`). MobileSheetNav owns the first lg application; do not use lg merely to make ordinary actions visually louder.
+**Use lg for touch-primary controls and destination rows.** The lg recipe is a 40px row with a 24px icon, `text-body-large`, 8px row edges, and an 8px computed icon-to-text inset (`4px gap + 4px label inset`). ButtonFilled, ButtonUnfilled, Input, Select, SelectMulti, Menu, and MobileSheetNav expose or consume this recipe. Responsive owners may promote controls to lg for mobile; components do not infer a viewport breakpoint themselves. Do not use lg merely to make ordinary actions visually louder.
+
+Choice rows in Select, SelectMulti, and Menu consume the owning component's density for their complete geometry and primary label. Supporting text steps down one text recipe (`lg` → `text-body-medium`, `md` → `text-body-small`, `sm` → `text-caption`), except `xs`, where both primary and supporting text use `text-caption`. Embedded Checkbox and Switch indicators use the same public density as their owning row.
 
 Applying `.ds-control--lg|md|sm|xs` provides geometry variables only. A native input or button that uses internal `ds-text--*` utility classes must also import `src/wc/utils/typography.css`; otherwise it can silently inherit an application or Storybook font size. Prefer `ds-text` where native element constraints do not prevent it. Every new or changed control must have a rendered test for computed font size, line height, and icon box—not only a source assertion that the intended class and prop are present.
 
 The density utility is the single source of truth for a row's height, inline padding, icon box, icon↔label gap, label inset, and default radius. Consume the `--ds-control-*` variables instead of repeating their current TokoMo token values in component CSS. Keep structural container padding separate: for example, a panel header may own an 8px outer inset while its read-only title and adjacent buttons use the md row/label metrics. Support `label`, `icon-label`, `label-icon`, and `icon-label-icon` compositions from the same variables so changing one density recipe propagates to every composition.
+
+**Chrome layout spacing**
+
+Use `src/wc/utils/chrome-layout.css` for structural containers whose padding and sibling gap intentionally match. Apply one spacing recipe (`.ds-chrome-space--sm` = 4px, `--md` = 8px, `--lg` = 16px) with `.ds-chrome-row` or `.ds-chrome-column`. Spacing and axis are separate concerns: the utility sets display, axis, `box-sizing: border-box`, padding, and gap, but never width or height. The owning component retains explicit structural sizing, distribution, border, surface, and responsive policy. Nested groups own their own internal spacing and may use a different recipe. CardSetting header is the initial migration proving that an 8/8 row with a bottom border remains exactly 48px high.
 
 PanelNav inherits the md default radius for its item and header controls, while its existing local height, gap, and positioning aliases remain responsible for collapsed-shell and footer animation geometry.
 
@@ -611,6 +618,7 @@ Use `src/wc/styles/control-elevation.css` inside CompoMo or import the public `@
 - The utility owns no layout, radius, background, blur, clipping, or motion. The owning wrapper sets those properties, and the overlay inherits its radius.
 - Use it only when elevation lives on a wrapper around a separate control surface, such as ConversationList actions, MessageScroller's Scroll to latest control, or ConversationListItem contextual actions. Do not migrate surfaces that paint their own background and elevation on the same element unless rendering proves their highlight is obscured.
 - Wrapped `ds-button-filled` and `ds-button-unfilled` controls pass `hasBorder={false}` explicitly; the elevation wrapper owns the resting edge. Other wrapped controls likewise disable optional resting borders.
+- A wrapper around `ds-button-filled` or `ds-button-unfilled` also applies `.ds-control-elevation--press-scale`, which transfers physical press motion to the entire surface and suppresses compounded scaling on the nested native button. Omit the modifier for inputs and every other non-scaling control.
 - A wrapped `ds-input` uses `hasBorder={false}` at rest. Its internal focus/error interaction stroke must stay complete beneath the wrapper highlight; never remove those state indicators. The wrapper highlight is the topmost local chrome layer, including above selected, focus, error, hover, and press strokes.
 - Do not add masks, filters, or a new backdrop root to the utility. Contextual wrappers continue to own their existing `backdrop-filter`, geometry, tooltip anchoring, and click/focus behavior.
 

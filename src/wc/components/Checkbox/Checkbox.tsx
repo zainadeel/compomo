@@ -1,13 +1,7 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
-import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
+import { CONTROL_TEXT_VARIANT, DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
 
-export type CheckboxSize = 'md' | 'sm' | 'xs';
-
-const LABEL_VARIANT: Record<CheckboxSize, 'text-body-medium' | 'text-body-small' | 'text-caption'> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
+export type CheckboxSize = 'lg' | 'md' | 'sm' | 'xs';
 
 let idCounter = 0;
 
@@ -146,7 +140,7 @@ export class Checkbox {
           <ds-text
             class="checkbox__label ds-interaction-fill__content"
             as="span"
-            variant={LABEL_VARIANT[this.size]}
+            variant={CONTROL_TEXT_VARIANT[this.size]}
             textId={this.labelId}
           >
             {this.label}

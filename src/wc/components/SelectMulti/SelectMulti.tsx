@@ -13,6 +13,7 @@ import {
 } from '@stencil/core';
 import {
   controlWidthClass,
+  CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
   choicePopupMinWidth,
   resolveCssLengthPx,
@@ -50,7 +51,8 @@ export type SelectMultiBackground = SelectBackground;
 export type SelectMultiSize = SelectSize;
 export type SelectMultiWidth = ControlWidth;
 
-const ICON_SIZE: Record<SelectMultiSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<SelectMultiSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
@@ -519,6 +521,7 @@ export class SelectMulti {
     const active = this.activeIndex === index;
     return (
       <ChoiceOptionRow
+        size={this.size}
         id={`${this.generatedId}-option-${index}`}
         option={option}
         selected={selected}
@@ -530,7 +533,7 @@ export class SelectMulti {
             <ds-checkbox
               class="select-option__checkbox"
               label=""
-              size="md"
+              size={this.size}
               checked={selected}
               presentation
             />
@@ -570,9 +573,7 @@ export class SelectMulti {
         class={{
           'select-host': true,
           'ds-control-inactive': inactive,
-          'ds-control--md': this.size === 'md',
-          'ds-control--sm': this.size === 'sm',
-          'ds-control--xs': this.size === 'xs',
+          [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
           [`select-host--background-${this.background}`]: !!this.background,
         }}
@@ -643,6 +644,7 @@ export class SelectMulti {
           >
             {this.searchable && (
               <ChoiceSearch
+                size={this.size}
                 value={this.searchTerm}
                 placeholder={this.searchPlaceholder}
                 controls={this.listboxId}
@@ -674,7 +676,7 @@ export class SelectMulti {
                   aria-label={this.loadingLabel}
                   aria-live="polite"
                 >
-                  <ds-loader size="md" color="inherit" />
+                  <ds-loader size={this.size} color="inherit" />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
                 <div
@@ -699,9 +701,9 @@ export class SelectMulti {
                   >
                     {section.header && (
                       <ds-text
-                        class="ds-choice-section__header ds-control--md"
+                        class={`ds-choice-section__header ds-control--${this.size}`}
                         as="span"
-                        variant="text-body-small"
+                        variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                         emphasis
                         color="primary"
                         aria-hidden="true"
@@ -720,6 +722,7 @@ export class SelectMulti {
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
               <ChoiceFooter
+                size={this.size}
                 summary={`${count} ${this.selectedLabel}`}
                 clearLabel={this.clearLabel}
                 onClear={this.clearSelection}

@@ -1,0 +1,27 @@
+/**
+ * Physical press feedback for approved momentary action controls.
+ *
+ * Apply this class to the interactive hit target, not its host or decorative
+ * wrapper. This policy is deliberately separate from interaction-fill:
+ * selected, expanded, aria-pressed, focus, and keyboard activation do not own
+ * this transient pointer/tap feedback.
+ *
+ * Approved consumers: ButtonFilled and ButtonUnfilled only. Controls with
+ * navigation, editing, selection, popup anchoring, dragging, or state-driven
+ * geometry use their component-specific feedback without this utility.
+ */
+.ds-control-press-scale {
+  transition: scale var(--effect-motion-short-2);
+}
+
+.ds-control-press-scale:active:not(:disabled):not(.ds-control-inactive):not([aria-busy='true']) {
+  scale: var(--ds-control-press-active-scale, var(--dimension-scale-subtle));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-control-press-scale,
+  .ds-control-press-scale:active:not(:disabled):not(.ds-control-inactive):not([aria-busy='true']) {
+    scale: none;
+    transition: none;
+  }
+}

@@ -65,6 +65,20 @@ export class ShellTools {
   @Prop() inboxLabel: string = 'Inbox';
   @Prop() inboxNavigationLabel: string = 'Inbox sections';
 
+  @Watch('presentation')
+  presentationChanged(next: 'drawer' | 'fullscreen', previous: 'drawer' | 'fullscreen') {
+    if (next === previous) return;
+
+    /*
+     * Consumers update ShellTools and their slotted master/detail layout in the
+     * same render. Forward the request immediately so PanelTools can conceal
+     * its surface until its matching render class commits on the next frame.
+     */
+    if (this.panelToolsEl && this.panelToolsEl.getAttribute('presentation') !== next) {
+      this.panelToolsEl.setAttribute('presentation', next);
+    }
+  }
+
   @Event({ bubbles: true, composed: true }) dsToolChange!: EventEmitter<{
     id: PanelToolsToolId;
     selected: boolean;

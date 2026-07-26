@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
+import {
+  CONTROL_SUPPORTING_TEXT_VARIANT,
+  CONTROL_TEXT_VARIANT,
+} from '../src/wc/utils/control-text';
 
 const root = path.resolve(import.meta.dirname, '..');
 
@@ -16,6 +20,35 @@ test('all control densities share one default radius declaration', () => {
   for (const size of ['lg', 'md', 'sm', 'xs']) {
     assert.match(css, new RegExp(`:host\\(\\.ds-control--${size}\\)[\\s\\S]*?--ds-control-radius`));
   }
+});
+
+test('lg resolves one complete 40px control recipe', () => {
+  const css = read('src/wc/utils/control-density.css');
+  assert.match(
+    css,
+    /:host\(\.ds-control--lg\),\s*\.ds-control--lg\s*{[\s\S]*?--ds-control-height: var\(--dimension-size-500\);[\s\S]*?--ds-control-icon: var\(--dimension-iconography-lg\);[\s\S]*?--ds-control-padding-inline: var\(--dimension-space-100\);[\s\S]*?--ds-control-label-inset: var\(--dimension-space-050\);[\s\S]*?--ds-control-gap: var\(--dimension-space-050\);[\s\S]*?}/,
+  );
+  assert.equal(CONTROL_TEXT_VARIANT.lg, 'text-body-large');
+});
+
+test('choice rows derive primary and supporting type from control density', () => {
+  assert.deepEqual(CONTROL_TEXT_VARIANT, {
+    lg: 'text-body-large',
+    md: 'text-body-medium',
+    sm: 'text-body-small',
+    xs: 'text-caption',
+  });
+  assert.deepEqual(CONTROL_SUPPORTING_TEXT_VARIANT, {
+    lg: 'text-body-medium',
+    md: 'text-body-small',
+    sm: 'text-caption',
+    xs: 'text-caption',
+  });
+
+  const parts = read('src/wc/utils/choice-list-parts.tsx');
+  assert.match(parts, /\[`ds-control--\$\{size\}`\]: true/);
+  assert.match(parts, /variant={CONTROL_TEXT_VARIANT\[size\]}/);
+  assert.match(parts, /variant={CONTROL_SUPPORTING_TEXT_VARIANT\[size\]}/);
 });
 
 test('shell navigation rows consume the shared control-density recipe', () => {
@@ -107,7 +140,7 @@ test('PanelTools search uses the shared Select search control at md density', ()
   const panelToolsCss = read('src/wc/components/PanelTools/PanelTools.css');
 
   assert.match(source, /<ChoiceSearch/);
-  assert.match(searchParts, /class="select-search__control ds-control--md"/);
+  assert.match(searchParts, /class={`select-search__control ds-control--\$\{size\}`}/);
   assert.match(searchParts, /onDsChange={event => event\.stopPropagation\(\)}/);
   assert.match(
     read('src/wc/utils/search-control.css'),

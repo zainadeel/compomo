@@ -7,7 +7,7 @@
   "tag": "ds-checkbox",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+  "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and four density states.",
   "useWhen": [
     "A user may independently select zero or more choices.",
     "A form requires acknowledgment, consent, or an opt-in value before submission.",
@@ -47,15 +47,15 @@
     "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
   ],
   "states": [
-    "Unchecked boxes use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned check or subtract mark at the same density-specific stroke width.",
+    "Unchecked boxes use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned check or subtract mark at the same density-specific stroke width.",
     "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
     "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
-    "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
+    "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
     "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
-    "Use the md indicator centered by the shared 20px option icon zone in multi-select rows."
+    "Use the same density as the shared option icon zone in multi-select rows."
   ],
   "frameworkCaveats": {
     "customElements": [

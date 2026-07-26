@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import '../../styles/control-elevation.css';
 import '../../../../dist/components/ds-button-filled.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 
 const INTENTS = [
   'neutral',
@@ -16,7 +18,7 @@ const INTENTS = [
 
 const CONTRASTS = ['bold', 'strong', 'medium', 'faint'] as const;
 const VARIANTS = ['label', 'icon', 'icon-label'] as const;
-const SIZES = ['md', 'sm', 'xs'] as const;
+const SIZES = ['lg', 'md', 'sm', 'xs'] as const;
 const WIDTHS = ['hug', 'fill'] as const;
 const BACKGROUNDS = [
   'faint',
@@ -144,6 +146,55 @@ export const LoadingVariants: Story = {
           ></ds-button-filled>
         `,
       )}
+    </div>
+  `,
+};
+
+/**
+ * Physical pointer/tap feedback is shared by the two button primitives only.
+ * Hold each eligible button to compare the token-driven scale treatment.
+ */
+export const PhysicalPressPolicy: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Filled and unfilled buttons share the internal physical press-scale utility. Inactive, loading, and reduced-motion buttons remain at their resting scale. Elevated wrappers opt into the press-scale modifier so their surface and elevation move with the button.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL};width:min(100%, 360px);">
+      <div style="${ROW}">
+        <span style="${LABEL}">eligible</span>
+        <ds-button-filled label="Filled action"></ds-button-filled>
+        <ds-button-unfilled label="Unfilled action"></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Icon action"
+        ></ds-button-unfilled>
+      </div>
+
+      <div style="${ROW}">
+        <span style="${LABEL}">no scale</span>
+        <ds-button-filled label="Inactive" is-inactive></ds-button-filled>
+        <ds-button-unfilled label="Loading" is-loading></ds-button-unfilled>
+      </div>
+
+      <div
+        class="ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale"
+        style="width:100%;border-radius:var(--dimension-radius-half);"
+      >
+        <ds-button-filled
+          width="fill"
+          rounded
+          variant="icon-label"
+          icon="Plus"
+          label="Elevated full-width action"
+        ></ds-button-filled>
+      </div>
     </div>
   `,
 };

@@ -34,6 +34,13 @@
     box-shadow var(--effect-motion-short-3);
 }
 
+:host(.switch--lg) {
+  --ds-switch-width: var(--dimension-size-500);
+  --ds-switch-height: var(--dimension-size-300);
+  --ds-switch-thumb-size: var(--dimension-iconography-sm);
+  --ds-switch-gap: var(--dimension-space-050);
+}
+
 :host(.switch--sm) {
   --ds-switch-width: var(--dimension-size-300);
   --ds-switch-height: var(--dimension-size-200);

@@ -8,16 +8,18 @@ import {
 } from '../../utils';
 
 export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
-export type InputSize = 'md' | 'sm' | 'xs';
+export type InputSize = 'lg' | 'md' | 'sm' | 'xs';
 export type InputWidth = ControlWidth;
 
-const ICON_SIZE: Record<InputSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<InputSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
 };
 
-const CLEAR_BUTTON_SIZE: Record<InputSize, 'sm' | 'xs'> = {
+const CLEAR_BUTTON_SIZE: Record<InputSize, 'md' | 'sm' | 'xs'> = {
+  lg: 'md',
   md: 'sm',
   sm: 'xs',
   xs: 'xs',

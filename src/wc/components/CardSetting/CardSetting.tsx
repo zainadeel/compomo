@@ -65,7 +65,7 @@ export class CardSetting {
           '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],
         }}
       >
-        <header class="card-setting__header">
+        <header class="card-setting__header ds-chrome-row ds-chrome-space--md">
           <ds-text
             class="card-setting__title"
             variant="text-title-small"

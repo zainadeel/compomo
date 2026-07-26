@@ -188,7 +188,7 @@ ds-text.ds-choice-item__subtext {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  height: var(--dimension-size-400);
+  height: var(--ds-control-height, var(--dimension-size-400));
 }
 
 .ds-choice-footer__summary,

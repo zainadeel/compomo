@@ -11,8 +11,8 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Single source of truth for shared md / sm / xs control metrics (`src/wc/utils/control-density.css`). ' +
-          'Apply `.ds-control--md|sm|xs` to set `--ds-control-*` vars (height, padding, gap, icon, radius). ' +
+          'Single source of truth for shared lg / md / sm / xs control metrics (`src/wc/utils/control-density.css`). ' +
+          'Apply `.ds-control--lg|md|sm|xs` to set `--ds-control-*` vars (height, padding, label inset, gap, icon, radius). ' +
           'Components consume these vars instead of defining per-component optical-sizing classes. ' +
           'See AGENTS.md — Control density recipes for the maintained metric table.',
       },
@@ -24,6 +24,7 @@ export default meta;
 type Story = StoryObj;
 
 const SIZES = [
+  { cls: 'ds-control--lg', label: 'lg', text: 'text-body-large', icon: 'lg' },
   { cls: 'ds-control--md', label: 'md', text: 'text-body-medium', icon: 'md' },
   { cls: 'ds-control--sm', label: 'sm', text: 'text-body-small', icon: 'sm' },
   { cls: 'ds-control--xs', label: 'xs', text: 'text-caption', icon: 'xs' },

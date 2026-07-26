@@ -115,6 +115,7 @@
   align-self: center;
 }
 
+.input-control.ds-control--lg:has(.input-control__clear),
 .input-control.ds-control--md:has(.input-control__clear),
 .input-control.ds-control--sm:has(.input-control__clear) {
   padding-right: var(--dimension-space-050);

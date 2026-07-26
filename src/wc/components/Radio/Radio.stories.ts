@@ -13,7 +13,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'text' },
-    size: { control: 'radio', options: ['md', 'sm', 'xs'] },
+    size: { control: 'radio', options: ['lg', 'md', 'sm', 'xs'] },
     direction: { control: 'radio', options: ['vertical', 'horizontal'] },
     isInactive: { control: 'boolean' },
   },
@@ -39,7 +39,7 @@ export const Playground: Story = {
 export const Sizes: Story = {
   render: () => html`
     <div style="display: grid; gap: var(--dimension-space-200);">
-      ${(['md', 'sm', 'xs'] as const).map(size => html`
+      ${(['lg', 'md', 'sm', 'xs'] as const).map(size => html`
         <ds-radio
           .options=${[
             { label: `${size.toUpperCase()} selected`, value: 'selected' },

@@ -31,7 +31,7 @@ export type { TokenDefaultKey } from './token-defaults';
 export { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from './required-validity';
 export { controlWidthClass } from './control-width';
 export type { ControlWidth } from './control-width';
-export { CONTROL_TEXT_VARIANT } from './control-text';
+export { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from './control-text';
 export type { ControlSize } from './control-text';
 export {
   choicePopupMinWidth,

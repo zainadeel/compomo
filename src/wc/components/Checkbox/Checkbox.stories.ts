@@ -7,7 +7,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     label: { control: 'text' },
-    size: { control: 'select', options: ['md', 'sm', 'xs'] },
+    size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     checked: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     isInactive: { control: 'boolean' },
@@ -45,7 +45,7 @@ export const Playground: Story = {
 export const Sizes: Story = {
   render: () => html`
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--dimension-space-100);">
-      ${(['md', 'sm', 'xs'] as const).map(size => html`
+      ${(['lg', 'md', 'sm', 'xs'] as const).map(size => html`
         <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
           <ds-checkbox size=${size} label="${size.toUpperCase()} unchecked"></ds-checkbox>
           <ds-checkbox size=${size} label="${size.toUpperCase()} checked" checked></ds-checkbox>
@@ -72,7 +72,7 @@ export const States: Story = {
 export const PresentationIndicators: Story = {
   render: () => html`
     <div style="display:flex;align-items:center;gap:var(--dimension-space-200);">
-      ${(['md', 'sm', 'xs'] as const).map(size => html`
+      ${(['lg', 'md', 'sm', 'xs'] as const).map(size => html`
         <div
           style="
             display:flex;

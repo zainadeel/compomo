@@ -13,6 +13,7 @@ import {
 } from '@stencil/core';
 import {
   controlWidthClass,
+  CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
   choicePopupMinWidth,
   resolveCssLengthPx,
@@ -43,10 +44,11 @@ import {
 export type SelectOption = ChoiceOption;
 export type SelectSection = ChoiceSection;
 export type SelectBackground = ChoiceBackground;
-export type SelectSize = 'md' | 'sm' | 'xs';
+export type SelectSize = 'lg' | 'md' | 'sm' | 'xs';
 export type SelectWidth = ControlWidth;
 
-const ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<SelectSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
@@ -517,6 +519,7 @@ export class Select {
     const active = index === this.activeIndex;
     return (
       <ChoiceOptionRow
+        size={this.size}
         id={`${this.generatedId}-option-${index}`}
         option={option}
         selected={selected}
@@ -525,7 +528,7 @@ export class Select {
         usesSubtext={usesSubtext}
         leading={usesIcons && option.icon ? (
           <span class="ds-choice-item__icon ds-interaction-fill__content" aria-hidden="true">
-            <ds-icon name={option.icon} size="md" color="inherit" />
+            <ds-icon name={option.icon} size={this.size} color="inherit" />
           </span>
         ) : undefined}
         onHover={() => {
@@ -564,9 +567,7 @@ export class Select {
         class={{
           'select-host': true,
           'ds-control-inactive': inactive,
-          'ds-control--md': this.size === 'md',
-          'ds-control--sm': this.size === 'sm',
-          'ds-control--xs': this.size === 'xs',
+          [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
           [`select-host--background-${this.background}`]: !!this.background,
         }}
@@ -638,6 +639,7 @@ export class Select {
           >
             {this.searchable && (
               <ChoiceSearch
+                size={this.size}
                 value={this.searchTerm}
                 placeholder={this.searchPlaceholder}
                 controls={this.listboxId}
@@ -668,7 +670,7 @@ export class Select {
                   aria-label={this.loadingLabel}
                   aria-live="polite"
                 >
-                  <ds-loader size="md" color="inherit" />
+                  <ds-loader size={this.size} color="inherit" />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
                 <div
@@ -693,9 +695,9 @@ export class Select {
                   >
                     {section.header && (
                       <ds-text
-                        class="ds-choice-section__header ds-control--md"
+                        class={`ds-choice-section__header ds-control--${this.size}`}
                         as="span"
-                        variant="text-body-small"
+                        variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                         emphasis
                         color="primary"
                         aria-hidden="true"
@@ -714,7 +716,7 @@ export class Select {
               )}
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
-              <ChoiceFooter clearLabel={this.clearLabel} onClear={this.clearSelection} />
+              <ChoiceFooter size={this.size} clearLabel={this.clearLabel} onClear={this.clearSelection} />
             )}
           </div>
         )}

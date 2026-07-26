@@ -84,7 +84,7 @@ export class ConversationListItem {
                 </ds-text>
                 {this.unreadCount > 0 ? (
                   <span class="conversation-list-item__unread">
-                    <ds-badge variant="dot" surface="secondary" />
+                    <ds-badge variant="dot" surface="secondary" hasRing={false} />
                   </span>
                 ) : null}
               </span>
@@ -110,7 +110,7 @@ export class ConversationListItem {
               <slot name="trailing" />
             </span>
           </button>
-          <div class="conversation-list-item__actions ds-control-elevation ds-control-elevation--md">
+          <div class="conversation-list-item__actions ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale">
             <slot name="actions" onSlotchange={this.handleActionsSlotChange} />
           </div>
         </div>

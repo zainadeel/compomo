@@ -1,3 +1,7 @@
+sandbox_mode = "workspace-write"
 [mcp_servers.compomo]
 command = "node"
 args = ["./scripts/mcp-server.mjs"]
+
+[sandbox_workspace_write]
+network_access = true

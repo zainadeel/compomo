@@ -9,7 +9,7 @@ const meta: Meta = {
     value: { control: 'text' },
     placeholder: { control: 'text' },
     type: { control: 'select', options: ['text', 'email', 'tel', 'url', 'search', 'password'] },
-    size: { control: 'select', options: ['md', 'sm', 'xs'] },
+    size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
     hasBorder: { control: 'boolean' },
@@ -59,6 +59,8 @@ export const Playground: Story = {
 export const SizesAndStates: Story = {
   render: () => html`
     <div style="display:grid;grid-template-columns:max-content 320px;align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);">
+      <ds-text variant="text-body-small" color="secondary">Large</ds-text>
+      <ds-input size="lg" placeholder="Large input" aria-label="Large input"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Medium</ds-text>
       <ds-input size="md" placeholder="Medium input" aria-label="Medium input"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Small</ds-text>

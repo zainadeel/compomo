@@ -1,5 +1,5 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
-import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
+import { CONTROL_TEXT_VARIANT, DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
 
 export interface RadioOption {
   label: string;
@@ -7,13 +7,7 @@ export interface RadioOption {
   isInactive?: boolean;
 }
 
-export type RadioSize = 'md' | 'sm' | 'xs';
-
-const LABEL_VARIANT: Record<RadioSize, 'text-body-medium' | 'text-body-small' | 'text-caption'> = {
-  md: 'text-body-medium',
-  sm: 'text-body-small',
-  xs: 'text-caption',
-};
+export type RadioSize = 'lg' | 'md' | 'sm' | 'xs';
 
 @Component({
   tag: 'ds-radio',
@@ -199,7 +193,7 @@ export class Radio {
               <ds-text
                 class="radio__label ds-interaction-fill__content"
                 as="span"
-                variant={LABEL_VARIANT[this.size]}
+                variant={CONTROL_TEXT_VARIANT[this.size]}
               >
                 {option.label}
               </ds-text>

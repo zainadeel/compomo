@@ -47,13 +47,38 @@ describe('public control elevation style contract', () => {
     assert.match(css, /z-index: 4/);
     assert.match(css, /border-radius: inherit/);
     assert.match(css, /pointer-events: none/);
-    assert.doesNotMatch(css, /\b(?:mask|filter|backdrop-filter|animation|transition):/);
+    assert.doesNotMatch(css, /\b(?:mask|filter|backdrop-filter|animation):/);
+  });
+
+  it('transfers approved button press scale to the complete elevated wrapper', () => {
+    assert.match(
+      css,
+      /\.ds-control-elevation--press-scale\s*{[\s\S]*?--ds-control-press-active-scale: var\(--dimension-scale-default\);[\s\S]*?transition: scale var\(--effect-motion-short-2\);/,
+    );
+    assert.doesNotMatch(
+      css,
+      /\.ds-control-elevation--press-scale\s*{[^}]*\n\s*scale\s*:/,
+      'resting wrappers must not create a transformed containing block',
+    );
+    assert.match(
+      css,
+      /\.ds-control-elevation--press-scale\[data-ds-press-active\]\s*{[\s\S]*?scale: var\(--dimension-scale-subtle\);/,
+    );
+    assert.match(
+      css,
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.ds-control-elevation--press-scale\[data-ds-press-active\][\s\S]*?scale: none;[\s\S]*?transition: none;/,
+    );
   });
 
   it('migrates the three wrapper controls without double-painting elevation', () => {
     for (const source of migratedSources) {
       assert.doesNotMatch(source, /--effect-elevation-/);
       assert.match(source, /control-elevation\.css|ds-control-elevation--md/);
+    }
+    for (const source of migratedSources.filter(source =>
+      source.includes('ds-control-elevation--md'),
+    )) {
+      assert.match(source, /ds-control-elevation--press-scale/);
     }
   });
 });

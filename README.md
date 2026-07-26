@@ -135,12 +135,17 @@ When a control needs elevation on an outer wrapper, use the split-shadow utility
 ```
 
 ```html
-<div class="my-control-shell ds-control-elevation ds-control-elevation--md">
+<div
+  class="my-control-shell ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale"
+>
   <ds-button-filled label="Create" has-border="false"></ds-button-filled>
 </div>
 ```
 
 The wrapper owns its radius, surface, outer shadow, and topmost highlight. Keep the wrapped control's optional resting border off; focus, error, selected, hover, and press strokes remain owned and rendered by the control beneath that highlight.
+For a wrapped `ds-button-filled` or `ds-button-unfilled`, add
+`.ds-control-elevation--press-scale` so the wrapper surface, shadow, highlight,
+and button scale together. Omit it for inputs and other non-scaling controls.
 
 ## Icon pattern
 

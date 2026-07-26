@@ -45,7 +45,7 @@
     "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
     "Open with visible initial focus only when the trigger was activated from the keyboard.",
     "Keep disabled items discoverable only when their unavailable state is meaningful.",
-    "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
+    "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator at the same density as the menu.",
     "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
     "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
     "Use notification dots only as supplemental status and not as the sole indication of important information."
@@ -56,7 +56,8 @@
     "After dsSelect from a switch row, replace the items or sections array with updated switchValue data so the controlled indicator reflects the new state.",
     "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
     "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
-    "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only."
+    "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only.",
+    "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics."
   ],
   "responsiveBehavior": [
     "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
