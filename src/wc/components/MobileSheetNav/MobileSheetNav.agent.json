@@ -1,0 +1,31 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-mobile-sheet-nav",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-mobile-sheet-nav",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Full-height mobile navigation sheet with a single brand, context, and utility header above large primary destinations.",
+  "useWhen": ["The mobile ShellApp Menu control needs to expose the complete primary navigation collection."],
+  "avoidWhen": ["Rendering desktop PanelNav.", "Switching local page content."],
+  "commonlyComposedWith": ["component:ds-shell-app", "component:ds-mobile-bar-nav"],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "The sheet is a named navigation landmark and retains visible labels for every primary destination.",
+    "Dashboard and Settings use icon-only tabs with localized accessible names; Help and Account use icon-only actions with matching tooltips.",
+    "Escape requests dismissal and opening moves focus to the selected or first available area."
+  ],
+  "states": [
+    "Dashboard and Settings change only the flat destination collection being browsed.",
+    "Area, Help, and Account events express intent while the application owns navigation and product behavior."
+  ],
+  "responsiveBehavior": ["The pane fills the mobile content stage while the bottom bar remains available."],
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/MobileSheetNav/MobileSheetNav.stories.ts"
+    }
+  ]
+}

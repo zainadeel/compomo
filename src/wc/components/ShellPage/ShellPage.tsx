@@ -1,4 +1,5 @@
 import { Component, Element, h, Host, Prop, State, Watch } from '@stencil/core';
+import type { ShellResponsiveMode } from '../../shell/shell-responsive';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import type { BarTitleVariant } from '../BarTitle/bar-title-types';
 import { resolveShellPageHeaderVariant } from './shell-page-responsive';
@@ -30,6 +31,10 @@ export class ShellPage {
   /** Standard page gutters, or no inset for full-bleed page content. */
   @Prop() contentInset: ShellPageContentInset = 'default';
 
+  /** Explicit shell breakpoint presentation. Mobile uses the dedicated mobile-header slot. */
+  @Prop({ attribute: 'responsive-mode', reflect: true })
+  responsiveMode: ShellResponsiveMode = 'desktop';
+
   @State() private pageTopVisible = true;
 
   private sentinelEl: HTMLElement | null = null;
@@ -51,8 +56,13 @@ export class ShellPage {
     this.syncHeaderVariant(true);
   }
 
+  @Watch('responsiveMode')
+  handleResponsiveModeChange() {
+    this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
+  }
+
   componentDidLoad() {
-    this.observeHeader(this.findHeader());
+    this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
     this.connectScrollRoot();
   }
 
@@ -335,6 +345,7 @@ export class ShellPage {
   }
 
   private handleHeaderSlotChange = (event: Event) => {
+    if (this.responsiveMode === 'mobile') return;
     const slot = event.target as HTMLSlotElement;
     const header = slot
       .assignedElements()
@@ -343,12 +354,14 @@ export class ShellPage {
   };
 
   render() {
+    const mobile = this.responsiveMode === 'mobile';
     return (
       <Host
         role="main"
         class={{
           'shell-page-host--inset-default': this.contentInset === 'default',
           'shell-page-host--inset-none': this.contentInset === 'none',
+          'shell-page-host--mobile': mobile,
           [`shell-page-host--header-${this.effectiveVariant}`]: true,
         }}
       >
@@ -365,7 +378,22 @@ export class ShellPage {
           }}
           class="shell-page__sticky-header"
         >
-          <slot name="header" onSlotchange={this.handleHeaderSlotChange} />
+          <div
+            class="shell-page__desktop-header"
+            hidden={mobile}
+            aria-hidden={mobile ? 'true' : undefined}
+            inert={mobile ? true : undefined}
+          >
+            <slot name="header" onSlotchange={this.handleHeaderSlotChange} />
+          </div>
+          <div
+            class="shell-page__mobile-header"
+            hidden={!mobile}
+            aria-hidden={!mobile ? 'true' : undefined}
+            inert={!mobile ? true : undefined}
+          >
+            <slot name="mobile-header" />
+          </div>
         </div>
         <div
           ref={el => {

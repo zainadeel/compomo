@@ -1,0 +1,210 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "mobile-section-switcher",
+  "title": "MobileSectionSwitcher",
+  "description": "Controlled mobile section chooser showing the current section, adjacent-position hints, and a complete tap menu.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/mobile-section-switcher",
+    "source": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Controlled mobile section chooser showing the current section, adjacent-position hints, and a complete tap menu.",
+      "useWhen": [
+        "A mobile page or tool header must combine current-page identity with ordered peer-section navigation."
+      ],
+      "avoidWhen": [
+        "Rendering desktop BarNav.",
+        "The destination collection is primary application navigation."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-mobile-header"
+      ],
+      "patterns": [
+        "pattern:application-shell"
+      ],
+      "accessibility": [
+        "The trigger exposes the current section, popup relationship, and expanded state.",
+        "Decorative previous and next position hints are hidden from assistive technology.",
+        "The menu is always available so a future swipe gesture is never the only navigation mechanism."
+      ],
+      "states": [
+        "Selection is controlled and dsChange reports intent without mutating value.",
+        "Dividers group menu items but never participate in previous or next resolution.",
+        "The first and last selectable sections expose only the available neighboring direction."
+      ],
+      "responsiveBehavior": [
+        "Use only in the dedicated mobile header presentation."
+      ],
+      "references": [
+        {
+          "label": "Storybook",
+          "path": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "navigationLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "navigation-label",
+          "default": "'Change page section'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the section chooser."
+        },
+        "sections": {
+          "type": "TabItem[]",
+          "resolvedType": "TabItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Ordered controlled sections. Divider entries group the popup menu."
+        },
+        "sectionsJson": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "sections-json",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "JSON fallback for `sections`."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled selected section id."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Selection intent. The route, tool, or workflow owner updates `value`."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "navigationLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "navigation-label",
+        "default": "'Change page section'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the section chooser."
+      },
+      "sections": {
+        "type": "TabItem[]",
+        "resolvedType": "TabItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Ordered controlled sections. Divider entries group the popup menu."
+      },
+      "sectionsJson": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "sections-json",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "JSON fallback for `sections`."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled selected section id."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Selection intent. The route, tool, or workflow owner updates `value`."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-mobile-section-switcher",
+      "react": "DsMobileSectionSwitcher",
+      "angular": "DsMobileSectionSwitcher"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-mobile-section-switcher.js';",
+        "example": "<ds-mobile-section-switcher></ds-mobile-section-switcher>"
+      },
+      "react": {
+        "import": "import { DsMobileSectionSwitcher } from '@ds-mo/ui/react';",
+        "example": "<DsMobileSectionSwitcher />"
+      },
+      "angular": {
+        "import": "import { DsMobileSectionSwitcher } from '@ds-mo/ui/angular/ds-mobile-section-switcher';",
+        "example": "<ds-mobile-section-switcher></ds-mobile-section-switcher>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: sections.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "menu",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.css",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  max-width: 100%;\n  color: var(--color-foreground-primary);\n}\n\n.mobile-section-switcher {\n  appearance: none;\n  display: grid;\n  grid-template-columns: var(--dimension-size-100) minmax(0, auto) var(--dimension-size-100);\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-050);\n  max-width: 100%;\n  min-height: var(--dimension-size-400);\n  padding-inline: var(--dimension-space-100);\n  border: 0;\n  border-radius: var(--dimension-radius-100);\n  background: var(--color-background-secondary);\n  color: inherit;\n  box-sizing: border-box;\n  cursor: pointer;\n}\n\n.mobile-section-switcher--expanded {\n  background: var(--color-background-tertiary);\n}\n\n.mobile-section-switcher__label {\n  min-width: 0;\n  max-width: 100%;\n  text-align: center;\n}\n\n.mobile-section-switcher__position {\n  width: var(--dimension-size-050);\n  height: var(--dimension-size-050);\n  border-radius: var(--dimension-radius-half);\n  background: currentColor;\n  opacity: 0;\n}\n\n.mobile-section-switcher__position--visible {\n  opacity: 1;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport type { MenuItemData, MenuSection } from '../Menu/menu-types';\nimport {\n  getSelectableTabs,\n  isTabDivider,\n  type TabItem,\n  type TabItemTab,\n} from '../TabGroup/tab-item-utils';\nimport { resolveMobileSectionPosition } from './mobile-section-switcher-utils';\n\nlet nextMobileSectionSwitcherId = 0;\n\n@Component({\n  tag: 'ds-mobile-section-switcher',\n  styleUrl: 'MobileSectionSwitcher.css',\n  scoped: true,\n})\nexport class MobileSectionSwitcher {\n  @Element() el!: HTMLElement;\n\n  /** Ordered controlled sections. Divider entries group the popup menu. */\n  @Prop() sections: TabItem[] = [];\n  /** JSON fallback for `sections`. */\n  @Prop({ attribute: 'sections-json' }) sectionsJson: string = '';\n  /** Controlled selected section id. */\n  @Prop() value: string = '';\n  /** Accessible name for the section chooser. */\n  @Prop() navigationLabel: string = 'Change page section';\n\n  /** Selection intent. The route, tool, or workflow owner updates `value`. */\n  @Event() dsChange!: EventEmitter<string>;\n\n  @State() private menuOpen = false;\n  @State() private initialFocusVisible = false;\n\n  private readonly instanceId = nextMobileSectionSwitcherId++;\n  private readonly triggerId = `ds-mobile-section-switcher-trigger-${this.instanceId}`;\n  private readonly menuId = `ds-mobile-section-switcher-menu-${this.instanceId}`;\n  private triggerEl: HTMLButtonElement | null = null;\n\n  private get resolvedSections(): TabItem[] {\n    if (!this.sectionsJson.trim()) return this.sections ?? [];\n    try {\n      const parsed = JSON.parse(this.sectionsJson);\n      return Array.isArray(parsed) ? (parsed as TabItem[]) : [];\n    } catch {\n      return [];\n    }\n  }\n\n  private get selectableSections(): TabItemTab[] {\n    return getSelectableTabs(this.resolvedSections);\n  }\n\n  private get selectedIndex(): number {\n    return resolveMobileSectionPosition(this.resolvedSections, this.value).selectedIndex;\n  }\n\n  private get selectedSection(): TabItemTab | undefined {\n    return this.selectableSections[this.selectedIndex];\n  }\n\n  private get hasPrevious(): boolean {\n    return resolveMobileSectionPosition(this.resolvedSections, this.value).hasPrevious;\n  }\n\n  private get hasNext(): boolean {\n    return resolveMobileSectionPosition(this.resolvedSections, this.value).hasNext;\n  }\n\n  private get triggerAriaLabel(): string {\n    return `${this.navigationLabel}. Current section: ${this.selectedSection?.label ?? ''}`;\n  }\n\n  private get menuSections(): MenuSection[] {\n    const groups: MenuSection[] = [];\n    let items: MenuItemData[] = [];\n    const commit = () => {\n      if (items.length) groups.push({ items });\n      items = [];\n    };\n\n    for (const section of this.resolvedSections) {\n      if (isTabDivider(section)) {\n        commit();\n        continue;\n      }\n      items.push({\n        label: section.label,\n        value: section.id,\n        dot: section.dot,\n        isSelected: section.id === this.selectedSection?.id,\n        isInactive: section.isInactive,\n      });\n    }\n    commit();\n    return groups;\n  }\n\n  @Watch('sections')\n  @Watch('sectionsJson')\n  handleSectionsChange() {\n    if (this.selectableSections.length <= 1) this.closeMenu();\n  }\n\n  private toggleMenu = (event: MouseEvent) => {\n    if (this.selectableSections.length <= 1) return;\n    this.initialFocusVisible = event.detail === 0;\n    this.menuOpen = !this.menuOpen;\n  };\n\n  private closeMenu = () => {\n    this.menuOpen = false;\n  };\n\n  private handleSelect = (event: CustomEvent<MenuItemData>) => {\n    const id = String(event.detail.value ?? '');\n    const section = this.selectableSections.find(candidate => candidate.id === id);\n    if (!section || section.isInactive) return;\n    this.closeMenu();\n    if (id !== this.selectedSection?.id) this.dsChange.emit(id);\n    requestAnimationFrame(() => this.triggerEl?.focus());\n  };\n\n  render() {\n    const selected = this.selectedSection;\n    if (!selected) return <Host />;\n\n    return (\n      <Host>\n        <button\n          ref={element => {\n            this.triggerEl = element ?? null;\n          }}\n          id={this.triggerId}\n          class={{\n            'mobile-section-switcher': true,\n            'mobile-section-switcher--expanded': this.menuOpen,\n            'ds-focus-ring-inset': true,\n            'ds-interaction-fill': true,\n          }}\n          type=\"button\"\n          aria-haspopup=\"menu\"\n          aria-controls={this.menuId}\n          aria-expanded={String(this.menuOpen)}\n          aria-label={this.triggerAriaLabel}\n          onClick={this.toggleMenu}\n        >\n          <span\n            class={{\n              'mobile-section-switcher__position': true,\n              'mobile-section-switcher__position--visible': this.hasPrevious,\n              'ds-interaction-fill__content': true,\n            }}\n            aria-hidden=\"true\"\n          />\n          <ds-text\n            class=\"mobile-section-switcher__label ds-interaction-fill__content\"\n            as=\"span\"\n            variant=\"text-body-medium\"\n            emphasis\n            color=\"inherit\"\n            lineTruncation={1}\n          >\n            {selected.label}\n          </ds-text>\n          <span\n            class={{\n              'mobile-section-switcher__position': true,\n              'mobile-section-switcher__position--visible': this.hasNext,\n              'ds-interaction-fill__content': true,\n            }}\n            aria-hidden=\"true\"\n          />\n        </button>\n\n        {this.selectableSections.length > 1 ? (\n          <ds-menu\n            id={this.menuId}\n            anchorId={this.triggerId}\n            align=\"center\"\n            selectionMode=\"single\"\n            menuLabel={this.navigationLabel}\n            open={this.menuOpen}\n            initialFocusVisible={this.initialFocusVisible}\n            sections={this.menuSections}\n            onDsClose={this.closeMenu}\n            onDsSelect={this.handleSelect}\n          />\n        ) : null}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MobileSectionSwitcher/mobile-section-switcher-types.ts",
+      "content": "import type { TabItem } from '../TabGroup/tab-item-utils';\n\n/** Ordered mobile sections. Dividers group the tap menu but do not participate in selection. */\nexport type MobileSectionItem = TabItem;\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MobileSectionSwitcher/mobile-section-switcher-utils.ts",
+      "content": "import { getSelectableTabs, type TabItem, type TabItemTab } from '../TabGroup/tab-item-utils';\n\nexport interface MobileSectionPosition {\n  selectedIndex: number;\n  selected?: TabItemTab;\n  hasPrevious: boolean;\n  hasNext: boolean;\n}\n\n/** Resolve ordered selectable neighbors while ignoring visual divider entries. */\nexport function resolveMobileSectionPosition(\n  sections: TabItem[],\n  value: string\n): MobileSectionPosition {\n  const selectable = getSelectableTabs(sections);\n  const matchedIndex = selectable.findIndex(section => section.id === value);\n  const selectedIndex = matchedIndex >= 0 ? matchedIndex : 0;\n  return {\n    selectedIndex,\n    selected: selectable[selectedIndex],\n    hasPrevious: selectedIndex > 0,\n    hasNext: selectedIndex < selectable.length - 1,\n  };\n}\n\n",
+      "type": "registry:ui"
+    }
+  ]
+}

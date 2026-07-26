@@ -33,6 +33,7 @@
   ],
   "commonlyComposedWith": [
     "component:ds-shell-page",
+    "component:ds-mobile-header",
     "component:ds-button-filled",
     "component:ds-button-unfilled",
     "component:ds-text",
@@ -47,7 +48,7 @@
     "Use submitAction.type=submit inside a form so the final action preserves native submission semantics."
   ],
   "states": [
-    "BarWorkflow always renders compact 48px bold-brand chrome and has no expanded, constrained, or responsive variant.",
+    "BarWorkflow always renders compact 48px bold-brand chrome; responsiveMode changes only the action geometry, never workflow state or hierarchy.",
     "An unrecognized value resolves navigation from the first step without mutating the controlled value.",
     "The first step omits Previous. Intermediate steps show Previous and Next. The last step replaces Next with the Check Save or Submit action.",
     "The default empty steps array is a single-step flow with the plain heading, no Previous control, and the final action visible. An explicit one-step array behaves the same way.",
@@ -55,7 +56,8 @@
     "submitAction owns the final label, native button type, inactive state, and loading state."
   ],
   "responsiveBehavior": [
-    "BarWorkflow does not expose a presentation variant and never collapses its navigation actions.",
+    "Desktop and tablet keep the established left-aligned identity and trailing actions.",
+    "Mobile uses symmetric MobileHeader geometry with Exit leading, the title and step count centered, and Previous plus Next or Submit trailing.",
     "The heading truncates before Exit, Previous, and Next or Submit lose their complete hit targets.",
     "When slotted into ShellPage, BarWorkflow remains compact while ShellPage continues to provide sticky placement."
   ],

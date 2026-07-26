@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsBarWorkflow } from '@ds-mo/ui/components
 
 @ProxyCmp({
   defineCustomElementFn: defineDsBarWorkflow,
-  inputs: ['exitAriaLabel', 'exitLabel', 'heading', 'isNextInactive', 'nextLabel', 'previousLabel', 'steps', 'submitAction', 'value']
+  inputs: ['exitAriaLabel', 'exitLabel', 'heading', 'isNextInactive', 'nextLabel', 'previousLabel', 'responsiveMode', 'steps', 'submitAction', 'value']
 })
 @Component({
   selector: 'ds-bar-workflow',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['exitAriaLabel', 'exitLabel', { name: 'heading', required: true }, 'isNextInactive', 'nextLabel', 'previousLabel', 'steps', 'submitAction', 'value'],
+  inputs: ['exitAriaLabel', 'exitLabel', { name: 'heading', required: true }, 'isNextInactive', 'nextLabel', 'previousLabel', 'responsiveMode', 'steps', 'submitAction', 'value'],
   outputs: ['dsExit', 'dsStepChange', 'dsSubmit'],
 })
 export class DsBarWorkflow {

@@ -12,7 +12,6 @@ import {
 import {
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_TOOL_IDS,
-  type PanelToolsHeaderAction,
   type PanelToolsHeaderConfig,
   type PanelToolsHeaders,
   type PanelToolsItem,
@@ -163,10 +162,11 @@ export class ShellTools {
 
   private handleMobileHeaderAction = (
     tool: PanelToolsToolId,
-    event: CustomEvent<{ id: string }>
+    id: string,
+    event: CustomEvent<MouseEvent>
   ) => {
     event.stopPropagation();
-    this.dsHeaderAction.emit({ tool, id: event.detail.id });
+    this.dsHeaderAction.emit({ tool, id });
   };
 
   /** Match PanelTools' imperative activation contract in every responsive mode. */
@@ -240,41 +240,78 @@ export class ShellTools {
   private renderMobileHeader(tool: PanelToolsToolId) {
     const header = this.activeHeader(tool);
     const configuredTitle = header.title?.trim();
-    const title = isShellInboxTool(tool)
-      ? header.showBack && configuredTitle
-        ? configuredTitle
-        : this.inboxLabel
-      : configuredTitle || PANEL_TOOLS_LABELS[tool];
+    const title = configuredTitle || PANEL_TOOLS_LABELS[tool];
     const actions = (header.actions ?? []).filter(action => action.id !== 'fullscreen');
+    const sections =
+      isShellInboxTool(tool) && !header.showBack
+        ? this.availableInboxTools.map(id => ({
+            id,
+            label: PANEL_TOOLS_LABELS[id],
+          }))
+        : [];
 
     return (
-      <ds-panel-tool-header
+      <ds-mobile-header
         class="shell-tools__mobile-header"
         heading={title}
-        showBack={header.showBack ?? false}
-        backIcon={header.backIcon || 'ChevronLeft'}
-        backAriaLabel={header.backAriaLabel || 'Back'}
-        showMenu={false}
-        ref={element => {
-          const toolHeader = element as
-            | (HTMLDsPanelToolHeaderElement & { actions: PanelToolsHeaderAction[] })
-            | undefined;
-          if (toolHeader) toolHeader.actions = actions;
-        }}
-        onDsBack={() => this.dsHeaderBack.emit({ tool })}
-        onDsAction={(event: CustomEvent<{ id: string }>) =>
-          this.handleMobileHeaderAction(tool, event)}
-      />
+        headingLevel="h2"
+        sections={sections}
+        value={tool}
+        sectionsAriaLabel={this.inboxNavigationLabel}
+        onDsSectionChange={this.selectInboxTool}
+      >
+        {header.showBack ? (
+          <ds-tooltip
+            slot="leading"
+            label={header.backAriaLabel || 'Back'}
+            side="bottom"
+            size="sm"
+          >
+            <ds-button-unfilled
+              variant="icon"
+              icon={header.backIcon || 'ChevronLeft'}
+              size="md"
+              aria-label={header.backAriaLabel || 'Back'}
+              activeFill={false}
+              hasBorder={false}
+              onDsClick={() => this.dsHeaderBack.emit({ tool })}
+            />
+          </ds-tooltip>
+        ) : null}
+        {actions.map(action => (
+          <ds-tooltip
+            slot="trailing"
+            key={action.id}
+            label={action.ariaLabel}
+            side="bottom"
+            size="sm"
+          >
+            <ds-button-unfilled
+              id={action.triggerId || undefined}
+              data-header-action-id={action.id}
+              variant="icon"
+              icon={action.icon}
+              size="md"
+              aria-label={action.ariaLabel}
+              haspopup={action.haspopup}
+              controls={action.controls}
+              expanded={action.expanded}
+              pressed={action.pressed}
+              isActive={!!action.expanded}
+              isInactive={action.isInactive}
+              activeFill={false}
+              hasBorder={false}
+              onDsClick={(event: CustomEvent<MouseEvent>) =>
+                this.handleMobileHeaderAction(tool, action.id, event)}
+            />
+          </ds-tooltip>
+        ))}
+      </ds-mobile-header>
     );
   }
 
   private renderMobile() {
     const tool = this.mobileActiveTool;
-    const inboxTabs = this.availableInboxTools.map(id => ({
-      id,
-      label: PANEL_TOOLS_LABELS[id],
-    }));
-
     return (
       <div
         class="shell-tools__mobile"
@@ -282,16 +319,6 @@ export class ShellTools {
         inert={this.open && tool ? undefined : true}
       >
         {tool ? this.renderMobileHeader(tool) : null}
-        {tool && isShellInboxTool(tool) && inboxTabs.length ? (
-          <div class="shell-tools__inbox-nav">
-            <ds-tab-group
-              tabs={inboxTabs}
-              value={tool}
-              aria-label={this.inboxNavigationLabel}
-              onDsChange={this.selectInboxTool}
-            />
-          </div>
-        ) : null}
         <div class="shell-tools__mobile-body">
           {MOBILE_VIEW_ORDER.map(id => {
             const active = this.open && id === tool;

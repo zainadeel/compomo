@@ -98,7 +98,7 @@ export {
 } from './shell-responsive';
 export type {
   ShellInboxToolId,
-  ShellMobileDestination,
+  MobileDestination,
   ShellResponsiveMode,
 } from './shell-responsive';
 export {

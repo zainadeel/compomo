@@ -66,18 +66,18 @@ test.describe('Responsive mobile shell foundation', () => {
       'Inbox',
       'Agents',
     ]);
-    await expect(page.locator('.shell-mobile-bar__group')).toHaveCount(2);
-    await expect(page.locator('.shell-mobile-bar__dot')).toHaveCount(2);
+    await expect(page.locator('.mobile-bar-nav__group')).toHaveCount(2);
+    await expect(page.locator('.mobile-bar-nav__dot')).toHaveCount(2);
 
-    const metrics = await page.locator('ds-shell-mobile-bar').evaluate(element => {
-      const bar = element.querySelector('.shell-mobile-bar');
-      const groups = Array.from(element.querySelectorAll('.shell-mobile-bar__group'));
-      const items = Array.from(element.querySelectorAll('.shell-mobile-bar__item'));
-      const icons = Array.from(element.querySelectorAll('.shell-mobile-bar__icon'));
-      const divider = element.querySelector('.shell-mobile-bar__divider');
-      const selected = element.querySelector('.shell-mobile-bar__item--selected');
+    const metrics = await page.locator('ds-mobile-bar-nav').evaluate(element => {
+      const bar = element.querySelector('.mobile-bar-nav');
+      const groups = Array.from(element.querySelectorAll('.mobile-bar-nav__group'));
+      const items = Array.from(element.querySelectorAll('.mobile-bar-nav__item'));
+      const icons = Array.from(element.querySelectorAll('.mobile-bar-nav__icon'));
+      const divider = element.querySelector('.mobile-bar-nav__divider');
+      const selected = element.querySelector('.mobile-bar-nav__item--selected');
       const unselected = element.querySelector(
-        '.shell-mobile-bar__item:not(.shell-mobile-bar__item--selected)'
+        '.mobile-bar-nav__item:not(.mobile-bar-nav__item--selected)'
       );
       const colorProbe = document.createElement('span');
       element.append(colorProbe);
@@ -122,7 +122,7 @@ test.describe('Responsive mobile shell foundation', () => {
     expect(metrics.selectedForeground).toBe(metrics.primaryForeground);
     expect(metrics.unselectedForeground).toBe(metrics.tertiaryForeground);
 
-    const barBox = await page.locator('ds-shell-mobile-bar').boundingBox();
+    const barBox = await page.locator('ds-mobile-bar-nav').boundingBox();
     expect(barBox).not.toBeNull();
     expect(barBox!.x).toBeGreaterThanOrEqual(0);
     expect(barBox!.x + barBox!.width).toBeLessThanOrEqual(390);
@@ -183,19 +183,206 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Search' })).toBeFocused();
   });
 
-  test('layers selected fills below mobile icons, labels, and badges', async ({ page }) => {
-    await expectSelectedFillBelowContent(
-      page.locator('ds-shell-mobile-section-nav button[aria-current="page"]')
-    );
+  test('uses one icon-only sheet header lane and large-density destination rows', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Menu' }).click();
+
+    const sheet = page.locator('ds-mobile-sheet-nav');
+    const tabs = sheet.getByRole('tab');
+    await expect(tabs).toHaveCount(2);
+    await expect(tabs.allTextContents()).resolves.toEqual(['', '']);
+    await expect(tabs.evaluateAll(items => items.map(item => item.getAttribute('aria-label'))))
+      .resolves.toEqual(['Dashboard', 'Settings']);
+    await expect(sheet.getByRole('button', { name: 'Help & Support' })).toHaveText('');
+    await expect(sheet.getByRole('button', { name: 'Account' })).toHaveText('');
+    await expect(sheet.getByText('Navigation', { exact: true })).toHaveCount(0);
+
+    const headerMetrics = await sheet.evaluate(element => {
+      const header = element.querySelector('.mobile-sheet-nav__header');
+      const logo = element.querySelector('.mobile-sheet-nav__logo');
+      const context = element.querySelector('.mobile-sheet-nav__context');
+      const actions = element.querySelector('.mobile-sheet-nav__actions');
+      const logoMark = element.querySelector('.mobile-sheet-nav__logo-mark');
+      const actionButtons = Array.from(
+        element.querySelectorAll('.mobile-sheet-nav__actions ds-button-unfilled')
+      );
+      const rects = [logo, context, actions].map(item => item?.getBoundingClientRect());
+      return {
+        height: header?.getBoundingClientRect().height,
+        centers: rects.map(rect => rect ? rect.top + rect.height / 2 : 0),
+        logoLeft: rects[0]?.left,
+        logoMarkLeft: logoMark?.getBoundingClientRect().left,
+        logoMarkSize: logoMark
+          ? [logoMark.getBoundingClientRect().width, logoMark.getBoundingClientRect().height]
+          : [],
+        contextCenter: rects[1] ? rects[1].left + rects[1].width / 2 : 0,
+        actionsRight: rects[2]?.right,
+        actionSizes: actionButtons.map(item => {
+          const rect = item.getBoundingClientRect();
+          return [rect.width, rect.height];
+        }),
+        actionIconSizes: actionButtons.map(item => {
+          const icon = item.querySelector('ds-icon')?.getBoundingClientRect();
+          return icon ? [icon.width, icon.height] : [];
+        }),
+        headerCenter: header
+          ? header.getBoundingClientRect().left + header.getBoundingClientRect().width / 2
+          : 0,
+        headerRight: header?.getBoundingClientRect().right,
+      };
+    });
+
+    expect(headerMetrics.height).toBe(72);
+    expect(headerMetrics.centers[0]).toBeCloseTo(headerMetrics.centers[1], 0);
+    expect(headerMetrics.centers[1]).toBeCloseTo(headerMetrics.centers[2], 0);
+    expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
+    expect(headerMetrics.logoLeft).toBe(16);
+    expect(headerMetrics.logoMarkLeft).toBe(24);
+    expect(headerMetrics.logoMarkSize).toEqual([24, 24]);
+    expect(headerMetrics.actionsRight).toBeCloseTo(headerMetrics.headerRight! - 16, 0);
+    expect(headerMetrics.actionSizes).toEqual([[40, 40], [40, 40]]);
+    expect(headerMetrics.actionIconSizes).toEqual([[24, 24], [24, 24]]);
+
+    const sheetMetrics = await sheet.evaluate(element => {
+      const body = element.querySelector('.mobile-sheet-nav__body');
+      const itemsContainer = element.querySelector('.mobile-sheet-nav__items');
+      const items = Array.from(element.querySelectorAll('.mobile-sheet-nav__item'));
+      return {
+        bodyPadding: body ? getComputedStyle(body).padding : '',
+        itemGap: itemsContainer ? getComputedStyle(itemsContainer).gap : '',
+        items: items.map(item => {
+          const icon = item.querySelector('ds-icon');
+          const label = item.querySelector('.mobile-sheet-nav__item-label');
+          const itemStyle = getComputedStyle(item);
+          const labelStyle = label ? getComputedStyle(label) : null;
+          const iconRect = icon?.getBoundingClientRect();
+          return {
+            height: item.getBoundingClientRect().height,
+            paddingInline: itemStyle.paddingInline,
+            gap: itemStyle.gap,
+            iconSize: iconRect ? [iconRect.width, iconRect.height] : [],
+            labelPaddingInline: labelStyle?.paddingInline,
+          };
+        }),
+      };
+    });
+
+    expect(sheetMetrics.bodyPadding).toBe('16px');
+    expect(sheetMetrics.itemGap).toBe('8px');
+    expect(sheetMetrics.items).toEqual([
+      {
+        height: 40,
+        paddingInline: '8px',
+        gap: '4px',
+        iconSize: [24, 24],
+        labelPaddingInline: '4px',
+      },
+      {
+        height: 40,
+        paddingInline: '8px',
+        gap: '4px',
+        iconSize: [24, 24],
+        labelPaddingInline: '4px',
+      },
+    ]);
+  });
+
+  test('uses the centered section chooser and emphasis-only sheet selection', async ({
+    page,
+  }) => {
+    await expect(
+      page.locator('ds-mobile-section-switcher button').getByText('Live Map')
+    ).toBeVisible();
 
     await page
       .getByRole('navigation', { name: 'Primary' })
       .getByRole('button', { name: 'Menu' })
       .click();
 
-    await expectSelectedFillBelowContent(
-      page.locator('ds-shell-mobile-nav button[aria-current="page"]')
+    const selectedSheetItem = page.locator(
+      'ds-mobile-sheet-nav button[aria-current="page"]'
     );
+    await expect(selectedSheetItem.locator('ds-text')).toHaveClass(/ds-text--emphasis/);
+    await expect(
+      selectedSheetItem.evaluate(
+        element => getComputedStyle(element, '::before').backgroundColor
+      )
+    ).resolves.toBe('rgba(0, 0, 0, 0)');
+  });
+
+  test('keeps local page tabs subordinate to the selected area section', async ({ page }) => {
+    await page.locator('#mobile-header').evaluate(header => {
+      const mobileHeader = header as HTMLElement & {
+        sections: Array<{ id: string; label: string }>;
+        value: string;
+        subsections: Array<{ id: string; label: string }>;
+        subvalue: string;
+        sectionsAriaLabel: string;
+        subsectionsAriaLabel: string;
+      };
+      mobileHeader.sections = [
+        { id: 'overview', label: 'Overview' },
+        { id: 'people', label: 'People' },
+        { id: 'timecards', label: 'Timecards' },
+      ];
+      mobileHeader.value = 'people';
+      mobileHeader.sectionsAriaLabel = 'Change Workforce page';
+      mobileHeader.subsections = [
+        { id: 'drivers', label: 'Drivers' },
+        { id: 'managers', label: 'Managers' },
+      ];
+      mobileHeader.subvalue = 'drivers';
+      mobileHeader.subsectionsAriaLabel = 'Change People view';
+      mobileHeader.addEventListener('dsSubsectionChange', event => {
+        mobileHeader.subvalue = (event as CustomEvent<string>).detail;
+      });
+    });
+
+    await expect(page.getByRole('heading', { name: 'People', level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('button', {
+        name: 'Change Workforce page. Current section: People',
+      })
+    ).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Change People view' })).toBeVisible();
+    await page
+      .getByRole('button', { name: 'Change People view. Current section: Drivers' })
+      .click();
+    await page.getByRole('menuitemradio', { name: 'Managers' }).click();
+    await expect(
+      page.getByRole('button', { name: 'Change People view. Current section: Managers' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', {
+        name: 'Change Workforce page. Current section: People',
+      })
+    ).toBeVisible();
+  });
+
+  test('keeps Help on the persistent tool owner across mobile and wider breakpoints', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.getByRole('button', { name: 'Help & Support' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-selected-area', 'help');
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'help');
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('open');
+    await expect(page.getByRole('button', { name: 'Help & Support' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    await expect(page.getByText('Help view', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+    await page.setViewportSize({ width: 1200, height: 760 });
+    await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'desktop');
+    await expect(page.locator('ds-panel-tools')).toHaveAttribute('active-tool', 'help');
+    await expect(page.locator('ds-panel-tools')).toHaveAttribute('open');
+    await expect(page.getByText('Help view', { exact: true })).toBeVisible();
   });
 
   test('preserves a slotted tool owner and form value across destination and breakpoint changes', async ({
@@ -252,7 +439,7 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toBeVisible();
   });
 
-  test('uses a solid primary stage and scrolls the selected route section into view', async ({
+  test('uses a solid primary stage with the selected route in the mobile header', async ({
     page,
   }) => {
     await expect(page.locator('.shell-app__chrome')).toHaveCSS('display', 'none');
@@ -264,13 +451,7 @@ test.describe('Responsive mobile shell foundation', () => {
       'background-color',
       'rgb(255, 255, 255)'
     );
-    await expect(
-      page.getByRole('navigation', { name: 'Section navigation' })
-    ).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Live Map' })).toHaveAttribute(
-      'aria-current',
-      'page'
-    );
+    await expect(page.getByRole('button', { name: /Current section: Live Map/ })).toBeVisible();
   });
 });
 

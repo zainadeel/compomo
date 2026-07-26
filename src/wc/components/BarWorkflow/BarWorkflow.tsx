@@ -1,4 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
+import type { ShellResponsiveMode } from '../../shell/shell-responsive';
 import type { BarWorkflowStep, BarWorkflowSubmitAction } from './bar-workflow-types';
 
 @Component({
@@ -36,6 +37,10 @@ export class BarWorkflow {
 
   /** Prevent advancing while the current step is incomplete or invalid. */
   @Prop() isNextInactive: boolean = false;
+
+  /** Explicit shell breakpoint presentation. Mobile keeps the same controlled workflow state. */
+  @Prop({ attribute: 'responsive-mode', reflect: true })
+  responsiveMode: ShellResponsiveMode = 'desktop';
 
   /** Emitted when Exit is activated. */
   @Event() dsExit!: EventEmitter<MouseEvent>;
@@ -80,11 +85,94 @@ export class BarWorkflow {
     }
   };
 
-  render() {
+  private renderSubmit(slot?: 'trailing') {
     const submit = this.submitAction;
     return (
-      <Host>
-        <div class="bar-workflow">
+      <ds-tooltip slot={slot} label={submit.label} side="bottom" size="sm">
+        <ds-button-filled
+          class="bar-workflow__submit"
+          variant="icon"
+          icon="Check"
+          label={submit.label}
+          aria-label={submit.label}
+          intent="brand"
+          contrast="faint"
+          background="bold"
+          size="md"
+          type={submit.type ?? 'submit'}
+          isInactive={submit.isInactive}
+          isLoading={submit.isLoading}
+          onDsClick={(event: CustomEvent<MouseEvent>) => this.dsSubmit.emit(event.detail)}
+        />
+      </ds-tooltip>
+    );
+  }
+
+  private renderMobile() {
+    return (
+      <ds-mobile-header
+        class="bar-workflow__mobile"
+        heading={this.resolvedHeading}
+        tone="brand"
+      >
+        <ds-tooltip slot="leading" label={this.exitLabel} side="bottom" size="sm">
+          <ds-button-unfilled
+            class="bar-workflow__exit"
+            variant="icon"
+            icon="Cross"
+            aria-label={this.exitAriaLabel}
+            size="md"
+            background="bold"
+            activeFill={false}
+            hasBorder={false}
+            onDsClick={(event: CustomEvent<MouseEvent>) => this.dsExit.emit(event.detail)}
+          />
+        </ds-tooltip>
+
+        {this.previousStep ? (
+          <ds-tooltip slot="trailing" label={this.previousLabel} side="bottom" size="sm">
+            <ds-button-unfilled
+              class="bar-workflow__previous"
+              variant="icon"
+              icon="ChevronLeft"
+              aria-label={this.previousLabel}
+              size="md"
+              background="bold"
+              activeFill={false}
+              hasBorder={false}
+              isInactive={this.previousStep.isInactive}
+              onDsClick={this.handlePrevious}
+            />
+          </ds-tooltip>
+        ) : null}
+
+        {this.isLastStep ? (
+          this.renderSubmit('trailing')
+        ) : (
+          <ds-tooltip slot="trailing" label={this.nextLabel} side="bottom" size="sm">
+            <ds-button-filled
+              class="bar-workflow__next"
+              variant="icon"
+              icon="ChevronRight"
+              label={this.nextLabel}
+              aria-label={this.nextLabel}
+              intent="brand"
+              contrast="faint"
+              background="bold"
+              size="md"
+              type="button"
+              isInactive={this.isNextInactive || this.nextStep?.isInactive}
+              onDsClick={this.handleNext}
+            />
+          </ds-tooltip>
+        )}
+      </ds-mobile-header>
+    );
+  }
+
+  private renderDesktop() {
+    return (
+      <div class="bar-workflow">
           <div class="bar-workflow__identity">
             <ds-tooltip label={this.exitLabel} side="bottom" size="sm">
               <ds-button-unfilled
@@ -130,23 +218,7 @@ export class BarWorkflow {
             ) : null}
 
             {this.isLastStep ? (
-              <ds-tooltip label={submit.label} side="bottom" size="sm">
-                <ds-button-filled
-                  class="bar-workflow__submit"
-                  variant="icon"
-                  icon="Check"
-                  label={submit.label}
-                  aria-label={submit.label}
-                  intent="brand"
-                  contrast="faint"
-                  background="bold"
-                  size="md"
-                  type={submit.type ?? 'submit'}
-                  isInactive={submit.isInactive}
-                  isLoading={submit.isLoading}
-                  onDsClick={(event: CustomEvent<MouseEvent>) => this.dsSubmit.emit(event.detail)}
-                />
-              </ds-tooltip>
+              this.renderSubmit()
             ) : (
               <ds-tooltip label={this.nextLabel} side="bottom" size="sm">
                 <ds-button-filled
@@ -166,7 +238,14 @@ export class BarWorkflow {
               </ds-tooltip>
             )}
           </div>
-        </div>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <Host>
+        {this.responsiveMode === 'mobile' ? this.renderMobile() : this.renderDesktop()}
       </Host>
     );
   }

@@ -1,0 +1,38 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-mobile-header",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-mobile-header",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Consistent mobile top chrome with symmetric action lanes, a centered page identity or peer-section chooser, and an optional subordinate page-section row.",
+  "useWhen": ["A routed page, persistent tool, account surface, or workflow needs the canonical mobile header presentation."],
+  "avoidWhen": ["Rendering desktop BarTitle, BarNav, or PanelToolHeader.", "Rendering the Mobile Sheet Nav utility lane."],
+  "commonlyComposedWith": ["component:ds-mobile-section-switcher", "component:ds-shell-page", "component:ds-shell-tools"],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "Static screens render a real h1 or h2 according to headingLevel.",
+    "Section-switching screens expose an equivalent semantic heading alongside the accessible popup trigger.",
+    "Subsections use a separately named navigation landmark and never replace the semantic page identity.",
+    "Leading and trailing slotted icon actions retain their own accessible names and tooltips."
+  ],
+  "states": [
+    "Without multiple sections the center renders heading.",
+    "With multiple sections the center renders the controlled MobileSectionSwitcher.",
+    "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
+    "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
+    "Brand tone changes surface and foreground without changing geometry or interaction ownership."
+  ],
+  "responsiveBehavior": [
+    "The primary 48px lane is dedicated to the below-768px presentation; optional subsections add one subordinate 48px lane.",
+    "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric."
+  ],
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/MobileHeader/MobileHeader.stories.ts"
+    }
+  ]
+}

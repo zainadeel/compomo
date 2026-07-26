@@ -1,9 +1,11 @@
 import '/dist/components/ds-shell-app.js';
 import '/dist/components/ds-panel-nav.js';
 import '/dist/components/ds-bar-nav.js';
-import '/dist/components/ds-shell-mobile-nav.js';
-import '/dist/components/ds-shell-mobile-section-nav.js';
-import '/dist/components/ds-shell-mobile-bar.js';
+import '/dist/components/ds-bar-title.js';
+import '/dist/components/ds-mobile-sheet-nav.js';
+import '/dist/components/ds-mobile-header.js';
+import '/dist/components/ds-mobile-bar-nav.js';
+import '/dist/components/ds-shell-page.js';
 import '/dist/components/ds-shell-tools.js';
 
 const dashboardGroups = [
@@ -53,18 +55,19 @@ const sectionTabs = [
 
 await Promise.all([
   customElements.whenDefined('ds-shell-app'),
-  customElements.whenDefined('ds-shell-mobile-nav'),
-  customElements.whenDefined('ds-shell-mobile-section-nav'),
-  customElements.whenDefined('ds-shell-mobile-bar'),
+  customElements.whenDefined('ds-mobile-sheet-nav'),
+  customElements.whenDefined('ds-mobile-header'),
+  customElements.whenDefined('ds-mobile-bar-nav'),
   customElements.whenDefined('ds-shell-tools'),
 ]);
 
 const shell = document.getElementById('shell');
 const panel = document.getElementById('panel');
 const bar = document.getElementById('bar');
-const mobileNav = document.getElementById('mobile-nav');
-const mobileSections = document.getElementById('mobile-sections');
-const mobileBar = document.getElementById('mobile-bar');
+const mobileSheetNav = document.getElementById('mobile-sheet-nav');
+const mobileHeader = document.getElementById('mobile-header');
+const workspacePage = document.getElementById('workspace-page');
+const mobileBarNav = document.getElementById('mobile-bar-nav');
 const tools = document.getElementById('tools');
 
 panel.groups = dashboardGroups;
@@ -72,16 +75,15 @@ panel.currentUrl = '/dashboard/tracking/live-map';
 bar.tabs = sectionTabs;
 bar.basePath = '/dashboard/tracking';
 bar.currentUrl = '/dashboard/tracking/live-map';
-mobileNav.dashboardGroups = dashboardGroups;
-mobileNav.settingsGroups = settingsGroups;
-mobileNav.currentUrl = '/dashboard/tracking/live-map';
-mobileSections.tabs = sectionTabs;
-mobileSections.basePath = '/dashboard/tracking';
-mobileSections.currentUrl = '/dashboard/tracking/live-map';
-mobileSections.heading = 'Tracking';
-mobileBar.currentArea = { id: 'tracking', icon: 'MapPage', label: 'Tracking' };
-mobileBar.searchDot = true;
-mobileBar.inboxDot = true;
+mobileSheetNav.dashboardGroups = dashboardGroups;
+mobileSheetNav.settingsGroups = settingsGroups;
+mobileSheetNav.currentUrl = '/dashboard/tracking/live-map';
+mobileHeader.sections = sectionTabs;
+mobileHeader.value = 'live-map';
+mobileHeader.heading = 'Tracking';
+mobileBarNav.currentArea = { id: 'tracking', icon: 'MapPage', label: 'Tracking' };
+mobileBarNav.searchDot = true;
+mobileBarNav.inboxDot = true;
 tools.items = toolItems;
 tools.headers = {
   search: { title: 'Search' },
@@ -107,20 +109,29 @@ tools.headers = {
   },
 };
 
-function applyShellState(destination, navigationOpen) {
+function applyShellState(destination, sheetNavOpen) {
   shell.mobileDestination = destination;
-  shell.mobileNavigationOpen = navigationOpen;
-  mobileBar.activeDestination = destination;
-  mobileBar.navigationExpanded = navigationOpen;
-  mobileNav.open = navigationOpen;
+  shell.mobileSheetNavOpen = sheetNavOpen;
+  mobileBarNav.activeDestination = destination;
+  mobileBarNav.sheetNavExpanded = sheetNavOpen;
+  mobileSheetNav.open = sheetNavOpen;
 }
 
 applyShellState('area', false);
+workspacePage.responsiveMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
 
-mobileBar.addEventListener('dsNavigationToggle', event => {
+shell.addEventListener('dsResponsiveModeChange', event => {
+  workspacePage.responsiveMode = event.detail.mode;
+});
+
+mobileHeader.addEventListener('dsSectionChange', event => {
+  mobileHeader.value = event.detail;
+});
+
+mobileBarNav.addEventListener('dsSheetNavToggle', event => {
   applyShellState(shell.mobileDestination, event.detail);
 });
-mobileBar.addEventListener('dsDestinationChange', event => {
+mobileBarNav.addEventListener('dsDestinationChange', event => {
   const destination = event.detail.destination;
   applyShellState(destination, false);
   if (destination === 'area') {
@@ -131,14 +142,20 @@ mobileBar.addEventListener('dsDestinationChange', event => {
   tools.activeTool = tool;
   tools.open = true;
 });
-mobileNav.addEventListener('dsBrowseContextChange', event => {
-  mobileNav.browseContext = event.detail;
+mobileSheetNav.addEventListener('dsBrowseContextChange', event => {
+  mobileSheetNav.browseContext = event.detail;
 });
-mobileNav.addEventListener('dsAreaSelect', event => {
+mobileSheetNav.addEventListener('dsAreaSelect', event => {
   document.documentElement.dataset.selectedArea = event.detail;
+  if (event.detail === 'help') {
+    tools.activeTool = 'help';
+    tools.open = true;
+    applyShellState('help', false);
+    return;
+  }
   applyShellState('area', false);
 });
-mobileNav.addEventListener('dsClose', () => {
+mobileSheetNav.addEventListener('dsClose', () => {
   applyShellState(shell.mobileDestination, false);
 });
 tools.addEventListener('dsToolChange', event => {
@@ -146,7 +163,11 @@ tools.addEventListener('dsToolChange', event => {
   tools.activeTool = id;
   tools.open = selected;
   const destination =
-    !selected ? 'area' : id === 'search' || id === 'agents' ? id : 'inbox';
+    !selected
+      ? 'area'
+      : id === 'search' || id === 'agents' || id === 'help'
+        ? id
+        : 'inbox';
   applyShellState(destination, false);
 });
 

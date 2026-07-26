@@ -93,3 +93,32 @@ test('keeps an inactive Next visible when forward validation blocks progress', a
   await expect(header.getByRole('button', { name: 'Previous step' })).toHaveCount(0);
   await expect(header.getByRole('button', { name: 'Next step' })).toBeDisabled();
 });
+
+test('uses symmetric mobile workflow chrome without changing the controlled step contract', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 760 });
+  const header = page.locator('#workflow-header');
+  await header.evaluate((element: HTMLDsBarWorkflowElement) => {
+    element.responsiveMode = 'mobile';
+    element.value = 'employment';
+  });
+
+  const heading = header.getByRole('heading', { name: 'Create driver · 2/3', level: 1 });
+  await expect(heading).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Exit driver creation' })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Previous step' })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Next step' })).toBeVisible();
+
+  const geometry = await header.evaluate(element => {
+    const host = element.getBoundingClientRect();
+    const title = element.querySelector('ds-mobile-header ds-text')?.getBoundingClientRect();
+    return {
+      height: host.height,
+      hostCenter: host.left + host.width / 2,
+      titleCenter: title ? title.left + title.width / 2 : 0,
+    };
+  });
+  expect(geometry.height).toBe(48);
+  expect(Math.abs(geometry.hostCenter - geometry.titleCenter)).toBeLessThanOrEqual(1);
+});

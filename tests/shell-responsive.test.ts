@@ -35,7 +35,7 @@ describe('shellMobileDestinationForTool', () => {
     assert.equal(shellMobileDestinationForTool(true, 'messages'), 'inbox');
     assert.equal(shellMobileDestinationForTool(true, 'stacks'), 'inbox');
     assert.equal(shellMobileDestinationForTool(true, 'activity'), 'inbox');
-    assert.equal(shellMobileDestinationForTool(true, 'help'), 'area');
+    assert.equal(shellMobileDestinationForTool(true, 'help'), 'help');
   });
 });
 

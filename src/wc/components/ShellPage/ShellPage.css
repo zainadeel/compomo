@@ -26,10 +26,21 @@
   overflow-anchor: none;
 }
 
-.shell-page__sticky-header ::slotted(ds-bar-title),
-.shell-page__sticky-header ::slotted(ds-bar-workflow) {
+.shell-page__desktop-header ::slotted(ds-bar-title),
+.shell-page__desktop-header ::slotted(ds-bar-workflow),
+.shell-page__mobile-header ::slotted(ds-mobile-header) {
   display: block;
   min-width: 0;
+}
+
+.shell-page__desktop-header[hidden],
+.shell-page__mobile-header[hidden] {
+  display: none;
+}
+
+:host(.shell-page-host--mobile) .shell-page__scroll-sentinel,
+:host(.shell-page-host--mobile) .shell-page__flow-spacer {
+  display: none;
 }
 
 .shell-page__flow-spacer {

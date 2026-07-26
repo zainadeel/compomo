@@ -112,12 +112,15 @@ Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages
 ```html
 <ds-shell-app nav-style="dashboard" gradient>
   <ds-panel-nav slot="panel" …></ds-panel-nav>
-  <ds-shell-mobile-nav slot="mobile-navigation" …></ds-shell-mobile-nav>
+  <ds-mobile-sheet-nav slot="mobile-sheet-nav" …></ds-mobile-sheet-nav>
   <ds-bar-nav slot="bar" …></ds-bar-nav>
-  <ds-shell-mobile-section-nav slot="mobile-section-nav" …></ds-shell-mobile-section-nav>
   <ds-shell-tools slot="tools" …></ds-shell-tools>
-  <main>…page content…</main>
-  <ds-shell-mobile-bar slot="mobile-bar" …></ds-shell-mobile-bar>
+  <ds-shell-page responsive-mode="mobile">
+    <ds-bar-title slot="header" …></ds-bar-title>
+    <ds-mobile-header slot="mobile-header" …></ds-mobile-header>
+    …page content…
+  </ds-shell-page>
+  <ds-mobile-bar-nav slot="mobile-bar-nav" …></ds-mobile-bar-nav>
 </ds-shell-app>
 ```
 
@@ -126,7 +129,7 @@ Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages
 | `navStyle` | `dashboard` | Shell propagates to slotted `ds-panel-nav` and `ds-bar-nav` |
 | `gradientPreset` | `neutral` | Desktop/tablet chrome wash: `none`, `cool`, `neutral`, `warm`, or `fresh`; mobile always uses a solid primary stage |
 | `mobileDestination` | `area` | Controlled mobile Area, Search, Agents, or Inbox stage |
-| `mobileNavigationOpen` | `false` | Controlled mobile navigation-pane state |
+| `mobileSheetNavOpen` | `false` | Controlled Mobile Sheet Nav state |
 
 ShellApp reflects `responsive-mode` and emits `dsResponsiveModeChange` at the fixed boundaries: mobile below 768px, tablet from 768px through 1199px, and desktop at 1200px and wider. In mobile mode, the routed workspace stays mounted but becomes hidden and inert whenever Menu or a global tool occupies the stage. The bottom bar stays visible and owns its safe-area padding.
 

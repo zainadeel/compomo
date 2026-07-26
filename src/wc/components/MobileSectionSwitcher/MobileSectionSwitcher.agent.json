@@ -1,0 +1,33 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-mobile-section-switcher",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-mobile-section-switcher",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Controlled mobile section chooser showing the current section, adjacent-position hints, and a complete tap menu.",
+  "useWhen": ["A mobile page or tool header must combine current-page identity with ordered peer-section navigation."],
+  "avoidWhen": ["Rendering desktop BarNav.", "The destination collection is primary application navigation."],
+  "commonlyComposedWith": ["component:ds-mobile-header"],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "The trigger exposes the current section, popup relationship, and expanded state.",
+    "Decorative previous and next position hints are hidden from assistive technology.",
+    "The menu is always available so a future swipe gesture is never the only navigation mechanism."
+  ],
+  "states": [
+    "Selection is controlled and dsChange reports intent without mutating value.",
+    "Dividers group menu items but never participate in previous or next resolution.",
+    "The first and last selectable sections expose only the available neighboring direction."
+  ],
+  "responsiveBehavior": ["Use only in the dedicated mobile header presentation."],
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.stories.ts"
+    }
+  ]
+}
+

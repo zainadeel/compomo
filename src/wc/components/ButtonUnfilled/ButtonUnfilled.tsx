@@ -13,16 +13,17 @@ export type ButtonUnfilledBackground =
 
 export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
 
-export type ButtonUnfilledSize = 'md' | 'sm' | 'xs';
+export type ButtonUnfilledSize = 'lg' | 'md' | 'sm' | 'xs';
 
 export type ButtonUnfilledWidth = ControlWidth;
 export type ButtonUnfilledPopup = 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
 
 /**
  * `ds-icon` size prop matching control-density icon metrics
- * (md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).
+ * (lg→24 / md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).
  */
-const ICON_SIZE: Record<ButtonUnfilledSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<ButtonUnfilledSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
@@ -151,7 +152,8 @@ export class ButtonUnfilled {
 
   render() {
     const bg = this.background;
-    const textVariant = CONTROL_TEXT_VARIANT[this.size];
+    const textVariant =
+      this.size === 'lg' ? 'text-body-large' : CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
     const cls: Record<string, boolean> = {
@@ -172,6 +174,7 @@ export class ButtonUnfilled {
       'button-unfilled--bordered': this.hasBorder,
       'button-unfilled--rounded': this.rounded,
       'ds-control-inactive': this.isInactive,
+      'ds-control--lg': this.size === 'lg',
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
@@ -193,6 +196,7 @@ export class ButtonUnfilled {
         class={{
           'button-unfilled-host': true,
           'button-unfilled-host--icon': this.variant === 'icon',
+          'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
