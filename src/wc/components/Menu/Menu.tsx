@@ -71,7 +71,7 @@ export class Menu {
 
   @Prop({ mutable: true }) open: boolean = false;
   @Prop() items: MenuItemData[] = [];
-  /** Give ordinary rows mutually-exclusive radio-menu semantics using isSelected. */
+  /** Give ordinary rows mutually-exclusive menu semantics using isSelected. */
   @Prop() selectionMode: MenuSelectionMode = 'none';
   @Prop() sections: MenuSection[] = [];
   /** Preferred side; placement flips to the opposite side when that offers a better fit. */
@@ -630,7 +630,7 @@ export class Menu {
                   section.items.map(item => {
                     const idx = flatIdx++;
                     const isFocused = this.focusedIndex === idx;
-                    const isRadioItem =
+                    const isSingleSelectionItem =
                       !hasCompositeSections &&
                       this.selectionMode === 'single' &&
                       !item.showSwitch;
@@ -656,14 +656,14 @@ export class Menu {
                             ? undefined
                             : item.showSwitch
                             ? 'menuitemcheckbox'
-                            : isRadioItem
+                            : isSingleSelectionItem
                             ? 'menuitemradio'
                             : 'menuitem'
                         }
                         aria-checked={
                           !hasCompositeSections && item.showSwitch
                             ? String(!!item.switchValue)
-                            : isRadioItem
+                            : isSingleSelectionItem
                             ? String(!!item.isSelected)
                             : undefined
                         }
@@ -675,7 +675,7 @@ export class Menu {
                         aria-current={
                           !hasCompositeSections &&
                           !item.showSwitch &&
-                          !isRadioItem &&
+                          !isSingleSelectionItem &&
                           item.isSelected
                             ? 'true'
                             : undefined
@@ -690,21 +690,6 @@ export class Menu {
                           this.focusedIndex = idx;
                         }}
                       >
-                        {isRadioItem && (
-                          <span
-                            class="menu-item__radio-box ds-interaction-fill__content"
-                            aria-hidden="true"
-                          >
-                            <span
-                              class={{
-                                'menu-item__radio': true,
-                                'menu-item__radio--checked': !!item.isSelected,
-                              }}
-                            >
-                              {item.isSelected && <span class="menu-item__radio-dot" />}
-                            </span>
-                          </span>
-                        )}
                         <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
                           <ds-text
                             class="menu-item__label ds-choice-item__label"

@@ -4395,7 +4395,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
+      "description": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4406,7 +4406,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
+          "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots, switches, and destructive actions.",
           "useWhen": [
             "A trigger reveals a short contextual list of commands or state-changing actions.",
             "Actions need grouping, mutually exclusive selected state, supplemental notification dots, switch rows, or destructive treatment."
@@ -4447,7 +4447,7 @@
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
             "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
-            "Single-selection menus use menuitemradio semantics and aria-checked on each row; the leading radio mark is presentation-only.",
+            "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
             "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
           ],

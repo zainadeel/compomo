@@ -1262,7 +1262,7 @@ export namespace Components {
          */
         "sections": MenuSection[];
         /**
-          * Give ordinary rows mutually-exclusive radio-menu semantics using isSelected.
+          * Give ordinary rows mutually-exclusive menu semantics using isSelected.
           * @default 'none'
          */
         "selectionMode": MenuSelectionMode;
@@ -5336,7 +5336,7 @@ declare namespace LocalJSX {
          */
         "sections"?: MenuSection[];
         /**
-          * Give ordinary rows mutually-exclusive radio-menu semantics using isSelected.
+          * Give ordinary rows mutually-exclusive menu semantics using isSelected.
           * @default 'none'
          */
         "selectionMode"?: MenuSelectionMode;
