@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.7.0](https://github.com/zainadeel/compomo/compare/v12.6.2...v12.7.0) (2026-07-26)
+
+
+### Added
+
+* add shared layout recipes ([#386](https://github.com/zainadeel/compomo/issues/386)) ([6b47967](https://github.com/zainadeel/compomo/commit/6b479672da03dc505dda670a3d3326daa25a0ca0))
+
 ## [12.6.2](https://github.com/zainadeel/compomo/compare/v12.6.1...v12.6.2) (2026-07-26)
 
 
