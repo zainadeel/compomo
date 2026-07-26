@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.2](https://github.com/zainadeel/compomo/compare/v12.6.1...v12.6.2) (2026-07-26)
+
+
+### Fixed
+
+* stabilize touch and cursor interactions ([#384](https://github.com/zainadeel/compomo/issues/384)) ([4cd9d53](https://github.com/zainadeel/compomo/commit/4cd9d53b21dbf0c8ae106d3e5873ba390580150c))
+
 ## [12.6.1](https://github.com/zainadeel/compomo/compare/v12.6.0...v12.6.1) (2026-07-26)
 
 
