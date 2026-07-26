@@ -53,6 +53,7 @@
     "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
   ],
   "states": [
+    "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
     "General content UI keeps the selected interaction fill and border for persistent active state.",
     "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
     "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",

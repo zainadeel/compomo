@@ -2,11 +2,37 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-mobile-sheet-nav.js';
 
-const groups = [
+const dashboardGroups = [
   {
+    id: 'operations',
     items: [
       { id: 'tracking', label: 'Tracking', icon: 'MapPage', href: '/dashboard/tracking' },
+      { id: 'operations', label: 'Operations', icon: 'Task', href: '/dashboard/operations' },
       { id: 'workforce', label: 'Workforce', icon: 'Person', href: '/dashboard/workforce' },
+    ],
+  },
+  {
+    id: 'administration',
+    items: [
+      { id: 'security', label: 'Security', icon: 'Shield', href: '/dashboard/security' },
+      { id: 'devices', label: 'Devices', icon: 'Devices', href: '/dashboard/devices' },
+    ],
+  },
+];
+
+const settingsGroups = [
+  {
+    id: 'personal',
+    items: [
+      { id: 'account', label: 'Account', icon: 'Avatar', href: '/settings/account' },
+      { id: 'preferences', label: 'Preferences', icon: 'Gear', href: '/settings/preferences' },
+    ],
+  },
+  {
+    id: 'organization',
+    items: [
+      { id: 'users', label: 'Users', icon: 'Person', href: '/settings/users' },
+      { id: 'security', label: 'Security', icon: 'Shield', href: '/settings/security' },
     ],
   },
 ];
@@ -24,8 +50,8 @@ export const Foundation: Story = {
       <ds-mobile-sheet-nav
         open
         current-url="/dashboard/tracking/live-map"
-        .dashboardGroups=${groups}
-        .settingsGroups=${[]}
+        .dashboardGroups=${dashboardGroups}
+        .settingsGroups=${settingsGroups}
       ></ds-mobile-sheet-nav>
     </div>
   `,

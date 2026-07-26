@@ -2,6 +2,9 @@
 @import './interaction-fill.css';
 @import './control-inactive.css';
 @import './control-density.css';
+@import './chrome-layout.css';
+@import './control-parts.css';
+@import './empty-region.css';
 
 .ds-choice-popup {
   box-sizing: border-box;
@@ -69,13 +72,6 @@
   overscroll-behavior: contain;
 }
 
-.ds-choice-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--dimension-space-050);
-  padding: var(--dimension-space-050);
-}
-
 .ds-choice-section--divided {
   border-bottom: var(--dimension-stroke-width-015) solid var(--color-border-tertiary);
 }
@@ -95,13 +91,7 @@ ds-text.ds-choice-section__header {
 }
 
 .ds-choice-item {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-control-gap, var(--dimension-space-050));
   width: 100%;
-  height: var(--ds-control-height, var(--dimension-size-400));
-  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
-  box-sizing: border-box;
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   background: transparent;
@@ -125,12 +115,6 @@ ds-text.ds-choice-section__header {
   flex-direction: column;
   gap: var(--dimension-space-025);
   min-width: 0;
-}
-
-ds-text.ds-choice-item__label,
-.ds-choice-item__subtext,
-ds-text.ds-choice-item__subtext {
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
 ds-text.ds-choice-item__label {
@@ -160,10 +144,6 @@ ds-text.ds-choice-item__subtext {
 
 .ds-choice-empty,
 .ds-choice-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
   min-height: var(--dimension-size-600);
   padding: var(--dimension-space-100);
 }

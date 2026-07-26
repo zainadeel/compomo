@@ -48,6 +48,8 @@
     "Use errorMessage with error so the trigger is described by the rendered alert."
   ],
   "states": [
+    "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+    "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
     "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
     "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
     "Selecting an option keeps the popup open so additional values can be toggled.",

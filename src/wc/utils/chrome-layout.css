@@ -27,7 +27,9 @@
 :host(.ds-chrome-row),
 .ds-chrome-row,
 :host(.ds-chrome-column),
-.ds-chrome-column {
+.ds-chrome-column,
+:host(.ds-chrome-grid),
+.ds-chrome-grid {
   display: flex;
   box-sizing: border-box;
   gap: var(--ds-chrome-gap, var(--dimension-space-100));
@@ -43,4 +45,10 @@
 :host(.ds-chrome-column),
 .ds-chrome-column {
   flex-direction: column;
+}
+
+:host(.ds-chrome-grid),
+.ds-chrome-grid {
+  display: grid;
+  align-items: center;
 }

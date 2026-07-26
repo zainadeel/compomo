@@ -594,6 +594,8 @@ export class Menu {
                   'menu-section--divided': si < sections.length - 1,
                   'menu-section--gradient-picker': isMenuPickerSection(section),
                   'ds-choice-section': true,
+                  'ds-chrome-column': true,
+                  'ds-chrome-space--sm': true,
                   'ds-choice-section--divided': si < sections.length - 1,
                 }}
                 role={section.header ? 'group' : undefined}
@@ -647,6 +649,7 @@ export class Menu {
                         class={{
                           'menu-item': true,
                           'ds-choice-item': true,
+                          'ds-control-frame': true,
                           [`ds-control--${this.size}`]: true,
                           'ds-focus-ring-inset': true,
                           'ds-focus-ring--visible': isFocused && this.focusRingVisible,
@@ -698,7 +701,7 @@ export class Menu {
                       >
                         <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
                           <ds-text
-                            class="menu-item__label ds-choice-item__label"
+                            class="menu-item__label ds-choice-item__label ds-control-label-box"
                             as="span"
                             variant={CONTROL_TEXT_VARIANT[this.size]}
                             color={item.isSelected ? 'primary' : 'secondary'}
@@ -707,7 +710,7 @@ export class Menu {
                           </ds-text>
                           {item.subtext && (
                             <ds-text
-                              class="menu-item__subtext ds-choice-item__subtext"
+                              class="menu-item__subtext ds-choice-item__subtext ds-control-label-box"
                               as="span"
                               variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                               color="secondary"

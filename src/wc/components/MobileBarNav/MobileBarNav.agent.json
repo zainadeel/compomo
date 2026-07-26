@@ -24,7 +24,7 @@
     "Direct touch paints the pressed overlay immediately, keeps a quick tap visible for one short frame, and clears it after release or cancellation without relying on Safari's latch-prone active state."
   ],
   "responsiveBehavior": [
-    "Render only below the mobile breakpoint and preserve safe-area clearance.",
+    "Render only below the mobile breakpoint; its secondary surface extends through the bottom safe-area inset when the application enables viewport-fit=cover.",
     "The secondary-background bar keeps an 8px outer inset; its two icon-only groups anchor to opposite edges while retaining fixed 40px targets and a divider between Menu and current area.",
     "Bar chrome and its divider are not text-selectable and suppress the iOS touch callout."
   ],

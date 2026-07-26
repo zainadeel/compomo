@@ -773,7 +773,7 @@ export class PanelNav {
           }
         >
           {/* ── Header: Motive logo, reveals collapse toggle on hover ── */}
-          <div class="panel-nav__header">
+          <div class="panel-nav__header ds-chrome-row ds-chrome-space--md">
             <button
               type="button"
               class="panel-nav__header-btn ds-focus-ring-inset ds-interaction-fill"
@@ -818,6 +818,8 @@ export class PanelNav {
           <div
             class={{
               'panel-nav__body': true,
+              'ds-chrome-column': true,
+              'ds-chrome-space--md': true,
               'ds-scrollbar-hidden': true,
               'ds-focus-ring': this.bodyScrollable,
               ...scrollEdgeFadeClassMap({ edges: 'bottom' }),
@@ -832,25 +834,27 @@ export class PanelNav {
             aria-label={this.bodyScrollable ? this.navigationItemsLabel : undefined}
             tabIndex={this.bodyScrollable ? 0 : undefined}
           >
-            {(() => {
-              let flatIdx = 0;
-              return this.parsedGroups.map(group => (
-                <div class="panel-nav__group">
-                  {group.label && (
-                    <ds-text
-                      class="panel-nav__group-label ds-control--md"
-                      as="span"
-                      variant="text-caption"
-                      emphasis
-                      color="inherit"
-                    >
-                      {group.label}
-                    </ds-text>
-                  )}
-                  {group.items.map(item => this.renderNavItem(item, flatIdx++, collapsed))}
-                </div>
-              ));
-            })()}
+            <div class="panel-nav__sections">
+              {(() => {
+                let flatIdx = 0;
+                return this.parsedGroups.map(group => (
+                  <div class="panel-nav__group">
+                    {group.label && (
+                      <ds-text
+                        class="panel-nav__group-label ds-control--md"
+                        as="span"
+                        variant="text-caption"
+                        emphasis
+                        color="inherit"
+                      >
+                        {group.label}
+                      </ds-text>
+                    )}
+                    {group.items.map(item => this.renderNavItem(item, flatIdx++, collapsed))}
+                  </div>
+                ));
+              })()}
+            </div>
           </div>
 
           {/* ── Footer ── */}

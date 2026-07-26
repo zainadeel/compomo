@@ -1352,6 +1352,7 @@
             "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
           ],
           "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
             "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
             "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
             "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
@@ -1524,6 +1525,7 @@
             "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
           ],
           "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
             "General content UI keeps the selected interaction fill and border for persistent active state.",
             "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
@@ -1719,6 +1721,7 @@
             "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
           ],
           "states": [
+            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills the remaining card body while an optional legend remains content-sized.",
             "The card disables local hover highlighting on a slotted ChartLegend because bar legends are static keys.",
             "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
@@ -1833,6 +1836,7 @@
             "The application owns meaningful loading, empty, and error status copy when either content region is temporarily replaced or absent."
           ],
           "states": [
+            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills remaining card height while the legend remains content-sized.",
             "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
             "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
@@ -1947,6 +1951,7 @@
             "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
           ],
           "states": [
+            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills the remaining card body while the legend remains content-sized.",
             "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
             "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
@@ -3687,7 +3692,7 @@
             "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
             "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
             "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
-            "All content is centered. The owner supplies container size and surrounding padding; do not compose actions into or immediately alongside the current EmptyState pattern.",
+            "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently. Do not compose actions into or immediately alongside the current EmptyState pattern.",
             "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
           ],
           "responsiveBehavior": [
@@ -3709,6 +3714,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/EmptyState/EmptyState.stories.ts"
+            },
+            {
+              "label": "Shared layout recipe foundation",
+              "path": "docs/layout-recipe-foundation.md"
             }
           ]
         },
@@ -3790,6 +3799,7 @@
             "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
           ],
           "states": [
+            "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics.",
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
             "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
             "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
@@ -4039,6 +4049,7 @@
             "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
           ],
           "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
             "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
             "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
             "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
@@ -5008,7 +5019,7 @@
             "Direct touch paints the pressed overlay immediately, keeps a quick tap visible for one short frame, and clears it after release or cancellation without relying on Safari's latch-prone active state."
           ],
           "responsiveBehavior": [
-            "Render only below the mobile breakpoint and preserve safe-area clearance.",
+            "Render only below the mobile breakpoint; its secondary surface extends through the bottom safe-area inset when the application enables viewport-fit=cover.",
             "The secondary-background bar keeps an 8px outer inset; its two icon-only groups anchor to opposite edges while retaining fixed 40px targets and a divider between Menu and current area.",
             "Bar chrome and its divider are not text-selectable and suppress the iOS touch callout."
           ],
@@ -5346,7 +5357,9 @@
             "Area, Help, and Account events express intent while the application owns navigation and product behavior."
           ],
           "responsiveBehavior": [
-            "The pane fills the mobile content stage while the bottom bar remains available."
+            "The pane fills the mobile content stage while the bottom bar remains available.",
+            "The sheet header and scrollable navigation body each use the shared 8px chrome inset; large destination controls retain their independent 40px density.",
+            "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
           ],
           "references": [
             {
@@ -6725,6 +6738,8 @@
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
           "states": [
+            "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
             "Value is controlled through the mutable value property; dsChange reports user selection and clearing.",
             "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
             "When allowClear is enabled, the clear affordance appears only after a value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
@@ -6982,6 +6997,8 @@
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
           "states": [
+            "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
             "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
             "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
             "Selecting an option keeps the popup open so additional values can be toggled.",
@@ -7258,6 +7275,7 @@
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On mobile, ShellApp hides and inerts PanelNav and BarNav, uses a solid primary stage, and composes routed ShellPage MobileHeader presentations, MobileSheetNav, ShellTools, and the persistent five-item MobileBarNav.",
+            "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
             "The bottom bar remains visible at all route and tool depths in the foundation release."
@@ -8041,6 +8059,7 @@
             "Read-only sliders remain focusable and submittable; inactive or disabled sliders leave the tab order and form submission."
           ],
           "states": [
+            "The label, slider control, value display, and supporting content follow the shared 4px vertical field flow.",
             "value is mutable: user pointer, keyboard, or assistive-technology input updates it and emits dsChange continuously.",
             "dsCommit emits once a pointer interaction completes or the native range input commits a keyboard or assistive-technology change.",
             "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",

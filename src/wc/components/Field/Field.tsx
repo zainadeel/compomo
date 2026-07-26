@@ -186,7 +186,7 @@ export class Field {
         onChange={this.handleValueChange}
         onDsChange={this.handleValueChange}
       >
-        <div class="field">
+        <div class="field ds-field-stack">
           <ds-text
             class="field__label"
             as="label"

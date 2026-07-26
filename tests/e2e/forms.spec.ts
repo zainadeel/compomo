@@ -267,6 +267,17 @@ test('select, multi-select, and menu propagate density into choice rows', async 
   await page.locator('#menu-xs').evaluate((element: HTMLDsMenuElement) => {
     element.open = true;
   });
+  const menuSection = page.locator('#menu-xs .ds-choice-section').first();
+  await expect(menuSection).toHaveClass(/ds-chrome-column/);
+  await expect(menuSection).toHaveClass(/ds-chrome-space--sm/);
+  await expect
+    .poll(() =>
+      menuSection.evaluate(element => {
+        const style = getComputedStyle(element);
+        return { gap: style.gap, padding: style.padding };
+      })
+    )
+    .toEqual({ gap: '4px', padding: '4px' });
   const menuRow = page.locator('#menu-xs .menu-item').first();
   await expect(menuRow).toHaveClass(/ds-control--xs/);
   await expect(menuRow.locator('.menu-item__label')).toHaveJSProperty('variant', 'text-caption');

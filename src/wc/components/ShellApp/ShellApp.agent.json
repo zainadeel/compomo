@@ -57,6 +57,7 @@
     "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
     "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
     "On mobile, ShellApp hides and inerts PanelNav and BarNav, uses a solid primary stage, and composes routed ShellPage MobileHeader presentations, MobileSheetNav, ShellTools, and the persistent five-item MobileBarNav.",
+    "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
     "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
     "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
     "The bottom bar remains visible at all route and tool depths in the foundation release."

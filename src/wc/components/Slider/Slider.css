@@ -1,4 +1,5 @@
 @import '../../utils/control-inactive.css';
+@import '../../utils/field-stack.css';
 
 :host {
   --ds-slider-control-size: var(--dimension-size-400);
@@ -6,10 +7,7 @@
   --ds-slider-track-size: var(--dimension-size-100);
   --ds-slider-track-stroke: var(--dimension-stroke-width-012);
   --ds-slider-vertical-length: calc(var(--dimension-size-800) * 3);
-  display: flex;
-  flex-direction: column;
   box-sizing: border-box;
-  gap: var(--dimension-space-050);
   width: 100%;
   color: var(--color-foreground-primary);
 }

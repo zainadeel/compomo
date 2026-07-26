@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 
@@ -16,7 +17,6 @@
 .bar-title {
   position: relative;
   min-width: 0;
-  padding: 0;
   box-sizing: border-box;
   background: var(--color-background-primary);
 }
@@ -160,7 +160,6 @@
 
 :host(.bar-title-host--compact) .bar-title {
   height: var(--dimension-size-600);
-  padding: var(--dimension-space-100);
 }
 
 :host(.bar-title-host--compact) .bar-title::after {

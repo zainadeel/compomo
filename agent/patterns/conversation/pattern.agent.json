@@ -66,7 +66,8 @@
     "Do not force the reader back to the live edge after deliberate transcript interaction."
   ],
   "responsiveBehavior": [
-    "Let the containing product select drawer or full-width layout while keeping transcript measure readable and rich content horizontally scrollable."
+    "Let the containing product select drawer or full-width layout while keeping transcript measure readable and rich content horizontally scrollable.",
+    "When history and transcript are simultaneously visible, establish one shared master-detail layout contract for pane width, divider, transcript measure, composer containment, and empty-region placement; do not independently recreate that geometry for each conversation channel."
   ],
   "implementations": {
     "customElements": {
@@ -78,6 +79,7 @@
   },
   "references": [
     "src/wc/components/ConversationList/ConversationList.stories.ts",
-    "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+    "src/wc/components/MessageScroller/MessageScroller.stories.ts",
+    "docs/layout-recipe-foundation.md"
   ]
 }

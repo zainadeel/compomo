@@ -39,6 +39,7 @@
     "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
   ],
   "states": [
+    "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics.",
     "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
     "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
     "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",

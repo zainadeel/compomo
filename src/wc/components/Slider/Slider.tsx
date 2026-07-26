@@ -476,6 +476,7 @@ export class Slider {
         aria-disabled={this.isDisabled ? 'true' : undefined}
         class={{
           slider: true,
+          'ds-field-stack': true,
           [`slider--${this.size}`]: true,
           [`slider--${this.orientation}`]: true,
           [`slider--thumb-${this.thumbAlignment}`]: true,

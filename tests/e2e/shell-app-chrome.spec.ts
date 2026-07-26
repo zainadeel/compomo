@@ -149,7 +149,7 @@ test.describe('App shell chrome', () => {
     await expect.poll(actionGap).toBe(4);
   });
 
-  test('keeps fixed 4px header gaps while only the title shrinks', async ({ page }) => {
+  test('keeps shared 8px header gaps while only the title shrinks', async ({ page }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
     const shell = page.locator('ds-shell-app');
     const tools = page.locator('ds-panel-tools');
@@ -178,8 +178,8 @@ test.describe('App shell chrome', () => {
     expect(wide).toMatchObject({
       leadingWidth: 32,
       trailingWidth: 68,
-      leadingGap: 4,
-      trailingGap: 4,
+      leadingGap: 8,
+      trailingGap: 8,
     });
 
     await shell.evaluate(element => {
@@ -191,8 +191,8 @@ test.describe('App shell chrome', () => {
     await expect.poll(geometry).toMatchObject({
       leadingWidth: 32,
       trailingWidth: 68,
-      leadingGap: 4,
-      trailingGap: 4,
+      leadingGap: 8,
+      trailingGap: 8,
     });
     const narrow = await geometry();
     expect(narrow).not.toBeNull();

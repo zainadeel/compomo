@@ -1,0 +1,29 @@
+/**
+ * Reusable control anatomy. Density values come from control-density.css;
+ * these classes only consume them to prevent individual controls from
+ * reimplementing the same frame, icon box, and text inset geometry.
+ */
+
+.ds-control-frame {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding-inline: var(--ds-control-padding-inline, var(--dimension-space-075));
+  gap: var(--ds-control-gap, var(--dimension-space-050));
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+}
+
+.ds-control-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+}
+
+.ds-control-label-box {
+  min-width: 0;
+  padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
+}

@@ -1,11 +1,7 @@
+@import '../../utils/field-stack.css';
+
 :host {
   display: block;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--dimension-space-050);
 }
 
 .field__control {

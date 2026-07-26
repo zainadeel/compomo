@@ -202,7 +202,7 @@ export class MobileBarNav {
 
     return (
       <Host>
-        <nav class="mobile-bar-nav" aria-label="Primary">
+        <nav class="mobile-bar-nav ds-chrome-row ds-chrome-space--md" aria-label="Primary">
           <div class="mobile-bar-nav__group mobile-bar-nav__group--context">
             <button
               id="ds-mobile-sheet-nav-trigger"

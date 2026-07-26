@@ -1,0 +1,48 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Layout Recipes" />
+
+# Layout recipes
+
+CompoMo components reuse a small set of structural recipes so related controls
+grow, shrink, and respond together. Consumers select components and their
+documented props; internal recipe class names are not public API.
+
+## Controls
+
+Control density defines the complete geometry for a size: height, inline
+padding, gap, icon zone, text-container inset, and radius. Buttons, Inputs,
+Selects, Menu choices, and conversation rows consume the same anatomy while
+retaining their own semantics, borders, surfaces, and interaction behavior.
+
+Use each component's `size` property. Do not copy its internal padding onto a
+consumer wrapper.
+
+## Fields
+
+Field, Input, Select, SelectMulti, and Slider share a 4px vertical flow between
+the control and supporting or error content. `ds-field` remains the preferred
+composition when a persistent external label or description is required.
+
+## Empty regions
+
+`ds-empty-state` owns the centered message composition. The containing region
+owns available size and outer padding. Repeated application layouts should
+define that region once so empty, populated, and fullscreen presentations use
+the same geometry.
+
+## Data visualization
+
+Bar, Line, and Donut data-viz cards share one body contract: the chart fills
+remaining space and the optional legend remains content-sized. Use the
+matching `ds-card-data-viz-*` component rather than recreating the card shell.
+
+## Select behavior
+
+Select and SelectMulti intentionally share popup positioning, dismissal,
+search focus, typeahead, and listbox keyboard traversal. Their selection and
+form contracts differ: Select commits one value and closes, while SelectMulti
+toggles an array and remains open.
+
+See **Utility → ControlDensity**, **Utility → ChromeLayout**, and the component
+stories for rendered examples.

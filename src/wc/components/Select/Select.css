@@ -1,12 +1,12 @@
 @import '../../utils/choice-list.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/control-width.css';
+@import '../../utils/field-stack.css';
 @import '../../utils/search-control.css';
 @import '../../utils/typography.css';
 
 :host(.select-host) {
   display: inline-flex;
-  flex-direction: column;
-  gap: var(--dimension-space-050);
   position: relative;
   outline: none;
   --ds-select-fg: var(--color-foreground-secondary);
@@ -22,13 +22,7 @@
 }
 
 .trigger {
-  display: inline-flex;
-  align-items: center;
   justify-content: flex-start;
-  box-sizing: border-box;
-  height: var(--ds-control-height, var(--dimension-size-400));
-  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
-  gap: var(--ds-control-gap, var(--dimension-space-050));
   background: transparent;
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
@@ -59,12 +53,6 @@
 .trigger__chevron {
   position: relative;
   z-index: 2;
-  flex-shrink: 0;
-  width: var(--ds-control-icon, var(--dimension-iconography-md));
-  height: var(--ds-control-icon, var(--dimension-iconography-md));
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .trigger__prefix {
@@ -79,8 +67,6 @@
   position: relative;
   z-index: 2;
   flex: 1 1 auto;
-  min-width: 0;
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   text-align: left;
   color: inherit;
   transition: color var(--effect-motion-short-2);

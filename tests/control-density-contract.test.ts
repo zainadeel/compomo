@@ -147,7 +147,8 @@ test('PanelTools search uses the shared Select search control at md density', ()
     /\.select-search__control > ds-icon\s*{[\s\S]*?color: var\(--color-foreground-secondary\);/,
   );
   assert.match(css, /height: var\(--dimension-size-600\);/);
-  assert.match(css, /padding: var\(--dimension-space-100\);/);
+  assert.match(source, /panel-tool-search ds-chrome-row ds-chrome-space--md/);
+  assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/search-control\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/typography\.css['"];/);

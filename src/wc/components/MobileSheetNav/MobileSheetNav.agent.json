@@ -21,7 +21,11 @@
     "Dashboard and Settings change only the flat destination collection being browsed.",
     "Area, Help, and Account events express intent while the application owns navigation and product behavior."
   ],
-  "responsiveBehavior": ["The pane fills the mobile content stage while the bottom bar remains available."],
+  "responsiveBehavior": [
+    "The pane fills the mobile content stage while the bottom bar remains available.",
+    "The sheet header and scrollable navigation body each use the shared 8px chrome inset; large destination controls retain their independent 40px density.",
+    "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
+  ],
   "references": [
     {
       "label": "Storybook",

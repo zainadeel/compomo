@@ -40,6 +40,7 @@
     "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
   ],
   "states": [
+    "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
     "The chart region fills the remaining card body while the legend remains content-sized.",
     "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
     "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",

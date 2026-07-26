@@ -179,6 +179,7 @@ export class ButtonUnfilled {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
+      'ds-control-frame': true,
       'button-unfilled--icon': this.variant === 'icon',
       'button-unfilled--label': this.variant === 'label',
       'button-unfilled--icon-label': this.variant === 'icon-label',
@@ -226,7 +227,7 @@ export class ButtonUnfilled {
           onClick={this.handleClick}
         >
           {this.showIcon && (
-            <span class="button-unfilled__icon-wrap ds-interaction-fill__content">
+            <span class="button-unfilled__icon-wrap ds-control-icon-box ds-interaction-fill__content">
               {this.isLoading
                 ? <ds-loader size={iconSize} color="inherit" />
                 : <ds-icon name={this.icon} size={iconSize} color="inherit" />
@@ -246,6 +247,7 @@ export class ButtonUnfilled {
             <ds-text
               class={{
                 'button-unfilled__label': true,
+                'ds-control-label-box': true,
                 'button-unfilled__label--loading': this.isLoading && this.variant === 'label',
                 'ds-interaction-fill__content': true,
               }}

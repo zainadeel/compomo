@@ -594,15 +594,19 @@ export class PanelTools {
         <div class="panel-tools__layout">
           <nav class="panel-tools__rail" aria-label={this.toolShortcutsLabel}>
             {headerItem ? (
-              <div class="panel-tools__rail-header">{this.renderRailAction(headerItem, 0)}</div>
+              <div class="panel-tools__rail-header ds-chrome-row ds-chrome-space--md">
+                {this.renderRailAction(headerItem, 0)}
+              </div>
             ) : null}
-            <div class="panel-tools__rail-body ds-scrollbar-hidden">
-              {bodyItems.map((item, bodyIdx) =>
-                this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx)
-              )}
+            <div class="panel-tools__rail-body ds-chrome-column ds-chrome-space--md ds-scrollbar-hidden">
+              <div class="panel-tools__rail-actions">
+                {bodyItems.map((item, bodyIdx) =>
+                  this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx)
+                )}
+              </div>
             </div>
             {footerItem ? (
-              <div class="panel-tools__rail-footer">
+              <div class="panel-tools__rail-footer ds-chrome-row ds-chrome-space--md">
                 {this.renderRailAction(footerItem, footerIndex)}
               </div>
             ) : null}

@@ -172,7 +172,7 @@ export class BarWorkflow {
 
   private renderDesktop() {
     return (
-      <div class="bar-workflow">
+      <div class="bar-workflow ds-chrome-row ds-chrome-space--md">
           <div class="bar-workflow__identity">
             <ds-tooltip label={this.exitLabel} side="bottom" size="sm">
               <ds-button-unfilled

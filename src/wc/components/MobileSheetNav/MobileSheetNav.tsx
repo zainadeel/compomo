@@ -47,10 +47,6 @@ export class MobileSheetNav {
     return this.browseContext === 'settings' ? this.settingsGroups : this.dashboardGroups;
   }
 
-  private get items(): PanelNavItem[] {
-    return this.groups.flatMap(group => group.items);
-  }
-
   private get activeId(): string {
     return deriveActiveIdFromUrl(this.currentUrl, [
       ...this.dashboardGroups.flatMap(group => group.items),
@@ -177,7 +173,7 @@ export class MobileSheetNav {
           id="ds-mobile-sheet-nav"
           class="mobile-sheet-nav"
         >
-          <header class="mobile-sheet-nav__header">
+          <header class="mobile-sheet-nav__header ds-chrome-grid ds-chrome-space--md">
             <div class="mobile-sheet-nav__brand">{this.renderLogo()}</div>
             <ds-tab-group
               class="mobile-sheet-nav__context"
@@ -192,9 +188,18 @@ export class MobileSheetNav {
             </div>
           </header>
 
-          <nav class="mobile-sheet-nav__body" aria-label={this.navigationLabel}>
-            <div class="mobile-sheet-nav__items">
-              {this.items.map(item => this.renderItem(item))}
+          <nav
+            class="mobile-sheet-nav__body ds-chrome-column ds-chrome-space--md"
+            aria-label={this.navigationLabel}
+          >
+            <div class="mobile-sheet-nav__sections">
+              {this.groups
+                .filter(group => group.items.length > 0)
+                .map(group => (
+                  <div class="mobile-sheet-nav__items">
+                    {group.items.map(item => this.renderItem(item))}
+                  </div>
+                ))}
             </div>
           </nav>
         </section>

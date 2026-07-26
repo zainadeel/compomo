@@ -157,6 +157,7 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
     class={{
       'select-option': true,
       'ds-choice-item': true,
+      'ds-control-frame': true,
       [`ds-control--${size}`]: true,
       'ds-focus-ring-inset': true,
       'ds-focus-ring--visible': active && focusRingVisible,
@@ -177,7 +178,7 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
     {leading}
     <div class="ds-choice-item__content ds-interaction-fill__content">
       <ds-text
-        class="ds-choice-item__label"
+        class="ds-choice-item__label ds-control-label-box"
         as="span"
         variant={CONTROL_TEXT_VARIANT[size]}
         color={selected ? 'primary' : 'secondary'}
@@ -185,7 +186,7 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
         {option.label}
       </ds-text>
       {usesSubtext && (
-        <ds-text class="ds-choice-item__subtext" as="span" variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]} color="secondary">
+        <ds-text class="ds-choice-item__subtext ds-control-label-box" as="span" variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]} color="secondary">
           {option.subtext?.trim() || '—'}
         </ds-text>
       )}
