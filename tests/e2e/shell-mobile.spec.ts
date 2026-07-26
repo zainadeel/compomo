@@ -85,11 +85,24 @@ test.describe('Responsive mobile shell foundation', () => {
       const primaryForeground = getComputedStyle(colorProbe).color;
       colorProbe.style.color = 'var(--color-foreground-tertiary)';
       const tertiaryForeground = getComputedStyle(colorProbe).color;
+      colorProbe.style.backgroundColor = 'var(--color-background-secondary)';
+      const secondaryBackground = getComputedStyle(colorProbe).backgroundColor;
       colorProbe.remove();
+      const barRect = bar?.getBoundingClientRect();
+      const groupRects = groups.map(group => group.getBoundingClientRect());
 
       return {
         barGap: bar ? getComputedStyle(bar).gap : '',
+        barJustifyContent: bar ? getComputedStyle(bar).justifyContent : '',
         barPaddingInline: bar ? getComputedStyle(bar).paddingInline : '',
+        barBackground: bar ? getComputedStyle(bar).backgroundColor : '',
+        groupEdgeInsets:
+          barRect && groupRects.length === 2
+            ? [
+                Math.round(groupRects[0].left - barRect.left),
+                Math.round(barRect.right - groupRects[1].right),
+              ]
+            : [],
         groupGaps: groups.map(group => getComputedStyle(group).gap),
         itemSizes: items.map(item => {
           const rect = item.getBoundingClientRect();
@@ -108,11 +121,15 @@ test.describe('Responsive mobile shell foundation', () => {
         unselectedForeground: unselected ? getComputedStyle(unselected).color : '',
         primaryForeground,
         tertiaryForeground,
+        secondaryBackground,
       };
     });
 
     expect(metrics.barGap).toBe('16px');
-    expect(metrics.barPaddingInline).toBe('16px');
+    expect(metrics.barJustifyContent).toBe('space-between');
+    expect(metrics.barPaddingInline).toBe('8px');
+    expect(metrics.barBackground).toBe(metrics.secondaryBackground);
+    expect(metrics.groupEdgeInsets).toEqual([8, 8]);
     expect(metrics.groupGaps).toEqual(['8px', '8px']);
     expect(metrics.itemSizes).toEqual(Array.from({ length: 5 }, () => [40, 40]));
     expect(metrics.itemRadii).toEqual(Array.from({ length: 5 }, () => '2px'));
@@ -349,7 +366,12 @@ test.describe('Responsive mobile shell foundation', () => {
     await page
       .getByRole('button', { name: 'Change People view. Current section: Drivers' })
       .click();
-    await page.getByRole('menuitemradio', { name: 'Managers' }).click();
+    await expect(page.getByRole('menuitemradio')).toHaveCount(0);
+    await expect(page.getByRole('menuitem', { name: 'Drivers' })).toHaveAttribute(
+      'aria-current',
+      'true'
+    );
+    await page.getByRole('menuitem', { name: 'Managers' }).click();
     await expect(
       page.getByRole('button', { name: 'Change People view. Current section: Managers' })
     ).toBeVisible();

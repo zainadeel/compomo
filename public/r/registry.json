@@ -5003,7 +5003,7 @@
           ],
           "responsiveBehavior": [
             "Render only below the mobile breakpoint and preserve safe-area clearance.",
-            "The two icon-only control groups remain centered with fixed 40px targets and a divider between Menu and current area."
+            "The secondary-background bar keeps an 8px outer inset; its two icon-only groups anchor to opposite edges while retaining fixed 40px targets and a divider between Menu and current area."
           ],
           "references": [
             {
@@ -5242,7 +5242,8 @@
           "accessibility": [
             "The trigger exposes the current section, popup relationship, and expanded state.",
             "Decorative previous and next position hints are hidden from assistive technology.",
-            "The menu is always available so a future swipe gesture is never the only navigation mechanism."
+            "The menu is always available so a future swipe gesture is never the only navigation mechanism.",
+            "Peer destinations use menuitem semantics with aria-current on the active page; they do not present a radio-control affordance."
           ],
           "states": [
             "Selection is controlled and dsChange reports intent without mutating value.",

@@ -4,6 +4,15 @@
   --ds-focus-ring-color: var(--color-interaction-focus);
 }
 
+:host(.ds-focus-ring),
+.ds-focus-ring,
+:host(.ds-focus-ring-inset),
+.ds-focus-ring-inset {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 :host(.ds-focus-ring:focus-visible),
 .ds-focus-ring:focus-visible {
   outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);

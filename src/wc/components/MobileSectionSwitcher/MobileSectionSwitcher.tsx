@@ -189,7 +189,6 @@ export class MobileSectionSwitcher {
             id={this.menuId}
             anchorId={this.triggerId}
             align="center"
-            selectionMode="single"
             menuLabel={this.navigationLabel}
             open={this.menuOpen}
             initialFocusVisible={this.initialFocusVisible}

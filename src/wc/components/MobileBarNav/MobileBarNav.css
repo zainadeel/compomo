@@ -4,20 +4,20 @@
 :host {
   display: block;
   min-width: 0;
-  background: var(--color-background-primary);
+  background: var(--color-background-secondary);
   color: var(--color-foreground-tertiary);
 }
 
 .mobile-bar-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: var(--dimension-space-200);
   min-width: 0;
-  padding: var(--dimension-space-200) var(--dimension-space-200)
-    max(var(--dimension-space-200), env(safe-area-inset-bottom));
+  padding: var(--dimension-space-100) var(--dimension-space-100)
+    max(var(--dimension-space-100), env(safe-area-inset-bottom));
   border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
-  background: var(--color-background-primary);
+  background: var(--color-background-secondary);
   box-sizing: border-box;
 }
 
