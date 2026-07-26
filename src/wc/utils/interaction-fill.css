@@ -101,9 +101,15 @@
   --ds-interaction-dot-ring: var(--ds-interaction-active);
 }
 
-:host(.ds-interaction-fill:hover:not(:disabled))::after,
-.ds-interaction-fill:hover:not(:disabled)::after {
-  background: var(--ds-interaction-hover);
+/*
+ * Touch browsers can latch :hover after a tap. Only hover-capable fine
+ * pointers receive the hover wash; touch still receives :active press feedback.
+ */
+@media (hover: hover) and (pointer: fine) {
+  :host(.ds-interaction-fill:hover:not(:disabled))::after,
+  .ds-interaction-fill:hover:not(:disabled)::after {
+    background: var(--ds-interaction-hover);
+  }
 }
 
 :host(.ds-interaction-fill:active:not(:disabled))::after,

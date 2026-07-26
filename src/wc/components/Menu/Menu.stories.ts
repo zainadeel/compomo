@@ -132,7 +132,7 @@ export const WithSwitch: Story = {
 };
 
 export const SingleSelection: Story = {
-  name: 'Single-selection radio menu',
+  name: 'Single-selection menu',
   render: () => html`
     <div style="padding: 16px; height: 280px">
       <span id="menu-anchor-radio" style="display: inline-block; width: 1px; height: 1px"></span>

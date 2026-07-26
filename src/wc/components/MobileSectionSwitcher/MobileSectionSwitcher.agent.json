@@ -15,7 +15,8 @@
   "accessibility": [
     "The trigger exposes the current section, popup relationship, and expanded state.",
     "Decorative previous and next position hints are hidden from assistive technology.",
-    "The menu is always available so a future swipe gesture is never the only navigation mechanism."
+    "The menu is always available so a future swipe gesture is never the only navigation mechanism.",
+    "Peer destinations use menuitem semantics with aria-current on the active page; they do not present a radio-control affordance."
   ],
   "states": [
     "Selection is controlled and dsChange reports intent without mutating value.",
@@ -30,4 +31,3 @@
     }
   ]
 }
-

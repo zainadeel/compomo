@@ -4395,7 +4395,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
+      "description": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4406,7 +4406,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action menu with flat commands, grouped sections, single-selection radio choices, supplemental notification dots, switches, and destructive actions.",
+          "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots, switches, and destructive actions.",
           "useWhen": [
             "A trigger reveals a short contextual list of commands or state-changing actions.",
             "Actions need grouping, mutually exclusive selected state, supplemental notification dots, switch rows, or destructive treatment."
@@ -4447,7 +4447,7 @@
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
             "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
-            "Single-selection menus use menuitemradio semantics and aria-checked on each row; the leading radio mark is presentation-only.",
+            "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
             "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
           ],
@@ -5003,7 +5003,7 @@
           ],
           "responsiveBehavior": [
             "Render only below the mobile breakpoint and preserve safe-area clearance.",
-            "The two icon-only control groups remain centered with fixed 40px targets and a divider between Menu and current area."
+            "The secondary-background bar keeps an 8px outer inset; its two icon-only groups anchor to opposite edges while retaining fixed 40px targets and a divider between Menu and current area."
           ],
           "references": [
             {
@@ -5242,7 +5242,8 @@
           "accessibility": [
             "The trigger exposes the current section, popup relationship, and expanded state.",
             "Decorative previous and next position hints are hidden from assistive technology.",
-            "The menu is always available so a future swipe gesture is never the only navigation mechanism."
+            "The menu is always available so a future swipe gesture is never the only navigation mechanism.",
+            "Peer destinations use menuitem semantics with aria-current on the active page; they do not present a radio-control affordance."
           ],
           "states": [
             "Selection is controlled and dsChange reports intent without mutating value.",

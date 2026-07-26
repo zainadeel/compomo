@@ -24,6 +24,19 @@ actionAnchor.addEventListener('click', () => {
 });
 actionMenu.addEventListener('dsClose', () => actionAnchor.setAttribute('aria-expanded', 'false'));
 
+const filterAnchor = document.getElementById('filter-anchor');
+const filterMenu = document.getElementById('filter-menu');
+filterMenu.selectionMode = 'single';
+filterMenu.items = [
+  { label: 'All chats', value: 'all', isSelected: true },
+  { label: 'Unread', value: 'unread', isSelected: false },
+];
+filterAnchor.addEventListener('click', () => {
+  filterMenu.open = true;
+  filterAnchor.setAttribute('aria-expanded', 'true');
+});
+filterMenu.addEventListener('dsClose', () => filterAnchor.setAttribute('aria-expanded', 'false'));
+
 const richAnchor = document.getElementById('rich-anchor');
 const richMenu = document.getElementById('rich-menu');
 richMenu.sections = [

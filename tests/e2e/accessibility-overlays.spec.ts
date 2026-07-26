@@ -28,6 +28,22 @@ test('plain menu restores focus on Escape but lets Tab continue forward', async 
   await expect(anchor).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('single-selection menu uses selected row styling without a radio glyph', async ({ page }) => {
+  await page.locator('#filter-anchor').click();
+  const menu = page.getByRole('menu', { name: 'Conversation filter' });
+  const selected = menu.getByRole('menuitemradio', { name: 'All chats', checked: true });
+  const unselected = menu.getByRole('menuitemradio', { name: 'Unread', checked: false });
+
+  await expect(selected).toBeVisible();
+  await expect(selected).toHaveClass(/ds-interaction-fill--selected/);
+  await expect(menu.locator('.menu-item__radio-box')).toHaveCount(0);
+  const colors = await Promise.all([
+    selected.locator('.menu-item__label').evaluate(element => getComputedStyle(element).color),
+    unselected.locator('.menu-item__label').evaluate(element => getComputedStyle(element).color),
+  ]);
+  expect(colors[0]).not.toBe(colors[1]);
+});
+
 test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {
   const anchor = page.locator('#collision-anchor');
   await anchor.click();
