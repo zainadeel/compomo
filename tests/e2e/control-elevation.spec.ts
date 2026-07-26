@@ -6,6 +6,74 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('scales the complete elevated surface without compounding its button scale', async ({
+  page,
+}) => {
+  const wrapper = page.locator('#opaque-wrapper');
+  const button = page.locator('#opaque-control button');
+  const wrapperBefore = await wrapper.boundingBox();
+  const buttonBefore = await button.boundingBox();
+  expect(wrapperBefore).not.toBeNull();
+  expect(buttonBefore).not.toBeNull();
+
+  await page.mouse.move(
+    buttonBefore!.x + buttonBefore!.width / 2,
+    buttonBefore!.y + buttonBefore!.height / 2,
+  );
+  await page.mouse.down();
+  await expect(wrapper).toHaveAttribute('data-ds-press-active', '');
+  await expect(wrapper).toHaveCSS('scale', '0.99');
+  await expect(button).toHaveCSS('scale', '1');
+
+  const pressed = await wrapper.evaluate(element => ({
+    wrapperScale: getComputedStyle(element).scale,
+    highlightScale: getComputedStyle(element, '::after').scale,
+    buttonScale: getComputedStyle(element.querySelector('button')!).scale,
+  }));
+  expect(pressed).toEqual({
+    wrapperScale: '0.99',
+    highlightScale: 'none',
+    buttonScale: '1',
+  });
+  expect(await wrapper.boundingBox()).not.toEqual(wrapperBefore);
+  await page.mouse.up();
+  await expect(wrapper).not.toHaveAttribute('data-ds-press-active');
+  await expect(wrapper).toHaveCSS('scale', 'none');
+  await expect(button).toHaveCSS('scale', 'none');
+});
+
+test('keeps the elevated wrapper still for inactive and reduced-motion buttons', async ({
+  page,
+}) => {
+  const wrapper = page.locator('#opaque-wrapper');
+  const host = page.locator('#opaque-control');
+  const button = host.locator('button');
+
+  await host.evaluate(element => {
+    (element as HTMLElement & { isInactive: boolean }).isInactive = true;
+  });
+  let bounds = await button.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+  await page.mouse.down();
+  await expect(wrapper).not.toHaveAttribute('data-ds-press-active');
+  await expect(wrapper).toHaveCSS('scale', 'none');
+  await page.mouse.up();
+
+  await host.evaluate(element => {
+    (element as HTMLElement & { isInactive: boolean }).isInactive = false;
+  });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  bounds = await button.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+  await page.mouse.down();
+  await expect(wrapper).toHaveAttribute('data-ds-press-active', '');
+  await expect(wrapper).toHaveCSS('scale', 'none');
+  await page.mouse.up();
+  await expect(wrapper).not.toHaveAttribute('data-ds-press-active');
+});
+
 test('paints the md outer shadow once and keeps its highlight above an opaque child', async ({
   page,
 }) => {

@@ -17,6 +17,17 @@ indicator; a choice row never combines both. Sections add headings and dividers
 without changing the value model. Search is immediate and local to the supplied
 options.
 
+## Shared popup interaction
+
+Select and SelectMulti use the same anchored positioning, outside dismissal,
+search-focus, typeahead, and listbox traversal contract. Arrow keys skip
+inactive options and wrap; Home and End move to the first and last enabled
+option; Escape closes and restores trigger focus.
+
+Selection remains intentionally different. Select commits one value and closes
+the popup. SelectMulti toggles one value in its controlled array and keeps the
+popup open for further choices.
+
 ## Future hierarchical selection
 
 Hierarchical selection is deliberately outside the flat Select APIs. It should

@@ -51,7 +51,7 @@
     "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
     "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
     "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
-    "All content is centered. The owner supplies container size and surrounding padding; do not compose actions into or immediately alongside the current EmptyState pattern.",
+    "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently. Do not compose actions into or immediately alongside the current EmptyState pattern.",
     "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
   ],
   "responsiveBehavior": [
@@ -73,6 +73,10 @@
     {
       "label": "Storybook examples",
       "path": "src/wc/components/EmptyState/EmptyState.stories.ts"
+    },
+    {
+      "label": "Shared layout recipe foundation",
+      "path": "docs/layout-recipe-foundation.md"
     }
   ]
 }

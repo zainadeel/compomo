@@ -1,7 +1,7 @@
 import { AttachInternals, Component, Element, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
 import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
 
-export type SwitchSize = 'md' | 'sm' | 'xs';
+export type SwitchSize = 'lg' | 'md' | 'sm' | 'xs';
 
 let generatedLabelId = 0;
 
@@ -154,6 +154,7 @@ export class Switch {
         class={{
           switch: true,
           checked: this.checked,
+          'switch--lg': this.size === 'lg',
           'switch--md': this.size === 'md',
           'switch--sm': this.size === 'sm',
           'switch--xs': this.size === 'xs',

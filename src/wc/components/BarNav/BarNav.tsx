@@ -794,6 +794,8 @@ export class BarNav {
           class={{
             'bar-nav': true,
             'ds-control--md': true,
+            'ds-chrome-row': true,
+            'ds-chrome-space--md': true,
             'bar-nav--dashboard': this.navStyle === 'dashboard',
             'bar-nav--settings': this.navStyle === 'settings',
             'bar-nav--tabs-collapsed':

@@ -1,0 +1,11 @@
+/**
+ * Shared vertical field flow for label/control/supporting-message compositions.
+ * Width, semantics, and validation remain component-owned.
+ */
+
+:host(.ds-field-stack),
+.ds-field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+}

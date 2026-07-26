@@ -162,6 +162,8 @@
 
 :host(.shell-app--mobile) .shell-app__main {
   width: 100%;
+  padding-block-start: env(safe-area-inset-top);
+  box-sizing: border-box;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:

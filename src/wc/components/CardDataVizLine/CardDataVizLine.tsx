@@ -62,14 +62,14 @@ export class CardDataVizLine {
             aria-label={this.filterLabel}
             onDsClick={this.handleFilterClick}
           />
-          <div class="card-data-viz-line__layout">
+          <div class="ds-data-viz-card-layout">
             {this.hasChartSlot && (
-              <div class="card-data-viz-line__chart-region">
+              <div class="ds-data-viz-card-chart">
                 <slot name="chart" />
               </div>
             )}
             {this.hasLegendSlot && (
-              <div class="card-data-viz-line__legend-region">
+              <div class="ds-data-viz-card-legend">
                 <slot name="legend" />
               </div>
             )}

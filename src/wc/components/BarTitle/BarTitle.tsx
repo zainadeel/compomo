@@ -415,7 +415,13 @@ export class BarTitle {
           'bar-title-host--has-breadcrumb': !compact && this.expandedBreadcrumbItems.length > 0,
         }}
       >
-        <div class="bar-title">
+        <div
+          class={{
+            'bar-title': true,
+            'ds-chrome-row': compact,
+            'ds-chrome-space--md': compact,
+          }}
+        >
           <div class="bar-title__inner">
             {!compact ? this.renderBreadcrumb() : null}
             <div class="bar-title__row">

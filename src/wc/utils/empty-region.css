@@ -1,0 +1,19 @@
+/**
+ * Fill the available region and center an EmptyState or equivalent status.
+ * The padded modifier is intended for standalone panel/detail empty regions;
+ * embedded owners may provide their own inset.
+ */
+
+.ds-empty-region {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+}
+
+.ds-empty-region--padded {
+  padding: var(--dimension-space-200);
+}

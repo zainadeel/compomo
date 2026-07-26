@@ -231,7 +231,7 @@ export class MessageScroller {
             <slot name="overlay" />
           </div>
           {this.showScrollToLatest ? (
-            <div class="message-scroller__control ds-control-elevation ds-control-elevation--md">
+            <div class="message-scroller__control ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale">
               <ds-tooltip label="Scroll to latest message" side="top" size="sm">
                 <ds-button-unfilled
                   variant="icon"

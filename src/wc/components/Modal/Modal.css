@@ -1,3 +1,5 @@
+@import '../../utils/chrome-layout.css';
+
 :host {
   display: contents;
 }
@@ -76,13 +78,8 @@
 }
 
 .modal-header {
-  display: flex;
-  align-items: center;
-  gap: var(--dimension-space-050);
   height: var(--dimension-size-800);
-  padding: var(--dimension-space-200);
   flex: 0 0 auto;
-  box-sizing: border-box;
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   color: var(--color-foreground-primary);
 }
@@ -109,21 +106,23 @@ ds-text.modal-heading {
 }
 
 .modal-footer {
+  justify-content: flex-start;
+  height: var(--dimension-size-800);
+  flex: 0 0 auto;
+  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.modal-footer__actions {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: var(--dimension-space-100);
-  height: var(--dimension-size-800);
-  padding: var(--dimension-space-200);
-  flex: 0 0 auto;
-  box-sizing: border-box;
-  border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  min-width: 0;
 }
 
 .modal-footer--empty {
   display: none;
 }
 
-.modal-footer slot {
+.modal-footer__actions slot {
   display: contents;
 }

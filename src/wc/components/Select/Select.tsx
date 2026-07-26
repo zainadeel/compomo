@@ -13,17 +13,12 @@ import {
 } from '@stencil/core';
 import {
   controlWidthClass,
+  CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
-  choicePopupMinWidth,
-  resolveCssLengthPx,
-  resolveCssTimeMs,
-  resolveChoicePopupAlignOffset,
-  TOKEN_DEFAULTS,
   DEFAULT_REQUIRED_MESSAGE,
   setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
-import { computeAnchoredPopupPosition } from '../../utils/anchored-popup';
 import { ChoiceFooter, ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import {
   choiceBackgroundClassMap,
@@ -31,30 +26,28 @@ import {
   choiceListUsesSubtext,
   enabledChoiceIndexes,
   filterChoiceSections,
-  findChoiceTypeaheadMatch,
   flattenChoiceSections,
-  moveChoiceIndex,
   resolveChoiceSections,
   type ChoiceBackground,
   type ChoiceOption,
   type ChoiceSection,
 } from '../../utils/choice-list';
+import { SelectController } from '../../utils/select-controller';
 
 export type SelectOption = ChoiceOption;
 export type SelectSection = ChoiceSection;
 export type SelectBackground = ChoiceBackground;
-export type SelectSize = 'md' | 'sm' | 'xs';
+export type SelectSize = 'lg' | 'md' | 'sm' | 'xs';
 export type SelectWidth = ControlWidth;
 
-const ICON_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<SelectSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
 };
 
 let selectId = 0;
-/** rAF retries while the conditionally rendered popup mounts. */
-const POSITION_RETRY_BUDGET = 8;
 
 @Component({
   tag: 'ds-select',
@@ -142,15 +135,39 @@ export class Select {
   private readonly generatedId = `ds-select-${++selectId}`;
   private readonly listboxId = `${this.generatedId}-listbox`;
   private readonly errorId = `${this.generatedId}-error`;
-  private triggerEl: HTMLButtonElement | null = null;
-  private popupEl: HTMLDivElement | null = null;
-  private searchEl: HTMLInputElement | null = null;
   private initialValue = '';
-  private typeahead = '';
-  private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
-  private outsideHandler: ((event: MouseEvent) => void) | null = null;
-  private repositionHandler: (() => void) | null = null;
-  private positionRetryRaf: number | null = null;
+  private readonly controller = this.createController();
+
+  private createController() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- adapter getters preserve reactive component ownership without inheritance.
+    const owner = this;
+    return new SelectController<SelectOption>({
+      get host() { return owner.el; },
+      generatedId: owner.generatedId,
+      get options() { return owner.visibleOptions; },
+      get searchable() { return owner.searchable; },
+      get isLoading() { return owner.isLoading; },
+      get isDisabled() { return owner.isDisabled; },
+      get preferredIndex() {
+        return owner.visibleOptions.findIndex(
+          option => option.value === owner.value && !option.isInactive,
+        );
+      },
+      get open() { return owner.open; },
+      set open(value) { owner.open = value; },
+      get activeIndex() { return owner.activeIndex; },
+      set activeIndex(value) { owner.activeIndex = value; },
+      get searchTerm() { return owner.searchTerm; },
+      set searchTerm(value) { owner.searchTerm = value; },
+      get focusRingVisible() { return owner.focusRingVisible; },
+      set focusRingVisible(value) { owner.focusRingVisible = value; },
+      get position() { return owner.position; },
+      set position(value) { owner.position = value; },
+      get positionReady() { return owner.positionReady; },
+      set positionReady(value) { owner.positionReady = value; },
+      selectOption: option => owner.selectOption(option),
+    });
+  }
 
   componentWillLoad() {
     this.initialValue = this.value;
@@ -158,13 +175,11 @@ export class Select {
   }
 
   componentDidLoad() {
-    if (this.open) this.onOpenChange(true);
+    this.controller.connect();
   }
 
   disconnectedCallback() {
-    this.cancelPositionRetry();
-    this.unbindPopupListeners();
-    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);
+    this.controller.disconnect();
   }
 
   @Watch('value')
@@ -179,48 +194,28 @@ export class Select {
     this.internals.setFormValue(inactive ? null : resolvedValue);
     const missing = this.required && !inactive && !resolvedValue;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
-    if (this.open) {
-      const enabled = enabledChoiceIndexes(this.visibleOptions);
-      if (!enabled.includes(this.activeIndex)) this.activeIndex = enabled[0] ?? -1;
-      requestAnimationFrame(() => this.updatePosition());
-    }
+    this.controller.optionsChanged();
   }
 
   @Watch('isLoading')
   onLoadingChange() {
-    if (this.open) requestAnimationFrame(() => this.updatePosition());
+    this.controller.loadingChanged();
   }
 
   @Watch('open')
   onOpenChange(open: boolean) {
     this.dsOpenChange.emit(open);
-    if (open) {
-      this.bindPopupListeners();
-      this.schedulePositionUpdate(() => {
-        this.scrollActiveOptionIntoView();
-        if (this.searchable) this.searchEl?.focus();
-      });
-    } else {
-      this.cancelPositionRetry();
-      this.unbindPopupListeners();
-      this.searchTerm = '';
-      this.positionReady = false;
-    }
+    this.controller.openChanged(open);
   }
 
   @Watch('searchTerm')
   onSearchTermChange() {
-    const enabled = enabledChoiceIndexes(this.visibleOptions);
-    this.activeIndex = enabled[0] ?? -1;
-    requestAnimationFrame(() => {
-      this.updatePosition();
-      this.scrollActiveOptionIntoView();
-    });
+    this.controller.searchChanged();
   }
 
   @Watch('activeIndex')
   onActiveIndexChange() {
-    requestAnimationFrame(() => this.scrollActiveOptionIntoView());
+    this.controller.activeIndexChanged();
   }
 
   formDisabledCallback(disabled: boolean) {
@@ -239,7 +234,7 @@ export class Select {
 
   @Method()
   async setFocus() {
-    this.triggerEl?.focus();
+    this.controller.setFocus();
   }
 
   private get isDisabled(): boolean {
@@ -273,134 +268,22 @@ export class Select {
   }
 
   private get activeOptionId(): string | undefined {
-    return !this.isLoading && this.activeIndex >= 0
-      ? `${this.generatedId}-option-${this.activeIndex}`
-      : undefined;
-  }
-
-  private scrollActiveOptionIntoView() {
-    if (!this.open || !this.activeOptionId) return;
-    this.el
-      .querySelector<HTMLElement>(`#${this.activeOptionId}`)
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }
-
-  private bindPopupListeners() {
-    this.unbindPopupListeners();
-    this.outsideHandler = event => {
-      const target = event.target as Node;
-      if (this.el.contains(target)) return;
-      this.closePopup();
-    };
-    this.repositionHandler = () => this.updatePosition();
-    document.addEventListener('mousedown', this.outsideHandler, true);
-    window.addEventListener('scroll', this.repositionHandler, true);
-    window.addEventListener('resize', this.repositionHandler);
-  }
-
-  private unbindPopupListeners() {
-    if (this.outsideHandler) {
-      document.removeEventListener('mousedown', this.outsideHandler, true);
-      this.outsideHandler = null;
-    }
-    if (this.repositionHandler) {
-      window.removeEventListener('scroll', this.repositionHandler, true);
-      window.removeEventListener('resize', this.repositionHandler);
-      this.repositionHandler = null;
-    }
-  }
-
-  private cancelPositionRetry() {
-    if (this.positionRetryRaf !== null) {
-      cancelAnimationFrame(this.positionRetryRaf);
-      this.positionRetryRaf = null;
-    }
-  }
-
-  /** Retry until the conditionally rendered popup is mounted and measurable. */
-  private schedulePositionUpdate(onReady?: () => void) {
-    if (!this.open) return;
-
-    this.cancelPositionRetry();
-    this.positionReady = false;
-    let remaining = POSITION_RETRY_BUDGET;
-
-    const attempt = () => {
-      this.positionRetryRaf = null;
-      if (!this.open) return;
-
-      if (this.updatePosition()) {
-        onReady?.();
-        return;
-      }
-
-      if (remaining > 0) {
-        remaining -= 1;
-        this.positionRetryRaf = requestAnimationFrame(attempt);
-      }
-    };
-
-    this.positionRetryRaf = requestAnimationFrame(attempt);
-  }
-
-  /** @returns `true` when the current popup was found and positioned. */
-  private updatePosition(): boolean {
-    if (
-      !this.open ||
-      !this.triggerEl ||
-      !this.popupEl ||
-      !this.popupEl.isConnected ||
-      !this.el.contains(this.popupEl)
-    ) return false;
-    const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
-    this.popupEl.style.minWidth = `${choicePopupMinWidth(this.triggerEl.offsetWidth, sectionPadding)}px`;
-    this.position = computeAnchoredPopupPosition({
-      anchorRect: this.triggerEl.getBoundingClientRect(),
-      popupWidth: this.popupEl.offsetWidth,
-      popupHeight: this.popupEl.offsetHeight,
-      side: 'bottom',
-      align: 'start',
-      sideOffsetPx: sectionPadding,
-      alignOffsetPx: resolveChoicePopupAlignOffset({
-        align: 'start',
-        alignOffsetPx: 0,
-        sectionInsetPx: sectionPadding,
-      }),
-      viewportPadPx: sectionPadding,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    });
-    this.positionReady = true;
-    return true;
-  }
-
-  private openPopup(focusVisible: boolean, edge?: 'first' | 'last') {
-    if (this.isDisabled || (!this.allOptions.length && !this.isLoading)) return;
-    const enabled = enabledChoiceIndexes(this.visibleOptions);
-    const selectedIndex = this.visibleOptions.findIndex(
-      option => option.value === this.value && !option.isInactive,
-    );
-    this.activeIndex =
-      edge === 'last'
-        ? (enabled[enabled.length - 1] ?? -1)
-        : selectedIndex >= 0
-          ? selectedIndex
-          : (enabled[0] ?? -1);
-    this.focusRingVisible = focusVisible;
-    this.open = true;
+    return this.controller.activeOptionId;
   }
 
   private closePopup(restoreFocus = false) {
-    if (!this.open) return;
-    this.open = false;
-    if (restoreFocus) requestAnimationFrame(() => this.triggerEl?.focus());
+    this.controller.closePopup(restoreFocus);
+  }
+
+  private openPopup(focusVisible: boolean, edge?: 'first' | 'last') {
+    this.controller.openPopup(focusVisible, edge);
   }
 
   private selectOption(option: SelectOption) {
     if (option.isInactive || this.isLoading) return;
     this.value = option.value;
     this.dsChange.emit(this.value);
-    this.closePopup(true);
+    this.controller.closePopup(true);
   }
 
   private clearSelection = (event: Event) => {
@@ -411,101 +294,11 @@ export class Select {
     this.dsClear.emit();
     const enabled = enabledChoiceIndexes(this.visibleOptions);
     this.activeIndex = enabled[0] ?? -1;
-    requestAnimationFrame(() => (this.searchable ? this.searchEl?.focus() : this.triggerEl?.focus()));
+    this.controller.focusSearchOrTrigger();
   };
 
-  private moveActive(direction: 1 | -1) {
-    this.activeIndex = moveChoiceIndex(this.visibleOptions, this.activeIndex, direction);
-  }
-
-  private setActiveEdge(edge: 'first' | 'last') {
-    const enabled = enabledChoiceIndexes(this.visibleOptions);
-    this.activeIndex =
-      edge === 'first' ? (enabled[0] ?? -1) : (enabled[enabled.length - 1] ?? -1);
-  }
-
-  private handleTypeahead(key: string) {
-    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);
-    this.focusRingVisible = true;
-    const normalized = key.toLocaleLowerCase();
-    const repeatedCharacter =
-      this.typeahead.length > 0 &&
-      [...this.typeahead].every(character => character === normalized);
-    this.typeahead = repeatedCharacter ? normalized : `${this.typeahead}${normalized}`;
-    const match = findChoiceTypeaheadMatch(this.visibleOptions, this.typeahead, this.activeIndex);
-    if (match >= 0) this.activeIndex = match;
-    const resetMs = resolveCssTimeMs(
-      TOKEN_DEFAULTS.animationDurationMedium1,
-      TOKEN_DEFAULTS.animationDurationMedium1,
-    );
-    this.typeaheadTimer = setTimeout(() => {
-      this.typeahead = '';
-      this.typeaheadTimer = null;
-    }, resetMs);
-  }
-
-  private handleListKeyDown(event: KeyboardEvent) {
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.moveActive(1);
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.moveActive(-1);
-        break;
-      case 'Home':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.setActiveEdge('first');
-        break;
-      case 'End':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.setActiveEdge('last');
-        break;
-      case 'Enter':
-      case ' ': {
-        if (event.key === ' ' && this.searchable && event.target === this.searchEl) break;
-        event.preventDefault();
-        const option = this.visibleOptions[this.activeIndex];
-        if (option) this.selectOption(option);
-        break;
-      }
-      case 'Escape':
-        event.preventDefault();
-        this.closePopup(true);
-        break;
-      case 'Tab':
-        this.closePopup();
-        break;
-      default:
-        if (!this.searchable && event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
-          this.handleTypeahead(event.key);
-        }
-    }
-  }
-
-  private handleTriggerKeyDown = (event: KeyboardEvent) => {
-    if (!this.open) {
-      if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
-        event.preventDefault();
-        this.openPopup(true, event.key === 'ArrowUp' ? 'last' : 'first');
-      } else if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
-        event.preventDefault();
-        this.openPopup(true);
-        if (this.searchable) {
-          this.searchTerm = event.key;
-        } else {
-          this.handleTypeahead(event.key);
-        }
-      }
-      return;
-    }
-    this.handleListKeyDown(event);
-  };
+  private readonly handleListKeyDown = this.controller.handleListKeyDown;
+  private readonly handleTriggerKeyDown = this.controller.handleTriggerKeyDown;
 
   private renderOption(
     option: SelectOption,
@@ -517,6 +310,7 @@ export class Select {
     const active = index === this.activeIndex;
     return (
       <ChoiceOptionRow
+        size={this.size}
         id={`${this.generatedId}-option-${index}`}
         option={option}
         selected={selected}
@@ -524,8 +318,8 @@ export class Select {
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
         leading={usesIcons && option.icon ? (
-          <span class="ds-choice-item__icon ds-interaction-fill__content" aria-hidden="true">
-            <ds-icon name={option.icon} size="md" color="inherit" />
+          <span class="ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
+            <ds-icon name={option.icon} size={this.size} color="inherit" />
           </span>
         ) : undefined}
         onHover={() => {
@@ -563,22 +357,22 @@ export class Select {
       <Host
         class={{
           'select-host': true,
+          'ds-field-stack': true,
           'ds-control-inactive': inactive,
-          'ds-control--md': this.size === 'md',
-          'ds-control--sm': this.size === 'sm',
-          'ds-control--xs': this.size === 'xs',
+          [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
           [`select-host--background-${this.background}`]: !!this.background,
         }}
       >
         <button
           ref={element => {
-            this.triggerEl = (element as HTMLButtonElement) ?? null;
+            this.controller.setTriggerElement((element as HTMLButtonElement) ?? null);
           }}
           id={this.inputId ?? this.generatedId}
           type="button"
           class={{
             trigger: true,
+            'ds-control-frame': true,
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
             'ds-interaction-fill--selected':
@@ -606,7 +400,7 @@ export class Select {
           onKeyDown={this.handleTriggerKeyDown}
         >
           {(this.icon || this.isLoading) && (
-            <span class="trigger__prefix ds-interaction-fill__content" aria-hidden="true">
+            <span class="trigger__prefix ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
               {this.isLoading ? (
                 <ds-loader size={iconSize} color="inherit" />
               ) : (
@@ -615,7 +409,7 @@ export class Select {
             </span>
           )}
           <ds-text
-            class="trigger__label ds-interaction-fill__content"
+            class="trigger__label ds-control-label-box ds-interaction-fill__content"
             as="span"
             variant={textVariant}
             color="inherit"
@@ -623,7 +417,7 @@ export class Select {
           >
             {label}
           </ds-text>
-          <span class="trigger__chevron ds-interaction-fill__content" aria-hidden="true">
+          <span class="trigger__chevron ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
           </span>
         </button>
@@ -631,20 +425,19 @@ export class Select {
         {this.open && (
           <div
             ref={element => {
-              this.popupEl = (element as HTMLDivElement) ?? null;
+              this.controller.setPopupElement((element as HTMLDivElement) ?? null);
             }}
             class="select-popup ds-choice-popup"
             style={popupStyle}
           >
             {this.searchable && (
               <ChoiceSearch
+                size={this.size}
                 value={this.searchTerm}
                 placeholder={this.searchPlaceholder}
                 controls={this.listboxId}
                 activeDescendant={this.activeOptionId}
-                inputRef={element => {
-                  this.searchEl = element;
-                }}
+                inputRef={this.controller.setSearchElement}
                 clearLabel={this.clearLabel}
                 onValueChange={value => {
                   this.searchTerm = value;
@@ -668,11 +461,11 @@ export class Select {
                   aria-label={this.loadingLabel}
                   aria-live="polite"
                 >
-                  <ds-loader size="md" color="inherit" />
+                  <ds-loader size={this.size} color="inherit" />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
                 <div
-                  class="ds-choice-empty"
+                  class="ds-choice-empty ds-empty-region"
                   role="option"
                   aria-selected="false"
                   aria-disabled="true"
@@ -686,6 +479,8 @@ export class Select {
                   <div
                     class={{
                       'ds-choice-section': true,
+                      'ds-chrome-column': true,
+                      'ds-chrome-space--sm': true,
                       'ds-choice-section--divided': !!section.divider,
                     }}
                     role={section.header ? 'group' : undefined}
@@ -693,9 +488,9 @@ export class Select {
                   >
                     {section.header && (
                       <ds-text
-                        class="ds-choice-section__header ds-control--md"
+                        class={`ds-choice-section__header ds-control--${this.size}`}
                         as="span"
-                        variant="text-body-small"
+                        variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                         emphasis
                         color="primary"
                         aria-hidden="true"
@@ -714,7 +509,7 @@ export class Select {
               )}
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
-              <ChoiceFooter clearLabel={this.clearLabel} onClear={this.clearSelection} />
+              <ChoiceFooter size={this.size} clearLabel={this.clearLabel} onClear={this.clearSelection} />
             )}
           </div>
         )}

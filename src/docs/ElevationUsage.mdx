@@ -62,6 +62,36 @@ does not mean every edge-attached component should use it.
 Prefer the component's existing treatment. Consumers should not add a second
 shadow around a component that already owns its elevation.
 
+## Elevated control wrappers
+
+When elevation belongs to an application-owned wrapper around a separate
+control surface, import CompoMo's public split-shadow utility. Apply the base
+class, exactly one elevation level, and keep the wrapped control's optional
+resting border off:
+
+```css
+@import '@ds-mo/ui/control-elevation.css';
+```
+
+```html
+<div
+  class="action-shell ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale"
+>
+  <ds-button-filled label="Create" has-border="false"></ds-button-filled>
+</div>
+```
+
+The wrapper owner supplies layout, radius, surface, and optional backdrop blur.
+The outer shadow lives on the wrapper; a pointer-transparent `::after` paints
+the matching inset highlight above opaque children.
+
+Add `.ds-control-elevation--press-scale` only when wrapping
+`ds-button-filled` or `ds-button-unfilled`. It transfers physical pointer/tap
+feedback to the complete elevated surface so the background, shadow,
+highlight, and button scale together without compounding. It also follows the
+shared reduced-motion contract. Omit the modifier for Inputs and other
+non-scaling controls; their focus and error strokes remain control-owned.
+
 ## Shadow and highlight parts
 
 Every elevation recipe is composed from matching shadow and highlight tokens:

@@ -25,12 +25,14 @@ Import the stylesheet once, then apply the base class plus one `sm`, `md`, or `f
 ```
 
 ```html
-<div class="contact-action ds-control-elevation ds-control-elevation--md">
+<div
+  class="contact-action ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale"
+>
   <ds-button-filled label="Contact support" has-border="false"></ds-button-filled>
 </div>
 ```
 
-The utility places the split outer shadow on the wrapper and TokoMo's inset highlight on a non-interactive top overlay. It does not impose layout, radius, background, blur, or animation. The owner keeps those concerns and disables optional resting borders on wrapped controls. A wrapped Input uses `hasBorder="false"` at rest while its own focus and error strokes remain rendered beneath the topmost elevation highlight.
+The utility places the split outer shadow on the wrapper and TokoMo's inset highlight on a non-interactive top overlay. It does not impose layout, radius, background, or blur. The owner keeps those concerns and disables optional resting borders on wrapped controls. Add `.ds-control-elevation--press-scale` only around `ds-button-filled` or `ds-button-unfilled`; it transfers the button's physical press motion to the entire elevated surface and honors reduced motion. A wrapped Input omits that modifier and uses `hasBorder="false"` at rest while its own focus and error strokes remain rendered beneath the topmost elevation highlight.
 
 ## Renderer-neutral prose
 

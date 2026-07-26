@@ -39,7 +39,7 @@ export class CardShellDataViz {
           '--_card-shell-data-viz-min-height': CARD_HEIGHT_VARS[this.cardWidth],
         }}
       >
-        <header class="card-shell-data-viz__header">
+        <header class="card-shell-data-viz__header ds-chrome-row ds-chrome-space--md">
           <ds-text
             class="card-shell-data-viz__title"
             variant="text-title-small"

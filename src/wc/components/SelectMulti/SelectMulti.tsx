@@ -13,28 +13,21 @@ import {
 } from '@stencil/core';
 import {
   controlWidthClass,
+  CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
-  choicePopupMinWidth,
-  resolveCssLengthPx,
-  resolveCssTimeMs,
-  resolveChoicePopupAlignOffset,
-  TOKEN_DEFAULTS,
   DEFAULT_REQUIRED_MESSAGE,
   setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
-import { computeAnchoredPopupPosition } from '../../utils/anchored-popup';
 import { ChoiceFooter, ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import {
   choiceBackgroundClassMap,
   choiceListUsesSubtext,
-  enabledChoiceIndexes,
   filterChoiceSections,
-  findChoiceTypeaheadMatch,
   flattenChoiceSections,
-  moveChoiceIndex,
   resolveChoiceSections,
 } from '../../utils/choice-list';
+import { SelectController } from '../../utils/select-controller';
 import type {
   SelectBackground,
   SelectOption,
@@ -50,15 +43,14 @@ export type SelectMultiBackground = SelectBackground;
 export type SelectMultiSize = SelectSize;
 export type SelectMultiWidth = ControlWidth;
 
-const ICON_SIZE: Record<SelectMultiSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<SelectMultiSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
 };
 
 let selectMultiId = 0;
-/** rAF retries while the conditionally rendered popup mounts. */
-const POSITION_RETRY_BUDGET = 8;
 
 @Component({
   tag: 'ds-select-multi',
@@ -148,15 +140,35 @@ export class SelectMulti {
   private readonly generatedId = `ds-select-multi-${++selectMultiId}`;
   private readonly listboxId = `${this.generatedId}-listbox`;
   private readonly errorId = `${this.generatedId}-error`;
-  private triggerEl: HTMLButtonElement | null = null;
-  private popupEl: HTMLDivElement | null = null;
-  private searchEl: HTMLInputElement | null = null;
   private initialValues: string[] = [];
-  private typeahead = '';
-  private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
-  private outsideHandler: ((event: MouseEvent) => void) | null = null;
-  private repositionHandler: (() => void) | null = null;
-  private positionRetryRaf: number | null = null;
+  private readonly controller = this.createController();
+
+  private createController() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- adapter getters preserve reactive component ownership without inheritance.
+    const owner = this;
+    return new SelectController<SelectMultiOption>({
+      get host() { return owner.el; },
+      generatedId: owner.generatedId,
+      get options() { return owner.visibleOptions; },
+      get searchable() { return owner.searchable; },
+      get isLoading() { return owner.isLoading; },
+      get isDisabled() { return owner.isDisabled; },
+      get preferredIndex() { return -1; },
+      get open() { return owner.open; },
+      set open(value) { owner.open = value; },
+      get activeIndex() { return owner.activeIndex; },
+      set activeIndex(value) { owner.activeIndex = value; },
+      get searchTerm() { return owner.searchTerm; },
+      set searchTerm(value) { owner.searchTerm = value; },
+      get focusRingVisible() { return owner.focusRingVisible; },
+      set focusRingVisible(value) { owner.focusRingVisible = value; },
+      get position() { return owner.position; },
+      set position(value) { owner.position = value; },
+      get positionReady() { return owner.positionReady; },
+      set positionReady(value) { owner.positionReady = value; },
+      selectOption: option => owner.toggleOption(option),
+    });
+  }
 
   componentWillLoad() {
     this.initialValues = [...this.values];
@@ -164,13 +176,11 @@ export class SelectMulti {
   }
 
   componentDidLoad() {
-    if (this.open) this.onOpenChange(true);
+    this.controller.connect();
   }
 
   disconnectedCallback() {
-    this.cancelPositionRetry();
-    this.unbindPopupListeners();
-    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);
+    this.controller.disconnect();
   }
 
   @Watch('values')
@@ -191,47 +201,28 @@ export class SelectMulti {
     }
     const missing = this.required && !this.isDisabled && resolvedValues.length === 0;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
-    if (this.open) {
-      const enabled = enabledChoiceIndexes(this.visibleOptions);
-      if (!enabled.includes(this.activeIndex)) this.activeIndex = enabled[0] ?? -1;
-      requestAnimationFrame(() => this.updatePosition());
-    }
+    this.controller.optionsChanged();
   }
 
   @Watch('isLoading')
   onLoadingChange() {
-    if (this.open) requestAnimationFrame(() => this.updatePosition());
+    this.controller.loadingChanged();
   }
 
   @Watch('open')
   onOpenChange(open: boolean) {
     this.dsOpenChange.emit(open);
-    if (open) {
-      this.bindPopupListeners();
-      this.schedulePositionUpdate(() => {
-        this.scrollActiveOptionIntoView();
-        if (this.searchable) this.searchEl?.focus();
-      });
-    } else {
-      this.cancelPositionRetry();
-      this.unbindPopupListeners();
-      this.searchTerm = '';
-      this.positionReady = false;
-    }
+    this.controller.openChanged(open);
   }
 
   @Watch('searchTerm')
   onSearchTermChange() {
-    this.activeIndex = enabledChoiceIndexes(this.visibleOptions)[0] ?? -1;
-    requestAnimationFrame(() => {
-      this.updatePosition();
-      this.scrollActiveOptionIntoView();
-    });
+    this.controller.searchChanged();
   }
 
   @Watch('activeIndex')
   onActiveIndexChange() {
-    requestAnimationFrame(() => this.scrollActiveOptionIntoView());
+    this.controller.activeIndexChanged();
   }
 
   formDisabledCallback(disabled: boolean) {
@@ -261,7 +252,7 @@ export class SelectMulti {
 
   @Method()
   async setFocus() {
-    this.triggerEl?.focus();
+    this.controller.setFocus();
   }
 
   private get isDisabled(): boolean {
@@ -296,121 +287,15 @@ export class SelectMulti {
   }
 
   private get activeOptionId(): string | undefined {
-    return !this.isLoading && this.activeIndex >= 0
-      ? `${this.generatedId}-option-${this.activeIndex}`
-      : undefined;
-  }
-
-  private scrollActiveOptionIntoView() {
-    if (!this.open || !this.activeOptionId) return;
-    this.el
-      .querySelector<HTMLElement>(`#${this.activeOptionId}`)
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }
-
-  private bindPopupListeners() {
-    this.unbindPopupListeners();
-    this.outsideHandler = event => {
-      if (this.el.contains(event.target as Node)) return;
-      this.closePopup();
-    };
-    this.repositionHandler = () => this.updatePosition();
-    document.addEventListener('mousedown', this.outsideHandler, true);
-    window.addEventListener('scroll', this.repositionHandler, true);
-    window.addEventListener('resize', this.repositionHandler);
-  }
-
-  private unbindPopupListeners() {
-    if (this.outsideHandler) {
-      document.removeEventListener('mousedown', this.outsideHandler, true);
-      this.outsideHandler = null;
-    }
-    if (this.repositionHandler) {
-      window.removeEventListener('scroll', this.repositionHandler, true);
-      window.removeEventListener('resize', this.repositionHandler);
-      this.repositionHandler = null;
-    }
-  }
-
-  private cancelPositionRetry() {
-    if (this.positionRetryRaf !== null) {
-      cancelAnimationFrame(this.positionRetryRaf);
-      this.positionRetryRaf = null;
-    }
-  }
-
-  /** Retry until the conditionally rendered popup is mounted and measurable. */
-  private schedulePositionUpdate(onReady?: () => void) {
-    if (!this.open) return;
-
-    this.cancelPositionRetry();
-    this.positionReady = false;
-    let remaining = POSITION_RETRY_BUDGET;
-
-    const attempt = () => {
-      this.positionRetryRaf = null;
-      if (!this.open) return;
-
-      if (this.updatePosition()) {
-        onReady?.();
-        return;
-      }
-
-      if (remaining > 0) {
-        remaining -= 1;
-        this.positionRetryRaf = requestAnimationFrame(attempt);
-      }
-    };
-
-    this.positionRetryRaf = requestAnimationFrame(attempt);
-  }
-
-  /** @returns `true` when the current popup was found and positioned. */
-  private updatePosition(): boolean {
-    if (
-      !this.open ||
-      !this.triggerEl ||
-      !this.popupEl ||
-      !this.popupEl.isConnected ||
-      !this.el.contains(this.popupEl)
-    ) return false;
-    const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
-    this.popupEl.style.minWidth = `${choicePopupMinWidth(this.triggerEl.offsetWidth, sectionPadding)}px`;
-    this.position = computeAnchoredPopupPosition({
-      anchorRect: this.triggerEl.getBoundingClientRect(),
-      popupWidth: this.popupEl.offsetWidth,
-      popupHeight: this.popupEl.offsetHeight,
-      side: 'bottom',
-      align: 'start',
-      sideOffsetPx: sectionPadding,
-      alignOffsetPx: resolveChoicePopupAlignOffset({
-        align: 'start',
-        alignOffsetPx: 0,
-        sectionInsetPx: sectionPadding,
-      }),
-      viewportPadPx: sectionPadding,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    });
-    this.positionReady = true;
-    return true;
-  }
-
-  private openPopup(focusVisible: boolean, edge?: 'first' | 'last') {
-    if (this.isDisabled || (!this.allOptions.length && !this.isLoading)) return;
-    const enabled = enabledChoiceIndexes(this.visibleOptions);
-    this.activeIndex =
-      edge === 'last'
-        ? (enabled[enabled.length - 1] ?? -1)
-        : (enabled[0] ?? -1);
-    this.focusRingVisible = focusVisible;
-    this.open = true;
+    return this.controller.activeOptionId;
   }
 
   private closePopup(restoreFocus = false) {
-    if (!this.open) return;
-    this.open = false;
-    if (restoreFocus) requestAnimationFrame(() => this.triggerEl?.focus());
+    this.controller.closePopup(restoreFocus);
+  }
+
+  private openPopup(focusVisible: boolean, edge?: 'first' | 'last') {
+    this.controller.openPopup(focusVisible, edge);
   }
 
   private toggleOption(option: SelectMultiOption) {
@@ -429,96 +314,18 @@ export class SelectMulti {
     this.values = [];
     this.dsChange.emit([]);
     this.dsClear.emit();
-    requestAnimationFrame(() => (this.searchable ? this.searchEl?.focus() : this.triggerEl?.focus()));
+    this.controller.focusSearchOrTrigger();
   };
 
-  private handleTypeahead(key: string) {
-    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);
-    this.focusRingVisible = true;
-    const normalized = key.toLocaleLowerCase();
-    const repeatedCharacter =
-      this.typeahead.length > 0 &&
-      [...this.typeahead].every(character => character === normalized);
-    this.typeahead = repeatedCharacter ? normalized : `${this.typeahead}${normalized}`;
-    const match = findChoiceTypeaheadMatch(this.visibleOptions, this.typeahead, this.activeIndex);
-    if (match >= 0) this.activeIndex = match;
-    const resetMs = resolveCssTimeMs(
-      TOKEN_DEFAULTS.animationDurationMedium1,
-      TOKEN_DEFAULTS.animationDurationMedium1,
-    );
-    this.typeaheadTimer = setTimeout(() => {
-      this.typeahead = '';
-      this.typeaheadTimer = null;
-    }, resetMs);
-  }
-
-  private handleListKeyDown(event: KeyboardEvent) {
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.activeIndex = moveChoiceIndex(this.visibleOptions, this.activeIndex, 1);
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.activeIndex = moveChoiceIndex(this.visibleOptions, this.activeIndex, -1);
-        break;
-      case 'Home':
-        event.preventDefault();
-        this.focusRingVisible = true;
-        this.activeIndex = enabledChoiceIndexes(this.visibleOptions)[0] ?? -1;
-        break;
-      case 'End': {
-        event.preventDefault();
-        this.focusRingVisible = true;
-        const enabled = enabledChoiceIndexes(this.visibleOptions);
-        this.activeIndex = enabled[enabled.length - 1] ?? -1;
-        break;
-      }
-      case 'Enter':
-      case ' ': {
-        if (event.key === ' ' && this.searchable && event.target === this.searchEl) break;
-        event.preventDefault();
-        const option = this.visibleOptions[this.activeIndex];
-        if (option) this.toggleOption(option);
-        break;
-      }
-      case 'Escape':
-        event.preventDefault();
-        this.closePopup(true);
-        break;
-      case 'Tab':
-        this.closePopup();
-        break;
-      default:
-        if (!this.searchable && event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
-          this.handleTypeahead(event.key);
-        }
-    }
-  }
-
-  private handleTriggerKeyDown = (event: KeyboardEvent) => {
-    if (!this.open) {
-      if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
-        event.preventDefault();
-        this.openPopup(true, event.key === 'ArrowUp' ? 'last' : 'first');
-      } else if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
-        event.preventDefault();
-        this.openPopup(true);
-        if (this.searchable) this.searchTerm = event.key;
-        else this.handleTypeahead(event.key);
-      }
-      return;
-    }
-    this.handleListKeyDown(event);
-  };
+  private readonly handleListKeyDown = this.controller.handleListKeyDown;
+  private readonly handleTriggerKeyDown = this.controller.handleTriggerKeyDown;
 
   private renderOption(option: SelectMultiOption, index: number, usesSubtext: boolean) {
     const selected = this.values.includes(option.value);
     const active = this.activeIndex === index;
     return (
       <ChoiceOptionRow
+        size={this.size}
         id={`${this.generatedId}-option-${index}`}
         option={option}
         selected={selected}
@@ -526,11 +333,11 @@ export class SelectMulti {
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
         leading={(
-          <span class="ds-choice-item__icon ds-interaction-fill__content" aria-hidden="true">
+          <span class="ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
             <ds-checkbox
               class="select-option__checkbox"
               label=""
-              size="md"
+              size={this.size}
               checked={selected}
               presentation
             />
@@ -569,22 +376,22 @@ export class SelectMulti {
       <Host
         class={{
           'select-host': true,
+          'ds-field-stack': true,
           'ds-control-inactive': inactive,
-          'ds-control--md': this.size === 'md',
-          'ds-control--sm': this.size === 'sm',
-          'ds-control--xs': this.size === 'xs',
+          [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
           [`select-host--background-${this.background}`]: !!this.background,
         }}
       >
         <button
           ref={element => {
-            this.triggerEl = (element as HTMLButtonElement) ?? null;
+            this.controller.setTriggerElement((element as HTMLButtonElement) ?? null);
           }}
           id={this.inputId ?? this.generatedId}
           type="button"
           class={{
             trigger: true,
+            'ds-control-frame': true,
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
             'ds-interaction-fill--selected':
@@ -611,7 +418,7 @@ export class SelectMulti {
           onKeyDown={this.handleTriggerKeyDown}
         >
           {(this.icon || this.isLoading) && (
-            <span class="trigger__prefix ds-interaction-fill__content" aria-hidden="true">
+            <span class="trigger__prefix ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
               {this.isLoading ? (
                 <ds-loader size={iconSize} color="inherit" />
               ) : (
@@ -620,7 +427,7 @@ export class SelectMulti {
             </span>
           )}
           <ds-text
-            class="trigger__label ds-interaction-fill__content"
+            class="trigger__label ds-control-label-box ds-interaction-fill__content"
             as="span"
             variant={textVariant}
             color="inherit"
@@ -628,7 +435,7 @@ export class SelectMulti {
           >
             {`${this.placeholder}${count > 0 ? ` · ${count}` : ''}`}
           </ds-text>
-          <span class="trigger__chevron ds-interaction-fill__content" aria-hidden="true">
+          <span class="trigger__chevron ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
           </span>
         </button>
@@ -636,20 +443,19 @@ export class SelectMulti {
         {this.open && (
           <div
             ref={element => {
-              this.popupEl = (element as HTMLDivElement) ?? null;
+              this.controller.setPopupElement((element as HTMLDivElement) ?? null);
             }}
             class="select-popup ds-choice-popup"
             style={popupStyle}
           >
             {this.searchable && (
               <ChoiceSearch
+                size={this.size}
                 value={this.searchTerm}
                 placeholder={this.searchPlaceholder}
                 controls={this.listboxId}
                 activeDescendant={this.activeOptionId}
-                inputRef={element => {
-                  this.searchEl = element;
-                }}
+                inputRef={this.controller.setSearchElement}
                 clearLabel={this.clearLabel}
                 onValueChange={value => {
                   this.searchTerm = value;
@@ -674,11 +480,11 @@ export class SelectMulti {
                   aria-label={this.loadingLabel}
                   aria-live="polite"
                 >
-                  <ds-loader size="md" color="inherit" />
+                  <ds-loader size={this.size} color="inherit" />
                 </div>
               ) : this.visibleOptions.length === 0 ? (
                 <div
-                  class="ds-choice-empty"
+                  class="ds-choice-empty ds-empty-region"
                   role="option"
                   aria-selected="false"
                   aria-disabled="true"
@@ -692,6 +498,8 @@ export class SelectMulti {
                   <div
                     class={{
                       'ds-choice-section': true,
+                      'ds-chrome-column': true,
+                      'ds-chrome-space--sm': true,
                       'ds-choice-section--divided': !!section.divider,
                     }}
                     role={section.header ? 'group' : undefined}
@@ -699,9 +507,9 @@ export class SelectMulti {
                   >
                     {section.header && (
                       <ds-text
-                        class="ds-choice-section__header ds-control--md"
+                        class={`ds-choice-section__header ds-control--${this.size}`}
                         as="span"
-                        variant="text-body-small"
+                        variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                         emphasis
                         color="primary"
                         aria-hidden="true"
@@ -720,6 +528,7 @@ export class SelectMulti {
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
               <ChoiceFooter
+                size={this.size}
                 summary={`${count} ${this.selectedLabel}`}
                 clearLabel={this.clearLabel}
                 onClear={this.clearSelection}

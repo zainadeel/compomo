@@ -1,6 +1,7 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
 import type { ChoiceBackground } from '../../utils/choice-list';
+import { beginElevatedControlPress } from '../../utils/control-press';
 
 export type ButtonFilledIntent =
   | 'neutral'
@@ -19,15 +20,16 @@ export type ButtonFilledBackground = ChoiceBackground;
 
 export type ButtonFilledVariant = 'icon' | 'label' | 'icon-label';
 
-export type ButtonFilledSize = 'md' | 'sm' | 'xs';
+export type ButtonFilledSize = 'lg' | 'md' | 'sm' | 'xs';
 
 export type ButtonFilledWidth = ControlWidth;
 
 /**
  * `ds-icon` size prop matching control-density icon metrics
- * (md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).
+ * (lg→24 / md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).
  */
-const ICON_SIZE: Record<ButtonFilledSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<ButtonFilledSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
@@ -131,6 +133,7 @@ export class ButtonFilled {
     const cls: Record<string, boolean> = {
       'button-filled': true,
       'ds-focus-ring-inset': true,
+      'ds-control-press-scale': true,
       'ds-interaction-fill': !this.isInactive,
       /* Bold is the default filled contrast — on-bold interaction tokens. */
       'ds-interaction-fill--on-bold': this.contrast === 'bold',
@@ -139,9 +142,11 @@ export class ButtonFilled {
       /* faint → default app interaction tokens (no --on-*). */
       'button-filled--bordered': this.hasBorder,
       'ds-control-inactive': this.isInactive,
+      'ds-control--lg': this.size === 'lg',
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
+      'ds-control-frame': true,
       'button-filled--icon': this.variant === 'icon',
       'button-filled--label': this.variant === 'label',
       'button-filled--icon-label': this.variant === 'icon-label',
@@ -156,6 +161,7 @@ export class ButtonFilled {
         class={{
           'button-filled-host': true,
           'button-filled-host--icon': this.variant === 'icon',
+          'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
@@ -173,10 +179,13 @@ export class ButtonFilled {
           aria-label={this.accessibleName}
           aria-busy={this.isLoading ? 'true' : undefined}
           aria-disabled={this.isLoading ? 'true' : undefined}
+          onPointerDown={event =>
+            beginElevatedControlPress(event, !this.isInactive && !this.isLoading)
+          }
           onClick={this.handleClick}
         >
           {this.showIcon && (
-            <span class="button-filled__icon-wrap ds-interaction-fill__content">
+            <span class="button-filled__icon-wrap ds-control-icon-box ds-interaction-fill__content">
               {this.isLoading
                 ? <ds-loader size={iconSize} color="inherit" />
                 : <ds-icon name={this.icon} size={iconSize} color="inherit" />
@@ -187,6 +196,7 @@ export class ButtonFilled {
             <ds-text
               class={{
                 'button-filled__label': true,
+                'ds-control-label-box': true,
                 'button-filled__label--loading': this.isLoading && this.variant === 'label',
                 'ds-interaction-fill__content': true,
               }}

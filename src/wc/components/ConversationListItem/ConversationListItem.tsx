@@ -56,6 +56,7 @@ export class ConversationListItem {
             class={{
               'conversation-list-item': true,
               'ds-choice-item': true,
+              'ds-control-frame': true,
               'ds-control--md': true,
               'ds-focus-ring-inset': true,
               'ds-interaction-fill': true,
@@ -67,13 +68,13 @@ export class ConversationListItem {
             aria-busy={busy ? 'true' : undefined}
             onClick={this.handleClick}
           >
-            <span class="conversation-list-item__leading ds-choice-item__icon ds-interaction-fill__content">
+            <span class="conversation-list-item__leading ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content">
               <slot name="leading" />
             </span>
             <span class="conversation-list-item__content ds-choice-item__content ds-interaction-fill__content">
               <span class="conversation-list-item__title-row">
                 <ds-text
-                  class="conversation-list-item__title ds-choice-item__label"
+                  class="conversation-list-item__title ds-choice-item__label ds-control-label-box"
                   as="span"
                   variant="text-body-medium"
                   emphasis={this.unreadCount > 0}
@@ -84,14 +85,14 @@ export class ConversationListItem {
                 </ds-text>
                 {this.unreadCount > 0 ? (
                   <span class="conversation-list-item__unread">
-                    <ds-badge variant="dot" surface="secondary" />
+                    <ds-badge variant="dot" surface="secondary" hasRing={false} />
                   </span>
                 ) : null}
               </span>
               <span class="conversation-list-item__preview-row">
                 {busy ? <ds-loader size="sm" color="secondary" /> : null}
                 <ds-text
-                  class="conversation-list-item__preview ds-choice-item__subtext"
+                  class="conversation-list-item__preview ds-choice-item__subtext ds-control-label-box"
                   as="span"
                   variant="text-body-small"
                   color={this.state === 'error' ? 'negative' : 'secondary'}
@@ -110,7 +111,7 @@ export class ConversationListItem {
               <slot name="trailing" />
             </span>
           </button>
-          <div class="conversation-list-item__actions ds-control-elevation ds-control-elevation--md">
+          <div class="conversation-list-item__actions ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale">
             <slot name="actions" onSlotchange={this.handleActionsSlotChange} />
           </div>
         </div>

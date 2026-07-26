@@ -14,14 +14,28 @@ const ITEMS = [
 
 const meta: Meta = {
   title: 'Utility/ChoiceLists',
-  parameters: { controls: { disable: true } },
+  argTypes: {
+    size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
+  },
+  args: {
+    size: 'md',
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Menu, Select, and SelectMulti share one density-aware choice-row recipe. ' +
+          'Primary text follows control density; supporting text steps down one recipe, with caption/caption at xs.',
+      },
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj;
 
 export const SemanticParity: Story = {
-  render: () => {
+  render: args => {
     let anchor: HTMLElement | undefined;
     let menu: HTMLDsMenuElement | undefined;
     const syncMenu = () => {
@@ -37,6 +51,7 @@ export const SemanticParity: Story = {
           <ds-text as="div" variant="text-body-small" emphasis>Action menu</ds-text>
           <ds-button-unfilled
             label="Open actions"
+            size=${args['size']}
             width="fill"
             ${ref(element => {
               anchor = element as HTMLElement;
@@ -44,6 +59,7 @@ export const SemanticParity: Story = {
             })}
           ></ds-button-unfilled>
           <ds-menu
+            size=${args['size']}
             ${ref(element => {
               menu = element as HTMLDsMenuElement;
               syncMenu();
@@ -53,6 +69,7 @@ export const SemanticParity: Story = {
         <div style="width:240px;">
           <ds-text as="div" variant="text-body-small" emphasis>Single-select listbox</ds-text>
           <ds-select
+            size=${args['size']}
             .options=${ITEMS}
             value="first"
             open
@@ -62,6 +79,7 @@ export const SemanticParity: Story = {
         <div style="width:240px;">
           <ds-text as="div" variant="text-body-small" emphasis>Multi-select listbox</ds-text>
           <ds-select-multi
+            size=${args['size']}
             .options=${ITEMS}
             .values=${['first', 'third']}
             placeholder="Multiple choices"

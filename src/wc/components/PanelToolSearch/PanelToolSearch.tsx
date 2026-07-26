@@ -71,7 +71,7 @@ export class PanelToolSearch {
   render() {
     return (
       <Host>
-        <div class="panel-tool-search">
+        <div class="panel-tool-search ds-chrome-row ds-chrome-space--md">
           <ChoiceSearch
             value={this.value}
             placeholder={this.placeholder}

@@ -20,7 +20,8 @@ npm install @ds-mo/tokens @ds-mo/icons @ds-mo/ui
 - `@ds-mo/icons` supplies SVG glyphs resolved by `ds-icon`.
 - `@ds-mo/ui` supplies the components and framework adapters.
 
-CompoMo currently requires `@ds-mo/tokens` 3.1+ and `@ds-mo/icons` 6.2+.
+Use the peer dependency ranges in `@ds-mo/ui`'s `package.json` as the current
+compatibility source.
 
 ## Global setup
 
@@ -43,8 +44,8 @@ Import every tag the application renders. Each module defines its own custom
 element:
 
 ```ts
-import '@ds-mo/ui/components/ds-button-filled.js';
-import '@ds-mo/ui/components/ds-text.js';
+import '@ds-mo/ui/dist/components/ds-button-filled.js';
+import '@ds-mo/ui/dist/components/ds-text.js';
 ```
 
 ```html

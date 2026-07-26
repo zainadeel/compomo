@@ -398,7 +398,10 @@ test('keeps inline section state controlled and restores trigger focus', async (
     name: 'Change driver section. Current section: Summary',
   });
 
+  await expect(trigger).toHaveCSS('transition-property', 'all');
+  await expect(trigger).toHaveCSS('transition-duration', '0s');
   await trigger.click();
+  await expect(trigger).toHaveCSS('transition-duration', '0s');
   await page.getByRole('menuitem', { name: 'History' }).click();
 
   await expect(header).toHaveJSProperty('value', 'history');

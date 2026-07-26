@@ -163,6 +163,13 @@ export class PanelTools {
   @Watch('presentation')
   presentationChanged(next: 'drawer' | 'fullscreen', previous?: 'drawer' | 'fullscreen') {
     if (next === previous) return;
+    // Framework property bindings can update slotted master/detail content in
+    // the same render that requests fullscreen. Reflect the host selector
+    // immediately so that content cannot paint once in the drawer geometry
+    // while Stencil waits to commit its next render.
+    if (this.el.getAttribute('presentation') !== next) {
+      this.el.setAttribute('presentation', next);
+    }
     const presentationGeneration = ++this.presentationMotionGeneration;
     this.presentationMotionSuppressed = true;
     requestAnimationFrame(() => {
@@ -587,15 +594,19 @@ export class PanelTools {
         <div class="panel-tools__layout">
           <nav class="panel-tools__rail" aria-label={this.toolShortcutsLabel}>
             {headerItem ? (
-              <div class="panel-tools__rail-header">{this.renderRailAction(headerItem, 0)}</div>
+              <div class="panel-tools__rail-header ds-chrome-row ds-chrome-space--md">
+                {this.renderRailAction(headerItem, 0)}
+              </div>
             ) : null}
-            <div class="panel-tools__rail-body ds-scrollbar-hidden">
-              {bodyItems.map((item, bodyIdx) =>
-                this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx)
-              )}
+            <div class="panel-tools__rail-body ds-chrome-column ds-chrome-space--md ds-scrollbar-hidden">
+              <div class="panel-tools__rail-actions">
+                {bodyItems.map((item, bodyIdx) =>
+                  this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx)
+                )}
+              </div>
             </div>
             {footerItem ? (
-              <div class="panel-tools__rail-footer">
+              <div class="panel-tools__rail-footer ds-chrome-row ds-chrome-space--md">
                 {this.renderRailAction(footerItem, footerIndex)}
               </div>
             ) : null}

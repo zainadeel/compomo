@@ -84,7 +84,7 @@ export class MobileHeader {
     return (
       <Host>
         <header class="mobile-header">
-          <div class="mobile-header__primary">
+          <div class="mobile-header__primary ds-chrome-grid ds-chrome-space--md">
             <div class="mobile-header__lane mobile-header__lane--leading">
               <slot name="leading" />
             </div>

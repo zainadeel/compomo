@@ -31,6 +31,7 @@ const meta: Meta = {
     },
   },
   argTypes: {
+    size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     side: { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
     align: { control: 'select', options: ['start', 'center', 'end'] },
     anchorAlignment: { control: 'select', options: ['choice-cell', 'popup-frame'] },
@@ -40,6 +41,7 @@ const meta: Meta = {
     },
   },
   args: {
+    size: 'md',
     side: 'bottom',
     align: 'start',
     anchorAlignment: 'choice-cell',
@@ -57,6 +59,7 @@ export const Playground: Story = {
       <ds-menu
         ?open=${true}
         .items=${items}
+        size=${args['size'] ?? 'md'}
         side=${args['side'] ?? 'bottom'}
         align=${args['align'] ?? 'start'}
         anchorAlignment=${args['anchorAlignment'] ?? 'choice-cell'}

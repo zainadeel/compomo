@@ -12,17 +12,21 @@ import {
 } from '@stencil/core';
 import {
   choicePopupMinWidth,
+  CONTROL_SUPPORTING_TEXT_VARIANT,
+  CONTROL_TEXT_VARIANT,
   resolveChoicePopupAlignOffset,
   resolveCssLengthPx,
   resolveMotionTimeMs,
   TOKEN_CSS_LENGTHS,
   TOKEN_DEFAULTS,
   type ChoicePopupAnchorAlignment,
+  type ControlSize,
 } from '../../utils';
 import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
 
 export type MenuSelectionMode = 'none' | 'single';
+export type MenuSize = ControlSize;
 import {
   isMenuGradientPickerSection,
   isMenuPickerSection,
@@ -71,6 +75,8 @@ export class Menu {
 
   @Prop({ mutable: true }) open: boolean = false;
   @Prop() items: MenuItemData[] = [];
+  /** Choice-row density. */
+  @Prop() size: MenuSize = 'md';
   /** Give ordinary rows mutually-exclusive menu semantics using isSelected. */
   @Prop() selectionMode: MenuSelectionMode = 'none';
   @Prop() sections: MenuSection[] = [];
@@ -588,6 +594,8 @@ export class Menu {
                   'menu-section--divided': si < sections.length - 1,
                   'menu-section--gradient-picker': isMenuPickerSection(section),
                   'ds-choice-section': true,
+                  'ds-chrome-column': true,
+                  'ds-chrome-space--sm': true,
                   'ds-choice-section--divided': si < sections.length - 1,
                 }}
                 role={section.header ? 'group' : undefined}
@@ -595,9 +603,9 @@ export class Menu {
               >
                 {section.header && (
                   <ds-text
-                    class="section-header ds-choice-section__header ds-control--md"
+                    class={`section-header ds-choice-section__header ds-control--${this.size}`}
                     as="span"
-                    variant="text-body-small"
+                    variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                     emphasis
                     color="primary"
                     aria-hidden="true"
@@ -641,7 +649,8 @@ export class Menu {
                         class={{
                           'menu-item': true,
                           'ds-choice-item': true,
-                          'ds-control--md': true,
+                          'ds-control-frame': true,
+                          [`ds-control--${this.size}`]: true,
                           'ds-focus-ring-inset': true,
                           'ds-focus-ring--visible': isFocused && this.focusRingVisible,
                           'ds-interaction-fill': !item.isInactive,
@@ -692,18 +701,18 @@ export class Menu {
                       >
                         <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
                           <ds-text
-                            class="menu-item__label ds-choice-item__label"
+                            class="menu-item__label ds-choice-item__label ds-control-label-box"
                             as="span"
-                            variant="text-body-medium"
+                            variant={CONTROL_TEXT_VARIANT[this.size]}
                             color={item.isSelected ? 'primary' : 'secondary'}
                           >
                             {item.label}
                           </ds-text>
                           {item.subtext && (
                             <ds-text
-                              class="menu-item__subtext ds-choice-item__subtext"
+                              class="menu-item__subtext ds-choice-item__subtext ds-control-label-box"
                               as="span"
-                              variant="text-body-small"
+                              variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                               color="secondary"
                             >
                               {item.subtext}
@@ -726,7 +735,7 @@ export class Menu {
                         {item.showSwitch && (
                           <ds-switch
                             class="menu-item__switch ds-interaction-fill__content"
-                            size="md"
+                            size={this.size}
                             checked={!!item.switchValue}
                             presentation
                           />

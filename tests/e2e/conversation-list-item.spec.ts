@@ -62,6 +62,8 @@ test('renders one unread dot centered on the title action track', async ({ page 
   const mark = badge.locator('.badge__mark');
 
   await expect(badge).toHaveClass(/badge--dot/);
+  await expect(badge).toHaveClass(/badge--no-ring/);
+  await expect(badge).toHaveCSS('--_badge-ring-width', '0');
   await expect(mark).toHaveText('');
   await rowButton.hover();
   await expect(item.locator('.conversation-list-item__unread')).toHaveCSS('opacity', '1');

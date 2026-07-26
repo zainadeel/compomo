@@ -18,7 +18,8 @@ const meta: Meta = {
           '`@ds-mo/ui/control-elevation.css`, apply `.ds-control-elevation` plus `--sm`, `--md`, ' +
           'or `--floating`, and keep the wrapped control borderless. The wrapper receives the split ' +
           'outer shadow while a pointer-transparent top overlay keeps TokoMo’s inset highlight visible ' +
-          'over opaque children. The owner still supplies layout, radius, background, and optional blur. ' +
+          'over opaque children. Add `--press-scale` around ButtonFilled or ButtonUnfilled so the complete ' +
+          'elevated surface scales as one unit. The owner still supplies layout, radius, background, and optional blur. ' +
           'A wrapped Input uses `hasBorder=false` at rest; its focus and error strokes remain control-owned beneath the topmost highlight.',
       },
     },
@@ -35,7 +36,7 @@ const elevationLevel = (
   <div class="control-elevation-demo__example">
     <p class="control-elevation-demo__label">${label}</p>
     <div
-      class="control-elevation-demo__wrapper ds-control-elevation ds-control-elevation--${level}"
+      class="control-elevation-demo__wrapper ds-control-elevation ds-control-elevation--${level} ds-control-elevation--press-scale"
     >
       <ds-button-filled
         data-a11y-fixture
@@ -60,7 +61,7 @@ const themeExamples = (theme: 'light' | 'dark') => html`
     <div class="control-elevation-demo__example">
       <p class="control-elevation-demo__label">Transparent blurred child</p>
       <div
-        class="control-elevation-demo__wrapper control-elevation-demo__wrapper--transparent ds-control-elevation ds-control-elevation--md"
+        class="control-elevation-demo__wrapper control-elevation-demo__wrapper--transparent ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale"
       >
         <ds-button-unfilled
           data-a11y-fixture

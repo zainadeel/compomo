@@ -1352,6 +1352,7 @@
             "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
           ],
           "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
             "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
             "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
             "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
@@ -1524,6 +1525,7 @@
             "For form submission, use native submit behavior and handle the form submit event rather than submitting from the button click event."
           ],
           "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
             "General content UI keeps the selected interaction fill and border for persistent active state.",
             "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
@@ -1719,6 +1721,7 @@
             "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
           ],
           "states": [
+            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills the remaining card body while an optional legend remains content-sized.",
             "The card disables local hover highlighting on a slotted ChartLegend because bar legends are static keys.",
             "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
@@ -1833,6 +1836,7 @@
             "The application owns meaningful loading, empty, and error status copy when either content region is temporarily replaced or absent."
           ],
           "states": [
+            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills remaining card height while the legend remains content-sized.",
             "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
             "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
@@ -1947,6 +1951,7 @@
             "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
           ],
           "states": [
+            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills the remaining card body while the legend remains content-sized.",
             "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
             "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
@@ -2906,7 +2911,7 @@
     {
       "name": "checkbox",
       "title": "Checkbox",
-      "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+      "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and four density states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2917,7 +2922,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and three density states.",
+          "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and four density states.",
           "useWhen": [
             "A user may independently select zero or more choices.",
             "A form requires acknowledgment, consent, or an opt-in value before submission.",
@@ -2957,15 +2962,15 @@
             "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
           ],
           "states": [
-            "Unchecked boxes use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned check or subtract mark at the same density-specific stroke width.",
+            "Unchecked boxes use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned check or subtract mark at the same density-specific stroke width.",
             "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
             "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
-            "Sizes are md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
+            "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
             "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
-            "Use the md indicator centered by the shared 20px option icon zone in multi-select rows."
+            "Use the same density as the shared option icon zone in multi-select rows."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -3302,7 +3307,7 @@
             "actionLayout footer stretches a long action between 8px side and bottom insets.",
             "Both action layouts share the always-active scroll-overlay fade controller, reserve measured end clearance, and begin fading 8px before the visible action.",
             "ConversationList paints its measured fade on a separate surface-aware layer so contextual row actions retain a real backdrop for blur; hovered, focused, and menu-open rows rise above that decorative fade.",
-            "The persistent action wrapper splits its md outer shadow from a top inset-highlight overlay so opaque filled actions keep the complete TokoMo elevation; slotted controls must disable optional resting borders."
+            "The persistent action wrapper splits its md outer shadow from a top inset-highlight overlay so opaque filled actions keep the complete TokoMo elevation; slotted buttons disable optional resting borders and the press-scale modifier moves the button and elevated surface as one unit."
           ],
           "responsiveBehavior": [
             "The list fills its owner, scrolls independently, and keeps its persistent action above scrolling rows."
@@ -3376,7 +3381,7 @@
             "Hover and press use the shared interaction hover and pressed overlays. Only the selected conversation uses the persistent active fill.",
             "The title uses body-medium, not title-small, and the body-small preview truncates after one line. Unread titles use emphasis with primary foreground; read titles use regular weight with secondary foreground.",
             "The actions slot overlays the row at an 8px right inset without changing title or preview measure, and paints above the row interaction wash while that wash remains active.",
-            "Contextual actions use the shared md control-elevation wrapper so their transparent backdrop blur is unchanged while the split inset highlight remains above the borderless slotted action."
+            "Contextual actions use the shared md control-elevation wrapper so their transparent backdrop blur is unchanged while the split inset highlight remains above the borderless slotted action and the press-scale modifier moves the complete elevated surface."
           ],
           "responsiveBehavior": [
             "Long titles and previews truncate without displacing trailing status."
@@ -3687,7 +3692,7 @@
             "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
             "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
             "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
-            "All content is centered. The owner supplies container size and surrounding padding; do not compose actions into or immediately alongside the current EmptyState pattern.",
+            "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently. Do not compose actions into or immediately alongside the current EmptyState pattern.",
             "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
           ],
           "responsiveBehavior": [
@@ -3709,6 +3714,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/EmptyState/EmptyState.stories.ts"
+            },
+            {
+              "label": "Shared layout recipe foundation",
+              "path": "docs/layout-recipe-foundation.md"
             }
           ]
         },
@@ -3790,6 +3799,7 @@
             "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
           ],
           "states": [
+            "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics.",
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
             "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
             "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
@@ -3987,7 +3997,7 @@
     {
       "name": "input",
       "title": "Input",
-      "description": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
+      "description": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3998,7 +4008,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, three control densities, optional leading and trailing content, search clearing, and validation.",
+          "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
           "useWhen": [
             "A user must enter or edit one line of text, an email address, telephone number, URL, search query, or password.",
             "The value must participate in native, Angular, or React form state.",
@@ -4039,6 +4049,7 @@
             "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
           ],
           "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
             "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
             "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
             "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
@@ -4050,7 +4061,7 @@
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
-            "Choose density from the containing layout: md for ordinary forms, sm or xs only where the surrounding controls use the same compact recipe.",
+            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
             "The owner supplies layout constraints and decides when a compact field moves to its own row."
           ],
           "frameworkCaveats": {
@@ -4446,7 +4457,7 @@
             "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
-            "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden md presentation indicator.",
+            "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator at the same density as the menu.",
             "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
             "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
             "Use notification dots only as supplemental status and not as the sole indication of important information."
@@ -4457,7 +4468,8 @@
             "After dsSelect from a switch row, replace the items or sections array with updated switchValue data so the controlled indicator reflects the new state.",
             "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
-            "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only."
+            "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only.",
+            "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics."
           ],
           "responsiveBehavior": [
             "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
@@ -4545,6 +4557,10 @@
           },
           "sideOffset": {
             "type": "number | string",
+            "required": false
+          },
+          "size": {
+            "type": "MenuSize",
             "required": false
           }
         },
@@ -4908,7 +4924,7 @@
             "Selection and transcript interaction release automatic following.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
             "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
-            "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action.",
+            "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action while the press-scale modifier moves the complete elevated surface.",
             "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
@@ -5003,7 +5019,7 @@
             "Direct touch paints the pressed overlay immediately, keeps a quick tap visible for one short frame, and clears it after release or cancellation without relying on Safari's latch-prone active state."
           ],
           "responsiveBehavior": [
-            "Render only below the mobile breakpoint and preserve safe-area clearance.",
+            "Render only below the mobile breakpoint; its secondary surface extends through the bottom safe-area inset when the application enables viewport-fit=cover.",
             "The secondary-background bar keeps an 8px outer inset; its two icon-only groups anchor to opposite edges while retaining fixed 40px targets and a divider between Menu and current area.",
             "Bar chrome and its divider are not text-selectable and suppress the iOS touch callout."
           ],
@@ -5341,7 +5357,9 @@
             "Area, Help, and Account events express intent while the application owns navigation and product behavior."
           ],
           "responsiveBehavior": [
-            "The pane fills the mobile content stage while the bottom bar remains available."
+            "The pane fills the mobile content stage while the bottom bar remains available.",
+            "The sheet header and scrollable navigation body each use the shared 8px chrome inset; large destination controls retain their independent 40px density.",
+            "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
           ],
           "references": [
             {
@@ -6426,7 +6444,7 @@
     {
       "name": "radio",
       "title": "Radio",
-      "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
+      "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, four densities, per-option inactive state, and roving keyboard focus.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6437,7 +6455,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, three densities, per-option inactive state, and roving keyboard focus.",
+          "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, four densities, per-option inactive state, and roving keyboard focus.",
           "useWhen": [
             "A user must select exactly one visible option from a small set.",
             "All available choices should remain visible for comparison.",
@@ -6476,9 +6494,9 @@
             "Roving tabindex keeps one active option in the tab order, preferring the selected option."
           ],
           "states": [
-            "Unchecked circles use a tertiary-foreground inset stroke: 1.25px at md, 1px at sm, and 0.75px at xs.",
-            "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 8px at md, 6px at sm, and 4px at xs.",
-            "Sizes are md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
+            "Unchecked circles use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs.",
+            "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 10px at lg, 8px at md, 6px at sm, and 4px at xs.",
+            "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
             "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected."
           ],
           "responsiveBehavior": [
@@ -6720,6 +6738,8 @@
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
           "states": [
+            "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
             "Value is controlled through the mutable value property; dsChange reports user selection and clearing.",
             "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
             "When allowClear is enabled, the clear affordance appears only after a value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
@@ -6731,9 +6751,9 @@
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
-            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
-            "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the CrossCircle icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
-            "The shared clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
+            "The shared popup search control follows the Select density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
+            "When search contains text, the shared control shows a rounded icon-only ButtonUnfilled with the CrossCircle icon and no border, sized to remain inset within the current row density. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+            "The shared clear footer mirrors the owning density: menu-item padding surrounds a borderless density row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
             "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
             "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the Select exposes validity and error presentation without imposing that policy.",
@@ -6972,23 +6992,25 @@
             "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
             "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
             "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
-            "Each row uses a medium-size presentation-only ds-checkbox indicator; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
+            "Each row uses a presentation-only ds-checkbox indicator at the same density as the row; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
             "The trigger keeps its field label visible and appends the current selected count; an explicit aria-label or aria-labelledby remains the authoritative accessible name when supplied.",
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
           "states": [
+            "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
             "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
             "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
             "Selecting an option keeps the popup open so additional values can be toggled.",
-            "The trigger label stays left-aligned at every width; every option row uses the same leading medium Checkbox indicator. The default control size is md in both forms and filter bars.",
+            "The trigger label stays left-aligned at every width; every option row uses the same leading Checkbox indicator at its density. The default control size is md in both forms and filter bars.",
             "The selected count always follows the persistent label as plain text separated by a centered dot, including for one selection, and counts every selected value even when search or grouping hides it. Never replace the count with selected option names.",
             "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when selection promotes the label and count to primary.",
-            "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
+            "The shared popup search control follows the SelectMulti density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
             "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
-            "The shared summary-and-clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
+            "The shared summary-and-clear footer mirrors the owning density: menu-item padding surrounds a borderless density row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
             "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
             "When allowClear is enabled, clear-all appears only after at least one value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
@@ -7253,6 +7275,7 @@
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On mobile, ShellApp hides and inerts PanelNav and BarNav, uses a solid primary stage, and composes routed ShellPage MobileHeader presentations, MobileSheetNav, ShellTools, and the persistent five-item MobileBarNav.",
+            "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
             "The bottom bar remains visible at all route and tool depths in the foundation release."
@@ -8036,6 +8059,7 @@
             "Read-only sliders remain focusable and submittable; inactive or disabled sliders leave the tab order and form submission."
           ],
           "states": [
+            "The label, slider control, value display, and supporting content follow the shared 4px vertical field flow.",
             "value is mutable: user pointer, keyboard, or assistive-technology input updates it and emits dsChange continuously.",
             "dsCommit emits once a pointer interaction completes or the native range input commits a keyboard or assistive-technology change.",
             "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",
@@ -8334,7 +8358,7 @@
     {
       "name": "switch",
       "title": "Switch",
-      "description": "Compact on/off setting control for changes that take effect immediately, with three sizes and form-associated behavior.",
+      "description": "Compact on/off setting control for changes that take effect immediately, with four sizes and form-associated behavior.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -8345,7 +8369,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Compact on/off setting control for changes that take effect immediately, with three sizes and form-associated behavior.",
+          "summary": "Compact on/off setting control for changes that take effect immediately, with four sizes and form-associated behavior.",
           "useWhen": [
             "A binary setting takes effect immediately when the user turns it on or off.",
             "A settings, form, or menu row needs a compact on/off control.",
@@ -8388,7 +8412,7 @@
           "states": [
             "Activation updates checked immediately and emits dsChange with the new boolean value.",
             "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
-            "Sizes are md 32×20 with a 12px thumb and 4px body inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
+            "Sizes are lg 40×24 with a 16px thumb and 4px body inset, md 32×20 with a 12px thumb and 4px inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
             "Unchecked uses a transparent track with a density-specific tertiary-foreground inset stroke and a solid tertiary-foreground thumb without a border. Checked uses a brand track and primary-background thumb with no strokes.",
             "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
           ],

@@ -191,7 +191,7 @@ export class Modal {
             width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))`,
           }}
         >
-          <div class="modal-header">
+          <div class="modal-header ds-chrome-row ds-chrome-space--lg">
             <ds-text
               class="modal-heading"
               as="h2"
@@ -224,15 +224,19 @@ export class Modal {
           <div
             class={{
               'modal-footer': true,
+              'ds-chrome-row': true,
+              'ds-chrome-space--lg': true,
               'modal-footer--empty': !this.hasFooter,
             }}
           >
-            <slot
-              name="footer"
-              onSlotchange={(event: Event) =>
-                this.updateFooterPresence(event.currentTarget as HTMLSlotElement)
-              }
-            />
+            <div class="modal-footer__actions">
+              <slot
+                name="footer"
+                onSlotchange={(event: Event) =>
+                  this.updateFooterPresence(event.currentTarget as HTMLSlotElement)
+                }
+              />
+            </div>
           </div>
         </dialog>
       </Host>

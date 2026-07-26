@@ -14,6 +14,12 @@
   gap: var(--dimension-space-100);
 }
 
+:host(.radio--lg) {
+  --_radio-circle: var(--dimension-iconography-md);
+  --_radio-dot: calc(var(--dimension-size-base) * 5 / 4);
+  --_radio-stroke: var(--dimension-stroke-width-018);
+}
+
 :host(.radio--md) {
   --_radio-circle: var(--dimension-iconography-sm);
   --_radio-dot: var(--dimension-size-100);

@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 
@@ -16,7 +17,6 @@
 .bar-title {
   position: relative;
   min-width: 0;
-  padding: 0;
   box-sizing: border-box;
   background: var(--color-background-primary);
 }
@@ -129,7 +129,6 @@
   cursor: default;
   font-family: inherit;
   user-select: none;
-  transition: color var(--effect-motion-short-2);
 }
 
 .bar-title__section-trigger--expanded {
@@ -161,7 +160,6 @@
 
 :host(.bar-title-host--compact) .bar-title {
   height: var(--dimension-size-600);
-  padding: var(--dimension-space-100);
 }
 
 :host(.bar-title-host--compact) .bar-title::after {
@@ -194,10 +192,4 @@
   height: var(--dimension-size-400);
   padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
   box-sizing: border-box;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bar-title__section-trigger {
-    transition: none;
-  }
 }

@@ -8,16 +8,18 @@ import {
 } from '../../utils';
 
 export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
-export type InputSize = 'md' | 'sm' | 'xs';
+export type InputSize = 'lg' | 'md' | 'sm' | 'xs';
 export type InputWidth = ControlWidth;
 
-const ICON_SIZE: Record<InputSize, 'md' | 'sm' | 'xs'> = {
+const ICON_SIZE: Record<InputSize, 'lg' | 'md' | 'sm' | 'xs'> = {
+  lg: 'lg',
   md: 'md',
   sm: 'sm',
   xs: 'xs',
 };
 
-const CLEAR_BUTTON_SIZE: Record<InputSize, 'sm' | 'xs'> = {
+const CLEAR_BUTTON_SIZE: Record<InputSize, 'md' | 'sm' | 'xs'> = {
+  lg: 'md',
   md: 'sm',
   sm: 'xs',
   xs: 'xs',
@@ -162,6 +164,7 @@ export class Input {
       <Host
         class={{
           'input-host': true,
+          'ds-field-stack': true,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
@@ -178,6 +181,7 @@ export class Input {
         <div
           class={{
             'input-control': true,
+            'ds-control-frame': true,
             'input-control--bordered': this.hasBorder || this.error,
             'input-control--error': this.error,
             'ds-interaction-fill': true,
@@ -185,7 +189,7 @@ export class Input {
           }}
         >
           {this.icon && (
-            <span class="input-control__prefix ds-interaction-fill__content" aria-hidden="true">
+            <span class="input-control__prefix ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
               <ds-icon name={this.icon} size={iconSize} color="inherit" />
             </span>
           )}
@@ -201,7 +205,7 @@ export class Input {
             autoComplete={this.autoComplete}
             inputMode={this.inputMode || undefined}
             enterKeyHint={this.enterKeyHint || undefined}
-            class={`native-input ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
+            class={`native-input ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}
@@ -210,7 +214,7 @@ export class Input {
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
-          <span class={{ 'input-control__suffix': true, 'input-control__suffix--empty': !this.hasSuffix }}>
+          <span class={{ 'input-control__suffix': true, 'ds-control-icon-box': true, 'input-control__suffix--empty': !this.hasSuffix }}>
             <slot name="suffix" />
           </span>
           {showClear && (

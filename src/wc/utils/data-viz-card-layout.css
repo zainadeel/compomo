@@ -1,0 +1,46 @@
+/**
+ * Shared body anatomy for data-visualization cards.
+ *
+ * The owning card component still controls chart behavior and slot semantics.
+ * These parts keep the fill chart region and content-sized legend geometry in
+ * sync across bar, line, and donut cards.
+ */
+
+.ds-data-viz-card-layout {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  gap: var(--dimension-space-200);
+}
+
+.ds-data-viz-card-chart {
+  display: grid;
+  flex: 1 1 auto;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: var(--dimension-space-400) var(--dimension-space-400) 0
+    var(--dimension-space-400);
+}
+
+.ds-data-viz-card-chart > * {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ds-data-viz-card-chart--fill > * {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.ds-data-viz-card-legend {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  padding: 0 var(--dimension-space-100) var(--dimension-space-100)
+    var(--dimension-space-100);
+}

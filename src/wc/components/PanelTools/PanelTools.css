@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/chrome-layout.css';
 @import '../../utils/scrollbar-hidden.css';
 
 :host {
@@ -112,6 +113,16 @@
   width: 100vw;
 }
 
+/*
+ * A framework can update the reflected presentation attribute before Stencil
+ * commits the matching render class. Conceal that single inconsistent frame so
+ * slotted master/detail content never paints against the previous geometry.
+ */
+:host([presentation='fullscreen']:not(.panel-tools--fullscreen)) .panel-tools__drawer-surface,
+:host(.panel-tools--fullscreen:not([presentation='fullscreen'])) .panel-tools__drawer-surface {
+  visibility: hidden;
+}
+
 :host(.panel-tools--presentation-snap) .panel-tools__drawer {
   transition: none;
 }
@@ -172,13 +183,9 @@
 }
 
 .panel-tools__rail-header {
-  display: flex;
-  align-items: center;
   justify-content: center;
   height: var(--dimension-size-600);
-  padding: var(--dimension-space-100);
   flex-shrink: 0;
-  box-sizing: border-box;
   border-bottom: var(--_panel-tools-border);
 }
 
@@ -187,22 +194,20 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.panel-tools__rail-actions {
   display: flex;
   flex-direction: column;
   gap: var(--dimension-space-050);
-  padding: var(--dimension-space-100);
-  box-sizing: border-box;
+  width: 100%;
 }
 
 /* Flush to the bottom of the rail — mirrors Search header pin. */
 .panel-tools__rail-footer {
-  display: flex;
-  align-items: center;
   justify-content: center;
   flex-shrink: 0;
   margin-top: auto;
-  padding: var(--dimension-space-100);
-  box-sizing: border-box;
 }
 
 .panel-tools__rail-action {

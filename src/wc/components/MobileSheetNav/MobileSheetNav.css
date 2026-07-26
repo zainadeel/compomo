@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 
@@ -24,12 +25,7 @@
 
 .mobile-sheet-nav__header {
   position: relative;
-  display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--dimension-space-100);
-  padding: var(--dimension-space-200);
-  box-sizing: border-box;
 }
 
 .mobile-sheet-nav__header::after {
@@ -82,7 +78,11 @@
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
-  padding: var(--dimension-space-200);
+}
+
+.mobile-sheet-nav__sections {
+  display: grid;
+  gap: var(--dimension-space-400);
 }
 
 .mobile-sheet-nav__items {

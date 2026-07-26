@@ -47,6 +47,7 @@
     "Read-only sliders remain focusable and submittable; inactive or disabled sliders leave the tab order and form submission."
   ],
   "states": [
+    "The label, slider control, value display, and supporting content follow the shared 4px vertical field flow.",
     "value is mutable: user pointer, keyboard, or assistive-technology input updates it and emits dsChange continuously.",
     "dsCommit emits once a pointer interaction completes or the native range input commits a keyboard or assistive-technology change.",
     "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",

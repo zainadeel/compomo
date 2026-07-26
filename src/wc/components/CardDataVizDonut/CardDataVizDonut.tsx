@@ -99,14 +99,14 @@ export class CardDataVizDonut {
             aria-label={this.filterLabel}
             onDsClick={this.handleFilterClick}
           />
-          <div class="card-data-viz-donut__layout">
+          <div class="ds-data-viz-card-layout">
             {this.hasChartSlot && (
-              <div class="card-data-viz-donut__chart-region">
+              <div class="ds-data-viz-card-chart ds-data-viz-card-chart--fill">
                 <slot name="chart" />
               </div>
             )}
             {this.hasLegendSlot && (
-              <div class="card-data-viz-donut__legend-region">
+              <div class="ds-data-viz-card-legend">
                 <slot name="legend" />
               </div>
             )}

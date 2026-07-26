@@ -44,6 +44,21 @@ test.describe('App shell chrome', () => {
     expect(new Set(cursors)).toEqual(new Set(['default']));
   });
 
+  test('keeps tool-rail dot halos aligned to the shell gradient at rest', async ({ page }) => {
+    const action = page.getByRole('button', { name: 'Activity' });
+    const badge = action.locator('ds-badge');
+    const mark = badge.locator('.badge__mark');
+
+    await expect(action).toHaveCSS('scale', 'none');
+    await expect(badge).toHaveClass(/badge--on-gradient-background/);
+    await expect(mark).toHaveCSS('box-shadow', 'none');
+    await expect
+      .poll(() =>
+        mark.evaluate(element => getComputedStyle(element, '::after').backgroundAttachment),
+      )
+      .toBe('fixed');
+  });
+
   test('contains page scrolling without moving the shell viewport', async ({ page }) => {
     const shell = page.locator('ds-shell-app');
     const shellRoot = page.locator('.shell-app');
@@ -125,14 +140,16 @@ test.describe('App shell chrome', () => {
     };
 
     await expect.poll(actionGap).toBe(4);
-    await tools.evaluate(element => {
+    const reflectedPresentation = await tools.evaluate(element => {
       (element as HTMLElement & { presentation: 'fullscreen' }).presentation = 'fullscreen';
+      return element.getAttribute('presentation');
     });
+    expect(reflectedPresentation).toBe('fullscreen');
     await expect(tools).toHaveAttribute('presentation', 'fullscreen');
     await expect.poll(actionGap).toBe(4);
   });
 
-  test('keeps fixed 4px header gaps while only the title shrinks', async ({ page }) => {
+  test('keeps shared 8px header gaps while only the title shrinks', async ({ page }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
     const shell = page.locator('ds-shell-app');
     const tools = page.locator('ds-panel-tools');
@@ -161,8 +178,8 @@ test.describe('App shell chrome', () => {
     expect(wide).toMatchObject({
       leadingWidth: 32,
       trailingWidth: 68,
-      leadingGap: 4,
-      trailingGap: 4,
+      leadingGap: 8,
+      trailingGap: 8,
     });
 
     await shell.evaluate(element => {
@@ -174,8 +191,8 @@ test.describe('App shell chrome', () => {
     await expect.poll(geometry).toMatchObject({
       leadingWidth: 32,
       trailingWidth: 68,
-      leadingGap: 4,
-      trailingGap: 4,
+      leadingGap: 8,
+      trailingGap: 8,
     });
     const narrow = await geometry();
     expect(narrow).not.toBeNull();
@@ -602,6 +619,40 @@ test.describe('App shell chrome', () => {
 
     await expect(host).toHaveClass(/panel-tools--drawer-resting/, { timeout: 5000 });
     await expect(drawer).toHaveCSS('max-width', '0px');
+  });
+
+  test('conceals tool content until the requested presentation is committed', async ({ page }) => {
+    const tools = page.locator('ds-panel-tools');
+    const surface = page.locator('.panel-tools__drawer-surface');
+
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    await expect(surface).toBeVisible();
+
+    const entering = await tools.evaluate(element => {
+      element.setAttribute('presentation', 'fullscreen');
+      const drawerSurface = element.querySelector('.panel-tools__drawer-surface');
+      return {
+        committed: element.classList.contains('panel-tools--fullscreen'),
+        visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
+      };
+    });
+
+    expect(entering).toEqual({ committed: false, visibility: 'hidden' });
+    await expect(tools).toHaveClass(/panel-tools--fullscreen/);
+    await expect(surface).toHaveCSS('visibility', 'visible');
+
+    const exiting = await tools.evaluate(element => {
+      element.setAttribute('presentation', 'drawer');
+      const drawerSurface = element.querySelector('.panel-tools__drawer-surface');
+      return {
+        committed: !element.classList.contains('panel-tools--fullscreen'),
+        visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
+      };
+    });
+
+    expect(exiting).toEqual({ committed: false, visibility: 'hidden' });
+    await expect(tools).not.toHaveClass(/panel-tools--fullscreen/);
+    await expect(surface).toHaveCSS('visibility', 'visible');
   });
 
   test('keeps the complete tool UI opaque until the drawer is fully clipped closed', async ({

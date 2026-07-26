@@ -125,7 +125,7 @@ test.describe('Responsive mobile shell foundation', () => {
       };
     });
 
-    expect(metrics.barGap).toBe('16px');
+    expect(metrics.barGap).toBe('8px');
     expect(metrics.barJustifyContent).toBe('space-between');
     expect(metrics.barPaddingInline).toBe('8px');
     expect(metrics.barBackground).toBe(metrics.secondaryBackground);
@@ -237,6 +237,44 @@ test.describe('Responsive mobile shell foundation', () => {
   test('uses one icon-only sheet header lane and large-density destination rows', async ({
     page,
   }) => {
+    await page.locator('ds-mobile-sheet-nav').evaluate(element => {
+      (element as HTMLElement & {
+        dashboardGroups: Array<{
+          id: string;
+          items: Array<{ id: string; icon: string; label: string; href: string }>;
+        }>;
+      }).dashboardGroups = [
+        {
+          id: 'primary',
+          items: [
+            {
+              id: 'tracking',
+              icon: 'MapPage',
+              label: 'Tracking',
+              href: '/dashboard/tracking',
+            },
+            {
+              id: 'workforce',
+              icon: 'Person',
+              label: 'Workforce',
+              href: '/dashboard/workforce',
+            },
+          ],
+        },
+        {
+          id: 'administration',
+          items: [
+            {
+              id: 'devices',
+              icon: 'Devices',
+              label: 'Devices',
+              href: '/dashboard/devices',
+            },
+          ],
+        },
+      ];
+    });
+
     await page.getByRole('button', { name: 'Menu' }).click();
 
     const sheet = page.locator('ds-mobile-sheet-nav');
@@ -261,6 +299,8 @@ test.describe('Responsive mobile shell foundation', () => {
       const rects = [logo, context, actions].map(item => item?.getBoundingClientRect());
       return {
         height: header?.getBoundingClientRect().height,
+        padding: header ? getComputedStyle(header).padding : '',
+        gap: header ? getComputedStyle(header).gap : '',
         centers: rects.map(rect => rect ? rect.top + rect.height / 2 : 0),
         logoLeft: rects[0]?.left,
         logoMarkLeft: logoMark?.getBoundingClientRect().left,
@@ -284,23 +324,29 @@ test.describe('Responsive mobile shell foundation', () => {
       };
     });
 
-    expect(headerMetrics.height).toBe(72);
+    expect(headerMetrics.height).toBe(56);
+    expect(headerMetrics.padding).toBe('8px');
+    expect(headerMetrics.gap).toBe('8px');
     expect(headerMetrics.centers[0]).toBeCloseTo(headerMetrics.centers[1], 0);
     expect(headerMetrics.centers[1]).toBeCloseTo(headerMetrics.centers[2], 0);
     expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
-    expect(headerMetrics.logoLeft).toBe(16);
-    expect(headerMetrics.logoMarkLeft).toBe(24);
+    expect(headerMetrics.logoLeft).toBe(8);
+    expect(headerMetrics.logoMarkLeft).toBe(16);
     expect(headerMetrics.logoMarkSize).toEqual([24, 24]);
-    expect(headerMetrics.actionsRight).toBeCloseTo(headerMetrics.headerRight! - 16, 0);
+    expect(headerMetrics.actionsRight).toBeCloseTo(headerMetrics.headerRight! - 8, 0);
     expect(headerMetrics.actionSizes).toEqual([[40, 40], [40, 40]]);
     expect(headerMetrics.actionIconSizes).toEqual([[24, 24], [24, 24]]);
 
     const sheetMetrics = await sheet.evaluate(element => {
       const body = element.querySelector('.mobile-sheet-nav__body');
+      const sectionsContainer = element.querySelector('.mobile-sheet-nav__sections');
       const itemsContainer = element.querySelector('.mobile-sheet-nav__items');
+      const sections = Array.from(element.querySelectorAll('.mobile-sheet-nav__items'));
       const items = Array.from(element.querySelectorAll('.mobile-sheet-nav__item'));
       return {
         bodyPadding: body ? getComputedStyle(body).padding : '',
+        sectionGap: sectionsContainer ? getComputedStyle(sectionsContainer).gap : '',
+        sectionCount: sections.length,
         itemGap: itemsContainer ? getComputedStyle(itemsContainer).gap : '',
         items: items.map(item => {
           const icon = item.querySelector('ds-icon');
@@ -319,9 +365,18 @@ test.describe('Responsive mobile shell foundation', () => {
       };
     });
 
-    expect(sheetMetrics.bodyPadding).toBe('16px');
+    expect(sheetMetrics.bodyPadding).toBe('8px');
+    expect(sheetMetrics.sectionGap).toBe('32px');
+    expect(sheetMetrics.sectionCount).toBe(2);
     expect(sheetMetrics.itemGap).toBe('8px');
     expect(sheetMetrics.items).toEqual([
+      {
+        height: 40,
+        paddingInline: '8px',
+        gap: '4px',
+        iconSize: [24, 24],
+        labelPaddingInline: '4px',
+      },
       {
         height: 40,
         paddingInline: '8px',
@@ -582,6 +637,36 @@ test.describe('Shell tablet and desktop compatibility', () => {
     await expect(page.getByRole('complementary', { name: 'Tools' })).toHaveCount(1);
     await expect(innerTools).toHaveAttribute('open');
     await expect(page.locator('#persistent-value')).toBeVisible();
+  });
+
+  test('forwards presentation before paint and conceals the nested handoff frame', async ({
+    page,
+  }) => {
+    const tools = page.locator('ds-shell-tools');
+    const innerTools = tools.locator('ds-panel-tools');
+    const surface = innerTools.locator('.panel-tools__drawer-surface');
+
+    await page.getByRole('button', { name: 'Agents' }).click();
+    await expect(surface).toBeVisible();
+
+    const entering = await tools.evaluate(element => {
+      element.setAttribute('presentation', 'fullscreen');
+      const panel = element.querySelector('ds-panel-tools');
+      const drawerSurface = panel?.querySelector('.panel-tools__drawer-surface');
+      return {
+        forwarded: panel?.getAttribute('presentation'),
+        committed: panel?.classList.contains('panel-tools--fullscreen'),
+        visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
+      };
+    });
+
+    expect(entering).toEqual({
+      forwarded: 'fullscreen',
+      committed: false,
+      visibility: 'hidden',
+    });
+    await expect(innerTools).toHaveClass(/panel-tools--fullscreen/);
+    await expect(surface).toHaveCSS('visibility', 'visible');
   });
 });
 

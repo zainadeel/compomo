@@ -43,6 +43,7 @@
     "The application owns meaningful loading, empty, and error status copy when either content region is temporarily replaced or absent."
   ],
   "states": [
+    "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
     "The chart region fills remaining card height while the legend remains content-sized.",
     "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
     "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",

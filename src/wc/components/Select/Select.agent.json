@@ -52,6 +52,8 @@
     "Use errorMessage with error so the trigger is described by the rendered alert."
   ],
   "states": [
+    "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+    "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
     "Value is controlled through the mutable value property; dsChange reports user selection and clearing.",
     "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
     "When allowClear is enabled, the clear affordance appears only after a value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
@@ -63,9 +65,9 @@
     "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
     "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
     "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
-    "The shared popup search control stays md at every trigger size, using body-medium text, a 20px icon, and the same internal spacing as a borderless Select trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
-    "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the CrossCircle icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
-    "The shared clear footer mirrors the search region's sizing: menu-item padding surrounds an md-height borderless row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
+    "The shared popup search control follows the Select density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
+    "When search contains text, the shared control shows a rounded icon-only ButtonUnfilled with the CrossCircle icon and no border, sized to remain inset within the current row density. It clears the local term, stays hidden for an empty term, and returns focus to search.",
+    "The shared clear footer mirrors the owning density: menu-item padding surrounds a borderless density row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
     "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
     "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
     "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the Select exposes validity and error presentation without imposing that policy.",

@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/chrome-layout.css';
 
 :host {
   display: block;
@@ -8,14 +9,9 @@
 }
 
 .bar-workflow {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: var(--dimension-space-100);
   height: var(--dimension-size-600);
   min-width: 0;
-  padding: var(--dimension-space-100);
-  box-sizing: border-box;
   background: var(--color-background-bold-brand);
 }
 

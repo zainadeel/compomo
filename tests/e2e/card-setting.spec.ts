@@ -24,12 +24,18 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
         style.getPropertyValue('--dimension-card-height-sm')
       ),
       headerHeight: header?.getBoundingClientRect().height,
+      headerPadding: header ? getComputedStyle(header).padding : undefined,
+      headerGap: header ? getComputedStyle(header).gap : undefined,
+      headerBoxSizing: header ? getComputedStyle(header).boxSizing : undefined,
     };
   });
 
   expect(geometry.width).toBe(geometry.expectedWidth);
   expect(geometry.minHeight).toBe(geometry.expectedMinHeight);
   expect(geometry.headerHeight).toBe(48);
+  expect(geometry.headerPadding).toBe('8px');
+  expect(geometry.headerGap).toBe('8px');
+  expect(geometry.headerBoxSizing).toBe('border-box');
 });
 
 test('emits typed actions while the parent enforces one editing section', async ({ page }) => {

@@ -1,3 +1,5 @@
+@import '../../utils/chrome-layout.css';
+
 :host {
   display: block;
   min-width: 0;
@@ -23,15 +25,10 @@
 }
 
 .mobile-header__primary {
-  display: grid;
   grid-template-columns: minmax(var(--dimension-size-400), 1fr) minmax(0, auto) minmax(var(--dimension-size-400), 1fr);
-  align-items: center;
-  gap: var(--dimension-space-050);
   width: 100%;
   height: var(--dimension-size-600);
   min-width: 0;
-  padding: var(--dimension-space-100);
-  box-sizing: border-box;
   background: inherit;
   color: inherit;
 }

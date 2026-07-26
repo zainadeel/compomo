@@ -62,7 +62,7 @@ export class PanelToolHeader {
 
     return (
       <Host>
-        <header class="panel-tool-header">
+        <header class="panel-tool-header ds-chrome-row ds-chrome-space--md">
           <div class="panel-tool-header__leading">
             {this.showBack ? (
               <ds-tooltip label={this.backAriaLabel} side="bottom" size="sm">

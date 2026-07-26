@@ -1,5 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
+import { beginElevatedControlPress } from '../../utils/control-press';
 
 export type ButtonUnfilledBackground =
   | 'faint'
@@ -152,13 +153,13 @@ export class ButtonUnfilled {
 
   render() {
     const bg = this.background;
-    const textVariant =
-      this.size === 'lg' ? 'text-body-large' : CONTROL_TEXT_VARIANT[this.size];
+    const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
     const cls: Record<string, boolean> = {
       'button-unfilled': true,
       'ds-focus-ring-inset': true,
+      'ds-control-press-scale': true,
       'ds-interaction-fill': true,
       'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
       'ds-interaction-fill--on-faint': bg === 'faint',
@@ -178,6 +179,7 @@ export class ButtonUnfilled {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
+      'ds-control-frame': true,
       'button-unfilled--icon': this.variant === 'icon',
       'button-unfilled--label': this.variant === 'label',
       'button-unfilled--icon-label': this.variant === 'icon-label',
@@ -219,10 +221,13 @@ export class ButtonUnfilled {
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
           aria-haspopup={this.haspopup}
           aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
+          onPointerDown={event =>
+            beginElevatedControlPress(event, !this.isInactive && !this.isLoading)
+          }
           onClick={this.handleClick}
         >
           {this.showIcon && (
-            <span class="button-unfilled__icon-wrap ds-interaction-fill__content">
+            <span class="button-unfilled__icon-wrap ds-control-icon-box ds-interaction-fill__content">
               {this.isLoading
                 ? <ds-loader size={iconSize} color="inherit" />
                 : <ds-icon name={this.icon} size={iconSize} color="inherit" />
@@ -242,6 +247,7 @@ export class ButtonUnfilled {
             <ds-text
               class={{
                 'button-unfilled__label': true,
+                'ds-control-label-box': true,
                 'button-unfilled__label--loading': this.isLoading && this.variant === 'label',
                 'ds-interaction-fill__content': true,
               }}

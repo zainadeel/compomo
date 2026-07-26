@@ -1,7 +1,9 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/control-press.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/control-width.css';
 
 :host {
@@ -31,13 +33,7 @@
 }
 
 .button-unfilled {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  height: var(--ds-control-height, var(--dimension-size-400));
-  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
-  gap: var(--ds-control-gap, var(--dimension-space-050));
   background: transparent;
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
@@ -46,9 +42,8 @@
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;
-  transition: color var(--effect-motion-short-2);
   /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected` / `--on-*`).
-     Active always promotes foreground to primary (toggle mode). */
+     Active and popup-open foreground changes resolve atomically with the fill. */
 }
 
 .button-unfilled--icon {
@@ -148,19 +143,12 @@
 
 .button-unfilled__icon-wrap {
   position: relative;
-  width: var(--ds-control-icon, var(--dimension-iconography-md));
-  height: var(--ds-control-icon, var(--dimension-iconography-md));
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
   z-index: 2;
 }
 
 .button-unfilled__label {
   position: relative;
   z-index: 2;
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 0;

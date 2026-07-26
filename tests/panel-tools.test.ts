@@ -222,9 +222,13 @@ describe('tool view composition contract', () => {
       new URL('../src/wc/components/PanelToolHeader/PanelToolHeader.css', import.meta.url),
       'utf8'
     );
+    const source = fs.readFileSync(
+      new URL('../src/wc/components/PanelToolHeader/PanelToolHeader.tsx', import.meta.url),
+      'utf8'
+    );
 
-    assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?display: flex;/);
-    assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?padding: var\(--dimension-space-100\);/);
+    assert.match(styles, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
+    assert.match(source, /panel-tool-header ds-chrome-row ds-chrome-space--md/);
     assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?user-select: none;/);
     assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?flex: 1 1 0;/);
     assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?width: auto;/);

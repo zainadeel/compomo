@@ -1,13 +1,13 @@
 @import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/control-width.css';
+@import '../../utils/field-stack.css';
 @import '../../utils/typography.css';
 
 :host(.input-host) {
   display: inline-flex;
-  flex-direction: column;
-  gap: var(--dimension-space-050);
   --ds-input-fg: var(--color-foreground-primary);
   --ds-input-placeholder: var(--color-foreground-secondary);
   --ds-input-placeholder-active: var(--color-foreground-quaternary);
@@ -21,12 +21,6 @@
 }
 
 .input-control {
-  display: inline-flex;
-  align-items: center;
-  box-sizing: border-box;
-  height: var(--ds-control-height, var(--dimension-size-400));
-  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
-  gap: var(--ds-control-gap, var(--dimension-space-050));
   overflow: hidden;
   background: transparent;
   border: none;
@@ -59,7 +53,6 @@
   flex: 1 1 auto;
   min-width: 0;
   height: 100%;
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
   background: transparent;
   border: none;
   border-radius: inherit;
@@ -95,12 +88,6 @@
 .input-control__suffix {
   position: relative;
   z-index: 2;
-  flex-shrink: 0;
-  width: var(--ds-control-icon, var(--dimension-iconography-md));
-  height: var(--ds-control-icon, var(--dimension-iconography-md));
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   color: var(--ds-input-adornment-fg);
 }
 
@@ -115,6 +102,7 @@
   align-self: center;
 }
 
+.input-control.ds-control--lg:has(.input-control__clear),
 .input-control.ds-control--md:has(.input-control__clear),
 .input-control.ds-control--sm:has(.input-control__clear) {
   padding-right: var(--dimension-space-050);
