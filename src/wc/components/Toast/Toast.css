@@ -28,9 +28,9 @@
     bottom: calc(
       var(--dimension-space-200) +
       var(--dimension-stroke-width-012) +
-      var(--dimension-space-050) +
-      var(--dimension-size-600) +
-      max(var(--dimension-space-050), env(safe-area-inset-bottom))
+      var(--dimension-space-200) +
+      var(--dimension-size-500) +
+      max(var(--dimension-space-200), env(safe-area-inset-bottom))
     );
   }
 }
