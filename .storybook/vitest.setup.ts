@@ -48,7 +48,8 @@ function describeFindings(findings: Result[]): string {
     .flatMap((finding) =>
       finding.nodes.map(
         (node) => {
-          const target = node.target.length > 0 ? node.target.join(' >>> ') : node.html;
+          // `selectors: false` above means axe omits `target`, so fall back to markup.
+          const target = node.target?.length ? node.target.join(' >>> ') : node.html;
           return `${finding.impact ?? 'unknown'}/${finding.id}: ${finding.help} — ${target}`;
         },
       ),

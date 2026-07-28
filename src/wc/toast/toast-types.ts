@@ -1,4 +1,4 @@
-import type { AnchoredPopupAlign, AnchoredPopupSide } from '../utils/anchored-popup';
+import type { AnchoredAlign, AnchoredSide } from '../utils/anchored-position';
 
 export type ToastPriority = 'low' | 'high';
 export type ToastTransitionStatus = 'starting' | 'active' | 'ending';
@@ -13,8 +13,8 @@ export type ToastCloseReason =
 export interface ToastPositionerOptions {
   /** Element or document id used to position this toast outside the global stack. */
   anchor: HTMLElement | string;
-  side?: AnchoredPopupSide;
-  align?: AnchoredPopupAlign;
+  side?: AnchoredSide;
+  align?: AnchoredAlign;
   sideOffset?: number | string;
   alignOffset?: number | string;
 }

@@ -15,7 +15,7 @@ import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/
 import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
-import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -74,7 +74,7 @@ export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/
 export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
-export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
@@ -460,10 +460,27 @@ export namespace Components {
          */
         "contrast": ButtonFilledContrast;
         /**
+          * ID of the popup this button controls.
+         */
+        "controls": string | undefined;
+        /**
+          * Controlled open state of the popup this button triggers. Holds the pressed wash for the popup's rendered lifecycle. ButtonFilled has no selected state, so an open popup never promotes to an active treatment.
+         */
+        "expanded": boolean | undefined;
+        /**
           * Show a 1px secondary inset border.
           * @default false
          */
         "hasBorder": boolean;
+        /**
+          * This action *has* a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. A filled button is never the overflow / more-options control — that role belongs to ButtonUnfilled with an `Ellipses` glyph, which conveys the menu without a chevron.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu": boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup": ButtonFilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -489,6 +506,15 @@ export namespace Components {
           * @default ''
          */
         "label": string;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale": boolean;
+        /**
+          * Pressed semantics for a toggle command that reports state elsewhere.
+         */
+        "pressed": boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
           * @default false
@@ -547,6 +573,11 @@ export namespace Components {
           * @default true
          */
         "hasBorder": boolean;
+        /**
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu, i.e. the overflow / more-options control.   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu": boolean;
         "haspopup": ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
@@ -4493,10 +4524,27 @@ declare namespace LocalJSX {
          */
         "contrast"?: ButtonFilledContrast;
         /**
+          * ID of the popup this button controls.
+         */
+        "controls"?: string | undefined;
+        /**
+          * Controlled open state of the popup this button triggers. Holds the pressed wash for the popup's rendered lifecycle. ButtonFilled has no selected state, so an open popup never promotes to an active treatment.
+         */
+        "expanded"?: boolean | undefined;
+        /**
           * Show a 1px secondary inset border.
           * @default false
          */
         "hasBorder"?: boolean;
+        /**
+          * This action *has* a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. A filled button is never the overflow / more-options control — that role belongs to ButtonUnfilled with an `Ellipses` glyph, which conveys the menu without a chevron.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu"?: boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup"?: ButtonFilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -4523,6 +4571,15 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale"?: boolean;
+        /**
+          * Pressed semantics for a toggle command that reports state elsewhere.
+         */
+        "pressed"?: boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
           * @default false
@@ -4580,6 +4637,11 @@ declare namespace LocalJSX {
           * @default true
          */
         "hasBorder"?: boolean;
+        /**
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu, i.e. the overflow / more-options control.   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu"?: boolean;
         "haspopup"?: ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
@@ -7146,10 +7208,16 @@ declare namespace LocalJSX {
         "hasBorder": boolean;
         "background": ButtonFilledBackground | undefined;
         "rounded": boolean;
+        "pressScale": boolean;
         "isInactive": boolean;
         "isLoading": boolean;
         "type": 'button' | 'submit' | 'reset';
         "ariaLabel": string | null;
+        "controls": string | undefined;
+        "expanded": boolean | undefined;
+        "haspopup": ButtonFilledPopup | undefined;
+        "pressed": boolean | undefined;
+        "hasMenu": boolean;
     }
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
@@ -7172,6 +7240,7 @@ declare namespace LocalJSX {
         "expanded": boolean | undefined;
         "haspopup": ButtonUnfilledPopup | undefined;
         "pressed": boolean | undefined;
+        "hasMenu": boolean;
         "focusTabIndex": number;
     }
     interface DsCardDataVizBarAttributes {

@@ -1,4 +1,4 @@
-import { computeAnchoredPopupPosition } from './anchored-popup';
+import { AnchoredPositionController } from './anchored-position-controller';
 import {
   enabledChoiceIndexes,
   findChoiceTypeaheadMatch,
@@ -32,14 +32,13 @@ export interface SelectControllerState<T extends ChoiceOption> {
   selectOption(option: T): void;
 }
 
-const POSITION_RETRY_BUDGET = 8;
-
 /**
  * Shared Select/SelectMulti interaction controller.
  *
  * Decorated Stencil state and scalar/array selection remain in each component;
  * this controller owns only popup lifecycle, focus, positioning, typeahead,
- * and listbox keyboard traversal.
+ * and listbox keyboard traversal. Anchored placement is delegated to
+ * `AnchoredPositionController`; only the choice-cell measurement stays here.
  */
 export class SelectController<T extends ChoiceOption> {
   private triggerEl: HTMLButtonElement | null = null;
@@ -48,10 +47,45 @@ export class SelectController<T extends ChoiceOption> {
   private typeahead = '';
   private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
   private outsideHandler: ((event: MouseEvent) => void) | null = null;
-  private repositionHandler: (() => void) | null = null;
-  private positionRetryRaf: number | null = null;
+  private readonly position: AnchoredPositionController;
 
-  constructor(private readonly state: SelectControllerState<T>) {}
+  constructor(private readonly state: SelectControllerState<T>) {
+    this.position = new AnchoredPositionController({
+      getAnchor: () => this.triggerEl,
+      getPopup: () => this.popupEl,
+      measure: (trigger, popup) => {
+        if (
+          !this.state.open ||
+          !popup.isConnected ||
+          !this.state.host.contains(popup)
+        ) return null;
+
+        const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+        popup.style.minWidth = `${choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px`;
+
+        return {
+          anchorRect: trigger.getBoundingClientRect(),
+          popupWidth: popup.offsetWidth,
+          popupHeight: popup.offsetHeight,
+          side: 'bottom',
+          align: 'start',
+          sideOffsetPx: sectionPadding,
+          alignOffsetPx: resolveChoicePopupAlignOffset({
+            align: 'start',
+            alignOffsetPx: 0,
+            sectionInsetPx: sectionPadding,
+          }),
+          viewportPadPx: sectionPadding,
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
+        };
+      },
+      apply: ({ x, y }) => {
+        this.state.position = { x, y };
+        this.state.positionReady = true;
+      },
+    });
+  }
 
   get activeOptionId(): string | undefined {
     return !this.state.isLoading && this.state.activeIndex >= 0
@@ -259,12 +293,8 @@ export class SelectController<T extends ChoiceOption> {
       if (this.state.host.contains(event.target as Node)) return;
       this.closePopup();
     };
-    this.repositionHandler = () => {
-      this.updatePosition();
-    };
     document.addEventListener('mousedown', this.outsideHandler, true);
-    window.addEventListener('scroll', this.repositionHandler, true);
-    window.addEventListener('resize', this.repositionHandler);
+    this.position.observe();
   }
 
   private unbindPopupListeners() {
@@ -272,69 +302,20 @@ export class SelectController<T extends ChoiceOption> {
       document.removeEventListener('mousedown', this.outsideHandler, true);
       this.outsideHandler = null;
     }
-    if (this.repositionHandler) {
-      window.removeEventListener('scroll', this.repositionHandler, true);
-      window.removeEventListener('resize', this.repositionHandler);
-      this.repositionHandler = null;
-    }
+    this.position.unobserve();
   }
 
   private cancelPositionRetry() {
-    if (this.positionRetryRaf === null) return;
-    cancelAnimationFrame(this.positionRetryRaf);
-    this.positionRetryRaf = null;
+    this.position.cancel();
   }
 
   private schedulePositionUpdate(onReady?: () => void) {
     if (!this.state.open) return;
-    this.cancelPositionRetry();
     this.state.positionReady = false;
-    let remaining = POSITION_RETRY_BUDGET;
-    const attempt = () => {
-      this.positionRetryRaf = null;
-      if (!this.state.open) return;
-      if (this.updatePosition()) {
-        onReady?.();
-        return;
-      }
-      if (remaining > 0) {
-        remaining -= 1;
-        this.positionRetryRaf = requestAnimationFrame(attempt);
-      }
-    };
-    this.positionRetryRaf = requestAnimationFrame(attempt);
+    this.position.schedule(onReady);
   }
 
   private updatePosition(): boolean {
-    if (
-      !this.state.open ||
-      !this.triggerEl ||
-      !this.popupEl ||
-      !this.popupEl.isConnected ||
-      !this.state.host.contains(this.popupEl)
-    ) return false;
-    const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
-    this.popupEl.style.minWidth = `${choicePopupMinWidth(
-      this.triggerEl.offsetWidth,
-      sectionPadding,
-    )}px`;
-    this.state.position = computeAnchoredPopupPosition({
-      anchorRect: this.triggerEl.getBoundingClientRect(),
-      popupWidth: this.popupEl.offsetWidth,
-      popupHeight: this.popupEl.offsetHeight,
-      side: 'bottom',
-      align: 'start',
-      sideOffsetPx: sectionPadding,
-      alignOffsetPx: resolveChoicePopupAlignOffset({
-        align: 'start',
-        alignOffsetPx: 0,
-        sectionInsetPx: sectionPadding,
-      }),
-      viewportPadPx: sectionPadding,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    });
-    this.state.positionReady = true;
-    return true;
+    return this.position.update();
   }
 }

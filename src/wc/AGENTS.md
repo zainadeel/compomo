@@ -50,6 +50,10 @@ at the line where they occur.
 - `chrome-layout.css`: spacing-only row/column/grid chrome.
 - `data-viz-card-layout.css`: chart/legend card body geometry.
 - `select-controller.ts`: Select and SelectMulti popup lifecycle and traversal.
+- `anchored-position.ts`: pure element-anchored popup geometry (flip + clamp).
+- `anchored-position-controller.ts`: anchored-popup lifecycle — listener binding,
+  measurement retries, frame coalescing, teardown. Owning components keep their
+  own anchor semantics in the `measure` callback.
 
 These are implementation details, not consumer classes. Ownership rationale
 lives in `docs/layout-recipe-foundation.md`.

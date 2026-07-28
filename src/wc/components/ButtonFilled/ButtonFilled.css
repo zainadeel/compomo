@@ -57,6 +57,16 @@
   --ds-control-radius: var(--dimension-radius-half);
 }
 
+/*
+ * An open popup is a transient pressed state, not a selected state. ButtonFilled
+ * deliberately has no active state, so hold the pressed wash for the popup's
+ * complete rendered lifecycle instead of promoting any selected treatment.
+ */
+.button-filled.button-filled--expanded::after,
+.button-filled.button-filled--expanded:hover:not(:disabled)::after {
+  background: var(--ds-interaction-pressed);
+}
+
 /* Inset stroke via interaction-fill ::after (above hover and pressed washes). */
 .button-filled--bordered {
   --ds-interaction-border-width: var(--dimension-stroke-width-012);
@@ -116,6 +126,16 @@
 }
 
 .button-filled__label--loading {
+  visibility: hidden;
+}
+
+.button-filled__chevron {
+  position: relative;
+  z-index: 2;
+}
+
+/* Hidden, not removed, so the label-only loader keeps the measured button width. */
+.button-filled__chevron--loading {
   visibility: hidden;
 }
 

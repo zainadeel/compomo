@@ -22,7 +22,8 @@ import {
   type ChoicePopupAnchorAlignment,
   type ControlSize,
 } from '../../utils';
-import { computeMenuPosition, type MenuAlign, type MenuSide } from './menu-position';
+import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import type { MenuAlign, MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
 
 export type MenuSelectionMode = 'none' | 'single';
@@ -37,8 +38,6 @@ import {
   type ShellGradientPreset,
 } from '../../shell/shell-gradient-presets';
 
-/** rAF retries while the popup mounts or the anchor resolves. */
-const POSITION_RETRY_BUDGET = 8;
 const MENU_FOCUSABLE_SELECTOR = [
   'a[href]',
   'button:not([disabled])',
@@ -117,10 +116,60 @@ export class Menu {
   @Event() dsSwatchSelect!: EventEmitter<string>;
 
   private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
-  private scrollResizeHandler: (() => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
-  private positionRetryRaf: number | null = null;
-  private livePositionRaf: number | null = null;
+  /**
+   * Anchored placement. The choice-cell measurement stays here on purpose: the
+   * inner-cell align offset and the `--dimension-menu-width-xs` floor are Menu
+   * semantics, not shared geometry.
+   */
+  private readonly position = new AnchoredPositionController({
+    getAnchor: () => this.resolvedAnchor ?? null,
+    getPopup: () => this.el.querySelector<HTMLElement>('.menu-popup'),
+    measure: (anchorEl, popup) => {
+      if (!this.open) return null;
+
+      const anchorRect = anchorEl.getBoundingClientRect();
+      const sectionInsetPx = this.viewportPadPx;
+      if (!this.minWidth) {
+        if (
+          this.anchorAlignment === 'choice-cell' &&
+          (this.side === 'top' || this.side === 'bottom')
+        ) {
+          popup.style.minWidth = `max(var(--dimension-menu-width-xs), ${choicePopupMinWidth(
+            anchorRect.width,
+            sectionInsetPx
+          )}px)`;
+        } else {
+          popup.style.removeProperty('min-width');
+        }
+      }
+
+      return {
+        anchorRect,
+        popupWidth: popup.offsetWidth || this.popupFallbackWidthPx,
+        popupHeight: popup.offsetHeight || this.popupFallbackHeightPx,
+        side: this.side,
+        align: this.align,
+        sideOffsetPx: this.sideOffsetPx,
+        alignOffsetPx: resolveChoicePopupAlignOffset({
+          align: this.align,
+          alignOffsetPx: this.alignOffsetPx,
+          sectionInsetPx,
+          anchorAlignment: this.anchorAlignment,
+        }),
+        viewportPadPx: this.viewportPadPx,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      };
+    },
+    apply: ({ x, y }) => {
+      this.pos = { x, y };
+    },
+    onReady: () => {
+      this.positionReady = true;
+    },
+    liveUpdate: 'double-frame',
+  });
   /** Last content actually painted while open; retained unchanged through exit motion. */
   private lastRenderedSections: MenuSection[] = [];
   private closingSections: MenuSection[] | null = null;
@@ -302,103 +351,28 @@ export class Menu {
   }
 
   private cancelPositionRetry() {
-    if (this.positionRetryRaf !== null) {
-      cancelAnimationFrame(this.positionRetryRaf);
-      this.positionRetryRaf = null;
-    }
+    this.position.cancel();
   }
 
   private cancelLivePositionUpdate() {
-    if (this.livePositionRaf !== null) {
-      cancelAnimationFrame(this.livePositionRaf);
-      this.livePositionRaf = null;
-    }
+    this.position.cancel();
   }
 
   /** Reposition after the current scroll/layout frame without hiding the open popup. */
   private scheduleLivePositionUpdate() {
-    if (this.livePositionRaf !== null) return;
-    this.livePositionRaf = requestAnimationFrame(() => {
-      if (this.shouldRender && !this.closing) this.calculatePosition();
-      // Scroll-driven owners such as ShellPage may commit their compact header
-      // render in this frame. Re-read once after that render, then stop tracking.
-      this.livePositionRaf = requestAnimationFrame(() => {
-        this.livePositionRaf = null;
-        if (this.shouldRender && !this.closing) this.calculatePosition();
-      });
-    });
+    this.position.scheduleLiveUpdate();
   }
 
   /** Retry until anchor + popup exist — do not reveal at 0,0 on a failed first pass. */
   private schedulePositionUpdate(onReady?: () => void) {
     if (!this.open) return;
-
-    this.cancelPositionRetry();
     this.positionReady = false;
-
-    let remaining = POSITION_RETRY_BUDGET;
-
-    const attempt = () => {
-      this.positionRetryRaf = null;
-      if (!this.open) return;
-
-      if (this.calculatePosition()) {
-        this.positionReady = true;
-        onReady?.();
-        return;
-      }
-
-      if (remaining > 0) {
-        remaining -= 1;
-        this.positionRetryRaf = requestAnimationFrame(attempt);
-      }
-    };
-
-    this.positionRetryRaf = requestAnimationFrame(attempt);
+    this.position.schedule(onReady);
   }
 
   /** @returns `true` when anchor and popup were found and `pos` was updated. */
   private calculatePosition(): boolean {
-    const anchorEl = this.resolvedAnchor;
-    if (!anchorEl) return false;
-    const popup = this.el.querySelector('.menu-popup') as HTMLElement | null;
-    if (!popup) return false;
-
-    const anchorRect = anchorEl.getBoundingClientRect();
-    const sectionInsetPx = this.viewportPadPx;
-    if (!this.minWidth) {
-      if (
-        this.anchorAlignment === 'choice-cell' &&
-        (this.side === 'top' || this.side === 'bottom')
-      ) {
-        popup.style.minWidth = `max(var(--dimension-menu-width-xs), ${choicePopupMinWidth(
-          anchorRect.width,
-          sectionInsetPx
-        )}px)`;
-      } else {
-        popup.style.removeProperty('min-width');
-      }
-    }
-
-    const next = computeMenuPosition({
-      anchorRect,
-      popupWidth: popup.offsetWidth || this.popupFallbackWidthPx,
-      popupHeight: popup.offsetHeight || this.popupFallbackHeightPx,
-      side: this.side,
-      align: this.align,
-      sideOffsetPx: this.sideOffsetPx,
-      alignOffsetPx: resolveChoicePopupAlignOffset({
-        align: this.align,
-        alignOffsetPx: this.alignOffsetPx,
-        sectionInsetPx,
-        anchorAlignment: this.anchorAlignment,
-      }),
-      viewportPadPx: this.viewportPadPx,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    });
-    if (next.x !== this.pos.x || next.y !== this.pos.y) this.pos = next;
-    return true;
+    return this.position.update();
   }
 
   /** Focus the selected item when present, otherwise the first enabled item. */
@@ -430,23 +404,15 @@ export class Menu {
       this.close();
     };
 
-    this.scrollResizeHandler = () => this.scheduleLivePositionUpdate();
-
     document.addEventListener('mousedown', this.clickOutsideHandler, true);
-    window.addEventListener('scroll', this.scrollResizeHandler, true);
-    window.addEventListener('resize', this.scrollResizeHandler);
+    this.position.observe();
   }
 
   private teardownListeners() {
-    this.cancelLivePositionUpdate();
+    this.position.unobserve();
     if (this.clickOutsideHandler) {
       document.removeEventListener('mousedown', this.clickOutsideHandler, true);
       this.clickOutsideHandler = null;
-    }
-    if (this.scrollResizeHandler) {
-      window.removeEventListener('scroll', this.scrollResizeHandler, true);
-      window.removeEventListener('resize', this.scrollResizeHandler);
-      this.scrollResizeHandler = null;
     }
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);

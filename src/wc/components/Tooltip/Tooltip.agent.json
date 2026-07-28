@@ -83,7 +83,7 @@
     },
     {
       "label": "Positioning unit coverage",
-      "path": "tests/tooltip-position.test.ts"
+      "path": "tests/anchored-position.test.ts"
     }
   ]
 }

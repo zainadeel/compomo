@@ -101,6 +101,19 @@ export class ButtonUnfilled {
   @Prop() pressed: boolean | undefined;
 
   /**
+   * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers
+   * both menu-button shapes:
+   *
+   * - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries
+   *   the affordance.
+   * - `icon` — the button *is* a menu, i.e. the overflow / more-options control.
+   *   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.
+   *
+   * Use `haspopup` directly for non-menu popups.
+   */
+  @Prop() hasMenu: boolean = false;
+
+  /**
    * Native `tabindex` for roving keyboard groups in shell chrome.
    * Omit for the default button tab stop (`0`).
    */
@@ -136,6 +149,15 @@ export class ButtonUnfilled {
 
   private get showDot(): boolean {
     return this.variant === 'icon' && this.dot && !this.isLoading;
+  }
+
+  /** Icon-only triggers rely on their own glyph, so the chevron is label-bound. */
+  private get showChevron(): boolean {
+    return this.hasMenu && this.variant !== 'icon';
+  }
+
+  private get resolvedHaspopup(): ButtonUnfilledPopup | undefined {
+    return this.haspopup ?? (this.hasMenu ? 'menu' : undefined);
   }
 
   /** An expanded popup trigger is visually active even when selection is controlled separately. */
@@ -225,7 +247,7 @@ export class ButtonUnfilled {
           aria-disabled={this.isLoading ? 'true' : undefined}
           aria-controls={this.controls}
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
-          aria-haspopup={this.haspopup}
+          aria-haspopup={this.resolvedHaspopup}
           aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
           onPointerDown={event =>
             beginElevatedControlPress(
@@ -267,6 +289,19 @@ export class ButtonUnfilled {
             >
               {this.label}
             </ds-text>
+          )}
+          {this.showChevron && (
+            <span
+              class={{
+                'button-unfilled__chevron': true,
+                'ds-control-icon-box': true,
+                'ds-interaction-fill__content': true,
+                'button-unfilled__chevron--loading': this.isLoading && this.variant === 'label',
+              }}
+              aria-hidden="true"
+            >
+              <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
+            </span>
           )}
           {this.isLoading && this.variant === 'label' && (
             <span class="button-unfilled__loader-overlay ds-interaction-fill__content">

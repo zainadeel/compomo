@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^3.1.1",
+        "@ds-mo/tokens ^4.0.0",
         "@ds-mo/icons ^6.4.0"
       ],
       "optional": [],
@@ -1326,7 +1326,8 @@
             "The action is unfilled icon-only shell or navigation chrome.",
             "The element represents navigation rather than a command.",
             "The content is a persistent selected state rather than an action.",
-            "A semantic color would be decorative or merely match the surrounding product area."
+            "A semantic color would be decorative or merely match the surrounding product area.",
+            "The control is an overflow or more-options menu whose only content is an Ellipses glyph; that role is never filled."
           ],
           "alternatives": [
             {
@@ -1338,14 +1339,25 @@
               "when": "The user is choosing a destination in application navigation.",
               "component": "component:ds-panel-nav",
               "reason": "Navigation components own destination selection, active state, and navigation semantics."
+            },
+            {
+              "when": "The control is the overflow or more-options menu for a row, card, or toolbar.",
+              "component": "component:ds-button-unfilled",
+              "reason": "An icon-only Ellipses trigger is chrome, and its glyph conveys the menu without a chevron; a filled button never carries that role."
             }
           ],
           "commonlyComposedWith": [
             "component:ds-modal",
-            "component:ds-field"
+            "component:ds-field",
+            "component:ds-menu"
+          ],
+          "patterns": [
+            "pattern:menu-trigger"
           ],
           "accessibility": [
             "Provide an explicit accessible name for icon-only buttons.",
+            "Set hasMenu when the action opens a Menu; it implies aria-haspopup of menu and renders the trailing chevron. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+            "Use haspopup directly for a non-menu popup such as a dialog; that case gets no chevron.",
             "Use inactive state only when the action must remain visible but unavailable.",
             "Do not encode the action meaning through color alone.",
             "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when users need confirmation.",
@@ -1360,7 +1372,11 @@
             "Parent surface context changes only the optional inset border color. Contrast continues to own the button fill, foreground, hover, pressed, and focus treatments; never use surface context to change action hierarchy.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
-            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+            "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+            "ButtonFilled has no active or selected state; a filled action is a command, not a toggle or a persistent selection.",
+            "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
+            "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."
           ],
           "responsiveBehavior": [
             "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
@@ -1396,8 +1412,24 @@
             "type": "ButtonFilledContrast",
             "required": false
           },
+          "controls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "expanded": {
+            "type": "boolean | undefined",
+            "required": false
+          },
           "hasBorder": {
             "type": "boolean",
+            "required": false
+          },
+          "hasMenu": {
+            "type": "boolean",
+            "required": false
+          },
+          "haspopup": {
+            "type": "ButtonFilledPopup | undefined",
             "required": false
           },
           "icon": {
@@ -1418,6 +1450,14 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "pressScale": {
+            "type": "boolean",
+            "required": false
+          },
+          "pressed": {
+            "type": "boolean | undefined",
             "required": false
           },
           "rounded": {
@@ -1483,7 +1523,8 @@
           "useWhen": [
             "A secondary command accompanies the single filled primary action in a local decision area.",
             "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
-            "A command represents a persistent toggle or mode whose active state remains meaningful after activation."
+            "A command represents a persistent toggle or mode whose active state remains meaningful after activation.",
+            "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role."
           ],
           "avoidWhen": [
             "The command is the single primary action in a local decision area; use ButtonFilled instead.",
@@ -1518,6 +1559,9 @@
           ],
           "accessibility": [
             "Provide an explicit accessible name for every icon-only action.",
+            "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+            "Give an icon-only menu button an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
+            "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
             "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
             "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
             "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
@@ -1533,7 +1577,10 @@
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
-            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+            "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu, meaning the overflow or more-options control, and no chevron is added.",
+            "Because the icon-only shape has no chevron, its glyph must convey the menu on its own; use Ellipses. Never pair hasMenu with an icon-only glyph that does not read as a menu.",
+            "An open popup is a transient pressed state rather than a selected one. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, including when chrome opts out of selected fills with activeFill set to false."
           ],
           "responsiveBehavior": [
             "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",
@@ -1588,6 +1635,10 @@
             "required": false
           },
           "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasMenu": {
             "type": "boolean",
             "required": false
           },
@@ -9240,7 +9291,7 @@
             },
             {
               "label": "Positioning unit coverage",
-              "path": "tests/tooltip-position.test.ts"
+              "path": "tests/anchored-position.test.ts"
             }
           ]
         },
@@ -9350,6 +9401,8 @@
             "The owning chart mounts the callout when a local interaction starts and unmounts it when that interaction ends.",
             "Coordinate updates track within one mounted interaction session without restarting the show delay.",
             "Placement flips horizontally or vertically when the rendered callout approaches a viewport edge.",
+            "Placement is chosen as a quadrant rather than computed as coordinates: the component measures its own rendered rect and flips its side and align props, which CSS consumes. It therefore does not use the shared anchored-position utilities, which resolve an anchor element into x and y.",
+            "This separation is deliberate. The callout follows the pointer instead of an element, so it has no anchor rect to resolve; adopting the shared geometry would mean rewriting its CSS to consume coordinates for no behavioral gain.",
             "Reduced motion preserves the final visible state without an opacity transition."
           ],
           "responsiveBehavior": [
