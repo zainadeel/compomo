@@ -55,8 +55,9 @@
     "Negative values are unsupported and render as zero; the owning product supplies loading, empty, and error states."
   ],
   "responsiveBehavior": [
-    "The SVG preserves its authored aspect ratio while shrinking to fit a narrower parent.",
-    "The parent supplies dimensions and chooses how many time buckets remain legible at each width.",
+    "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
+    "Responsive layout changes stack positions and plot extents without scaling SVG text, strokes, separators, corner radii, or margins.",
+    "The parent chooses how many time buckets remain legible at each width.",
     "Pre-format category labels and reduce bucket count before rendering when horizontal space becomes constrained."
   ],
   "frameworkCaveats": {

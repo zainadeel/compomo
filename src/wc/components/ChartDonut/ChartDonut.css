@@ -39,7 +39,8 @@
 .chart-donut__svg path:focus-visible {
   outline: none;
   stroke: var(--color-interaction-focus);
-  stroke-width: 2;
+  stroke-width: var(--dimension-stroke-width-025);
+  vector-effect: non-scaling-stroke;
 }
 
 /* Matches ds-text text-title-large + emphasis (SVG cannot host ds-text). */

@@ -20,6 +20,7 @@ const meta: Meta = {
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
     rounded: { control: 'boolean' },
+    pressScale: { control: 'boolean' },
     dot: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -51,6 +52,7 @@ const meta: Meta = {
     activeFill: true,
     hasBorder: true,
     rounded: false,
+    pressScale: true,
     dot: false,
     isInactive: false,
     isLoading: false,
@@ -81,6 +83,7 @@ export const Playground: Story = {
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
       ?rounded=${args['rounded']}
+      ?press-scale=${args['pressScale']}
       ?dot=${args['dot']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}

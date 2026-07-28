@@ -1532,6 +1532,7 @@
             "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
+            "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
           ],
           "responsiveBehavior": [
@@ -1612,6 +1613,10 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "pressScale": {
+            "type": "boolean",
             "required": false
           },
           "pressed": {
@@ -1728,7 +1733,7 @@
             "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
           ],
           "responsiveBehavior": [
-            "The selected sm, md, or lg shell size controls the card dimensions while the bar chart shrinks within its chart region.",
+            "The selected sm, md, or lg shell size controls the card dimensions while the bar chart reflows to the chart region without visually scaling its primitives.",
             "The horizontal legend wraps complete entries when the available width is constrained.",
             "The parent dashboard owns card wrapping and breakpoint changes."
           ],
@@ -1844,6 +1849,7 @@
           ],
           "responsiveBehavior": [
             "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
+            "The donut measures the chart region and changes radius within its shared size band while token thickness and typography remain fixed.",
             "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
           ],
           "frameworkCaveats": {
@@ -1958,7 +1964,7 @@
             "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
           ],
           "responsiveBehavior": [
-            "The selected sm, md, or lg shell size controls the card dimensions while the line chart shrinks within its chart region.",
+            "The selected sm, md, or lg shell size controls the card dimensions while the line chart reflows to the chart region without visually scaling its primitives.",
             "The horizontal legend wraps complete entries when the available width is constrained.",
             "The parent dashboard owns card wrapping and breakpoint changes."
           ],
@@ -2334,7 +2340,8 @@
             "Authored datum colors override the shared categorical palette."
           ],
           "responsiveBehavior": [
-            "The owner supplies dimensions and updates them with its layout; the chart does not measure its container.",
+            "Width and height provide the standalone intrinsic viewport; container constraints are measured and reflow the plot across the available pixels.",
+            "Responsive layout changes bar positions and plot extents without scaling SVG text, strokes, corner radii, or margins.",
             "Limit or pre-format long category labels so they remain legible at the chosen width.",
             "Time labels remain ordered, pre-formatted buckets with equal spacing rather than raw continuous timestamps."
           ],
@@ -2343,10 +2350,10 @@
               "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
             ],
             "react": [
-              "Pass a stable data array and dimensions derived from the containing layout."
+              "Pass a stable data array; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ],
             "angular": [
-              "Bind data as a property and update dimensions from the containing layout."
+              "Bind data as a property; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ]
           },
           "references": [
@@ -2446,8 +2453,9 @@
             "Negative values are unsupported and render as zero; the owning product supplies loading, empty, and error states."
           ],
           "responsiveBehavior": [
-            "The SVG preserves its authored aspect ratio while shrinking to fit a narrower parent.",
-            "The parent supplies dimensions and chooses how many time buckets remain legible at each width.",
+            "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
+            "Responsive layout changes stack positions and plot extents without scaling SVG text, strokes, separators, corner radii, or margins.",
+            "The parent chooses how many time buckets remain legible at each width.",
             "Pre-format category labels and reduce bucket count before rendering when horizontal space becomes constrained."
           ],
           "frameworkCaveats": {
@@ -2562,6 +2570,7 @@
           "responsiveBehavior": [
             "Prefer container-fill sizing inside data-viz cards and explicit sizing only in layouts that own a stable diameter.",
             "Fill sizing remains centered and constrained to the shared donut size band.",
+            "Changing the measured diameter changes the ring radius without scaling its token-based thickness, typography, focus stroke, or corner treatment.",
             "The owner adapts category count and legend placement for available space."
           ],
           "frameworkCaveats": {
@@ -2850,7 +2859,8 @@
             "Authored series colors override the shared categorical palette."
           ],
           "responsiveBehavior": [
-            "The owner supplies intrinsic dimensions; the SVG preserves its aspect ratio while shrinking to fit a narrower parent.",
+            "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
+            "Responsive layout changes point positions and plot extents without scaling SVG text, line strokes, point markers, or margins.",
             "Category positions are always equally spaced, even when labels represent time.",
             "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
           ],
@@ -2859,10 +2869,10 @@
               "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
             ],
             "react": [
-              "Pass stable series and category arrays with dimensions derived from the containing layout."
+              "Pass stable series and category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ],
             "angular": [
-              "Bind series and categories as properties with dimensions derived from the containing layout."
+              "Bind series and categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ]
           },
           "references": [
@@ -6308,6 +6318,7 @@
             "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
+            "Rail actions disable physical press scaling so notification-dot halos remain aligned to the shell gradient; hover and pressed washes continue to paint above the dot and halo.",
             "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
             "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
             "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
@@ -7638,7 +7649,8 @@
             "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
             "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
             "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-            "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, then snaps variants without moving that shared visual anchor.",
+            "The default content inset is 32px in desktop mode and 16px in tablet and mobile modes, while preserving the larger bottom scroll space.",
+            "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
             "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
             "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
             "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."

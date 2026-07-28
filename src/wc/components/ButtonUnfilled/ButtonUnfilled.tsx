@@ -72,6 +72,12 @@ export class ButtonUnfilled {
   /** Use the half-radius treatment instead of the default control radius. */
   @Prop() rounded: boolean = false;
 
+  /**
+   * Scale down during a physical pointer press.
+   * Disable when an owning composite requires fixed child or background geometry.
+   */
+  @Prop() pressScale: boolean = true;
+
   /** Show a notification dot at the top-right of the icon zone (icon variant only). */
   @Prop() dot: boolean = false;
 
@@ -159,7 +165,7 @@ export class ButtonUnfilled {
     const cls: Record<string, boolean> = {
       'button-unfilled': true,
       'ds-focus-ring-inset': true,
-      'ds-control-press-scale': true,
+      'ds-control-press-scale': this.pressScale,
       'ds-interaction-fill': true,
       'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
       'ds-interaction-fill--on-faint': bg === 'faint',
@@ -222,7 +228,10 @@ export class ButtonUnfilled {
           aria-haspopup={this.haspopup}
           aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
           onPointerDown={event =>
-            beginElevatedControlPress(event, !this.isInactive && !this.isLoading)
+            beginElevatedControlPress(
+              event,
+              this.pressScale && !this.isInactive && !this.isLoading,
+            )
           }
           onClick={this.handleClick}
         >

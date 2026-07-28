@@ -54,7 +54,8 @@
     "Authored datum colors override the shared categorical palette."
   ],
   "responsiveBehavior": [
-    "The owner supplies dimensions and updates them with its layout; the chart does not measure its container.",
+    "Width and height provide the standalone intrinsic viewport; container constraints are measured and reflow the plot across the available pixels.",
+    "Responsive layout changes bar positions and plot extents without scaling SVG text, strokes, corner radii, or margins.",
     "Limit or pre-format long category labels so they remain legible at the chosen width.",
     "Time labels remain ordered, pre-formatted buckets with equal spacing rather than raw continuous timestamps."
   ],
@@ -63,10 +64,10 @@
       "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
     ],
     "react": [
-      "Pass a stable data array and dimensions derived from the containing layout."
+      "Pass a stable data array; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
     ],
     "angular": [
-      "Bind data as a property and update dimensions from the containing layout."
+      "Bind data as a property; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
     ]
   },
   "references": [

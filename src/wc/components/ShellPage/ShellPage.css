@@ -58,6 +58,11 @@
   padding: var(--dimension-space-400) var(--dimension-space-400) var(--dimension-space-800);
 }
 
+:host(.shell-page-host--inset-default[responsive-mode='tablet']) .shell-page__content,
+:host(.shell-page-host--inset-default[responsive-mode='mobile']) .shell-page__content {
+  padding: var(--dimension-space-200) var(--dimension-space-200) var(--dimension-space-800);
+}
+
 :host(.shell-page-host--inset-none) .shell-page__content {
   padding: 0;
 }

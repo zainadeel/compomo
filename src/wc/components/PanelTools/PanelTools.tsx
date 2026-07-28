@@ -534,6 +534,7 @@ export class PanelTools {
           isActive={this.isRailSelected(item.id)}
           activeFill={false}
           hasBorder={false}
+          pressScale={false}
           dot={item.dot ?? false}
           isInactive={item.isInactive}
           focusTabIndex={index === this.rovingIndex ? 0 : -1}

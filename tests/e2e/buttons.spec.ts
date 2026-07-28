@@ -70,6 +70,20 @@ test('physical press scales only eligible filled and unfilled buttons', async ({
   await page.mouse.down();
   await expect(loadingButton).toHaveCSS('scale', 'none');
   await page.mouse.up();
+
+  const stableHost = page.locator('#unfilled-no-press-scale');
+  const stableButton = stableHost.locator('button');
+  await expect(stableHost).toHaveJSProperty('pressScale', false);
+  await expect(stableButton).not.toHaveClass(/ds-control-press-scale/);
+  const stableBox = await stableButton.boundingBox();
+  expect(stableBox).not.toBeNull();
+  await page.mouse.move(
+    stableBox!.x + stableBox!.width / 2,
+    stableBox!.y + stableBox!.height / 2,
+  );
+  await page.mouse.down();
+  await expect(stableButton).toHaveCSS('scale', 'none');
+  await page.mouse.up();
 });
 
 test('reduced motion keeps physical press at resting scale', async ({ page }) => {

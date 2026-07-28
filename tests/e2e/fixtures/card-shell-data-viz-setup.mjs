@@ -2,7 +2,9 @@ import '/dist/components/ds-card-shell-data-viz.js';
 import '/dist/components/ds-card-data-viz-bar.js';
 import '/dist/components/ds-card-data-viz-donut.js';
 import '/dist/components/ds-card-data-viz-line.js';
+import '/dist/components/ds-chart-bar.js';
 import '/dist/components/ds-chart-bar-stacked.js';
+import '/dist/components/ds-chart-donut.js';
 import '/dist/components/ds-chart-line.js';
 import '/dist/components/ds-chart-legend.js';
 
@@ -11,10 +13,21 @@ await Promise.all([
   customElements.whenDefined('ds-card-data-viz-bar'),
   customElements.whenDefined('ds-card-data-viz-donut'),
   customElements.whenDefined('ds-card-data-viz-line'),
+  customElements.whenDefined('ds-chart-bar'),
   customElements.whenDefined('ds-chart-bar-stacked'),
+  customElements.whenDefined('ds-chart-donut'),
   customElements.whenDefined('ds-chart-line'),
   customElements.whenDefined('ds-chart-legend'),
 ]);
+
+const donutData = [
+  { label: 'Online', value: 412 },
+  { label: 'Offline', value: 31 },
+  { label: 'Needs attention', value: 12 },
+];
+const donutCard = document.getElementById('donut-card');
+donutCard.querySelector('ds-chart-donut').data = donutData;
+donutCard.querySelector('ds-chart-legend').items = donutData;
 
 const lineSeries = [
   { name: 'Fuel score', data: [72, 75, 74, 79, 81, 84] },
@@ -40,5 +53,13 @@ barCard.querySelector('ds-chart-legend').items = barSeries.map(series => ({
   color: series.color,
 }));
 
-await new Promise(requestAnimationFrame);
+document.querySelector('#regular-bar-card ds-chart-bar').data = [
+  { label: 'Mon', value: 118, color: 'var(--color-data-category-1)' },
+  { label: 'Tue', value: 136, color: 'var(--color-data-category-1)' },
+  { label: 'Wed', value: 124, color: 'var(--color-data-category-1)' },
+  { label: 'Thu', value: 151, color: 'var(--color-data-category-1)' },
+  { label: 'Fri', value: 143, color: 'var(--color-data-category-1)' },
+];
+
+await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 document.documentElement.dataset.ready = 'true';

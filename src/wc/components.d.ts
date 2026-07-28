@@ -573,6 +573,11 @@ export namespace Components {
           * @default ''
          */
         "label": string;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale": boolean;
         "pressed": boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
@@ -708,10 +713,12 @@ export namespace Components {
          */
         "data": ChartDatum[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height": number;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width": number;
@@ -723,6 +730,7 @@ export namespace Components {
          */
         "categories": string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height": number;
@@ -736,6 +744,7 @@ export namespace Components {
          */
         "variant": ChartBarStackedVariant;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width": number;
@@ -835,6 +844,7 @@ export namespace Components {
          */
         "categories": string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height": number;
@@ -848,6 +858,7 @@ export namespace Components {
          */
         "showPoints": boolean;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width": number;
@@ -4597,6 +4608,11 @@ declare namespace LocalJSX {
         "label"?: string;
         "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
         "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale"?: boolean;
         "pressed"?: boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
@@ -4747,10 +4763,12 @@ declare namespace LocalJSX {
          */
         "data"?: ChartDatum[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height"?: number;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width"?: number;
@@ -4762,6 +4780,7 @@ declare namespace LocalJSX {
          */
         "categories"?: string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height"?: number;
@@ -4775,6 +4794,7 @@ declare namespace LocalJSX {
          */
         "variant"?: ChartBarStackedVariant;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width"?: number;
@@ -4886,6 +4906,7 @@ declare namespace LocalJSX {
          */
         "categories"?: string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height"?: number;
@@ -4899,6 +4920,7 @@ declare namespace LocalJSX {
          */
         "showPoints"?: boolean;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width"?: number;
@@ -7139,6 +7161,7 @@ declare namespace LocalJSX {
         "activeFill": boolean;
         "hasBorder": boolean;
         "rounded": boolean;
+        "pressScale": boolean;
         "dot": boolean;
         "isInactive": boolean;
         "isLoading": boolean;

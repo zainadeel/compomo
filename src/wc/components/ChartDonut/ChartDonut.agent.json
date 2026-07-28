@@ -51,6 +51,7 @@
   "responsiveBehavior": [
     "Prefer container-fill sizing inside data-viz cards and explicit sizing only in layouts that own a stable diameter.",
     "Fill sizing remains centered and constrained to the shared donut size band.",
+    "Changing the measured diameter changes the ring radius without scaling its token-based thickness, typography, focus stroke, or corner treatment.",
     "The owner adapts category count and legend placement for available space."
   ],
   "frameworkCaveats": {

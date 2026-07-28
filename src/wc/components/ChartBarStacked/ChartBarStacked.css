@@ -6,13 +6,14 @@
 
 .chart-bar-stacked__svg {
   display: block;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 100%;
 }
 
 .chart-bar-stacked__gridline {
   stroke: var(--color-border-tertiary);
-  stroke-width: 1;
+  stroke-width: var(--dimension-stroke-width-012);
+  vector-effect: non-scaling-stroke;
 }
 
 /* Matches ds-text text-caption regular (SVG cannot host ds-text). */
@@ -33,4 +34,5 @@
   stroke: var(--color-background-primary);
   stroke-width: var(--dimension-stroke-width-012);
   stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
 }

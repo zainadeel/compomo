@@ -59,7 +59,7 @@
         "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
       ],
       "responsiveBehavior": [
-        "The selected sm, md, or lg shell size controls the card dimensions while the bar chart shrinks within its chart region.",
+        "The selected sm, md, or lg shell size controls the card dimensions while the bar chart reflows to the chart region without visually scaling its primitives.",
         "The horizontal legend wraps complete entries when the available width is constrained.",
         "The parent dashboard owns card wrapping and breakpoint changes."
       ],

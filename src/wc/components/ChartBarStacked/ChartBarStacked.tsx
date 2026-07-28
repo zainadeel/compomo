@@ -1,12 +1,16 @@
-import { Component, Prop, h, Host } from '@stencil/core';
+import { Component, Prop, State, Watch, h, Host } from '@stencil/core';
 import { scaleBand, scaleLinear } from 'd3-scale';
 import { categoryColor } from '../../utils/chart-colors';
 import { formatPercentage } from '../../utils';
+import { resolveCartesianChartLayout } from '../../utils/cartesian-chart-layout';
+import {
+  ChartViewportController,
+  type ChartViewportSize,
+} from '../../utils/chart-viewport-controller';
 import type { ChartSeries } from '../../utils/chart-types';
 
 export type ChartBarStackedVariant = 'stacked' | 'percentage';
 
-const MARGIN = { top: 16, right: 16, bottom: 24, left: 32 };
 const PERCENTAGE_TICKS = [0, 25, 50, 75, 100];
 
 @Component({
@@ -20,8 +24,54 @@ export class ChartBarStacked {
   /** X-axis labels — must match each series' `data` length. Set as a JS property. */
   @Prop() categories: string[] = [];
   @Prop() variant: ChartBarStackedVariant = 'stacked';
+  /** Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size. */
   @Prop() width: number = 480;
+  /** Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size. */
   @Prop() height: number = 240;
+
+  @State() private viewport: ChartViewportSize | undefined;
+
+  private viewportController: ChartViewportController | null = null;
+  private svgEl: SVGElement | null = null;
+
+  componentDidLoad() {
+    this.connectViewportController();
+  }
+
+  connectedCallback() {
+    if (this.svgEl && !this.viewportController) this.connectViewportController();
+  }
+
+  componentDidRender() {
+    if (!this.viewportController) this.connectViewportController();
+  }
+
+  private connectViewportController() {
+    if (!this.svgEl) return;
+    this.viewportController = new ChartViewportController(this.svgEl, viewport => {
+      if (
+        viewport.width !== this.viewport?.width ||
+        viewport.height !== this.viewport?.height
+      ) {
+        this.viewport = viewport;
+      }
+    });
+    this.viewportController.connect();
+  }
+
+  disconnectedCallback() {
+    this.viewportController?.disconnect();
+    this.viewportController = null;
+  }
+
+  @Watch('width')
+  @Watch('height')
+  handleIntrinsicSizeChange() {
+    this.viewport = undefined;
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => this.viewportController?.measure());
+    }
+  }
 
   private valuesForCategory(categoryIndex: number) {
     return this.series.map(series => Math.max(0, series.data[categoryIndex] ?? 0));
@@ -47,8 +97,12 @@ export class ChartBarStacked {
   }
 
   render() {
-    const innerWidth = this.width - MARGIN.left - MARGIN.right;
-    const innerHeight = this.height - MARGIN.top - MARGIN.bottom;
+    const viewportWidth = this.viewport?.width ?? this.width;
+    const viewportHeight = this.viewport?.height ?? this.height;
+    const { margin, axisLabelGap, categoryLabelOffset } =
+      resolveCartesianChartLayout();
+    const innerWidth = Math.max(0, viewportWidth - margin.left - margin.right);
+    const innerHeight = Math.max(0, viewportHeight - margin.top - margin.bottom);
     const categoryValues = this.categories.map((_, index) => this.valuesForCategory(index));
     const totals = categoryValues.map(values =>
       values.reduce((sum, value) => sum + value, 0)
@@ -71,19 +125,21 @@ export class ChartBarStacked {
       <Host class="chart-bar-stacked">
         <svg
           class="chart-bar-stacked__svg"
-          viewBox={`0 0 ${this.width} ${this.height}`}
-          width={this.width}
-          height={this.height}
+          ref={element => {
+            this.svgEl = element ?? null;
+          }}
+          width={viewportWidth}
+          height={viewportHeight}
           role="img"
           aria-label={this.accessibleLabel()}
         >
-          <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
+          <g transform={`translate(${margin.left}, ${margin.top})`}>
             {yTicks.map(tick => (
               <g key={`grid-${tick}`} transform={`translate(0, ${yScale(tick)})`}>
                 <line class="chart-bar-stacked__gridline" x1={0} x2={innerWidth} />
                 <text
                   class="chart-bar-stacked__axis-label"
-                  x={-8}
+                  x={-axisLabelGap}
                   text-anchor="end"
                   dominant-baseline="middle"
                 >
@@ -171,7 +227,7 @@ export class ChartBarStacked {
                   <text
                     class="chart-bar-stacked__axis-label"
                     x={barX + barWidth / 2}
-                    y={innerHeight + 16}
+                    y={innerHeight + categoryLabelOffset}
                     text-anchor="middle"
                   >
                     {category}
