@@ -1,0 +1,343 @@
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Prop,
+  State,
+} from '@stencil/core';
+import type { TextVariant } from '../Text/text-types';
+import type { MetricTrend } from '../../utils/metric-change';
+import type { OverviewMetric, OverviewScore } from './card-overview-types';
+
+/** Metric cells below this width drop a grid column rather than compress further. */
+const DEFAULT_METRIC_MIN_WIDTH = 'var(--dimension-menu-width-xs)';
+
+/** Skeleton cells rendered while loading with no metrics supplied yet. */
+const LOADING_PLACEHOLDER_COUNT = 4;
+
+@Component({
+  tag: 'ds-card-overview',
+  styleUrl: 'CardOverview.css',
+  scoped: true,
+})
+export class CardOverview {
+  @Element() el!: HTMLElement;
+
+  /** Leading summary block. Omit to render the bar without a headline figure. */
+  @Prop() score: OverviewScore | undefined;
+
+  /** Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`. */
+  @Prop() periodLabel: string = '';
+
+  /** Comparison caption, for example `vs. previous score period`. */
+  @Prop() comparisonLabel: string = '';
+
+  /** Measures rendered in the responsive grid. */
+  @Prop() metrics: OverviewMetric[] = [];
+
+  /**
+   * Width a metric cell may shrink to before the grid drops a column. The grid
+   * reflows and then stacks from this alone, so no measurement is required.
+   */
+  @Prop() metricMinWidth: string = DEFAULT_METRIC_MIN_WIDTH;
+
+  /** Replace the score and metrics with skeletons while data resolves. */
+  @Prop() isLoading: boolean = false;
+
+  /** Message shown in place of the score when its figure cannot be resolved. */
+  @Prop() scoreErrorMessage: string | undefined;
+
+  /** Accessible name for the region. */
+  @Prop() overviewLabel: string = 'Overview';
+
+  /** Emitted when a metric that is not inactive is activated. */
+  @Event() dsMetricSelect!: EventEmitter<OverviewMetric>;
+
+  /** Roving tab stop across selectable metrics. */
+  @State() private focusedMetricIndex: number = 0;
+
+  private get hasScore(): boolean {
+    return this.score !== undefined || this.scoreErrorMessage !== undefined || this.isLoading;
+  }
+
+  /** Index of the roving tab stop, skipping inactive metrics. */
+  private get rovingIndex(): number {
+    const first = this.metrics.findIndex(metric => !metric.isInactive);
+    if (first < 0) return -1;
+    const current = this.metrics[this.focusedMetricIndex];
+    return current && !current.isInactive ? this.focusedMetricIndex : first;
+  }
+
+  private selectMetric(metric: OverviewMetric, index: number) {
+    if (metric.isInactive) return;
+    this.focusedMetricIndex = index;
+    this.dsMetricSelect.emit(metric);
+  }
+
+  /** Move the roving tab stop, wrapping and skipping inactive metrics. */
+  private moveFocus(from: number, step: number) {
+    const count = this.metrics.length;
+    if (count === 0) return;
+
+    for (let offset = 1; offset <= count; offset += 1) {
+      // Positive modulo so a backwards step from the first metric wraps to the last.
+      const next = (((from + step * offset) % count) + count) % count;
+      if (this.metrics[next]?.isInactive) continue;
+
+      this.focusedMetricIndex = next;
+      const cells = this.el.querySelectorAll<HTMLElement>('.card-overview__metric');
+      cells[next]?.focus();
+      return;
+    }
+  }
+
+  private handleMetricKeyDown = (event: KeyboardEvent, index: number) => {
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        event.preventDefault();
+        this.moveFocus(index, 1);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        event.preventDefault();
+        this.moveFocus(index, -1);
+        break;
+      default:
+        break;
+    }
+  };
+
+  /**
+   * A skeleton bar matching the type metrics of the text it stands in for, so the
+   * loading state holds the same shape and rhythm as the resolved content.
+   *
+   * `background` is always passed: the default base is the theme's quaternary
+   * foreground, which is black and therefore invisible on this permanently dark
+   * surface.
+   */
+  private bar(textVariant: TextVariant, width: string) {
+    return (
+      <ds-skeleton
+        variant="text"
+        textVariant={textVariant}
+        width={width}
+        background="always-dark"
+      />
+    );
+  }
+
+  /**
+   * Arrow and change in one text node.
+   *
+   * The arrow is a typeface glyph rather than an icon so it inherits the exact
+   * size, weight, and baseline of the value beside it; an icon would need its
+   * own size scale and would drift whenever the type scale changed.
+   *
+   * Tone is supplied by the caller and never inferred here.
+   */
+  private renderTrend(trend: MetricTrend | undefined, variant: TextVariant, emphasis = false) {
+    if (!trend) return null;
+    return (
+      <ds-text
+        as="span"
+        class={{
+          'card-overview__trend': true,
+          [`card-overview__trend--${trend.tone}`]: true,
+        }}
+        variant={variant}
+        emphasis={emphasis}
+        color="inherit"
+        fontFeature="tabular-nums"
+      >
+        {trend.direction === 'up' ? '↑' : '↓'} {trend.value}
+      </ds-text>
+    );
+  }
+
+  private renderScore() {
+    if (this.isLoading) {
+      return (
+        <div class="card-overview__score ds-control--md" part="score">
+          {/* Mirrors the resolved score: label row, figure pair, then the band. */}
+          <div class="card-overview__score-label-row">
+            {this.bar('text-body-medium', '56px')}
+          </div>
+          <div class="card-overview__score-figure">
+            {this.bar('text-display-medium', '56px')}
+            {this.bar('text-body-small', '28px')}
+          </div>
+          <div class="card-overview__score-band">
+            {this.bar('text-caption', '96px')}
+          </div>
+        </div>
+      );
+    }
+
+    if (this.scoreErrorMessage) {
+      return (
+        <div class="card-overview__score card-overview__score--error" part="score" role="alert">
+          <ds-icon name="CircleExclamation" size="sm" color="inherit" aria-hidden="true" />
+          <ds-text as="span" variant="text-body-medium" color="inherit">
+            {this.scoreErrorMessage}
+          </ds-text>
+        </div>
+      );
+    }
+
+    const score = this.score;
+    if (!score) return null;
+
+    return (
+      <div class="card-overview__score ds-control--md" part="score">
+        <div class="card-overview__score-label-row">
+          <ds-text
+            as="span"
+            class="card-overview__score-label"
+            variant="text-body-medium"
+            emphasis
+            color="inherit"
+          >
+            {score.label}
+          </ds-text>
+        </div>
+        <div class="card-overview__score-figure">
+          <ds-text as="span" variant="text-display-medium" emphasis color="inherit" fontFeature="tabular-nums">
+            {score.value}
+          </ds-text>
+          {this.renderTrend(score.trend, 'text-body-small', true)}
+        </div>
+        {score.band && (
+          <ds-text as="span" class="card-overview__score-band" variant="text-caption" color="inherit">
+            {score.band}
+          </ds-text>
+        )}
+      </div>
+    );
+  }
+
+  private renderMetric(metric: OverviewMetric, index: number) {
+    const selectable = !metric.isInactive;
+    const label = (
+      <ds-text as="span" class="card-overview__metric-label" variant="text-body-small" color="inherit">
+        {metric.label}
+      </ds-text>
+    );
+
+    return (
+      <div
+        class={{
+          'card-overview__metric': true,
+          'card-overview__metric--inactive': !selectable,
+          // Selection targets get the shared wash; press scaling is not used here
+          // so the grid keeps its columns aligned. See docs/control-press-policy.md.
+          'ds-interaction-fill': selectable,
+          // The card is permanently dark, so interaction tokens come from that family.
+          'ds-interaction-fill--on-always-dark': selectable,
+          'ds-focus-ring-inset': selectable,
+        }}
+        part="metric"
+        role={selectable ? 'button' : undefined}
+        tabIndex={selectable && index === this.rovingIndex ? 0 : -1}
+        onClick={() => this.selectMetric(metric, index)}
+        onKeyDown={event => this.handleMetricKeyDown(event, index)}
+        onFocusin={() => {
+          if (selectable) this.focusedMetricIndex = index;
+        }}
+      >
+        {metric.labelTooltip
+          ? <ds-tooltip label={metric.labelTooltip} side="top" size="sm">{label}</ds-tooltip>
+          : label}
+        <div class="card-overview__metric-figure">
+          <ds-text as="span" class="card-overview__metric-value" variant="text-body-medium" color="inherit" fontFeature="tabular-nums">
+            {metric.value}
+          </ds-text>
+          {this.renderTrend(metric.trend, 'text-body-medium')}
+        </div>
+      </div>
+    );
+  }
+
+  private renderMetrics() {
+    if (this.isLoading && this.metrics.length === 0) {
+      return Array.from({ length: LOADING_PLACEHOLDER_COUNT }, (_, index) => (
+        <div class="card-overview__metric" key={`loading-${index}`}>
+          {this.bar('text-body-small', '96px')}
+          <div class="card-overview__metric-figure">
+            {this.bar('text-body-medium', '44px')}
+            {this.bar('text-body-small', '28px')}
+          </div>
+        </div>
+      ));
+    }
+
+    return this.metrics.map((metric, index) => this.renderMetric(metric, index));
+  }
+
+  render() {
+    const hasHeader = Boolean(this.periodLabel || this.comparisonLabel);
+
+    return (
+      <Host
+        class={{
+          'card-overview': true,
+          'card-overview--has-score': this.hasScore,
+          // Split shadow and inset highlight, so the opaque surface cannot cover
+          // the highlight the way a combined elevation shadow would.
+          'ds-control-elevation': true,
+          'ds-control-elevation--sm': true,
+        }}
+        role="region"
+        aria-label={this.overviewLabel}
+        aria-busy={this.isLoading ? 'true' : undefined}
+        style={{ '--ds-card-overview-metric-min': this.metricMinWidth }}
+      >
+        {this.hasScore && this.renderScore()}
+
+        <div class="card-overview__body">
+          {/* `ds-control--md` supplies the 32px height and the label inset below. */}
+          <div class="card-overview__header ds-control--md">
+            {this.isLoading ? (
+              <div class="card-overview__period ds-control-label-box">
+                {this.bar('text-body-medium', '184px')}
+                {this.bar('text-body-medium', '248px')}
+              </div>
+            ) : hasHeader && (
+              <div class="card-overview__period ds-control-label-box">
+                {this.periodLabel && (
+                  <ds-text as="span" class="card-overview__period-current ds-control-label-box" variant="text-body-medium" emphasis color="inherit">
+                    {this.periodLabel}
+                  </ds-text>
+                )}
+                {this.comparisonLabel && (
+                  <ds-text as="span" class="card-overview__period-comparison ds-control-label-box" variant="text-body-medium" color="inherit">
+                    {this.comparisonLabel}
+                  </ds-text>
+                )}
+              </div>
+            )}
+            <div class="card-overview__filter">
+              {/*
+                Period control is application owned: it varies by product surface.
+                While loading it is stood in for by a control-shaped skeleton so the
+                header keeps its resolved proportions.
+              */}
+              {this.isLoading
+                ? <ds-skeleton variant="control" controlSize="md" width="128px" background="always-dark" />
+                : <slot name="filter" />}
+            </div>
+          </div>
+
+          <div class="card-overview__metrics" part="metrics">
+            {this.renderMetrics()}
+          </div>
+
+          <slot name="footer" />
+        </div>
+      </Host>
+    );
+  }
+}

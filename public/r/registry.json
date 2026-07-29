@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^4.0.0",
+        "@ds-mo/tokens ^4.0.1",
         "@ds-mo/icons ^6.4.0"
       ],
       "optional": [],
@@ -2071,6 +2071,156 @@
       "registryDependencies": [
         "button-unfilled",
         "card-shell-data-viz"
+      ]
+    },
+    {
+      "name": "card-overview",
+      "title": "CardOverview",
+      "description": "Page-level summary bar pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-overview",
+        "source": "src/wc/components/CardOverview/CardOverview.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Page-level summary bar pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures.",
+          "useWhen": [
+            "A page opens with one headline figure that the surrounding measures explain.",
+            "Every measure is compared against the same period, so one caption describes the comparison for all of them.",
+            "The measures are read together at a glance rather than explored individually."
+          ],
+          "avoidWhen": [
+            "There is no headline figure and the measures are unrelated; use the matching card surface for each one.",
+            "A measure needs a chart, sparkline, or other visualization; the grid presents values and change only.",
+            "The measures each require their own comparison period or their own filter control.",
+            "The content is a settings section or a general read-only card."
+          ],
+          "alternatives": [
+            {
+              "when": "A measure needs a chart or other data visualization.",
+              "component": "component:ds-card-shell-data-viz",
+              "reason": "CardShellDataViz owns the data-visualization shell contract; the overview grid presents values and change only."
+            },
+            {
+              "when": "The surface is a settings section with an edit workflow.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns the controlled view and edit chrome."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-select",
+            "component:ds-button-unfilled",
+            "component:ds-text",
+            "component:ds-tooltip"
+          ],
+          "accessibility": [
+            "The bar is a labelled region; set overviewLabel to name what is being summarised, such as Safety summary.",
+            "Trend arrows are decorative and hidden from assistive technology, so the formatted change value must read correctly on its own.",
+            "Colour never carries the trend meaning alone; the arrow direction and the value are both present.",
+            "Measures become selectable only when they are not inactive. Selectable measures form one roving tab stop, so the grid is a single stop and arrow keys move between measures.",
+            "Set labelTooltip when a measure's label needs qualifying rather than shortening the label into something ambiguous.",
+            "While loading, the region exposes a busy state and renders skeletons whose type metrics match the resolved content."
+          ],
+          "states": [
+            "Score and measures are supplied as data; the component owns their type treatment so summary bars stay consistent across pages.",
+            "Trend is supplied already resolved as a direction, a formatted value, and a tone. Whether a rise reads well is a product decision, so the component never infers tone from the numbers. Derive it with resolveMetricTrend.",
+            "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
+            "Omit score to render the bar without a headline figure. Set scoreErrorMessage to report that the figure could not be resolved while the measures remain readable.",
+            "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
+            "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface."
+          ],
+          "responsiveBehavior": [
+            "The measure grid reflows to fewer columns and finally stacks, driven by the minimum measure width alone. There is no measurement and no horizontal scrolling.",
+            "Set metricMinWidth to change the width a measure may shrink to before the grid drops a column.",
+            "The score block hugs its content and never shrinks, so the headline figure holds its size while the grid absorbs the remaining width.",
+            "The score moves above the body once the bar can no longer fit both side by side."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign score and metrics as JavaScript properties; both are objects and cannot be expressed as HTML attributes.",
+              "Place the period control in the filter slot; the component reserves space for it but never renders one."
+            ],
+            "react": [
+              "Pass score and metrics as props and read the selected measure from the onDsMetricSelect event detail.",
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+            ],
+            "angular": [
+              "Bind [score] and [metrics] as properties and read the selected measure from $event.detail on (dsMetricSelect).",
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook structural examples",
+              "path": "src/wc/components/CardOverview/CardOverview.stories.ts"
+            },
+            {
+              "label": "Trend resolution unit coverage",
+              "path": "tests/metric-change.test.ts"
+            }
+          ]
+        },
+        "props": {
+          "comparisonLabel": {
+            "type": "string",
+            "required": false
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "metricMinWidth": {
+            "type": "string",
+            "required": false
+          },
+          "metrics": {
+            "type": "OverviewMetric[]",
+            "required": false
+          },
+          "overviewLabel": {
+            "type": "string",
+            "required": false
+          },
+          "periodLabel": {
+            "type": "string",
+            "required": false
+          },
+          "score": {
+            "type": "OverviewScore | undefined",
+            "required": false
+          },
+          "scoreErrorMessage": {
+            "type": "string | undefined",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsMetricSelect",
+            "detail": "OverviewMetric"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-overview",
+          "react": "DsCardOverview",
+          "angular": "DsCardOverview"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "skeleton",
+        "text",
+        "tooltip"
       ]
     },
     {

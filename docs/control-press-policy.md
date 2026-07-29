@@ -38,6 +38,7 @@ activation remains native and is not promised an equivalent held frame.
 | `BarNav` — `.bar-nav__tab` and overflow trigger composition | Local active wash; selected tab state | None on tabs | Navigation tabs do not scale. The overflow trigger inherits scale only because it is a composed `ButtonUnfilled`. |
 | `BarTitle` — native back button and composed action/menu buttons | `interaction-fill` wash | None | The back/navigation target stays stable; composed button primitives follow their own policy. |
 | `Breadcrumb` — item anchors and buttons | Link underline/focus feedback | None | Hierarchical navigation does not scale. |
+| `CardOverview` — selectable `.card-overview__metric` cells | `interaction-fill` wash; roving focus state | None | Summary measures are selection targets in a shared grid; every column must stay aligned, so cell geometry cannot move. |
 | `ChartLegend` — interactive legend item | Hover/selected opacity and interaction state | None | Large data-selection rows remain geometrically stable. |
 | `Checkbox` — host ARIA checkbox target | `interaction-fill`, mark, and checked/mixed state | None | Choice controls do not scale. |
 | `Chip` — root action and `.tag__remove` button | Root interaction wash; remove action has a local active wash | None | Selection/removal affordances keep stable chip geometry. |

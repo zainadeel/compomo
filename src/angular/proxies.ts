@@ -20,6 +20,7 @@ export { DsButtonUnfilled } from './ds-button-unfilled';
 export { DsCardDataVizBar } from './ds-card-data-viz-bar';
 export { DsCardDataVizDonut } from './ds-card-data-viz-donut';
 export { DsCardDataVizLine } from './ds-card-data-viz-line';
+export { DsCardOverview } from './ds-card-overview';
 export { DsCardSetting } from './ds-card-setting';
 export { DsCardShellDataViz } from './ds-card-shell-data-viz';
 export { DsChartBar } from './ds-chart-bar';

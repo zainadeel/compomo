@@ -7,14 +7,22 @@
  * approved press-scaling button so its surface and elevation move as one unit.
  * The owner still supplies layout, radius, surface, and any backdrop blur.
  * Keep wrapped controls' optional resting borders off.
+ *
+ * Both `:host(.ds-control-elevation)` and `.ds-control-elevation` are listed so
+ * Stencil scoped components work whether the class sits on the host (a component
+ * that is itself the elevated surface) or on an inner wrapper. Scoped builds
+ * suffix host and child classes differently, so a plain class alone silently
+ * misses the host.
  */
 
+:host(.ds-control-elevation),
 .ds-control-elevation {
   position: relative;
   overflow: visible;
   box-shadow: var(--ds-control-elevation-shadow, none);
 }
 
+:host(.ds-control-elevation)::after,
 .ds-control-elevation::after {
   content: '';
   position: absolute;
@@ -26,16 +34,19 @@
   pointer-events: none;
 }
 
+:host(.ds-control-elevation--sm),
 .ds-control-elevation--sm {
   --ds-control-elevation-shadow: var(--effect-shadow-elevated-sm);
   --ds-control-elevation-highlight: var(--effect-highlight-elevated-sm);
 }
 
+:host(.ds-control-elevation--md),
 .ds-control-elevation--md {
   --ds-control-elevation-shadow: var(--effect-shadow-elevated-md);
   --ds-control-elevation-highlight: var(--effect-highlight-elevated-md);
 }
 
+:host(.ds-control-elevation--floating),
 .ds-control-elevation--floating {
   --ds-control-elevation-shadow: var(--effect-shadow-elevated-floating);
   --ds-control-elevation-highlight: var(--effect-highlight-elevated-floating);

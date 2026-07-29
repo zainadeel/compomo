@@ -18,6 +18,7 @@ export const DIRECTIVES = [
   d.DsCardDataVizBar,
   d.DsCardDataVizDonut,
   d.DsCardDataVizLine,
+  d.DsCardOverview,
   d.DsCardSetting,
   d.DsCardShellDataViz,
   d.DsChartBar,

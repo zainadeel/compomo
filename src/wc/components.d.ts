@@ -20,6 +20,7 @@ import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, Butt
 import { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
+import { OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -79,6 +80,7 @@ export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, Butt
 export { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
+export { OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -693,6 +695,46 @@ export namespace Components {
           * Widget heading shown in the card header.
          */
         "heading": string;
+    }
+    interface DsCardOverview {
+        /**
+          * Comparison caption, for example `vs. previous score period`.
+          * @default ''
+         */
+        "comparisonLabel": string;
+        /**
+          * Replace the score and metrics with skeletons while data resolves.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
+          * @default 'var(--dimension-menu-width-xs)'
+         */
+        "metricMinWidth": string;
+        /**
+          * Measures rendered in the responsive grid.
+          * @default []
+         */
+        "metrics": OverviewMetric[];
+        /**
+          * Accessible name for the region.
+          * @default 'Overview'
+         */
+        "overviewLabel": string;
+        /**
+          * Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`.
+          * @default ''
+         */
+        "periodLabel": string;
+        /**
+          * Leading summary block. Omit to render the bar without a headline figure.
+         */
+        "score": OverviewScore | undefined;
+        /**
+          * Message shown in place of the score when its figure cannot be resolved.
+         */
+        "scoreErrorMessage": string | undefined;
     }
     interface DsCardSetting {
         /**
@@ -2922,6 +2964,10 @@ export interface DsCardDataVizLineCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardDataVizLineElement;
 }
+export interface DsCardOverviewCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardOverviewElement;
+}
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardSettingElement;
@@ -3271,6 +3317,23 @@ declare global {
     var HTMLDsCardDataVizLineElement: {
         prototype: HTMLDsCardDataVizLineElement;
         new (): HTMLDsCardDataVizLineElement;
+    };
+    interface HTMLDsCardOverviewElementEventMap {
+        "dsMetricSelect": OverviewMetric;
+    }
+    interface HTMLDsCardOverviewElement extends Components.DsCardOverview, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardOverviewElementEventMap>(type: K, listener: (this: HTMLDsCardOverviewElement, ev: DsCardOverviewCustomEvent<HTMLDsCardOverviewElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardOverviewElementEventMap>(type: K, listener: (this: HTMLDsCardOverviewElement, ev: DsCardOverviewCustomEvent<HTMLDsCardOverviewElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardOverviewElement: {
+        prototype: HTMLDsCardOverviewElement;
+        new (): HTMLDsCardOverviewElement;
     };
     interface HTMLDsCardSettingElementEventMap {
         "dsAction": CardSettingActionDetail;
@@ -4092,6 +4155,7 @@ declare global {
         "ds-card-data-viz-bar": HTMLDsCardDataVizBarElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
         "ds-card-data-viz-line": HTMLDsCardDataVizLineElement;
+        "ds-card-overview": HTMLDsCardOverviewElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-card-shell-data-viz": HTMLDsCardShellDataVizElement;
         "ds-chart-bar": HTMLDsChartBarElement;
@@ -4770,6 +4834,50 @@ declare namespace LocalJSX {
           * Emits when the header filter control is activated.
          */
         "onDsFilterClick"?: (event: DsCardDataVizLineCustomEvent<void>) => void;
+    }
+    interface DsCardOverview {
+        /**
+          * Comparison caption, for example `vs. previous score period`.
+          * @default ''
+         */
+        "comparisonLabel"?: string;
+        /**
+          * Replace the score and metrics with skeletons while data resolves.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
+          * @default 'var(--dimension-menu-width-xs)'
+         */
+        "metricMinWidth"?: string;
+        /**
+          * Measures rendered in the responsive grid.
+          * @default []
+         */
+        "metrics"?: OverviewMetric[];
+        /**
+          * Emitted when a metric that is not inactive is activated.
+         */
+        "onDsMetricSelect"?: (event: DsCardOverviewCustomEvent<OverviewMetric>) => void;
+        /**
+          * Accessible name for the region.
+          * @default 'Overview'
+         */
+        "overviewLabel"?: string;
+        /**
+          * Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`.
+          * @default ''
+         */
+        "periodLabel"?: string;
+        /**
+          * Leading summary block. Omit to render the bar without a headline figure.
+         */
+        "score"?: OverviewScore | undefined;
+        /**
+          * Message shown in place of the score when its figure cannot be resolved.
+         */
+        "scoreErrorMessage"?: string | undefined;
     }
     interface DsCardSetting {
         /**
@@ -7258,6 +7366,14 @@ declare namespace LocalJSX {
         "cardWidth": CardDataVizLineWidth;
         "filterLabel": string;
     }
+    interface DsCardOverviewAttributes {
+        "periodLabel": string;
+        "comparisonLabel": string;
+        "metricMinWidth": string;
+        "isLoading": boolean;
+        "scoreErrorMessage": string | undefined;
+        "overviewLabel": string;
+    }
     interface DsCardSettingAttributes {
         "heading": string;
         "cardWidth": CardSettingWidth;
@@ -7808,6 +7924,7 @@ declare namespace LocalJSX {
         "ds-card-data-viz-bar": Omit<DsCardDataVizBar, keyof DsCardDataVizBarAttributes> & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes]?: DsCardDataVizBar[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `attr:${K}`]?: DsCardDataVizBarAttributes[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `prop:${K}`]?: DsCardDataVizBar[K] } & OneOf<"heading", DsCardDataVizBar["heading"], DsCardDataVizBarAttributes["heading"]>;
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
         "ds-card-data-viz-line": Omit<DsCardDataVizLine, keyof DsCardDataVizLineAttributes> & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes]?: DsCardDataVizLine[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `attr:${K}`]?: DsCardDataVizLineAttributes[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `prop:${K}`]?: DsCardDataVizLine[K] } & OneOf<"heading", DsCardDataVizLine["heading"], DsCardDataVizLineAttributes["heading"]>;
+        "ds-card-overview": Omit<DsCardOverview, keyof DsCardOverviewAttributes> & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes]?: DsCardOverview[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `attr:${K}`]?: DsCardOverviewAttributes[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `prop:${K}`]?: DsCardOverview[K] };
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-card-shell-data-viz": Omit<DsCardShellDataViz, keyof DsCardShellDataVizAttributes> & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes]?: DsCardShellDataViz[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `attr:${K}`]?: DsCardShellDataVizAttributes[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `prop:${K}`]?: DsCardShellDataViz[K] } & OneOf<"heading", DsCardShellDataViz["heading"], DsCardShellDataVizAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
@@ -7897,6 +8014,7 @@ declare module "@stencil/core" {
              * region and a content-sized, static legend.
              */
             "ds-card-data-viz-line": LocalJSX.IntrinsicElements["ds-card-data-viz-line"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizLineElement>;
+            "ds-card-overview": LocalJSX.IntrinsicElements["ds-card-overview"] & JSXBase.HTMLAttributes<HTMLDsCardOverviewElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
             /**
              * Dedicated shell chrome for data-visualization cards. Chart-specific layout,

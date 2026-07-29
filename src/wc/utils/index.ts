@@ -3,6 +3,14 @@ export { clearCssLengthPxCache, resolveCssLengthPx } from './resolve-css-length-
 export { formatCompactNumber } from './format-compact-number';
 export { formatPercentage } from './format-percentage';
 export type { PercentageDecimals } from './format-percentage';
+export { computeMetricChange, resolveMetricTrend } from './metric-change';
+export type {
+  MetricChange,
+  MetricTrend,
+  MetricTrendDirection,
+  MetricTrendTone,
+  ResolveMetricTrendOptions,
+} from './metric-change';
 export { truncateSvgTextToWidth } from './truncate-svg-text';
 export {
   parseCssTimeMs,

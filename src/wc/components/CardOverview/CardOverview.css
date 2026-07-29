@@ -1,0 +1,319 @@
+@import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
+@import '../../styles/control-elevation.css';
+
+/*
+ * A permanently dark surface, independent of the page theme, so the summary bar
+ * reads the same on every product surface. Every foreground, border, and
+ * interaction token below therefore comes from the always-dark family rather
+ * than the theme-reactive one.
+ */
+
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  box-sizing: border-box;
+  /* Drives the narrow layout below from the card's own width, not the viewport's. */
+  container-type: inline-size;
+  /* A summary is read, not copied; stray selection while clicking cells is noise. */
+  -webkit-user-select: none;
+  user-select: none;
+  /* Width a metric may shrink to before the grid drops a column. */
+  --ds-card-overview-metric-min: calc(var(--dimension-size-400) * 5);
+  --ds-card-overview-divider: var(--dimension-stroke-width-012) solid
+    var(--color-always-dark-border-tertiary);
+  border-radius: var(--dimension-radius-050);
+  background: var(--color-always-dark-background);
+  color: var(--color-always-dark-foreground-primary);
+  /*
+   * Clips the square-cornered metric washes to the card radius. The outer
+   * elevation shadow is painted outside the border box and is unaffected, and
+   * the inset highlight is meant to sit exactly on this edge.
+   */
+  overflow: hidden;
+}
+
+/* ── Score ────────────────────────────────────────────────────────────────── */
+
+/*
+ * Hugs its content and never shrinks, so the headline figure keeps its size and
+ * the metric grid absorbs the remaining width.
+ */
+/*
+ * Top aligned rather than centred, and padded to match the header, so the score
+ * label sits in the same 32px box at the same offset as the period text beside
+ * it. Both use the same type variant, so their baselines land together.
+ */
+.card-overview__score {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: var(--dimension-space-100) var(--dimension-space-200);
+  border-inline-end: var(--ds-card-overview-divider);
+}
+
+/* The control-height box that aligns this label with the period text. */
+.card-overview__score-label-row {
+  display: flex;
+  align-items: center;
+  min-height: var(--ds-control-height);
+}
+
+.card-overview__score-label {
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+/*
+ * The score is its own column, so its rows cannot baseline-align with the measure
+ * rows through flex or grid — those only align items that share a line. These two
+ * offsets pull the column onto the measure baselines instead.
+ *
+ * They are compensation for how much lower a display-scale figure sits in its line
+ * box than the body text it aligns to, so they are coupled to the type pairing:
+ * change the score or measure variants and both need re-measuring.
+ */
+.card-overview__score-figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+  margin-block-start: calc(-1 * (var(--dimension-space-150) + var(--dimension-space-012)));
+}
+
+/* Second half of the baseline compensation described above the score figure. */
+.card-overview__score-band {
+  margin-block-start: calc(-1 * var(--dimension-space-025));
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+.card-overview__score--error {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  color: var(--color-always-dark-foreground-negative);
+}
+
+/* ── Body ─────────────────────────────────────────────────────────────────── */
+
+/*
+ * Takes the remaining inline space. The minimum is what makes the host wrap: once
+ * the score and roughly two measure columns no longer fit side by side, the body
+ * drops below the score instead of squeezing it. `min()` keeps that from becoming
+ * an overflow floor on very narrow viewports.
+ */
+.card-overview__body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: min(100%, calc(var(--ds-card-overview-metric-min) * 2));
+}
+
+/*
+ * One control row: 8px of padding on every side around a 32px md control, so the
+ * bar is 8 + 32 + 8. Both ends of the bar are control-shaped boxes — the period
+ * text on the left and the slotted control on the right — so the row reads
+ * balanced rather than text on one side and a control on the other.
+ */
+.card-overview__header {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  min-width: 0;
+  padding: var(--dimension-space-100);
+  border-block-end: var(--ds-card-overview-divider);
+  box-sizing: border-box;
+}
+
+/*
+ * Matches the control's box on the opposite end, including its inline padding, so
+ * the text lands at the same optical inset the slotted control does:
+ * 8 from the bar + 6 from this box + 2 from the label inset = 16.
+ *
+ * Nowrap keeps the row at the control height; the period truncates rather than
+ * growing the bar to two lines.
+ */
+.card-overview__period {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  min-height: var(--ds-control-height);
+  min-width: 0;
+  padding-inline: var(--ds-control-padding-inline);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card-overview__period-current {
+  color: var(--color-always-dark-foreground-primary);
+}
+
+.card-overview__period-comparison {
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+/* The period control is slotted, so only reserve space for it. */
+.card-overview__filter {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+/* ── Metrics ──────────────────────────────────────────────────────────────── */
+
+/*
+ * Reflows to fewer columns and finally stacks from `auto-fit` alone. No observer
+ * and no horizontal scroll: a metric never compresses past its minimum, it moves
+ * to the next row instead.
+ */
+/*
+ * Wrapping flex rather than an auto-fit grid, because a grid gives the final row's
+ * items their column width and leaves a gap. Flex lets the last row's items grow
+ * to fill, so a measure left on its own spans the full width.
+ *
+ * Dividers are trailing, not leading: a leading divider on the first cell would
+ * land exactly on the score's own trailing border and paint it twice. The two
+ * negative margins pull the final column's and final row's dividers past the card
+ * edge, where the card's `overflow: hidden` clips them, so separators appear
+ * between cells without needing to detect which cell ends a row.
+ *
+ * `flex: 1 1 auto` on the container makes it absorb whatever height the body has
+ * left, so cells reach the card bottom and their hover wash has no dead strip.
+ */
+.card-overview__metrics {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  min-width: 0;
+  margin-inline-end: calc(-1 * var(--dimension-stroke-width-012));
+  margin-block-end: calc(-1 * var(--dimension-stroke-width-012));
+}
+
+/*
+ * Square by design. Cells tile edge to edge against their dividers, so a radius
+ * would break the seam; the card's own radius clips the outer corners instead.
+ *
+ * Padding is plain rather than control-derived: a cell is a block of content, not
+ * a control box that has to optically match something on the far side.
+ */
+.card-overview__metric {
+  display: flex;
+  position: relative;
+  flex: 1 1 var(--ds-card-overview-metric-min);
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+  padding: var(--dimension-space-175) var(--dimension-space-200);
+  border-radius: 0;
+  border-inline-end: var(--ds-card-overview-divider);
+  border-block-end: var(--ds-card-overview-divider);
+}
+
+.card-overview__metric[role='button'] {
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.card-overview__metric-label {
+  min-width: 0;
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+.card-overview__metric-value {
+  color: var(--color-always-dark-foreground-primary);
+}
+
+.card-overview__metric-figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--dimension-space-100);
+  min-width: 0;
+}
+
+/* ── Trend ────────────────────────────────────────────────────────────────── */
+
+/*
+ * Tone arrives resolved from the caller: the arrow direction and the sentiment
+ * are independent, so a falling metric can read positive or neutral. The arrow is
+ * a glyph inside this text node, so it always matches the surrounding weight.
+ */
+.card-overview__trend {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.card-overview__trend--positive {
+  color: var(--color-always-dark-foreground-positive);
+}
+
+.card-overview__trend--negative {
+  color: var(--color-always-dark-foreground-negative);
+}
+
+/*
+ * Secondary rather than tertiary: the change value is content, not decoration,
+ * and tertiary does not hold a readable contrast at this size.
+ */
+.card-overview__trend--neutral {
+  color: var(--color-always-dark-foreground-secondary);
+}
+
+/* ── Narrow layout ────────────────────────────────────────────────────────── */
+
+/*
+ * Below roughly two measure columns the card stops being a bar with a leading
+ * score and becomes a stack. The score turns into its own full-width row reading
+ * left to right, so its divider moves from the trailing edge to the underside and
+ * the period bar spans the full width beneath it.
+ */
+/*
+ * Selectors are host-qualified purely for specificity: the compiled sheet places
+ * these rules ahead of the base ones, so a plain class here would only ever add
+ * properties and never override them.
+ */
+@container (max-width: 480px) {
+  :host .card-overview__score {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--dimension-space-100);
+    width: 100%;
+    padding-block: var(--dimension-space-150);
+    border-inline-end: none;
+    border-block-end: var(--ds-card-overview-divider);
+  }
+
+  /* Pushes the figure and band to the trailing edge, opposite the label. */
+  :host .card-overview__score-label-row {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* The vertical rhythm that aligned these to the measure rows no longer applies. */
+  :host .card-overview__score-band,
+  :host .card-overview__score-figure {
+    margin-block-start: 0;
+  }
+
+  /*
+   * The period gets a full-width row of its own here, but not enough of it for
+   * both parts on one line. Wrapping keeps the comparison readable; holding the
+   * single-line rule instead collides the two runs of text.
+   */
+  :host .card-overview__header {
+    align-items: flex-start;
+  }
+
+  :host .card-overview__period {
+    flex-wrap: wrap;
+    min-height: 0;
+    overflow: visible;
+    white-space: normal;
+  }
+}
