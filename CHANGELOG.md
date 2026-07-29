@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.8.0](https://github.com/zainadeel/compomo/compare/v12.7.0...v12.8.0) (2026-07-29)
+
+
+### Added
+
+* card overview summary bar, tokens 5.0.0, and shell refinements ([#388](https://github.com/zainadeel/compomo/issues/388)) ([b7d7c35](https://github.com/zainadeel/compomo/commit/b7d7c353d3358941e98b17760ed4135738939c4a))
+
 ## [12.7.0](https://github.com/zainadeel/compomo/compare/v12.6.2...v12.7.0) (2026-07-26)
 
 
