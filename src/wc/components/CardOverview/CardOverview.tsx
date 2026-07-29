@@ -119,9 +119,10 @@ export class CardOverview {
    * foreground, which is black and therefore invisible on this permanently dark
    * surface.
    */
-  private bar(textVariant: TextVariant, width: string) {
+  private bar(textVariant: TextVariant, width: string, className?: string) {
     return (
       <ds-skeleton
+        class={className}
         variant="text"
         textVariant={textVariant}
         width={width}
@@ -162,17 +163,23 @@ export class CardOverview {
     if (this.isLoading) {
       return (
         <div class="card-overview__score ds-control--md" part="score">
-          {/* Mirrors the resolved score: label row, figure pair, then the band. */}
-          <div class="card-overview__score-label-row">
-            {this.bar('text-body-medium', '56px')}
-          </div>
+          {/*
+            * The label row is kept but left empty. It carries the control-height
+            * box that aligns the score block with the period control, so dropping
+            * it would shift the whole block up; a bar inside it would collide with
+            * the figure, which sits under the label by design.
+            */}
+          <div class="card-overview__score-label-row" />
           <div class="card-overview__score-figure">
             {this.bar('text-display-medium', '56px')}
-            {this.bar('text-body-small', '28px')}
+            {this.bar('text-body-small', '24px', 'card-overview__skeleton-baseline')}
           </div>
-          <div class="card-overview__score-band">
-            {this.bar('text-caption', '96px')}
-          </div>
+          {/*
+            * Class goes on the skeleton itself, matching the resolved band. In a
+            * wrapper the bar picks up inline leading and drops below the resolved
+            * band position.
+            */}
+          {this.bar('text-caption', '80px', 'card-overview__score-band card-overview__score-band--loading')}
         </div>
       );
     }
@@ -265,10 +272,12 @@ export class CardOverview {
     if (this.isLoading && this.metrics.length === 0) {
       return Array.from({ length: LOADING_PLACEHOLDER_COUNT }, (_, index) => (
         <div class="card-overview__metric" key={`loading-${index}`}>
-          {this.bar('text-body-small', '96px')}
+          {this.bar('text-body-small', '70%', 'card-overview__metric-label')}
           <div class="card-overview__metric-figure">
-            {this.bar('text-body-medium', '44px')}
-            {this.bar('text-body-small', '28px')}
+            {this.bar('text-body-medium', '36px')}
+            {/* text-body-medium, matching renderTrend for a metric — a smaller
+              * variant here leaves the trend bar short of the value beside it. */}
+            {this.bar('text-body-medium', '40px')}
           </div>
         </div>
       ));

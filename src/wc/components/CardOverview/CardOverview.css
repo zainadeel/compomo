@@ -91,6 +91,24 @@
   color: var(--color-always-dark-foreground-secondary);
 }
 
+/*
+ * A skeleton bar is a solid block, so in a baseline-aligned row it aligns on its
+ * bottom edge while the text it stands in for aligns on its baseline. Next to a
+ * display-scale figure that difference is the descent under the figure's
+ * baseline, which drops the bar below where the resolved trend sits.
+ *
+ * The offset is applied with relative positioning rather than a margin: a margin
+ * is not part of a synthesized baseline, so it grows the figure instead of moving
+ * the bar, which then pushes the band below it out of place.
+ *
+ * Only needed beside the score figure; the measure rows pair body variants whose
+ * bottom edge and baseline already agree.
+ */
+.card-overview__skeleton-baseline {
+  position: relative;
+  inset-block-start: calc(-1 * var(--dimension-space-150));
+}
+
 .card-overview__score--error {
   flex-direction: row;
   align-items: center;
@@ -299,6 +317,17 @@
   :host .card-overview__score-band,
   :host .card-overview__score-figure {
     margin-block-start: 0;
+  }
+
+  /*
+   * Here the band joins the baseline-aligned row, so the band skeleton needs the
+   * same lift the trend skeleton gets: a solid bar synthesizes its baseline from
+   * its bottom edge and would otherwise hang below the figure's baseline. The
+   * column layout aligns the band by margin instead, so this is narrow-only.
+   */
+  :host .card-overview__score-band--loading {
+    position: relative;
+    inset-block-start: calc(-1 * (var(--dimension-space-150) + var(--dimension-space-012)));
   }
 
   /*
