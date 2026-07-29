@@ -51,6 +51,7 @@
   ],
   "responsiveBehavior": [
     "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
+    "The donut measures the chart region and changes radius within its shared size band while token thickness and typography remain fixed.",
     "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
   ],
   "frameworkCaveats": {

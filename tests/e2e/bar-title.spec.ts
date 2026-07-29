@@ -92,6 +92,29 @@ test('composes one page main and semantic h1 with the default content inset', as
   expect(geometry.dividerRight).toBe(32);
 });
 
+test('reduces the default page inset for tablet and mobile modes', async ({ page }) => {
+  const shell = page.locator('#shell-page');
+  const content = shell.locator('.shell-page__content');
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.responsiveMode = 'tablet';
+  });
+  await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
+  await expect(content).toHaveCSS('padding-top', '16px');
+  await expect(content).toHaveCSS('padding-right', '16px');
+  await expect(content).toHaveCSS('padding-bottom', '64px');
+  await expect(content).toHaveCSS('padding-left', '16px');
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.responsiveMode = 'mobile';
+  });
+  await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+  await expect(content).toHaveCSS('padding-top', '16px');
+  await expect(content).toHaveCSS('padding-right', '16px');
+  await expect(content).toHaveCSS('padding-bottom', '64px');
+  await expect(content).toHaveCSS('padding-left', '16px');
+});
+
 test('aligns expanded title and actions below a full-width breadcrumb row', async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
@@ -643,6 +666,13 @@ test('selects compact and constrained variants from supplied ShellPage capacity'
   await expect(header).toHaveClass(/bar-title-host--constrained/);
   await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
 
+  const constrainedActionsRightInset = await header.evaluate(element => {
+    const host = element.getBoundingClientRect();
+    const actions = element.querySelector<HTMLElement>('.bar-title__actions');
+    return host.right - (actions?.getBoundingClientRect().right ?? host.right);
+  });
+  expect(constrainedActionsRightInset).toBeCloseTo(8, 3);
+
   const more = header.getByRole('button', { name: 'More driver actions' });
   await more.click();
   await expect(page.getByRole('menuitem', { name: 'Call driver' })).toHaveCount(1);
@@ -711,6 +741,13 @@ test('snaps only when the expanded title and actions reach their compact positio
   const initialOffset = await shell
     .locator('.shell-page__content')
     .evaluate(element => (element as HTMLElement).offsetTop);
+  const readDividerInset = () =>
+    header.evaluate(element => {
+      const bar = element.querySelector<HTMLElement>('.bar-title');
+      const divider = bar ? getComputedStyle(bar, '::after') : null;
+      return divider ? Number.parseFloat(divider.left) : 0;
+    });
+  expect(await readDividerInset()).toBe(32);
   await expect
     .poll(() =>
       shell.evaluate(element =>
@@ -727,6 +764,15 @@ test('snaps only when the expanded title and actions reach their compact positio
       ? root.scrollTop + sentinel.getBoundingClientRect().top - root.getBoundingClientRect().top
       : 0;
   });
+  const initialScrollTop = await scroller.evaluate(element => element.scrollTop);
+
+  await scroller.evaluate(
+    (element: HTMLElement, position) => {
+      element.scrollTop = position;
+    },
+    initialScrollTop + (snapScrollTop - initialScrollTop) / 2
+  );
+  await expect.poll(readDividerInset).toBeCloseTo(16, 0);
 
   await scroller.evaluate((element: HTMLElement, distance) => {
     element.scrollTop = distance - 1;
@@ -737,6 +783,7 @@ test('snaps only when the expanded title and actions reach their compact positio
     element.scrollTop = distance;
   }, snapScrollTop);
   await expect(header).toHaveClass(/bar-title-host--expanded/);
+  await expect.poll(readDividerInset).toBeCloseTo(0, 3);
   const expandedAnchor = await header.evaluate(element => {
     const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
     const title = element.querySelector<HTMLElement>('[data-shell-page-header-anchor]');

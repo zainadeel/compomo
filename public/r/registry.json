@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^3.1.1",
+        "@ds-mo/tokens ^5.0.0",
         "@ds-mo/icons ^6.4.0"
       ],
       "optional": [],
@@ -1326,7 +1326,8 @@
             "The action is unfilled icon-only shell or navigation chrome.",
             "The element represents navigation rather than a command.",
             "The content is a persistent selected state rather than an action.",
-            "A semantic color would be decorative or merely match the surrounding product area."
+            "A semantic color would be decorative or merely match the surrounding product area.",
+            "The control is an overflow or more-options menu whose only content is an Ellipses glyph; that role is never filled."
           ],
           "alternatives": [
             {
@@ -1338,14 +1339,25 @@
               "when": "The user is choosing a destination in application navigation.",
               "component": "component:ds-panel-nav",
               "reason": "Navigation components own destination selection, active state, and navigation semantics."
+            },
+            {
+              "when": "The control is the overflow or more-options menu for a row, card, or toolbar.",
+              "component": "component:ds-button-unfilled",
+              "reason": "An icon-only Ellipses trigger is chrome, and its glyph conveys the menu without a chevron; a filled button never carries that role."
             }
           ],
           "commonlyComposedWith": [
             "component:ds-modal",
-            "component:ds-field"
+            "component:ds-field",
+            "component:ds-menu"
+          ],
+          "patterns": [
+            "pattern:menu-trigger"
           ],
           "accessibility": [
             "Provide an explicit accessible name for icon-only buttons.",
+            "Set hasMenu when the action opens a Menu; it implies aria-haspopup of menu and renders the trailing chevron. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+            "Use haspopup directly for a non-menu popup such as a dialog; that case gets no chevron.",
             "Use inactive state only when the action must remain visible but unavailable.",
             "Do not encode the action meaning through color alone.",
             "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when users need confirmation.",
@@ -1360,7 +1372,11 @@
             "Parent surface context changes only the optional inset border color. Contrast continues to own the button fill, foreground, hover, pressed, and focus treatments; never use surface context to change action hierarchy.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
-            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+            "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+            "ButtonFilled has no active or selected state; a filled action is a command, not a toggle or a persistent selection.",
+            "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
+            "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."
           ],
           "responsiveBehavior": [
             "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
@@ -1396,8 +1412,24 @@
             "type": "ButtonFilledContrast",
             "required": false
           },
+          "controls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "expanded": {
+            "type": "boolean | undefined",
+            "required": false
+          },
           "hasBorder": {
             "type": "boolean",
+            "required": false
+          },
+          "hasMenu": {
+            "type": "boolean",
+            "required": false
+          },
+          "haspopup": {
+            "type": "ButtonFilledPopup | undefined",
             "required": false
           },
           "icon": {
@@ -1418,6 +1450,14 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "pressScale": {
+            "type": "boolean",
+            "required": false
+          },
+          "pressed": {
+            "type": "boolean | undefined",
             "required": false
           },
           "rounded": {
@@ -1483,7 +1523,8 @@
           "useWhen": [
             "A secondary command accompanies the single filled primary action in a local decision area.",
             "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
-            "A command represents a persistent toggle or mode whose active state remains meaningful after activation."
+            "A command represents a persistent toggle or mode whose active state remains meaningful after activation.",
+            "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role."
           ],
           "avoidWhen": [
             "The command is the single primary action in a local decision area; use ButtonFilled instead.",
@@ -1518,6 +1559,9 @@
           ],
           "accessibility": [
             "Provide an explicit accessible name for every icon-only action.",
+            "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+            "Give an icon-only menu button an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
+            "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
             "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
             "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
             "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
@@ -1532,7 +1576,11 @@
             "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
-            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+            "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+            "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu, meaning the overflow or more-options control, and no chevron is added.",
+            "Because the icon-only shape has no chevron, its glyph must convey the menu on its own; use Ellipses. Never pair hasMenu with an icon-only glyph that does not read as a menu.",
+            "An open popup is a transient pressed state rather than a selected one. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, including when chrome opts out of selected fills with activeFill set to false."
           ],
           "responsiveBehavior": [
             "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",
@@ -1590,6 +1638,10 @@
             "type": "boolean",
             "required": false
           },
+          "hasMenu": {
+            "type": "boolean",
+            "required": false
+          },
           "haspopup": {
             "type": "ButtonUnfilledPopup | undefined",
             "required": false
@@ -1612,6 +1664,10 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "pressScale": {
+            "type": "boolean",
             "required": false
           },
           "pressed": {
@@ -1728,7 +1784,7 @@
             "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
           ],
           "responsiveBehavior": [
-            "The selected sm, md, or lg shell size controls the card dimensions while the bar chart shrinks within its chart region.",
+            "The selected sm, md, or lg shell size controls the card dimensions while the bar chart reflows to the chart region without visually scaling its primitives.",
             "The horizontal legend wraps complete entries when the available width is constrained.",
             "The parent dashboard owns card wrapping and breakpoint changes."
           ],
@@ -1844,6 +1900,7 @@
           ],
           "responsiveBehavior": [
             "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
+            "The donut measures the chart region and changes radius within its shared size band while token thickness and typography remain fixed.",
             "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
           ],
           "frameworkCaveats": {
@@ -1958,7 +2015,7 @@
             "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
           ],
           "responsiveBehavior": [
-            "The selected sm, md, or lg shell size controls the card dimensions while the line chart shrinks within its chart region.",
+            "The selected sm, md, or lg shell size controls the card dimensions while the line chart reflows to the chart region without visually scaling its primitives.",
             "The horizontal legend wraps complete entries when the available width is constrained.",
             "The parent dashboard owns card wrapping and breakpoint changes."
           ],
@@ -2014,6 +2071,156 @@
       "registryDependencies": [
         "button-unfilled",
         "card-shell-data-viz"
+      ]
+    },
+    {
+      "name": "card-overview",
+      "title": "CardOverview",
+      "description": "Page-level summary bar pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-overview",
+        "source": "src/wc/components/CardOverview/CardOverview.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Page-level summary bar pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures.",
+          "useWhen": [
+            "A page opens with one headline figure that the surrounding measures explain.",
+            "Every measure is compared against the same period, so one caption describes the comparison for all of them.",
+            "The measures are read together at a glance rather than explored individually."
+          ],
+          "avoidWhen": [
+            "There is no headline figure and the measures are unrelated; use the matching card surface for each one.",
+            "A measure needs a chart, sparkline, or other visualization; the grid presents values and change only.",
+            "The measures each require their own comparison period or their own filter control.",
+            "The content is a settings section or a general read-only card."
+          ],
+          "alternatives": [
+            {
+              "when": "A measure needs a chart or other data visualization.",
+              "component": "component:ds-card-shell-data-viz",
+              "reason": "CardShellDataViz owns the data-visualization shell contract; the overview grid presents values and change only."
+            },
+            {
+              "when": "The surface is a settings section with an edit workflow.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns the controlled view and edit chrome."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-select",
+            "component:ds-button-unfilled",
+            "component:ds-text",
+            "component:ds-tooltip"
+          ],
+          "accessibility": [
+            "The bar is a labelled region; set overviewLabel to name what is being summarised, such as Safety summary.",
+            "Trend arrows are decorative and hidden from assistive technology, so the formatted change value must read correctly on its own.",
+            "Colour never carries the trend meaning alone; the arrow direction and the value are both present.",
+            "Measures become selectable only when they are not inactive. Selectable measures form one roving tab stop, so the grid is a single stop and arrow keys move between measures.",
+            "Set labelTooltip when a measure's label needs qualifying rather than shortening the label into something ambiguous.",
+            "While loading, the region exposes a busy state and renders skeletons whose type metrics match the resolved content."
+          ],
+          "states": [
+            "Score and measures are supplied as data; the component owns their type treatment so summary bars stay consistent across pages.",
+            "Trend is supplied already resolved as a direction, a formatted value, and a tone. Whether a rise reads well is a product decision, so the component never infers tone from the numbers. Derive it with resolveMetricTrend.",
+            "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
+            "Omit score to render the bar without a headline figure. Set scoreErrorMessage to report that the figure could not be resolved while the measures remain readable.",
+            "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
+            "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface."
+          ],
+          "responsiveBehavior": [
+            "The measure grid reflows to fewer columns and finally stacks, driven by the minimum measure width alone. There is no measurement and no horizontal scrolling.",
+            "Set metricMinWidth to change the width a measure may shrink to before the grid drops a column.",
+            "The score block hugs its content and never shrinks, so the headline figure holds its size while the grid absorbs the remaining width.",
+            "The score moves above the body once the bar can no longer fit both side by side."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign score and metrics as JavaScript properties; both are objects and cannot be expressed as HTML attributes.",
+              "Place the period control in the filter slot; the component reserves space for it but never renders one."
+            ],
+            "react": [
+              "Pass score and metrics as props and read the selected measure from the onDsMetricSelect event detail.",
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+            ],
+            "angular": [
+              "Bind [score] and [metrics] as properties and read the selected measure from $event.detail on (dsMetricSelect).",
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook structural examples",
+              "path": "src/wc/components/CardOverview/CardOverview.stories.ts"
+            },
+            {
+              "label": "Trend resolution unit coverage",
+              "path": "tests/metric-change.test.ts"
+            }
+          ]
+        },
+        "props": {
+          "comparisonLabel": {
+            "type": "string",
+            "required": false
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "metricMinWidth": {
+            "type": "string",
+            "required": false
+          },
+          "metrics": {
+            "type": "OverviewMetric[]",
+            "required": false
+          },
+          "overviewLabel": {
+            "type": "string",
+            "required": false
+          },
+          "periodLabel": {
+            "type": "string",
+            "required": false
+          },
+          "score": {
+            "type": "OverviewScore | undefined",
+            "required": false
+          },
+          "scoreErrorMessage": {
+            "type": "string | undefined",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsMetricSelect",
+            "detail": "OverviewMetric"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-overview",
+          "react": "DsCardOverview",
+          "angular": "DsCardOverview"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "skeleton",
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -2334,7 +2541,8 @@
             "Authored datum colors override the shared categorical palette."
           ],
           "responsiveBehavior": [
-            "The owner supplies dimensions and updates them with its layout; the chart does not measure its container.",
+            "Width and height provide the standalone intrinsic viewport; container constraints are measured and reflow the plot across the available pixels.",
+            "Responsive layout changes bar positions and plot extents without scaling SVG text, strokes, corner radii, or margins.",
             "Limit or pre-format long category labels so they remain legible at the chosen width.",
             "Time labels remain ordered, pre-formatted buckets with equal spacing rather than raw continuous timestamps."
           ],
@@ -2343,10 +2551,10 @@
               "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
             ],
             "react": [
-              "Pass a stable data array and dimensions derived from the containing layout."
+              "Pass a stable data array; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ],
             "angular": [
-              "Bind data as a property and update dimensions from the containing layout."
+              "Bind data as a property; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ]
           },
           "references": [
@@ -2446,8 +2654,9 @@
             "Negative values are unsupported and render as zero; the owning product supplies loading, empty, and error states."
           ],
           "responsiveBehavior": [
-            "The SVG preserves its authored aspect ratio while shrinking to fit a narrower parent.",
-            "The parent supplies dimensions and chooses how many time buckets remain legible at each width.",
+            "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
+            "Responsive layout changes stack positions and plot extents without scaling SVG text, strokes, separators, corner radii, or margins.",
+            "The parent chooses how many time buckets remain legible at each width.",
             "Pre-format category labels and reduce bucket count before rendering when horizontal space becomes constrained."
           ],
           "frameworkCaveats": {
@@ -2562,6 +2771,7 @@
           "responsiveBehavior": [
             "Prefer container-fill sizing inside data-viz cards and explicit sizing only in layouts that own a stable diameter.",
             "Fill sizing remains centered and constrained to the shared donut size band.",
+            "Changing the measured diameter changes the ring radius without scaling its token-based thickness, typography, focus stroke, or corner treatment.",
             "The owner adapts category count and legend placement for available space."
           ],
           "frameworkCaveats": {
@@ -2850,7 +3060,8 @@
             "Authored series colors override the shared categorical palette."
           ],
           "responsiveBehavior": [
-            "The owner supplies intrinsic dimensions; the SVG preserves its aspect ratio while shrinking to fit a narrower parent.",
+            "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
+            "Responsive layout changes point positions and plot extents without scaling SVG text, line strokes, point markers, or margins.",
             "Category positions are always equally spaced, even when labels represent time.",
             "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
           ],
@@ -2859,10 +3070,10 @@
               "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
             ],
             "react": [
-              "Pass stable series and category arrays with dimensions derived from the containing layout."
+              "Pass stable series and category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ],
             "angular": [
-              "Bind series and categories as properties with dimensions derived from the containing layout."
+              "Bind series and categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ]
           },
           "references": [
@@ -6308,6 +6519,7 @@
             "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
+            "Rail actions disable physical press scaling so notification-dot halos remain aligned to the shell gradient; hover and pressed washes continue to paint above the dot and halo.",
             "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
             "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
             "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
@@ -7638,7 +7850,8 @@
             "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
             "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
             "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-            "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, then snaps variants without moving that shared visual anchor.",
+            "The default content inset is 32px in desktop mode and 16px in tablet and mobile modes, while preserving the larger bottom scroll space.",
+            "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
             "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
             "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
             "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."
@@ -9228,7 +9441,7 @@
             },
             {
               "label": "Positioning unit coverage",
-              "path": "tests/tooltip-position.test.ts"
+              "path": "tests/anchored-position.test.ts"
             }
           ]
         },
@@ -9338,6 +9551,8 @@
             "The owning chart mounts the callout when a local interaction starts and unmounts it when that interaction ends.",
             "Coordinate updates track within one mounted interaction session without restarting the show delay.",
             "Placement flips horizontally or vertically when the rendered callout approaches a viewport edge.",
+            "Placement is chosen as a quadrant rather than computed as coordinates: the component measures its own rendered rect and flips its side and align props, which CSS consumes. It therefore does not use the shared anchored-position utilities, which resolve an anchor element into x and y.",
+            "This separation is deliberate. The callout follows the pointer instead of an element, so it has no anchor rect to resolve; adopting the shared geometry would mean rewriting its CSS to consume coordinates for no behavioral gain.",
             "Reduced motion preserves the final visible state without an opacity transition."
           ],
           "responsiveBehavior": [

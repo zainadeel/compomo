@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../styles/control-elevation.css';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-menu.js';
 
 const INTENTS = [
   'neutral',
@@ -45,8 +47,11 @@ const meta: Meta = {
     hasBorder: { control: 'boolean' },
     background: { control: 'select', options: ['', ...BACKGROUNDS] },
     rounded: { control: 'boolean' },
+    pressScale: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
+    hasMenu: { control: 'boolean' },
+    expanded: { control: 'boolean' },
     ariaLabel: { control: 'text' },
   },
   args: {
@@ -60,8 +65,11 @@ const meta: Meta = {
     hasBorder: false,
     background: '',
     rounded: false,
+    pressScale: true,
     isInactive: false,
     isLoading: false,
+    hasMenu: false,
+    expanded: false,
     ariaLabel: '',
   },
 };
@@ -76,6 +84,50 @@ const LABEL =
 const SURFACE =
   'display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);';
 
+/** Menu variants that a filled action supports — never the icon-only overflow role. */
+const MENU_VARIANTS = ['label', 'icon-label'] as const;
+
+const MENU_ITEMS = [
+  { label: 'Vehicle', value: 'vehicle' },
+  { label: 'Driver', value: 'driver' },
+  { label: 'Group', value: 'group' },
+];
+
+/**
+ * Wire every trigger/menu pair inside the story root: one application-owned open
+ * boolean drives both `expanded` and `Menu.open`. Menu owns placement.
+ */
+type MenuTriggerEl = HTMLElement & { expanded: boolean; setFocus: () => void };
+type MenuEl = HTMLElement & { open: boolean; initialFocusVisible: boolean };
+
+const wireMenuTriggers = (root: Element | undefined) => {
+  if (!root) return;
+  root.querySelectorAll('[data-menu-trigger]').forEach(node => {
+    const trigger = node as MenuTriggerEl & { dataset: DOMStringMap };
+    if (trigger.dataset['wired'] === 'true') return;
+    trigger.dataset['wired'] = 'true';
+
+    const menu = root.querySelector<MenuEl>(`#${trigger.dataset['menuTrigger']}`);
+    if (!menu) return;
+
+    const setOpen = (open: boolean) => {
+      trigger.expanded = open;
+      menu.open = open;
+    };
+
+    trigger.addEventListener('dsClick', event => {
+      // detail === 0 means keyboard activation, so the menu shows a focus ring.
+      menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
+      setOpen(!menu.open);
+    });
+    menu.addEventListener('dsClose', () => setOpen(false));
+    menu.addEventListener('dsSelect', () => {
+      setOpen(false);
+      requestAnimationFrame(() => trigger.setFocus());
+    });
+  });
+};
+
 export const Playground: Story = {
   render: args => html`
     <ds-button-filled
@@ -89,8 +141,11 @@ export const Playground: Story = {
       .hasBorder=${args['hasBorder']}
       .background=${args['background'] || undefined}
       ?rounded=${args['rounded']}
+      ?press-scale=${args['pressScale']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}
+      ?has-menu=${args['hasMenu']}
+      ?expanded=${args['expanded']}
       aria-label=${args['ariaLabel'] || undefined}
     ></ds-button-filled>
   `,
@@ -317,6 +372,179 @@ export const BorderSurfaceContexts: Story = {
       <div style="${SURFACE} background:var(--color-always-dark-background);">
         <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)">always-dark</span>
         <ds-button-filled has-border background="always-dark" label="Confirm" contrast="faint"></ds-button-filled>
+      </div>
+    </div>
+  `,
+};
+
+/**
+ * A filled action that *has* a menu. `hasMenu` implies `aria-haspopup="menu"` and
+ * adds the trailing chevron that carries the affordance.
+ *
+ * A filled button is never the icon-only overflow control — see ButtonUnfilled.
+ */
+export const MenuTrigger: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Pass `hasMenu` when a filled action opens a menu. Only `label` and `icon-label` are supported: the ' +
+          'chevron is what tells the user a menu will open. The icon-only "more options" control is a different ' +
+          'role — it belongs to ButtonUnfilled with an `Ellipses` glyph, which conveys the menu without a chevron.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL}">
+      ${MENU_VARIANTS.map(
+        variant => html`
+          <div style="${ROW}">
+            <span style="${LABEL}">${variant}</span>
+            ${SIZES.map(
+              size => html`
+                <ds-button-filled
+                  variant=${variant}
+                  size=${size}
+                  label="Add"
+                  icon="Plus"
+                  has-menu
+                ></ds-button-filled>
+              `,
+            )}
+          </div>
+        `,
+      )}
+    </div>
+  `,
+};
+
+/**
+ * ButtonFilled has no selected state by design. An open popup is a *transient
+ * pressed* state, so `expanded` holds the pressed wash for the popup's lifecycle
+ * rather than promoting any active treatment.
+ */
+export const MenuTriggerOpenState: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'ButtonFilled intentionally has no active/selected state — filled actions are commands, not toggles. ' +
+          'While `expanded` is true the pressed wash stays applied (and survives hover), matching how shell chrome ' +
+          'holds a trigger down for the life of its menu. Compare each pair: resting left, open right.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL}">
+      <div style="${ROW}">
+        <span style="${LABEL}">label</span>
+        <ds-button-filled variant="label" label="Add" has-menu></ds-button-filled>
+        <ds-button-filled variant="label" label="Add" has-menu expanded></ds-button-filled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">icon-label</span>
+        <ds-button-filled variant="icon-label" icon="Plus" label="Add" has-menu></ds-button-filled>
+        <ds-button-filled variant="icon-label" icon="Plus" label="Add" has-menu expanded></ds-button-filled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">inactive</span>
+        <ds-button-filled variant="label" label="Add" has-menu is-inactive></ds-button-filled>
+        <ds-button-filled variant="label" label="Add" has-menu expanded is-inactive></ds-button-filled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">loading</span>
+        <ds-button-filled variant="label" label="Add" has-menu is-loading></ds-button-filled>
+        <ds-button-filled variant="icon-label" icon="Plus" label="Add" has-menu is-loading></ds-button-filled>
+      </div>
+
+      <div style="${COL};margin-top:var(--dimension-space-100);">
+        <span style="${LABEL}">contrast × open</span>
+        ${CONTRASTS.map(
+          contrast => html`
+            <div style="${ROW}">
+              <span style="${LABEL}">${contrast}</span>
+              <ds-button-filled variant="label" label="Add" contrast=${contrast} has-menu></ds-button-filled>
+              <ds-button-filled variant="label" label="Add" contrast=${contrast} has-menu expanded></ds-button-filled>
+            </div>
+          `,
+        )}
+      </div>
+
+      <div style="${COL};margin-top:var(--dimension-space-100);">
+        <span style="${LABEL}">intent × open</span>
+        ${INTENTS.map(
+          intent => html`
+            <div style="${ROW}">
+              <span style="${LABEL}">${intent}</span>
+              <ds-button-filled variant="label" label="Add" intent=${intent} has-menu></ds-button-filled>
+              <ds-button-filled variant="label" label="Add" intent=${intent} has-menu expanded></ds-button-filled>
+            </div>
+          `,
+        )}
+      </div>
+    </div>
+  `,
+};
+
+/**
+ * Wired trigger: the application owns one open boolean and synchronizes it to both
+ * `expanded` and `Menu.open`. Menu owns placement — never position the popup here.
+ */
+export const MenuTriggerLive: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Click each trigger to open its menu. One application-owned open boolean drives both ' +
+          '`ButtonFilled.expanded` and `Menu.open`; `Menu` resolves placement from `anchorId`.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL};height:320px;" ${ref(el => wireMenuTriggers(el))}>
+      <div style="${ROW}">
+        <ds-button-filled
+          id="filled-menu-trigger-icon-label"
+          data-menu-trigger="filled-menu-icon-label"
+          variant="icon-label"
+          icon="Plus"
+          label="Add"
+          controls="filled-menu-icon-label"
+          has-menu
+        ></ds-button-filled>
+        <ds-menu
+          id="filled-menu-icon-label"
+          anchor-id="filled-menu-trigger-icon-label"
+          menu-label="Add"
+          side="bottom"
+          align="start"
+          .items=${MENU_ITEMS}
+        ></ds-menu>
+
+        <ds-button-filled
+          id="filled-menu-trigger-label"
+          data-menu-trigger="filled-menu-label"
+          variant="label"
+          label="Export"
+          intent="neutral"
+          contrast="faint"
+          controls="filled-menu-label"
+          has-menu
+        ></ds-button-filled>
+        <ds-menu
+          id="filled-menu-label"
+          anchor-id="filled-menu-trigger-label"
+          menu-label="Export"
+          side="bottom"
+          align="start"
+          .items=${[
+            { label: 'CSV', value: 'csv' },
+            { label: 'PDF', value: 'pdf' },
+          ]}
+        ></ds-menu>
       </div>
     </div>
   `,

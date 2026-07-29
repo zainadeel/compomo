@@ -15,11 +15,12 @@ import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/
 import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
-import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
+import { OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -74,11 +75,12 @@ export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/
 export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
-export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
+export { OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -460,10 +462,27 @@ export namespace Components {
          */
         "contrast": ButtonFilledContrast;
         /**
+          * ID of the popup this button controls.
+         */
+        "controls": string | undefined;
+        /**
+          * Controlled open state of the popup this button triggers. Holds the pressed wash for the popup's rendered lifecycle. ButtonFilled has no selected state, so an open popup never promotes to an active treatment.
+         */
+        "expanded": boolean | undefined;
+        /**
           * Show a 1px secondary inset border.
           * @default false
          */
         "hasBorder": boolean;
+        /**
+          * This action *has* a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. A filled button is never the overflow / more-options control — that role belongs to ButtonUnfilled with an `Ellipses` glyph, which conveys the menu without a chevron.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu": boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup": ButtonFilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -489,6 +508,15 @@ export namespace Components {
           * @default ''
          */
         "label": string;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale": boolean;
+        /**
+          * Pressed semantics for a toggle command that reports state elsewhere.
+         */
+        "pressed": boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
           * @default false
@@ -547,6 +575,11 @@ export namespace Components {
           * @default true
          */
         "hasBorder": boolean;
+        /**
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu, i.e. the overflow / more-options control.   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu": boolean;
         "haspopup": ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
@@ -573,6 +606,11 @@ export namespace Components {
           * @default ''
          */
         "label": string;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale": boolean;
         "pressed": boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
@@ -658,6 +696,46 @@ export namespace Components {
          */
         "heading": string;
     }
+    interface DsCardOverview {
+        /**
+          * Comparison caption, for example `vs. previous score period`.
+          * @default ''
+         */
+        "comparisonLabel": string;
+        /**
+          * Replace the score and metrics with skeletons while data resolves.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
+          * @default 'var(--dimension-menu-width-xs)'
+         */
+        "metricMinWidth": string;
+        /**
+          * Measures rendered in the responsive grid.
+          * @default []
+         */
+        "metrics": OverviewMetric[];
+        /**
+          * Accessible name for the region.
+          * @default 'Overview'
+         */
+        "overviewLabel": string;
+        /**
+          * Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`.
+          * @default ''
+         */
+        "periodLabel": string;
+        /**
+          * Leading summary block. Omit to render the bar without a headline figure.
+         */
+        "score": OverviewScore | undefined;
+        /**
+          * Message shown in place of the score when its figure cannot be resolved.
+         */
+        "scoreErrorMessage": string | undefined;
+    }
     interface DsCardSetting {
         /**
           * @default 'Cancel'
@@ -708,10 +786,12 @@ export namespace Components {
          */
         "data": ChartDatum[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height": number;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width": number;
@@ -723,6 +803,7 @@ export namespace Components {
          */
         "categories": string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height": number;
@@ -736,6 +817,7 @@ export namespace Components {
          */
         "variant": ChartBarStackedVariant;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width": number;
@@ -835,6 +917,7 @@ export namespace Components {
          */
         "categories": string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height": number;
@@ -848,6 +931,7 @@ export namespace Components {
          */
         "showPoints": boolean;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width": number;
@@ -2880,6 +2964,10 @@ export interface DsCardDataVizLineCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardDataVizLineElement;
 }
+export interface DsCardOverviewCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardOverviewElement;
+}
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardSettingElement;
@@ -3229,6 +3317,23 @@ declare global {
     var HTMLDsCardDataVizLineElement: {
         prototype: HTMLDsCardDataVizLineElement;
         new (): HTMLDsCardDataVizLineElement;
+    };
+    interface HTMLDsCardOverviewElementEventMap {
+        "dsMetricSelect": OverviewMetric;
+    }
+    interface HTMLDsCardOverviewElement extends Components.DsCardOverview, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardOverviewElementEventMap>(type: K, listener: (this: HTMLDsCardOverviewElement, ev: DsCardOverviewCustomEvent<HTMLDsCardOverviewElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardOverviewElementEventMap>(type: K, listener: (this: HTMLDsCardOverviewElement, ev: DsCardOverviewCustomEvent<HTMLDsCardOverviewElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardOverviewElement: {
+        prototype: HTMLDsCardOverviewElement;
+        new (): HTMLDsCardOverviewElement;
     };
     interface HTMLDsCardSettingElementEventMap {
         "dsAction": CardSettingActionDetail;
@@ -4050,6 +4155,7 @@ declare global {
         "ds-card-data-viz-bar": HTMLDsCardDataVizBarElement;
         "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
         "ds-card-data-viz-line": HTMLDsCardDataVizLineElement;
+        "ds-card-overview": HTMLDsCardOverviewElement;
         "ds-card-setting": HTMLDsCardSettingElement;
         "ds-card-shell-data-viz": HTMLDsCardShellDataVizElement;
         "ds-chart-bar": HTMLDsChartBarElement;
@@ -4482,10 +4588,27 @@ declare namespace LocalJSX {
          */
         "contrast"?: ButtonFilledContrast;
         /**
+          * ID of the popup this button controls.
+         */
+        "controls"?: string | undefined;
+        /**
+          * Controlled open state of the popup this button triggers. Holds the pressed wash for the popup's rendered lifecycle. ButtonFilled has no selected state, so an open popup never promotes to an active treatment.
+         */
+        "expanded"?: boolean | undefined;
+        /**
           * Show a 1px secondary inset border.
           * @default false
          */
         "hasBorder"?: boolean;
+        /**
+          * This action *has* a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. A filled button is never the overflow / more-options control — that role belongs to ButtonUnfilled with an `Ellipses` glyph, which conveys the menu without a chevron.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu"?: boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup"?: ButtonFilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
           * @default ''
@@ -4512,6 +4635,15 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale"?: boolean;
+        /**
+          * Pressed semantics for a toggle command that reports state elsewhere.
+         */
+        "pressed"?: boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
           * @default false
@@ -4569,6 +4701,11 @@ declare namespace LocalJSX {
           * @default true
          */
         "hasBorder"?: boolean;
+        /**
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu, i.e. the overflow / more-options control.   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.  Use `haspopup` directly for non-menu popups.
+          * @default false
+         */
+        "hasMenu"?: boolean;
         "haspopup"?: ButtonUnfilledPopup | undefined;
         /**
           * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
@@ -4597,6 +4734,11 @@ declare namespace LocalJSX {
         "label"?: string;
         "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
         "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale"?: boolean;
         "pressed"?: boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
@@ -4693,6 +4835,50 @@ declare namespace LocalJSX {
          */
         "onDsFilterClick"?: (event: DsCardDataVizLineCustomEvent<void>) => void;
     }
+    interface DsCardOverview {
+        /**
+          * Comparison caption, for example `vs. previous score period`.
+          * @default ''
+         */
+        "comparisonLabel"?: string;
+        /**
+          * Replace the score and metrics with skeletons while data resolves.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
+          * @default 'var(--dimension-menu-width-xs)'
+         */
+        "metricMinWidth"?: string;
+        /**
+          * Measures rendered in the responsive grid.
+          * @default []
+         */
+        "metrics"?: OverviewMetric[];
+        /**
+          * Emitted when a metric that is not inactive is activated.
+         */
+        "onDsMetricSelect"?: (event: DsCardOverviewCustomEvent<OverviewMetric>) => void;
+        /**
+          * Accessible name for the region.
+          * @default 'Overview'
+         */
+        "overviewLabel"?: string;
+        /**
+          * Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`.
+          * @default ''
+         */
+        "periodLabel"?: string;
+        /**
+          * Leading summary block. Omit to render the bar without a headline figure.
+         */
+        "score"?: OverviewScore | undefined;
+        /**
+          * Message shown in place of the score when its figure cannot be resolved.
+         */
+        "scoreErrorMessage"?: string | undefined;
+    }
     interface DsCardSetting {
         /**
           * @default 'Cancel'
@@ -4747,10 +4933,12 @@ declare namespace LocalJSX {
          */
         "data"?: ChartDatum[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height"?: number;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width"?: number;
@@ -4762,6 +4950,7 @@ declare namespace LocalJSX {
          */
         "categories"?: string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height"?: number;
@@ -4775,6 +4964,7 @@ declare namespace LocalJSX {
          */
         "variant"?: ChartBarStackedVariant;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width"?: number;
@@ -4886,6 +5076,7 @@ declare namespace LocalJSX {
          */
         "categories"?: string[];
         /**
+          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
           * @default 240
          */
         "height"?: number;
@@ -4899,6 +5090,7 @@ declare namespace LocalJSX {
          */
         "showPoints"?: boolean;
         /**
+          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
          */
         "width"?: number;
@@ -7124,10 +7316,16 @@ declare namespace LocalJSX {
         "hasBorder": boolean;
         "background": ButtonFilledBackground | undefined;
         "rounded": boolean;
+        "pressScale": boolean;
         "isInactive": boolean;
         "isLoading": boolean;
         "type": 'button' | 'submit' | 'reset';
         "ariaLabel": string | null;
+        "controls": string | undefined;
+        "expanded": boolean | undefined;
+        "haspopup": ButtonFilledPopup | undefined;
+        "pressed": boolean | undefined;
+        "hasMenu": boolean;
     }
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
@@ -7139,6 +7337,7 @@ declare namespace LocalJSX {
         "activeFill": boolean;
         "hasBorder": boolean;
         "rounded": boolean;
+        "pressScale": boolean;
         "dot": boolean;
         "isInactive": boolean;
         "isLoading": boolean;
@@ -7149,6 +7348,7 @@ declare namespace LocalJSX {
         "expanded": boolean | undefined;
         "haspopup": ButtonUnfilledPopup | undefined;
         "pressed": boolean | undefined;
+        "hasMenu": boolean;
         "focusTabIndex": number;
     }
     interface DsCardDataVizBarAttributes {
@@ -7165,6 +7365,14 @@ declare namespace LocalJSX {
         "heading": string;
         "cardWidth": CardDataVizLineWidth;
         "filterLabel": string;
+    }
+    interface DsCardOverviewAttributes {
+        "periodLabel": string;
+        "comparisonLabel": string;
+        "metricMinWidth": string;
+        "isLoading": boolean;
+        "scoreErrorMessage": string | undefined;
+        "overviewLabel": string;
     }
     interface DsCardSettingAttributes {
         "heading": string;
@@ -7716,6 +7924,7 @@ declare namespace LocalJSX {
         "ds-card-data-viz-bar": Omit<DsCardDataVizBar, keyof DsCardDataVizBarAttributes> & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes]?: DsCardDataVizBar[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `attr:${K}`]?: DsCardDataVizBarAttributes[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `prop:${K}`]?: DsCardDataVizBar[K] } & OneOf<"heading", DsCardDataVizBar["heading"], DsCardDataVizBarAttributes["heading"]>;
         "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
         "ds-card-data-viz-line": Omit<DsCardDataVizLine, keyof DsCardDataVizLineAttributes> & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes]?: DsCardDataVizLine[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `attr:${K}`]?: DsCardDataVizLineAttributes[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `prop:${K}`]?: DsCardDataVizLine[K] } & OneOf<"heading", DsCardDataVizLine["heading"], DsCardDataVizLineAttributes["heading"]>;
+        "ds-card-overview": Omit<DsCardOverview, keyof DsCardOverviewAttributes> & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes]?: DsCardOverview[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `attr:${K}`]?: DsCardOverviewAttributes[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `prop:${K}`]?: DsCardOverview[K] };
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
         "ds-card-shell-data-viz": Omit<DsCardShellDataViz, keyof DsCardShellDataVizAttributes> & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes]?: DsCardShellDataViz[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `attr:${K}`]?: DsCardShellDataVizAttributes[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `prop:${K}`]?: DsCardShellDataViz[K] } & OneOf<"heading", DsCardShellDataViz["heading"], DsCardShellDataVizAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
@@ -7805,6 +8014,7 @@ declare module "@stencil/core" {
              * region and a content-sized, static legend.
              */
             "ds-card-data-viz-line": LocalJSX.IntrinsicElements["ds-card-data-viz-line"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizLineElement>;
+            "ds-card-overview": LocalJSX.IntrinsicElements["ds-card-overview"] & JSXBase.HTMLAttributes<HTMLDsCardOverviewElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
             /**
              * Dedicated shell chrome for data-visualization cards. Chart-specific layout,

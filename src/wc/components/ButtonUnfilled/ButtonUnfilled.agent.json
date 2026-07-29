@@ -11,7 +11,8 @@
   "useWhen": [
     "A secondary command accompanies the single filled primary action in a local decision area.",
     "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
-    "A command represents a persistent toggle or mode whose active state remains meaningful after activation."
+    "A command represents a persistent toggle or mode whose active state remains meaningful after activation.",
+    "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role."
   ],
   "avoidWhen": [
     "The command is the single primary action in a local decision area; use ButtonFilled instead.",
@@ -46,6 +47,9 @@
   ],
   "accessibility": [
     "Provide an explicit accessible name for every icon-only action.",
+    "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+    "Give an icon-only menu button an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
+    "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
     "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
     "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
     "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
@@ -60,7 +64,11 @@
     "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
     "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
-    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+    "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+    "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu, meaning the overflow or more-options control, and no chevron is added.",
+    "Because the icon-only shape has no chevron, its glyph must convey the menu on its own; use Ellipses. Never pair hasMenu with an icon-only glyph that does not read as a menu.",
+    "An open popup is a transient pressed state rather than a selected one. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, including when chrome opts out of selected fills with activeFill set to false."
   ],
   "responsiveBehavior": [
     "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",

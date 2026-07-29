@@ -18,7 +18,8 @@
     "The action is unfilled icon-only shell or navigation chrome.",
     "The element represents navigation rather than a command.",
     "The content is a persistent selected state rather than an action.",
-    "A semantic color would be decorative or merely match the surrounding product area."
+    "A semantic color would be decorative or merely match the surrounding product area.",
+    "The control is an overflow or more-options menu whose only content is an Ellipses glyph; that role is never filled."
   ],
   "alternatives": [
     {
@@ -30,14 +31,25 @@
       "when": "The user is choosing a destination in application navigation.",
       "component": "component:ds-panel-nav",
       "reason": "Navigation components own destination selection, active state, and navigation semantics."
+    },
+    {
+      "when": "The control is the overflow or more-options menu for a row, card, or toolbar.",
+      "component": "component:ds-button-unfilled",
+      "reason": "An icon-only Ellipses trigger is chrome, and its glyph conveys the menu without a chevron; a filled button never carries that role."
     }
   ],
   "commonlyComposedWith": [
     "component:ds-modal",
-    "component:ds-field"
+    "component:ds-field",
+    "component:ds-menu"
+  ],
+  "patterns": [
+    "pattern:menu-trigger"
   ],
   "accessibility": [
     "Provide an explicit accessible name for icon-only buttons.",
+    "Set hasMenu when the action opens a Menu; it implies aria-haspopup of menu and renders the trailing chevron. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+    "Use haspopup directly for a non-menu popup such as a dialog; that case gets no chevron.",
     "Use inactive state only when the action must remain visible but unavailable.",
     "Do not encode the action meaning through color alone.",
     "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when users need confirmation.",
@@ -52,7 +64,11 @@
     "Parent surface context changes only the optional inset border color. Contrast continues to own the button fill, foreground, hover, pressed, and focus treatments; never use surface context to change action hierarchy.",
     "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, intent, or interaction semantics.",
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
-    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width."
+    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+    "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+    "ButtonFilled has no active or selected state; a filled action is a command, not a toggle or a persistent selection.",
+    "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
+    "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."
   ],
   "responsiveBehavior": [
     "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."

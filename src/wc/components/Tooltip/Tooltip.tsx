@@ -9,7 +9,7 @@ import {
 } from '../../utils';
 import type { TextVariant } from '../Text/text-types';
 import { shortcutKeyLabels } from '../../utils/shortcut-key';
-import { computeTooltipPosition } from './tooltip-position';
+import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 // Side-effect: register `ds-text` — the portal builds it via createElement, not JSX.
 import '../Text/Text';
 
@@ -110,9 +110,31 @@ export class Tooltip {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private anchor: HTMLElement | null = null;
   private popupEl: HTMLElement | null = null;
-  private positionObserver: ResizeObserver | null = null;
   private anchorObserver: MutationObserver | null = null;
-  private positionFrame: number | null = null;
+  private readonly position = new AnchoredPositionController({
+    getAnchor: () => this.anchor,
+    getPopup: () => this.popupEl,
+    measure: (anchor, tip) => ({
+      anchorRect: anchor.getBoundingClientRect(),
+      // Fall back to token metrics until `ds-text` upgrades and reports a width.
+      popupWidth: tip.offsetWidth || this.tooltipFallbackWidthPx,
+      popupHeight: tip.offsetHeight || this.tooltipFallbackHeightPx,
+      side: this.side,
+      align: this.align,
+      sideOffsetPx: this.sideOffsetPx,
+      alignOffsetPx: this.alignOffsetPx,
+      viewportPadPx: this.viewportPadPx,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+    }),
+    apply: ({ x, y, resolvedSide }) => {
+      if (!this.popupEl) return;
+      this.popupEl.dataset.side = resolvedSide;
+      this.popupEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+    },
+    liveUpdate: 'frame',
+    observeResize: true,
+  });
   private skipEnterAnimation = false;
   private isOpen = false;
   private lastInteractionWasKeyboard = false;
@@ -139,13 +161,6 @@ export class Tooltip {
     const next = e.relatedTarget as Node | null;
     if (next && this.anchor?.contains(next)) return;
     this.hide();
-  };
-  private scrollResizeHandler = () => {
-    if (this.positionFrame !== null) return;
-    this.positionFrame = requestAnimationFrame(() => {
-      this.positionFrame = null;
-      this.calculatePosition();
-    });
   };
   private escapeHandler = (event: KeyboardEvent) => {
     if (event.key !== 'Escape' || !this.isOpen) return;
@@ -279,25 +294,19 @@ export class Tooltip {
   }
 
   private setupOpenListeners() {
-    window.addEventListener('scroll', this.scrollResizeHandler, true);
-    window.addEventListener('resize', this.scrollResizeHandler);
+    // Binds scroll/resize + the resize observer; placement itself is scheduled
+    // by schedulePosition() so the label restyle stays interleaved.
+    this.position.observe();
     document.addEventListener('keydown', this.escapeHandler);
   }
 
   private teardownOpenListeners() {
-    window.removeEventListener('scroll', this.scrollResizeHandler, true);
-    window.removeEventListener('resize', this.scrollResizeHandler);
+    this.position.unobserve();
     document.removeEventListener('keydown', this.escapeHandler);
-    if (this.positionFrame !== null) {
-      cancelAnimationFrame(this.positionFrame);
-      this.positionFrame = null;
-    }
   }
 
   private destroyPopup() {
     this.teardownOpenListeners();
-    this.positionObserver?.disconnect();
-    this.positionObserver = null;
     this.unlinkDescribedBy();
     if (!this.popupEl) return;
     this.popupEl.remove();
@@ -318,17 +327,15 @@ export class Tooltip {
 
     requestAnimationFrame(() => {
       reapplyLabelStyles();
-      this.calculatePosition();
+      this.position.update();
       requestAnimationFrame(() => {
         reapplyLabelStyles();
-        this.calculatePosition();
+        this.position.update();
       });
     });
 
-    this.positionObserver?.disconnect();
-    this.positionObserver = new ResizeObserver(() => this.calculatePosition());
-    this.positionObserver.observe(this.popupEl);
-    if (this.anchor) this.positionObserver.observe(this.anchor);
+    // The popup remounts on every show, so re-target the observer bound in start().
+    this.position.observeResizeTargets();
   }
 
   /** Drop the open tip immediately (warm handoff to another tooltip). */
@@ -459,28 +466,6 @@ export class Tooltip {
     appendShortcut('end');
 
     this.popupEl.replaceChildren(inner);
-  }
-
-  private calculatePosition() {
-    if (!this.anchor || !this.popupEl) return;
-    const tip = this.popupEl;
-    const a = this.anchor.getBoundingClientRect();
-    const tw = tip.offsetWidth || this.tooltipFallbackWidthPx;
-    const th = tip.offsetHeight || this.tooltipFallbackHeightPx;
-    const { x, y, resolvedSide } = computeTooltipPosition({
-      anchorRect: a,
-      popupWidth: tw,
-      popupHeight: th,
-      side: this.side,
-      align: this.align,
-      sideOffsetPx: this.sideOffsetPx,
-      alignOffsetPx: this.alignOffsetPx,
-      viewportPadPx: this.viewportPadPx,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    });
-    tip.dataset.side = resolvedSide;
-    tip.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
   }
 
   render() {

@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-menu.js';
 
 const VARIANTS = ['label', 'icon', 'icon-label'] as const;
 const SIZES = ['lg', 'md', 'sm', 'xs'] as const;
@@ -17,9 +19,11 @@ const meta: Meta = {
     icon: { control: 'text' },
     isActive: { control: 'boolean' },
     expanded: { control: 'boolean' },
+    hasMenu: { control: 'boolean' },
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
     rounded: { control: 'boolean' },
+    pressScale: { control: 'boolean' },
     dot: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -48,9 +52,11 @@ const meta: Meta = {
     ariaLabel: '',
     isActive: false,
     expanded: false,
+    hasMenu: false,
     activeFill: true,
     hasBorder: true,
     rounded: false,
+    pressScale: true,
     dot: false,
     isInactive: false,
     isLoading: false,
@@ -68,6 +74,53 @@ const LABEL =
 const SURFACE =
   'display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);';
 
+const VIEW_ITEMS = [
+  { label: 'Overview', value: 'overview', isSelected: true },
+  { label: 'Map', value: 'map' },
+  { label: 'Timeline', value: 'timeline' },
+];
+
+const OVERFLOW_ITEMS = [
+  { label: 'Edit', value: 'edit' },
+  { label: 'Duplicate', value: 'duplicate' },
+  { label: 'Delete', value: 'delete', isDestructive: true },
+];
+
+/**
+ * Wire every trigger/menu pair inside the story root: one application-owned open
+ * boolean drives both `expanded` and `Menu.open`. Menu owns placement.
+ */
+type MenuTriggerEl = HTMLElement & { expanded: boolean; setFocus: () => void };
+type MenuEl = HTMLElement & { open: boolean; initialFocusVisible: boolean };
+
+const wireMenuTriggers = (root: Element | undefined) => {
+  if (!root) return;
+  root.querySelectorAll('[data-menu-trigger]').forEach(node => {
+    const trigger = node as MenuTriggerEl & { dataset: DOMStringMap };
+    if (trigger.dataset['wired'] === 'true') return;
+    trigger.dataset['wired'] = 'true';
+
+    const menu = root.querySelector<MenuEl>(`#${trigger.dataset['menuTrigger']}`);
+    if (!menu) return;
+
+    const setOpen = (open: boolean) => {
+      trigger.expanded = open;
+      menu.open = open;
+    };
+
+    trigger.addEventListener('dsClick', event => {
+      // detail === 0 means keyboard activation, so the menu shows a focus ring.
+      menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
+      setOpen(!menu.open);
+    });
+    menu.addEventListener('dsClose', () => setOpen(false));
+    menu.addEventListener('dsSelect', () => {
+      setOpen(false);
+      requestAnimationFrame(() => trigger.setFocus());
+    });
+  });
+};
+
 export const Playground: Story = {
   render: args => html`
     <ds-button-unfilled
@@ -78,9 +131,11 @@ export const Playground: Story = {
       icon=${args['icon']}
       ?is-active=${args['isActive']}
       ?expanded=${args['expanded']}
+      ?has-menu=${args['hasMenu']}
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
       ?rounded=${args['rounded']}
+      ?press-scale=${args['pressScale']}
       ?dot=${args['dot']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}
@@ -286,6 +341,204 @@ export const Surfaces: Story = {
         <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)">always-dark</span>
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="always-dark" .hasBorder=${false}></ds-button-unfilled>
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="always-dark" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
+      </div>
+    </div>
+  `,
+};
+
+/**
+ * `hasMenu` covers the two menu-button shapes, and the variant decides which one:
+ *
+ * - **has a menu** (`label` / `icon-label`) — an action that opens a menu. The
+ *   trailing chevron carries the affordance.
+ * - **is a menu** (`icon`) — the overflow / more-options control. No chevron, so
+ *   the glyph must convey it alone; use `Ellipses`.
+ */
+export const MenuTrigger: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'One prop, two shapes. `label` and `icon-label` are actions that *have* a menu, so they get a trailing ' +
+          'ChevronDown. The `icon` variant *is* a menu — the overflow control — and stays chevron-free because an ' +
+          '`Ellipses` glyph already means "more options". Never pair `hasMenu` with an icon-only glyph that does ' +
+          'not read as a menu on its own; there is no chevron to fall back on.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL}">
+      <div style="${ROW}">
+        <span style="${LABEL}">has a menu</span>
+        ${SIZES.map(
+          size => html`
+            <ds-button-unfilled
+              variant="label"
+              size=${size}
+              label="View"
+              has-menu
+            ></ds-button-unfilled>
+          `,
+        )}
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">has a menu (icon)</span>
+        ${SIZES.map(
+          size => html`
+            <ds-button-unfilled
+              variant="icon-label"
+              size=${size}
+              icon="Filters"
+              label="Filter"
+              has-menu
+            ></ds-button-unfilled>
+          `,
+        )}
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">is a menu</span>
+        ${SIZES.map(
+          size => html`
+            <ds-button-unfilled
+              variant="icon"
+              size=${size}
+              icon="Ellipses"
+              has-menu
+              aria-label="More options"
+            ></ds-button-unfilled>
+          `,
+        )}
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">is a menu (chrome)</span>
+        ${SIZES.map(
+          size => html`
+            <ds-button-unfilled
+              variant="icon"
+              size=${size}
+              icon="Ellipses"
+              has-menu
+              rounded
+              .hasBorder=${false}
+              .activeFill=${false}
+              aria-label="More options"
+            ></ds-button-unfilled>
+          `,
+        )}
+      </div>
+    </div>
+  `,
+};
+
+/**
+ * An open popup is a transient *pressed* state, not a selected one. `expanded`
+ * holds the pressed wash for the popup's rendered lifecycle — including through
+ * hover — and works even when chrome opts out of selected fills.
+ */
+export const MenuTriggerOpenState: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Resting left, open right. `expanded` keeps the pressed wash applied for as long as the menu is ' +
+          'rendered, so the trigger reads as held down. It survives hover, and it is independent of `isActive`: ' +
+          'chrome passing `activeFill={false}` still gets the open treatment.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL}">
+      <div style="${ROW}">
+        <span style="${LABEL}">has a menu</span>
+        <ds-button-unfilled variant="label" label="View" has-menu></ds-button-unfilled>
+        <ds-button-unfilled variant="label" label="View" has-menu expanded></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">icon-label</span>
+        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter" has-menu></ds-button-unfilled>
+        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter" has-menu expanded></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">is a menu</span>
+        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu aria-label="More options"></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu expanded aria-label="More options open"></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">is a menu (chrome)</span>
+        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu rounded .hasBorder=${false} .activeFill=${false} aria-label="More options"></ds-button-unfilled>
+        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu rounded expanded .hasBorder=${false} .activeFill=${false} aria-label="More options open"></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">inactive</span>
+        <ds-button-unfilled variant="label" label="View" has-menu is-inactive></ds-button-unfilled>
+        <ds-button-unfilled variant="label" label="View" has-menu expanded is-inactive></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">loading</span>
+        <ds-button-unfilled variant="label" label="View" has-menu is-loading></ds-button-unfilled>
+        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter" has-menu is-loading></ds-button-unfilled>
+      </div>
+    </div>
+  `,
+};
+
+/**
+ * Wired triggers: the application owns one open boolean and synchronizes it to
+ * both `expanded` and `Menu.open`. Menu owns placement.
+ */
+export const MenuTriggerLive: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Click each trigger. One application-owned open boolean drives both `ButtonUnfilled.expanded` and ' +
+          '`Menu.open`; `Menu` resolves placement from `anchorId`. The application never positions the popup.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL};height:320px;" ${ref(el => wireMenuTriggers(el))}>
+      <div style="${ROW}">
+        <ds-button-unfilled
+          id="unfilled-menu-trigger-view"
+          data-menu-trigger="unfilled-menu-view"
+          variant="label"
+          label="View"
+          controls="unfilled-menu-view"
+          has-menu
+        ></ds-button-unfilled>
+        <ds-menu
+          id="unfilled-menu-view"
+          anchor-id="unfilled-menu-trigger-view"
+          menu-label="Choose view"
+          side="bottom"
+          align="start"
+          .items=${VIEW_ITEMS}
+        ></ds-menu>
+
+        <ds-button-unfilled
+          id="unfilled-menu-trigger-overflow"
+          data-menu-trigger="unfilled-menu-overflow"
+          variant="icon"
+          icon="Ellipses"
+          aria-label="More options"
+          controls="unfilled-menu-overflow"
+          rounded
+          has-menu
+          .hasBorder=${false}
+          .activeFill=${false}
+        ></ds-button-unfilled>
+        <ds-menu
+          id="unfilled-menu-overflow"
+          anchor-id="unfilled-menu-trigger-overflow"
+          menu-label="More options"
+          side="bottom"
+          align="end"
+          .items=${OVERFLOW_ITEMS}
+        ></ds-menu>
       </div>
     </div>
   `,

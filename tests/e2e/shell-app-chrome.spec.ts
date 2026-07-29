@@ -44,11 +44,14 @@ test.describe('App shell chrome', () => {
     expect(new Set(cursors)).toEqual(new Set(['default']));
   });
 
-  test('keeps tool-rail dot halos aligned to the shell gradient at rest', async ({ page }) => {
+  test('keeps tool-rail dot halos aligned below the interaction wash while pressed', async ({
+    page,
+  }) => {
     const action = page.getByRole('button', { name: 'Activity' });
     const badge = action.locator('ds-badge');
     const mark = badge.locator('.badge__mark');
 
+    await expect(action).not.toHaveClass(/ds-control-press-scale/);
     await expect(action).toHaveCSS('scale', 'none');
     await expect(badge).toHaveClass(/badge--on-gradient-background/);
     await expect(mark).toHaveCSS('box-shadow', 'none');
@@ -57,6 +60,32 @@ test.describe('App shell chrome', () => {
         mark.evaluate(element => getComputedStyle(element, '::after').backgroundAttachment),
       )
       .toBe('fixed');
+
+    const restingBadge = await badge.boundingBox();
+    expect(restingBadge).not.toBeNull();
+    const actionBox = await action.boundingBox();
+    expect(actionBox).not.toBeNull();
+
+    await page.mouse.move(
+      actionBox!.x + actionBox!.width / 2,
+      actionBox!.y + actionBox!.height / 2,
+    );
+    await page.mouse.down();
+
+    await expect(action).toHaveCSS('scale', 'none');
+    expect(await badge.boundingBox()).toEqual(restingBadge);
+    const pressedLayers = await action.evaluate(element => ({
+      interaction: Number(getComputedStyle(element, '::after').zIndex),
+      content: Number(
+        getComputedStyle(element.querySelector<HTMLElement>('.button-unfilled__icon-wrap')!)
+          .zIndex,
+      ),
+      wash: getComputedStyle(element, '::after').backgroundColor,
+    }));
+    expect(pressedLayers.interaction).toBeGreaterThan(pressedLayers.content);
+    expect(pressedLayers.wash).not.toBe('rgba(0, 0, 0, 0)');
+
+    await page.mouse.up();
   });
 
   test('contains page scrolling without moving the shell viewport', async ({ page }) => {

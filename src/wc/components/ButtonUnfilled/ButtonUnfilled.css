@@ -158,6 +158,16 @@
   visibility: hidden;
 }
 
+.button-unfilled__chevron {
+  position: relative;
+  z-index: 2;
+}
+
+/* Hidden, not removed, so the label-only loader keeps the measured button width. */
+.button-unfilled__chevron--loading {
+  visibility: hidden;
+}
+
 .button-unfilled > .button-unfilled__loader-overlay {
   position: absolute;
   inset: 0;

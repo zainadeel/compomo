@@ -1,4 +1,4 @@
-import type { AnchoredPopupAlign } from './anchored-popup';
+import type { AnchoredAlign } from './anchored-position';
 
 /**
  * `choice-cell` aligns the first/last interactive row edge with the anchor,
@@ -8,7 +8,7 @@ import type { AnchoredPopupAlign } from './anchored-popup';
 export type ChoicePopupAnchorAlignment = 'choice-cell' | 'popup-frame';
 
 export interface ChoicePopupAlignOffsetInput {
-  align: AnchoredPopupAlign;
+  align: AnchoredAlign;
   alignOffsetPx: number;
   sectionInsetPx: number;
   anchorAlignment?: ChoicePopupAnchorAlignment;

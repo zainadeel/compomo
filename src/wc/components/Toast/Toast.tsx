@@ -25,7 +25,7 @@ import {
   type ToastRecord,
   type ToastSwipeDirection,
 } from '../../toast';
-import { computeTooltipPosition } from '../Tooltip/tooltip-position';
+import { computeAnchoredPosition } from '../../utils/anchored-position';
 
 interface ToastTimer {
   timerKey: number;
@@ -801,7 +801,7 @@ export class Toast {
         TOKEN_DEFAULTS.space050,
       );
       const alignOffset = resolveCssLengthPx(record.positioner.alignOffset, 0);
-      const position = computeTooltipPosition({
+      const position = computeAnchoredPosition({
         anchorRect: anchor.getBoundingClientRect(),
         popupWidth: rect.width,
         popupHeight: height,

@@ -12,8 +12,11 @@ import {
   dimensionSize400,
   dimensionSize600,
   dimensionSize800,
+  dimensionSpace100,
   dimensionSpace050,
   dimensionSpace200,
+  dimensionSpace300,
+  dimensionSpace400,
   typographyLineheightLg,
   typographyLineheightMd,
   typographyLineheightSm,
@@ -33,7 +36,10 @@ import {
 /** TokoMo CSS custom-property names for shared component defaults (runtime resolution). */
 export const TOKEN_DEFAULTS = {
   space050: dimensionSpace050,
+  space100: dimensionSpace100,
   space200: dimensionSpace200,
+  space300: dimensionSpace300,
+  space400: dimensionSpace400,
   radius025: dimensionRadius025,
   size200: dimensionSize200,
   size300: dimensionSize300,

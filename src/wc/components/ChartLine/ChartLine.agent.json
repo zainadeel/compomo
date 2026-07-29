@@ -49,7 +49,8 @@
     "Authored series colors override the shared categorical palette."
   ],
   "responsiveBehavior": [
-    "The owner supplies intrinsic dimensions; the SVG preserves its aspect ratio while shrinking to fit a narrower parent.",
+    "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
+    "Responsive layout changes point positions and plot extents without scaling SVG text, line strokes, point markers, or margins.",
     "Category positions are always equally spaced, even when labels represent time.",
     "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
   ],
@@ -58,10 +59,10 @@
       "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
     ],
     "react": [
-      "Pass stable series and category arrays with dimensions derived from the containing layout."
+      "Pass stable series and category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
     ],
     "angular": [
-      "Bind series and categories as properties with dimensions derived from the containing layout."
+      "Bind series and categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
     ]
   },
   "references": [

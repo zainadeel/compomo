@@ -4,10 +4,11 @@
   "id": "pattern:menu-trigger",
   "kind": "pattern",
   "status": "stable",
-  "summary": "Connect a ButtonUnfilled trigger to an anchored Menu for a compact command or view-selection popup without application-authored positioning.",
+  "summary": "Connect a button trigger to an anchored Menu for a compact command or view-selection popup without application-authored positioning.",
   "useWhen": [
     "A button should reveal a short contextual collection of commands.",
-    "A compact button should show the current view or mode and let the user choose another one from a menu."
+    "A compact button should show the current view or mode and let the user choose another one from a menu.",
+    "A row, card, or toolbar needs an overflow or more-options menu."
   ],
   "avoidWhen": [
     "The choice is a submitted form value with a field label or validation; use Select.",
@@ -18,24 +19,36 @@
   "components": [
     {
       "component": "component:ds-button-unfilled",
-      "role": "Provides the visible trigger, popup relationship attributes, and focus target.",
+      "role": "Provides the visible trigger, popup relationship attributes, and focus target. Carries both shapes, and is the only component that carries the icon-only overflow role.",
       "required": true
     },
     {
       "component": "component:ds-menu",
       "role": "Owns anchored placement, menu semantics, keyboard navigation, viewport clamping, selection, and close behavior.",
       "required": true
+    },
+    {
+      "component": "component:ds-button-filled",
+      "role": "Substitutes for the trigger when the menu belongs to the single primary action in a local decision area, using the label or icon-label shape only.",
+      "required": false
     }
   ],
   "stateOwnership": [
     "The application owns the selected command or view value and derives the trigger label and each item's isSelected state from it.",
-    "The application synchronizes one open boolean to ButtonUnfilled.expanded and Menu.open.",
+    "The application synchronizes one open boolean to the trigger's expanded prop and Menu.open.",
+    "An open popup is a transient pressed state, not a selected one. The trigger holds its pressed wash for the popup's rendered lifecycle from expanded alone, so never also set isActive to represent an open menu.",
     "Menu owns popup placement and keyboard navigation; the application never calculates popup coordinates or applies positional CSS.",
     "On dsSelect, update the selected value, close the Menu, and restore focus to the trigger.",
     "On dsClose, synchronize the application open state to false."
   ],
   "accessibility": [
-    "Set ButtonUnfilled.haspopup to menu, controls to the Menu id, and expanded from the same open state passed to Menu.",
+    "A button either has a menu or is a menu, and the trigger's variant selects between the two shapes.",
+    "Has a menu: a label or icon-label action that opens a menu. Set hasMenu, which implies aria-haspopup of menu and renders the trailing chevron that communicates the popup. Both button primitives support this shape.",
+    "Is a menu: an icon-only overflow or more-options control. Set hasMenu, which adds no chevron, so the glyph must convey the menu alone; use Ellipses. Only ButtonUnfilled carries this shape, because the role is chrome rather than a primary action.",
+    "Never pair hasMenu with an icon-only glyph that does not read as a menu on its own; there is no chevron to fall back on.",
+    "Set controls to the Menu id and expanded from the same open state passed to Menu.",
+    "Give an icon-only trigger an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
+    "Use haspopup directly instead of hasMenu for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
     "Give Menu a concise menuLabel describing the available commands or views.",
     "Set Menu.initialFocusVisible only when the trigger MouseEvent detail is zero, indicating keyboard activation.",
     "Keep visible selected styling synchronized with the application's selected value; Menu exposes the selected command through aria-current.",
@@ -58,7 +71,7 @@
             {
               "path": "view-menu.html",
               "language": "html",
-              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  label=\"View · Overview\"\n  haspopup=\"menu\"\n  controls=\"view-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchor-id=\"view-menu-trigger\"\n  menu-label=\"Choose view\"\n></ds-menu>"
+              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  label=\"View · Overview\"\n  has-menu\n  controls=\"view-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchor-id=\"view-menu-trigger\"\n  menu-label=\"Choose view\"\n></ds-menu>\n\n<!-- Overflow shape: the Ellipses glyph conveys the menu, so no chevron is added. -->\n<ds-button-unfilled\n  id=\"row-menu-trigger\"\n  variant=\"icon\"\n  icon=\"Ellipses\"\n  aria-label=\"More options\"\n  has-menu\n  controls=\"row-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"row-menu\"\n  anchor-id=\"row-menu-trigger\"\n  menu-label=\"More options\"\n  align=\"end\"\n></ds-menu>"
             },
             {
               "path": "view-menu.ts",
@@ -88,7 +101,7 @@
             {
               "path": "ViewMenu.tsx",
               "language": "tsx",
-              "content": "import { useState } from 'react'\nimport type { HTMLDsButtonUnfilledElement, MenuItemData } from '@ds-mo/ui'\nimport { DsButtonUnfilled, DsMenu } from '@ds-mo/ui/react'\n\nconst choices: MenuItemData[] = [\n  { label: 'Overview', value: 'overview' },\n  { label: 'Map', value: 'map' },\n  { label: 'Timeline', value: 'timeline' },\n]\n\nexport function ViewMenu() {\n  const [selectedValue, setSelectedValue] = useState('overview')\n  const [open, setOpen] = useState(false)\n  const [initialFocusVisible, setInitialFocusVisible] = useState(false)\n  const selected = choices.find(item => item.value === selectedValue) ?? choices[0]\n  const items = choices.map(item => ({ ...item, isSelected: item.value === selectedValue }))\n\n  function focusTrigger() {\n    requestAnimationFrame(() => {\n      const trigger = document.querySelector<HTMLDsButtonUnfilledElement>('#view-menu-trigger')\n      trigger?.setFocus()\n    })\n  }\n\n  return (\n    <>\n      <DsButtonUnfilled\n        id=\"view-menu-trigger\"\n        label={`View · ${selected.label}`}\n        haspopup=\"menu\"\n        controls=\"view-menu\"\n        expanded={open}\n        onDsClick={event => {\n          setInitialFocusVisible(event.detail.detail === 0)\n          setOpen(current => !current)\n        }}\n      />\n      <DsMenu\n        id=\"view-menu\"\n        anchorId=\"view-menu-trigger\"\n        menuLabel=\"Choose view\"\n        items={items}\n        open={open}\n        initialFocusVisible={initialFocusVisible}\n        onDsClose={() => setOpen(false)}\n        onDsSelect={event => {\n          setSelectedValue(event.detail.value ?? selectedValue)\n          setOpen(false)\n          focusTrigger()\n        }}\n      />\n    </>\n  )\n}"
+              "content": "import { useState } from 'react'\nimport type { HTMLDsButtonUnfilledElement, MenuItemData } from '@ds-mo/ui'\nimport { DsButtonUnfilled, DsMenu } from '@ds-mo/ui/react'\n\nconst choices: MenuItemData[] = [\n  { label: 'Overview', value: 'overview' },\n  { label: 'Map', value: 'map' },\n  { label: 'Timeline', value: 'timeline' },\n]\n\nexport function ViewMenu() {\n  const [selectedValue, setSelectedValue] = useState('overview')\n  const [open, setOpen] = useState(false)\n  const [initialFocusVisible, setInitialFocusVisible] = useState(false)\n  const selected = choices.find(item => item.value === selectedValue) ?? choices[0]\n  const items = choices.map(item => ({ ...item, isSelected: item.value === selectedValue }))\n\n  function focusTrigger() {\n    requestAnimationFrame(() => {\n      const trigger = document.querySelector<HTMLDsButtonUnfilledElement>('#view-menu-trigger')\n      trigger?.setFocus()\n    })\n  }\n\n  return (\n    <>\n      <DsButtonUnfilled\n        id=\"view-menu-trigger\"\n        label={`View · ${selected.label}`}\n        hasMenu\n        controls=\"view-menu\"\n        expanded={open}\n        onDsClick={event => {\n          setInitialFocusVisible(event.detail.detail === 0)\n          setOpen(current => !current)\n        }}\n      />\n      <DsMenu\n        id=\"view-menu\"\n        anchorId=\"view-menu-trigger\"\n        menuLabel=\"Choose view\"\n        items={items}\n        open={open}\n        initialFocusVisible={initialFocusVisible}\n        onDsClose={() => setOpen(false)}\n        onDsSelect={event => {\n          setSelectedValue(event.detail.value ?? selectedValue)\n          setOpen(false)\n          focusTrigger()\n        }}\n      />\n    </>\n  )\n}"
             }
           ],
           "notes": [
@@ -113,7 +126,7 @@
             {
               "path": "view-menu.component.html",
               "language": "html",
-              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  [label]=\"'View · ' + selectedLabel\"\n  haspopup=\"menu\"\n  controls=\"view-menu\"\n  [expanded]=\"open\"\n  (dsClick)=\"toggleMenu($event)\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchorId=\"view-menu-trigger\"\n  menuLabel=\"Choose view\"\n  [items]=\"menuItems\"\n  [open]=\"open\"\n  [initialFocusVisible]=\"initialFocusVisible\"\n  (dsClose)=\"open = false\"\n  (dsSelect)=\"selectView($event)\"\n></ds-menu>"
+              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  [label]=\"'View · ' + selectedLabel\"\n  has-menu\n  controls=\"view-menu\"\n  [expanded]=\"open\"\n  (dsClick)=\"toggleMenu($event)\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchorId=\"view-menu-trigger\"\n  menuLabel=\"Choose view\"\n  [items]=\"menuItems\"\n  [open]=\"open\"\n  [initialFocusVisible]=\"initialFocusVisible\"\n  (dsClose)=\"open = false\"\n  (dsSelect)=\"selectView($event)\"\n></ds-menu>"
             },
             {
               "path": "view-menu.component.ts",

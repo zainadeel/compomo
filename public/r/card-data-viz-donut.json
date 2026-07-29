@@ -57,6 +57,7 @@
       ],
       "responsiveBehavior": [
         "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
+        "The donut measures the chart region and changes radius within its shared size band while token thickness and typography remain fixed.",
         "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
       ],
       "frameworkCaveats": {
@@ -183,7 +184,7 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^3.1.1",
+          "@ds-mo/tokens ^5.0.0",
           "@ds-mo/icons ^6.4.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."

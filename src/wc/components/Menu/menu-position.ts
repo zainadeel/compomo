@@ -1,13 +1,13 @@
 import {
-  computeAnchoredPopupPosition,
-  type AnchoredPopupAlign,
-  type AnchoredPopupPositionInput,
-  type AnchoredPopupSide,
-} from '../../utils/anchored-popup';
+  computeAnchoredPosition,
+  type AnchoredAlign,
+  type AnchoredPositionInput,
+  type AnchoredSide,
+} from '../../utils/anchored-position';
 
-export type MenuSide = AnchoredPopupSide;
-export type MenuAlign = AnchoredPopupAlign;
-export type MenuPositionInput = AnchoredPopupPositionInput;
+export type MenuSide = AnchoredSide;
+export type MenuAlign = AnchoredAlign;
+export type MenuPositionInput = AnchoredPositionInput;
 
-/** Backward-compatible menu alias for the shared anchored-popup layout math. */
-export const computeMenuPosition = computeAnchoredPopupPosition;
+/** Backward-compatible menu alias for the shared anchored-position layout math. */
+export const computeMenuPosition = computeAnchoredPosition;

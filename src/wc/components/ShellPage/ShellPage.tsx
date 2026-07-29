@@ -77,6 +77,7 @@ export class ShellPage {
     this.headerMutationObserver = null;
     this.cancelHeaderReveal();
     this.cancelHeaderGeometrySync();
+    this.headerEl?.style.removeProperty('--ds-bar-title-divider-inset');
     this.scrollRoot?.removeEventListener('scroll', this.handleScroll);
     this.scrollRoot = null;
   }
@@ -128,6 +129,7 @@ export class ShellPage {
     if (!this.sentinelEl || !this.scrollRoot) return;
     const rootTop =
       this.scrollRoot === window ? 0 : (this.scrollRoot as HTMLElement).getBoundingClientRect().top;
+    this.syncHeaderDividerInset(rootTop);
     const nextPageTopVisible = this.sentinelEl.getBoundingClientRect().top >= rootTop;
     if (
       !nextPageTopVisible &&
@@ -156,6 +158,34 @@ export class ShellPage {
 
   private get compactHeaderHeight(): number {
     return resolveCssLengthPx('--dimension-size-600', 0);
+  }
+
+  private syncHeaderDividerInset(rootTop?: number) {
+    const header = this.headerEl;
+    if (!header) return;
+
+    const ownsScrollTransition =
+      this.headerPresentation === 'auto' && this.headerCapacity === 'roomy';
+    const expandedInset = resolveCssLengthPx('--dimension-space-400', 0);
+    if (
+      !ownsScrollTransition ||
+      !this.sentinelEl ||
+      !this.scrollRoot ||
+      this.headerTravel <= 0 ||
+      expandedInset <= 0
+    ) {
+      header.style.removeProperty('--ds-bar-title-divider-inset');
+      return;
+    }
+
+    const scrollRootTop =
+      rootTop ??
+      (this.scrollRoot === window
+        ? 0
+        : (this.scrollRoot as HTMLElement).getBoundingClientRect().top);
+    const remainingTravel = this.sentinelEl.getBoundingClientRect().top - scrollRootTop;
+    const progress = Math.min(1, Math.max(0, 1 - remainingTravel / this.headerTravel));
+    header.style.setProperty('--ds-bar-title-divider-inset', `${expandedInset * (1 - progress)}px`);
   }
 
   private setHeaderTravel(distance: number) {
@@ -288,6 +318,7 @@ export class ShellPage {
     const header = this.headerEl;
     if (!header) return;
 
+    this.syncHeaderDividerInset();
     if (!this.headerContractResolved) {
       this.cancelHeaderReveal();
       header.setAttribute('data-shell-page-syncing', '');
@@ -314,6 +345,7 @@ export class ShellPage {
     this.headerResizeObserver = null;
     this.headerMutationObserver?.disconnect();
     this.headerMutationObserver = null;
+    this.headerEl?.style.removeProperty('--ds-bar-title-divider-inset');
     this.headerEl = header;
     this.expandedHeaderHeight = 0;
     this.expandedGeometryFrozen = false;

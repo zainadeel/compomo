@@ -72,6 +72,12 @@ export class ButtonUnfilled {
   /** Use the half-radius treatment instead of the default control radius. */
   @Prop() rounded: boolean = false;
 
+  /**
+   * Scale down during a physical pointer press.
+   * Disable when an owning composite requires fixed child or background geometry.
+   */
+  @Prop() pressScale: boolean = true;
+
   /** Show a notification dot at the top-right of the icon zone (icon variant only). */
   @Prop() dot: boolean = false;
 
@@ -93,6 +99,19 @@ export class ButtonUnfilled {
   @Prop() expanded: boolean | undefined;
   @Prop() haspopup: ButtonUnfilledPopup | undefined;
   @Prop() pressed: boolean | undefined;
+
+  /**
+   * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers
+   * both menu-button shapes:
+   *
+   * - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries
+   *   the affordance.
+   * - `icon` — the button *is* a menu, i.e. the overflow / more-options control.
+   *   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.
+   *
+   * Use `haspopup` directly for non-menu popups.
+   */
+  @Prop() hasMenu: boolean = false;
 
   /**
    * Native `tabindex` for roving keyboard groups in shell chrome.
@@ -132,6 +151,15 @@ export class ButtonUnfilled {
     return this.variant === 'icon' && this.dot && !this.isLoading;
   }
 
+  /** Icon-only triggers rely on their own glyph, so the chevron is label-bound. */
+  private get showChevron(): boolean {
+    return this.hasMenu && this.variant !== 'icon';
+  }
+
+  private get resolvedHaspopup(): ButtonUnfilledPopup | undefined {
+    return this.haspopup ?? (this.hasMenu ? 'menu' : undefined);
+  }
+
   /** An expanded popup trigger is visually active even when selection is controlled separately. */
   private get visuallyActive(): boolean {
     return this.isActive || this.expanded === true;
@@ -159,7 +187,7 @@ export class ButtonUnfilled {
     const cls: Record<string, boolean> = {
       'button-unfilled': true,
       'ds-focus-ring-inset': true,
-      'ds-control-press-scale': true,
+      'ds-control-press-scale': this.pressScale,
       'ds-interaction-fill': true,
       'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
       'ds-interaction-fill--on-faint': bg === 'faint',
@@ -219,10 +247,13 @@ export class ButtonUnfilled {
           aria-disabled={this.isLoading ? 'true' : undefined}
           aria-controls={this.controls}
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
-          aria-haspopup={this.haspopup}
+          aria-haspopup={this.resolvedHaspopup}
           aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
           onPointerDown={event =>
-            beginElevatedControlPress(event, !this.isInactive && !this.isLoading)
+            beginElevatedControlPress(
+              event,
+              this.pressScale && !this.isInactive && !this.isLoading,
+            )
           }
           onClick={this.handleClick}
         >
@@ -258,6 +289,19 @@ export class ButtonUnfilled {
             >
               {this.label}
             </ds-text>
+          )}
+          {this.showChevron && (
+            <span
+              class={{
+                'button-unfilled__chevron': true,
+                'ds-control-icon-box': true,
+                'ds-interaction-fill__content': true,
+                'button-unfilled__chevron--loading': this.isLoading && this.variant === 'label',
+              }}
+              aria-hidden="true"
+            >
+              <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
+            </span>
           )}
           {this.isLoading && this.variant === 'label' && (
             <span class="button-unfilled__loader-overlay ds-interaction-fill__content">

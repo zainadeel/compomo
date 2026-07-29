@@ -25,7 +25,7 @@ activation remains native and is not promised an equivalent held frame.
 | Component and target | Existing pressed/state paint | Transform ownership | Policy and rationale | Composition |
 | --- | --- | --- | --- | --- |
 | `ButtonFilled` — native `.button-filled` | `interaction-fill` pressed wash | None after migration | **scale** — momentary action primitive | The native hit target scales. An elevated owner adds `ds-control-elevation--press-scale` so the wrapper surface, shadow, highlight, and button scale together without compounding. |
-| `ButtonUnfilled` — native `.button-unfilled` | `interaction-fill` pressed wash; expanded and selected paint remain independent | None | **scale** — momentary action primitive | Applies to label, icon, and icon-label variants, including composed shell actions. Popup-open state does not keep scale active. |
+| `ButtonUnfilled` — native `.button-unfilled` | `interaction-fill` pressed wash; expanded and selected paint remain independent | None | **scale by default** — momentary action primitive | Applies to label, icon, and icon-label variants. Owning composites may disable `pressScale` only when fixed child or background geometry must remain aligned; the pressed wash remains active. Popup-open state does not keep scale active. |
 
 ### No-scale targets
 
@@ -38,6 +38,7 @@ activation remains native and is not promised an equivalent held frame.
 | `BarNav` — `.bar-nav__tab` and overflow trigger composition | Local active wash; selected tab state | None on tabs | Navigation tabs do not scale. The overflow trigger inherits scale only because it is a composed `ButtonUnfilled`. |
 | `BarTitle` — native back button and composed action/menu buttons | `interaction-fill` wash | None | The back/navigation target stays stable; composed button primitives follow their own policy. |
 | `Breadcrumb` — item anchors and buttons | Link underline/focus feedback | None | Hierarchical navigation does not scale. |
+| `CardOverview` — selectable `.card-overview__metric` cells | `interaction-fill` wash; roving focus state | None | Summary measures are selection targets in a shared grid; every column must stay aligned, so cell geometry cannot move. |
 | `ChartLegend` — interactive legend item | Hover/selected opacity and interaction state | None | Large data-selection rows remain geometrically stable. |
 | `Checkbox` — host ARIA checkbox target | `interaction-fill`, mark, and checked/mixed state | None | Choice controls do not scale. |
 | `Chip` — root action and `.tag__remove` button | Root interaction wash; remove action has a local active wash | None | Selection/removal affordances keep stable chip geometry. |
@@ -81,8 +82,11 @@ remain outside this utility.
 
 `BarWorkflow`, `CodeBlock`, `MessageComposer`, `MobileHeader`,
 `PanelToolHeader`, `PanelTools`, and shell/tool actions may render or receive
-`ButtonFilled` or `ButtonUnfilled`. They inherit the button primitive policy;
-their containers must not add another press transform. In downstream Lab this
+`ButtonFilled` or `ButtonUnfilled`. They inherit the button primitive policy
+unless fixed child or background geometry requires the unfilled button's
+explicit `pressScale={false}` opt-out; their containers must not add another
+press transform. PanelTools rail actions use that opt-out so notification-dot
+halos remain aligned to the shell gradient. In downstream Lab this
 includes Agents/Messages “New chat,” Help “Contact support,” chat composer
 submit/stop, and other floating actions.
 
