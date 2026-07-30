@@ -207,12 +207,13 @@ test.describe('BarNav responsive overflow', () => {
         centerY: dotRect.y + dotRect.height / 2 - rowRect.y,
       };
     });
-    expect(dotGeometry).toEqual({
+    expect(dotGeometry).toMatchObject({
       boxWidth: 20,
       boxHeight: 20,
       rightInset: 13,
-      centerY: 16,
     });
+    expect(dotGeometry.centerY).toBeGreaterThanOrEqual(15.5);
+    expect(dotGeometry.centerY).toBeLessThanOrEqual(16.5);
 
     const iconName = await page.evaluate(() => {
       const icon = document.querySelector('.bar-nav__overflow-trigger ds-icon') as

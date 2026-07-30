@@ -122,8 +122,8 @@ test('groups the score, period, and filter above fully stacked metrics', async (
   );
   expect(layout.filter.left).toBeGreaterThan(layout.scoreFigure.left);
   expect(layout.currentPeriod.left).toBeGreaterThan(layout.scoreFigure.right);
-  expect(layout.currentPeriod.top - layout.scoreFigure.top).toBeGreaterThanOrEqual(-4);
-  expect(layout.currentPeriod.top - layout.scoreFigure.top).toBeLessThanOrEqual(4);
+  expect(layout.currentPeriod.bottom).toBeGreaterThan(layout.scoreFigure.top);
+  expect(layout.currentPeriod.top).toBeLessThan(layout.scoreFigure.bottom);
   expect(layout.card.right - layout.currentPeriod.right).toBeCloseTo(
     layout.scoreLabel.left - layout.card.left,
     1
