@@ -20,7 +20,7 @@ import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, Butt
 import { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 import { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
-import { OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
+import { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -80,7 +80,7 @@ export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, Butt
 export { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
 export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
 export { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
-export { OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
+export { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
@@ -698,7 +698,7 @@ export namespace Components {
     }
     interface DsCardOverview {
         /**
-          * Comparison caption, for example `vs. previous score period`.
+          * Comparison caption, for example `vs Previous period`.
           * @default ''
          */
         "comparisonLabel": string;
@@ -708,12 +708,17 @@ export namespace Components {
          */
         "isLoading": boolean;
         /**
+          * Intrinsic responsive layout, or a page-owned single-column stack.
+          * @default 'auto'
+         */
+        "layout": CardOverviewLayout;
+        /**
           * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
           * @default 'var(--dimension-menu-width-xs)'
          */
         "metricMinWidth": string;
         /**
-          * Measures rendered in the responsive grid.
+          * Measures rendered in the responsive grid. Only the first six are shown.
           * @default []
          */
         "metrics": OverviewMetric[];
@@ -735,6 +740,11 @@ export namespace Components {
           * Message shown in place of the score when its figure cannot be resolved.
          */
         "scoreErrorMessage": string | undefined;
+        /**
+          * Full summary card, or the condensed 48px summary bar.
+          * @default 'default'
+         */
+        "variant": CardOverviewVariant;
     }
     interface DsCardSetting {
         /**
@@ -4837,7 +4847,7 @@ declare namespace LocalJSX {
     }
     interface DsCardOverview {
         /**
-          * Comparison caption, for example `vs. previous score period`.
+          * Comparison caption, for example `vs Previous period`.
           * @default ''
          */
         "comparisonLabel"?: string;
@@ -4847,12 +4857,17 @@ declare namespace LocalJSX {
          */
         "isLoading"?: boolean;
         /**
+          * Intrinsic responsive layout, or a page-owned single-column stack.
+          * @default 'auto'
+         */
+        "layout"?: CardOverviewLayout;
+        /**
           * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
           * @default 'var(--dimension-menu-width-xs)'
          */
         "metricMinWidth"?: string;
         /**
-          * Measures rendered in the responsive grid.
+          * Measures rendered in the responsive grid. Only the first six are shown.
           * @default []
          */
         "metrics"?: OverviewMetric[];
@@ -4878,6 +4893,11 @@ declare namespace LocalJSX {
           * Message shown in place of the score when its figure cannot be resolved.
          */
         "scoreErrorMessage"?: string | undefined;
+        /**
+          * Full summary card, or the condensed 48px summary bar.
+          * @default 'default'
+         */
+        "variant"?: CardOverviewVariant;
     }
     interface DsCardSetting {
         /**
@@ -7367,6 +7387,8 @@ declare namespace LocalJSX {
         "filterLabel": string;
     }
     interface DsCardOverviewAttributes {
+        "variant": CardOverviewVariant;
+        "layout": CardOverviewLayout;
         "periodLabel": string;
         "comparisonLabel": string;
         "metricMinWidth": string;

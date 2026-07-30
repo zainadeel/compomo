@@ -10,14 +10,14 @@ import { defineCustomElement as defineDsCardOverview } from '@ds-mo/ui/component
 
 @ProxyCmp({
   defineCustomElementFn: defineDsCardOverview,
-  inputs: ['comparisonLabel', 'isLoading', 'metricMinWidth', 'metrics', 'overviewLabel', 'periodLabel', 'score', 'scoreErrorMessage']
+  inputs: ['comparisonLabel', 'isLoading', 'layout', 'metricMinWidth', 'metrics', 'overviewLabel', 'periodLabel', 'score', 'scoreErrorMessage', 'variant']
 })
 @Component({
   selector: 'ds-card-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['comparisonLabel', 'isLoading', 'metricMinWidth', 'metrics', 'overviewLabel', 'periodLabel', 'score', 'scoreErrorMessage'],
+  inputs: ['comparisonLabel', 'isLoading', 'layout', 'metricMinWidth', 'metrics', 'overviewLabel', 'periodLabel', 'score', 'scoreErrorMessage', 'variant'],
   outputs: ['dsMetricSelect'],
 })
 export class DsCardOverview {

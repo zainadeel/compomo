@@ -32,6 +32,22 @@ test('inherits owner color and keeps one-line metric height atomic', async ({ pa
   expect(metrics.height).toBe(metrics.lineHeight);
 });
 
+test('allows an owner-applied semantic token to win without stylesheet-order coupling', async ({
+  page,
+}) => {
+  const text = page.locator('#owner-color');
+  const colors = await text.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-bold-positive)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).color;
+    probe.remove();
+    return { actual: getComputedStyle(element).color, expected };
+  });
+
+  expect(colors.actual).toBe(colors.expected);
+});
+
 test('applies bounded line truncation to the inner semantic element', async ({ page }) => {
   const text = page.locator('#truncated');
   const inner = text.locator('p');

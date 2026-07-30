@@ -1,1 +1,6 @@
-export type { OverviewMetric, OverviewScore } from './card-overview-types';
+export type {
+  CardOverviewLayout,
+  CardOverviewVariant,
+  OverviewMetric,
+  OverviewScore,
+} from './card-overview-types';

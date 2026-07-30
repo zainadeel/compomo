@@ -5,10 +5,7 @@ import {
   moveChoiceIndex,
   type ChoiceOption,
 } from './choice-list';
-import {
-  choicePopupMinWidth,
-  resolveChoicePopupAlignOffset,
-} from './choice-popup-alignment';
+import { choicePopupMinWidth, resolveChoicePopupAlignOffset } from './choice-popup-alignment';
 import { resolveCssLengthPx } from './resolve-css-length-px';
 import { resolveCssTimeMs } from './resolve-css-time-ms';
 import { TOKEN_DEFAULTS } from './token-defaults';
@@ -54,11 +51,7 @@ export class SelectController<T extends ChoiceOption> {
       getAnchor: () => this.triggerEl,
       getPopup: () => this.popupEl,
       measure: (trigger, popup) => {
-        if (
-          !this.state.open ||
-          !popup.isConnected ||
-          !this.state.host.contains(popup)
-        ) return null;
+        if (!this.state.open || !popup.isConnected || !this.state.host.contains(popup)) return null;
 
         const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
         popup.style.minWidth = `${choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px`;
@@ -84,6 +77,7 @@ export class SelectController<T extends ChoiceOption> {
         this.state.position = { x, y };
         this.state.positionReady = true;
       },
+      topLayer: true,
     });
   }
 
@@ -203,20 +197,12 @@ export class SelectController<T extends ChoiceOption> {
       case 'ArrowDown':
         event.preventDefault();
         this.state.focusRingVisible = true;
-        this.state.activeIndex = moveChoiceIndex(
-          this.state.options,
-          this.state.activeIndex,
-          1,
-        );
+        this.state.activeIndex = moveChoiceIndex(this.state.options, this.state.activeIndex, 1);
         break;
       case 'ArrowUp':
         event.preventDefault();
         this.state.focusRingVisible = true;
-        this.state.activeIndex = moveChoiceIndex(
-          this.state.options,
-          this.state.activeIndex,
-          -1,
-        );
+        this.state.activeIndex = moveChoiceIndex(this.state.options, this.state.activeIndex, -1);
         break;
       case 'Home':
         event.preventDefault();
@@ -261,18 +247,17 @@ export class SelectController<T extends ChoiceOption> {
     this.state.focusRingVisible = true;
     const normalized = key.toLocaleLowerCase();
     const repeatedCharacter =
-      this.typeahead.length > 0 &&
-      [...this.typeahead].every(character => character === normalized);
+      this.typeahead.length > 0 && [...this.typeahead].every(character => character === normalized);
     this.typeahead = repeatedCharacter ? normalized : `${this.typeahead}${normalized}`;
     const match = findChoiceTypeaheadMatch(
       this.state.options,
       this.typeahead,
-      this.state.activeIndex,
+      this.state.activeIndex
     );
     if (match >= 0) this.state.activeIndex = match;
     const resetMs = resolveCssTimeMs(
       TOKEN_DEFAULTS.animationDurationMedium1,
-      TOKEN_DEFAULTS.animationDurationMedium1,
+      TOKEN_DEFAULTS.animationDurationMedium1
     );
     this.typeaheadTimer = setTimeout(() => {
       this.typeahead = '';

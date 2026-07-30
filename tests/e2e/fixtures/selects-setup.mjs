@@ -14,10 +14,17 @@ const sections = [
   { header: 'More', options: options.slice(2) },
 ];
 
-for (const id of ['single', 'searchable', 'loading', 'surface', 'required-single']) {
+for (const id of [
+  'single',
+  'searchable',
+  'loading',
+  'surface',
+  'required-single',
+  'contained-single',
+]) {
   document.getElementById(id).options = options;
 }
-for (const id of ['multi', 'multi-search', 'required-multi']) {
+for (const id of ['multi', 'multi-search', 'required-multi', 'contained-multi']) {
   document.getElementById(id).sections = sections;
 }
 

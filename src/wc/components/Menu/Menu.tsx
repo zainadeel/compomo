@@ -169,6 +169,7 @@ export class Menu {
       this.positionReady = true;
     },
     liveUpdate: 'double-frame',
+    topLayer: true,
   });
   /** Last content actually painted while open; retained unchanged through exit motion. */
   private lastRenderedSections: MenuSection[] = [];
@@ -176,13 +177,6 @@ export class Menu {
 
   componentDidLoad() {
     if (this.open) this.onOpenChange(true);
-  }
-
-  componentDidRender() {
-    if (!this.shouldRender) return;
-    const popup = this.el.querySelector<HTMLElement>('.menu-popup');
-    if (!popup || typeof popup.showPopover !== 'function') return;
-    if (!popup.matches(':popover-open')) popup.showPopover();
   }
 
   disconnectedCallback() {
@@ -293,8 +287,7 @@ export class Menu {
 
   private focusAnchor() {
     const anchor = this.resolvedAnchor as
-      | (HTMLElement & { setFocus?: () => Promise<void> | void })
-      | null;
+      (HTMLElement & { setFocus?: () => Promise<void> | void }) | null;
     if (anchor?.setFocus) {
       anchor.setFocus();
       return;
@@ -605,9 +598,7 @@ export class Menu {
                     const idx = flatIdx++;
                     const isFocused = this.focusedIndex === idx;
                     const isSingleSelectionItem =
-                      !hasCompositeSections &&
-                      this.selectionMode === 'single' &&
-                      !item.showSwitch;
+                      !hasCompositeSections && this.selectionMode === 'single' && !item.showSwitch;
                     return (
                       <button
                         key={idx}
@@ -630,17 +621,17 @@ export class Menu {
                           hasCompositeSections
                             ? undefined
                             : item.showSwitch
-                            ? 'menuitemcheckbox'
-                            : isSingleSelectionItem
-                            ? 'menuitemradio'
-                            : 'menuitem'
+                              ? 'menuitemcheckbox'
+                              : isSingleSelectionItem
+                                ? 'menuitemradio'
+                                : 'menuitem'
                         }
                         aria-checked={
                           !hasCompositeSections && item.showSwitch
                             ? String(!!item.switchValue)
                             : isSingleSelectionItem
-                            ? String(!!item.isSelected)
-                            : undefined
+                              ? String(!!item.isSelected)
+                              : undefined
                         }
                         aria-pressed={
                           hasCompositeSections

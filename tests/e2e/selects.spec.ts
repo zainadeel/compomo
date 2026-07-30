@@ -9,9 +9,11 @@ test.beforeEach(async ({ page }) => {
 test('defaults both select triggers to hug width and supports explicit fill', async ({ page }) => {
   for (const selector of ['#single', '#multi']) {
     const select = page.locator(selector);
-    await expect.poll(() =>
-      select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => element.width),
-    ).toBe('hug');
+    await expect
+      .poll(() =>
+        select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => element.width)
+      )
+      .toBe('hug');
     await expect(select).toHaveClass(/ds-control-width--hug/);
 
     await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => {
@@ -36,7 +38,9 @@ test('defaults both select triggers to hug width and supports explicit fill', as
   }
 });
 
-test('uses combobox and listbox semantics with disabled-option keyboard skipping', async ({ page }) => {
+test('uses combobox and listbox semantics with disabled-option keyboard skipping', async ({
+  page,
+}) => {
   const select = page.locator('#single');
   const trigger = select.getByRole('combobox');
 
@@ -48,7 +52,9 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(listbox).toBeVisible();
   await expect(listbox.getByRole('option')).toHaveCount(4);
   await expect(listbox.locator('.ds-choice-item__icon')).toHaveCount(4);
-  const selectedIcon = listbox.locator('[role="option"][aria-selected="true"] .ds-choice-item__icon');
+  const selectedIcon = listbox.locator(
+    '[role="option"][aria-selected="true"] .ds-choice-item__icon'
+  );
   const primaryColor = await page.evaluate(() => {
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-foreground-primary)';
@@ -58,14 +64,19 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
     return color;
   });
   await expect(selectedIcon).toHaveCSS('color', primaryColor);
-  await expect(listbox.getByRole('option', { name: 'Banana' })).toHaveAttribute('aria-disabled', 'true');
-  await expect.poll(() =>
-    listbox.evaluate(element =>
-      [...element.querySelectorAll('ds-icon')].some(
-        icon => (icon as HTMLDsIconElement).name === 'Check',
-      ),
-    ),
-  ).toBe(false);
+  await expect(listbox.getByRole('option', { name: 'Banana' })).toHaveAttribute(
+    'aria-disabled',
+    'true'
+  );
+  await expect
+    .poll(() =>
+      listbox.evaluate(element =>
+        [...element.querySelectorAll('ds-icon')].some(
+          icon => (icon as HTMLDsIconElement).name === 'Check'
+        )
+      )
+    )
+    .toBe(false);
 
   await trigger.press('ArrowDown');
   await expect(trigger).toHaveAttribute('aria-activedescendant', /option-3$/);
@@ -73,13 +84,17 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   expect(activeId).toBeTruthy();
   await expect(page.locator(`#${activeId}`)).toHaveClass(/ds-focus-ring--visible/);
   await trigger.press('Enter');
-  await expect.poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value)).toBe('date');
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('date');
   await expect(trigger).toBeFocused();
 
   await trigger.press('ArrowDown');
   await trigger.press('Home');
   await trigger.press('Space');
-  await expect.poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value)).toBe('apple');
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('apple');
   await expect(trigger).toBeFocused();
 
   await trigger.press('ArrowDown');
@@ -101,7 +116,9 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('keeps single and multi popups visible and pointer-usable after repeated reopen cycles', async ({ page }) => {
+test('keeps single and multi popups visible and pointer-usable after repeated reopen cycles', async ({
+  page,
+}) => {
   const single = page.locator('#single');
   const singleTrigger = single.getByRole('combobox');
 
@@ -113,9 +130,9 @@ test('keeps single and multi popups visible and pointer-usable after repeated re
     await singleTrigger.click();
     await expect(single.getByRole('listbox')).toBeVisible();
     await single.getByRole('option', { name: option.label }).click();
-    await expect.poll(() =>
-      single.evaluate((element: HTMLDsSelectElement) => element.value),
-    ).toBe(option.value);
+    await expect
+      .poll(() => single.evaluate((element: HTMLDsSelectElement) => element.value))
+      .toBe(option.value);
     await expect(singleTrigger).toHaveAttribute('aria-expanded', 'false');
   }
 
@@ -126,15 +143,52 @@ test('keeps single and multi popups visible and pointer-usable after repeated re
     await multiTrigger.click();
     await expect(multi.getByRole('listbox')).toBeVisible();
     await multi.getByRole('option', { name: 'Date' }).click();
-    await expect.poll(() =>
-      multi.evaluate((element: HTMLDsSelectMultiElement) => element.values.includes('date')),
-    ).toBe(cycle % 2 === 0);
+    await expect
+      .poll(() =>
+        multi.evaluate((element: HTMLDsSelectMultiElement) => element.values.includes('date'))
+      )
+      .toBe(cycle % 2 === 0);
     await multiTrigger.press('Escape');
     await expect(multiTrigger).toHaveAttribute('aria-expanded', 'false');
   }
 });
 
-test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({ page }) => {
+test('keeps single and multi popups viewport-anchored inside contained clipping layouts', async ({
+  page,
+}) => {
+  for (const selector of ['#contained-single', '#contained-multi']) {
+    const select = page.locator(selector);
+    const trigger = select.getByRole('combobox');
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.click();
+
+    const popup = select.locator('.select-popup');
+    await expect(popup).toBeVisible();
+    await expect(popup).toHaveJSProperty('popover', 'manual');
+    expect(await popup.evaluate(element => element.matches(':popover-open'))).toBe(true);
+
+    const [triggerBox, popupBox, containerBox] = await Promise.all([
+      trigger.boundingBox(),
+      popup.boundingBox(),
+      page.locator('.contained-selects').boundingBox(),
+    ]);
+    expect(triggerBox).not.toBeNull();
+    expect(popupBox).not.toBeNull();
+    expect(containerBox).not.toBeNull();
+    expect(containerBox!.x).toBeGreaterThan(0);
+    expect(containerBox!.y).toBeGreaterThan(0);
+    expect(popupBox!.x).toBeCloseTo(triggerBox!.x - 4, 0);
+    expect(popupBox!.y).toBeCloseTo(triggerBox!.y + triggerBox!.height + 4, 0);
+    expect(popupBox!.y + popupBox!.height).toBeGreaterThan(containerBox!.y + containerBox!.height);
+
+    await trigger.press('Escape');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  }
+});
+
+test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({
+  page,
+}) => {
   const loading = page.locator('#loading');
   await loading.getByRole('combobox').click();
   const loadingOption = loading.getByRole('option', { name: 'Loading' });
@@ -177,39 +231,49 @@ test('keeps the active descendant visible in long single and multi lists', async
     await trigger.press('ArrowDown');
     await trigger.press('End');
 
-    await expect.poll(async () => {
-      const activeId = await trigger.getAttribute('aria-activedescendant');
-      if (!activeId) return false;
-      return select.evaluate((element, id) => {
-        const listbox = element.querySelector<HTMLElement>('[role="listbox"]');
-        const option = element.querySelector<HTMLElement>(`#${id}`);
-        if (!listbox || !option) return false;
-        const listboxRect = listbox.getBoundingClientRect();
-        const optionRect = option.getBoundingClientRect();
-        return optionRect.top >= listboxRect.top && optionRect.bottom <= listboxRect.bottom;
-      }, activeId);
-    }).toBe(true);
+    await expect
+      .poll(async () => {
+        const activeId = await trigger.getAttribute('aria-activedescendant');
+        if (!activeId) return false;
+        return select.evaluate((element, id) => {
+          const listbox = element.querySelector<HTMLElement>('[role="listbox"]');
+          const option = element.querySelector<HTMLElement>(`#${id}`);
+          if (!listbox || !option) return false;
+          const listboxRect = listbox.getBoundingClientRect();
+          const optionRect = option.getBoundingClientRect();
+          return optionRect.top >= listboxRect.top && optionRect.bottom <= listboxRect.bottom;
+        }, activeId);
+      })
+      .toBe(true);
 
     await trigger.press('Escape');
   }
 });
 
-test('supports buffered local typeahead and clear while preserving the open popup', async ({ page }) => {
+test('supports buffered local typeahead and clear while preserving the open popup', async ({
+  page,
+}) => {
   const select = page.locator('#single');
   const trigger = select.getByRole('combobox');
 
   await trigger.press('a');
   await trigger.press('Enter');
-  await expect.poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value)).toBe('apple');
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('apple');
 
   await trigger.click();
   await select.getByRole('button', { name: 'Clear' }).click();
-  await expect.poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value)).toBe('');
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('');
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect.poll(() => page.evaluate(() => window.__selectClears)).toContain('single');
 
   await select.getByRole('option', { name: /Cherry/ }).click();
-  await expect.poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value)).toBe('cherry');
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('cherry');
   await expect(trigger).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
@@ -243,23 +307,27 @@ test('filters locally by subtext and preserves group semantics', async ({ page }
     await expect(searchRegion).toHaveCSS(`padding-${side}`, '4px');
   }
   await search.focus();
-  await expect.poll(() => searchRegion.evaluate(element => {
-    const style = getComputedStyle(element, '::after');
-    const probe = document.createElement('span');
-    probe.style.color = 'var(--color-border-bold-brand)';
-    document.body.append(probe);
-    const expectedColor = getComputedStyle(probe).color;
-    probe.remove();
-    return {
-      height: style.height,
-      colorMatches: style.backgroundColor === expectedColor,
-    };
-  })).toEqual({ height: '1.5px', colorMatches: true });
+  await expect
+    .poll(() =>
+      searchRegion.evaluate(element => {
+        const style = getComputedStyle(element, '::after');
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-border-bold-brand)';
+        document.body.append(probe);
+        const expectedColor = getComputedStyle(probe).color;
+        probe.remove();
+        return {
+          height: style.height,
+          colorMatches: style.backgroundColor === expectedColor,
+        };
+      })
+    )
+    .toEqual({ height: '1.5px', colorMatches: true });
 
   await search.evaluate(element => element.blur());
-  await expect.poll(() => searchRegion.evaluate(element =>
-    getComputedStyle(element, '::after').height,
-  )).toBe('1px');
+  await expect
+    .poll(() => searchRegion.evaluate(element => getComputedStyle(element, '::after').height))
+    .toBe('1px');
 
   const rows = select.getByRole('option');
   await expect(rows.locator('.ds-choice-item__subtext')).toHaveCount(4);
@@ -284,7 +352,9 @@ test('filters locally by subtext and preserves group semantics', async ({ page }
   await expect(options.first()).toContainText('Cherry');
 });
 
-test('shares a rounded sm search clear button across single and multi selects', async ({ page }) => {
+test('shares a rounded sm search clear button across single and multi selects', async ({
+  page,
+}) => {
   for (const selector of ['#searchable', '#multi-search']) {
     const select = page.locator(selector);
     await select.getByRole('combobox').click();
@@ -364,28 +434,34 @@ test('shows busy state in the trigger and popup', async ({ page }) => {
   await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
 });
 
-test('uses a thicker inset stroke for error without changing control geometry', async ({ page }) => {
+test('uses a thicker inset stroke for error without changing control geometry', async ({
+  page,
+}) => {
   for (const selector of ['#single', '#multi']) {
     const select = page.locator(selector);
     const trigger = select.getByRole('combobox');
     const normalHeight = await trigger.evaluate(element => element.getBoundingClientRect().height);
 
-    await expect.poll(() => trigger.evaluate(element =>
-      getComputedStyle(element, '::after').boxShadow,
-    )).toMatch(/0px 0px 0px 1px/);
+    await expect
+      .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
+      .toMatch(/0px 0px 0px 1px/);
     await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => {
       element.error = true;
       element.errorMessage = 'Make a selection.';
     });
 
-    await expect.poll(() => trigger.evaluate(element =>
-      getComputedStyle(element, '::after').boxShadow,
-    )).toMatch(/0px 0px 0px 1.5px/);
-    await expect.poll(() => trigger.evaluate(element => element.getBoundingClientRect().height)).toBe(normalHeight);
+    await expect
+      .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
+      .toMatch(/0px 0px 0px 1.5px/);
+    await expect
+      .poll(() => trigger.evaluate(element => element.getBoundingClientRect().height))
+      .toBe(normalHeight);
   }
 });
 
-test('keeps the multi trigger label and inline count, repeated selection, and clear-all behavior', async ({ page }) => {
+test('keeps the multi trigger label and inline count, repeated selection, and clear-all behavior', async ({
+  page,
+}) => {
   const select = page.locator('#multi');
   const trigger = select.getByRole('combobox');
   const triggerLabel = trigger.locator('.trigger__label');
@@ -416,20 +492,24 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   const selectedCheckbox = listbox.getByRole('option', { name: /Apple/ }).locator('ds-checkbox');
   await expect(selectedCheckbox).toHaveAttribute('aria-hidden', 'true');
   await expect(selectedCheckbox).not.toHaveAttribute('role', 'checkbox');
-  await expect.poll(() =>
-    selectedCheckbox.evaluate((element: HTMLDsCheckboxElement) => element.checked),
-  ).toBe(true);
+  await expect
+    .poll(() => selectedCheckbox.evaluate((element: HTMLDsCheckboxElement) => element.checked))
+    .toBe(true);
   const dateOption = listbox.getByRole('option', { name: 'Date' });
   await dateOption.click();
   await expect(dateOption).not.toHaveClass(/ds-focus-ring--visible/);
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  await expect.poll(() =>
-    select.evaluate((element: HTMLDsSelectMultiElement) => element.values),
-  ).toEqual(['apple', 'cherry', 'date']);
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectMultiElement) => element.values))
+    .toEqual(['apple', 'cherry', 'date']);
   await expect(triggerLabel).toHaveText('Entities · 3');
-  await expect.poll(() =>
-    dateOption.locator('ds-checkbox').evaluate((element: HTMLDsCheckboxElement) => element.checked),
-  ).toBe(true);
+  await expect
+    .poll(() =>
+      dateOption
+        .locator('ds-checkbox')
+        .evaluate((element: HTMLDsCheckboxElement) => element.checked)
+    )
+    .toBe(true);
 
   const footer = select.locator('.ds-choice-footer');
   const footerContent = footer.locator('.ds-choice-footer__content');
@@ -437,9 +517,9 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   const clear = select.getByRole('button', { name: 'Clear' });
   await expect(footer).toHaveCSS('height', '40px');
   await expect(footerContent).toHaveCSS('height', '32px');
-  await expect.poll(() => footer.evaluate(element =>
-    getComputedStyle(element, '::before').height,
-  )).toBe('1px');
+  await expect
+    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').height))
+    .toBe('1px');
   await expect(footer).toHaveCSS('padding-top', '4px');
   await expect(footer).toHaveCSS('padding-right', '0px');
   await expect(footer).toHaveCSS('padding-bottom', '4px');
@@ -462,8 +542,12 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   expect(Number.parseFloat(labelPadding.summaryLeft)).toBeGreaterThan(0);
   const insets = await footer.evaluate(element => {
     const footerRect = element.getBoundingClientRect();
-    const summaryRect = element.querySelector('.ds-choice-footer__summary')?.getBoundingClientRect();
-    const clearRect = element.querySelector('.ds-choice-footer__clear ds-text')?.getBoundingClientRect();
+    const summaryRect = element
+      .querySelector('.ds-choice-footer__summary')
+      ?.getBoundingClientRect();
+    const clearRect = element
+      .querySelector('.ds-choice-footer__clear ds-text')
+      ?.getBoundingClientRect();
     return {
       left: (summaryRect?.left ?? 0) - footerRect.left,
       right: footerRect.right - (clearRect?.right ?? 0),
@@ -474,9 +558,9 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   await clear.hover();
   await expect(clear).toHaveCSS('text-decoration-line', 'underline');
   await clear.click();
-  await expect.poll(() =>
-    select.evaluate((element: HTMLDsSelectMultiElement) => element.values),
-  ).toEqual([]);
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectMultiElement) => element.values))
+    .toEqual([]);
   await expect(triggerLabel).toHaveText('Entities');
   await expect(select.getByRole('listbox')).toBeVisible();
 });
@@ -486,39 +570,69 @@ test('submits repeated multi values, validates required controls, and resets', a
   const single = page.locator('#required-single');
   const multi = page.locator('#required-multi');
 
-  await expect.poll(() => form.evaluate(element => (element as HTMLFormElement).checkValidity())).toBe(false);
+  await expect
+    .poll(() => form.evaluate(element => (element as HTMLFormElement).checkValidity()))
+    .toBe(false);
   await single.evaluate((element: HTMLDsSelectElement) => {
     element.value = 'apple';
   });
   await multi.evaluate((element: HTMLDsSelectMultiElement) => {
     element.values = ['apple', 'cherry'];
   });
-  await expect.poll(() => form.evaluate(element => (element as HTMLFormElement).checkValidity())).toBe(true);
+  await expect
+    .poll(() => form.evaluate(element => (element as HTMLFormElement).checkValidity()))
+    .toBe(true);
 
   await page.locator('#submit').click();
-  await expect.poll(() => page.evaluate(() => window.__formEntries)).toEqual({
-    fruit: 'apple',
-    groups: ['apple', 'cherry'],
-  });
+  await expect
+    .poll(() => page.evaluate(() => window.__formEntries))
+    .toEqual({
+      fruit: 'apple',
+      groups: ['apple', 'cherry'],
+    });
 
   await page.locator('#reset').click();
-  await expect.poll(() => single.evaluate((element: HTMLDsSelectElement) => element.value)).toBe('');
-  await expect.poll(() =>
-    multi.evaluate((element: HTMLDsSelectMultiElement) => element.values),
-  ).toEqual([]);
+  await expect
+    .poll(() => single.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('');
+  await expect
+    .poll(() => multi.evaluate((element: HTMLDsSelectMultiElement) => element.values))
+    .toEqual([]);
 });
 
-test('keeps prefix icons and chevrons secondary across selected surface contexts', async ({ page }) => {
+test('keeps prefix icons and chevrons secondary across selected surface contexts', async ({
+  page,
+}) => {
   const cases = [
     [undefined, '--color-foreground-secondary', '--color-foreground-primary'],
     ['faint', '--color-foreground-secondary', '--color-foreground-primary'],
-    ['medium', '--color-foreground-on-medium-background-secondary', '--color-foreground-on-medium-background-primary'],
-    ['bold', '--color-foreground-on-bold-background-secondary', '--color-foreground-on-bold-background-primary'],
-    ['strong', '--color-foreground-on-strong-background-secondary', '--color-foreground-on-strong-background-primary'],
-    ['translucent', '--color-translucent-foreground-secondary', '--color-translucent-foreground-primary'],
+    [
+      'medium',
+      '--color-foreground-on-medium-background-secondary',
+      '--color-foreground-on-medium-background-primary',
+    ],
+    [
+      'bold',
+      '--color-foreground-on-bold-background-secondary',
+      '--color-foreground-on-bold-background-primary',
+    ],
+    [
+      'strong',
+      '--color-foreground-on-strong-background-secondary',
+      '--color-foreground-on-strong-background-primary',
+    ],
+    [
+      'translucent',
+      '--color-translucent-foreground-secondary',
+      '--color-translucent-foreground-primary',
+    ],
     ['inverted', '--color-inverted-foreground-secondary', '--color-inverted-foreground-primary'],
     ['media', '--color-media-foreground-secondary', '--color-media-foreground-primary'],
-    ['always-dark', '--color-always-dark-foreground-secondary', '--color-always-dark-foreground-primary'],
+    [
+      'always-dark',
+      '--color-always-dark-foreground-secondary',
+      '--color-always-dark-foreground-primary',
+    ],
   ] as const;
 
   for (const selector of ['#single', '#multi']) {
@@ -534,22 +648,31 @@ test('keeps prefix icons and chevrons secondary across selected surface contexts
         element.background = value;
       }, background);
 
-      await expect.poll(() => select.evaluate((element, [secondary, primary]) => {
-        const prefix = element.querySelector<HTMLElement>('.trigger__prefix');
-        const chevron = element.querySelector<HTMLElement>('.trigger__chevron');
-        const label = element.querySelector<HTMLElement>('.trigger__label');
-        const probe = document.createElement('span');
-        probe.style.color = `var(${secondary})`;
-        document.body.append(probe);
-        const expectedSecondary = getComputedStyle(probe).color;
-        probe.style.color = `var(${primary})`;
-        const expectedPrimary = getComputedStyle(probe).color;
-        probe.remove();
-        if (!prefix || !chevron || !label) return false;
-        return getComputedStyle(prefix).color === expectedSecondary &&
-          getComputedStyle(chevron).color === expectedSecondary &&
-          getComputedStyle(label).color === expectedPrimary;
-      }, [secondaryToken, primaryToken] as const)).toBe(true);
+      await expect
+        .poll(() =>
+          select.evaluate(
+            (element, [secondary, primary]) => {
+              const prefix = element.querySelector<HTMLElement>('.trigger__prefix');
+              const chevron = element.querySelector<HTMLElement>('.trigger__chevron');
+              const label = element.querySelector<HTMLElement>('.trigger__label');
+              const probe = document.createElement('span');
+              probe.style.color = `var(${secondary})`;
+              document.body.append(probe);
+              const expectedSecondary = getComputedStyle(probe).color;
+              probe.style.color = `var(${primary})`;
+              const expectedPrimary = getComputedStyle(probe).color;
+              probe.remove();
+              if (!prefix || !chevron || !label) return false;
+              return (
+                getComputedStyle(prefix).color === expectedSecondary &&
+                getComputedStyle(chevron).color === expectedSecondary &&
+                getComputedStyle(label).color === expectedPrimary
+              );
+            },
+            [secondaryToken, primaryToken] as const
+          )
+        )
+        .toBe(true);
     }
   }
 });

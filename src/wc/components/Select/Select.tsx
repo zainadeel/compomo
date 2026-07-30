@@ -142,29 +142,63 @@ export class Select {
     // eslint-disable-next-line @typescript-eslint/no-this-alias -- adapter getters preserve reactive component ownership without inheritance.
     const owner = this;
     return new SelectController<SelectOption>({
-      get host() { return owner.el; },
+      get host() {
+        return owner.el;
+      },
       generatedId: owner.generatedId,
-      get options() { return owner.visibleOptions; },
-      get searchable() { return owner.searchable; },
-      get isLoading() { return owner.isLoading; },
-      get isDisabled() { return owner.isDisabled; },
+      get options() {
+        return owner.visibleOptions;
+      },
+      get searchable() {
+        return owner.searchable;
+      },
+      get isLoading() {
+        return owner.isLoading;
+      },
+      get isDisabled() {
+        return owner.isDisabled;
+      },
       get preferredIndex() {
         return owner.visibleOptions.findIndex(
-          option => option.value === owner.value && !option.isInactive,
+          option => option.value === owner.value && !option.isInactive
         );
       },
-      get open() { return owner.open; },
-      set open(value) { owner.open = value; },
-      get activeIndex() { return owner.activeIndex; },
-      set activeIndex(value) { owner.activeIndex = value; },
-      get searchTerm() { return owner.searchTerm; },
-      set searchTerm(value) { owner.searchTerm = value; },
-      get focusRingVisible() { return owner.focusRingVisible; },
-      set focusRingVisible(value) { owner.focusRingVisible = value; },
-      get position() { return owner.position; },
-      set position(value) { owner.position = value; },
-      get positionReady() { return owner.positionReady; },
-      set positionReady(value) { owner.positionReady = value; },
+      get open() {
+        return owner.open;
+      },
+      set open(value) {
+        owner.open = value;
+      },
+      get activeIndex() {
+        return owner.activeIndex;
+      },
+      set activeIndex(value) {
+        owner.activeIndex = value;
+      },
+      get searchTerm() {
+        return owner.searchTerm;
+      },
+      set searchTerm(value) {
+        owner.searchTerm = value;
+      },
+      get focusRingVisible() {
+        return owner.focusRingVisible;
+      },
+      set focusRingVisible(value) {
+        owner.focusRingVisible = value;
+      },
+      get position() {
+        return owner.position;
+      },
+      set position(value) {
+        owner.position = value;
+      },
+      get positionReady() {
+        return owner.positionReady;
+      },
+      set positionReady(value) {
+        owner.positionReady = value;
+      },
       selectOption: option => owner.selectOption(option),
     });
   }
@@ -304,7 +338,7 @@ export class Select {
     option: SelectOption,
     index: number,
     usesIcons: boolean,
-    usesSubtext: boolean,
+    usesSubtext: boolean
   ) {
     const selected = option.value === this.value;
     const active = index === this.activeIndex;
@@ -317,14 +351,19 @@ export class Select {
         active={active}
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
-        leading={usesIcons && option.icon ? (
-          <span class="ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
-            <ds-icon name={option.icon} size={this.size} color="inherit" />
-          </span>
-        ) : undefined}
+        leading={
+          usesIcons && option.icon ? (
+            <span
+              class="ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
+              aria-hidden="true"
+            >
+              <ds-icon name={option.icon} size={this.size} color="inherit" />
+            </span>
+          ) : undefined
+        }
         onHover={() => {
-            this.focusRingVisible = false;
-            this.activeIndex = index;
+          this.focusRingVisible = false;
+          this.activeIndex = index;
         }}
         onSelect={() => this.selectOption(option)}
       />
@@ -340,9 +379,9 @@ export class Select {
     const usesOptionIcons = choiceListUsesIcons(this.allOptions);
     const usesOptionSubtext = choiceListUsesSubtext(this.allOptions);
     const showError = this.error && Boolean(this.errorMessage);
-    const describedBy = [this.ariaDescribedby, showError ? this.errorId : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined;
+    const describedBy =
+      [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
+      undefined;
     const popupStyle = {
       position: 'fixed',
       left: '0',
@@ -375,8 +414,7 @@ export class Select {
             'ds-control-frame': true,
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
-            'ds-interaction-fill--selected':
-              !inactive && this.activeFill && this.hasSelection,
+            'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
             'trigger--bordered': this.hasBorder || this.error,
             'trigger--placeholder': showPlaceholder,
             'trigger--has-value': this.hasSelection,
@@ -400,7 +438,10 @@ export class Select {
           onKeyDown={this.handleTriggerKeyDown}
         >
           {(this.icon || this.isLoading) && (
-            <span class="trigger__prefix ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
+            <span
+              class="trigger__prefix ds-control-icon-box ds-interaction-fill__content"
+              aria-hidden="true"
+            >
               {this.isLoading ? (
                 <ds-loader size={iconSize} color="inherit" />
               ) : (
@@ -417,13 +458,17 @@ export class Select {
           >
             {label}
           </ds-text>
-          <span class="trigger__chevron ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
+          <span
+            class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
+            aria-hidden="true"
+          >
             <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
           </span>
         </button>
 
         {this.open && (
           <div
+            popover="manual"
             ref={element => {
               this.controller.setPopupElement((element as HTMLDivElement) ?? null);
             }}
@@ -498,18 +543,19 @@ export class Select {
                         {section.header}
                       </ds-text>
                     )}
-                    {section.options.map(option => this.renderOption(
-                      option,
-                      flatIndex++,
-                      usesOptionIcons,
-                      usesOptionSubtext,
-                    ))}
+                    {section.options.map(option =>
+                      this.renderOption(option, flatIndex++, usesOptionIcons, usesOptionSubtext)
+                    )}
                   </div>
                 ))
               )}
             </div>
             {this.allowClear && this.hasSelection && !this.isLoading && (
-              <ChoiceFooter size={this.size} clearLabel={this.clearLabel} onClear={this.clearSelection} />
+              <ChoiceFooter
+                size={this.size}
+                clearLabel={this.clearLabel}
+                onClear={this.clearSelection}
+              />
             )}
           </div>
         )}

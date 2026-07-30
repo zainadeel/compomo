@@ -122,7 +122,11 @@
 :host(.ds-text--color-ai)        { color: var(--color-foreground-bold-ai); }
 :host(.ds-text--color-on-strong) { color: var(--color-foreground-on-strong-background-primary); }
 :host(.ds-text--color-on-bold)   { color: var(--color-foreground-on-bold-background-primary); }
-:host(.ds-text--color-inherit)   { color: inherit; }
+/*
+ * The inherit state intentionally has no declaration. `color` inherits
+ * naturally, while omitting a host rule lets an owning component apply a
+ * semantic token directly to ds-text without depending on stylesheet order.
+ */
 
 /* ── Decorations ─────────────────────────────────────────────────────────── */
 

@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Select foundations test</title>
     <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      .contained-selects {
+        contain: layout;
+        overflow: hidden;
+        width: 480px;
+        height: 48px;
+        margin: 96px 0 0 160px;
+        padding: 24px;
+      }
+    </style>
   </head>
   <body>
     <main>
@@ -14,11 +24,26 @@
       <ds-select id="searchable" searchable aria-label="Search fruit"></ds-select>
       <ds-select id="loading" icon="Chart" is-loading aria-label="Loading fruit"></ds-select>
       <ds-select id="surface" background="bold" aria-label="Bold fruit"></ds-select>
-      <ds-select-multi id="multi" name="entities" placeholder="Entities" aria-label="Entities"></ds-select-multi>
-      <ds-select-multi id="multi-search" searchable placeholder="Entities" aria-label="Search entities"></ds-select-multi>
+      <ds-select-multi
+        id="multi"
+        name="entities"
+        placeholder="Entities"
+        aria-label="Entities"
+      ></ds-select-multi>
+      <ds-select-multi
+        id="multi-search"
+        searchable
+        placeholder="Entities"
+        aria-label="Search entities"
+      ></ds-select-multi>
 
       <form id="selection-form">
-        <ds-select id="required-single" name="fruit" required aria-label="Required fruit"></ds-select>
+        <ds-select
+          id="required-single"
+          name="fruit"
+          required
+          aria-label="Required fruit"
+        ></ds-select>
         <ds-select-multi
           id="required-multi"
           name="group"
@@ -29,6 +54,15 @@
         <button id="submit" type="submit">Submit</button>
         <button id="reset" type="reset">Reset</button>
       </form>
+
+      <section class="contained-selects" aria-label="Contained select fixtures">
+        <ds-select id="contained-single" aria-label="Contained fruit"></ds-select>
+        <ds-select-multi
+          id="contained-multi"
+          placeholder="Contained entities"
+          aria-label="Contained entities"
+        ></ds-select-multi>
+      </section>
     </main>
 
     <script type="module" src="/selects-setup.mjs"></script>
