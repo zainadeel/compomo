@@ -432,8 +432,24 @@ test('shows busy state in the trigger and popup', async ({ page }) => {
   await expect(trigger.locator('ds-loader')).toHaveCount(1);
   await trigger.click();
   const loadingOption = select.getByRole('option', { name: 'Loading' });
+  const popupLoader = loadingOption.locator('ds-loader');
   await expect(loadingOption).toHaveCount(1);
   await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
+
+  const [loadingBox, loaderBox] = await Promise.all([
+    loadingOption.boundingBox(),
+    popupLoader.boundingBox(),
+  ]);
+  expect(loadingBox).not.toBeNull();
+  expect(loaderBox).not.toBeNull();
+  expect(loaderBox!.x + loaderBox!.width / 2).toBeCloseTo(
+    loadingBox!.x + loadingBox!.width / 2,
+    1
+  );
+  expect(loaderBox!.y + loaderBox!.height / 2).toBeCloseTo(
+    loadingBox!.y + loadingBox!.height / 2,
+    1
+  );
 });
 
 test('uses a thicker inset stroke for error without changing control geometry', async ({

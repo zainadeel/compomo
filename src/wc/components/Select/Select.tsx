@@ -578,7 +578,7 @@ export class Select {
             >
               {this.isLoading ? (
                 <div
-                  class="ds-choice-loading"
+                  class="ds-choice-loading ds-empty-region"
                   role="option"
                   aria-selected="false"
                   aria-disabled="true"

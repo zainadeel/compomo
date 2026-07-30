@@ -6491,7 +6491,7 @@
             "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
             "When allowClear is enabled, the clear affordance appears only after a value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
             "Clearing emits dsChange with an empty string or empty array according to mode plus dsClear, keeps the popup open, and restores useful focus.",
-            "Loading keeps the trigger visible, replaces its prefix icon, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
+            "Loading keeps the trigger visible, replaces its prefix icon, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive. When the popup is open, its single loader is centered vertically and horizontally within the loading region.",
             "The trigger label stays left-aligned at every width. The default size is md in both forms and filter bars; smaller sizes require an explicit density need.",
             "Use option icons only when they help users differentiate choices. Icons render only when every option in the complete list provides one; mixed icon data falls back to the text-only row layout.",
             "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
