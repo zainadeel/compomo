@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.0](https://github.com/zainadeel/compomo/compare/v13.0.0...v13.1.0) (2026-07-30)
+
+
+### Added
+
+* use shared opacity tokens ([#394](https://github.com/zainadeel/compomo/issues/394)) ([fddc194](https://github.com/zainadeel/compomo/commit/fddc194233cfee9d311362dbaa34b6f4dfe2346a))
+
 ## [13.0.0](https://github.com/zainadeel/compomo/compare/v12.9.0...v13.0.0) (2026-07-30)
 
 
