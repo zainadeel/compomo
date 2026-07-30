@@ -693,6 +693,8 @@ test('aligns a compact top-level title with BarNav control text', async ({ page 
     element.heading = 'Live Map';
   });
   await expect(header).toHaveClass(/bar-title-host--compact/);
+  await expect(header.getByRole('button', { name: /back/i })).toHaveCount(0);
+  await expect(header.locator('.bar-title__heading')).toHaveText('Live Map');
 
   const geometry = await header.evaluate(element => {
     const host = element.getBoundingClientRect();
