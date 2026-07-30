@@ -115,26 +115,26 @@ describe('source-derived component inventory', () => {
   it('detects missing and stale generated framework adapters', () => {
     const root = fixtureRoot();
     writeComponent(root, 'NewWidget', 'ds-new-widget');
-    writeFile(root, 'src/angular/ds-new-widget.ts');
-    writeFile(root, 'src/angular/ds-new-widget 2.ts');
-    writeFile(root, 'src/angular/ds-deleted-widget.ts');
-    writeFile(root, 'src/react/ds-deleted-widget.ts');
-    writeFile(root, 'src/react/ds-deleted-widget 2.ts');
+    writeFile(root, 'src/.generated/angular/ds-new-widget.ts');
+    writeFile(root, 'src/.generated/angular/ds-new-widget 2.ts');
+    writeFile(root, 'src/.generated/angular/ds-deleted-widget.ts');
+    writeFile(root, 'src/.generated/react/ds-deleted-widget.ts');
+    writeFile(root, 'src/.generated/react/ds-deleted-widget 2.ts');
 
     const errors = validateFrameworkAdapters({ root, components: discoverComponents(root) });
     assert.ok(
       errors.some(error =>
-        error.includes('missing generated framework adapter src/react/ds-new-widget.ts')
+        error.includes('missing generated framework adapter src/.generated/react/ds-new-widget.ts')
       )
     );
     assert.ok(
       errors.some(error =>
-        error.includes('stale generated framework adapter src/angular/ds-deleted-widget.ts')
+        error.includes('stale generated framework adapter src/.generated/angular/ds-deleted-widget.ts')
       )
     );
     assert.ok(
       errors.some(error =>
-        error.includes('stale generated framework adapter src/react/ds-deleted-widget.ts')
+        error.includes('stale generated framework adapter src/.generated/react/ds-deleted-widget.ts')
       )
     );
     assert.equal(
@@ -143,25 +143,21 @@ describe('source-derived component inventory', () => {
     );
   });
 
-  it('cleans generated proxies and barrels while preserving Angular support files', () => {
+  it('cleans ignored generated adapters while preserving authored framework entrypoints', () => {
     const root = fixtureRoot();
     for (const generatedPath of [
-      'src/angular/ds-new-widget.ts',
-      'src/angular/ds-new-widget 2.ts',
-      'src/angular/proxies.ts',
-      'src/angular/proxies 2.ts',
-      'src/angular/index.ts',
-      'src/react/ds-new-widget.ts',
-      'src/react/components.ts',
-      'src/react/components 2.ts',
+      'src/.generated/angular/ds-new-widget.ts',
+      'src/.generated/angular/ds-new-widget 2.ts',
+      'src/.generated/angular/proxies.ts',
+      'src/.generated/angular/proxies 2.ts',
+      'src/.generated/angular/index.ts',
+      'src/.generated/angular/angular-component-lib/utils.ts',
+      'src/.generated/react/ds-new-widget.ts',
+      'src/.generated/react/components.ts',
+      'src/.generated/react/components 2.ts',
     ])
       writeFile(root, generatedPath, 'generated');
-    for (const supportPath of [
-      'src/angular/boolean-value-accessor.ts',
-      'src/angular/value-accessor.ts',
-      'src/angular/angular-component-lib/utils.ts',
-    ])
-      writeFile(root, supportPath, 'preserved');
+    writeFile(root, 'src/framework/angular.ts', 'preserved');
     writeFile(root, 'src/angular/angular-component-lib/utils 3.ts', 'collision');
     writeFile(root, 'src/wc/components/Widget/Widget.stories 2.ts', 'collision');
     writeFile(root, 'tests/e2e/widget.spec 2.ts', 'collision');
@@ -171,24 +167,23 @@ describe('source-derived component inventory', () => {
     const removed = cleanFrameworkProxies(root);
     assert.deepEqual(removed, [
       'public/r/widget 2.json',
+      'src/.generated/angular/angular-component-lib/utils.ts',
+      'src/.generated/angular/ds-new-widget 2.ts',
+      'src/.generated/angular/ds-new-widget.ts',
+      'src/.generated/angular/index.ts',
+      'src/.generated/angular/proxies 2.ts',
+      'src/.generated/angular/proxies.ts',
+      'src/.generated/react/components 2.ts',
+      'src/.generated/react/components.ts',
+      'src/.generated/react/ds-new-widget.ts',
       'src/angular/angular-component-lib/utils 3.ts',
-      'src/angular/ds-new-widget 2.ts',
-      'src/angular/ds-new-widget.ts',
-      'src/angular/index.ts',
-      'src/angular/proxies 2.ts',
-      'src/angular/proxies.ts',
-      'src/react/components 2.ts',
-      'src/react/components.ts',
-      'src/react/ds-new-widget.ts',
       'src/wc/components/Widget/Widget.stories 2.ts',
       'tests/e2e/widget.spec 2.ts',
     ]);
-    for (const supportPath of [
-      'src/angular/boolean-value-accessor.ts',
-      'src/angular/value-accessor.ts',
-      'src/angular/angular-component-lib/utils.ts',
-    ])
-      assert.equal(fs.readFileSync(path.join(root, supportPath), 'utf8'), 'preserved');
+    assert.equal(
+      fs.readFileSync(path.join(root, 'src/framework/angular.ts'), 'utf8'),
+      'preserved'
+    );
     assert.equal(fs.existsSync(path.join(root, '.stencil')), false);
   });
 

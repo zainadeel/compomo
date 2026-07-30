@@ -1,78 +1,86 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import type { TemplateResult } from 'lit';
-import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-shell-app.js';
 import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-bar-nav.js';
-import '../../../../dist/components/ds-bar-title.js';
 import '../../../../dist/components/ds-panel-tools.js';
-import '../../../../dist/components/ds-shell-tools.js';
-import '../../../../dist/components/ds-mobile-bar-nav.js';
-import '../../../../dist/components/ds-mobile-sheet-nav.js';
-import '../../../../dist/components/ds-mobile-header.js';
-import '../../../../dist/components/ds-shell-page.js';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
-import type { PanelToolsItem } from '../PanelTools/panel-tools-types';
+import {
+  PANEL_TOOLS_DEFAULT_ITEMS,
+  type PanelToolsItem,
+} from '../PanelTools/panel-tools-types';
 import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
+import type {
+  ShellNavigationConfig,
+  ShellPageChromeConfig,
+  ShellToolsConfig,
+} from './shell-app-types';
 
-const PANEL_GROUPS: PanelNavGroup[] = [
+const DASHBOARD_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'area-a', icon: 'MapPage', label: 'Area A' },
-      { id: 'area-b', icon: 'ShieldCircle', label: 'Area B' },
+      { id: 'area-a', icon: 'MapPage', label: 'Area A', href: '/dashboard/area-a/tab-1' },
+      { id: 'area-b', icon: 'ShieldCircle', label: 'Area B', href: '/dashboard/area-b/tab-2' },
     ],
   },
   {
     label: 'Section 1',
     items: [
-      { id: 'area-c', icon: 'Chart', label: 'Area C' },
-      { id: 'area-d', icon: 'FuelPump', label: 'Area D' },
+      { id: 'area-c', icon: 'Chart', label: 'Area C', href: '/dashboard/area-c' },
+      { id: 'area-d', icon: 'FuelPump', label: 'Area D', href: '/dashboard/area-d' },
     ],
   },
 ];
 
-const BAR_TABS = [
-  { id: 'tab-1', label: 'Tab 1' },
-  { id: 'tab-2', label: 'Tab 2', dot: true },
+const SETTINGS_GROUPS: PanelNavGroup[] = [
+  {
+    items: [
+      { id: 'account', icon: 'Gear', label: 'Account', href: '/settings/account' },
+    ],
+  },
 ];
 
-const PANEL_TOOLS_ITEMS: PanelToolsItem[] = [
-  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
-  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
-];
+const NAVIGATION: ShellNavigationConfig = {
+  groups: DASHBOARD_GROUPS,
+  dashboardGroups: DASHBOARD_GROUPS,
+  settingsGroups: SETTINGS_GROUPS,
+  currentUrl: '/dashboard/area-b/tab-2',
+  activeId: 'area-b',
+  browseContext: 'dashboard',
+  routerMode: 'event',
+  storageKey: 'storybook.shell.panel',
+  userName: 'User Name',
+  userInitial: 'U',
+};
 
-const wiredPanelTools = new WeakSet<Element>();
+const PAGE_CHROME: ShellPageChromeConfig = {
+  heading: 'Area B',
+  tabs: [
+    { id: 'tab-1', label: 'Tab 1' },
+    { id: 'tab-2', label: 'Tab 2', dot: true },
+  ],
+  value: 'tab-2',
+  currentUrl: '/dashboard/area-b/tab-2',
+  sectionsAriaLabel: 'Change Area B page',
+};
 
-function bindTabChange(nav: HTMLElement & { value: string }) {
-  nav.addEventListener('dsTabChange', (e: Event) => {
-    nav.value = (e as CustomEvent<string>).detail;
-  });
+const TOOLS: ShellToolsConfig = {
+  items: PANEL_TOOLS_DEFAULT_ITEMS,
+  storageKey: 'storybook.shell.tool',
+};
+
+function toolViews() {
+  return html`
+    <div slot="search-view">Search tool</div>
+    <div slot="agents-view">Agents tool</div>
+    <div slot="messages-view">Messages tool</div>
+    <div slot="stacks-view">Stacks tool</div>
+    <div slot="activity-view">Activity tool</div>
+    <div slot="help-view">Help &amp; Support</div>
+  `;
 }
 
-function wirePanelTools(el: Element | null) {
-  if (!el || wiredPanelTools.has(el)) return;
-  wiredPanelTools.add(el);
-
-  const tools = el as HTMLElement & {
-    open: boolean;
-    activeTool: string;
-    items: PanelToolsItem[];
-  };
-  tools.items = PANEL_TOOLS_ITEMS;
-  tools.open = false;
-  tools.activeTool = '';
-
-  tools.addEventListener('dsToolChange', (e: Event) => {
-    const { id, selected } = (e as CustomEvent<{ id: string; selected: boolean }>).detail;
-    tools.open = selected;
-    if (selected) tools.activeTool = id;
-  });
-}
-
-function shellLayout(gradientPreset: ShellGradientPreset): TemplateResult {
+function shellLayout(gradientPreset: ShellGradientPreset) {
   return html`
     <div
       style="
@@ -81,27 +89,17 @@ function shellLayout(gradientPreset: ShellGradientPreset): TemplateResult {
         font-family: var(--typography-font-family, system-ui);
       "
     >
-      <ds-shell-app nav-style="dashboard" gradient-preset=${gradientPreset} style="height: 100%;">
-        <ds-panel-nav
-          slot="panel"
-          nav-style="dashboard"
-          .groups=${PANEL_GROUPS}
-          active-id="area-b"
-          user-name="User Name"
-          user-initial="U"
-        ></ds-panel-nav>
-        <ds-bar-nav
-          slot="bar"
-          nav-style="dashboard"
-          base-path="/example"
-          .tabs=${BAR_TABS}
-          value="tab-2"
-          ${ref(el => {
-            if (!el) return;
-            bindTabChange(el as HTMLElement & { value: string });
-          })}
-        ></ds-bar-nav>
-        <ds-panel-tools slot="tools" ${ref(wirePanelTools)}></ds-panel-tools>
+      <ds-shell-app
+        .navigation=${NAVIGATION}
+        .pageChrome=${PAGE_CHROME}
+        .tools=${TOOLS}
+        gradient-preset=${gradientPreset}
+        style="height: 100%;"
+      >
+        ${toolViews()}
+        <section style="min-height: 100%; padding: var(--dimension-space-200); box-sizing: border-box;">
+          Router-owned Area B content
+        </section>
       </ds-shell-app>
     </div>
   `;
@@ -115,66 +113,52 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const WithGradient: Story = {
-  name: 'With gradient',
+export const Managed: Story = {
+  name: 'Managed application',
   render: () => shellLayout('neutral'),
 };
 
 export const WithoutGradient: Story = {
-  name: 'Without gradient',
+  name: 'Managed without gradient',
   render: () => shellLayout('none'),
 };
 
-export const MobileFoundation: Story = {
-  name: 'Mobile foundation',
+export const MobileManaged: Story = {
+  name: 'Managed mobile',
   parameters: {
     viewport: { defaultViewport: 'mobile1' },
   },
-  render: () => html`
-    <div style="height: 100vh;">
-      <ds-shell-app
-        nav-style="dashboard"
-        gradient-preset="warm"
-        mobile-destination="area"
-        style="height: 100%;"
-      >
-        <ds-panel-nav slot="panel" .groups=${PANEL_GROUPS}></ds-panel-nav>
-        <ds-mobile-sheet-nav
-          slot="mobile-sheet-nav"
-          .dashboardGroups=${PANEL_GROUPS}
-          .settingsGroups=${[]}
-          current-url="/dashboard/area-a/tab-2"
-        ></ds-mobile-sheet-nav>
-        <ds-bar-nav
-          slot="bar"
-          .tabs=${BAR_TABS}
-          base-path="/dashboard/area-a"
-          current-url="/dashboard/area-a/tab-2"
-        ></ds-bar-nav>
-        <ds-shell-tools slot="tools" .items=${PANEL_TOOLS_ITEMS}>
-          <div slot="search-view">Search tool</div>
-          <div slot="agents-view">Agents tool</div>
-          <div slot="messages-view">Messages tool</div>
-        </ds-shell-tools>
-        <ds-shell-page responsive-mode="mobile">
-          <ds-bar-title slot="header" heading="Tab 2"></ds-bar-title>
-          <ds-mobile-header
-            slot="mobile-header"
-            .sections=${BAR_TABS}
+  render: () => shellLayout('warm'),
+};
+
+export const AdvancedSlotted: Story = {
+  name: 'Advanced slotted composition',
+  render: () => {
+    const items: PanelToolsItem[] = PANEL_TOOLS_DEFAULT_ITEMS;
+    return html`
+      <div style="height: 100vh;">
+        <ds-shell-app composition="slotted" style="height: 100%;">
+          <ds-panel-nav
+            slot="panel"
+            .groups=${DASHBOARD_GROUPS}
+            active-id="area-b"
+            user-name="User Name"
+            user-initial="U"
+          ></ds-panel-nav>
+          <ds-bar-nav
+            slot="bar"
+            .tabs=${PAGE_CHROME.tabs}
             value="tab-2"
-            sections-aria-label="Change Area A page"
-          ></ds-mobile-header>
-          <main style="min-height: 100%; padding: var(--dimension-space-200); box-sizing: border-box;">
-            Routed Area A content
-          </main>
-        </ds-shell-page>
-        <ds-mobile-bar-nav
-          slot="mobile-bar-nav"
-          .currentArea=${{ id: 'area-a', icon: 'MapPage', label: 'Area A' }}
-          active-destination="area"
-          inbox-dot
-        ></ds-mobile-bar-nav>
-      </ds-shell-app>
-    </div>
-  `,
+            heading="Area B"
+          ></ds-bar-nav>
+          <ds-panel-tools
+            slot="tools"
+            .items=${items}
+            active-tool=""
+          ></ds-panel-tools>
+          <section style="padding: var(--dimension-space-200);">Manually composed shell content</section>
+        </ds-shell-app>
+      </div>
+    `;
+  },
 };

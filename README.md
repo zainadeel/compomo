@@ -76,6 +76,7 @@ co-located component agent JSON and executable patterns.
 
 - [Storybook introduction and usage](src/docs/Introduction.mdx)
 - [Framework integration](docs/framework-integration.md)
+- [v13 migration guide](docs/migrations/v13.md)
 - [Maintainer documentation router](docs/index.md)
 - [Repository instructions](AGENTS.md)
 

@@ -463,30 +463,37 @@ test('maps every filled intent and contrast recipe', async ({ page }) => {
         control.contrast = values.contrast;
       }, { intent, contrast });
       await expect(button).toHaveClass(new RegExp(`button-filled--intent-${intent}`));
-      if (contrast === 'bold') {
-        await expect(button).not.toHaveClass(/button-filled--contrast-/);
-      } else {
-        await expect(button).toHaveClass(new RegExp(`button-filled--contrast-${contrast}`));
-      }
+      await expect(button).toHaveClass(new RegExp(`button-filled--contrast-${contrast}`));
       await expect(button).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     }
   }
 });
 
-test('emits controlled unfilled toggle intent without mutating isActive', async ({ page }) => {
+test('emits controlled toggle intent only for pressed without mutating state', async ({ page }) => {
   const host = page.locator('#unfilled-label');
   const button = host.locator('button');
 
   await button.click();
   await expect.poll(() => page.evaluate(() => (
     window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> }
+  ).__buttonChanges)).toEqual([]);
+
+  await host.evaluate(element => {
+    (element as HTMLElement & { pressed?: boolean }).pressed = false;
+  });
+  await button.click();
+  await expect.poll(() => page.evaluate(() => (
+    window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> }
   ).__buttonChanges)).toEqual([{ id: 'unfilled-label', detail: true }]);
+
   expect(await host.evaluate(element => (
-    (element as HTMLElement & { isActive: boolean }).isActive
+    (element as HTMLElement & { pressed?: boolean }).pressed
   ))).toBe(false);
 
   await host.evaluate(element => {
-    (element as HTMLElement & { isActive: boolean }).isActive = true;
+    const control = element as HTMLElement & { pressed?: boolean; isActive: boolean };
+    control.pressed = true;
+    control.isActive = false;
   });
   await button.click();
   await expect.poll(() => page.evaluate(() => (
@@ -495,9 +502,7 @@ test('emits controlled unfilled toggle intent without mutating isActive', async 
     { id: 'unfilled-label', detail: true },
     { id: 'unfilled-label', detail: false },
   ]);
-  expect(await host.evaluate(element => (
-    (element as HTMLElement & { isActive: boolean }).isActive
-  ))).toBe(true);
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('requires an explicit accessible name for icon-only buttons', async ({ page }) => {

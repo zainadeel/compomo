@@ -7,17 +7,17 @@
   "tag": "ds-panel-tools",
   "audience": "specialized",
   "status": "stable",
-  "summary": "Required ShellApp utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+  "summary": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools, normally assembled by managed ShellApp through ShellTools.",
   "useWhen": [
-    "Composing the required global tools region inside the application's single ShellApp.",
+    "An advanced slotted ShellApp needs the desktop and tablet global-tools primitive directly.",
     "Users need to move between application-wide utilities without losing each tool's in-progress state.",
     "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
   ],
   "avoidWhen": [
     "The action is specific to the current page or selected content rather than globally available across the application.",
     "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
-    "A consumer wants to add arbitrary tools, reorder fixed tools, or repurpose a semantic tool id.",
-    "Building the mobile tools experience; future mobile ShellApp composition uses a different bottom-bar and panel pattern.",
+    "Tool definitions lack stable ids, visible labels, explicit rail placement, or application-owned view content.",
+    "Building the mobile tools experience; use ShellTools or managed ShellApp.",
     "PanelTools would be mounted outside the application's single ShellApp."
   ],
   "alternatives": [
@@ -45,16 +45,16 @@
   "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
-    "Keep Search first in the rail header and Help last in the rail footer so keyboard and visual order remain predictable.",
+    "Use the canonical default recipe when the product needs Search first and Help last; custom recipes must preserve a deliberate keyboard and visual order.",
     "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
     "Do not trigger global shortcuts while focus is in an editable control.",
     "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
     "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."
   ],
   "states": [
-    "Search and Help are required; optional Agents, Messages, Stacks, and Activity tools are filtered by the application for authorization and entitlement.",
-    "Use only the fixed semantic tool ids and canonical order: Search, Agents, Messages, Stacks, Activity, Help; do not reorder, duplicate, or repurpose them.",
-    "Search is application-wide; Agents is user-to-AI chat; Messages is user-to-user chat; Stacks is a specialized inbox of grouped application events for review; Activity is the notification center; Help is drawer content that may link to external resources.",
+    "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
+    "Tool order, header or footer rail placement, shortcut, and mobile grouping come from explicit item metadata rather than id-based layout assumptions.",
+    "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Help pinned last, current shortcuts, and Messages, Stacks, and Activity grouped under mobile Inbox.",
     "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
     "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
     "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
@@ -77,19 +77,19 @@
   "responsiveBehavior": [
     "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
     "ShellApp owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
-    "Below 768px, do not reuse desktop PanelTools: future ShellApp mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
+    "Below 768px, do not reuse PanelTools directly; ShellTools and managed ShellApp present the same persistent tool owners through mobile chrome.",
     "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
     "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
     "Use fixed drawer widths for now; do not add user resizing or width persistence."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign items as a JavaScript property for structured data; items-json is the string fallback.",
+      "Assign items and headers as JavaScript properties and replace their references when collections change.",
       "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
       "Keep PanelTools mounted at ShellApp scope across route changes and provide each product through its matching named slot."
     ],
     "react": [
-      "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
+      "Pass a stable explicitly ordered item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
       "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
     ],
     "angular": [

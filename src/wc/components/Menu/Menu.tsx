@@ -25,18 +25,14 @@ import {
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 import type { MenuAlign, MenuSide } from './menu-position';
 import type { MenuItemData, MenuSection } from './menu-types';
+import { snapshotMenuSections } from './menu-sections';
 
 export type MenuSelectionMode = 'none' | 'single';
 export type MenuSize = ControlSize;
 import {
-  isMenuGradientPickerSection,
   isMenuPickerSection,
   isMenuSwatchPickerSection,
 } from './menu-types';
-import {
-  shellGradientPickerSections,
-  type ShellGradientPreset,
-} from '../../shell/shell-gradient-presets';
 
 const MENU_FOCUSABLE_SELECTOR = [
   'a[href]',
@@ -46,23 +42,6 @@ const MENU_FOCUSABLE_SELECTOR = [
   'textarea:not([disabled])',
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
-
-function snapshotMenuSections(sections: MenuSection[]): MenuSection[] {
-  return sections.map(section => {
-    if (isMenuGradientPickerSection(section)) return { ...section };
-    if (isMenuSwatchPickerSection(section)) {
-      return {
-        ...section,
-        options: section.options?.map(option => ({ ...option })),
-        sections: section.sections?.map(swatchSection => ({
-          ...swatchSection,
-          options: swatchSection.options.map(option => ({ ...option })),
-        })),
-      };
-    }
-    return { ...section, items: section.items.map(item => ({ ...item })) };
-  });
-}
 
 @Component({
   tag: 'ds-menu',
@@ -110,8 +89,6 @@ export class Menu {
   /** Emitted after the popup's exit motion is complete and its rendered content is removed. */
   @Event() dsAfterClose!: EventEmitter<void>;
   @Event() dsSelect!: EventEmitter<MenuItemData>;
-  /** Emitted when a `gradient-picker` section swatch is chosen. */
-  @Event() dsGradientSelect!: EventEmitter<ShellGradientPreset>;
   /** Emitted when a generic `swatch-picker` section option is chosen. */
   @Event() dsSwatchSelect!: EventEmitter<string>;
 
@@ -496,10 +473,6 @@ export class Menu {
     this.dsSelect.emit(item);
   }
 
-  private handleGradientSelect(preset: ShellGradientPreset) {
-    this.dsGradientSelect.emit(preset);
-  }
-
   private handleSwatchSelect(value: string) {
     this.dsSwatchSelect.emit(value);
   }
@@ -551,7 +524,7 @@ export class Menu {
                 class={{
                   'menu-section': true,
                   'menu-section--divided': si < sections.length - 1,
-                  'menu-section--gradient-picker': isMenuPickerSection(section),
+                  'menu-section--swatch-picker': isMenuPickerSection(section),
                   'ds-choice-section': true,
                   'ds-chrome-column': true,
                   'ds-chrome-space--sm': true,
@@ -572,17 +545,7 @@ export class Menu {
                     {section.header}
                   </ds-text>
                 )}
-                {isMenuGradientPickerSection(section) ? (
-                  <ds-swatch-picker
-                    value={section.value}
-                    groupLabel={section.header ?? 'Shell gradient theme'}
-                    sections={shellGradientPickerSections()}
-                    onDsChange={(e: CustomEvent<string>) => {
-                      e.stopPropagation();
-                      this.handleGradientSelect(e.detail as ShellGradientPreset);
-                    }}
-                  />
-                ) : isMenuSwatchPickerSection(section) ? (
+                {isMenuSwatchPickerSection(section) ? (
                   <ds-swatch-picker
                     value={section.value}
                     groupLabel={section.groupLabel ?? section.header ?? 'Swatch options'}

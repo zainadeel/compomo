@@ -2,7 +2,7 @@ import type { PanelToolsToolId } from '../components/PanelTools/panel-tools-type
 
 export type ShellResponsiveMode = 'desktop' | 'tablet' | 'mobile';
 export type MobileDestination = 'area' | 'search' | 'agents' | 'inbox' | 'help';
-export type ShellInboxToolId = Extract<PanelToolsToolId, 'messages' | 'stacks' | 'activity'>;
+export type ShellInboxToolId = PanelToolsToolId;
 
 export const SHELL_DESKTOP_BREAKPOINT = 1200;
 export const SHELL_MOBILE_BREAKPOINT = 768;
@@ -12,6 +12,14 @@ export function resolveShellResponsiveMode(width: number): ShellResponsiveMode {
   if (width >= SHELL_DESKTOP_BREAKPOINT) return 'desktop';
   if (width >= SHELL_MOBILE_BREAKPOINT) return 'tablet';
   return 'mobile';
+}
+
+export function resolveManagedShellPageCapacity(
+  mode: ShellResponsiveMode,
+  toolsOpen: boolean
+): 'roomy' | 'compact' | 'constrained' {
+  if (mode === 'desktop') return toolsOpen ? 'compact' : 'roomy';
+  return toolsOpen ? 'constrained' : 'compact';
 }
 
 export function shellMobileDestinationForTool(

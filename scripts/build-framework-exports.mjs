@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 /** Compile generated framework adapters to publishable JavaScript and declarations. */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
@@ -11,15 +18,33 @@ cleanFileProviderCollisions();
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react.json'], { stdio: 'inherit' });
 execFileSync(npx, ['ngc', '-p', 'tsconfig.angular.json'], { stdio: 'inherit' });
 
+const generatedAngularOutput = 'dist/.generated/angular';
+if (!existsSync(generatedAngularOutput)) {
+  throw new Error(`Missing compiled Angular proxy directory: ${generatedAngularOutput}`);
+}
+cpSync(generatedAngularOutput, 'dist/angular', { recursive: true });
+rmSync('dist/.generated', { recursive: true, force: true });
+
 for (const dir of ['dist/angular', 'dist/framework']) {
-  for (const file of readdirSync(dir).filter(name => name.endsWith('.js'))) {
+  for (const file of readdirSync(dir).filter(
+    name => name.endsWith('.js') || name.endsWith('.d.ts')
+  )) {
     const path = `${dir}/${file}`;
     const source = readFileSync(path, 'utf8');
-    const withExtensions = source.replace(
-      /(from\s+['"])(\.\.?\/[^'"]+?)(['"])/g,
-      (match, start, specifier, end) => /\.[a-z]+$/i.test(specifier) ? match : `${start}${specifier}.js${end}`,
+    const publicPaths = source.replace(
+      /\.\.\/\.generated\/angular\//g,
+      '../angular/'
     );
-    writeFileSync(path, withExtensions);
+    const publishSource = file.endsWith('.js')
+      ? publicPaths.replace(
+          /(from\s+['"])(\.\.?\/[^'"]+?)(['"])/g,
+          (match, start, specifier, end) =>
+            /\.[a-z]+$/i.test(specifier)
+              ? match
+              : `${start}${specifier}.js${end}`,
+        )
+      : publicPaths;
+    writeFileSync(path, publishSource);
   }
 }
 

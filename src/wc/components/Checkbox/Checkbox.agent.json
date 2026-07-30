@@ -37,7 +37,7 @@
   ],
   "commonlyComposedWith": [
     "component:ds-field",
-    "component:ds-select-multi",
+    "component:ds-select",
     "component:ds-text"
   ],
   "accessibility": [

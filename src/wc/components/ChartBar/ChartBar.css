@@ -29,3 +29,14 @@
 .chart-bar__bar--rounded {
   rx: var(--dimension-radius-025);
 }
+
+.chart-bar__segment-shape--rounded {
+  rx: var(--dimension-radius-025);
+}
+
+.chart-bar__segment-separator {
+  stroke: var(--color-background-primary);
+  stroke-width: var(--dimension-stroke-width-012);
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+}

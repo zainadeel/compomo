@@ -15,6 +15,7 @@ live in source, package manifests, compiler output, and generated registries.
 | Shared layout recipes | [Layout recipes](../src/docs/LayoutRecipes.mdx) |
 | Selection composition | [Selection patterns](../src/docs/SelectionPatterns.mdx) |
 | Semantic prose | [Prose foundation](prose-foundation.md) |
+| Upgrade to v13 | [v13 migration guide](migrations/v13.md) |
 
 Component props, events, methods, slots, stories, and intent are discoverable
 from Storybook and `public/r/`.

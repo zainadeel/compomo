@@ -33,8 +33,7 @@
   ],
   "commonlyComposedWith": [
     "component:ds-chart-legend",
-    "component:ds-card-data-viz-line",
-    "component:ds-card-shell-data-viz",
+    "component:ds-card-data-viz",
     "component:ds-tooltip-data-viz"
   ],
   "accessibility": [

@@ -4,7 +4,6 @@ import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-select.js';
-import '../../../../dist/components/ds-select-multi.js';
 
 const ITEMS = [
   { label: 'First item', value: 'first', subtext: 'Shared secondary text' },
@@ -24,7 +23,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Menu, Select, and SelectMulti share one density-aware choice-row recipe. ' +
+          'Menu and both Select cardinality modes share one density-aware choice-row recipe. ' +
           'Primary text follows control density; supporting text steps down one recipe, with caption/caption at xs.',
       },
     },
@@ -78,14 +77,15 @@ export const SemanticParity: Story = {
         </div>
         <div style="width:240px;">
           <ds-text as="div" variant="text-body-small" emphasis>Multi-select listbox</ds-text>
-          <ds-select-multi
+          <ds-select
+            multiple
             size=${args['size']}
             .options=${ITEMS}
-            .values=${['first', 'third']}
+            .value=${['first', 'third']}
             placeholder="Multiple choices"
             open
             aria-label="Multiple choices"
-          ></ds-select-multi>
+          ></ds-select>
         </div>
       </div>
     `;

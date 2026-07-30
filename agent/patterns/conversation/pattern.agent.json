@@ -74,8 +74,8 @@
       "status": "planned",
       "references": ["src/wc/components/MessageScroller/MessageScroller.stories.ts"]
     },
-    "react": { "status": "planned", "references": ["src/react/components.ts"] },
-    "angular": { "status": "planned", "references": ["src/angular/index.ts"] }
+    "react": { "status": "planned", "references": ["docs/framework-integration.md"] },
+    "angular": { "status": "planned", "references": ["docs/framework-integration.md"] }
   },
   "references": [
     "src/wc/components/ConversationList/ConversationList.stories.ts",

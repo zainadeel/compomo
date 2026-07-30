@@ -17,16 +17,12 @@ export class MobileHeader {
   @Prop() headingLevel: MobileHeaderHeadingLevel = 'h1';
   /** Controlled peer sections. Their selected label replaces the static title. */
   @Prop() sections: TabItem[] = [];
-  /** JSON fallback for `sections`. */
-  @Prop({ attribute: 'sections-json' }) sectionsJson: string = '';
   /** Controlled selected section id. */
   @Prop() value: string = '';
   /** Accessible name for the section chooser. */
   @Prop() sectionsAriaLabel: string = 'Change page section';
   /** Controlled child sections within the selected page or detail screen. */
   @Prop() subsections: TabItem[] = [];
-  /** JSON fallback for `subsections`. */
-  @Prop({ attribute: 'subsections-json' }) subsectionsJson: string = '';
   /** Controlled selected child-section id. */
   @Prop() subvalue: string = '';
   /** Accessible name for the child-section chooser. */
@@ -39,22 +35,12 @@ export class MobileHeader {
   /** Child-section selection intent. */
   @Event() dsSubsectionChange!: EventEmitter<string>;
 
-  private parseSections(value: TabItem[], json: string): TabItem[] {
-    if (!json.trim()) return value ?? [];
-    try {
-      const parsed = JSON.parse(json);
-      return Array.isArray(parsed) ? (parsed as TabItem[]) : [];
-    } catch {
-      return [];
-    }
-  }
-
   private get resolvedSections(): TabItem[] {
-    return this.parseSections(this.sections, this.sectionsJson);
+    return this.sections ?? [];
   }
 
   private get resolvedSubsections(): TabItem[] {
-    return this.parseSections(this.subsections, this.subsectionsJson);
+    return this.subsections ?? [];
   }
 
   private get selectedLabel(): string {

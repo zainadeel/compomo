@@ -13,7 +13,7 @@ CompoMo has one source-derived component inventory and two deliberately separate
 
 ## Pipeline
 
-1. `npm run build` asks Stencil to emit compiler documentation and framework adapters.
+1. `npm run build` asks Stencil to emit compiler documentation and ignored framework adapter source under `src/.generated/`.
 2. `npm run registry:build` discovers components from source and joins them to compiler metadata by tag.
 3. Co-located agent intent is schema-validated and merged by stable component ID.
 4. `public/r/` is cleared before generation, so renamed and deleted components cannot leave stale output.

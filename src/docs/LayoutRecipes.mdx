@@ -20,7 +20,7 @@ consumer wrapper.
 
 ## Fields
 
-Field, Input, Select, SelectMulti, and Slider share a 4px vertical flow between
+Field, Input, Select, and Slider share a 4px vertical flow between
 the control and supporting or error content. `ds-field` remains the preferred
 composition when a persistent external label or description is required.
 
@@ -39,9 +39,9 @@ matching `ds-card-data-viz-*` component rather than recreating the card shell.
 
 ## Select behavior
 
-Select and SelectMulti intentionally share popup positioning, dismissal,
+Single and multiple Select intentionally share popup positioning, dismissal,
 search focus, typeahead, and listbox keyboard traversal. Their selection and
-form contracts differ: Select commits one value and closes, while SelectMulti
+form contracts differ by mode: scalar Select commits one value and closes, while multiple Select
 toggles an array and remains open.
 
 See **Utility → ControlDensity**, **Utility → ChromeLayout**, and the component

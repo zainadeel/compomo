@@ -15,7 +15,6 @@ import { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/ta
 import type { BarNavTab } from './bar-nav-types';
 import {
   deriveBarNavValueFromUrl,
-  parseJsonArrayProp,
   shouldResyncBarNavProps,
 } from './bar-nav-utils';
 import {
@@ -49,9 +48,6 @@ export class BarNav {
    * Set via JS property: `el.tabs = [...]`. Replace the array reference to update.
    */
   @Prop() tabs: BarNavTab[] = [];
-
-  /** JSON fallback for `tabs` — useful when framework bindings don't propagate arrays. */
-  @Prop({ attribute: 'tabs-json' }) tabsJson: string = '';
 
   /** ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set. */
   @Prop({ mutable: true }) value: string = '';
@@ -152,7 +148,6 @@ export class BarNav {
   }
 
   @Watch('tabs')
-  @Watch('tabsJson')
   @Watch('currentUrl')
   @Watch('basePath')
   onHostPropsChange() {
@@ -278,7 +273,7 @@ export class BarNav {
 
   /** Re-resolve props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
   private syncHostPropsIfNeeded() {
-    if (shouldResyncBarNavProps(this.resolvedTabs, this.tabs, this.tabsJson)) {
+    if (shouldResyncBarNavProps(this.resolvedTabs, this.tabs)) {
       this.applyHostProps();
     } else if (this.currentUrl && this.basePath) {
       this.syncValueFromUrl();
@@ -484,9 +479,7 @@ export class BarNav {
 
   /** Batch tabs/basePath/currentUrl updates so URL derivation never runs with a mixed section. */
   private incomingTabs(): BarNavTab[] {
-    return this.tabsJson
-      ? parseJsonArrayProp(this.tabsJson, [])
-      : (this.tabs ?? []);
+    return this.tabs ?? [];
   }
 
   private applyHostProps() {

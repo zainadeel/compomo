@@ -1,7 +1,6 @@
 import '/dist/components/ds-select.js';
-import '/dist/components/ds-select-multi.js';
 
-await Promise.all(['ds-select', 'ds-select-multi'].map(tag => customElements.whenDefined(tag)));
+await customElements.whenDefined('ds-select');
 
 const options = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
@@ -29,12 +28,12 @@ for (const id of ['multi', 'multi-search', 'required-multi', 'contained-multi'])
 }
 
 document.getElementById('single').value = 'cherry';
-document.getElementById('multi').values = ['apple', 'cherry'];
+document.getElementById('multi').value = ['apple', 'cherry'];
 
 window.__selectChanges = [];
 window.__selectClears = [];
 document.addEventListener('dsChange', event => {
-  if (event.target.matches('ds-select, ds-select-multi')) {
+  if (event.target.matches('ds-select')) {
     window.__selectChanges.push({ id: event.target.id, detail: event.detail });
   }
 });

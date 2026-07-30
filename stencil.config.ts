@@ -26,8 +26,8 @@ export const config: Config = {
       componentCorePackage: '@ds-mo/ui',
       outputType: 'standalone',
       esModules: true,
-      directivesProxyFile: 'src/angular/proxies.ts',
-      directivesArrayFile: 'src/angular/index.ts',
+      directivesProxyFile: 'src/.generated/angular/proxies.ts',
+      directivesArrayFile: 'src/.generated/angular/index.ts',
       valueAccessorConfigs: [
         { elementSelectors: 'ds-input', event: 'dsChange', targetAttr: 'value', type: 'text' },
         { elementSelectors: 'ds-select', event: 'dsChange', targetAttr: 'value', type: 'select' },
@@ -36,7 +36,7 @@ export const config: Config = {
       ],
     }),
     reactOutputTarget({
-      outDir: 'src/react',
+      outDir: 'src/.generated/react',
       esModules: true,
     }),
   ],

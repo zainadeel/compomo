@@ -1,15 +1,6 @@
 import { Component, h, Host, Prop } from '@stencil/core';
+import { resolveSafeUrl } from '../../utils';
 import type { ConversationAttachment } from '../conversation-types';
-
-function safeAttachmentUrl(value: string | undefined): string | undefined {
-  if (!value) return undefined;
-  try {
-    const url = new URL(value, document.baseURI);
-    return ['http:', 'https:', 'blob:'].includes(url.protocol) ? url.href : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 @Component({
   tag: 'ds-attachment-list',
@@ -21,7 +12,9 @@ export class AttachmentList {
   @Prop() label: string = 'Attachments';
 
   private renderItem(item: ConversationAttachment) {
-    const url = safeAttachmentUrl(item.url);
+    const url = resolveSafeUrl(item.url, {
+      protocols: ['http:', 'https:', 'blob:'],
+    });
     const content = (
       <span class="attachment-list__item-content">
         <ds-icon name="Document" size="sm" color="secondary" />

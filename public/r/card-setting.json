@@ -29,8 +29,8 @@
       "alternatives": [
         {
           "when": "The surface contains a chart or specialized data-visualization composition.",
-          "component": "component:ds-card-shell-data-viz",
-          "reason": "CardShellDataViz owns the independently evolving data-visualization shell contract."
+          "component": "component:ds-card-data-viz",
+          "reason": "CardDataViz owns the independently evolving data-visualization card contract."
         },
         {
           "when": "The task must block the interface for one focused decision or short workflow.",

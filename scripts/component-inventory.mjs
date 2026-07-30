@@ -64,8 +64,8 @@ export function discoverComponents(root = ROOT) {
       stylePath: `${relativeDirectory}/${directory}.css`,
       storyPath: `${relativeDirectory}/${directory}.stories.ts`,
       agentPath: `${relativeDirectory}/${directory}.agent.json`,
-      angularPath: `src/angular/ds-${name}.ts`,
-      reactPath: `src/react/ds-${name}.ts`,
+      angularPath: `src/.generated/angular/ds-${name}.ts`,
+      reactPath: `src/.generated/react/ds-${name}.ts`,
     });
   }
   return components.sort((a, b) => a.tag.localeCompare(b.tag));

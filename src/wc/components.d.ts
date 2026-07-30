@@ -17,14 +17,11 @@ import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkfl
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
-import { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
-import { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
-import { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
+import { CardDataVizVariant, CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 import { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
-import { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
+import { ChartBarVariant } from "./components/ChartBar/ChartBar";
 import { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
-import { ChartBarStackedVariant } from "./components/ChartBarStacked/ChartBarStacked";
 import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
@@ -37,7 +34,6 @@ import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment } from "./utils";
-import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
@@ -51,9 +47,9 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
-import { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
-import { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
+import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
+import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
@@ -77,14 +73,11 @@ export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkfl
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
-export { CardDataVizBarWidth } from "./components/CardDataVizBar/CardDataVizBar";
-export { CardDataVizDonutWidth } from "./components/CardDataVizDonut/CardDataVizDonut";
-export { CardDataVizLineWidth } from "./components/CardDataVizLine/CardDataVizLine";
+export { CardDataVizVariant, CardDataVizWidth } from "./components/CardDataViz/CardDataViz";
 export { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
-export { CardShellDataVizWidth } from "./components/CardShellDataViz/CardShellDataViz";
+export { ChartBarVariant } from "./components/ChartBar/ChartBar";
 export { ChartDatum, ChartLegendItem, ChartSeries } from "./utils/chart-types";
-export { ChartBarStackedVariant } from "./components/ChartBarStacked/ChartBarStacked";
 export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
@@ -97,7 +90,6 @@ export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment } from "./utils";
-export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
@@ -111,9 +103,9 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectWidth } from "./components/Select/Select";
-export { SelectMultiBackground, SelectMultiOption, SelectMultiSection, SelectMultiSize, SelectMultiWidth } from "./components/SelectMulti/SelectMulti";
-export { ShellGradientPreset as ShellGradientPreset1 } from "./components/ShellGradientSwatch/shell-gradient-swatch-types";
+export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
+export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
@@ -301,11 +293,6 @@ export namespace Components {
           * @default []
          */
         "tabs": BarNavTab[];
-        /**
-          * JSON fallback for `tabs` — useful when framework bindings don't propagate arrays.
-          * @default ''
-         */
-        "tabsJson": string;
         /**
           * ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set.
           * @default ''
@@ -514,10 +501,6 @@ export namespace Components {
          */
         "pressScale": boolean;
         /**
-          * Pressed semantics for a toggle command that reports state elsewhere.
-         */
-        "pressed": boolean | undefined;
-        /**
           * Use the half-radius treatment instead of the default control radius.
           * @default false
          */
@@ -587,7 +570,7 @@ export namespace Components {
          */
         "icon": string;
         /**
-          * Active/selected visual state. Always promotes foreground to primary.
+          * Owner-controlled visual emphasis inside a composite. This does not add toggle semantics and does not emit dsChange.
           * @default false
          */
         "isActive": boolean;
@@ -611,6 +594,9 @@ export namespace Components {
           * @default true
          */
         "pressScale": boolean;
+        /**
+          * Controlled state for a genuine toggle button. Adds aria-pressed, promotes active styling, and makes activation emit dsChange with the requested state.
+         */
         "pressed": boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
@@ -640,61 +626,33 @@ export namespace Components {
         "width": ButtonUnfilledWidth;
     }
     /**
-     * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-     * region and an optional, content-sized static legend.
+     * Standard data-visualization card chrome and composition. The variant owns
+     * only the chart/legend relationship; applications continue to own data.
      */
-    interface DsCardDataVizBar {
+    interface DsCardDataViz {
         /**
-          * Card width token — also sets matching min-height.
+          * Width token with the matching data-visualization card min-height.
           * @default 'md'
          */
-        "cardWidth": CardDataVizBarWidth;
+        "cardWidth": CardDataVizWidth;
         /**
           * @default 'Filter'
          */
         "filterLabel": string;
         /**
-          * Widget heading shown in the card header.
+          * Data-visualization heading shown in the card header.
          */
         "heading": string;
-    }
-    /**
-     * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
-     * content-sized legend. Hover sync between chart and legend stays here.
-     */
-    interface DsCardDataVizDonut {
         /**
-          * Card width token — also sets matching min-height.
-          * @default 'md'
+          * Renders the standard filter action before custom actions.
+          * @default false
          */
-        "cardWidth": CardDataVizDonutWidth;
+        "showFilter": boolean;
         /**
-          * @default 'Filter'
+          * Chart composition behavior.
+          * @default 'custom'
          */
-        "filterLabel": string;
-        /**
-          * Widget heading shown in the card header.
-         */
-        "heading": string;
-    }
-    /**
-     * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-     * region and a content-sized, static legend.
-     */
-    interface DsCardDataVizLine {
-        /**
-          * Card width token — also sets matching min-height.
-          * @default 'md'
-         */
-        "cardWidth": CardDataVizLineWidth;
-        /**
-          * @default 'Filter'
-         */
-        "filterLabel": string;
-        /**
-          * Widget heading shown in the card header.
-         */
-        "heading": string;
+        "variant": CardDataVizVariant;
     }
     interface DsCardOverview {
         /**
@@ -741,6 +699,11 @@ export namespace Components {
          */
         "scoreErrorMessage": string | undefined;
         /**
+          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps elevation on the shrinking surface, and clips translated content internally. The page still owns sticky positioning and the final swap to `variant="compact"`.
+          * @default 0
+         */
+        "scrollCollapseProgress": number;
+        /**
           * Full summary card, or the condensed 48px summary bar.
           * @default 'default'
          */
@@ -774,22 +737,12 @@ export namespace Components {
          */
         "saveLabel": string;
     }
-    /**
-     * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
-     * legends, hover synchronization, and empty states belong to composing cards.
-     */
-    interface DsCardShellDataViz {
-        /**
-          * Width token with the matching data-visualization shell min-height.
-          * @default 'md'
-         */
-        "cardWidth": CardShellDataVizWidth;
-        /**
-          * Data-visualization heading shown in the shell header.
-         */
-        "heading": string;
-    }
     interface DsChartBar {
+        /**
+          * X-axis labels for stacked and percentage variants. Set as a JS property.
+          * @default []
+         */
+        "categories": string[];
         /**
           * Bars to render. Set as a JS property (not an HTML attribute).
           * @default []
@@ -801,31 +754,15 @@ export namespace Components {
          */
         "height": number;
         /**
-          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
-          * @default 480
-         */
-        "width": number;
-    }
-    interface DsChartBarStacked {
-        /**
-          * X-axis labels — must match each series' `data` length. Set as a JS property.
-          * @default []
-         */
-        "categories": string[];
-        /**
-          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
-          * @default 240
-         */
-        "height": number;
-        /**
-          * Ordered stack series. Set as a JS property (not an HTML attribute).
+          * Ordered stack series for stacked and percentage variants. Set as a JS property.
           * @default []
          */
         "series": ChartSeries[];
         /**
-          * @default 'stacked'
+          * Rendering model. Single uses `data`; stacked and percentage use `series` and `categories`.
+          * @default 'single'
          */
-        "variant": ChartBarStackedVariant;
+        "variant": ChartBarVariant;
         /**
           * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
@@ -1536,11 +1473,6 @@ export namespace Components {
          */
         "sectionsAriaLabel": string;
         /**
-          * JSON fallback for `sections`.
-          * @default ''
-         */
-        "sectionsJson": string;
-        /**
           * Controlled child sections within the selected page or detail screen.
           * @default []
          */
@@ -1550,11 +1482,6 @@ export namespace Components {
           * @default 'Change page subsection'
          */
         "subsectionsAriaLabel": string;
-        /**
-          * JSON fallback for `subsections`.
-          * @default ''
-         */
-        "subsectionsJson": string;
         /**
           * Controlled selected child-section id.
           * @default ''
@@ -1582,11 +1509,6 @@ export namespace Components {
           * @default []
          */
         "sections": TabItem[];
-        /**
-          * JSON fallback for `sections`.
-          * @default ''
-         */
-        "sectionsJson": string;
         /**
           * Controlled selected section id.
           * @default ''
@@ -1912,20 +1834,10 @@ export namespace Components {
          */
         "headers": PanelToolsHeaders;
         /**
-          * JSON fallback for `headers`. The `headers` property takes precedence when non-empty.
-          * @default ''
-         */
-        "headersJson": string;
-        /**
           * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
           * @default []
          */
         "items": PanelToolsItem[];
-        /**
-          * JSON fallback for `items` — useful when framework bindings don't propagate arrays.
-          * @default ''
-         */
-        "itemsJson": string;
         /**
           * When false, only the icon rail is shown.
           * @default false
@@ -2103,6 +2015,11 @@ export namespace Components {
          */
         "loadingLabel": string;
         /**
+          * Enable independent multi-value selection while keeping the popup open.
+          * @default false
+         */
+        "multiple": boolean;
+        /**
           * Native form field name.
          */
         "name": string | undefined;
@@ -2151,149 +2068,8 @@ export namespace Components {
           * @default []
          */
         "sections": SelectSection[];
-        "setFocus": () => Promise<void>;
         /**
-          * Control density.
-          * @default 'md'
-         */
-        "size": SelectSize;
-        /**
-          * Selected string value. Unknown values render the placeholder and are not submitted.
-          * @default ''
-         */
-        "value": string;
-        /**
-          * Width fit — hug content (default) or fill the parent.
-          * @default 'hug'
-         */
-        "width": SelectWidth;
-    }
-    interface DsSelectMulti {
-        /**
-          * Show the selected interaction fill when at least one value exists.
-          * @default true
-         */
-        "activeFill": boolean;
-        /**
-          * Show the clear-all footer action when values exist.
-          * @default true
-         */
-        "allowClear": boolean;
-        /**
-          * Additional IDs that describe the combobox.
-         */
-        "ariaDescribedby": string | undefined;
-        /**
-          * Direct accessible name when no external label is available.
-          * @default null
-         */
-        "ariaLabel": string | null;
-        /**
-          * IDs of elements that label the combobox.
-         */
-        "ariaLabelledby": string | undefined;
-        /**
-          * Actual parent surface context; omit on primary and secondary surfaces.
-         */
-        "background": SelectMultiBackground | undefined;
-        /**
-          * Localized clear-all action label.
-          * @default 'Clear'
-         */
-        "clearLabel": string;
-        /**
-          * Native disabled state.
-          * @default false
-         */
-        "disabled": boolean;
-        /**
-          * Show invalid visual state.
-          * @default false
-         */
-        "error": boolean;
-        /**
-          * Error text rendered below the trigger when error is true.
-         */
-        "errorMessage": string | undefined;
-        /**
-          * Show the surface-aware inset border.
-          * @default true
-         */
-        "hasBorder": boolean;
-        /**
-          * Optional trigger prefix icon name.
-         */
-        "icon": string | undefined;
-        /**
-          * ID applied to the internal combobox trigger for external labels.
-         */
-        "inputId": string | undefined;
-        /**
-          * Shared inactive treatment; removes interaction and form submission.
-          * @default false
-         */
-        "isInactive": boolean;
-        /**
-          * Replace the prefix with a loader and disable option interaction.
-          * @default false
-         */
-        "isLoading": boolean;
-        /**
-          * Accessible loading status label.
-          * @default 'Loading'
-         */
-        "loadingLabel": string;
-        /**
-          * Native form field name used for each repeated selected-value entry.
-         */
-        "name": string | undefined;
-        /**
-          * Localized empty-filter result text.
-          * @default 'No results found'
-         */
-        "noResultsText": string;
-        /**
-          * Controlled popup visibility.
-          * @default false
-         */
-        "open": boolean;
-        /**
-          * Flat choices. Assign arrays through the JavaScript property.
-          * @default []
-         */
-        "options": SelectMultiOption[];
-        /**
-          * Persistent trigger label; selected option labels never replace it.
-          * @default 'Select'
-         */
-        "placeholder": string;
-        /**
-          * Require at least one valid selected value.
-          * @default false
-         */
-        "required": boolean;
-        /**
-          * Validation message used when required is missing.
-          * @default 'This field is required.'
-         */
-        "requiredMessage": string;
-        /**
-          * Localized search-field placeholder and accessible name.
-          * @default 'Search'
-         */
-        "searchPlaceholder": string;
-        /**
-          * Show immediate local filtering over option labels, subtext, and section headings.
-          * @default false
-         */
-        "searchable": boolean;
-        /**
-          * Grouped choices; takes precedence over options. Assign through JavaScript.
-          * @default []
-         */
-        "sections": SelectMultiSection[];
-        /**
-          * Localized noun displayed after the selected count.
+          * Localized noun displayed after the selected count in multiple mode.
           * @default 'selected'
          */
         "selectedLabel": string;
@@ -2302,19 +2078,32 @@ export namespace Components {
           * Control density.
           * @default 'md'
          */
-        "size": SelectMultiSize;
+        "size": SelectSize;
         /**
-          * Selected values. Assign arrays through the JavaScript property.
-          * @default []
+          * Selected scalar or array value according to `multiple`.
+          * @default ''
          */
-        "values": string[];
+        "value": SelectValue;
         /**
           * Width fit — hug content (default) or fill the parent.
           * @default 'hug'
          */
-        "width": SelectMultiWidth;
+        "width": SelectWidth;
     }
     interface DsShellApp {
+        /**
+          * Open or toggle a managed global tool from application-owned UI.
+         */
+        "activateTool": (id: PanelToolsToolId) => Promise<void>;
+        /**
+          * Close whichever managed global surface is currently visible.
+         */
+        "closeGlobalSurface": () => Promise<void>;
+        /**
+          * Managed renders the complete responsive chrome; slotted exposes the advanced composition.
+          * @default 'managed'
+         */
+        "composition": ShellAppComposition;
         /**
           * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
           * @default 'neutral'
@@ -2336,47 +2125,29 @@ export namespace Components {
          */
         "navStyle": NavChromeStyle;
         /**
+          * Router-owned navigation data used by managed composition.
+          * @default {}
+         */
+        "navigation": ShellNavigationConfig;
+        /**
+          * Route-owned page title and section data used by managed composition.
+          * @default {}
+         */
+        "pageChrome": ShellPageChromeConfig;
+        /**
+          * Request drawer or fullscreen presentation for the active managed tool.
+         */
+        "setToolPresentation": (presentation: "drawer" | "fullscreen") => Promise<void>;
+        /**
           * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
         "shortcutsEnabled": boolean;
-    }
-    /**
-     * @deprecated Use `ds-swatch-picker` with shell preset options.
-     */
-    interface DsShellGradientPicker {
         /**
-          * @default 'Shell gradient theme'
+          * Product-owned global tool definitions used by managed composition.
+          * @default {}
          */
-        "groupLabel": string;
-        /**
-          * Active shell wash preset.
-          * @default 'neutral'
-         */
-        "value": ShellGradientPreset1;
-    }
-    /**
-     * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
-     */
-    interface DsShellGradientSwatch {
-        /**
-          * @default null
-         */
-        "ariaLabel": string | null;
-        /**
-          * @default false
-         */
-        "isInactive": boolean;
-        /**
-          * Wash preset this orb previews.
-          * @default 'neutral'
-         */
-        "preset": ShellGradientPreset1;
-        /**
-          * Selected — brand stroke + halo over inner fill/border/interaction stack.
-          * @default false
-         */
-        "selected": boolean;
+        "tools": ShellToolsConfig;
     }
     interface DsShellPage {
         /**
@@ -2425,10 +2196,6 @@ export namespace Components {
          */
         "headers": PanelToolsHeaders;
         /**
-          * @default ''
-         */
-        "headersJson": string;
-        /**
           * @default 'Inbox'
          */
         "inboxLabel": string;
@@ -2440,10 +2207,6 @@ export namespace Components {
           * @default []
          */
         "items": PanelToolsItem[];
-        /**
-          * @default ''
-         */
-        "itemsJson": string;
         /**
           * @default false
          */
@@ -2962,17 +2725,9 @@ export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
 }
-export interface DsCardDataVizBarCustomEvent<T> extends CustomEvent<T> {
+export interface DsCardDataVizCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsCardDataVizBarElement;
-}
-export interface DsCardDataVizDonutCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCardDataVizDonutElement;
-}
-export interface DsCardDataVizLineCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCardDataVizLineElement;
+    target: HTMLDsCardDataVizElement;
 }
 export interface DsCardOverviewCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -3070,21 +2825,9 @@ export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
 }
-export interface DsSelectMultiCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsSelectMultiElement;
-}
 export interface DsShellAppCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsShellAppElement;
-}
-export interface DsShellGradientPickerCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsShellGradientPickerElement;
-}
-export interface DsShellGradientSwatchCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsShellGradientSwatchElement;
 }
 export interface DsShellToolsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -3265,68 +3008,26 @@ declare global {
         prototype: HTMLDsButtonUnfilledElement;
         new (): HTMLDsButtonUnfilledElement;
     };
-    interface HTMLDsCardDataVizBarElementEventMap {
+    interface HTMLDsCardDataVizElementEventMap {
         "dsFilterClick": void;
     }
     /**
-     * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-     * region and an optional, content-sized static legend.
+     * Standard data-visualization card chrome and composition. The variant owns
+     * only the chart/legend relationship; applications continue to own data.
      */
-    interface HTMLDsCardDataVizBarElement extends Components.DsCardDataVizBar, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCardDataVizBarElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizBarElement, ev: DsCardDataVizBarCustomEvent<HTMLDsCardDataVizBarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsCardDataVizElement extends Components.DsCardDataViz, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardDataVizElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizElement, ev: DsCardDataVizCustomEvent<HTMLDsCardDataVizElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCardDataVizBarElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizBarElement, ev: DsCardDataVizBarCustomEvent<HTMLDsCardDataVizBarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardDataVizElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizElement, ev: DsCardDataVizCustomEvent<HTMLDsCardDataVizElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsCardDataVizBarElement: {
-        prototype: HTMLDsCardDataVizBarElement;
-        new (): HTMLDsCardDataVizBarElement;
-    };
-    interface HTMLDsCardDataVizDonutElementEventMap {
-        "dsFilterClick": void;
-    }
-    /**
-     * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
-     * content-sized legend. Hover sync between chart and legend stays here.
-     */
-    interface HTMLDsCardDataVizDonutElement extends Components.DsCardDataVizDonut, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCardDataVizDonutElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizDonutElement, ev: DsCardDataVizDonutCustomEvent<HTMLDsCardDataVizDonutElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCardDataVizDonutElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizDonutElement, ev: DsCardDataVizDonutCustomEvent<HTMLDsCardDataVizDonutElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCardDataVizDonutElement: {
-        prototype: HTMLDsCardDataVizDonutElement;
-        new (): HTMLDsCardDataVizDonutElement;
-    };
-    interface HTMLDsCardDataVizLineElementEventMap {
-        "dsFilterClick": void;
-    }
-    /**
-     * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-     * region and a content-sized, static legend.
-     */
-    interface HTMLDsCardDataVizLineElement extends Components.DsCardDataVizLine, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCardDataVizLineElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizLineElement, ev: DsCardDataVizLineCustomEvent<HTMLDsCardDataVizLineElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCardDataVizLineElementEventMap>(type: K, listener: (this: HTMLDsCardDataVizLineElement, ev: DsCardDataVizLineCustomEvent<HTMLDsCardDataVizLineElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCardDataVizLineElement: {
-        prototype: HTMLDsCardDataVizLineElement;
-        new (): HTMLDsCardDataVizLineElement;
+    var HTMLDsCardDataVizElement: {
+        prototype: HTMLDsCardDataVizElement;
+        new (): HTMLDsCardDataVizElement;
     };
     interface HTMLDsCardOverviewElementEventMap {
         "dsMetricSelect": OverviewMetric;
@@ -3362,27 +3063,11 @@ declare global {
         prototype: HTMLDsCardSettingElement;
         new (): HTMLDsCardSettingElement;
     };
-    /**
-     * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
-     * legends, hover synchronization, and empty states belong to composing cards.
-     */
-    interface HTMLDsCardShellDataVizElement extends Components.DsCardShellDataViz, HTMLStencilElement {
-    }
-    var HTMLDsCardShellDataVizElement: {
-        prototype: HTMLDsCardShellDataVizElement;
-        new (): HTMLDsCardShellDataVizElement;
-    };
     interface HTMLDsChartBarElement extends Components.DsChartBar, HTMLStencilElement {
     }
     var HTMLDsChartBarElement: {
         prototype: HTMLDsChartBarElement;
         new (): HTMLDsChartBarElement;
-    };
-    interface HTMLDsChartBarStackedElement extends Components.DsChartBarStacked, HTMLStencilElement {
-    }
-    var HTMLDsChartBarStackedElement: {
-        prototype: HTMLDsChartBarStackedElement;
-        new (): HTMLDsChartBarStackedElement;
     };
     interface HTMLDsChartDonutElementEventMap {
         "dsSliceHover": ChartDatum | null;
@@ -3564,7 +3249,6 @@ declare global {
         "dsClose": void;
         "dsAfterClose": void;
         "dsSelect": MenuItemData;
-        "dsGradientSelect": ShellGradientPreset;
         "dsSwatchSelect": string;
     }
     interface HTMLDsMenuElement extends Components.DsMenu, HTMLStencilElement {
@@ -3863,7 +3547,7 @@ declare global {
         new (): HTMLDsScrollOverlayElement;
     };
     interface HTMLDsSelectElementEventMap {
-        "dsChange": string;
+        "dsChange": SelectValue;
         "dsClear": void;
         "dsOpenChange": boolean;
     }
@@ -3881,27 +3565,21 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
-    interface HTMLDsSelectMultiElementEventMap {
-        "dsChange": string[];
-        "dsClear": void;
-        "dsOpenChange": boolean;
-    }
-    interface HTMLDsSelectMultiElement extends Components.DsSelectMulti, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSelectMultiElementEventMap>(type: K, listener: (this: HTMLDsSelectMultiElement, ev: DsSelectMultiCustomEvent<HTMLDsSelectMultiElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSelectMultiElementEventMap>(type: K, listener: (this: HTMLDsSelectMultiElement, ev: DsSelectMultiCustomEvent<HTMLDsSelectMultiElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsSelectMultiElement: {
-        prototype: HTMLDsSelectMultiElement;
-        new (): HTMLDsSelectMultiElement;
-    };
     interface HTMLDsShellAppElementEventMap {
         "dsResponsiveModeChange": { mode: ShellResponsiveMode };
+        "dsNavSelect": string;
+        "dsTabChange": string;
+        "dsSubsectionChange": string;
+        "dsPageBack": MouseEvent;
+        "dsBreadcrumbSelect": BreadcrumbSelectDetail;
+        "dsPageAction": string;
+        "dsToolChange": { id: PanelToolsToolId; selected: boolean };
+        "dsHeaderBack": { tool: PanelToolsToolId };
+        "dsHeaderAction": { tool: PanelToolsToolId; id: string };
+        "dsPresentationChange": { presentation: 'drawer' | 'fullscreen' };
+        "dsBrowseContextChange": NavChromeStyle;
+        "dsNavFooterAction": void;
+        "dsNavUserAction": PanelNavUserActionDetail;
     }
     interface HTMLDsShellAppElement extends Components.DsShellApp, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsShellAppElementEventMap>(type: K, listener: (this: HTMLDsShellAppElement, ev: DsShellAppCustomEvent<HTMLDsShellAppElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -3916,46 +3594,6 @@ declare global {
     var HTMLDsShellAppElement: {
         prototype: HTMLDsShellAppElement;
         new (): HTMLDsShellAppElement;
-    };
-    interface HTMLDsShellGradientPickerElementEventMap {
-        "dsChange": ShellGradientPreset1;
-    }
-    /**
-     * @deprecated Use `ds-swatch-picker` with shell preset options.
-     */
-    interface HTMLDsShellGradientPickerElement extends Components.DsShellGradientPicker, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsShellGradientPickerElementEventMap>(type: K, listener: (this: HTMLDsShellGradientPickerElement, ev: DsShellGradientPickerCustomEvent<HTMLDsShellGradientPickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsShellGradientPickerElementEventMap>(type: K, listener: (this: HTMLDsShellGradientPickerElement, ev: DsShellGradientPickerCustomEvent<HTMLDsShellGradientPickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsShellGradientPickerElement: {
-        prototype: HTMLDsShellGradientPickerElement;
-        new (): HTMLDsShellGradientPickerElement;
-    };
-    interface HTMLDsShellGradientSwatchElementEventMap {
-        "dsSelect": ShellGradientPreset1;
-    }
-    /**
-     * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
-     */
-    interface HTMLDsShellGradientSwatchElement extends Components.DsShellGradientSwatch, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsShellGradientSwatchElementEventMap>(type: K, listener: (this: HTMLDsShellGradientSwatchElement, ev: DsShellGradientSwatchCustomEvent<HTMLDsShellGradientSwatchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsShellGradientSwatchElementEventMap>(type: K, listener: (this: HTMLDsShellGradientSwatchElement, ev: DsShellGradientSwatchCustomEvent<HTMLDsShellGradientSwatchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsShellGradientSwatchElement: {
-        prototype: HTMLDsShellGradientSwatchElement;
-        new (): HTMLDsShellGradientSwatchElement;
     };
     interface HTMLDsShellPageElement extends Components.DsShellPage, HTMLStencilElement {
     }
@@ -4162,14 +3800,10 @@ declare global {
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
-        "ds-card-data-viz-bar": HTMLDsCardDataVizBarElement;
-        "ds-card-data-viz-donut": HTMLDsCardDataVizDonutElement;
-        "ds-card-data-viz-line": HTMLDsCardDataVizLineElement;
+        "ds-card-data-viz": HTMLDsCardDataVizElement;
         "ds-card-overview": HTMLDsCardOverviewElement;
         "ds-card-setting": HTMLDsCardSettingElement;
-        "ds-card-shell-data-viz": HTMLDsCardShellDataVizElement;
         "ds-chart-bar": HTMLDsChartBarElement;
-        "ds-chart-bar-stacked": HTMLDsChartBarStackedElement;
         "ds-chart-donut": HTMLDsChartDonutElement;
         "ds-chart-legend": HTMLDsChartLegendElement;
         "ds-chart-line": HTMLDsChartLineElement;
@@ -4204,10 +3838,7 @@ declare global {
         "ds-radio": HTMLDsRadioElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
-        "ds-select-multi": HTMLDsSelectMultiElement;
         "ds-shell-app": HTMLDsShellAppElement;
-        "ds-shell-gradient-picker": HTMLDsShellGradientPickerElement;
-        "ds-shell-gradient-swatch": HTMLDsShellGradientSwatchElement;
         "ds-shell-page": HTMLDsShellPageElement;
         "ds-shell-tools": HTMLDsShellToolsElement;
         "ds-skeleton": HTMLDsSkeletonElement;
@@ -4405,11 +4036,6 @@ declare namespace LocalJSX {
           * @default []
          */
         "tabs"?: BarNavTab[];
-        /**
-          * JSON fallback for `tabs` — useful when framework bindings don't propagate arrays.
-          * @default ''
-         */
-        "tabsJson"?: string;
         /**
           * ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set.
           * @default ''
@@ -4651,10 +4277,6 @@ declare namespace LocalJSX {
          */
         "pressScale"?: boolean;
         /**
-          * Pressed semantics for a toggle command that reports state elsewhere.
-         */
-        "pressed"?: boolean | undefined;
-        /**
           * Use the half-radius treatment instead of the default control radius.
           * @default false
          */
@@ -4723,7 +4345,7 @@ declare namespace LocalJSX {
          */
         "icon"?: string;
         /**
-          * Active/selected visual state. Always promotes foreground to primary.
+          * Owner-controlled visual emphasis inside a composite. This does not add toggle semantics and does not emit dsChange.
           * @default false
          */
         "isActive"?: boolean;
@@ -4749,6 +4371,9 @@ declare namespace LocalJSX {
           * @default true
          */
         "pressScale"?: boolean;
+        /**
+          * Controlled state for a genuine toggle button. Adds aria-pressed, promotes active styling, and makes activation emit dsChange with the requested state.
+         */
         "pressed"?: boolean | undefined;
         /**
           * Use the half-radius treatment instead of the default control radius.
@@ -4777,73 +4402,37 @@ declare namespace LocalJSX {
         "width"?: ButtonUnfilledWidth;
     }
     /**
-     * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-     * region and an optional, content-sized static legend.
+     * Standard data-visualization card chrome and composition. The variant owns
+     * only the chart/legend relationship; applications continue to own data.
      */
-    interface DsCardDataVizBar {
+    interface DsCardDataViz {
         /**
-          * Card width token — also sets matching min-height.
+          * Width token with the matching data-visualization card min-height.
           * @default 'md'
          */
-        "cardWidth"?: CardDataVizBarWidth;
+        "cardWidth"?: CardDataVizWidth;
         /**
           * @default 'Filter'
          */
         "filterLabel"?: string;
         /**
-          * Widget heading shown in the card header.
+          * Data-visualization heading shown in the card header.
          */
         "heading": string;
         /**
-          * Emits when the header filter control is activated.
+          * Emits when the standard header filter control is activated.
          */
-        "onDsFilterClick"?: (event: DsCardDataVizBarCustomEvent<void>) => void;
-    }
-    /**
-     * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
-     * content-sized legend. Hover sync between chart and legend stays here.
-     */
-    interface DsCardDataVizDonut {
+        "onDsFilterClick"?: (event: DsCardDataVizCustomEvent<void>) => void;
         /**
-          * Card width token — also sets matching min-height.
-          * @default 'md'
+          * Renders the standard filter action before custom actions.
+          * @default false
          */
-        "cardWidth"?: CardDataVizDonutWidth;
+        "showFilter"?: boolean;
         /**
-          * @default 'Filter'
+          * Chart composition behavior.
+          * @default 'custom'
          */
-        "filterLabel"?: string;
-        /**
-          * Widget heading shown in the card header.
-         */
-        "heading": string;
-        /**
-          * Emits when the header filter control is activated.
-         */
-        "onDsFilterClick"?: (event: DsCardDataVizDonutCustomEvent<void>) => void;
-    }
-    /**
-     * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-     * region and a content-sized, static legend.
-     */
-    interface DsCardDataVizLine {
-        /**
-          * Card width token — also sets matching min-height.
-          * @default 'md'
-         */
-        "cardWidth"?: CardDataVizLineWidth;
-        /**
-          * @default 'Filter'
-         */
-        "filterLabel"?: string;
-        /**
-          * Widget heading shown in the card header.
-         */
-        "heading": string;
-        /**
-          * Emits when the header filter control is activated.
-         */
-        "onDsFilterClick"?: (event: DsCardDataVizLineCustomEvent<void>) => void;
+        "variant"?: CardDataVizVariant;
     }
     interface DsCardOverview {
         /**
@@ -4894,6 +4483,11 @@ declare namespace LocalJSX {
          */
         "scoreErrorMessage"?: string | undefined;
         /**
+          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps elevation on the shrinking surface, and clips translated content internally. The page still owns sticky positioning and the final swap to `variant="compact"`.
+          * @default 0
+         */
+        "scrollCollapseProgress"?: number;
+        /**
           * Full summary card, or the condensed 48px summary bar.
           * @default 'default'
          */
@@ -4931,22 +4525,12 @@ declare namespace LocalJSX {
          */
         "saveLabel"?: string;
     }
-    /**
-     * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
-     * legends, hover synchronization, and empty states belong to composing cards.
-     */
-    interface DsCardShellDataViz {
-        /**
-          * Width token with the matching data-visualization shell min-height.
-          * @default 'md'
-         */
-        "cardWidth"?: CardShellDataVizWidth;
-        /**
-          * Data-visualization heading shown in the shell header.
-         */
-        "heading": string;
-    }
     interface DsChartBar {
+        /**
+          * X-axis labels for stacked and percentage variants. Set as a JS property.
+          * @default []
+         */
+        "categories"?: string[];
         /**
           * Bars to render. Set as a JS property (not an HTML attribute).
           * @default []
@@ -4958,31 +4542,15 @@ declare namespace LocalJSX {
          */
         "height"?: number;
         /**
-          * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
-          * @default 480
-         */
-        "width"?: number;
-    }
-    interface DsChartBarStacked {
-        /**
-          * X-axis labels — must match each series' `data` length. Set as a JS property.
-          * @default []
-         */
-        "categories"?: string[];
-        /**
-          * Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size.
-          * @default 240
-         */
-        "height"?: number;
-        /**
-          * Ordered stack series. Set as a JS property (not an HTML attribute).
+          * Ordered stack series for stacked and percentage variants. Set as a JS property.
           * @default []
          */
         "series"?: ChartSeries[];
         /**
-          * @default 'stacked'
+          * Rendering model. Single uses `data`; stacked and percentage use `series` and `categories`.
+          * @default 'single'
          */
-        "variant"?: ChartBarStackedVariant;
+        "variant"?: ChartBarVariant;
         /**
           * Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size.
           * @default 480
@@ -5535,10 +5103,6 @@ declare namespace LocalJSX {
          */
         "onDsAfterClose"?: (event: DsMenuCustomEvent<void>) => void;
         "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
-        /**
-          * Emitted when a `gradient-picker` section swatch is chosen.
-         */
-        "onDsGradientSelect"?: (event: DsMenuCustomEvent<ShellGradientPreset>) => void;
         "onDsSelect"?: (event: DsMenuCustomEvent<MenuItemData>) => void;
         /**
           * Emitted when a generic `swatch-picker` section option is chosen.
@@ -5742,11 +5306,6 @@ declare namespace LocalJSX {
          */
         "sectionsAriaLabel"?: string;
         /**
-          * JSON fallback for `sections`.
-          * @default ''
-         */
-        "sectionsJson"?: string;
-        /**
           * Controlled child sections within the selected page or detail screen.
           * @default []
          */
@@ -5756,11 +5315,6 @@ declare namespace LocalJSX {
           * @default 'Change page subsection'
          */
         "subsectionsAriaLabel"?: string;
-        /**
-          * JSON fallback for `subsections`.
-          * @default ''
-         */
-        "subsectionsJson"?: string;
         /**
           * Controlled selected child-section id.
           * @default ''
@@ -5792,11 +5346,6 @@ declare namespace LocalJSX {
           * @default []
          */
         "sections"?: TabItem[];
-        /**
-          * JSON fallback for `sections`.
-          * @default ''
-         */
-        "sectionsJson"?: string;
         /**
           * Controlled selected section id.
           * @default ''
@@ -6142,20 +5691,10 @@ declare namespace LocalJSX {
          */
         "headers"?: PanelToolsHeaders;
         /**
-          * JSON fallback for `headers`. The `headers` property takes precedence when non-empty.
-          * @default ''
-         */
-        "headersJson"?: string;
-        /**
           * Rail items rendered in the right column. Set via JS property: `el.items = [...]`. Replace the array reference to update.
           * @default []
          */
         "items"?: PanelToolsItem[];
-        /**
-          * JSON fallback for `items` — useful when framework bindings don't propagate arrays.
-          * @default ''
-         */
-        "itemsJson"?: string;
         "onDsChromeTransitionEnd"?: (event: DsPanelToolsCustomEvent<ChromeTransitionDetail>) => void;
         /**
           * Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion.
@@ -6364,6 +5903,11 @@ declare namespace LocalJSX {
          */
         "loadingLabel"?: string;
         /**
+          * Enable independent multi-value selection while keeping the popup open.
+          * @default false
+         */
+        "multiple"?: boolean;
+        /**
           * Native form field name.
          */
         "name"?: string | undefined;
@@ -6373,9 +5917,9 @@ declare namespace LocalJSX {
          */
         "noResultsText"?: string;
         /**
-          * Emitted after user selection or clearing with the next scalar value.
+          * Emitted after selection or clearing with the next scalar or array value.
          */
-        "onDsChange"?: (event: DsSelectCustomEvent<string>) => void;
+        "onDsChange"?: (event: DsSelectCustomEvent<SelectValue>) => void;
         /**
           * Emitted after the footer clear action.
          */
@@ -6425,163 +5969,7 @@ declare namespace LocalJSX {
          */
         "sections"?: SelectSection[];
         /**
-          * Control density.
-          * @default 'md'
-         */
-        "size"?: SelectSize;
-        /**
-          * Selected string value. Unknown values render the placeholder and are not submitted.
-          * @default ''
-         */
-        "value"?: string;
-        /**
-          * Width fit — hug content (default) or fill the parent.
-          * @default 'hug'
-         */
-        "width"?: SelectWidth;
-    }
-    interface DsSelectMulti {
-        /**
-          * Show the selected interaction fill when at least one value exists.
-          * @default true
-         */
-        "activeFill"?: boolean;
-        /**
-          * Show the clear-all footer action when values exist.
-          * @default true
-         */
-        "allowClear"?: boolean;
-        /**
-          * Additional IDs that describe the combobox.
-         */
-        "ariaDescribedby"?: string | undefined;
-        /**
-          * Direct accessible name when no external label is available.
-          * @default null
-         */
-        "ariaLabel"?: string | null;
-        /**
-          * IDs of elements that label the combobox.
-         */
-        "ariaLabelledby"?: string | undefined;
-        /**
-          * Actual parent surface context; omit on primary and secondary surfaces.
-         */
-        "background"?: SelectMultiBackground | undefined;
-        /**
-          * Localized clear-all action label.
-          * @default 'Clear'
-         */
-        "clearLabel"?: string;
-        /**
-          * Native disabled state.
-          * @default false
-         */
-        "disabled"?: boolean;
-        /**
-          * Show invalid visual state.
-          * @default false
-         */
-        "error"?: boolean;
-        /**
-          * Error text rendered below the trigger when error is true.
-         */
-        "errorMessage"?: string | undefined;
-        /**
-          * The `id` of a `<form>` element to associate this element with.
-         */
-        "form"?: string;
-        /**
-          * Show the surface-aware inset border.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        /**
-          * Optional trigger prefix icon name.
-         */
-        "icon"?: string | undefined;
-        /**
-          * ID applied to the internal combobox trigger for external labels.
-         */
-        "inputId"?: string | undefined;
-        /**
-          * Shared inactive treatment; removes interaction and form submission.
-          * @default false
-         */
-        "isInactive"?: boolean;
-        /**
-          * Replace the prefix with a loader and disable option interaction.
-          * @default false
-         */
-        "isLoading"?: boolean;
-        /**
-          * Accessible loading status label.
-          * @default 'Loading'
-         */
-        "loadingLabel"?: string;
-        /**
-          * Native form field name used for each repeated selected-value entry.
-         */
-        "name"?: string | undefined;
-        /**
-          * Localized empty-filter result text.
-          * @default 'No results found'
-         */
-        "noResultsText"?: string;
-        /**
-          * Emitted after user toggles or clearing with a new values array.
-         */
-        "onDsChange"?: (event: DsSelectMultiCustomEvent<string[]>) => void;
-        /**
-          * Emitted after the footer clear-all action.
-         */
-        "onDsClear"?: (event: DsSelectMultiCustomEvent<void>) => void;
-        /**
-          * Emitted whenever popup visibility changes.
-         */
-        "onDsOpenChange"?: (event: DsSelectMultiCustomEvent<boolean>) => void;
-        /**
-          * Controlled popup visibility.
-          * @default false
-         */
-        "open"?: boolean;
-        /**
-          * Flat choices. Assign arrays through the JavaScript property.
-          * @default []
-         */
-        "options"?: SelectMultiOption[];
-        /**
-          * Persistent trigger label; selected option labels never replace it.
-          * @default 'Select'
-         */
-        "placeholder"?: string;
-        /**
-          * Require at least one valid selected value.
-          * @default false
-         */
-        "required"?: boolean;
-        /**
-          * Validation message used when required is missing.
-          * @default 'This field is required.'
-         */
-        "requiredMessage"?: string;
-        /**
-          * Localized search-field placeholder and accessible name.
-          * @default 'Search'
-         */
-        "searchPlaceholder"?: string;
-        /**
-          * Show immediate local filtering over option labels, subtext, and section headings.
-          * @default false
-         */
-        "searchable"?: boolean;
-        /**
-          * Grouped choices; takes precedence over options. Assign through JavaScript.
-          * @default []
-         */
-        "sections"?: SelectMultiSection[];
-        /**
-          * Localized noun displayed after the selected count.
+          * Localized noun displayed after the selected count in multiple mode.
           * @default 'selected'
          */
         "selectedLabel"?: string;
@@ -6589,19 +5977,24 @@ declare namespace LocalJSX {
           * Control density.
           * @default 'md'
          */
-        "size"?: SelectMultiSize;
+        "size"?: SelectSize;
         /**
-          * Selected values. Assign arrays through the JavaScript property.
-          * @default []
+          * Selected scalar or array value according to `multiple`.
+          * @default ''
          */
-        "values"?: string[];
+        "value"?: SelectValue;
         /**
           * Width fit — hug content (default) or fill the parent.
           * @default 'hug'
          */
-        "width"?: SelectMultiWidth;
+        "width"?: SelectWidth;
     }
     interface DsShellApp {
+        /**
+          * Managed renders the complete responsive chrome; slotted exposes the advanced composition.
+          * @default 'managed'
+         */
+        "composition"?: ShellAppComposition;
         /**
           * Shell chrome wash preset. `none` renders solid chrome; the remaining presets use token-based washes that adapt to the active color theme.
           * @default 'neutral'
@@ -6623,53 +6016,81 @@ declare namespace LocalJSX {
          */
         "navStyle"?: NavChromeStyle;
         /**
+          * Router-owned navigation data used by managed composition.
+          * @default {}
+         */
+        "navigation"?: ShellNavigationConfig;
+        /**
+          * Managed breadcrumb intent from BarTitle.
+         */
+        "onDsBreadcrumbSelect"?: (event: DsShellAppCustomEvent<BreadcrumbSelectDetail>) => void;
+        /**
+          * Managed mobile Dashboard/Settings browsing intent.
+         */
+        "onDsBrowseContextChange"?: (event: DsShellAppCustomEvent<NavChromeStyle>) => void;
+        /**
+          * Managed tool-header action intent.
+         */
+        "onDsHeaderAction"?: (event: DsShellAppCustomEvent<{ tool: PanelToolsToolId; id: string }>) => void;
+        /**
+          * Managed tool-header Back intent.
+         */
+        "onDsHeaderBack"?: (event: DsShellAppCustomEvent<{ tool: PanelToolsToolId }>) => void;
+        /**
+          * Managed account-footer action intent.
+         */
+        "onDsNavFooterAction"?: (event: DsShellAppCustomEvent<void>) => void;
+        /**
+          * Managed primary-navigation intent; the application router performs navigation.
+         */
+        "onDsNavSelect"?: (event: DsShellAppCustomEvent<string>) => void;
+        /**
+          * Managed user/account trigger intent.
+         */
+        "onDsNavUserAction"?: (event: DsShellAppCustomEvent<PanelNavUserActionDetail>) => void;
+        /**
+          * Managed page action intent from BarTitle.
+         */
+        "onDsPageAction"?: (event: DsShellAppCustomEvent<string>) => void;
+        /**
+          * Managed page-level Back intent.
+         */
+        "onDsPageBack"?: (event: DsShellAppCustomEvent<MouseEvent>) => void;
+        /**
+          * Managed drawer/fullscreen presentation state.
+         */
+        "onDsPresentationChange"?: (event: DsShellAppCustomEvent<{ presentation: 'drawer' | 'fullscreen' }>) => void;
+        /**
           * Emitted after crossing the fixed 768px or 1200px shell boundaries.
          */
         "onDsResponsiveModeChange"?: (event: DsShellAppCustomEvent<{ mode: ShellResponsiveMode }>) => void;
+        /**
+          * Managed page-subsection intent from BarTitle or MobileHeader.
+         */
+        "onDsSubsectionChange"?: (event: DsShellAppCustomEvent<string>) => void;
+        /**
+          * Managed desktop BarNav or mobile section-selection intent.
+         */
+        "onDsTabChange"?: (event: DsShellAppCustomEvent<string>) => void;
+        /**
+          * Managed tools selection state.
+         */
+        "onDsToolChange"?: (event: DsShellAppCustomEvent<{ id: PanelToolsToolId; selected: boolean }>) => void;
+        /**
+          * Route-owned page title and section data used by managed composition.
+          * @default {}
+         */
+        "pageChrome"?: ShellPageChromeConfig;
         /**
           * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
         "shortcutsEnabled"?: boolean;
-    }
-    /**
-     * @deprecated Use `ds-swatch-picker` with shell preset options.
-     */
-    interface DsShellGradientPicker {
         /**
-          * @default 'Shell gradient theme'
+          * Product-owned global tool definitions used by managed composition.
+          * @default {}
          */
-        "groupLabel"?: string;
-        "onDsChange"?: (event: DsShellGradientPickerCustomEvent<ShellGradientPreset1>) => void;
-        /**
-          * Active shell wash preset.
-          * @default 'neutral'
-         */
-        "value"?: ShellGradientPreset1;
-    }
-    /**
-     * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
-     */
-    interface DsShellGradientSwatch {
-        /**
-          * @default null
-         */
-        "ariaLabel"?: string | null;
-        /**
-          * @default false
-         */
-        "isInactive"?: boolean;
-        "onDsSelect"?: (event: DsShellGradientSwatchCustomEvent<ShellGradientPreset1>) => void;
-        /**
-          * Wash preset this orb previews.
-          * @default 'neutral'
-         */
-        "preset"?: ShellGradientPreset1;
-        /**
-          * Selected — brand stroke + halo over inner fill/border/interaction stack.
-          * @default false
-         */
-        "selected"?: boolean;
+        "tools"?: ShellToolsConfig;
     }
     interface DsShellPage {
         /**
@@ -6706,10 +6127,6 @@ declare namespace LocalJSX {
          */
         "headers"?: PanelToolsHeaders;
         /**
-          * @default ''
-         */
-        "headersJson"?: string;
-        /**
           * @default 'Inbox'
          */
         "inboxLabel"?: string;
@@ -6721,10 +6138,6 @@ declare namespace LocalJSX {
           * @default []
          */
         "items"?: PanelToolsItem[];
-        /**
-          * @default ''
-         */
-        "itemsJson"?: string;
         "onDsHeaderAction"?: (event: DsShellToolsCustomEvent<{
     tool: PanelToolsToolId;
     id: string;
@@ -7293,7 +6706,6 @@ declare namespace LocalJSX {
     }
     interface DsBarNavAttributes {
         "navStyle": NavChromeStyle;
-        "tabsJson": string;
         "value": string;
         "heading": string | undefined;
         "basePath": string;
@@ -7344,7 +6756,6 @@ declare namespace LocalJSX {
         "controls": string | undefined;
         "expanded": boolean | undefined;
         "haspopup": ButtonFilledPopup | undefined;
-        "pressed": boolean | undefined;
         "hasMenu": boolean;
     }
     interface DsButtonUnfilledAttributes {
@@ -7371,19 +6782,11 @@ declare namespace LocalJSX {
         "hasMenu": boolean;
         "focusTabIndex": number;
     }
-    interface DsCardDataVizBarAttributes {
+    interface DsCardDataVizAttributes {
         "heading": string;
-        "cardWidth": CardDataVizBarWidth;
-        "filterLabel": string;
-    }
-    interface DsCardDataVizDonutAttributes {
-        "heading": string;
-        "cardWidth": CardDataVizDonutWidth;
-        "filterLabel": string;
-    }
-    interface DsCardDataVizLineAttributes {
-        "heading": string;
-        "cardWidth": CardDataVizLineWidth;
+        "variant": CardDataVizVariant;
+        "cardWidth": CardDataVizWidth;
+        "showFilter": boolean;
         "filterLabel": string;
     }
     interface DsCardOverviewAttributes {
@@ -7395,6 +6798,7 @@ declare namespace LocalJSX {
         "isLoading": boolean;
         "scoreErrorMessage": string | undefined;
         "overviewLabel": string;
+        "scrollCollapseProgress": number;
     }
     interface DsCardSettingAttributes {
         "heading": string;
@@ -7404,16 +6808,8 @@ declare namespace LocalJSX {
         "cancelLabel": string;
         "saveLabel": string;
     }
-    interface DsCardShellDataVizAttributes {
-        "heading": string;
-        "cardWidth": CardShellDataVizWidth;
-    }
     interface DsChartBarAttributes {
-        "width": number;
-        "height": number;
-    }
-    interface DsChartBarStackedAttributes {
-        "variant": ChartBarStackedVariant;
+        "variant": ChartBarVariant;
         "width": number;
         "height": number;
     }
@@ -7606,16 +7002,13 @@ declare namespace LocalJSX {
     interface DsMobileHeaderAttributes {
         "heading": string;
         "headingLevel": MobileHeaderHeadingLevel;
-        "sectionsJson": string;
         "value": string;
         "sectionsAriaLabel": string;
-        "subsectionsJson": string;
         "subvalue": string;
         "subsectionsAriaLabel": string;
         "tone": MobileHeaderTone;
     }
     interface DsMobileSectionSwitcherAttributes {
-        "sectionsJson": string;
         "value": string;
         "navigationLabel": string;
     }
@@ -7693,10 +7086,8 @@ declare namespace LocalJSX {
         "presentation": 'drawer' | 'fullscreen';
         "fullscreenHeaderMode": 'shared' | 'split';
         "activeTool": PanelToolsToolId | '';
-        "itemsJson": string;
         "toolsLabel": string;
         "toolShortcutsLabel": string;
-        "headersJson": string;
         "storageKey": string;
     }
     interface DsRadioAttributes {
@@ -7716,7 +7107,8 @@ declare namespace LocalJSX {
         "scrollLabel": string | undefined;
     }
     interface DsSelectAttributes {
-        "value": string;
+        "multiple": boolean;
+        "value": SelectValue;
         "open": boolean;
         "name": string | undefined;
         "disabled": boolean;
@@ -7732,6 +7124,7 @@ declare namespace LocalJSX {
         "icon": string | undefined;
         "allowClear": boolean;
         "clearLabel": string;
+        "selectedLabel": string;
         "searchable": boolean;
         "searchPlaceholder": string;
         "noResultsText": string;
@@ -7744,51 +7137,13 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
-    interface DsSelectMultiAttributes {
-        "open": boolean;
-        "name": string | undefined;
-        "disabled": boolean;
-        "required": boolean;
-        "requiredMessage": string;
-        "placeholder": string;
-        "size": SelectMultiSize;
-        "width": SelectMultiWidth;
-        "isInactive": boolean;
-        "isLoading": boolean;
-        "activeFill": boolean;
-        "hasBorder": boolean;
-        "icon": string | undefined;
-        "allowClear": boolean;
-        "clearLabel": string;
-        "selectedLabel": string;
-        "searchable": boolean;
-        "searchPlaceholder": string;
-        "noResultsText": string;
-        "loadingLabel": string;
-        "background": SelectMultiBackground | undefined;
-        "error": boolean;
-        "errorMessage": string | undefined;
-        "inputId": string | undefined;
-        "ariaLabel": string | null;
-        "ariaLabelledby": string | undefined;
-        "ariaDescribedby": string | undefined;
-    }
     interface DsShellAppAttributes {
+        "composition": ShellAppComposition;
         "navStyle": NavChromeStyle;
         "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
         "mobileDestination": MobileDestination;
         "mobileSheetNavOpen": boolean;
-    }
-    interface DsShellGradientPickerAttributes {
-        "value": ShellGradientPreset;
-        "groupLabel": string;
-    }
-    interface DsShellGradientSwatchAttributes {
-        "preset": ShellGradientPreset;
-        "selected": boolean;
-        "isInactive": boolean;
-        "ariaLabel": string | null;
     }
     interface DsShellPageAttributes {
         "headerPresentation": ShellPageHeaderPresentation;
@@ -7802,8 +7157,6 @@ declare namespace LocalJSX {
         "activeTool": PanelToolsToolId | '';
         "presentation": 'drawer' | 'fullscreen';
         "fullscreenHeaderMode": 'shared' | 'split';
-        "itemsJson": string;
-        "headersJson": string;
         "storageKey": string;
         "toolsLabel": string;
         "toolShortcutsLabel": string;
@@ -7943,14 +7296,10 @@ declare namespace LocalJSX {
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
-        "ds-card-data-viz-bar": Omit<DsCardDataVizBar, keyof DsCardDataVizBarAttributes> & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes]?: DsCardDataVizBar[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `attr:${K}`]?: DsCardDataVizBarAttributes[K] } & { [K in keyof DsCardDataVizBar & keyof DsCardDataVizBarAttributes as `prop:${K}`]?: DsCardDataVizBar[K] } & OneOf<"heading", DsCardDataVizBar["heading"], DsCardDataVizBarAttributes["heading"]>;
-        "ds-card-data-viz-donut": Omit<DsCardDataVizDonut, keyof DsCardDataVizDonutAttributes> & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes]?: DsCardDataVizDonut[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `attr:${K}`]?: DsCardDataVizDonutAttributes[K] } & { [K in keyof DsCardDataVizDonut & keyof DsCardDataVizDonutAttributes as `prop:${K}`]?: DsCardDataVizDonut[K] } & OneOf<"heading", DsCardDataVizDonut["heading"], DsCardDataVizDonutAttributes["heading"]>;
-        "ds-card-data-viz-line": Omit<DsCardDataVizLine, keyof DsCardDataVizLineAttributes> & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes]?: DsCardDataVizLine[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `attr:${K}`]?: DsCardDataVizLineAttributes[K] } & { [K in keyof DsCardDataVizLine & keyof DsCardDataVizLineAttributes as `prop:${K}`]?: DsCardDataVizLine[K] } & OneOf<"heading", DsCardDataVizLine["heading"], DsCardDataVizLineAttributes["heading"]>;
+        "ds-card-data-viz": Omit<DsCardDataViz, keyof DsCardDataVizAttributes> & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes]?: DsCardDataViz[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `attr:${K}`]?: DsCardDataVizAttributes[K] } & { [K in keyof DsCardDataViz & keyof DsCardDataVizAttributes as `prop:${K}`]?: DsCardDataViz[K] } & OneOf<"heading", DsCardDataViz["heading"], DsCardDataVizAttributes["heading"]>;
         "ds-card-overview": Omit<DsCardOverview, keyof DsCardOverviewAttributes> & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes]?: DsCardOverview[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `attr:${K}`]?: DsCardOverviewAttributes[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `prop:${K}`]?: DsCardOverview[K] };
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
-        "ds-card-shell-data-viz": Omit<DsCardShellDataViz, keyof DsCardShellDataVizAttributes> & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes]?: DsCardShellDataViz[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `attr:${K}`]?: DsCardShellDataVizAttributes[K] } & { [K in keyof DsCardShellDataViz & keyof DsCardShellDataVizAttributes as `prop:${K}`]?: DsCardShellDataViz[K] } & OneOf<"heading", DsCardShellDataViz["heading"], DsCardShellDataVizAttributes["heading"]>;
         "ds-chart-bar": Omit<DsChartBar, keyof DsChartBarAttributes> & { [K in keyof DsChartBar & keyof DsChartBarAttributes]?: DsChartBar[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `attr:${K}`]?: DsChartBarAttributes[K] } & { [K in keyof DsChartBar & keyof DsChartBarAttributes as `prop:${K}`]?: DsChartBar[K] };
-        "ds-chart-bar-stacked": Omit<DsChartBarStacked, keyof DsChartBarStackedAttributes> & { [K in keyof DsChartBarStacked & keyof DsChartBarStackedAttributes]?: DsChartBarStacked[K] } & { [K in keyof DsChartBarStacked & keyof DsChartBarStackedAttributes as `attr:${K}`]?: DsChartBarStackedAttributes[K] } & { [K in keyof DsChartBarStacked & keyof DsChartBarStackedAttributes as `prop:${K}`]?: DsChartBarStacked[K] };
         "ds-chart-donut": Omit<DsChartDonut, keyof DsChartDonutAttributes> & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes]?: DsChartDonut[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `attr:${K}`]?: DsChartDonutAttributes[K] } & { [K in keyof DsChartDonut & keyof DsChartDonutAttributes as `prop:${K}`]?: DsChartDonut[K] };
         "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
         "ds-chart-line": Omit<DsChartLine, keyof DsChartLineAttributes> & { [K in keyof DsChartLine & keyof DsChartLineAttributes]?: DsChartLine[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `attr:${K}`]?: DsChartLineAttributes[K] } & { [K in keyof DsChartLine & keyof DsChartLineAttributes as `prop:${K}`]?: DsChartLine[K] };
@@ -7985,10 +7334,7 @@ declare namespace LocalJSX {
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
-        "ds-select-multi": Omit<DsSelectMulti, keyof DsSelectMultiAttributes> & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes]?: DsSelectMulti[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `attr:${K}`]?: DsSelectMultiAttributes[K] } & { [K in keyof DsSelectMulti & keyof DsSelectMultiAttributes as `prop:${K}`]?: DsSelectMulti[K] };
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
-        "ds-shell-gradient-picker": Omit<DsShellGradientPicker, keyof DsShellGradientPickerAttributes> & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes]?: DsShellGradientPicker[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `attr:${K}`]?: DsShellGradientPickerAttributes[K] } & { [K in keyof DsShellGradientPicker & keyof DsShellGradientPickerAttributes as `prop:${K}`]?: DsShellGradientPicker[K] };
-        "ds-shell-gradient-swatch": Omit<DsShellGradientSwatch, keyof DsShellGradientSwatchAttributes> & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes]?: DsShellGradientSwatch[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `attr:${K}`]?: DsShellGradientSwatchAttributes[K] } & { [K in keyof DsShellGradientSwatch & keyof DsShellGradientSwatchAttributes as `prop:${K}`]?: DsShellGradientSwatch[K] };
         "ds-shell-page": Omit<DsShellPage, keyof DsShellPageAttributes> & { [K in keyof DsShellPage & keyof DsShellPageAttributes]?: DsShellPage[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `attr:${K}`]?: DsShellPageAttributes[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `prop:${K}`]?: DsShellPage[K] };
         "ds-shell-tools": Omit<DsShellTools, keyof DsShellToolsAttributes> & { [K in keyof DsShellTools & keyof DsShellToolsAttributes]?: DsShellTools[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `attr:${K}`]?: DsShellToolsAttributes[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `prop:${K}`]?: DsShellTools[K] };
         "ds-skeleton": Omit<DsSkeleton, keyof DsSkeletonAttributes> & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes]?: DsSkeleton[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `attr:${K}`]?: DsSkeletonAttributes[K] } & { [K in keyof DsSkeleton & keyof DsSkeletonAttributes as `prop:${K}`]?: DsSkeleton[K] };
@@ -8022,29 +7368,13 @@ declare module "@stencil/core" {
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             /**
-             * Bar-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-             * region and an optional, content-sized static legend.
+             * Standard data-visualization card chrome and composition. The variant owns
+             * only the chart/legend relationship; applications continue to own data.
              */
-            "ds-card-data-viz-bar": LocalJSX.IntrinsicElements["ds-card-data-viz-bar"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizBarElement>;
-            /**
-             * Donut data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart region and
-             * content-sized legend. Hover sync between chart and legend stays here.
-             */
-            "ds-card-data-viz-donut": LocalJSX.IntrinsicElements["ds-card-data-viz-donut"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizDonutElement>;
-            /**
-             * Line-chart data-viz card — dedicated `ds-card-shell-data-viz` chrome with a fill chart
-             * region and a content-sized, static legend.
-             */
-            "ds-card-data-viz-line": LocalJSX.IntrinsicElements["ds-card-data-viz-line"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizLineElement>;
+            "ds-card-data-viz": LocalJSX.IntrinsicElements["ds-card-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardDataVizElement>;
             "ds-card-overview": LocalJSX.IntrinsicElements["ds-card-overview"] & JSXBase.HTMLAttributes<HTMLDsCardOverviewElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
-            /**
-             * Dedicated shell chrome for data-visualization cards. Chart-specific layout,
-             * legends, hover synchronization, and empty states belong to composing cards.
-             */
-            "ds-card-shell-data-viz": LocalJSX.IntrinsicElements["ds-card-shell-data-viz"] & JSXBase.HTMLAttributes<HTMLDsCardShellDataVizElement>;
             "ds-chart-bar": LocalJSX.IntrinsicElements["ds-chart-bar"] & JSXBase.HTMLAttributes<HTMLDsChartBarElement>;
-            "ds-chart-bar-stacked": LocalJSX.IntrinsicElements["ds-chart-bar-stacked"] & JSXBase.HTMLAttributes<HTMLDsChartBarStackedElement>;
             "ds-chart-donut": LocalJSX.IntrinsicElements["ds-chart-donut"] & JSXBase.HTMLAttributes<HTMLDsChartDonutElement>;
             /**
              * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style
@@ -8091,16 +7421,7 @@ declare module "@stencil/core" {
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
-            "ds-select-multi": LocalJSX.IntrinsicElements["ds-select-multi"] & JSXBase.HTMLAttributes<HTMLDsSelectMultiElement>;
             "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;
-            /**
-             * @deprecated Use `ds-swatch-picker` with shell preset options.
-             */
-            "ds-shell-gradient-picker": LocalJSX.IntrinsicElements["ds-shell-gradient-picker"] & JSXBase.HTMLAttributes<HTMLDsShellGradientPickerElement>;
-            /**
-             * @deprecated Use `ds-swatch-picker`; individual swatches are implementation detail.
-             */
-            "ds-shell-gradient-swatch": LocalJSX.IntrinsicElements["ds-shell-gradient-swatch"] & JSXBase.HTMLAttributes<HTMLDsShellGradientSwatchElement>;
             "ds-shell-page": LocalJSX.IntrinsicElements["ds-shell-page"] & JSXBase.HTMLAttributes<HTMLDsShellPageElement>;
             "ds-shell-tools": LocalJSX.IntrinsicElements["ds-shell-tools"] & JSXBase.HTMLAttributes<HTMLDsShellToolsElement>;
             "ds-skeleton": LocalJSX.IntrinsicElements["ds-skeleton"] & JSXBase.HTMLAttributes<HTMLDsSkeletonElement>;

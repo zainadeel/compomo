@@ -26,22 +26,20 @@
     },
     {
       "when": "The donut belongs in the canonical dashboard card.",
-      "component": "component:ds-card-data-viz-donut",
-      "reason": "The dedicated card places the legend and handles bidirectional highlight synchronization."
+      "component": "component:ds-card-data-viz",
+      "reason": "The donut variant places the legend and handles bidirectional highlight synchronization."
     },
     {
       "when": "A static line chart and series key belong in the canonical dashboard card.",
-      "component": "component:ds-card-data-viz-line",
-      "reason": "The dedicated card places the horizontal legend and disables decorative local hover highlighting."
+      "component": "component:ds-card-data-viz",
+      "reason": "The line variant places the horizontal legend and disables decorative local hover highlighting."
     }
   ],
   "commonlyComposedWith": [
     "component:ds-chart-donut",
-    "component:ds-chart-bar-stacked",
+    "component:ds-chart-bar",
     "component:ds-chart-line",
-    "component:ds-card-data-viz-donut",
-    "component:ds-card-data-viz-line",
-    "component:ds-card-shell-data-viz"
+    "component:ds-card-data-viz"
   ],
   "accessibility": [
     "Rows remain non-interactive unless the item supplies an actual link destination.",

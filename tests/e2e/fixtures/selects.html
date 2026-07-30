@@ -24,18 +24,20 @@
       <ds-select id="searchable" searchable aria-label="Search fruit"></ds-select>
       <ds-select id="loading" icon="Chart" is-loading aria-label="Loading fruit"></ds-select>
       <ds-select id="surface" background="bold" aria-label="Bold fruit"></ds-select>
-      <ds-select-multi
+      <ds-select
         id="multi"
+        multiple
         name="entities"
         placeholder="Entities"
         aria-label="Entities"
-      ></ds-select-multi>
-      <ds-select-multi
+      ></ds-select>
+      <ds-select
         id="multi-search"
+        multiple
         searchable
         placeholder="Entities"
         aria-label="Search entities"
-      ></ds-select-multi>
+      ></ds-select>
 
       <form id="selection-form">
         <ds-select
@@ -44,24 +46,26 @@
           required
           aria-label="Required fruit"
         ></ds-select>
-        <ds-select-multi
+        <ds-select
           id="required-multi"
+          multiple
           name="group"
           required
           placeholder="Groups"
           aria-label="Required groups"
-        ></ds-select-multi>
+        ></ds-select>
         <button id="submit" type="submit">Submit</button>
         <button id="reset" type="reset">Reset</button>
       </form>
 
       <section class="contained-selects" aria-label="Contained select fixtures">
         <ds-select id="contained-single" aria-label="Contained fruit"></ds-select>
-        <ds-select-multi
+        <ds-select
           id="contained-multi"
+          multiple
           placeholder="Contained entities"
           aria-label="Contained entities"
-        ></ds-select-multi>
+        ></ds-select>
       </section>
     </main>
 

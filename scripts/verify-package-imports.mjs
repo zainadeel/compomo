@@ -37,11 +37,19 @@ async function verifyPackagedMcp(consumerDir) {
 
     const tools = await client.listTools();
     const toolNames = new Set(tools.tools.map(tool => tool.name));
-    for (const name of ['list_components', 'get_component', 'list_patterns', 'get_pattern']) {
+    const expectedTools = [
+      'list_components',
+      'get_component',
+      'get_setup_guide',
+      'get_component_source',
+      'list_patterns',
+      'get_pattern',
+    ];
+    for (const name of expectedTools) {
       if (!toolNames.has(name)) throw new Error(`Missing packaged MCP tool: ${name}`);
     }
 
-    for (const name of ['list_components', 'get_component', 'list_patterns', 'get_pattern']) {
+    for (const name of expectedTools) {
       const tool = tools.tools.find(candidate => candidate.name === name);
       if (!tool?.outputSchema) throw new Error(`Packaged MCP tool does not advertise structured output: ${name}`);
       if (
@@ -65,6 +73,30 @@ async function verifyPackagedMcp(consumerDir) {
       componentResult.structuredContent.component.files
     ) {
       throw new Error('Packaged MCP did not return structured ButtonFilled metadata without source files.');
+    }
+
+    const sourceResult = await client.callTool({
+      name: 'get_component_source',
+      arguments: { name: 'button-filled' },
+    });
+    if (
+      sourceResult.isError ||
+      sourceResult.structuredContent?.name !== 'button-filled' ||
+      !sourceResult.structuredContent.files?.some(file => file.path.endsWith('ButtonFilled.tsx'))
+    ) {
+      throw new Error('Packaged MCP did not return structured ButtonFilled source files.');
+    }
+
+    const setupResult = await client.callTool({
+      name: 'get_setup_guide',
+      arguments: {},
+    });
+    if (
+      setupResult.isError ||
+      !setupResult.structuredContent?.guide?.includes('@ds-mo/ui') ||
+      !setupResult.structuredContent.guide.includes('@ds-mo/tokens')
+    ) {
+      throw new Error('Packaged MCP did not return the structured setup guide.');
     }
 
     const componentListResult = await client.callTool({
@@ -136,6 +168,7 @@ try {
       '@ds-mo/icons': pkg.devDependencies['@ds-mo/icons'],
       '@ds-mo/tokens': pkg.devDependencies['@ds-mo/tokens'],
       '@ds-mo/ui': `file:${tarballPath}`,
+      '@stencil/react-output-target': pkg.devDependencies['@stencil/react-output-target'],
       react: pkg.devDependencies.react,
       'react-dom': pkg.devDependencies['react-dom'],
     },

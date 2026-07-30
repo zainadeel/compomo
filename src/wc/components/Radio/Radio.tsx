@@ -1,5 +1,11 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
-import { CONTROL_TEXT_VARIANT, DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
+import {
+  CONTROL_TEXT_VARIANT,
+  DEFAULT_REQUIRED_MESSAGE,
+  restoreStringFormState,
+  setFormControlValue,
+  setRequiredValidity,
+} from '../../utils';
 
 export interface RadioOption {
   label: string;
@@ -61,7 +67,7 @@ export class Radio {
   @Watch('required')
   syncFormValue() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    this.internals.setFormValue(inactive ? null : this.value);
+    setFormControlValue(this.internals, this.value, { inactive });
     const missing = this.required && !inactive && this.value.length === 0;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
@@ -76,7 +82,7 @@ export class Radio {
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
-    this.value = typeof state === 'string' ? state : '';
+    this.value = restoreStringFormState(state);
   }
 
   private get activeItems(): HTMLElement[] {

@@ -1,5 +1,5 @@
 import { AttachInternals, Component, Element, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
-import { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
+import { DEFAULT_REQUIRED_MESSAGE, setFormControlValue, setRequiredValidity } from '../../utils';
 
 export type SwitchSize = 'lg' | 'md' | 'sm' | 'xs';
 
@@ -69,7 +69,7 @@ export class Switch {
     const inactive = this.presentation || this.isInactive || this.disabled || this.formDisabled;
     const submissionValue = this.checked ? this.value : this.uncheckedValue ?? null;
     const state = this.checked ? 'checked' : 'unchecked';
-    this.internals.setFormValue(inactive ? null : submissionValue, state);
+    setFormControlValue(this.internals, submissionValue, { inactive, state });
 
     const missing = this.required && !inactive && !this.checked;
     setRequiredValidity(this.internals, missing, this.requiredMessage);

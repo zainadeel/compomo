@@ -11,12 +11,12 @@ test('defaults both select triggers to hug width and supports explicit fill', as
     const select = page.locator(selector);
     await expect
       .poll(() =>
-        select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => element.width)
+        select.evaluate((element: HTMLDsSelectElement) => element.width)
       )
       .toBe('hug');
     await expect(select).toHaveClass(/ds-control-width--hug/);
 
-    await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => {
+    await select.evaluate((element: HTMLDsSelectElement) => {
       element.width = 'fill';
       element.style.width = '320px';
     });
@@ -145,7 +145,9 @@ test('keeps single and multi popups visible and pointer-usable after repeated re
     await multi.getByRole('option', { name: 'Date' }).click();
     await expect
       .poll(() =>
-        multi.evaluate((element: HTMLDsSelectMultiElement) => element.values.includes('date'))
+        multi.evaluate((element: HTMLDsSelectElement) =>
+          Array.isArray(element.value) && element.value.includes('date')
+        )
       )
       .toBe(cycle % 2 === 0);
     await multiTrigger.press('Escape');
@@ -220,7 +222,7 @@ test('falls back to one text-only option layout when icon data is mixed', async 
 test('keeps the active descendant visible in long single and multi lists', async ({ page }) => {
   for (const selector of ['#single', '#multi']) {
     const select = page.locator(selector);
-    await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => {
+    await select.evaluate((element: HTMLDsSelectElement) => {
       element.options = Array.from({ length: 40 }, (_, index) => ({
         label: `Option ${String(index + 1).padStart(2, '0')}`,
         value: `option-${index + 1}`,
@@ -430,8 +432,24 @@ test('shows busy state in the trigger and popup', async ({ page }) => {
   await expect(trigger.locator('ds-loader')).toHaveCount(1);
   await trigger.click();
   const loadingOption = select.getByRole('option', { name: 'Loading' });
+  const popupLoader = loadingOption.locator('ds-loader');
   await expect(loadingOption).toHaveCount(1);
   await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
+
+  const [loadingBox, loaderBox] = await Promise.all([
+    loadingOption.boundingBox(),
+    popupLoader.boundingBox(),
+  ]);
+  expect(loadingBox).not.toBeNull();
+  expect(loaderBox).not.toBeNull();
+  expect(loaderBox!.x + loaderBox!.width / 2).toBeCloseTo(
+    loadingBox!.x + loadingBox!.width / 2,
+    1
+  );
+  expect(loaderBox!.y + loaderBox!.height / 2).toBeCloseTo(
+    loadingBox!.y + loadingBox!.height / 2,
+    1
+  );
 });
 
 test('uses a thicker inset stroke for error without changing control geometry', async ({
@@ -445,7 +463,7 @@ test('uses a thicker inset stroke for error without changing control geometry', 
     await expect
       .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
       .toMatch(/0px 0px 0px 1px/);
-    await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => {
+    await select.evaluate((element: HTMLDsSelectElement) => {
       element.error = true;
       element.errorMessage = 'Make a selection.';
     });
@@ -473,13 +491,13 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
     ['sm', 'ds-text--body-small'],
     ['xs', 'ds-text--caption'],
   ] as const) {
-    await select.evaluate((element: HTMLDsSelectMultiElement, nextSize) => {
+    await select.evaluate((element: HTMLDsSelectElement, nextSize) => {
       element.size = nextSize;
     }, size);
     await expect(triggerLabel).toHaveClass(new RegExp(textClass));
     await expect(triggerLabel).toHaveText('Entities · 2');
   }
-  await select.evaluate((element: HTMLDsSelectMultiElement) => {
+  await select.evaluate((element: HTMLDsSelectElement) => {
     element.size = 'md';
   });
   await trigger.click();
@@ -500,7 +518,7 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   await expect(dateOption).not.toHaveClass(/ds-focus-ring--visible/);
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect
-    .poll(() => select.evaluate((element: HTMLDsSelectMultiElement) => element.values))
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
     .toEqual(['apple', 'cherry', 'date']);
   await expect(triggerLabel).toHaveText('Entities · 3');
   await expect
@@ -559,7 +577,7 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   await expect(clear).toHaveCSS('text-decoration-line', 'underline');
   await clear.click();
   await expect
-    .poll(() => select.evaluate((element: HTMLDsSelectMultiElement) => element.values))
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
     .toEqual([]);
   await expect(triggerLabel).toHaveText('Entities');
   await expect(select.getByRole('listbox')).toBeVisible();
@@ -576,8 +594,8 @@ test('submits repeated multi values, validates required controls, and resets', a
   await single.evaluate((element: HTMLDsSelectElement) => {
     element.value = 'apple';
   });
-  await multi.evaluate((element: HTMLDsSelectMultiElement) => {
-    element.values = ['apple', 'cherry'];
+  await multi.evaluate((element: HTMLDsSelectElement) => {
+    element.value = ['apple', 'cherry'];
   });
   await expect
     .poll(() => form.evaluate(element => (element as HTMLFormElement).checkValidity()))
@@ -596,7 +614,7 @@ test('submits repeated multi values, validates required controls, and resets', a
     .poll(() => single.evaluate((element: HTMLDsSelectElement) => element.value))
     .toBe('');
   await expect
-    .poll(() => multi.evaluate((element: HTMLDsSelectMultiElement) => element.values))
+    .poll(() => multi.evaluate((element: HTMLDsSelectElement) => element.value))
     .toEqual([]);
 });
 
@@ -637,14 +655,13 @@ test('keeps prefix icons and chevrons secondary across selected surface contexts
 
   for (const selector of ['#single', '#multi']) {
     const select = page.locator(selector);
-    await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement) => {
+    await select.evaluate((element: HTMLDsSelectElement) => {
       element.icon = 'Chart';
-      if (element.tagName === 'DS-SELECT') (element as HTMLDsSelectElement).value = 'apple';
-      else (element as HTMLDsSelectMultiElement).values = ['apple'];
+      element.value = element.multiple ? ['apple'] : 'apple';
     });
 
     for (const [background, secondaryToken, primaryToken] of cases) {
-      await select.evaluate((element: HTMLDsSelectElement | HTMLDsSelectMultiElement, value) => {
+      await select.evaluate((element: HTMLDsSelectElement, value) => {
         element.background = value;
       }, background);
 

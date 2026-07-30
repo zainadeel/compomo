@@ -90,15 +90,6 @@
           "mutable": false,
           "description": "Accessible name for the section chooser."
         },
-        "sectionsJson": {
-          "type": "string",
-          "resolvedType": "string",
-          "attribute": "sections-json",
-          "default": "''",
-          "required": false,
-          "mutable": false,
-          "description": "JSON fallback for `sections`."
-        },
         "subsections": {
           "type": "TabItem[]",
           "resolvedType": "TabItem[]",
@@ -115,15 +106,6 @@
           "required": false,
           "mutable": false,
           "description": "Accessible name for the child-section chooser."
-        },
-        "subsectionsJson": {
-          "type": "string",
-          "resolvedType": "string",
-          "attribute": "subsections-json",
-          "default": "''",
-          "required": false,
-          "mutable": false,
-          "description": "JSON fallback for `subsections`."
         },
         "subvalue": {
           "type": "string",
@@ -210,15 +192,6 @@
         "mutable": false,
         "description": "Accessible name for the section chooser."
       },
-      "sectionsJson": {
-        "type": "string",
-        "resolvedType": "string",
-        "attribute": "sections-json",
-        "default": "''",
-        "required": false,
-        "mutable": false,
-        "description": "JSON fallback for `sections`."
-      },
       "subsections": {
         "type": "TabItem[]",
         "resolvedType": "TabItem[]",
@@ -235,15 +208,6 @@
         "required": false,
         "mutable": false,
         "description": "Accessible name for the child-section chooser."
-      },
-      "subsectionsJson": {
-        "type": "string",
-        "resolvedType": "string",
-        "attribute": "subsections-json",
-        "default": "''",
-        "required": false,
-        "mutable": false,
-        "description": "JSON fallback for `subsections`."
       },
       "subvalue": {
         "type": "string",
@@ -339,7 +303,7 @@
     },
     {
       "path": "src/wc/components/MobileHeader/MobileHeader.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { getSelectableTabs, type TabItem } from '../TabGroup/tab-item-utils';\nimport type {\n  MobileHeaderHeadingLevel,\n  MobileHeaderTone,\n} from './mobile-header-types';\n\n@Component({\n  tag: 'ds-mobile-header',\n  styleUrl: 'MobileHeader.css',\n  scoped: true,\n})\nexport class MobileHeader {\n  /** Static title used when no peer sections are supplied. */\n  @Prop() heading: string = '';\n  /** Semantic heading level for the active mobile screen. */\n  @Prop() headingLevel: MobileHeaderHeadingLevel = 'h1';\n  /** Controlled peer sections. Their selected label replaces the static title. */\n  @Prop() sections: TabItem[] = [];\n  /** JSON fallback for `sections`. */\n  @Prop({ attribute: 'sections-json' }) sectionsJson: string = '';\n  /** Controlled selected section id. */\n  @Prop() value: string = '';\n  /** Accessible name for the section chooser. */\n  @Prop() sectionsAriaLabel: string = 'Change page section';\n  /** Controlled child sections within the selected page or detail screen. */\n  @Prop() subsections: TabItem[] = [];\n  /** JSON fallback for `subsections`. */\n  @Prop({ attribute: 'subsections-json' }) subsectionsJson: string = '';\n  /** Controlled selected child-section id. */\n  @Prop() subvalue: string = '';\n  /** Accessible name for the child-section chooser. */\n  @Prop() subsectionsAriaLabel: string = 'Change page subsection';\n  /** Default page chrome or bold-brand workflow chrome. */\n  @Prop({ reflect: true }) tone: MobileHeaderTone = 'default';\n\n  /** Section selection intent. */\n  @Event() dsSectionChange!: EventEmitter<string>;\n  /** Child-section selection intent. */\n  @Event() dsSubsectionChange!: EventEmitter<string>;\n\n  private parseSections(value: TabItem[], json: string): TabItem[] {\n    if (!json.trim()) return value ?? [];\n    try {\n      const parsed = JSON.parse(json);\n      return Array.isArray(parsed) ? (parsed as TabItem[]) : [];\n    } catch {\n      return [];\n    }\n  }\n\n  private get resolvedSections(): TabItem[] {\n    return this.parseSections(this.sections, this.sectionsJson);\n  }\n\n  private get resolvedSubsections(): TabItem[] {\n    return this.parseSections(this.subsections, this.subsectionsJson);\n  }\n\n  private get selectedLabel(): string {\n    const selectable = getSelectableTabs(this.resolvedSections);\n    return selectable.find(section => section.id === this.value)?.label ??\n      selectable[0]?.label ??\n      this.heading;\n  }\n\n  private handleSectionChange = (event: CustomEvent<string>) => {\n    event.stopPropagation();\n    this.dsSectionChange.emit(event.detail);\n  };\n\n  private handleSubsectionChange = (event: CustomEvent<string>) => {\n    event.stopPropagation();\n    this.dsSubsectionChange.emit(event.detail);\n  };\n\n  render() {\n    const Heading = this.headingLevel;\n    const selectable = getSelectableTabs(this.resolvedSections);\n    const hasSwitcher = selectable.length > 1;\n    const hasSubsections = getSelectableTabs(this.resolvedSubsections).length > 1;\n    const foreground = this.tone === 'brand' ? 'on-bold' : 'primary';\n\n    return (\n      <Host>\n        <header class=\"mobile-header\">\n          <div class=\"mobile-header__primary ds-chrome-grid ds-chrome-space--md\">\n            <div class=\"mobile-header__lane mobile-header__lane--leading\">\n              <slot name=\"leading\" />\n            </div>\n            <div class=\"mobile-header__center\">\n              {hasSwitcher ? (\n                [\n                  <span\n                    class=\"mobile-header__semantic-heading\"\n                    role=\"heading\"\n                    aria-level={this.headingLevel === 'h1' ? '1' : '2'}\n                  >\n                    {this.selectedLabel}\n                  </span>,\n                  <ds-mobile-section-switcher\n                    sections={this.resolvedSections}\n                    value={this.value}\n                    navigationLabel={this.sectionsAriaLabel}\n                    onDsChange={this.handleSectionChange}\n                  />,\n                ]\n              ) : (\n                <ds-text\n                  class=\"mobile-header__heading\"\n                  as={Heading}\n                  variant=\"text-body-medium\"\n                  emphasis\n                  color={foreground}\n                  lineTruncation={1}\n                >\n                  {this.selectedLabel}\n                </ds-text>\n              )}\n            </div>\n            <div class=\"mobile-header__lane mobile-header__lane--trailing\">\n              <slot name=\"trailing\" />\n            </div>\n          </div>\n          {hasSubsections ? (\n            <nav class=\"mobile-header__subsections\" aria-label={this.subsectionsAriaLabel}>\n              <ds-mobile-section-switcher\n                sections={this.resolvedSubsections}\n                value={this.subvalue}\n                navigationLabel={this.subsectionsAriaLabel}\n                onDsChange={this.handleSubsectionChange}\n              />\n            </nav>\n          ) : null}\n        </header>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { getSelectableTabs, type TabItem } from '../TabGroup/tab-item-utils';\nimport type {\n  MobileHeaderHeadingLevel,\n  MobileHeaderTone,\n} from './mobile-header-types';\n\n@Component({\n  tag: 'ds-mobile-header',\n  styleUrl: 'MobileHeader.css',\n  scoped: true,\n})\nexport class MobileHeader {\n  /** Static title used when no peer sections are supplied. */\n  @Prop() heading: string = '';\n  /** Semantic heading level for the active mobile screen. */\n  @Prop() headingLevel: MobileHeaderHeadingLevel = 'h1';\n  /** Controlled peer sections. Their selected label replaces the static title. */\n  @Prop() sections: TabItem[] = [];\n  /** Controlled selected section id. */\n  @Prop() value: string = '';\n  /** Accessible name for the section chooser. */\n  @Prop() sectionsAriaLabel: string = 'Change page section';\n  /** Controlled child sections within the selected page or detail screen. */\n  @Prop() subsections: TabItem[] = [];\n  /** Controlled selected child-section id. */\n  @Prop() subvalue: string = '';\n  /** Accessible name for the child-section chooser. */\n  @Prop() subsectionsAriaLabel: string = 'Change page subsection';\n  /** Default page chrome or bold-brand workflow chrome. */\n  @Prop({ reflect: true }) tone: MobileHeaderTone = 'default';\n\n  /** Section selection intent. */\n  @Event() dsSectionChange!: EventEmitter<string>;\n  /** Child-section selection intent. */\n  @Event() dsSubsectionChange!: EventEmitter<string>;\n\n  private get resolvedSections(): TabItem[] {\n    return this.sections ?? [];\n  }\n\n  private get resolvedSubsections(): TabItem[] {\n    return this.subsections ?? [];\n  }\n\n  private get selectedLabel(): string {\n    const selectable = getSelectableTabs(this.resolvedSections);\n    return selectable.find(section => section.id === this.value)?.label ??\n      selectable[0]?.label ??\n      this.heading;\n  }\n\n  private handleSectionChange = (event: CustomEvent<string>) => {\n    event.stopPropagation();\n    this.dsSectionChange.emit(event.detail);\n  };\n\n  private handleSubsectionChange = (event: CustomEvent<string>) => {\n    event.stopPropagation();\n    this.dsSubsectionChange.emit(event.detail);\n  };\n\n  render() {\n    const Heading = this.headingLevel;\n    const selectable = getSelectableTabs(this.resolvedSections);\n    const hasSwitcher = selectable.length > 1;\n    const hasSubsections = getSelectableTabs(this.resolvedSubsections).length > 1;\n    const foreground = this.tone === 'brand' ? 'on-bold' : 'primary';\n\n    return (\n      <Host>\n        <header class=\"mobile-header\">\n          <div class=\"mobile-header__primary ds-chrome-grid ds-chrome-space--md\">\n            <div class=\"mobile-header__lane mobile-header__lane--leading\">\n              <slot name=\"leading\" />\n            </div>\n            <div class=\"mobile-header__center\">\n              {hasSwitcher ? (\n                [\n                  <span\n                    class=\"mobile-header__semantic-heading\"\n                    role=\"heading\"\n                    aria-level={this.headingLevel === 'h1' ? '1' : '2'}\n                  >\n                    {this.selectedLabel}\n                  </span>,\n                  <ds-mobile-section-switcher\n                    sections={this.resolvedSections}\n                    value={this.value}\n                    navigationLabel={this.sectionsAriaLabel}\n                    onDsChange={this.handleSectionChange}\n                  />,\n                ]\n              ) : (\n                <ds-text\n                  class=\"mobile-header__heading\"\n                  as={Heading}\n                  variant=\"text-body-medium\"\n                  emphasis\n                  color={foreground}\n                  lineTruncation={1}\n                >\n                  {this.selectedLabel}\n                </ds-text>\n              )}\n            </div>\n            <div class=\"mobile-header__lane mobile-header__lane--trailing\">\n              <slot name=\"trailing\" />\n            </div>\n          </div>\n          {hasSubsections ? (\n            <nav class=\"mobile-header__subsections\" aria-label={this.subsectionsAriaLabel}>\n              <ds-mobile-section-switcher\n                sections={this.resolvedSubsections}\n                value={this.subvalue}\n                navigationLabel={this.subsectionsAriaLabel}\n                onDsChange={this.handleSubsectionChange}\n              />\n            </nav>\n          ) : null}\n        </header>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     },
     {

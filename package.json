@@ -78,7 +78,7 @@
     "prebuild": "npm run clean && npm run clean:framework-proxies && node scripts/generate-icon-catalog.mjs",
     "pretypecheck": "node scripts/generate-icon-catalog.mjs",
     "pretest": "node scripts/generate-icon-catalog.mjs",
-    "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/write-build-stamp.mjs && node scripts/build-lib-exports.mjs && node scripts/build-style-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/build-mcp.mjs && node scripts/verify-framework-proxies.mjs",
+    "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/build-lib-exports.mjs && node scripts/build-style-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/build-mcp.mjs && node scripts/verify-framework-proxies.mjs && node scripts/write-build-stamp.mjs",
     "verify:pack": "node scripts/verify-framework-proxies.mjs && node scripts/verify-npm-pack.mjs && node scripts/verify-package-imports.mjs",
     "test": "node --import tsx/esm --test tests/*.test.ts",
     "test:e2e": "npm run build && playwright test",
@@ -86,9 +86,10 @@
     "prebuild:docs": "npm run clean:framework-proxies",
     "build:docs": "stencil build --docs",
     "predev": "npm run clean:framework-proxies",
-    "dev": "node scripts/generate-icon-catalog.mjs && stencil build --watch",
+    "dev": "node scripts/package-dev.mjs",
+    "dev:components": "node scripts/generate-icon-catalog.mjs && stencil build --watch --config stencil.storybook.config.ts",
     "storybook:ui": "node scripts/storybook-ui.mjs",
-    "prestorybook:build": "node scripts/write-build-stamp.mjs",
+    "prestorybook:build": "node scripts/write-build-stamp.mjs --storybook",
     "storybook": "node scripts/storybook-dev.mjs",
     "storybook:build": "storybook build",
     "storybook:test:a11y": "vitest run --project=storybook-light --project=storybook-dark",
@@ -109,7 +110,9 @@
     "@ds-mo/icons": "^6.4.0",
     "@ds-mo/tokens": "^5.0.0",
     "react": "^18 || ^19",
-    "react-dom": "^18 || ^19"
+    "react-dom": "^18 || ^19",
+    "rxjs": "^7.8.0",
+    "@stencil/react-output-target": ">=1.6 <2"
   },
   "peerDependenciesMeta": {
     "@angular/core": {
@@ -122,6 +125,12 @@
       "optional": true
     },
     "react-dom": {
+      "optional": true
+    },
+    "rxjs": {
+      "optional": true
+    },
+    "@stencil/react-output-target": {
       "optional": true
     }
   },
@@ -138,6 +147,7 @@
     "@playwright/test": "^1.55.0",
     "@stencil/angular-output-target": "^1.4.0",
     "@stencil/core": "^4.43.5",
+    "@stencil/react-output-target": "^1.6.0",
     "@storybook/addon-a11y": "^10.5.1",
     "@storybook/addon-docs": "^10.5.0",
     "@storybook/addon-vitest": "^10.5.2",
@@ -178,13 +188,11 @@
     "dist/components/**/*.js"
   ],
   "dependencies": {
-    "@stencil/react-output-target": "^1.6.0",
     "d3-array": "^3.2.4",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "mdast-util-from-markdown": "^2.0.3",
     "mdast-util-gfm": "^3.1.0",
-    "micromark-extension-gfm": "^3.0.0",
-    "rxjs": "^7.8.2"
+    "micromark-extension-gfm": "^3.0.0"
   }
 }

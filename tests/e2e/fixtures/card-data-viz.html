@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Data visualization card</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <ds-card-data-viz id="viz-shell" heading="Fuel trend" card-width="sm">
+      <ds-button-unfilled
+        slot="actions"
+        variant="icon"
+        icon="Filters"
+        aria-label="Filter fuel trend"
+      ></ds-button-unfilled>
+      <div id="viz-content">Visualization content</div>
+    </ds-card-data-viz>
+
+    <ds-card-data-viz id="donut-card" heading="Availability status" card-width="sm" variant="donut" show-filter>
+      <ds-chart-donut slot="chart" center-caption="Total"></ds-chart-donut>
+      <ds-chart-legend slot="legend"></ds-chart-legend>
+    </ds-card-data-viz>
+
+    <ds-card-data-viz id="line-card" heading="Fuel trend" card-width="sm" variant="line" show-filter>
+      <ds-chart-line slot="chart" width="480" height="240"></ds-chart-line>
+      <ds-chart-legend slot="legend" direction="horizontal"></ds-chart-legend>
+    </ds-card-data-viz>
+
+    <ds-card-data-viz id="bar-card" heading="Vehicle activity" card-width="sm" variant="bar" show-filter>
+      <ds-chart-bar slot="chart" variant="stacked" width="480" height="240"></ds-chart-bar>
+      <ds-chart-legend slot="legend" direction="horizontal"></ds-chart-legend>
+    </ds-card-data-viz>
+
+    <ds-card-data-viz id="regular-bar-card" heading="Daily activity" card-width="sm" variant="bar" show-filter>
+      <ds-chart-bar slot="chart" width="480" height="240"></ds-chart-bar>
+    </ds-card-data-viz>
+
+    <script type="module" src="/card-data-viz-setup.mjs"></script>
+  </body>
+</html>

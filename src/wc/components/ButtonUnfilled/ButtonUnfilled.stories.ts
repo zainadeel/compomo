@@ -3,10 +3,15 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-menu.js';
-
-const VARIANTS = ['label', 'icon', 'icon-label'] as const;
-const SIZES = ['lg', 'md', 'sm', 'xs'] as const;
-const WIDTHS = ['hug', 'fill'] as const;
+import {
+  BUTTON_STORY_COLUMN as COL,
+  BUTTON_STORY_ROW as ROW,
+  BUTTON_STORY_SIZES as SIZES,
+  BUTTON_STORY_SURFACE as SURFACE,
+  BUTTON_STORY_VARIANTS as VARIANTS,
+  BUTTON_STORY_WIDTHS as WIDTHS,
+  wireButtonStoryMenuTriggers as wireMenuTriggers,
+} from '../../utils/button-story-foundation';
 
 const meta: Meta = {
   title: 'Primitives/ButtonUnfilled',
@@ -18,6 +23,7 @@ const meta: Meta = {
     label: { control: 'text' },
     icon: { control: 'text' },
     isActive: { control: 'boolean' },
+    pressed: { control: 'boolean' },
     expanded: { control: 'boolean' },
     hasMenu: { control: 'boolean' },
     activeFill: { control: 'boolean' },
@@ -51,6 +57,7 @@ const meta: Meta = {
     icon: 'Bell',
     ariaLabel: '',
     isActive: false,
+    pressed: undefined,
     expanded: false,
     hasMenu: false,
     activeFill: true,
@@ -67,12 +74,8 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const ROW = 'display:flex;gap:var(--dimension-space-100);align-items:center;flex-wrap:wrap;';
-const COL = 'display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;';
 const LABEL =
   'min-width:128px;color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);';
-const SURFACE =
-  'display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);';
 
 const VIEW_ITEMS = [
   { label: 'Overview', value: 'overview', isSelected: true },
@@ -90,37 +93,6 @@ const OVERFLOW_ITEMS = [
  * Wire every trigger/menu pair inside the story root: one application-owned open
  * boolean drives both `expanded` and `Menu.open`. Menu owns placement.
  */
-type MenuTriggerEl = HTMLElement & { expanded: boolean; setFocus: () => void };
-type MenuEl = HTMLElement & { open: boolean; initialFocusVisible: boolean };
-
-const wireMenuTriggers = (root: Element | undefined) => {
-  if (!root) return;
-  root.querySelectorAll('[data-menu-trigger]').forEach(node => {
-    const trigger = node as MenuTriggerEl & { dataset: DOMStringMap };
-    if (trigger.dataset['wired'] === 'true') return;
-    trigger.dataset['wired'] = 'true';
-
-    const menu = root.querySelector<MenuEl>(`#${trigger.dataset['menuTrigger']}`);
-    if (!menu) return;
-
-    const setOpen = (open: boolean) => {
-      trigger.expanded = open;
-      menu.open = open;
-    };
-
-    trigger.addEventListener('dsClick', event => {
-      // detail === 0 means keyboard activation, so the menu shows a focus ring.
-      menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
-      setOpen(!menu.open);
-    });
-    menu.addEventListener('dsClose', () => setOpen(false));
-    menu.addEventListener('dsSelect', () => {
-      setOpen(false);
-      requestAnimationFrame(() => trigger.setFocus());
-    });
-  });
-};
-
 export const Playground: Story = {
   render: args => html`
     <ds-button-unfilled
@@ -130,6 +102,7 @@ export const Playground: Story = {
       label=${args['label']}
       icon=${args['icon']}
       ?is-active=${args['isActive']}
+      .pressed=${args['pressed']}
       ?expanded=${args['expanded']}
       ?has-menu=${args['hasMenu']}
       ?active-fill=${args['activeFill']}
@@ -285,6 +258,39 @@ export const States: Story = {
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications inactive" is-inactive></ds-button-unfilled>
         <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox inactive" is-inactive dot></ds-button-unfilled>
       </div>
+    </div>
+  `,
+};
+
+export const ToggleSemantics: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`pressed` is reserved for a genuine toggle and supplies aria-pressed plus dsChange intent. `isActive` is visual emphasis controlled by a composite owner and carries no toggle semantics.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${ROW}">
+      <ds-button-unfilled
+        variant="icon-label"
+        icon="Star"
+        label="Favorite"
+        .pressed=${false}
+      ></ds-button-unfilled>
+      <ds-button-unfilled
+        variant="icon-label"
+        icon="StarFilled"
+        label="Favorited"
+        .pressed=${true}
+      ></ds-button-unfilled>
+      <ds-button-unfilled
+        variant="icon-label"
+        icon="ViewList"
+        label="Composite active view"
+        is-active
+      ></ds-button-unfilled>
     </div>
   `,
 };

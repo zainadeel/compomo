@@ -728,7 +728,7 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign tabs as a JavaScript property for structured data; tabs-json is the string fallback.",
+              "Assign tabs as a JavaScript property and replace the array reference when the collection changes.",
               "Update tabs, heading, basePath, currentUrl, and navStyle from the same resolved route state."
             ],
             "react": [
@@ -777,10 +777,6 @@
           },
           "tabs": {
             "type": "BarNavTab[]",
-            "required": false
-          },
-          "tabsJson": {
-            "type": "string",
             "required": false
           },
           "value": {
@@ -1374,7 +1370,7 @@
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
-            "ButtonFilled has no active or selected state; a filled action is a command, not a toggle or a persistent selection.",
+            "ButtonFilled has no active, pressed, or selected state; a filled action is a command, not a toggle or a persistent selection.",
             "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
             "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."
           ],
@@ -1456,10 +1452,6 @@
             "type": "boolean",
             "required": false
           },
-          "pressed": {
-            "type": "boolean | undefined",
-            "required": false
-          },
           "rounded": {
             "type": "boolean",
             "required": false
@@ -1500,6 +1492,7 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "badge",
         "icon",
         "loader",
         "text"
@@ -1562,7 +1555,7 @@
             "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu.",
             "Give an icon-only menu button an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
             "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
-            "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
+            "Use pressed only for a genuine toggle button; it supplies aria-pressed and dsChange intent. Use isActive only for owner-controlled visual emphasis inside a composite whose selection semantics live on the owner.",
             "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
             "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
             "Use inactive state only when an unavailable action must remain visible.",
@@ -1570,8 +1563,9 @@
           ],
           "states": [
             "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
-            "General content UI keeps the selected interaction fill and border for persistent active state.",
-            "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
+            "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
+            "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
+            "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
             "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
@@ -1592,10 +1586,10 @@
               "Roving-focus composites own the button's tab-stop placement and selection semantics."
             ],
             "react": [
-              "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+              "Use pressed for controlled toggles and isActive for composite-owned emphasis; keep async state synchronized from the owner."
             ],
             "angular": [
-              "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+              "Use pressed for controlled toggles and isActive for composite-owned emphasis; keep async state synchronized from the owner."
             ]
           },
           "references": [
@@ -1725,321 +1719,82 @@
       ]
     },
     {
-      "name": "card-data-viz-bar",
-      "title": "CardDataVizBar",
-      "description": "Canonical bar-chart dashboard card with shared data-viz chrome, a filter action, a fill chart region, and an optional static legend.",
+      "name": "card-data-viz",
+      "title": "CardDataViz",
+      "description": "Standard data-visualization card chrome with variant-owned chart and legend composition.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-bar",
-        "source": "src/wc/components/CardDataVizBar/CardDataVizBar.tsx",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz",
+        "source": "src/wc/components/CardDataViz/CardDataViz.tsx",
         "intentStatus": "complete",
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Canonical bar-chart dashboard card with shared data-viz chrome, a filter action, a fill chart region, and an optional static legend.",
+          "summary": "Standard data-visualization card chrome with variant-owned chart and legend composition.",
           "useWhen": [
-            "A dashboard widget needs a regular, stacked, or percentage bar chart in the standard data-viz card.",
-            "A stacked bar chart needs a visible static series key beneath the chart."
+            "A chart, legend, metric visualization, or custom data-viz composition needs standard card chrome.",
+            "Bar and line legends should remain static, or a donut and legend should cross-highlight without redundant donut tooltips.",
+            "A data-viz card needs a visible heading, optional filter action, and application-owned chart data."
           ],
           "avoidWhen": [
-            "The visualization needs selectable legend rows or chart-to-legend hover synchronization.",
-            "The product needs supporting metrics or an alternate chart layout beyond the chart and optional legend."
+            "The card contains editable settings; use CardSetting.",
+            "The surface contains ordinary non-visualization content.",
+            "The application needs to replace the card chrome rather than compose its chart and actions."
           ],
           "alternatives": [
             {
-              "when": "The bar chart needs a custom layout without card chrome.",
-              "component": "component:ds-chart-bar",
-              "reason": "Compose ChartBar directly in the product-owned layout."
-            },
-            {
-              "when": "The visualization communicates change as continuous lines.",
-              "component": "component:ds-card-data-viz-line",
-              "reason": "CardDataVizLine owns the canonical line-chart card layout."
-            },
-            {
-              "when": "The visualization communicates parts of one total with synchronized slice emphasis.",
-              "component": "component:ds-card-data-viz-donut",
-              "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
+              "when": "The surface contains editable settings.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns the controlled settings-section workflow."
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-card-shell-data-viz",
             "component:ds-chart-bar",
-            "component:ds-chart-bar-stacked",
-            "component:ds-chart-legend",
-            "component:ds-button-unfilled"
-          ],
-          "accessibility": [
-            "Provide a concise heading that identifies the measure and meaningful visible labels for every legend entry.",
-            "Keep essential series and value context available textually rather than relying on bar color alone.",
-            "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
-          ],
-          "states": [
-            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
-            "The chart region fills the remaining card body while an optional legend remains content-sized.",
-            "The card disables local hover highlighting on a slotted ChartLegend because bar legends are static keys.",
-            "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
-            "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
-          ],
-          "responsiveBehavior": [
-            "The selected sm, md, or lg shell size controls the card dimensions while the bar chart reflows to the chart region without visually scaling its primitives.",
-            "The horizontal legend wraps complete entries when the available width is constrained.",
-            "The parent dashboard owns card wrapping and breakpoint changes."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign data or series and categories as JavaScript properties, then place the bar chart and optional legend in their named slots."
-            ],
-            "react": [
-              "Keep filter and dataset state in the owner; pass the chart and optional legend with chart and legend slot attributes."
-            ],
-            "angular": [
-              "Keep filter and dataset state in the owner; project the chart and optional legend into the chart and legend slots."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/CardDataVizBar/CardDataVizBar.stories.ts"
-            }
-          ]
-        },
-        "props": {
-          "cardWidth": {
-            "type": "CardDataVizBarWidth",
-            "required": false
-          },
-          "filterLabel": {
-            "type": "string",
-            "required": false
-          },
-          "heading": {
-            "type": "string",
-            "required": true
-          }
-        },
-        "events": [
-          {
-            "name": "dsFilterClick",
-            "detail": "void"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-card-data-viz-bar",
-          "react": "DsCardDataVizBar",
-          "angular": "DsCardDataVizBar"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "button-unfilled",
-        "card-shell-data-viz"
-      ]
-    },
-    {
-      "name": "card-data-viz-donut",
-      "title": "CardDataVizDonut",
-      "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-donut",
-        "source": "src/wc/components/CardDataVizDonut/CardDataVizDonut.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "experimental",
-          "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
-          "useWhen": [
-            "A dashboard widget needs the standard donut and visible legend composition in one data-viz card.",
-            "Chart slices and legend rows should cross-highlight without application hover wiring.",
-            "The card needs the shared header filter action while the application owns filter state and menu content."
-          ],
-          "avoidWhen": [
-            "The visualization is a bar, line, metric, or custom chart; compose CardShellDataViz directly.",
-            "The product needs a custom legend treatment such as chips, external stat callouts, or selectable filters.",
-            "The surface is a settings section or generic content card."
-          ],
-          "alternatives": [
-            {
-              "when": "The visualization needs shared data-viz chrome without the canonical donut layout.",
-              "component": "component:ds-card-shell-data-viz",
-              "reason": "CardShellDataViz owns only the header, actions, width, and body boundary."
-            },
-            {
-              "when": "A donut and legend need a custom layout without card chrome.",
-              "component": "component:ds-chart-donut",
-              "reason": "Compose the chart and ChartLegend directly and own their layout and hover synchronization."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-card-shell-data-viz",
             "component:ds-chart-donut",
-            "component:ds-chart-legend",
-            "component:ds-empty-state",
-            "component:ds-skeleton"
-          ],
-          "accessibility": [
-            "Provide a concise card heading and a localized filter label for the icon-only header action.",
-            "Keep essential values available through the chart and visible legend rather than encoding meaning through slice color alone.",
-            "The application owns meaningful loading, empty, and error status copy when either content region is temporarily replaced or absent."
-          ],
-          "states": [
-            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
-            "The chart region fills remaining card height while the legend remains content-sized.",
-            "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
-            "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
-            "The filter action emits intent while the parent owns popup content, applied constraints, and data updates."
-          ],
-          "responsiveBehavior": [
-            "Select the token-based card width appropriate to the parent grid; the matching minimum height preserves the chart region.",
-            "The donut measures the chart region and changes radius within its shared size band while token thickness and typography remain fixed.",
-            "The parent dashboard owns wrapping and column changes while the internal chart-over-legend arrangement remains stable."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots."
-            ],
-            "react": [
-              "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
-            ],
-            "angular": [
-              "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/CardDataVizDonut/CardDataVizDonut.stories.ts"
-            },
-            {
-              "label": "Dashboard review examples",
-              "path": "src/wc/stories/DataViz/OverviewReview.stories.ts"
-            }
-          ]
-        },
-        "props": {
-          "cardWidth": {
-            "type": "CardDataVizDonutWidth",
-            "required": false
-          },
-          "filterLabel": {
-            "type": "string",
-            "required": false
-          },
-          "heading": {
-            "type": "string",
-            "required": true
-          }
-        },
-        "events": [
-          {
-            "name": "dsFilterClick",
-            "detail": "void"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-card-data-viz-donut",
-          "react": "DsCardDataVizDonut",
-          "angular": "DsCardDataVizDonut"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "button-unfilled",
-        "card-shell-data-viz"
-      ]
-    },
-    {
-      "name": "card-data-viz-line",
-      "title": "CardDataVizLine",
-      "description": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz-line",
-        "source": "src/wc/components/CardDataVizLine/CardDataVizLine.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "experimental",
-          "summary": "Canonical line-chart dashboard card with shared data-viz chrome, a filter action, fill chart region, and a static horizontal legend.",
-          "useWhen": [
-            "A dashboard widget needs the standard line chart and visible series key in one data-viz card.",
-            "The legend identifies static line series and should not highlight or dim rows on hover."
-          ],
-          "avoidWhen": [
-            "The visualization needs chart-to-legend hover synchronization or selectable series controls.",
-            "The product needs a custom legend treatment, supporting metrics, or an alternate chart layout."
-          ],
-          "alternatives": [
-            {
-              "when": "The line chart and legend need a custom layout without card chrome.",
-              "component": "component:ds-chart-line",
-              "reason": "Compose ChartLine and a static ChartLegend directly in the product-owned layout."
-            },
-            {
-              "when": "The visualization communicates parts of a total with synchronized slice emphasis.",
-              "component": "component:ds-card-data-viz-donut",
-              "reason": "CardDataVizDonut owns the donut layout and bidirectional hover synchronization."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-card-shell-data-viz",
             "component:ds-chart-line",
             "component:ds-chart-legend",
             "component:ds-button-unfilled"
           ],
           "accessibility": [
-            "Provide a concise heading that identifies the trend and meaningful visible labels for every legend entry.",
-            "Keep essential series and value context available textually rather than relying on line color alone.",
-            "The card disables decorative legend-row hover; genuine legend links retain native link semantics and affordances."
+            "Provide a concise visible heading; the component renders it as a section heading.",
+            "Slotted actions must provide accessible names and controlled-state semantics.",
+            "Charts retain their own image names and data summaries.",
+            "A visible donut legend owns persistent labels and values, so donut mode suppresses the redundant slice tooltip."
           ],
           "states": [
-            "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
-            "The chart region fills the remaining card body while the legend remains content-sized.",
-            "The card disables local hover highlighting on a slotted ChartLegend because the line chart is static.",
-            "Chart and legend regions render only when their corresponding slots contain content, avoiding empty region spacing.",
-            "The owning product controls data, filtering, loading, empty, and error state; the card emits the filter action only."
+            "Custom mode provides flexible body chrome and does not mutate chart or legend interaction.",
+            "Bar and line modes keep a slotted legend static by disabling hover emphasis.",
+            "Donut mode synchronizes active labels between chart and legend and shows chart tooltips only when no legend is present.",
+            "showFilter adds the standard filter action and emits dsFilterClick without owning filter state."
           ],
           "responsiveBehavior": [
-            "The selected sm, md, or lg shell size controls the card dimensions while the line chart reflows to the chart region without visually scaling its primitives.",
-            "The horizontal legend wraps complete entries when the available width is constrained.",
-            "The parent dashboard owns card wrapping and breakpoint changes."
+            "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
+            "The body allocates remaining height to the chart while legends retain content height.",
+            "Parent layouts own wrapping, stacking, and breakpoint-dependent card width."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign series, categories, and legend items as JavaScript properties, then place the chart and legend in their named slots."
+              "Set variant to bar, line, or donut when the component should manage legend interaction; slot chart, legend, actions, and supporting content by name."
             ],
             "react": [
-              "Keep filter and dataset state in the owner; pass the chart and legend with chart and legend slot attributes."
+              "Keep chart data in React and pass chart, legend, and action elements through named slots."
             ],
             "angular": [
-              "Keep filter and dataset state in the owner; project the chart and legend into the chart and legend slots."
+              "Keep chart data in Angular and project chart, legend, and action elements through named slots."
             ]
           },
           "references": [
             {
               "label": "Storybook examples",
-              "path": "src/wc/components/CardDataVizLine/CardDataVizLine.stories.ts"
+              "path": "src/wc/components/CardDataViz/CardDataViz.stories.ts"
             }
           ]
         },
         "props": {
           "cardWidth": {
-            "type": "CardDataVizLineWidth",
+            "type": "CardDataVizWidth",
             "required": false
           },
           "filterLabel": {
@@ -2049,6 +1804,14 @@
           "heading": {
             "type": "string",
             "required": true
+          },
+          "showFilter": {
+            "type": "boolean",
+            "required": false
+          },
+          "variant": {
+            "type": "CardDataVizVariant",
+            "required": false
           }
         },
         "events": [
@@ -2059,9 +1822,9 @@
         ],
         "slots": [],
         "exports": {
-          "customElement": "ds-card-data-viz-line",
-          "react": "DsCardDataVizLine",
-          "angular": "DsCardDataVizLine"
+          "customElement": "ds-card-data-viz",
+          "react": "DsCardDataViz",
+          "angular": "DsCardDataViz"
         }
       },
       "dependencies": [
@@ -2070,13 +1833,13 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "card-shell-data-viz"
+        "text"
       ]
     },
     {
       "name": "card-overview",
       "title": "CardOverview",
-      "description": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional compact 48px presentation.",
+      "description": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional elevated scroll-collapse surface and compact 48px presentation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2087,7 +1850,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional compact 48px presentation.",
+          "summary": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional elevated scroll-collapse surface and compact 48px presentation.",
           "useWhen": [
             "A page opens with one headline figure that the surrounding measures explain.",
             "Every measure is compared against the same period, so one caption describes the comparison for all of them.",
@@ -2102,8 +1865,8 @@
           "alternatives": [
             {
               "when": "A measure needs a chart or other data visualization.",
-              "component": "component:ds-card-shell-data-viz",
-              "reason": "CardShellDataViz owns the data-visualization shell contract; the overview grid presents values and change only."
+              "component": "component:ds-card-data-viz",
+              "reason": "CardDataViz owns the data-visualization card contract; the overview grid presents values and change only."
             },
             {
               "when": "The surface is a settings section with an edit workflow.",
@@ -2133,6 +1896,7 @@
             "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
             "At most six measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
             "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface.",
+            "During a page-controlled scroll collapse, the component preserves its expanded flow height while the elevated visual surface shrinks toward 48px and the full content translates upward inside an internal clip. The elevation remains fitted to the visible surface instead of being clipped with the content.",
             "compact is exactly 48px high and keeps only the score label, score value, trend, reporting copy, and slotted period control. It omits the score band, measures, and footer."
           ],
           "responsiveBehavior": [
@@ -2144,20 +1908,24 @@
             "In that stacked summary, the score and trend share one line at the start, while the score band is hidden to preserve space. The period control stays at the upper end, while the current period and comparison sit on separate right-aligned lines beside the score.",
             "Every measure occupies a full-width row in the stacked state.",
             "Set layout to stacked when the owning page shell enters a responsive mode before the card's own container reaches its narrow threshold.",
-            "CardOverview does not observe scroll or choose its own presentation. The page owner may use compact as sticky summary chrome on supported breakpoints."
+            "CardOverview does not observe scroll, choose sticky offsets, or switch its own presentation. The page owner supplies collapse progress, keeps the card sticky at the appropriate shell inset, and swaps to compact at the 48px endpoint.",
+            "Leave scroll collapse inactive on page modes that do not support sticky compact summary chrome."
           ],
           "frameworkCaveats": {
             "customElements": [
               "Assign score and metrics as JavaScript properties; both are objects and cannot be expressed as HTML attributes.",
-              "Place the period control in the filter slot; the component reserves space for it but never renders one."
+              "Place the period control in the filter slot; the component reserves space for it but never renders one.",
+              "When driving scroll collapse, update scrollCollapseProgress from page-owned geometry and swap to a separate compact presentation at the endpoint."
             ],
             "react": [
               "Pass score and metrics as props and read the selected measure from the onDsMetricSelect event detail.",
-              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision.",
+              "Keep sticky geometry and scrollCollapseProgress in the page owner; CardOverview only renders the visual collapse."
             ],
             "angular": [
               "Bind [score] and [metrics] as properties and read the selected measure from $event.detail on (dsMetricSelect).",
-              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision.",
+              "Keep sticky geometry and [scrollCollapseProgress] in the page owner; CardOverview only renders the visual collapse."
             ]
           },
           "references": [
@@ -2206,6 +1974,10 @@
           },
           "scoreErrorMessage": {
             "type": "string | undefined",
+            "required": false
+          },
+          "scrollCollapseProgress": {
+            "type": "number",
             "required": false
           },
           "variant": {
@@ -2268,8 +2040,8 @@
           "alternatives": [
             {
               "when": "The surface contains a chart or specialized data-visualization composition.",
-              "component": "component:ds-card-shell-data-viz",
-              "reason": "CardShellDataViz owns the independently evolving data-visualization shell contract."
+              "component": "component:ds-card-data-viz",
+              "reason": "CardDataViz owns the independently evolving data-visualization card contract."
             },
             {
               "when": "The task must block the interface for one focused decision or short workflow.",
@@ -2386,119 +2158,9 @@
       ]
     },
     {
-      "name": "card-shell-data-viz",
-      "title": "CardShellDataViz",
-      "description": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts evolve independently from settings sections.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-shell-data-viz",
-        "source": "src/wc/components/CardShellDataViz/CardShellDataViz.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "experimental",
-          "summary": "Dedicated header, action, sizing, and body chrome for data-visualization cards whose layouts evolve independently from settings sections.",
-          "useWhen": [
-            "A card contains a chart, data-visualization legend, metric visualization, or a specialized data-viz composition.",
-            "A data-visualization card needs a heading and optional header actions while retaining a flexible body for its composing component.",
-            "Several chart-specific cards need one shell boundary that can evolve without changing settings sections."
-          ],
-          "avoidWhen": [
-            "The card contains settings or editable form content; use the settings card composition.",
-            "The surface is ordinary content without data visualization; use a product-owned layout rather than data-viz card chrome.",
-            "The shell would own chart-specific layout, hover synchronization, legends, or empty-state policy; keep those in the composing data-viz card."
-          ],
-          "alternatives": [
-            {
-              "when": "The surface contains editable settings rather than data visualization.",
-              "component": "component:ds-card-setting",
-              "reason": "CardSetting owns the persistent controlled settings-section workflow."
-            },
-            {
-              "when": "The composition is the standard donut chart plus synchronized legend.",
-              "component": "component:ds-card-data-viz-donut",
-              "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization."
-            },
-            {
-              "when": "The composition is the standard line chart plus static horizontal legend.",
-              "component": "component:ds-card-data-viz-line",
-              "reason": "CardDataVizLine composes this shell with line-specific regions and disables decorative legend hover."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-chart-bar",
-            "component:ds-chart-bar-stacked",
-            "component:ds-chart-donut",
-            "component:ds-chart-line",
-            "component:ds-chart-legend",
-            "component:ds-card-data-viz-line",
-            "component:ds-button-unfilled"
-          ],
-          "accessibility": [
-            "Provide a concise visible heading that identifies the visualization; the shell renders it as a section heading.",
-            "Header actions must provide their own accessible names and communicate any controlled state or popup relationship.",
-            "The shell does not add landmark or chart semantics; composing charts retain their own accessible names and descriptions.",
-            "Do not duplicate chart data in the heading. Provide an accessible summary through the chart or adjacent composition when visual encoding alone is insufficient."
-          ],
-          "states": [
-            "The shell owns default data-visualization surface chrome only; loading, empty, error, selected, and interactive states belong to the composing card or chart.",
-            "The actions slot collapses when empty so headings retain the available header width."
-          ],
-          "responsiveBehavior": [
-            "The selected sm, md, or lg width sets the matching token-based minimum height while max-width prevents overflow from a narrower parent.",
-            "The parent layout chooses card width, wrapping, stacking, and breakpoint changes; the shell does not switch sizes automatically.",
-            "The body is a flexible column so specialized data-viz cards can allocate remaining height between charts, legends, and supporting content."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Place header controls in the actions slot and data-visualization composition in the default slot."
-            ],
-            "react": [
-              "Pass header controls with slot=\"actions\" and keep chart state in the composing React component."
-            ],
-            "angular": [
-              "Project header controls with slot=\"actions\" and keep chart state in the composing Angular component."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/CardShellDataViz/CardShellDataViz.stories.ts"
-            }
-          ]
-        },
-        "props": {
-          "cardWidth": {
-            "type": "CardShellDataVizWidth",
-            "required": false
-          },
-          "heading": {
-            "type": "string",
-            "required": true
-          }
-        },
-        "events": [],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-card-shell-data-viz",
-          "react": "DsCardShellDataViz",
-          "angular": "DsCardShellDataViz"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": [
-        "text"
-      ]
-    },
-    {
       "name": "chart-bar",
       "title": "ChartBar",
-      "description": "Single-series bar chart for comparing discrete categories or evenly spaced time buckets on a band-scaled axis.",
+      "description": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2509,24 +2171,20 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Single-series bar chart for comparing discrete categories or evenly spaced time buckets on a band-scaled axis.",
+          "summary": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
           "useWhen": [
             "Users need to compare one numeric measure across a small set of categories.",
             "Values are grouped into ordered time buckets such as hours, days, weeks, or months and equal visual spacing is appropriate.",
-            "A data-viz card needs a compact magnitude comparison rather than a continuous trend."
+            "A data-viz card needs a compact magnitude comparison rather than a continuous trend.",
+            "Several consistent series contribute to each category total or its normalized composition."
           ],
           "avoidWhen": [
             "Timestamp positions must reflect irregular elapsed time; pre-bucket the data or use a future continuous time-scale chart.",
-            "The visualization needs stacked, grouped, or multi-series bars.",
+            "The visualization needs grouped bars or precise comparison of each individual series across categories.",
             "The interaction requires selection, drill-down, brushing, or zoom.",
             "The data communicates a part-to-whole relationship."
           ],
           "alternatives": [
-            {
-              "when": "Each category contains several additive series or needs normalized composition.",
-              "component": "component:ds-chart-bar-stacked",
-              "reason": "ChartBarStacked compares raw stacked totals or normalized 0–100% composition."
-            },
             {
               "when": "Users need to follow one or more trends across ordered categories.",
               "component": "component:ds-chart-line",
@@ -2539,8 +2197,8 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-chart-bar-stacked",
-            "component:ds-card-shell-data-viz",
+            "component:ds-chart-legend",
+            "component:ds-card-data-viz",
             "component:ds-tooltip-data-viz"
           ],
           "accessibility": [
@@ -2549,7 +2207,9 @@
             "A future interactive tooltip must supplement rather than replace the chart's accessible value representation."
           ],
           "states": [
-            "The chart is currently a static single-series rendering without hover, selection, loading, or empty-state policy.",
+            "The chart is static without hover, selection, loading, or empty-state policy.",
+            "Single mode reads data. Stacked and percentage modes read aligned series and categories.",
+            "Stacked mode preserves raw totals; percentage mode normalizes every non-empty category to 100%.",
             "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
             "Bars use 2px top corner radii while the lower corners touching the zero axis remain square.",
             "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
@@ -2563,13 +2223,13 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
+              "Assign data, series, and categories as JavaScript properties; arrays are not supported as HTML attributes."
             ],
             "react": [
-              "Pass a stable data array; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+              "Pass stable data or series/category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ],
             "angular": [
-              "Bind data as a property; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+              "Bind data or series/categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
             ]
           },
           "references": [
@@ -2580,12 +2240,24 @@
           ]
         },
         "props": {
+          "categories": {
+            "type": "string[]",
+            "required": false
+          },
           "data": {
             "type": "ChartDatum[]",
             "required": false
           },
           "height": {
             "type": "number",
+            "required": false
+          },
+          "series": {
+            "type": "ChartSeries[]",
+            "required": false
+          },
+          "variant": {
+            "type": "ChartBarVariant",
             "required": false
           },
           "width": {
@@ -2599,127 +2271,6 @@
           "customElement": "ds-chart-bar",
           "react": "DsChartBar",
           "angular": "DsChartBar"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "chart-bar-stacked",
-      "title": "ChartBarStacked",
-      "description": "Multi-series stacked bar chart for comparing raw totals or normalized 0–100% composition across ordered categories and time buckets.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-bar-stacked",
-        "source": "src/wc/components/ChartBarStacked/ChartBarStacked.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "experimental",
-          "summary": "Multi-series stacked bar chart for comparing raw totals or normalized 0–100% composition across ordered categories and time buckets.",
-          "useWhen": [
-            "Users need to compare both a category total and the contribution of several consistent series.",
-            "A time series needs to show how its composition changes across equal time buckets.",
-            "Every category should normalize to 100% so proportional composition can be compared independently of total magnitude."
-          ],
-          "avoidWhen": [
-            "Users need to compare individual series values precisely across categories; use grouped bars or separate charts.",
-            "The visualization has only one measure per category; use ChartBar.",
-            "The primary task is following continuous trends; use ChartLine.",
-            "Series contain negative values or do not align with the shared category list."
-          ],
-          "alternatives": [
-            {
-              "when": "Each category contains one independent value.",
-              "component": "component:ds-chart-bar",
-              "reason": "ChartBar provides the simpler single-series magnitude comparison."
-            },
-            {
-              "when": "Users need to follow one or more trends rather than compare stack composition.",
-              "component": "component:ds-chart-line",
-              "reason": "ChartLine preserves each series as a continuous path across the ordered axis."
-            },
-            {
-              "when": "One category's parts-to-whole composition is the focus.",
-              "component": "component:ds-chart-donut",
-              "reason": "ChartDonut provides the dedicated single-total composition treatment."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-chart-legend",
-            "component:ds-card-shell-data-viz",
-            "component:ds-tooltip-data-viz"
-          ],
-          "accessibility": [
-            "Provide a visible legend or adjacent textual summary that names every series; do not rely on segment color alone.",
-            "The chart image name includes each category and series value, using normalized percentages in percentage mode.",
-            "Use an adjacent data table when exact cross-category comparisons are necessary to complete the task."
-          ],
-          "states": [
-            "Stacked mode preserves raw magnitudes and scales the y-axis to the largest category total.",
-            "Percentage mode normalizes each non-empty category independently and renders a fixed 0%, 25%, 50%, 75%, and 100% axis.",
-            "Series render bottom-to-top in authored order; keep that order and color mapping stable across categories.",
-            "Stacked mode gives only the top visible segment 2px top corners. Percentage mode keeps every corner square because the normalized stack touches both axis edges.",
-            "Adjacent segments are separated by a non-scaling 1px gap; the stack's outer edges do not receive that separator.",
-            "Negative values are unsupported and render as zero; the owning product supplies loading, empty, and error states."
-          ],
-          "responsiveBehavior": [
-            "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
-            "Responsive layout changes stack positions and plot extents without scaling SVG text, strokes, separators, corner radii, or margins.",
-            "The parent chooses how many time buckets remain legible at each width.",
-            "Pre-format category labels and reduce bucket count before rendering when horizontal space becomes constrained."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
-            ],
-            "react": [
-              "Pass stable series and category arrays; choose percentage variant only when each category represents a meaningful whole."
-            ],
-            "angular": [
-              "Bind series and categories as properties; choose percentage variant only when each category represents a meaningful whole."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/ChartBarStacked/ChartBarStacked.stories.ts"
-            }
-          ]
-        },
-        "props": {
-          "categories": {
-            "type": "string[]",
-            "required": false
-          },
-          "height": {
-            "type": "number",
-            "required": false
-          },
-          "series": {
-            "type": "ChartSeries[]",
-            "required": false
-          },
-          "variant": {
-            "type": "ChartBarStackedVariant",
-            "required": false
-          },
-          "width": {
-            "type": "number",
-            "required": false
-          }
-        },
-        "events": [],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-chart-bar-stacked",
-          "react": "DsChartBarStacked",
-          "angular": "DsChartBarStacked"
         }
       },
       "dependencies": [
@@ -2756,8 +2307,8 @@
           "alternatives": [
             {
               "when": "The product needs the canonical card, filter action, visible legend, and built-in hover synchronization.",
-              "component": "component:ds-card-data-viz-donut",
-              "reason": "The dedicated card owns that complete composition and suppresses redundant slice tooltips."
+              "component": "component:ds-card-data-viz",
+              "reason": "The donut card variant owns that complete composition and suppresses redundant slice tooltips."
             },
             {
               "when": "Users need to compare independent category magnitudes.",
@@ -2768,7 +2319,7 @@
           "commonlyComposedWith": [
             "component:ds-chart-legend",
             "component:ds-tooltip-data-viz",
-            "component:ds-card-data-viz-donut"
+            "component:ds-card-data-viz"
           ],
           "accessibility": [
             "Every non-empty slice remains keyboard focusable and exposes its label and value without depending on the visual tooltip.",
@@ -2778,7 +2329,7 @@
           ],
           "states": [
             "Genuine local pointer or keyboard focus may show a chart-owned tooltip; externally synchronized highlight never opens it.",
-            "When a visible legend already owns label and value detail, suppress the redundant donut tooltip. CardDataVizDonut does this automatically.",
+            "When a visible legend already owns label and value detail, suppress the redundant donut tooltip. CardDataViz donut mode does this automatically.",
             "Local hover and external highlight remain separate while both may dim non-matching slices.",
             "Zero or negative totals render a neutral empty ring without interactive slices.",
             "Center value and caption truncate when they exceed the safe inner-circle measure."
@@ -2791,7 +2342,7 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign data as a JavaScript property and wire slice-hover detail to a sibling legend only when not using CardDataVizDonut."
+              "Assign data as a JavaScript property and wire slice-hover detail to a sibling legend only when not using CardDataViz donut mode."
             ],
             "react": [
               "Keep synchronized highlight controlled by the composition and disable slice tooltips when a sibling legend continuously shows the same details."
@@ -2907,22 +2458,20 @@
             },
             {
               "when": "The donut belongs in the canonical dashboard card.",
-              "component": "component:ds-card-data-viz-donut",
-              "reason": "The dedicated card places the legend and handles bidirectional highlight synchronization."
+              "component": "component:ds-card-data-viz",
+              "reason": "The donut variant places the legend and handles bidirectional highlight synchronization."
             },
             {
               "when": "A static line chart and series key belong in the canonical dashboard card.",
-              "component": "component:ds-card-data-viz-line",
-              "reason": "The dedicated card places the horizontal legend and disables decorative local hover highlighting."
+              "component": "component:ds-card-data-viz",
+              "reason": "The line variant places the horizontal legend and disables decorative local hover highlighting."
             }
           ],
           "commonlyComposedWith": [
             "component:ds-chart-donut",
-            "component:ds-chart-bar-stacked",
+            "component:ds-chart-bar",
             "component:ds-chart-line",
-            "component:ds-card-data-viz-donut",
-            "component:ds-card-data-viz-line",
-            "component:ds-card-shell-data-viz"
+            "component:ds-card-data-viz"
           ],
           "accessibility": [
             "Rows remain non-interactive unless the item supplies an actual link destination.",
@@ -3059,8 +2608,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-chart-legend",
-            "component:ds-card-data-viz-line",
-            "component:ds-card-shell-data-viz",
+            "component:ds-card-data-viz",
             "component:ds-tooltip-data-viz"
           ],
           "accessibility": [
@@ -3178,7 +2726,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-field",
-            "component:ds-select-multi",
+            "component:ds-select",
             "component:ds-text"
           ],
           "accessibility": [
@@ -3995,7 +3543,7 @@
           "status": "stable",
           "summary": "Accessible form-field composition that gives one Input or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
           "useWhen": [
-            "An Input, Select, or SelectMulti needs a persistent visible label in a form.",
+            "An Input or Select needs a persistent visible label in a form.",
             "Help text or an error message must be programmatically associated with one control.",
             "A form layout needs one consistent label-control-message rhythm."
           ],
@@ -4014,7 +3562,6 @@
           "commonlyComposedWith": [
             "component:ds-input",
             "component:ds-select",
-            "component:ds-select-multi",
             "component:ds-text"
           ],
           "accessibility": [
@@ -4041,7 +3588,7 @@
               "Assign child component values and option arrays through their normal JavaScript properties."
             ],
             "react": [
-              "Compose one DsInput, DsSelect, or DsSelectMulti child and control validation timing in the form owner."
+              "Compose one DsInput or DsSelect child and control validation timing in the form owner."
             ],
             "angular": [
               "Compose the generated Field adapter around the control adapter and its matching Angular value accessor."
@@ -4661,8 +4208,8 @@
             },
             {
               "when": "Several form values may be selected.",
-              "component": "component:ds-select-multi",
-              "reason": "SelectMulti provides multi-select listbox semantics, array value ownership, and count presentation."
+              "component": "component:ds-select",
+              "reason": "Select multiple provides multi-select listbox semantics, array value ownership, and count presentation."
             },
             {
               "when": "The interaction needs substantial content, confirmation, or a form.",
@@ -4694,7 +4241,7 @@
             "After dsSelect from a switch row, replace the items or sections array with updated switchValue data so the controlled indicator reflects the new state.",
             "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
-            "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only.",
+            "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
             "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics."
           ],
           "responsiveBehavior": [
@@ -4798,10 +4345,6 @@
           {
             "name": "dsClose",
             "detail": "void"
-          },
-          {
-            "name": "dsGradientSelect",
-            "detail": "ShellGradientPreset"
           },
           {
             "name": "dsSelect",
@@ -5400,19 +4943,11 @@
             "type": "string",
             "required": false
           },
-          "sectionsJson": {
-            "type": "string",
-            "required": false
-          },
           "subsections": {
             "type": "TabItem[]",
             "required": false
           },
           "subsectionsAriaLabel": {
-            "type": "string",
-            "required": false
-          },
-          "subsectionsJson": {
             "type": "string",
             "required": false
           },
@@ -5511,10 +5046,6 @@
           },
           "sections": {
             "type": "TabItem[]",
-            "required": false
-          },
-          "sectionsJson": {
-            "type": "string",
             "required": false
           },
           "value": {
@@ -5901,7 +5432,7 @@
             "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
             "From 768px through 1199px, present PanelNav permanently collapsed and do not allow user expansion.",
             "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
-            "ShellApp permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and replaces PanelNav with future mobile navigation below 768px.",
+            "Managed ShellApp permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and presents MobileSheetNav below 768px.",
             "When the viewport is below breakpoint, PanelNav locks collapsed, disables its header toggle affordance, and preserves the persisted desktop collapse preference.",
             "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
           ],
@@ -6333,7 +5864,7 @@
             "The product needs a compact filter menu next to search while keeping its filter choices and matching policy application-owned."
           ],
           "avoidWhen": [
-            "The search belongs inside a Select or SelectMulti popup; use that component's searchable behavior.",
+            "The search belongs inside a Select popup; use that component's searchable behavior in either cardinality mode.",
             "A form needs a labelled standalone field; compose ds-input inside ds-field instead."
           ],
           "commonlyComposedWith": [
@@ -6460,7 +5991,7 @@
     {
       "name": "panel-tools",
       "title": "PanelTools",
-      "description": "Required ShellApp utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+      "description": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools, normally assembled by managed ShellApp through ShellTools.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6471,17 +6002,17 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "Required ShellApp utility rail and persistent drawer host for the fixed set of global Search, Agents, Messages, Stacks, Activity, and Help products.",
+          "summary": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools, normally assembled by managed ShellApp through ShellTools.",
           "useWhen": [
-            "Composing the required global tools region inside the application's single ShellApp.",
+            "An advanced slotted ShellApp needs the desktop and tablet global-tools primitive directly.",
             "Users need to move between application-wide utilities without losing each tool's in-progress state.",
             "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
           ],
           "avoidWhen": [
             "The action is specific to the current page or selected content rather than globally available across the application.",
             "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
-            "A consumer wants to add arbitrary tools, reorder fixed tools, or repurpose a semantic tool id.",
-            "Building the mobile tools experience; future mobile ShellApp composition uses a different bottom-bar and panel pattern.",
+            "Tool definitions lack stable ids, visible labels, explicit rail placement, or application-owned view content.",
+            "Building the mobile tools experience; use ShellTools or managed ShellApp.",
             "PanelTools would be mounted outside the application's single ShellApp."
           ],
           "alternatives": [
@@ -6511,16 +6042,16 @@
           ],
           "accessibility": [
             "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
-            "Keep Search first in the rail header and Help last in the rail footer so keyboard and visual order remain predictable.",
+            "Use the canonical default recipe when the product needs Search first and Help last; custom recipes must preserve a deliberate keyboard and visual order.",
             "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
             "Do not trigger global shortcuts while focus is in an editable control.",
             "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
             "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."
           ],
           "states": [
-            "Search and Help are required; optional Agents, Messages, Stacks, and Activity tools are filtered by the application for authorization and entitlement.",
-            "Use only the fixed semantic tool ids and canonical order: Search, Agents, Messages, Stacks, Activity, Help; do not reorder, duplicate, or repurpose them.",
-            "Search is application-wide; Agents is user-to-AI chat; Messages is user-to-user chat; Stacks is a specialized inbox of grouped application events for review; Activity is the notification center; Help is drawer content that may link to external resources.",
+            "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
+            "Tool order, header or footer rail placement, shortcut, and mobile grouping come from explicit item metadata rather than id-based layout assumptions.",
+            "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Help pinned last, current shortcuts, and Messages, Stacks, and Activity grouped under mobile Inbox.",
             "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
             "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
             "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
@@ -6543,19 +6074,19 @@
           "responsiveBehavior": [
             "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
             "ShellApp owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
-            "Below 768px, do not reuse desktop PanelTools: future ShellApp mobile composition uses a bottom bar for Search, Agents, Notifications, and Stacks, while Help moves into mobile primary navigation.",
+            "Below 768px, do not reuse PanelTools directly; ShellTools and managed ShellApp present the same persistent tool owners through mobile chrome.",
             "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
             "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
             "Use fixed drawer widths for now; do not add user resizing or width persistence."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign items as a JavaScript property for structured data; items-json is the string fallback.",
+              "Assign items and headers as JavaScript properties and replace their references when collections change.",
               "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
               "Keep PanelTools mounted at ShellApp scope across route changes and provide each product through its matching named slot."
             ],
             "react": [
-              "Pass the fixed item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
+              "Pass a stable explicitly ordered item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
               "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
             ],
             "angular": [
@@ -6592,16 +6123,8 @@
             "type": "PanelToolsHeaders",
             "required": false
           },
-          "headersJson": {
-            "type": "string",
-            "required": false
-          },
           "items": {
             "type": "PanelToolsItem[]",
-            "required": false
-          },
-          "itemsJson": {
-            "type": "string",
             "required": false
           },
           "open": {
@@ -6909,7 +6432,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Form-associated single-value select with listbox semantics, local search, rich flat options, grouped sections, loading, clearing, and surface-aware trigger chrome.",
+      "description": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6920,24 +6443,19 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated single-value select with listbox semantics, local search, rich flat options, grouped sections, loading, clearing, and surface-aware trigger chrome.",
+          "summary": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
           "useWhen": [
             "The user must choose one value from a finite set.",
+            "The user may choose several independent values when multiple is enabled.",
             "The option set benefits from local search, subtext, prefix icons, grouping, or disabled choices.",
             "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain such as addresses where search materially improves retrieval.",
             "The selected value must participate in native, Angular, or React form state."
           ],
           "avoidWhen": [
-            "Several values may be selected at once.",
             "The rows perform commands rather than choosing a form value.",
             "The choices form a hierarchy with expandable parents."
           ],
           "alternatives": [
-            {
-              "when": "Several independent values may be selected.",
-              "component": "component:ds-select-multi",
-              "reason": "SelectMulti owns array values, multi-selection semantics, and count presentation."
-            },
             {
               "when": "The popup contains commands or state-changing actions.",
               "component": "component:ds-menu",
@@ -6958,6 +6476,7 @@
           "accessibility": [
             "In forms, provide a persistent visible external field label; placeholder text is guidance and must not be the field's only label. In a compact filter bar, the trigger's visible text may supply the accessible name.",
             "The trigger uses combobox semantics and the popup uses listbox and option semantics; do not replace them with menu roles.",
+            "Multiple mode adds aria-multiselectable, exposes independent aria-selected state, and uses presentation-only checkbox indicators while each option remains the sole interaction target.",
             "Disabled options remain visible, expose aria-disabled, and are skipped by keyboard navigation and typeahead.",
             "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
             "Selected options rely on active fill and foreground treatment without a redundant trailing check icon.",
@@ -6965,13 +6484,14 @@
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
           "states": [
-            "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
+            "The multiple property changes cardinality without changing the component family: scalar mode selects and closes, while multiple mode toggles array values and keeps the popup open.",
             "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
-            "Value is controlled through the mutable value property; dsChange reports user selection and clearing.",
+            "Value is controlled through the mutable value property as a string in scalar mode or a string array in multiple mode; dsChange reports the matching shape.",
+            "Multiple mode keeps the persistent placeholder label visible, appends the selected count, and submits one repeated form entry per selected value.",
             "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
             "When allowClear is enabled, the clear affordance appears only after a value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
-            "Clearing emits dsChange with an empty string and dsClear, keeps the popup open, and restores useful focus.",
-            "Loading keeps the trigger visible, replaces its prefix icon, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
+            "Clearing emits dsChange with an empty string or empty array according to mode plus dsClear, keeps the popup open, and restores useful focus.",
+            "Loading keeps the trigger visible, replaces its prefix icon, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive. When the popup is open, its single loader is centered vertically and horizontally within the loading region.",
             "The trigger label stays left-aligned at every width. The default size is md in both forms and filter bars; smaller sizes require an explicit density need.",
             "Use option icons only when they help users differentiate choices. Icons render only when every option in the complete list provides one; mixed icon data falls back to the text-only row layout.",
             "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
@@ -6996,10 +6516,10 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign options and sections through JavaScript properties because arrays and objects cannot be represented safely as attributes."
+              "Assign options, sections, and multiple-mode array values through JavaScript properties because arrays and objects cannot be represented safely as attributes."
             ],
             "react": [
-              "Pass options or sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
+              "Pass options or sections as wrapper props, set multiple for array values, and handle onDsChange, onDsClear, and onDsOpenChange."
             ],
             "angular": [
               "Import DsSelect and SelectValueAccessor when integrating with Angular Forms; bind options and sections as properties."
@@ -7081,6 +6601,10 @@
             "type": "string",
             "required": false
           },
+          "multiple": {
+            "type": "boolean",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
             "required": false
@@ -7121,12 +6645,16 @@
             "type": "SelectSection[]",
             "required": false
           },
+          "selectedLabel": {
+            "type": "string",
+            "required": false
+          },
           "size": {
             "type": "SelectSize",
             "required": false
           },
           "value": {
-            "type": "string",
+            "type": "SelectValue",
             "required": false
           },
           "width": {
@@ -7137,7 +6665,7 @@
         "events": [
           {
             "name": "dsChange",
-            "detail": "string"
+            "detail": "SelectValue"
           },
           {
             "name": "dsClear",
@@ -7162,271 +6690,6 @@
       ],
       "registryDependencies": [
         "button-unfilled",
-        "empty-state",
-        "icon",
-        "loader",
-        "text",
-        "tooltip"
-      ]
-    },
-    {
-      "name": "select-multi",
-      "title": "SelectMulti",
-      "description": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select-multi",
-        "source": "src/wc/components/SelectMulti/SelectMulti.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "general",
-          "status": "stable",
-          "summary": "Form-associated multi-value select with a persistent trigger label, inline selected count, local search, rich flat options, grouped sections, loading, and clear-all behavior.",
-          "useWhen": [
-            "The user may choose several independent values from one finite set.",
-            "A compact trigger should summarize selection with the field label and a count.",
-            "The option set benefits from local search, subtext, grouping, or disabled choices.",
-            "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain where search materially improves retrieval."
-          ],
-          "avoidWhen": [
-            "Exactly one value may be selected.",
-            "Selected values must remain individually removable as persistent tags outside the popup.",
-            "The choices form a hierarchy with cascading parent selection.",
-            "The customer task benefits more from keeping every choice and checkbox directly visible; choose between SelectMulti and a visible checkbox list from the use-case context rather than a fixed option-count threshold."
-          ],
-          "alternatives": [
-            {
-              "when": "Exactly one value may be selected.",
-              "component": "component:ds-select",
-              "reason": "Select owns scalar form value and single-select listbox behavior."
-            },
-            {
-              "when": "The popup contains actions rather than values.",
-              "component": "component:ds-menu",
-              "reason": "Menu uses command semantics and closes according to action-menu expectations."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-text",
-            "component:ds-checkbox",
-            "component:ds-empty-state",
-            "component:ds-loader"
-          ],
-          "accessibility": [
-            "In forms, provide a persistent visible external field label. In a compact filter bar, the trigger's visible persistent label and count may supply the accessible name.",
-            "The popup is a listbox with aria-multiselectable and every option exposes its independent aria-selected state.",
-            "Disabled options expose aria-disabled and are skipped by keyboard navigation and typeahead.",
-            "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
-            "Each row uses a presentation-only ds-checkbox indicator at the same density as the row; multi-select option rows never add a prefix icon alongside it, and the option remains the sole selection semantic and interaction target.",
-            "The trigger keeps its field label visible and appends the current selected count; an explicit aria-label or aria-labelledby remains the authoritative accessible name when supplied.",
-            "Use errorMessage with error so the trigger is described by the rendered alert."
-          ],
-          "states": [
-            "Select and SelectMulti share popup positioning, dismissal, focus, typeahead, and listbox traversal while retaining their distinct scalar and array selection contracts.",
-            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
-            "Values is a controlled JavaScript array; dsChange emits a new array after each user toggle.",
-            "Required SelectMulti controls begin without an automatic selection and require the user to make an explicit choice.",
-            "Selecting an option keeps the popup open so additional values can be toggled.",
-            "The trigger label stays left-aligned at every width; every option row uses the same leading Checkbox indicator at its density. The default control size is md in both forms and filter bars.",
-            "The selected count always follows the persistent label as plain text separated by a centered dot, including for one selection, and counts every selected value even when search or grouping hides it. Never replace the count with selected option names.",
-            "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
-            "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
-            "Option labels stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
-            "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when selection promotes the label and count to primary.",
-            "The shared popup search control follows the SelectMulti density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
-            "When search contains text, the shared control shows a rounded sm icon-only ButtonUnfilled with the Cross icon and no border. It clears the local term, stays hidden for an empty term, and returns focus to search.",
-            "The shared summary-and-clear footer mirrors the owning density: menu-item padding surrounds a borderless density row, and both texts use the same row and label insets as option text. The outer footer owns a 1px top divider.",
-            "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
-            "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
-            "When allowClear is enabled, clear-all appears only after at least one value exists. Clearing is valid for optional and required fields; a required field becomes invalid until the user selects again.",
-            "Clear-all emits an empty dsChange and dsClear while preserving useful popup or search focus.",
-            "Loading keeps the trigger visible, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive.",
-            "SelectMulti has no maximum-selection behavior; every available non-inactive option may be selected.",
-            "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the component exposes validity and error presentation without imposing that policy.",
-            "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry.",
-            "An initially empty option set is not an expected SelectMulti use case. The no-results state describes a search with no matches, not a source with no choices.",
-            "Native form submission emits one entry per selected value under the component name.",
-            "Use options for a flat list or sections for grouped choices. Multi-select option contracts intentionally exclude icons because the leading checkbox owns that row zone; hierarchical parent selection is deferred."
-          ],
-          "responsiveBehavior": [
-            "Use width fill for form fields and width hug for compact filter bars; the persistent trigger label avoids variable-width selected labels.",
-            "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
-            "Long option collections scroll inside the popup; virtualization and remote search are not part of this version."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign values, options, and sections through JavaScript properties; array values cannot be represented safely as attributes."
-            ],
-            "react": [
-              "Pass values, options, and sections as wrapper props and handle onDsChange, onDsClear, and onDsOpenChange."
-            ],
-            "angular": [
-              "Import DsSelectMulti and SelectMultiValueAccessor when integrating with Angular Forms."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/SelectMulti/SelectMulti.stories.ts"
-            },
-            {
-              "label": "Selection patterns",
-              "path": "src/docs/SelectionPatterns.mdx"
-            }
-          ]
-        },
-        "props": {
-          "activeFill": {
-            "type": "boolean",
-            "required": false
-          },
-          "allowClear": {
-            "type": "boolean",
-            "required": false
-          },
-          "ariaDescribedby": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "ariaLabel": {
-            "type": "string | null",
-            "required": false
-          },
-          "ariaLabelledby": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "background": {
-            "type": "SelectMultiBackground | undefined",
-            "required": false
-          },
-          "clearLabel": {
-            "type": "string",
-            "required": false
-          },
-          "disabled": {
-            "type": "boolean",
-            "required": false
-          },
-          "error": {
-            "type": "boolean",
-            "required": false
-          },
-          "errorMessage": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "hasBorder": {
-            "type": "boolean",
-            "required": false
-          },
-          "icon": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "inputId": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "isLoading": {
-            "type": "boolean",
-            "required": false
-          },
-          "loadingLabel": {
-            "type": "string",
-            "required": false
-          },
-          "name": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "noResultsText": {
-            "type": "string",
-            "required": false
-          },
-          "open": {
-            "type": "boolean",
-            "required": false
-          },
-          "options": {
-            "type": "SelectMultiOption[]",
-            "required": false
-          },
-          "placeholder": {
-            "type": "string",
-            "required": false
-          },
-          "required": {
-            "type": "boolean",
-            "required": false
-          },
-          "requiredMessage": {
-            "type": "string",
-            "required": false
-          },
-          "searchPlaceholder": {
-            "type": "string",
-            "required": false
-          },
-          "searchable": {
-            "type": "boolean",
-            "required": false
-          },
-          "sections": {
-            "type": "SelectMultiSection[]",
-            "required": false
-          },
-          "selectedLabel": {
-            "type": "string",
-            "required": false
-          },
-          "size": {
-            "type": "SelectMultiSize",
-            "required": false
-          },
-          "values": {
-            "type": "string[]",
-            "required": false
-          },
-          "width": {
-            "type": "SelectMultiWidth",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsChange",
-            "detail": "string[]"
-          },
-          {
-            "name": "dsClear",
-            "detail": "void"
-          },
-          {
-            "name": "dsOpenChange",
-            "detail": "boolean"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-select-multi",
-          "react": "DsSelectMulti",
-          "angular": "DsSelectMulti"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
-      ],
-      "registryDependencies": [
-        "button-unfilled",
         "checkbox",
         "empty-state",
         "icon",
@@ -7438,7 +6701,7 @@
     {
       "name": "shell-app",
       "title": "ShellApp",
-      "description": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
+      "description": "The standard managed workspace root for authenticated applications, assembling responsive navigation, page chrome, global tools, and stable application-owned content from typed data.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -7449,10 +6712,10 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "The single required workspace root for standard authenticated application pages, coordinating primary and secondary navigation, tools chrome, responsive composition, content geometry, shared styling, and shell behavior.",
+          "summary": "The standard managed workspace root for authenticated applications, assembling responsive navigation, page chrome, global tools, and stable application-owned content from typed data.",
           "useWhen": [
             "Building any standard authenticated product or workspace page with CompoMo.",
-            "PanelNav, BarNav, ShellTools, mobile navigation, page content, shared chrome, responsive behavior, and shell shortcuts must be composed as one application frame.",
+            "Navigation, page chrome, global tools, responsive behavior, and shell shortcuts must be composed as one application frame without parallel desktop and mobile owners.",
             "Future application templates need the supported base-page composition boundary."
           ],
           "avoidWhen": [
@@ -7476,32 +6739,34 @@
             "pattern:shell-page"
           ],
           "accessibility": [
-            "Keep primary destinations in PanelNav and secondary route sections in BarNav.",
+            "Supply primary destinations through navigation and secondary route sections through pageChrome so managed ShellApp preserves their correct semantics.",
             "Ensure the default content region contains the page's single main landmark.",
-            "Keep PanelNav, BarNav, and PanelTools-compatible chrome available in desktop and tablet compositions and the persistent mobile bar available below 768px.",
+            "Keep the managed desktop/tablet and mobile presentations available without conditionally recreating routed or tool content.",
             "Do not override browser keyboard chords when enabling shell shortcuts.",
             "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
             "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
           ],
           "states": [
             "Render exactly one ShellApp as the workspace root and never nest it.",
-            "PanelNav, BarNav, and ShellTools are the responsive shell regions; ShellTools contains at least Search and Help even when no additional product tools apply.",
+            "Managed composition is the standard. Supply navigation, pageChrome, and tools objects plus named tool-view and default page-content slots.",
             "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-            "ShellApp propagates navStyle and resolved responsive mode and coordinates layout, gradient alignment, transitions, metrics, shortcuts, and mobile-stage visibility.",
-            "The application controls mobileDestination and mobileSheetNavOpen and keeps router state independent from global tool-surface changes.",
+            "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, Inbox state, focus restoration, and mobile-stage visibility.",
+            "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
+            "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
+            "Use composition=slotted only for advanced application architectures that intentionally own all lower-level chrome wiring.",
             "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
-            "Update PanelNav groups, BarNav tabs and heading, navStyle, basePath, and currentUrl atomically from one resolved route state.",
-            "BarNav remains present: it shows route-section tabs when available and the active PanelNav destination label as heading otherwise.",
-            "Render one ShellPage as the default-slot child for each standard routed page; ShellApp owns the content scroller while ShellPage owns page header stickiness and content inset.",
+            "Replace navigation and pageChrome together from one completed route state.",
+            "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
+            "Managed ShellApp keeps BarNav and ShellPage presentations present and owns page header stickiness and the content scroller.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
           ],
           "responsiveBehavior": [
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
-            "On mobile, ShellApp hides and inerts PanelNav and BarNav, uses a solid primary stage, and composes routed ShellPage MobileHeader presentations, MobileSheetNav, ShellTools, and the persistent five-item MobileBarNav.",
+            "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
@@ -7509,15 +6774,15 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign complex navigation and tool collections as JavaScript properties on the slotted components.",
+              "Assign navigation, pageChrome, and tools as JavaScript properties on the managed ShellApp.",
               "Stamp route-derived nav-style before components connect when deterministic first paint is required."
             ],
             "react": [
-              "Use generated wrappers and preserve native slot names for desktop navigation, responsive tools, mobile navigation, and main content.",
+              "Use the generated ShellApp wrapper, structured object props, named tool-view slots, and stable routed children.",
               "Resolve all shell inputs from one router state before rendering the composition."
             ],
             "angular": [
-              "Use generated standalone adapters and preserve slot attributes in templates.",
+              "Use the generated standalone ShellApp adapter, bind structured object props, and preserve named tool-view slots.",
               "Bind complex inputs as properties and update navigation inputs atomically from one resolved router state.",
               "Bind both nav-style attributes and properties when deterministic first paint is required."
             ]
@@ -7542,6 +6807,10 @@
           ]
         },
         "props": {
+          "composition": {
+            "type": "ShellAppComposition",
+            "required": false
+          },
           "gradientPreset": {
             "type": "ShellGradientPreset",
             "required": false
@@ -7558,15 +6827,79 @@
             "type": "NavChromeStyle",
             "required": false
           },
+          "navigation": {
+            "type": "ShellNavigationConfig",
+            "required": false
+          },
+          "pageChrome": {
+            "type": "ShellPageChromeConfig",
+            "required": false
+          },
           "shortcutsEnabled": {
             "type": "boolean",
+            "required": false
+          },
+          "tools": {
+            "type": "ShellToolsConfig",
             "required": false
           }
         },
         "events": [
           {
+            "name": "dsBreadcrumbSelect",
+            "detail": "BreadcrumbSelectDetail"
+          },
+          {
+            "name": "dsBrowseContextChange",
+            "detail": "NavChromeStyle"
+          },
+          {
+            "name": "dsHeaderAction",
+            "detail": "{ tool: PanelToolsToolId; id: string }"
+          },
+          {
+            "name": "dsHeaderBack",
+            "detail": "{ tool: PanelToolsToolId }"
+          },
+          {
+            "name": "dsNavFooterAction",
+            "detail": "void"
+          },
+          {
+            "name": "dsNavSelect",
+            "detail": "string"
+          },
+          {
+            "name": "dsNavUserAction",
+            "detail": "PanelNavUserActionDetail"
+          },
+          {
+            "name": "dsPageAction",
+            "detail": "string"
+          },
+          {
+            "name": "dsPageBack",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsPresentationChange",
+            "detail": "{ presentation: 'drawer' | 'fullscreen' }"
+          },
+          {
             "name": "dsResponsiveModeChange",
             "detail": "{ mode: ShellResponsiveMode }"
+          },
+          {
+            "name": "dsSubsectionChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsTabChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsToolChange",
+            "detail": "{ id: PanelToolsToolId; selected: boolean }"
           }
         ],
         "slots": [],
@@ -7580,224 +6913,18 @@
         "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
-      "registryDependencies": []
-    },
-    {
-      "name": "shell-gradient-picker",
-      "title": "ShellGradientPicker",
-      "description": "Deprecated compatibility wrapper that maps the fixed ShellApp wash presets into SwatchPicker.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-picker",
-        "source": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "deprecated",
-          "replacedBy": "component:ds-swatch-picker",
-          "replacementReason": "SwatchPicker now owns the same accessible interaction with a generic option model that supports both flat colors and gradients.",
-          "summary": "Deprecated compatibility wrapper that maps the fixed ShellApp wash presets into SwatchPicker.",
-          "useWhen": [
-            "Adding the Appearance or Theme section to the application's user or account menu.",
-            "Users must choose the global ShellApp chrome treatment from none, cool, neutral, warm, or fresh."
-          ],
-          "avoidWhen": [
-            "Choosing semantic intent, page background, chart, content, or brand colors.",
-            "Building an arbitrary gradient editor or allowing custom gradient values.",
-            "A picker already exists for the application; provide exactly one canonical preference location.",
-            "Rendering an individual swatch outside the complete picker."
-          ],
-          "alternatives": [
-            {
-              "when": "The user is selecting the application light, dark, or system color mode.",
-              "component": "component:ds-menu",
-              "reason": "Color mode is a separate appearance preference and should use ordinary menu selection rows."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-shell-app",
-            "component:ds-menu"
-          ],
-          "patterns": [
-            "pattern:application-shell"
-          ],
-          "accessibility": [
-            "Provide a localized groupLabel that describes the shell appearance choice.",
-            "Treat the presets as one radio group with one Tab stop; Arrow keys, Home, and End move and select within the group.",
-            "Keep the visible compact swatches and their accessible preset names; do not rely on color alone for assistive technology."
-          ],
-          "states": [
-            "Neutral is the default preset; none renders solid shell chrome without a wash.",
-            "Cool, neutral, warm, and fresh use design tokens and automatically adapt to the active light or dark color theme.",
-            "Apply dsChange immediately to ShellApp.gradientPreset and keep the containing account menu open.",
-            "The application owns local persistence, cross-tab synchronization, and server or account preference precedence; the picker owns only selection UI and events.",
-            "Treat the fixed preset union as the only supported values and do not construct custom gradients."
-          ],
-          "responsiveBehavior": [
-            "Keep the compact picker in the user or account appearance menu on supported desktop and tablet shell compositions.",
-            "The future mobile account surface may present the same preference differently."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Listen for dsChange, resolve application preference precedence, and assign the result to the single ShellApp gradientPreset property."
-            ],
-            "react": [
-              "Use the generated wrapper and handle onDsChange without closing the containing account menu."
-            ],
-            "angular": [
-              "Bind value to the resolved preference and handle dsChange to update application state."
-            ]
-          },
-          "references": [
-            {
-              "label": "Replacement stories",
-              "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
-            },
-            {
-              "label": "ShellApp gradient contract",
-              "path": "src/wc/components/ShellApp/ShellApp.mdx"
-            },
-            {
-              "label": "Application shell composition",
-              "path": "agent/patterns/application-shell/pattern.agent.json"
-            }
-          ]
-        },
-        "props": {
-          "groupLabel": {
-            "type": "string",
-            "required": false
-          },
-          "value": {
-            "type": "ShellGradientPreset",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsChange",
-            "detail": "ShellGradientPreset"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-shell-gradient-picker",
-          "react": "DsShellGradientPicker",
-          "angular": "DsShellGradientPicker"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
       "registryDependencies": [
-        "swatch-picker"
+        "bar-nav",
+        "bar-title",
+        "button-unfilled",
+        "mobile-bar-nav",
+        "mobile-header",
+        "mobile-sheet-nav",
+        "panel-nav",
+        "shell-page",
+        "shell-tools",
+        "tooltip"
       ]
-    },
-    {
-      "name": "shell-gradient-swatch",
-      "title": "ShellGradientSwatch",
-      "description": "Deprecated internal compatibility component for one legacy ShellApp gradient swatch.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/shell-gradient-swatch",
-        "source": "src/wc/components/ShellGradientSwatch/ShellGradientSwatch.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "internal",
-          "status": "deprecated",
-          "replacedBy": "component:ds-swatch-picker",
-          "replacementReason": "SwatchPicker renders its option buttons internally so an individually published radio swatch is no longer needed.",
-          "summary": "Deprecated internal compatibility component for one legacy ShellApp gradient swatch.",
-          "useWhen": [
-            "Maintaining or extending ShellGradientPicker inside CompoMo."
-          ],
-          "avoidWhen": [
-            "Building application UI directly; use ShellGradientPicker instead.",
-            "Selecting semantic, brand, chart, page, or arbitrary gradient colors.",
-            "Creating a partial or custom set of shell gradient choices."
-          ],
-          "alternatives": [
-            {
-              "when": "An application needs the supported global shell appearance control.",
-              "component": "component:ds-swatch-picker",
-              "reason": "SwatchPicker provides the complete radio-group semantics, keyboard behavior, generic previews, and selection event."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-swatch-picker"
-          ],
-          "accessibility": [
-            "Keep radio semantics, aria-checked state, and a preset-specific accessible name on the internal button.",
-            "Let ShellGradientPicker manage the roving tab stop and group keyboard navigation.",
-            "Do not expose an unlabeled color-only choice."
-          ],
-          "states": [
-            "Preset determines the token-based preview; selected determines radio state and selected visuals.",
-            "The selected swatch owns the radio group's single tab stop while ShellGradientPicker coordinates selection and focus movement.",
-            "isInactive disables interaction but does not remove the accessible name."
-          ],
-          "responsiveBehavior": [
-            "Preserve the fixed compact swatch geometry and let ShellGradientPicker own layout."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Do not instantiate this internal primitive in consuming applications."
-            ],
-            "react": [
-              "Use DsShellGradientPicker rather than the generated swatch wrapper."
-            ],
-            "angular": [
-              "Use DsShellGradientPicker rather than importing DsShellGradientSwatch."
-            ]
-          },
-          "references": [
-            {
-              "label": "Parent picker",
-              "path": "src/wc/components/ShellGradientPicker/ShellGradientPicker.tsx"
-            }
-          ]
-        },
-        "props": {
-          "ariaLabel": {
-            "type": "string | null",
-            "required": false
-          },
-          "isInactive": {
-            "type": "boolean",
-            "required": false
-          },
-          "preset": {
-            "type": "ShellGradientPreset",
-            "required": false
-          },
-          "selected": {
-            "type": "boolean",
-            "required": false
-          }
-        },
-        "events": [
-          {
-            "name": "dsSelect",
-            "detail": "ShellGradientPreset"
-          }
-        ],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-shell-gradient-swatch",
-          "react": "DsShellGradientSwatch",
-          "angular": "DsShellGradientSwatch"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
     },
     {
       "name": "shell-page",
@@ -7935,7 +7062,7 @@
     {
       "name": "shell-tools",
       "title": "ShellTools",
-      "description": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+      "description": "Responsive persistent host for explicitly defined global tools, adapting PanelTools desktop/tablet chrome to configured mobile destinations and groups.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -7945,10 +7072,10 @@
         "intentStatus": "complete",
         "intent": {
           "audience": "specialized",
-          "status": "experimental",
-          "summary": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+          "status": "stable",
+          "summary": "Responsive persistent host for explicitly defined global tools, adapting PanelTools desktop/tablet chrome to configured mobile destinations and groups.",
           "useWhen": [
-            "A ShellApp must preserve the same Search, Agents, Messages, Stacks, Activity, and Help product owners across desktop, tablet, and mobile."
+            "A ShellApp must preserve the same product-owned global tool views across desktop, tablet, and mobile."
           ],
           "avoidWhen": [
             "The tools exist only in desktop and tablet chrome; PanelTools remains supported for that case.",
@@ -7958,7 +7085,7 @@
             {
               "when": "Only legacy rail and drawer behavior is required.",
               "component": "component:ds-panel-tools",
-              "reason": "PanelTools remains the backward-compatible desktop and tablet primitive."
+              "reason": "PanelTools is the direct desktop and tablet rail-and-drawer primitive."
             }
           ],
           "commonlyComposedWith": [
@@ -7978,7 +7105,8 @@
           ],
           "states": [
             "The application owns open and activeTool and replaces headers when tool depth changes.",
-            "Messages, Stacks, and Activity map to one mobile Inbox destination while retaining the actual active tool id.",
+            "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Messages, Stacks, and Activity.",
+            "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
             "Switching responsive mode must not recreate application-owned slotted product elements."
           ],
           "responsiveBehavior": [
@@ -8020,10 +7148,6 @@
             "type": "PanelToolsHeaders",
             "required": false
           },
-          "headersJson": {
-            "type": "string",
-            "required": false
-          },
           "inboxLabel": {
             "type": "string",
             "required": false
@@ -8034,10 +7158,6 @@
           },
           "items": {
             "type": "PanelToolsItem[]",
-            "required": false
-          },
-          "itemsJson": {
-            "type": "string",
             "required": false
           },
           "open": {

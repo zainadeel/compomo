@@ -2,14 +2,14 @@ import '/dist/components/ds-menu.js';
 import '/dist/components/ds-modal.js';
 import '/dist/components/ds-button-filled.js';
 import '/dist/components/ds-button-unfilled.js';
-import '/dist/components/ds-shell-gradient-picker.js';
+import '/dist/components/ds-swatch-picker.js';
 
 await Promise.all([
   customElements.whenDefined('ds-menu'),
   customElements.whenDefined('ds-modal'),
   customElements.whenDefined('ds-button-filled'),
   customElements.whenDefined('ds-button-unfilled'),
-  customElements.whenDefined('ds-shell-gradient-picker'),
+  customElements.whenDefined('ds-swatch-picker'),
 ]);
 
 const actionAnchor = document.getElementById('menu-anchor');
@@ -40,7 +40,16 @@ filterMenu.addEventListener('dsClose', () => filterAnchor.setAttribute('aria-exp
 const richAnchor = document.getElementById('rich-anchor');
 const richMenu = document.getElementById('rich-menu');
 richMenu.sections = [
-  { header: 'Theme', variant: 'gradient-picker', value: 'neutral' },
+  {
+    header: 'Theme',
+    variant: 'swatch-picker',
+    value: 'neutral',
+    groupLabel: 'Shell gradient theme',
+    options: [
+      { value: 'none', label: 'None', preview: { kind: 'color', color: 'var(--color-background-secondary)' } },
+      { value: 'neutral', label: 'Neutral', preview: { kind: 'color', color: 'var(--color-brand-primary)' } },
+    ],
+  },
   { header: 'Appearance', items: [
     { label: 'System', value: 'system' },
     { label: 'Dark', value: 'dark', isSelected: true },

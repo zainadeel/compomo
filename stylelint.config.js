@@ -72,7 +72,7 @@ export default {
         ],
         // Size (width / height / min- / max-)
         '/^(min-|max-)?(width|height)$/': [RAW_LENGTH],
-        // Width tokens used as height (the CardSetting / CardDataVizDonut bug class)
+        // Width tokens used as height (the CardSetting / CardDataViz bug class)
         '/^(min-|max-)?height$/': [
           '/--dimension-(card|modal|menu|panel)-width/',
         ],

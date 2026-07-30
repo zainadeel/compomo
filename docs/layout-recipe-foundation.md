@@ -14,7 +14,7 @@ events, and semantic ownership remain the public API.
 - `.ds-control-icon-box` owns the fixed icon/adornment zone.
 - `.ds-control-label-box` owns density-specific text-container inset.
 
-ButtonFilled, ButtonUnfilled, Input, Select, SelectMulti, Menu choice rows, and
+ButtonFilled, ButtonUnfilled, Input, Select, Menu choice rows, and
 ConversationListItem use these parts. Components continue to own borders,
 surface treatment, interaction state, typography selection, and semantics.
 Never add typography metrics to a control part.
@@ -23,7 +23,7 @@ Never add typography metrics to a control part.
 
 `src/wc/utils/field-stack.css` owns the 4px vertical flow shared by a field
 label, control, description, and error message. Field, Input, Select,
-SelectMulti, and Slider use the same recipe. It does not impose width,
+Select in either cardinality mode, and Slider use the same recipe. It does not impose width,
 validation timing, or form semantics.
 
 ## Empty regions
@@ -36,8 +36,8 @@ one equivalent region recipe rather than repeating centering rules around each
 
 ## Data-visualization card anatomy
 
-`src/wc/utils/data-viz-card-layout.css` keeps Bar, Line, and Donut card bodies
-aligned:
+`src/wc/components/CardDataViz` keeps Bar, Line, Donut, and custom card bodies
+aligned within one public component:
 
 - the body is a vertical fill layout;
 - the chart consumes remaining space;
@@ -45,12 +45,12 @@ aligned:
 - the donut modifier lets its chart stretch in both axes.
 
 Chart behavior, hover synchronization, filtering, and slot presence remain
-component-owned.
+owned by the selected card variant.
 
 ## Select controller
 
 `src/wc/utils/select-controller.ts` is a composition-based controller shared by
-Select and SelectMulti. It owns popup mounting retries, anchored positioning,
+single and multiple Select. It owns popup mounting retries, anchored positioning,
 outside dismissal, focus restoration, typeahead, and listbox traversal.
 Decorated Stencil state, form submission, validation, scalar selection, and
 array selection remain in their respective components.

@@ -20,12 +20,12 @@ const FUEL_TABS: BarNavTab[] = [
 describe('shouldResyncBarNavProps', () => {
   it('returns true when resolved tabs are empty but host tabs have items', () => {
     const tabs: BarNavTab[] = [{ id: 'overview', label: 'Overview' }];
-    assert.equal(shouldResyncBarNavProps([], tabs, ''), true);
+    assert.equal(shouldResyncBarNavProps([], tabs), true);
   });
 
   it('returns false when resolved tabs already match host tabs', () => {
     const tabs: BarNavTab[] = [{ id: 'overview', label: 'Overview' }];
-    assert.equal(shouldResyncBarNavProps(tabs, tabs, ''), false);
+    assert.equal(shouldResyncBarNavProps(tabs, tabs), false);
   });
 });
 

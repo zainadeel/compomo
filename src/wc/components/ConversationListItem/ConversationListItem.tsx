@@ -1,3 +1,4 @@
+/* eslint-disable local/no-selected-fill-emphasis-change -- Unread emphasis is message state, independent of the selected-row fill state. */
 import { Component, Element, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 import type { ConversationItemState } from '../conversation-types';
 

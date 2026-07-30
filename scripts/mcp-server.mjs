@@ -80,6 +80,18 @@ const COMPONENT_LIST_OUTPUT_SCHEMA = z.object({
 const COMPONENT_OUTPUT_SCHEMA = z.object({
   component: JSON_OBJECT_SCHEMA,
 });
+const SETUP_GUIDE_OUTPUT_SCHEMA = z.object({
+  guide: z.string(),
+});
+const COMPONENT_SOURCE_OUTPUT_SCHEMA = z.object({
+  name: z.string(),
+  title: z.string(),
+  files: z.array(z.object({
+    path: z.string(),
+    language: z.enum(['css', 'tsx']),
+    content: z.string(),
+  })),
+});
 const PATTERN_SUMMARY_SCHEMA = z.object({
   id: z.string(),
   status: z.string(),
@@ -379,10 +391,15 @@ server.registerTool(
   {
     title: 'Get Setup Guide',
     description: 'Get the full project setup guide for @ds-mo/ui — install commands, CSS imports, theme configuration, and design token architecture.',
+    outputSchema: SETUP_GUIDE_OUTPUT_SCHEMA,
     annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async () => {
-    return { content: [{ type: 'text', text: formatSetupGuide() }] };
+    const guide = formatSetupGuide();
+    return {
+      content: [{ type: 'text', text: guide }],
+      structuredContent: { guide },
+    };
   }
 );
 
@@ -395,6 +412,7 @@ server.registerTool(
     inputSchema: z.object({
       name: z.string().describe('Component name in kebab-case (e.g., "button", "modal").'),
     }),
+    outputSchema: COMPONENT_SOURCE_OUTPUT_SCHEMA,
     annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
   async ({ name }) => {
@@ -411,14 +429,24 @@ server.registerTool(
       };
     }
 
-    const sections = comp.files.map(f => {
-      const lang = f.path.endsWith('.css') ? 'css' : 'tsx';
-      return `### ${f.path}\n\n\`\`\`${lang}\n${f.content}\n\`\`\``;
+    const files = comp.files.map(f => {
+      const language = f.path.endsWith('.css') ? 'css' : 'tsx';
+      return { path: f.path, language, content: f.content };
     });
+    const sections = files.map(file =>
+      `### ${file.path}\n\n\`\`\`${file.language}\n${file.content}\n\`\`\``
+    );
 
     const header = formatComponentSourceHeader(comp);
 
-    return { content: [{ type: 'text', text: `${header}\n\n${sections.join('\n\n')}` }] };
+    return {
+      content: [{ type: 'text', text: `${header}\n\n${sections.join('\n\n')}` }],
+      structuredContent: {
+        name: comp.name,
+        title: comp.title,
+        files,
+      },
+    };
   }
 );
 

@@ -90,13 +90,21 @@ test('renders the minimal primary elevated surface and typed content', async ({ 
     const button = element as HTMLDsButtonUnfilledElement;
     return { icon: button.icon, hasBorder: button.hasBorder };
   })).toEqual({ icon: 'Cross', hasBorder: false });
-  const [surfaceBox, closeBox] = await Promise.all([
-    surface.boundingBox(),
-    close.boundingBox(),
-  ]);
-  if (!surfaceBox || !closeBox) throw new Error('Toast close geometry did not render');
-  expect(closeBox.y - surfaceBox.y).toBeCloseTo(8, 0);
-  expect(surfaceBox.x + surfaceBox.width - (closeBox.x + closeBox.width)).toBeCloseTo(8, 0);
+  const closeInsets = await surface.evaluate(element => {
+    const closeButton = element.querySelector<HTMLElement>(
+      'ds-button-unfilled.toast-close'
+    );
+    if (!closeButton) return null;
+    const surfaceBox = element.getBoundingClientRect();
+    const closeBox = closeButton.getBoundingClientRect();
+    return {
+      top: closeBox.top - surfaceBox.top,
+      right: surfaceBox.right - closeBox.right,
+    };
+  });
+  if (!closeInsets) throw new Error('Toast close geometry did not render');
+  expect(closeInsets.top).toBeCloseTo(8, 0);
+  expect(closeInsets.right).toBeCloseTo(8, 0);
 });
 
 test('centers one copy line in the 48px compact geometry', async ({ page }) => {

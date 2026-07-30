@@ -13,9 +13,7 @@ import {
 } from '@stencil/core';
 import type { ChromeTransitionDetail } from '../../shell/chrome-transition';
 import {
-  PANEL_TOOLS_FOOTER_TOOL_ID,
   PANEL_TOOLS_LABELS,
-  PANEL_TOOLS_PRIMARY_TOOL_ID,
   PANEL_TOOLS_SHORTCUTS,
   type PanelToolsHeaderAction,
   type PanelToolsHeaderConfig,
@@ -27,9 +25,9 @@ import {
   isPanelToolsToolId,
   orderPanelToolsItems,
   panelToolsDrawerAtTerminal,
-  parsePanelToolsItems,
   panelToolsDrawerResting,
   panelToolsDrawerTransitionMs,
+  panelToolsRailPlacement,
   reconcilePanelToolsAvailability,
   resolvePanelToolActivation,
 } from './panel-tools-utils';
@@ -62,16 +60,11 @@ export class PanelTools {
    */
   @Prop() items: PanelToolsItem[] = [];
 
-  /** JSON fallback for `items` — useful when framework bindings don't propagate arrays. */
-  @Prop({ attribute: 'items-json' }) itemsJson: string = '';
   @Prop() toolsLabel: string = 'Tools';
   @Prop() toolShortcutsLabel: string = 'Tool shortcuts';
 
   /** Active header state per tool. Replace the object when title, depth, or actions change. */
   @Prop() headers: PanelToolsHeaders = {};
-
-  /** JSON fallback for `headers`. The `headers` property takes precedence when non-empty. */
-  @Prop({ attribute: 'headers-json' }) headersJson: string = '';
 
   /**
    * Optional localStorage key for the last active tool. The drawer always starts
@@ -133,21 +126,11 @@ export class PanelTools {
   private fullViewObserver: MutationObserver | null = null;
 
   private get railItems(): PanelToolsItem[] {
-    return parsePanelToolsItems(this.items, this.itemsJson);
+    return this.items ?? [];
   }
 
   private get orderedRailItems(): PanelToolsItem[] {
-    const railItems = orderPanelToolsItems(this.railItems);
-    const headerItem = railItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
-    const footerItem = railItems.find(item => item.id === PANEL_TOOLS_FOOTER_TOOL_ID);
-    const bodyItems = railItems.filter(
-      item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID && item.id !== PANEL_TOOLS_FOOTER_TOOL_ID
-    );
-    const ordered: PanelToolsItem[] = [];
-    if (headerItem) ordered.push(headerItem);
-    ordered.push(...bodyItems);
-    if (footerItem) ordered.push(footerItem);
-    return ordered;
+    return orderPanelToolsItems(this.railItems);
   }
 
   disconnectedCallback() {
@@ -272,7 +255,6 @@ export class PanelTools {
   }
 
   @Watch('items')
-  @Watch('itemsJson')
   itemsChanged() {
     this.rovingIndex = 0;
     this.reconcileActiveTool();
@@ -418,27 +400,23 @@ export class PanelTools {
   }
 
   private syncFullViewTools() {
-    const ids: PanelToolsToolId[] = ['search', 'messages', 'stacks', 'activity', 'agents', 'help'];
+    const ids = this.orderedRailItems.map(item => item.id);
     const next = ids.filter(id => Boolean(this.el.querySelector(`[slot="${id}-view"]`)));
     if (next.join('|') !== this.fullViewToolIds.join('|')) this.fullViewToolIds = next;
   }
 
   private headerLabel(): string {
     if (!this.isDrawerPresent() || !this.activeTool) return '';
-    return PANEL_TOOLS_LABELS[this.activeTool as PanelToolsToolId] ?? '';
+    const item = this.railItems.find(candidate => candidate.id === this.activeTool);
+    return (
+      item?.label ??
+      PANEL_TOOLS_LABELS[this.activeTool as keyof typeof PANEL_TOOLS_LABELS] ??
+      this.activeTool
+    );
   }
 
   private resolvedHeaders(): PanelToolsHeaders {
-    if (Object.keys(this.headers).length) return this.headers;
-    if (!this.headersJson.trim()) return {};
-    try {
-      const parsed = JSON.parse(this.headersJson);
-      return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-        ? (parsed as PanelToolsHeaders)
-        : {};
-    } catch {
-      return {};
-    }
+    return this.headers ?? {};
   }
 
   private activeHeader(): PanelToolsHeaderConfig {
@@ -518,12 +496,19 @@ export class PanelTools {
   };
 
   private renderRailAction(item: PanelToolsItem, index: number) {
-    const label = item.ariaLabel ?? PANEL_TOOLS_LABELS[item.id];
+    const label =
+      item.ariaLabel ??
+      item.label ??
+      PANEL_TOOLS_LABELS[item.id as keyof typeof PANEL_TOOLS_LABELS] ??
+      item.id;
     return (
       <ds-tooltip
         key={item.id}
         label={label}
-        shortcutKey={PANEL_TOOLS_SHORTCUTS[item.id]}
+        shortcutKey={
+          item.shortcutKey ??
+          PANEL_TOOLS_SHORTCUTS[item.id as keyof typeof PANEL_TOOLS_SHORTCUTS]
+        }
         side="left"
         size="sm"
       >
@@ -556,25 +541,23 @@ export class PanelTools {
     const headerTitle = header.title?.trim() || headerLabel;
     const headerActions = header.actions ?? [];
     const orderedRailItems = this.orderedRailItems;
-    const headerItem = orderedRailItems.find(item => item.id === PANEL_TOOLS_PRIMARY_TOOL_ID);
-    const footerItem = orderedRailItems.find(item => item.id === PANEL_TOOLS_FOOTER_TOOL_ID);
-    const bodyItems = orderedRailItems.filter(
-      item => item.id !== PANEL_TOOLS_PRIMARY_TOOL_ID && item.id !== PANEL_TOOLS_FOOTER_TOOL_ID
+    const headerItems = orderedRailItems.filter(
+      item => panelToolsRailPlacement(item) === 'header'
     );
-    const footerIndex = footerItem ? (headerItem ? 1 : 0) + bodyItems.length : -1;
+    const bodyItems = orderedRailItems.filter(
+      item => panelToolsRailPlacement(item) === 'body'
+    );
+    const footerItems = orderedRailItems.filter(
+      item => panelToolsRailPlacement(item) === 'footer'
+    );
+    const headerCount = headerItems.length;
+    const footerStart = headerCount + bodyItems.length;
     const showDrawerChrome = this.isDrawerPresent();
     const drawerResting = panelToolsDrawerResting(this.open, this.motion);
     const activeFullView = Boolean(
       showDrawerChrome && this.activeTool && this.hasFullView(this.activeTool)
     );
-    const toolIds: PanelToolsToolId[] = [
-      'search',
-      'messages',
-      'stacks',
-      'activity',
-      'agents',
-      'help',
-    ];
+    const toolIds = orderedRailItems.map(item => item.id);
 
     return (
       <Host
@@ -594,21 +577,23 @@ export class PanelTools {
       >
         <div class="panel-tools__layout">
           <nav class="panel-tools__rail" aria-label={this.toolShortcutsLabel}>
-            {headerItem ? (
+            {headerItems.length ? (
               <div class="panel-tools__rail-header ds-chrome-row ds-chrome-space--md">
-                {this.renderRailAction(headerItem, 0)}
+                {headerItems.map((item, index) => this.renderRailAction(item, index))}
               </div>
             ) : null}
             <div class="panel-tools__rail-body ds-chrome-column ds-chrome-space--md ds-scrollbar-hidden">
               <div class="panel-tools__rail-actions">
                 {bodyItems.map((item, bodyIdx) =>
-                  this.renderRailAction(item, headerItem ? bodyIdx + 1 : bodyIdx)
+                  this.renderRailAction(item, headerCount + bodyIdx)
                 )}
               </div>
             </div>
-            {footerItem ? (
+            {footerItems.length ? (
               <div class="panel-tools__rail-footer ds-chrome-row ds-chrome-space--md">
-                {this.renderRailAction(footerItem, footerIndex)}
+                {footerItems.map((item, footerIdx) =>
+                  this.renderRailAction(item, footerStart + footerIdx)
+                )}
               </div>
             ) : null}
           </nav>

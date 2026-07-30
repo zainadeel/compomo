@@ -21,6 +21,7 @@ for (const [id, count] of [
   ['stacked', 3],
   ['score-pressure', 5],
   ['forced-stacked', 5],
+  ['scroll-collapse', 5],
 ]) {
   const card = document.getElementById(id);
   card.metricMinWidth = id === 'stacked' ? '200px' : '180px';
@@ -41,6 +42,7 @@ const score = {
 document.getElementById('stacked').score = score;
 document.getElementById('score-pressure').score = score;
 document.getElementById('forced-stacked').score = score;
+document.getElementById('scroll-collapse').score = score;
 
 const compact = document.getElementById('compact');
 compact.score = score;

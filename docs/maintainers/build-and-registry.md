@@ -11,6 +11,8 @@
 5. Copies public CSS surfaces.
 6. Regenerates registry and agent manifests.
 7. Bundles the published MCP executable and registry snapshot.
+8. Atomically writes `dist/.package-ready.json` after the publish-shaped output
+   is complete.
 
 The implementation is authoritative in `stencil.config.ts` and `scripts/`.
 Update this summary only when ownership changes.
@@ -20,12 +22,15 @@ Update this summary only when ownership changes.
 Never hand-edit:
 
 - `dist/`
-- `src/angular/`
-- `src/react/`
+- ignored `src/.generated/`
 - `src/wc/components.d.ts`
 - registry JSON under `public/r/`
 
 Edit source, then regenerate.
+
+`npm run dev` finalizes the same coherent package output after each Stencil
+watch build. Storybook uses `npm run dev:components`, a component-only output
+profile with its own `dist/.storybook-ready` reload boundary.
 
 ## Registry ownership
 

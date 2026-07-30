@@ -20,7 +20,7 @@
         "The product needs a compact filter menu next to search while keeping its filter choices and matching policy application-owned."
       ],
       "avoidWhen": [
-        "The search belongs inside a Select or SelectMulti popup; use that component's searchable behavior.",
+        "The search belongs inside a Select popup; use that component's searchable behavior in either cardinality mode.",
         "A form needs a labelled standalone field; compose ds-input inside ds-field instead."
       ],
       "commonlyComposedWith": [

@@ -50,7 +50,7 @@
     "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu.",
     "Give an icon-only menu button an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
     "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
-    "Use active state only for a persistent toggle or mode, and synchronize pressed semantics unless an owning composite exposes the selection state.",
+    "Use pressed only for a genuine toggle button; it supplies aria-pressed and dsChange intent. Use isActive only for owner-controlled visual emphasis inside a composite whose selection semantics live on the owner.",
     "Treat notification dots as supplemental unread or status information; never use a dot as the sole state, meaning, or accessible name.",
     "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation; announce broader operation progress from the owning workflow when needed.",
     "Use inactive state only when an unavailable action must remain visible.",
@@ -58,8 +58,9 @@
   ],
   "states": [
     "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
-    "General content UI keeps the selected interaction fill and border for persistent active state.",
-    "Shell, navigation, and tool-rail chrome uses foreground-only active state with no selected fill or border.",
+    "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
+    "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
+    "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border.",
     "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
     "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
@@ -80,10 +81,10 @@
       "Roving-focus composites own the button's tab-stop placement and selection semantics."
     ],
     "react": [
-      "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+      "Use pressed for controlled toggles and isActive for composite-owned emphasis; keep async state synchronized from the owner."
     ],
     "angular": [
-      "Keep active, pressed, and async state synchronized from the owning toolbar or workflow."
+      "Use pressed for controlled toggles and isActive for composite-owned emphasis; keep async state synchronized from the owner."
     ]
   },
   "references": [

@@ -48,7 +48,7 @@ test('CardSetting pilots md row chrome while retaining explicit 48px ownership',
 
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {
   const migrations = [
-    ['src/wc/components/CardShellDataViz/CardShellDataViz.tsx', /card-shell-data-viz__header ds-chrome-row ds-chrome-space--md/],
+    ['src/wc/components/CardDataViz/CardDataViz.tsx', /card-data-viz__header ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/PanelToolHeader/PanelToolHeader.tsx', /panel-tool-header ds-chrome-row ds-chrome-space--md/],
@@ -91,7 +91,7 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
 });
 
 test('choice sections migrate last to the shared sm column recipe', () => {
-  for (const component of ['Menu', 'Select', 'SelectMulti']) {
+  for (const component of ['Menu', 'Select']) {
     const source = read(`src/wc/components/${component}/${component}.tsx`);
     assert.match(source, /'ds-choice-section': true,[\s\S]*?'ds-chrome-column': true,[\s\S]*?'ds-chrome-space--sm': true/);
   }

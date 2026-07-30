@@ -80,9 +80,10 @@ describe('orderPanelToolsItems', () => {
 });
 
 describe('isPanelToolsToolId', () => {
-  it('accepts only fixed tool ids for persisted state', () => {
+  it('accepts application-owned tool ids while rejecting empty persisted state', () => {
     assert.equal(isPanelToolsToolId('agents'), true);
-    assert.equal(isPanelToolsToolId('custom'), false);
+    assert.equal(isPanelToolsToolId('custom'), true);
+    assert.equal(isPanelToolsToolId('  '), false);
     assert.equal(isPanelToolsToolId(null), false);
   });
 });

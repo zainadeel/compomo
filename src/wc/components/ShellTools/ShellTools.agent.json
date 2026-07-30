@@ -6,10 +6,10 @@
   "package": "@ds-mo/ui",
   "tag": "ds-shell-tools",
   "audience": "specialized",
-  "status": "experimental",
-  "summary": "Responsive persistent host for shell tools, adapting PanelTools rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
+  "status": "stable",
+  "summary": "Responsive persistent host for explicitly defined global tools, adapting PanelTools desktop/tablet chrome to configured mobile destinations and groups.",
   "useWhen": [
-    "A ShellApp must preserve the same Search, Agents, Messages, Stacks, Activity, and Help product owners across desktop, tablet, and mobile."
+    "A ShellApp must preserve the same product-owned global tool views across desktop, tablet, and mobile."
   ],
   "avoidWhen": [
     "The tools exist only in desktop and tablet chrome; PanelTools remains supported for that case.",
@@ -19,7 +19,7 @@
     {
       "when": "Only legacy rail and drawer behavior is required.",
       "component": "component:ds-panel-tools",
-      "reason": "PanelTools remains the backward-compatible desktop and tablet primitive."
+      "reason": "PanelTools is the direct desktop and tablet rail-and-drawer primitive."
     }
   ],
   "commonlyComposedWith": [
@@ -37,7 +37,8 @@
   ],
   "states": [
     "The application owns open and activeTool and replaces headers when tool depth changes.",
-    "Messages, Stacks, and Activity map to one mobile Inbox destination while retaining the actual active tool id.",
+    "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Messages, Stacks, and Activity.",
+    "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
     "Switching responsive mode must not recreate application-owned slotted product elements."
   ],
   "responsiveBehavior": [

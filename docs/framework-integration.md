@@ -3,8 +3,8 @@
 CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` emits:
 
 - **`dist/components/`** — `<ds-*>` custom elements (canonical; auto-define on import)
-- **`src/angular/`** — auto-generated Angular standalone adapters, published as compiled per-component subpaths
-- **`src/react/`** — auto-generated React wrappers, published as compiled JavaScript
+- **`src/.generated/angular/`** — ignored Angular standalone proxy sources, compiled to published per-component subpaths
+- **`src/.generated/react/`** — ignored React wrapper sources, compiled to published JavaScript
 
 **Consumption options:**
 
@@ -13,6 +13,9 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 | Any | `@ds-mo/ui/components/ds-*.js` | Canonical custom elements; tree-shake per tag |
 | Angular | `@ds-mo/ui/angular/ds-*` | Standalone adapter per component; preferred for tree shaking |
 | React | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … |
+
+Generated proxy source never lands in the authored tree. The publish step
+retains the existing `dist/angular`, `dist/react`, and package import paths.
 
 There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. Deliberate renderer-neutral exports include `@ds-mo/ui/prose.css` for safe semantic document trees and `@ds-mo/ui/control-elevation.css` for elevated wrappers around controls.
 
@@ -67,73 +70,65 @@ export function SafeRenderedContent() {
 
 Parsing and sanitization remain renderer/application responsibilities. Mark embedded product UI with `data-ds-prose="off"`, and place wide tables inside `.ds-prose__table-scroll`. Renderers must make genuinely scrollable table wrappers and native `pre` blocks keyboard-focusable; add contextual labelling when surrounding content does not identify the region. See [`docs/prose-foundation.md`](prose-foundation.md) for the distribution evidence and full boundary.
 
-On hard reload, seed **all** bar-nav props (`basePath`, `tabs`, `currentUrl`) before the custom element upgrades — not only `currentUrl`. See motive-webapp-lab `shellChromeStateForPath()`.
+## Managed application shell
 
----
+Use one managed `ds-shell-app` as the standard authenticated application
+architecture. The application supplies:
 
-## Nav chrome `navStyle` (panel + bar)
-
-Primary navigation (`ds-panel-nav`) and secondary navigation (`ds-bar-nav`) share a **`navStyle`** property — style slots:
-
-| `navStyle` | Typical route |
-| --- | --- |
-| `dashboard` | `/dashboard/*` |
-| `settings` | `/settings/*` |
-
-**HTML attribute:** `nav-style` (avoids collision with the element's native `style` property).
-
-**Colors are unified for now** — both slots use app surface tokens (`--color-background-secondary`, etc.). The `--dashboard` / `--settings` BEM classes are hooks for future texture/glyph layers.
-
-Bind the **same** `navStyle` on shell, panel, and bar so they stay in sync.
-
-### `ds-bar-nav` — tabs only
-
-Bar nav is **section tabs** (and an optional `heading` when tabs are hidden). Tool shortcuts (search, messages, agents, …) live on **`ds-panel-tools`**, not inline on the bar.
-
-### `ds-shell-tools` — one persistent named slot per tool
-
-Each fixed tool (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) has a persistent **`*-view` named slot**. Mount every available product owner once at ShellApp scope. `ds-shell-tools` adapts those owners to PanelTools-compatible desktop/tablet chrome and full-stage mobile chrome without recreating application children. Search is required and pinned to the desktop rail header; **Help & Support** is required and pinned to its footer. Mobile groups Messages, Stacks, and Activity under Inbox.
+- `navigation`: router-owned destinations, current URL/context, user identity,
+  labels, and persistence options;
+- `pageChrome`: route-owned heading, sections, depth, subsections, and actions;
+- `tools`: explicit tool ids, labels, order, rail placement, shortcuts, mobile
+  grouping, headers, unread state, and persistence.
 
 ```html
-<ds-shell-tools slot="tools" open active-tool="agents" .items=${railItems}>
-  <app-search-panel slot="search-view" />
-  <app-agents-panel slot="agents-view" />
-  <app-messages-panel slot="messages-view" />
-  <app-stacks-panel slot="stacks-view" />
-  <app-activity-panel slot="activity-view" />
-  <app-help-panel slot="help-view" />
-</ds-shell-tools>
-```
-
-`ds-panel-tools` remains backward compatible for applications that only need the existing desktop/tablet rail and drawer. New responsive shells should use `ds-shell-tools`.
-
-Global shell shortcuts toggle Search (`K`), Agents (`A`), Stacks (`S`), Messages (`M`), Activity (`N`), and Help (`/`); `]` closes the drawer. They are skipped while the user is typing in an editable control.
-
-## `ds-shell-app` (required workspace layout)
-
-```html
-<ds-shell-app nav-style="dashboard" gradient>
-  <ds-panel-nav slot="panel" …></ds-panel-nav>
-  <ds-mobile-sheet-nav slot="mobile-sheet-nav" …></ds-mobile-sheet-nav>
-  <ds-bar-nav slot="bar" …></ds-bar-nav>
-  <ds-shell-tools slot="tools" …></ds-shell-tools>
-  <ds-shell-page responsive-mode="mobile">
-    <ds-bar-title slot="header" …></ds-bar-title>
-    <ds-mobile-header slot="mobile-header" …></ds-mobile-header>
-    …page content…
-  </ds-shell-page>
-  <ds-mobile-bar-nav slot="mobile-bar-nav" …></ds-mobile-bar-nav>
+<ds-shell-app
+  [navigation]="navigation"
+  [pageChrome]="pageChrome"
+  [tools]="tools"
+  (dsNavSelect)="navigate($event.detail)"
+  (dsTabChange)="navigate($event.detail)"
+>
+  <app-search slot="search-view" />
+  <app-agents slot="agents-view" />
+  <app-messages slot="messages-view" />
+  <app-stacks slot="stacks-view" />
+  <app-activity slot="activity-view" />
+  <app-help slot="help-view" />
+  <router-outlet />
 </ds-shell-app>
 ```
 
-| Prop | Default | Behavior |
-| --- | --- | --- |
-| `navStyle` | `dashboard` | Shell propagates to slotted `ds-panel-nav` and `ds-bar-nav` |
-| `gradientPreset` | `neutral` | Desktop/tablet chrome wash: `none`, `cool`, `neutral`, `warm`, or `fresh`; mobile always uses a solid primary stage |
-| `mobileDestination` | `area` | Controlled mobile Area, Search, Agents, or Inbox stage |
-| `mobileSheetNavOpen` | `false` | Controlled Mobile Sheet Nav state |
+Managed ShellApp internally assembles PanelNav and BarNav on desktop/tablet,
+PanelTools through ShellTools, and MobileSheetNav, MobileBarNav, MobileHeader,
+and ShellPage on mobile. It reflects `responsive-mode` at the fixed boundaries:
+mobile below 768px, tablet from 768px through 1199px, and desktop at 1200px and
+wider.
 
-ShellApp reflects `responsive-mode` and emits `dsResponsiveModeChange` at the fixed boundaries: mobile below 768px, tablet from 768px through 1199px, and desktop at 1200px and wider. In mobile mode, the routed workspace stays mounted but becomes hidden and inert whenever Menu or a global tool occupies the stage. The bottom bar stays visible and owns its safe-area padding.
+Navigation selection is intent-only. The application router owns
+authorization, URLs, history, and route changes. After navigation completes,
+replace `navigation` and `pageChrome` together from the resolved route state.
+
+Mount every tool owner and routed-content owner once. ShellApp changes
+presentation, visibility, and inert state without recreating them, preserving
+focus, scroll, nested tool state, and element identity across breakpoints.
+
+`PANEL_TOOLS_DEFAULT_ITEMS` reproduces the canonical Lab tool recipe: Search is
+pinned first, Help last, existing shortcuts are preserved, and Messages,
+Stacks, and Activity share the mobile Inbox destination. Custom item
+collections use explicit metadata rather than special layout behavior inferred
+from tool ids.
+
+Global shell shortcuts are skipped while the user is typing in an editable
+control.
+
+### Advanced slotted composition
+
+Set `composition="slotted"` only when a specialized application intentionally
+owns the lower-level wiring. PanelNav, BarNav, PanelTools, ShellTools,
+MobileSheetNav, MobileBarNav, MobileHeader, and ShellPage remain public.
+PanelTools is the desktop/tablet primitive; ShellTools is the responsive tools
+adapter. They are not interchangeable and are not merged.
 
 Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`cool` / `neutral` / `warm`), layer opacity **10%**. Preset **`none`** skips the wash and leaves the secondary chrome surface only. Bar wash position is offset by panel width so the L-shape stays continuous when the panel collapses.
 
@@ -149,16 +144,14 @@ Nav chrome is not a single static bitmap behind the app. Transparent components 
 
 ## Host integration contract (SPA)
 
-Stencil runs `componentWillLoad` before framework property bindings land. Follow these rules in Angular / React hosts:
+Stencil may upgrade before framework property bindings land. Bind
+`navigation`, `pageChrome`, and `tools` as properties, replace their object
+identities when data changes, and synchronize completed route state once per
+navigation. Seed `data-nav-style` before bootstrap when a hard reload must paint
+the correct Dashboard or Settings context immediately.
 
-| Do | Don't |
-| --- | --- |
-| Bind `groups`, `currentUrl`, `tabs`, `basePath`, `open`, `items` via template/JSX properties | Imperatively re-flush the same props on every custom-element event when bindings already handle state |
-| Call `syncFromUrl` (or equivalent) **once** per navigation — e.g. `NavigationEnd`, or eager `NavigationStart` only when crossing dashboard ↔ settings | Double-sync on both `NavigationStart` and `NavigationEnd` for every route |
-| Stamp `data-nav-style` / `nav-style` before `ds-panel-nav` connects on hard reload | Rely on bindings alone for first-paint `navStyle` |
-| Verify shell chrome perf on a **production build** (`ng build` + static serve), not only `ng serve` | Assume dev-server HMR reflects custom-element upgrade timing |
-
-**motive-webapp-lab** reference: property bindings on `ds-bar-nav` / `ds-panel-tools`, `PanelNavHostDirective`, and document `data-nav-style` hint. Prefer PanelTools `storageKey` for last-tool continuity; the host may separately own open state when product requirements call for it, without redundantly flushing bindings on `dsToolChange`.
+Verify shell chrome and responsive identity behavior on a production build as
+well as the framework dev server.
 
 ---
 
@@ -182,44 +175,33 @@ Stencil runs `componentWillLoad` before framework property bindings land. Follow
 
 ## Angular
 
-Import only the standalone adapters used by the Angular component. Import a generated value accessor from the Angular barrel when connecting a form control to Angular Forms.
+Import only the standalone adapters used by the Angular component. A managed
+application layout normally imports ShellApp plus the application-owned tool
+views and router outlet. Import a generated value accessor from the Angular
+barrel when connecting a form control to Angular Forms.
 
 ```ts
-import { DsPanelNav } from '@ds-mo/ui/angular/ds-panel-nav';
+import { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app';
 import { DsInput } from '@ds-mo/ui/angular/ds-input';
 import { TextValueAccessor } from '@ds-mo/ui/angular';
 
 @Component({
-  imports: [DsPanelNav, DsInput, TextValueAccessor],
+  imports: [DsShellApp, DsInput, TextValueAccessor],
 })
 ```
 
 Do not add `CUSTOM_ELEMENTS_SCHEMA` when using adapters; Angular should validate the component properties and events.
 
 ```html
-<ds-panel-nav
-  [attr.nav-style]="navStyle"
-  [navStyle]="navStyle"
-  [groups]="groups"
-  [currentUrl]="currentPath"
-  …
-></ds-panel-nav>
-
-<ds-bar-nav
-  [navStyle]="navStyle"
-  [basePath]="barNavBasePath"
-  [currentUrl]="currentPath"
-  [tabs]="barNavTabs"
-  …
-></ds-bar-nav>
-
-<ds-panel-tools
-  [open]="toolsOpen"
-  [activeTool]="activeTool"
-  [items]="panelToolsItems"
-  storageKey="product.panel-tools.last-tool"
-  (dsToolChange)="onToolChange($event)"
-></ds-panel-tools>
+<ds-shell-app
+  [navigation]="navigation"
+  [pageChrome]="pageChrome"
+  [tools]="tools"
+  (dsNavSelect)="navigate($event.detail)"
+  (dsTabChange)="navigate($event.detail)"
+>
+  <router-outlet />
+</ds-shell-app>
 ```
 
 ## `ds-panel-tools` drawer paint skip
@@ -244,7 +226,7 @@ import {
   PANEL_NAV_USER_MENU_PLACEMENT,
   shellGradientPickerSections,
 } from '@ds-mo/ui/shell';
-import type { MenuSection, ShellGradientPreset } from '@ds-mo/ui';
+import type { MenuSection } from '@ds-mo/ui';
 ```
 
 ```html

@@ -1,5 +1,6 @@
 import { Component, h, Host, Prop, State, VNode, Watch } from '@stencil/core';
 import type { Nodes, Root } from 'mdast';
+import { resolveSafeUrl } from '../../utils';
 
 type MarkdownRender = VNode | string | null | MarkdownRender[];
 type MarkdownParser = {
@@ -21,17 +22,6 @@ function loadParser(): Promise<MarkdownParser> {
     gfm: gfmModule.gfm,
   }));
   return parserPromise;
-}
-
-function safeHref(value: string | null | undefined): string | undefined {
-  if (!value) return undefined;
-  try {
-    const url = new URL(value, document.baseURI);
-    if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) return undefined;
-    return url.href;
-  } catch {
-    return undefined;
-  }
 }
 
 @Component({
@@ -130,7 +120,9 @@ export class Markdown {
           />
         );
       case 'link': {
-        const href = safeHref(node.url);
+        const href = resolveSafeUrl(node.url, {
+          protocols: ['http:', 'https:', 'mailto:'],
+        });
         return href ? (
           <a class="markdown__link" href={href} target="_blank" rel="noopener noreferrer">
             {this.children(node)}
@@ -189,7 +181,9 @@ export class Markdown {
       case 'tableCell':
         return <td class="markdown__table-cell">{this.children(node)}</td>;
       case 'image': {
-        const href = safeHref(node.url);
+        const href = resolveSafeUrl(node.url, {
+          protocols: ['http:', 'https:', 'mailto:'],
+        });
         return href ? (
           <a class="markdown__image-link" href={href} target="_blank" rel="noopener noreferrer">
             {node.alt || 'View image'}

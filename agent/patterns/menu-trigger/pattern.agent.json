@@ -111,8 +111,8 @@
         }
       ],
       "references": [
-        "src/react/ds-button-unfilled.ts",
-        "src/react/ds-menu.ts"
+        "docs/framework-integration.md",
+        "src/wc/components/Menu/Menu.stories.ts"
       ]
     },
     "angular": {
@@ -141,8 +141,8 @@
         }
       ],
       "references": [
-        "src/angular/ds-button-unfilled.ts",
-        "src/angular/ds-menu.ts"
+        "docs/framework-integration.md",
+        "src/wc/components/Menu/Menu.stories.ts"
       ]
     }
   },

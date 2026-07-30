@@ -46,6 +46,15 @@ test('keeps right-aligned percentages inside the hover row', async ({ page }) =>
   expect(new Set(geometry.map(row => row.percentageRight)).size).toBe(1);
 });
 
+test('dims non-highlighted legend rows to half opacity', async ({ page }) => {
+  const rows = page.locator('#legend-one .chart-legend__item');
+  await rows.first().hover();
+
+  await expect
+    .poll(() => rows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity)))
+    .toEqual(['1', '0.5', '0.5', '0.5', '0.5']);
+});
+
 test('can render as a static key without local hover highlighting', async ({ page }) => {
   const legend = page.locator('#legend-static');
   const rows = legend.locator('.chart-legend__item');

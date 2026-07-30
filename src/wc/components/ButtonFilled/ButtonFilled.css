@@ -1,60 +1,18 @@
-@import '../../utils/focus-ring.css';
-@import '../../utils/interaction-fill.css';
-@import '../../utils/control-press.css';
-@import '../../utils/control-inactive.css';
-@import '../../utils/control-density.css';
-@import '../../utils/control-parts.css';
-@import '../../utils/control-width.css';
+@import '../../utils/button-base.css';
 
 :host {
-  display: inline-flex;
-  outline: none;
   --ds-button-filled-bg: var(--color-background-bold-brand);
   --ds-button-filled-fg: var(--color-foreground-faint-brand);
   --ds-button-filled-border: var(--color-border-secondary);
 }
 
-/* Icon-only: fixed square from density height (hug). Fill stretches the hit target. */
-:host(.button-filled-host--icon.ds-control-width--hug) {
-  width: var(--ds-control-height, var(--dimension-size-400));
-  height: var(--ds-control-height, var(--dimension-size-400));
-  min-width: var(--ds-control-height, var(--dimension-size-400));
-  min-height: var(--ds-control-height, var(--dimension-size-400));
-}
-
-:host(.button-filled-host--icon.ds-control-width--fill) {
-  height: var(--ds-control-height, var(--dimension-size-400));
-  min-height: var(--ds-control-height, var(--dimension-size-400));
-}
-
-:host(.ds-control-width--fill) .button-filled {
-  width: 100%;
-}
-
 .button-filled {
-  justify-content: center;
-  border: none;
-  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   background-color: var(--ds-button-filled-bg);
   color: var(--ds-button-filled-fg);
-  cursor: default;
-  -webkit-user-select: none;
-  user-select: none;
-  overflow: hidden;
   transition:
     background-color var(--effect-motion-short-2),
     color var(--effect-motion-short-2);
   /* Hover/press: `.ds-interaction-fill` + contrast → `--on-*` (token overlay, not color-mix). */
-}
-
-.button-filled--icon {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-
-.button-filled--rounded {
-  --ds-control-radius: var(--dimension-radius-half);
 }
 
 /*
@@ -62,20 +20,9 @@
  * deliberately has no active state, so hold the pressed wash for the popup's
  * complete rendered lifecycle instead of promoting any selected treatment.
  */
-.button-filled.button-filled--expanded::after,
-.button-filled.button-filled--expanded:hover:not(:disabled)::after {
-  background: var(--ds-interaction-pressed);
-}
-
 /* Inset stroke via interaction-fill ::after (above hover and pressed washes). */
 .button-filled--bordered {
-  --ds-interaction-border-width: var(--dimension-stroke-width-012);
   --ds-interaction-border-color: var(--ds-button-filled-border);
-}
-
-/* Preserve the border while inactive, when interaction-fill is intentionally omitted. */
-.button-filled--bordered:not(.ds-interaction-fill) {
-  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
 /*
@@ -111,43 +58,6 @@
 }
 
 /* Inactive: `.ds-control-inactive` (50% opacity). */
-
-.button-filled__icon-wrap {
-  position: relative;
-  z-index: 2;
-}
-
-.button-filled__label {
-  position: relative;
-  z-index: 2;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 0;
-}
-
-.button-filled__label--loading {
-  visibility: hidden;
-}
-
-.button-filled__chevron {
-  position: relative;
-  z-index: 2;
-}
-
-/* Hidden, not removed, so the label-only loader keeps the measured button width. */
-.button-filled__chevron--loading {
-  visibility: hidden;
-}
-
-.button-filled > .button-filled__loader-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
 
 /* ── Intent + contrast (bold default) ─────────────────────────────────────── */
 
@@ -332,4 +242,21 @@
 .button-filled--contrast-faint.button-filled--intent-walkthrough {
   --ds-button-filled-bg: var(--color-background-faint-walkthrough);
   --ds-button-filled-fg: var(--color-foreground-bold-walkthrough);
+}
+
+/*
+ * Bold, strong, and medium fills already communicate semantic intent. Their
+ * on-background foreground tokens preserve AA text contrast across themes,
+ * including brand pairs whose chromatic counterparts sit on the 4.5:1 edge.
+ */
+.button-filled--contrast-bold.button-filled {
+  --ds-button-filled-fg: var(--color-foreground-on-bold-background-primary);
+}
+
+.button-filled--contrast-strong.button-filled {
+  --ds-button-filled-fg: var(--color-foreground-on-strong-background-primary);
+}
+
+.button-filled--contrast-medium.button-filled {
+  --ds-button-filled-fg: var(--color-foreground-on-medium-background-primary);
 }

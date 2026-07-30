@@ -39,29 +39,10 @@ export function deriveBarNavValueFromUrl(
   return { value: '', hideTabs: true };
 }
 
-/** True when host array/json props have data but resolved internal state is still empty. */
+/** True when host array props have data but resolved internal state is still empty. */
 export function shouldResyncBarNavProps(
   resolvedTabs: BarNavTab[],
   tabs: BarNavTab[],
-  tabsJson: string,
 ): boolean {
-  const tabsIncoming = tabsJson
-    ? parseJsonArrayProp(tabsJson, [])
-    : (tabs ?? []);
-
-  return resolvedTabs.length === 0 && tabsIncoming.length > 0;
-}
-
-/** Parse tabs from either a JSON attribute string or a JS property array. */
-export function parseJsonArrayProp<T>(value: string | T[] | undefined, fallback: T[]): T[] {
-  if (Array.isArray(value)) return value;
-  if (typeof value === 'string' && value !== '') {
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed : fallback;
-    } catch {
-      return fallback;
-    }
-  }
-  return fallback;
+  return resolvedTabs.length === 0 && (tabs?.length ?? 0) > 0;
 }

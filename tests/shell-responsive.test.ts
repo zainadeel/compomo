@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   resolveAvailableInboxTool,
+  resolveManagedShellPageCapacity,
   resolveShellResponsiveMode,
   shellMobileDestinationForTool,
   shouldEmitMobileDestinationChange,
@@ -13,6 +14,17 @@ describe('resolveShellResponsiveMode', () => {
     assert.equal(resolveShellResponsiveMode(768), 'tablet');
     assert.equal(resolveShellResponsiveMode(1199), 'tablet');
     assert.equal(resolveShellResponsiveMode(1200), 'desktop');
+  });
+});
+
+describe('resolveManagedShellPageCapacity', () => {
+  it('preserves the established page-header capacity policy', () => {
+    assert.equal(resolveManagedShellPageCapacity('desktop', false), 'roomy');
+    assert.equal(resolveManagedShellPageCapacity('desktop', true), 'compact');
+    assert.equal(resolveManagedShellPageCapacity('tablet', false), 'compact');
+    assert.equal(resolveManagedShellPageCapacity('tablet', true), 'constrained');
+    assert.equal(resolveManagedShellPageCapacity('mobile', false), 'compact');
+    assert.equal(resolveManagedShellPageCapacity('mobile', true), 'constrained');
   });
 });
 

@@ -25,8 +25,8 @@
     },
     {
       "when": "Several form values may be selected.",
-      "component": "component:ds-select-multi",
-      "reason": "SelectMulti provides multi-select listbox semantics, array value ownership, and count presentation."
+      "component": "component:ds-select",
+      "reason": "Select multiple provides multi-select listbox semantics, array value ownership, and count presentation."
     },
     {
       "when": "The interaction needs substantial content, confirmation, or a form.",
@@ -56,7 +56,7 @@
     "After dsSelect from a switch row, replace the items or sections array with updated switchValue data so the controlled indicator reflects the new state.",
     "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
     "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
-    "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup; the legacy gradient-picker section and dsGradientSelect remain compatibility-only.",
+    "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
     "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics."
   ],
   "responsiveBehavior": [

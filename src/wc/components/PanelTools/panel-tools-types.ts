@@ -1,7 +1,16 @@
-/** Tool ids for the `ds-panel-tools` rail and drawer views. */
-export type PanelToolsToolId = 'search' | 'agents' | 'messages' | 'stacks' | 'activity' | 'help';
+/** Application-owned tool id for the shell rail and responsive tool views. */
+export type PanelToolsToolId = string;
 
-export const PANEL_TOOLS_TOOL_IDS: PanelToolsToolId[] = [
+/** Canonical Motive shell recipe used when item metadata is omitted. */
+export type CanonicalPanelToolsToolId =
+  | 'search'
+  | 'agents'
+  | 'messages'
+  | 'stacks'
+  | 'activity'
+  | 'help';
+
+export const PANEL_TOOLS_TOOL_IDS: CanonicalPanelToolsToolId[] = [
   'search',
   'agents',
   'messages',
@@ -11,12 +20,12 @@ export const PANEL_TOOLS_TOOL_IDS: PanelToolsToolId[] = [
 ];
 
 /** Rail header slot — mirrors panel-nav M logo row. */
-export const PANEL_TOOLS_PRIMARY_TOOL_ID: PanelToolsToolId = 'search';
+export const PANEL_TOOLS_PRIMARY_TOOL_ID: CanonicalPanelToolsToolId = 'search';
 
 /** Rail footer slot — flush to the bottom of the tools column. */
-export const PANEL_TOOLS_FOOTER_TOOL_ID: PanelToolsToolId = 'help';
+export const PANEL_TOOLS_FOOTER_TOOL_ID: CanonicalPanelToolsToolId = 'help';
 
-export const PANEL_TOOLS_LABELS: Record<PanelToolsToolId, string> = {
+export const PANEL_TOOLS_LABELS: Record<CanonicalPanelToolsToolId, string> = {
   search: 'Search',
   messages: 'Messages',
   stacks: 'Stacks',
@@ -25,7 +34,7 @@ export const PANEL_TOOLS_LABELS: Record<PanelToolsToolId, string> = {
   help: 'Help & Support',
 };
 
-export const PANEL_TOOLS_SHORTCUTS: Partial<Record<PanelToolsToolId, string>> = {
+export const PANEL_TOOLS_SHORTCUTS: Partial<Record<CanonicalPanelToolsToolId, string>> = {
   search: 'K',
   agents: 'A',
   messages: 'M',
@@ -38,6 +47,16 @@ export interface PanelToolsItem {
   id: PanelToolsToolId;
   /** Icon name for <ds-icon>. */
   icon: string;
+  /** Visible and accessible fallback label for custom tool ids. */
+  label?: string;
+  /** Explicit rail region; canonical Search/Help placement is the fallback. */
+  railPlacement?: 'header' | 'body' | 'footer';
+  /** Stable ordering within the selected rail region. */
+  order?: number;
+  /** Optional shortcut label displayed by the tooltip. */
+  shortcutKey?: string;
+  /** Mobile destination recipe; canonical ids retain their existing defaults. */
+  mobileDestination?: 'search' | 'agents' | 'inbox' | 'help';
   /** Whether this rail button is currently pressed/active. */
   selected?: boolean;
   /** Show a notification dot. */
@@ -45,6 +64,60 @@ export interface PanelToolsItem {
   isInactive?: boolean;
   ariaLabel?: string;
 }
+
+/** Canonical shell recipe used by Lab and by managed ShellApp examples. */
+export const PANEL_TOOLS_DEFAULT_ITEMS: PanelToolsItem[] = [
+  {
+    id: 'search',
+    icon: 'MagnifyingGlass',
+    label: PANEL_TOOLS_LABELS.search,
+    railPlacement: 'header',
+    order: 0,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.search,
+    mobileDestination: 'search',
+  },
+  {
+    id: 'agents',
+    icon: 'AI',
+    label: PANEL_TOOLS_LABELS.agents,
+    order: 1,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.agents,
+    mobileDestination: 'agents',
+  },
+  {
+    id: 'messages',
+    icon: 'MessageBubbleStack',
+    label: PANEL_TOOLS_LABELS.messages,
+    order: 2,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.messages,
+    mobileDestination: 'inbox',
+  },
+  {
+    id: 'stacks',
+    icon: 'ViewMenu',
+    label: PANEL_TOOLS_LABELS.stacks,
+    order: 3,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.stacks,
+    mobileDestination: 'inbox',
+  },
+  {
+    id: 'activity',
+    icon: 'Bell',
+    label: PANEL_TOOLS_LABELS.activity,
+    order: 4,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.activity,
+    mobileDestination: 'inbox',
+  },
+  {
+    id: 'help',
+    icon: 'CircleQuestion',
+    label: PANEL_TOOLS_LABELS.help,
+    railPlacement: 'footer',
+    order: 5,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.help,
+    mobileDestination: 'help',
+  },
+];
 
 export interface PanelToolsHeaderAction {
   id: string;

@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "chart-bar",
   "title": "ChartBar",
-  "description": "Single-series bar chart for comparing discrete categories or evenly spaced time buckets on a band-scaled axis.",
+  "description": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,24 +13,20 @@
     "intent": {
       "audience": "specialized",
       "status": "experimental",
-      "summary": "Single-series bar chart for comparing discrete categories or evenly spaced time buckets on a band-scaled axis.",
+      "summary": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
       "useWhen": [
         "Users need to compare one numeric measure across a small set of categories.",
         "Values are grouped into ordered time buckets such as hours, days, weeks, or months and equal visual spacing is appropriate.",
-        "A data-viz card needs a compact magnitude comparison rather than a continuous trend."
+        "A data-viz card needs a compact magnitude comparison rather than a continuous trend.",
+        "Several consistent series contribute to each category total or its normalized composition."
       ],
       "avoidWhen": [
         "Timestamp positions must reflect irregular elapsed time; pre-bucket the data or use a future continuous time-scale chart.",
-        "The visualization needs stacked, grouped, or multi-series bars.",
+        "The visualization needs grouped bars or precise comparison of each individual series across categories.",
         "The interaction requires selection, drill-down, brushing, or zoom.",
         "The data communicates a part-to-whole relationship."
       ],
       "alternatives": [
-        {
-          "when": "Each category contains several additive series or needs normalized composition.",
-          "component": "component:ds-chart-bar-stacked",
-          "reason": "ChartBarStacked compares raw stacked totals or normalized 0–100% composition."
-        },
         {
           "when": "Users need to follow one or more trends across ordered categories.",
           "component": "component:ds-chart-line",
@@ -43,8 +39,8 @@
         }
       ],
       "commonlyComposedWith": [
-        "component:ds-chart-bar-stacked",
-        "component:ds-card-shell-data-viz",
+        "component:ds-chart-legend",
+        "component:ds-card-data-viz",
         "component:ds-tooltip-data-viz"
       ],
       "accessibility": [
@@ -53,7 +49,9 @@
         "A future interactive tooltip must supplement rather than replace the chart's accessible value representation."
       ],
       "states": [
-        "The chart is currently a static single-series rendering without hover, selection, loading, or empty-state policy.",
+        "The chart is static without hover, selection, loading, or empty-state policy.",
+        "Single mode reads data. Stacked and percentage modes read aligned series and categories.",
+        "Stacked mode preserves raw totals; percentage mode normalizes every non-empty category to 100%.",
         "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
         "Bars use 2px top corner radii while the lower corners touching the zero axis remain square.",
         "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
@@ -67,13 +65,13 @@
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
+          "Assign data, series, and categories as JavaScript properties; arrays are not supported as HTML attributes."
         ],
         "react": [
-          "Pass a stable data array; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+          "Pass stable data or series/category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
         ],
         "angular": [
-          "Bind data as a property; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+          "Bind data or series/categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
         ]
       },
       "references": [
@@ -85,6 +83,14 @@
     },
     "api": {
       "props": {
+        "categories": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "X-axis labels for stacked and percentage variants. Set as a JS property."
+        },
         "data": {
           "type": "ChartDatum[]",
           "resolvedType": "ChartDatum[]",
@@ -102,6 +108,23 @@
           "mutable": false,
           "description": "Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size."
         },
+        "series": {
+          "type": "ChartSeries[]",
+          "resolvedType": "ChartSeries[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Ordered stack series for stacked and percentage variants. Set as a JS property."
+        },
+        "variant": {
+          "type": "ChartBarVariant",
+          "resolvedType": "\"percentage\" | \"single\" | \"stacked\"",
+          "attribute": "variant",
+          "default": "'single'",
+          "required": false,
+          "mutable": false,
+          "description": "Rendering model. Single uses `data`; stacked and percentage use `series` and `categories`."
+        },
         "width": {
           "type": "number",
           "resolvedType": "number",
@@ -117,6 +140,14 @@
       "slots": []
     },
     "props": {
+      "categories": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "X-axis labels for stacked and percentage variants. Set as a JS property."
+      },
       "data": {
         "type": "ChartDatum[]",
         "resolvedType": "ChartDatum[]",
@@ -133,6 +164,23 @@
         "required": false,
         "mutable": false,
         "description": "Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size."
+      },
+      "series": {
+        "type": "ChartSeries[]",
+        "resolvedType": "ChartSeries[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Ordered stack series for stacked and percentage variants. Set as a JS property."
+      },
+      "variant": {
+        "type": "ChartBarVariant",
+        "resolvedType": "\"percentage\" | \"single\" | \"stacked\"",
+        "attribute": "variant",
+        "default": "'single'",
+        "required": false,
+        "mutable": false,
+        "description": "Rendering model. Single uses `data`; stacked and percentage use `series` and `categories`."
       },
       "width": {
         "type": "number",
@@ -167,7 +215,7 @@
         "import": "import { DsChartBar } from '@ds-mo/ui/angular/ds-chart-bar';",
         "example": "<ds-chart-bar></ds-chart-bar>"
       },
-      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: data.",
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: categories, data, series.",
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^5.0.0",
@@ -185,12 +233,12 @@
   "files": [
     {
       "path": "src/wc/components/ChartBar/ChartBar.css",
-      "content": ":host {\n  display: inline-block;\n  max-width: 100%;\n  font-family: var(--typography-font-family);\n}\n\n.chart-bar__svg {\n  display: block;\n  width: 100%;\n  height: 100%;\n}\n\n.chart-bar__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: var(--dimension-stroke-width-012);\n  vector-effect: non-scaling-stroke;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-bar__axis-label {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-bar__bar--rounded {\n  rx: var(--dimension-radius-025);\n}\n",
+      "content": ":host {\n  display: inline-block;\n  max-width: 100%;\n  font-family: var(--typography-font-family);\n}\n\n.chart-bar__svg {\n  display: block;\n  width: 100%;\n  height: 100%;\n}\n\n.chart-bar__gridline {\n  stroke: var(--color-border-tertiary);\n  stroke-width: var(--dimension-stroke-width-012);\n  vector-effect: non-scaling-stroke;\n}\n\n/* Matches ds-text text-caption regular (SVG cannot host ds-text). */\n.chart-bar__axis-label {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart-bar__bar--rounded {\n  rx: var(--dimension-radius-025);\n}\n\n.chart-bar__segment-shape--rounded {\n  rx: var(--dimension-radius-025);\n}\n\n.chart-bar__segment-separator {\n  stroke: var(--color-background-primary);\n  stroke-width: var(--dimension-stroke-width-012);\n  stroke-linecap: butt;\n  vector-effect: non-scaling-stroke;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/ChartBar/ChartBar.tsx",
-      "content": "import { Component, Prop, State, Watch, h, Host } from '@stencil/core';\nimport { scaleBand, scaleLinear } from 'd3-scale';\nimport { max } from 'd3-array';\nimport { categoryColor } from '../../utils/chart-colors';\nimport { resolveCartesianChartLayout } from '../../utils/cartesian-chart-layout';\nimport {\n  ChartViewportController,\n  type ChartViewportSize,\n} from '../../utils/chart-viewport-controller';\nimport type { ChartDatum } from '../../utils/chart-types';\n\n@Component({\n  tag: 'ds-chart-bar',\n  styleUrl: 'ChartBar.css',\n  scoped: true,\n})\nexport class ChartBar {\n  /** Bars to render. Set as a JS property (not an HTML attribute). */\n  @Prop() data: ChartDatum[] = [];\n  /** Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size. */\n  @Prop() width: number = 480;\n  /** Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size. */\n  @Prop() height: number = 240;\n\n  @State() private viewport: ChartViewportSize | undefined;\n\n  private viewportController: ChartViewportController | null = null;\n  private svgEl: SVGElement | null = null;\n\n  componentDidLoad() {\n    this.connectViewportController();\n  }\n\n  connectedCallback() {\n    if (this.svgEl && !this.viewportController) this.connectViewportController();\n  }\n\n  componentDidRender() {\n    if (!this.viewportController) this.connectViewportController();\n  }\n\n  private connectViewportController() {\n    if (!this.svgEl) return;\n    this.viewportController = new ChartViewportController(this.svgEl, viewport => {\n      if (\n        viewport.width !== this.viewport?.width ||\n        viewport.height !== this.viewport?.height\n      ) {\n        this.viewport = viewport;\n      }\n    });\n    this.viewportController.connect();\n  }\n\n  disconnectedCallback() {\n    this.viewportController?.disconnect();\n    this.viewportController = null;\n  }\n\n  @Watch('width')\n  @Watch('height')\n  handleIntrinsicSizeChange() {\n    this.viewport = undefined;\n    if (typeof requestAnimationFrame === 'function') {\n      requestAnimationFrame(() => this.viewportController?.measure());\n    }\n  }\n\n  render() {\n    const viewportWidth = this.viewport?.width ?? this.width;\n    const viewportHeight = this.viewport?.height ?? this.height;\n    const { margin, axisLabelGap, categoryLabelOffset } =\n      resolveCartesianChartLayout();\n    const innerWidth = Math.max(0, viewportWidth - margin.left - margin.right);\n    const innerHeight = Math.max(0, viewportHeight - margin.top - margin.bottom);\n\n    const yMax = max(this.data, d => d.value) ?? 0;\n\n    const xScale = scaleBand()\n      .domain(this.data.map(d => d.label))\n      .range([0, innerWidth])\n      .padding(0.35);\n\n    const yScale = scaleLinear()\n      .domain([0, yMax || 1])\n      .range([innerHeight, 0])\n      .nice();\n\n    const yTicks = yScale.ticks(4);\n\n    return (\n      <Host class=\"chart-bar\">\n        <svg\n          class=\"chart-bar__svg\"\n          ref={element => {\n            this.svgEl = element ?? null;\n          }}\n          width={viewportWidth}\n          height={viewportHeight}\n          role=\"img\"\n          aria-label={this.data.map(d => `${d.label}: ${d.value}`).join(', ')}\n        >\n          <g transform={`translate(${margin.left}, ${margin.top})`}>\n            {yTicks.map(tick => (\n              <g key={`grid-${tick}`} transform={`translate(0, ${yScale(tick)})`}>\n                <line class=\"chart-bar__gridline\" x1={0} x2={innerWidth} />\n                <text\n                  class=\"chart-bar__axis-label\"\n                  x={-axisLabelGap}\n                  text-anchor=\"end\"\n                  dominant-baseline=\"middle\"\n                >\n                  {tick}\n                </text>\n              </g>\n            ))}\n\n            {this.data.map((d, i) => {\n              const barWidth = xScale.bandwidth();\n              const barX = xScale(d.label) ?? 0;\n              const barY = yScale(d.value);\n              const barHeight = innerHeight - barY;\n              const squareBaseY = barY + barHeight / 2;\n              const squareBaseHeight = barHeight / 2;\n              const fill = d.color ?? categoryColor(i);\n              return (\n                <g key={d.label}>\n                  <rect\n                    class=\"chart-bar__bar chart-bar__bar--rounded\"\n                    x={barX}\n                    y={barY}\n                    width={barWidth}\n                    height={barHeight}\n                    fill={fill}\n                  />\n                  <rect\n                    class=\"chart-bar__bar chart-bar__bar--square-base\"\n                    x={barX}\n                    y={squareBaseY}\n                    width={barWidth}\n                    height={squareBaseHeight}\n                    fill={fill}\n                  />\n                  <text\n                    class=\"chart-bar__axis-label\"\n                    x={barX + barWidth / 2}\n                    y={innerHeight + categoryLabelOffset}\n                    text-anchor=\"middle\"\n                  >\n                    {d.label}\n                  </text>\n                </g>\n              );\n            })}\n          </g>\n        </svg>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, State, Watch, h, Host } from '@stencil/core';\nimport { scaleBand, scaleLinear } from 'd3-scale';\nimport { max } from 'd3-array';\nimport { categoryColor } from '../../utils/chart-colors';\nimport { formatPercentage } from '../../utils';\nimport { resolveCartesianChartLayout } from '../../utils/cartesian-chart-layout';\nimport {\n  ChartViewportController,\n  type ChartViewportSize,\n} from '../../utils/chart-viewport-controller';\nimport type { ChartDatum, ChartSeries } from '../../utils/chart-types';\n\nexport type ChartBarVariant = 'single' | 'stacked' | 'percentage';\n\nconst PERCENTAGE_TICKS = [0, 25, 50, 75, 100];\n\n@Component({\n  tag: 'ds-chart-bar',\n  styleUrl: 'ChartBar.css',\n  scoped: true,\n})\nexport class ChartBar {\n  /** Rendering model. Single uses `data`; stacked and percentage use `series` and `categories`. */\n  @Prop() variant: ChartBarVariant = 'single';\n  /** Bars to render. Set as a JS property (not an HTML attribute). */\n  @Prop() data: ChartDatum[] = [];\n  /** Ordered stack series for stacked and percentage variants. Set as a JS property. */\n  @Prop() series: ChartSeries[] = [];\n  /** X-axis labels for stacked and percentage variants. Set as a JS property. */\n  @Prop() categories: string[] = [];\n  /** Standalone intrinsic width. Container constraints reflow the plot at rendered pixel size. */\n  @Prop() width: number = 480;\n  /** Standalone intrinsic height. Container constraints reflow the plot at rendered pixel size. */\n  @Prop() height: number = 240;\n\n  @State() private viewport: ChartViewportSize | undefined;\n\n  private viewportController: ChartViewportController | null = null;\n  private svgEl: SVGElement | null = null;\n\n  componentDidLoad() {\n    this.connectViewportController();\n  }\n\n  connectedCallback() {\n    if (this.svgEl && !this.viewportController) this.connectViewportController();\n  }\n\n  componentDidRender() {\n    if (!this.viewportController) this.connectViewportController();\n  }\n\n  private connectViewportController() {\n    if (!this.svgEl) return;\n    this.viewportController = new ChartViewportController(this.svgEl, viewport => {\n      if (\n        viewport.width !== this.viewport?.width ||\n        viewport.height !== this.viewport?.height\n      ) {\n        this.viewport = viewport;\n      }\n    });\n    this.viewportController.connect();\n  }\n\n  disconnectedCallback() {\n    this.viewportController?.disconnect();\n    this.viewportController = null;\n  }\n\n  @Watch('width')\n  @Watch('height')\n  handleIntrinsicSizeChange() {\n    this.viewport = undefined;\n    if (typeof requestAnimationFrame === 'function') {\n      requestAnimationFrame(() => this.viewportController?.measure());\n    }\n  }\n\n  private renderSingle(\n    innerWidth: number,\n    innerHeight: number,\n    axisLabelGap: number,\n    categoryLabelOffset: number\n  ) {\n    const yMax = max(this.data, d => d.value) ?? 0;\n    const xScale = scaleBand()\n      .domain(this.data.map(d => d.label))\n      .range([0, innerWidth])\n      .padding(0.35);\n    const yScale = scaleLinear()\n      .domain([0, yMax || 1])\n      .range([innerHeight, 0])\n      .nice();\n    const yTicks = yScale.ticks(4);\n\n    return (\n      <g>\n        {yTicks.map(tick => (\n          <g key={`grid-${tick}`} transform={`translate(0, ${yScale(tick)})`}>\n            <line class=\"chart-bar__gridline\" x1={0} x2={innerWidth} />\n            <text\n              class=\"chart-bar__axis-label\"\n              x={-axisLabelGap}\n              text-anchor=\"end\"\n              dominant-baseline=\"middle\"\n            >\n              {tick}\n            </text>\n          </g>\n        ))}\n\n        {this.data.map((datum, index) => {\n          const barWidth = xScale.bandwidth();\n          const barX = xScale(datum.label) ?? 0;\n          const barY = yScale(datum.value);\n          const barHeight = innerHeight - barY;\n          const squareBaseY = barY + barHeight / 2;\n          const squareBaseHeight = barHeight / 2;\n          const fill = datum.color ?? categoryColor(index);\n          return (\n            <g key={datum.label}>\n              <rect\n                class=\"chart-bar__bar chart-bar__bar--rounded\"\n                x={barX}\n                y={barY}\n                width={barWidth}\n                height={barHeight}\n                fill={fill}\n              />\n              <rect\n                class=\"chart-bar__bar chart-bar__bar--square-base\"\n                x={barX}\n                y={squareBaseY}\n                width={barWidth}\n                height={squareBaseHeight}\n                fill={fill}\n              />\n              <text\n                class=\"chart-bar__axis-label\"\n                x={barX + barWidth / 2}\n                y={innerHeight + categoryLabelOffset}\n                text-anchor=\"middle\"\n              >\n                {datum.label}\n              </text>\n            </g>\n          );\n        })}\n      </g>\n    );\n  }\n\n  private valuesForCategory(categoryIndex: number) {\n    return this.series.map(series => Math.max(0, series.data[categoryIndex] ?? 0));\n  }\n\n  private stackedAccessibleLabel() {\n    return this.categories\n      .map((category, categoryIndex) => {\n        const values = this.valuesForCategory(categoryIndex);\n        const total = values.reduce((sum, value) => sum + value, 0);\n        const details = this.series\n          .map((series, seriesIndex) => {\n            const value = values[seriesIndex];\n            const visibleValue =\n              this.variant === 'percentage'\n                ? formatPercentage(total ? value / total : 0, 1)\n                : String(value);\n            return `${series.name}: ${visibleValue}`;\n          })\n          .join(', ');\n        return `${category}: ${details}`;\n      })\n      .join('; ');\n  }\n\n  private renderStacked(\n    innerWidth: number,\n    innerHeight: number,\n    axisLabelGap: number,\n    categoryLabelOffset: number\n  ) {\n    const categoryValues = this.categories.map((_, index) =>\n      this.valuesForCategory(index)\n    );\n    const totals = categoryValues.map(values =>\n      values.reduce((sum, value) => sum + value, 0)\n    );\n    const yMax = this.variant === 'percentage' ? 100 : Math.max(0, ...totals);\n    const xScale = scaleBand()\n      .domain(this.categories)\n      .range([0, innerWidth])\n      .padding(0.35);\n    const yScale = scaleLinear()\n      .domain([0, yMax || 1])\n      .range([innerHeight, 0])\n      .nice();\n    const yTicks =\n      this.variant === 'percentage' ? PERCENTAGE_TICKS : yScale.ticks(4);\n\n    return (\n      <g>\n        {yTicks.map(tick => (\n          <g key={`grid-${tick}`} transform={`translate(0, ${yScale(tick)})`}>\n            <line class=\"chart-bar__gridline\" x1={0} x2={innerWidth} />\n            <text\n              class=\"chart-bar__axis-label\"\n              x={-axisLabelGap}\n              text-anchor=\"end\"\n              dominant-baseline=\"middle\"\n            >\n              {this.variant === 'percentage' ? `${tick}%` : tick}\n            </text>\n          </g>\n        ))}\n\n        {this.categories.map((category, categoryIndex) => {\n          const barWidth = xScale.bandwidth();\n          const barX = xScale(category) ?? 0;\n          const values = categoryValues[categoryIndex];\n          const total = totals[categoryIndex];\n          const topSeriesIndex = values.reduce(\n            (topIndex, value, seriesIndex) =>\n              value > 0 ? seriesIndex : topIndex,\n            -1\n          );\n          let cumulativeValue = 0;\n\n          return (\n            <g class=\"chart-bar__stack\" data-category={category} key={category}>\n              {this.series.map((series, seriesIndex) => {\n                const rawValue = values[seriesIndex];\n                const value =\n                  this.variant === 'percentage'\n                    ? total\n                      ? (rawValue / total) * 100\n                      : 0\n                    : rawValue;\n                const segmentStart = cumulativeValue;\n                const segmentEnd = cumulativeValue + value;\n                cumulativeValue = segmentEnd;\n                const segmentY = yScale(segmentEnd);\n                const segmentBottom = yScale(segmentStart);\n                const segmentHeight = Math.max(0, segmentBottom - segmentY);\n                if (!segmentHeight) return null;\n\n                const fill = series.color ?? categoryColor(seriesIndex);\n                const hasRoundedTop =\n                  this.variant === 'stacked' && seriesIndex === topSeriesIndex;\n                const squareBaseY = segmentY + segmentHeight / 2;\n                const squareBaseHeight = segmentHeight / 2;\n\n                return (\n                  <g\n                    class=\"chart-bar__segment\"\n                    data-series={series.name}\n                    key={series.name}\n                  >\n                    <rect\n                      class={{\n                        'chart-bar__segment-shape': true,\n                        'chart-bar__segment-shape--rounded': hasRoundedTop,\n                      }}\n                      x={barX}\n                      y={segmentY}\n                      width={barWidth}\n                      height={segmentHeight}\n                      fill={fill}\n                    />\n                    {hasRoundedTop ? (\n                      <rect\n                        class=\"chart-bar__segment-square-base\"\n                        x={barX}\n                        y={squareBaseY}\n                        width={barWidth}\n                        height={squareBaseHeight}\n                        fill={fill}\n                      />\n                    ) : null}\n                    {segmentStart > 0 ? (\n                      <line\n                        class=\"chart-bar__segment-separator\"\n                        x1={barX}\n                        x2={barX + barWidth}\n                        y1={segmentBottom}\n                        y2={segmentBottom}\n                        vector-effect=\"non-scaling-stroke\"\n                      />\n                    ) : null}\n                  </g>\n                );\n              })}\n              <text\n                class=\"chart-bar__axis-label\"\n                x={barX + barWidth / 2}\n                y={innerHeight + categoryLabelOffset}\n                text-anchor=\"middle\"\n              >\n                {category}\n              </text>\n            </g>\n          );\n        })}\n      </g>\n    );\n  }\n\n  render() {\n    const viewportWidth = this.viewport?.width ?? this.width;\n    const viewportHeight = this.viewport?.height ?? this.height;\n    const { margin, axisLabelGap, categoryLabelOffset } =\n      resolveCartesianChartLayout();\n    const innerWidth = Math.max(0, viewportWidth - margin.left - margin.right);\n    const innerHeight = Math.max(0, viewportHeight - margin.top - margin.bottom);\n    const isSingle = this.variant === 'single';\n    const accessibleLabel = isSingle\n      ? this.data.map(datum => `${datum.label}: ${datum.value}`).join(', ')\n      : this.stackedAccessibleLabel();\n\n    return (\n      <Host\n        class={{\n          'chart-bar': true,\n          [`chart-bar--${this.variant}`]: true,\n        }}\n      >\n        <svg\n          class=\"chart-bar__svg\"\n          ref={element => {\n            this.svgEl = element ?? null;\n          }}\n          width={viewportWidth}\n          height={viewportHeight}\n          role=\"img\"\n          aria-label={accessibleLabel}\n        >\n          <g transform={`translate(${margin.left}, ${margin.top})`}>\n            {isSingle\n              ? this.renderSingle(\n                  innerWidth,\n                  innerHeight,\n                  axisLabelGap,\n                  categoryLabelOffset\n                )\n              : this.renderStacked(\n                  innerWidth,\n                  innerHeight,\n                  axisLabelGap,\n                  categoryLabelOffset\n                )}\n          </g>\n        </svg>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

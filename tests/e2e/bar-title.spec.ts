@@ -693,6 +693,8 @@ test('aligns a compact top-level title with BarNav control text', async ({ page 
     element.heading = 'Live Map';
   });
   await expect(header).toHaveClass(/bar-title-host--compact/);
+  await expect(header.getByRole('button', { name: /back/i })).toHaveCount(0);
+  await expect(header.locator('.bar-title__heading')).toHaveText('Live Map');
 
   const geometry = await header.evaluate(element => {
     const host = element.getBoundingClientRect();
@@ -987,22 +989,21 @@ test('truncates a long heading before it can crowd fixed controls', async ({ pag
     const headingText = heading?.querySelector<HTMLElement>('.ds-text__element') ?? null;
     const section = element.querySelector<HTMLElement>('.bar-title__section-selector');
     const actions = element.querySelector<HTMLElement>('.bar-title__actions');
-    const range = document.createRange();
-    if (headingText) range.selectNodeContents(headingText);
+    const headingTextStyle = headingText ? getComputedStyle(headingText) : null;
     return {
       hostRight: host.right,
       sectionRight: section?.getBoundingClientRect().right ?? 0,
       actionsRight: actions?.getBoundingClientRect().right ?? 0,
       headingRight: heading?.getBoundingClientRect().right ?? 0,
       sectionLeft: section?.getBoundingClientRect().left ?? Number.POSITIVE_INFINITY,
-      headingTruncated: headingText
-        ? range.getBoundingClientRect().width > headingText.clientWidth ||
-          (heading?.scrollWidth ?? 0) > (heading?.clientWidth ?? 0)
-        : false,
+      headingOwnsEllipsis:
+        headingTextStyle?.textOverflow === 'ellipsis' &&
+        headingTextStyle.overflow === 'hidden' &&
+        headingTextStyle.whiteSpace === 'nowrap',
     };
   });
 
-  expect(geometry.headingTruncated).toBe(true);
+  expect(geometry.headingOwnsEllipsis).toBe(true);
   expect(geometry.headingRight).toBeLessThanOrEqual(geometry.sectionLeft);
   expect(geometry.sectionRight).toBeLessThanOrEqual(geometry.hostRight);
   expect(geometry.actionsRight).toBeLessThanOrEqual(geometry.hostRight);
