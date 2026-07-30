@@ -7,14 +7,13 @@ import { resolveMetricTrend } from '../../utils/metric-change';
 import type { OverviewMetric, OverviewScore } from './card-overview-types';
 
 const meta: Meta = {
-  title: 'Composites/CardOverview',
+  title: 'Cards/CardOverview',
   tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          'Structural baseline only. Layout, regions, roving focus, and the stacking grid are in place; ' +
-          'surface chrome and the final type scale are intentionally unset so the visual pass can own them. ' +
+          'A responsive summary card pairing a headline score, reporting period, filter, and comparable metrics. ' +
           'Trend tone is always supplied by the caller — derive it with `resolveMetricTrend` so whether a rise ' +
           'reads well stays a product decision.',
       },
@@ -39,7 +38,8 @@ const METRICS: OverviewMetric[] = [
     label: 'Distance driven (km)',
     value: '83.6k',
     // Distance moving either way is context, not good or bad news.
-    trend: resolveMetricTrend(83_600, 85_300, { neutral: true, display: 'percentage' }) ?? undefined,
+    trend:
+      resolveMetricTrend(83_600, 85_300, { neutral: true, display: 'percentage' }) ?? undefined,
   },
   {
     id: 'drivers',
@@ -70,6 +70,23 @@ const METRICS: OverviewMetric[] = [
 ];
 
 const FRAME = 'padding:var(--dimension-space-200);max-width:100%;';
+const PERIOD_OPTIONS = [
+  { label: 'Last 4 weeks', value: '4w' },
+  { label: 'Last 8 weeks', value: '8w' },
+  { label: 'Last 12 weeks', value: '12w' },
+];
+
+const periodFilter = () => html`
+  <ds-select
+    slot="filter"
+    size="md"
+    background="always-dark"
+    .activeFill=${false}
+    aria-label="Reporting period"
+    .options=${PERIOD_OPTIONS}
+    .value=${'4w'}
+  ></ds-select>
+`;
 
 export const Structure: Story = {
   parameters: { controls: { disable: true } },
@@ -78,7 +95,7 @@ export const Structure: Story = {
       <ds-card-overview
         overview-label="Safety summary"
         period-label="Jun 29, 2026 – Jul 26, 2026"
-        comparison-label="vs. previous score period (Jun 22, 2026 – Jul 19, 2026)"
+        comparison-label="vs Previous period"
         .score=${SCORE}
         .metrics=${METRICS}
       >
@@ -86,19 +103,35 @@ export const Structure: Story = {
           The period control is slotted, so the application picks it. Select
           supports the always-dark surface directly, so no wrapper is needed.
         -->
-        <ds-select
-          slot="filter"
-          size="md"
-          background="always-dark"
-          .activeFill=${false}
-          aria-label="Reporting period"
-          .options=${[
-            { label: 'Last 4 weeks', value: '4w' },
-            { label: 'Last 8 weeks', value: '8w' },
-            { label: 'Last 12 weeks', value: '12w' },
-          ]}
-          .value=${'4w'}
-        ></ds-select>
+        ${periodFilter()}
+      </ds-card-overview>
+    </div>
+  `,
+};
+
+/** Condensed summary chrome for application-owned sticky page behavior. */
+export const Compact: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'The compact presentation is exactly 48px high and omits measures and the score band. ' +
+          'Its owner decides when to show or stick it; CardOverview does not observe page scroll.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${FRAME}">
+      <ds-card-overview
+        variant="compact"
+        overview-label="Compact safety summary"
+        period-label="Jun 29, 2026 – Jul 26, 2026"
+        comparison-label="vs Previous period"
+        .score=${SCORE}
+        .metrics=${METRICS}
+      >
+        ${periodFilter()}
       </ds-card-overview>
     </div>
   `,
@@ -112,11 +145,36 @@ export const TrendTones: Story = {
       <ds-card-overview
         overview-label="Trend tones"
         .metrics=${[
-          { id: 'up-pos', label: 'Rise reads positive', value: 120, trend: resolveMetricTrend(120, 100) },
-          { id: 'down-neg', label: 'Fall reads negative', value: 80, trend: resolveMetricTrend(80, 100) },
-          { id: 'up-neg', label: 'Rise reads negative', value: 120, trend: resolveMetricTrend(120, 100, { inverted: true }) },
-          { id: 'down-pos', label: 'Fall reads positive', value: 80, trend: resolveMetricTrend(80, 100, { inverted: true }) },
-          { id: 'neutral', label: 'Change reads neutral', value: 90, trend: resolveMetricTrend(90, 100, { neutral: true }) },
+          {
+            id: 'up-pos',
+            label: 'Rise reads positive',
+            value: 120,
+            trend: resolveMetricTrend(120, 100),
+          },
+          {
+            id: 'down-neg',
+            label: 'Fall reads negative',
+            value: 80,
+            trend: resolveMetricTrend(80, 100),
+          },
+          {
+            id: 'up-neg',
+            label: 'Rise reads negative',
+            value: 120,
+            trend: resolveMetricTrend(120, 100, { inverted: true }),
+          },
+          {
+            id: 'down-pos',
+            label: 'Fall reads positive',
+            value: 80,
+            trend: resolveMetricTrend(80, 100, { inverted: true }),
+          },
+          {
+            id: 'neutral',
+            label: 'Change reads neutral',
+            value: 90,
+            trend: resolveMetricTrend(90, 100, { neutral: true }),
+          },
           { id: 'none', label: 'Nothing to report', value: 100 },
         ]}
       ></ds-card-overview>
@@ -124,15 +182,15 @@ export const TrendTones: Story = {
   `,
 };
 
-/** The grid reflows then stacks from the minimum measure width alone. */
+/** The grid reflows while keeping every occupied cell on equal-width tracks. */
 export const Stacking: Story = {
   parameters: {
     controls: { disable: true },
     docs: {
       description: {
         story:
-          'Each frame is narrower than the last. Measures reflow to fewer columns and finally stack; they never ' +
-          'compress past `metricMinWidth` and the bar never scrolls horizontally.',
+          'Each frame is narrower than the last. Measures reflow to fewer equal-width columns and finally stack; ' +
+          'a partial final row leaves empty tracks instead of stretching its cells, and the bar never scrolls horizontally.',
       },
     },
   },
@@ -144,12 +202,42 @@ export const Stacking: Story = {
             <ds-card-overview
               overview-label="Safety summary at ${width}px"
               period-label="Jun 29 – Jul 26, 2026"
+              comparison-label="vs Previous period"
               .score=${SCORE}
               .metrics=${METRICS}
-            ></ds-card-overview>
+            >
+              ${periodFilter()}
+            </ds-card-overview>
           </div>
-        `,
+        `
       )}
+    </div>
+  `,
+};
+
+/** A page shell can choose the single-column composition before the card is narrow. */
+export const ForcedStacking: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Set layout to stacked when the page shell has entered its responsive mode, even if the card still owns a wide content column.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="width:960px;${FRAME}">
+      <ds-card-overview
+        layout="stacked"
+        overview-label="Forced stacked safety summary"
+        period-label="Jun 29 – Jul 26, 2026"
+        comparison-label="vs Previous period"
+        .score=${SCORE}
+        .metrics=${METRICS}
+      >
+        ${periodFilter()}
+      </ds-card-overview>
     </div>
   `,
 };

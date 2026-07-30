@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Overview card</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: var(--typography-font-family, system-ui);
+      }
+
+      ds-card-overview {
+        display: block;
+        margin-block-end: 24px;
+      }
+
+      #five,
+      #six,
+      #clamped {
+        width: 800px;
+      }
+
+      #wrapped-four {
+        width: 560px;
+      }
+
+      #stacked {
+        width: 380px;
+      }
+
+      #compact {
+        width: 800px;
+      }
+
+      #score-pressure {
+        width: 670px;
+      }
+
+      #forced-stacked {
+        width: 800px;
+      }
+
+      #compact [slot='filter'] {
+        height: var(--dimension-size-400);
+      }
+    </style>
+  </head>
+  <body>
+    <ds-card-overview
+      id="five"
+      period-label="Jun 29, 2026 – Jul 26, 2026"
+      comparison-label="vs Previous period"
+    ></ds-card-overview>
+    <ds-card-overview id="six"></ds-card-overview>
+    <ds-card-overview id="clamped"></ds-card-overview>
+    <ds-card-overview id="wrapped-four"></ds-card-overview>
+    <ds-card-overview
+      id="stacked"
+      period-label="Jun 29, 2026 – Jul 26, 2026"
+      comparison-label="vs Previous period"
+    >
+      <button slot="filter" type="button">Last 4 weeks</button>
+    </ds-card-overview>
+    <ds-card-overview
+      id="compact"
+      variant="compact"
+      period-label="Jun 29, 2026 – Jul 26, 2026"
+      comparison-label="vs Previous period"
+    >
+      <button slot="filter" type="button">Last 4 weeks</button>
+    </ds-card-overview>
+    <ds-card-overview
+      id="score-pressure"
+      period-label="Jun 29, 2026 – Jul 26, 2026"
+      comparison-label="vs Previous period"
+    >
+      <button slot="filter" type="button">Last 4 weeks</button>
+    </ds-card-overview>
+    <ds-card-overview
+      id="forced-stacked"
+      layout="stacked"
+      period-label="Jun 29, 2026 – Jul 26, 2026"
+      comparison-label="vs Previous period"
+    >
+      <button slot="filter" type="button">Last 4 weeks</button>
+    </ds-card-overview>
+
+    <script type="module" src="/card-overview-setup.mjs"></script>
+  </body>
+</html>

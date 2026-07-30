@@ -37,6 +37,15 @@ export interface AnchoredPositionControllerOptions {
   measure: (anchor: HTMLElement, popup: HTMLElement) => AnchoredPositionInput | null;
   /** Commit a changed position. Not called when the result is unchanged. */
   apply: (position: AnchoredPosition) => void;
+  /**
+   * Move a `popover="manual"` popup into the native top layer before measuring.
+   *
+   * Use this for popups that remain in their owner's DOM tree. The top layer
+   * gives `position: fixed` viewport coordinates even when an application
+   * ancestor establishes a fixed-position containing block through containment,
+   * transforms, or filters.
+   */
+  topLayer?: boolean;
   /** Fired once per `start()` when the first measurement succeeds. */
   onReady?: () => void;
   /** Scroll/resize behavior. Defaults to `sync`. */
@@ -132,6 +141,20 @@ export class AnchoredPositionController {
     if (!anchor) return false;
     const popup = this.options.getPopup();
     if (!popup) return false;
+
+    if (
+      this.options.topLayer &&
+      typeof popup.showPopover === 'function' &&
+      !popup.matches(':popover-open')
+    ) {
+      try {
+        popup.showPopover();
+      } catch {
+        // The popup may not be connected yet. The scheduled retry will try again
+        // on the next frame instead of measuring it in the wrong coordinate space.
+        return false;
+      }
+    }
 
     const input = this.options.measure(anchor, popup);
     if (!input) return false;

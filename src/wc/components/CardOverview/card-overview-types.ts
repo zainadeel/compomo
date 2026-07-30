@@ -1,5 +1,8 @@
 import type { MetricTrend } from '../../utils/metric-change';
 
+export type CardOverviewVariant = 'default' | 'compact';
+export type CardOverviewLayout = 'auto' | 'stacked';
+
 /**
  * Leading summary block — the headline figure the rest of the bar contextualises.
  *

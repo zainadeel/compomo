@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <title>Text e2e</title>
     <link rel="stylesheet" href="/tokens/index.css">
+    <style>
+      .owner-color {
+        color: var(--color-foreground-bold-positive);
+      }
+    </style>
   </head>
   <body>
     <main style="color: var(--color-foreground-secondary)">
@@ -33,6 +38,7 @@
         <ds-text id="shimmer" as="span" shimmer>Generating summary</ds-text>
       </div>
       <ds-text id="numbers" as="span" font-feature="tabular-nums">11:11:11</ds-text>
+      <ds-text id="owner-color" class="owner-color" as="span">Owner-applied color</ds-text>
     </main>
     <script type="module" src="/text-setup.mjs"></script>
   </body>

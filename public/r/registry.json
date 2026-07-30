@@ -2076,7 +2076,7 @@
     {
       "name": "card-overview",
       "title": "CardOverview",
-      "description": "Page-level summary bar pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures.",
+      "description": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional compact 48px presentation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2087,7 +2087,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Page-level summary bar pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures.",
+          "summary": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional compact 48px presentation.",
           "useWhen": [
             "A page opens with one headline figure that the surrounding measures explain.",
             "Every measure is compared against the same period, so one caption describes the comparison for all of them.",
@@ -2131,13 +2131,20 @@
             "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
             "Omit score to render the bar without a headline figure. Set scoreErrorMessage to report that the figure could not be resolved while the measures remain readable.",
             "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
-            "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface."
+            "At most six measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
+            "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface.",
+            "compact is exactly 48px high and keeps only the score label, score value, trend, reporting copy, and slotted period control. It omits the score band, measures, and footer."
           ],
           "responsiveBehavior": [
             "The measure grid reflows to fewer columns and finally stacks, driven by the minimum measure width alone. There is no measurement and no horizontal scrolling.",
+            "Every occupied grid track has the same width. When a final row is incomplete, its measures keep the same width as the row above and the unused tracks remain empty.",
             "Set metricMinWidth to change the width a measure may shrink to before the grid drops a column.",
             "The score block hugs its content and never shrinks, so the headline figure holds its size while the grid absorbs the remaining width.",
-            "The score moves above the body once the bar can no longer fit both side by side."
+            "Once the card reaches its narrow stacked state, one summary block holds the score label, score, trend, score band, reporting period, and the application-owned period control above the single-column measures.",
+            "In that stacked summary, the score and trend share one line at the start, while the score band is hidden to preserve space. The period control stays at the upper end, while the current period and comparison sit on separate right-aligned lines beside the score.",
+            "Every measure occupies a full-width row in the stacked state.",
+            "Set layout to stacked when the owning page shell enters a responsive mode before the card's own container reaches its narrow threshold.",
+            "CardOverview does not observe scroll or choose its own presentation. The page owner may use compact as sticky summary chrome on supported breakpoints."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -2173,6 +2180,10 @@
             "type": "boolean",
             "required": false
           },
+          "layout": {
+            "type": "CardOverviewLayout",
+            "required": false
+          },
           "metricMinWidth": {
             "type": "string",
             "required": false
@@ -2195,6 +2206,10 @@
           },
           "scoreErrorMessage": {
             "type": "string | undefined",
+            "required": false
+          },
+          "variant": {
+            "type": "CardOverviewVariant",
             "required": false
           }
         },
@@ -9083,7 +9098,7 @@
           "states": [
             "A variant is atomic: font size, line height, weight, and letter spacing stay together and are not overridden by consumers.",
             "Emphasis selects the supported stronger recipe for local hierarchy; it does not independently mean selected or active.",
-            "Omitted color inherits currentColor. Explicit semantic aliases or CSS-variable references are used only when Text has an independent color role.",
+            "Omitted color inherits currentColor without imposing a host color declaration, so an owning component may apply its semantic foreground directly without depending on stylesheet order. Explicit semantic aliases or CSS-variable references are used when Text has an independent color role.",
             "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary or quaternary so visual treatment and inactive semantics remain synchronized.",
             "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
             "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
