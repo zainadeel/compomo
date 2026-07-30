@@ -1,5 +1,16 @@
 # Changelog
 
+## [13.0.0](https://github.com/zainadeel/compomo/compare/v12.9.0...v13.0.0) (2026-07-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* consolidate components around managed application shell ([#392](https://github.com/zainadeel/compomo/issues/392))
+
+### Added
+
+* consolidate components around managed application shell ([#392](https://github.com/zainadeel/compomo/issues/392)) ([df3ebce](https://github.com/zainadeel/compomo/commit/df3ebce99760507507d2c9597ec71d6d57cc4bf1))
+
 ## [12.9.0](https://github.com/zainadeel/compomo/compare/v12.8.0...v12.9.0) (2026-07-30)
 
 
