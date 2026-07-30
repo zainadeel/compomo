@@ -96,7 +96,6 @@ test('component scale declarations remain limited to documented non-press animat
 
   assert.deepEqual(scaleOwners, [
     'Modal/Modal.css',
-    'ShellGradientSwatch/ShellGradientSwatch.css',
     'SwatchPicker/SwatchPicker.css',
   ]);
 });

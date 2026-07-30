@@ -48,8 +48,8 @@ at the line where they occur.
 - `field-stack.css`: label/control/supporting-message flow.
 - `empty-region.css`: bounded empty-region centering.
 - `chrome-layout.css`: spacing-only row/column/grid chrome.
-- `data-viz-card-layout.css`: chart/legend card body geometry.
-- `select-controller.ts`: Select and SelectMulti popup lifecycle and traversal.
+- `CardDataViz`: one component-owned chart/legend card anatomy.
+- `select-controller.ts`: single and multiple Select popup lifecycle and traversal.
 - `anchored-position.ts`: pure element-anchored popup geometry (flip + clamp).
 - `anchored-position-controller.ts`: anchored-popup lifecycle — listener binding,
   measurement retries, frame coalescing, teardown. Owning components keep their

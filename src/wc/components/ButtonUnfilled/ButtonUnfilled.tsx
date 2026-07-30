@@ -1,6 +1,13 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
-import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
+import { controlWidthClass } from '../../utils';
 import { beginElevatedControlPress } from '../../utils/control-press';
+import { renderButtonContent } from '../../utils/button-render';
+import type {
+  ButtonPopup,
+  ButtonSize,
+  ButtonVariant,
+  ButtonWidth,
+} from '../../utils/button-types';
 
 export type ButtonUnfilledBackground =
   | 'faint'
@@ -12,23 +19,10 @@ export type ButtonUnfilledBackground =
   | 'media'
   | 'always-dark';
 
-export type ButtonUnfilledVariant = 'icon' | 'label' | 'icon-label';
-
-export type ButtonUnfilledSize = 'lg' | 'md' | 'sm' | 'xs';
-
-export type ButtonUnfilledWidth = ControlWidth;
-export type ButtonUnfilledPopup = 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
-
-/**
- * `ds-icon` size prop matching control-density icon metrics
- * (lg→24 / md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).
- */
-const ICON_SIZE: Record<ButtonUnfilledSize, 'lg' | 'md' | 'sm' | 'xs'> = {
-  lg: 'lg',
-  md: 'md',
-  sm: 'sm',
-  xs: 'xs',
-};
+export type ButtonUnfilledVariant = ButtonVariant;
+export type ButtonUnfilledSize = ButtonSize;
+export type ButtonUnfilledWidth = ButtonWidth;
+export type ButtonUnfilledPopup = ButtonPopup;
 
 @Component({
   tag: 'ds-button-unfilled',
@@ -56,7 +50,10 @@ export class ButtonUnfilled {
   /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */
   @Prop() icon: string = '';
 
-  /** Active/selected visual state. Always promotes foreground to primary. */
+  /**
+   * Owner-controlled visual emphasis inside a composite. This does not add
+   * toggle semantics and does not emit dsChange.
+   */
   @Prop() isActive: boolean = false;
 
   /**
@@ -98,6 +95,10 @@ export class ButtonUnfilled {
   @Prop() controls: string | undefined;
   @Prop() expanded: boolean | undefined;
   @Prop() haspopup: ButtonUnfilledPopup | undefined;
+  /**
+   * Controlled state for a genuine toggle button. Adds aria-pressed, promotes
+   * active styling, and makes activation emit dsChange with the requested state.
+   */
   @Prop() pressed: boolean | undefined;
 
   /**
@@ -136,24 +137,11 @@ export class ButtonUnfilled {
       return;
     }
     this.dsClick.emit(event);
-    this.dsChange.emit(!this.isActive);
+    if (this.pressed !== undefined) this.dsChange.emit(!this.pressed);
   };
-
-  private get showIcon(): boolean {
-    return this.variant === 'icon' || this.variant === 'icon-label';
-  }
-
-  private get showLabel(): boolean {
-    return this.variant === 'label' || this.variant === 'icon-label';
-  }
 
   private get showDot(): boolean {
     return this.variant === 'icon' && this.dot && !this.isLoading;
-  }
-
-  /** Icon-only triggers rely on their own glyph, so the chevron is label-bound. */
-  private get showChevron(): boolean {
-    return this.hasMenu && this.variant !== 'icon';
   }
 
   private get resolvedHaspopup(): ButtonUnfilledPopup | undefined {
@@ -162,12 +150,12 @@ export class ButtonUnfilled {
 
   /** An expanded popup trigger is visually active even when selection is controlled separately. */
   private get visuallyActive(): boolean {
-    return this.isActive || this.expanded === true;
+    return this.isActive || this.pressed === true || this.expanded === true;
   }
 
   /** Knock-out ring: selected fill → active wash; otherwise surface token. */
   private get dotRing(): string {
-    if (this.isActive && this.activeFill) {
+    if ((this.isActive || this.pressed === true) && this.activeFill) {
       return 'var(--ds-interaction-active)';
     }
     return 'var(--ds-button-unfilled-dot-ring)';
@@ -181,15 +169,16 @@ export class ButtonUnfilled {
 
   render() {
     const bg = this.background;
-    const textVariant = CONTROL_TEXT_VARIANT[this.size];
-    const iconSize = ICON_SIZE[this.size];
-
     const cls: Record<string, boolean> = {
       'button-unfilled': true,
+      'ds-button': true,
       'ds-focus-ring-inset': true,
       'ds-control-press-scale': this.pressScale,
       'ds-interaction-fill': true,
-      'ds-interaction-fill--selected': this.isActive && this.activeFill && !this.isInactive,
+      'ds-interaction-fill--selected':
+        (this.isActive || this.pressed === true) &&
+        this.activeFill &&
+        !this.isInactive,
       'ds-interaction-fill--on-faint': bg === 'faint',
       'ds-interaction-fill--on-medium': bg === 'medium',
       'ds-interaction-fill--on-bold': bg === 'bold',
@@ -200,8 +189,11 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
       'button-unfilled--active': this.visuallyActive,
       'button-unfilled--expanded': this.expanded === true && !this.isInactive,
+      'ds-button--expanded': this.expanded === true && !this.isInactive,
       'button-unfilled--bordered': this.hasBorder,
+      'ds-button--bordered': this.hasBorder,
       'button-unfilled--rounded': this.rounded,
+      'ds-button--rounded': this.rounded,
       'ds-control-inactive': this.isInactive,
       'ds-control--lg': this.size === 'lg',
       'ds-control--md': this.size === 'md',
@@ -209,6 +201,7 @@ export class ButtonUnfilled {
       'ds-control--xs': this.size === 'xs',
       'ds-control-frame': true,
       'button-unfilled--icon': this.variant === 'icon',
+      'ds-button--icon': this.variant === 'icon',
       'button-unfilled--label': this.variant === 'label',
       'button-unfilled--icon-label': this.variant === 'icon-label',
       'button-unfilled--background-faint': bg === 'faint',
@@ -226,6 +219,7 @@ export class ButtonUnfilled {
         class={{
           'button-unfilled-host': true,
           'button-unfilled-host--icon': this.variant === 'icon',
+          'ds-button-host--icon': this.variant === 'icon',
           'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
@@ -257,57 +251,19 @@ export class ButtonUnfilled {
           }
           onClick={this.handleClick}
         >
-          {this.showIcon && (
-            <span class="button-unfilled__icon-wrap ds-control-icon-box ds-interaction-fill__content">
-              {this.isLoading
-                ? <ds-loader size={iconSize} color="inherit" />
-                : <ds-icon name={this.icon} size={iconSize} color="inherit" />
-              }
-              {this.showDot && (
-                <ds-badge
-                  class="button-unfilled__dot"
-                  variant="dot"
-                  background={this.dotRing}
-                  label=""
-                  aria-hidden="true"
-                />
-              )}
-            </span>
-          )}
-          {this.showLabel && (
-            <ds-text
-              class={{
-                'button-unfilled__label': true,
-                'ds-control-label-box': true,
-                'button-unfilled__label--loading': this.isLoading && this.variant === 'label',
-                'ds-interaction-fill__content': true,
-              }}
-              as="span"
-              variant={textVariant}
-              emphasis
-              color="inherit"
-            >
-              {this.label}
-            </ds-text>
-          )}
-          {this.showChevron && (
-            <span
-              class={{
-                'button-unfilled__chevron': true,
-                'ds-control-icon-box': true,
-                'ds-interaction-fill__content': true,
-                'button-unfilled__chevron--loading': this.isLoading && this.variant === 'label',
-              }}
-              aria-hidden="true"
-            >
-              <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
-            </span>
-          )}
-          {this.isLoading && this.variant === 'label' && (
-            <span class="button-unfilled__loader-overlay ds-interaction-fill__content">
-              <ds-loader size={iconSize} color="inherit" />
-            </span>
-          )}
+          {renderButtonContent({
+            namespace: 'button-unfilled',
+            variant: this.variant,
+            size: this.size,
+            label: this.label,
+            icon: this.icon,
+            hasMenu: this.hasMenu,
+            isLoading: this.isLoading,
+            dot: {
+              visible: this.showDot,
+              background: this.dotRing,
+            },
+          })}
         </button>
       </Host>
     );

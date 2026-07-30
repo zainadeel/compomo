@@ -15,5 +15,8 @@
     "compilationMode": "partial",
     "strictTemplates": false
   },
-  "include": ["src/angular/**/*.ts", "src/framework/angular.ts"]
+  "include": [
+    "src/.generated/angular/**/*.ts",
+    "src/framework/angular.ts"
+  ]
 }

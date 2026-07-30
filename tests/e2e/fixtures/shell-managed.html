@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Managed application shell e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        font-family: var(--typography-font-family, system-ui);
+        background: var(--color-background-primary);
+      }
+
+      ds-shell-app {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .fixture-view,
+      #managed-page-content {
+        box-sizing: border-box;
+        min-height: 100%;
+        padding: var(--dimension-space-200);
+      }
+    </style>
+  </head>
+  <body>
+    <ds-shell-app id="managed-shell">
+      <section slot="search-view" class="fixture-view">Search view</section>
+      <section slot="agents-view" id="managed-agents-view" class="fixture-view">
+        <label for="agent-draft">Agent draft</label>
+        <input id="agent-draft" />
+      </section>
+      <section slot="messages-view" class="fixture-view">Messages view</section>
+      <section slot="stacks-view" class="fixture-view">Stacks view</section>
+      <section slot="activity-view" class="fixture-view">Activity view</section>
+      <section slot="help-view" class="fixture-view">Help view</section>
+      <main id="managed-page-content">
+        <p>Persistent routed content</p>
+        <div style="height: 1200px"></div>
+      </main>
+    </ds-shell-app>
+    <script type="module" src="/shell-managed-setup.mjs"></script>
+  </body>
+</html>

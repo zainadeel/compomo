@@ -5,6 +5,15 @@ import '../../styles/control-elevation.css';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-menu.js';
+import {
+  BUTTON_STORY_COLUMN as COL,
+  BUTTON_STORY_ROW as ROW,
+  BUTTON_STORY_SIZES as SIZES,
+  BUTTON_STORY_SURFACE as SURFACE,
+  BUTTON_STORY_VARIANTS as VARIANTS,
+  BUTTON_STORY_WIDTHS as WIDTHS,
+  wireButtonStoryMenuTriggers as wireMenuTriggers,
+} from '../../utils/button-story-foundation';
 
 const INTENTS = [
   'neutral',
@@ -19,9 +28,6 @@ const INTENTS = [
 ] as const;
 
 const CONTRASTS = ['bold', 'strong', 'medium', 'faint'] as const;
-const VARIANTS = ['label', 'icon', 'icon-label'] as const;
-const SIZES = ['lg', 'md', 'sm', 'xs'] as const;
-const WIDTHS = ['hug', 'fill'] as const;
 const BACKGROUNDS = [
   'faint',
   'medium',
@@ -77,12 +83,8 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const ROW = 'display:flex;gap:var(--dimension-space-100);align-items:center;flex-wrap:wrap;';
-const COL = 'display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;';
 const LABEL =
   'min-width:96px;color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);';
-const SURFACE =
-  'display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);';
 
 /** Menu variants that a filled action supports — never the icon-only overflow role. */
 const MENU_VARIANTS = ['label', 'icon-label'] as const;
@@ -97,37 +99,6 @@ const MENU_ITEMS = [
  * Wire every trigger/menu pair inside the story root: one application-owned open
  * boolean drives both `expanded` and `Menu.open`. Menu owns placement.
  */
-type MenuTriggerEl = HTMLElement & { expanded: boolean; setFocus: () => void };
-type MenuEl = HTMLElement & { open: boolean; initialFocusVisible: boolean };
-
-const wireMenuTriggers = (root: Element | undefined) => {
-  if (!root) return;
-  root.querySelectorAll('[data-menu-trigger]').forEach(node => {
-    const trigger = node as MenuTriggerEl & { dataset: DOMStringMap };
-    if (trigger.dataset['wired'] === 'true') return;
-    trigger.dataset['wired'] = 'true';
-
-    const menu = root.querySelector<MenuEl>(`#${trigger.dataset['menuTrigger']}`);
-    if (!menu) return;
-
-    const setOpen = (open: boolean) => {
-      trigger.expanded = open;
-      menu.open = open;
-    };
-
-    trigger.addEventListener('dsClick', event => {
-      // detail === 0 means keyboard activation, so the menu shows a focus ring.
-      menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
-      setOpen(!menu.open);
-    });
-    menu.addEventListener('dsClose', () => setOpen(false));
-    menu.addEventListener('dsSelect', () => {
-      setOpen(false);
-      requestAnimationFrame(() => trigger.setFocus());
-    });
-  });
-};
-
 export const Playground: Story = {
   render: args => html`
     <ds-button-filled

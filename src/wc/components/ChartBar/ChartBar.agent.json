@@ -7,24 +7,20 @@
   "tag": "ds-chart-bar",
   "audience": "specialized",
   "status": "experimental",
-  "summary": "Single-series bar chart for comparing discrete categories or evenly spaced time buckets on a band-scaled axis.",
+  "summary": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
   "useWhen": [
     "Users need to compare one numeric measure across a small set of categories.",
     "Values are grouped into ordered time buckets such as hours, days, weeks, or months and equal visual spacing is appropriate.",
-    "A data-viz card needs a compact magnitude comparison rather than a continuous trend."
+    "A data-viz card needs a compact magnitude comparison rather than a continuous trend.",
+    "Several consistent series contribute to each category total or its normalized composition."
   ],
   "avoidWhen": [
     "Timestamp positions must reflect irregular elapsed time; pre-bucket the data or use a future continuous time-scale chart.",
-    "The visualization needs stacked, grouped, or multi-series bars.",
+    "The visualization needs grouped bars or precise comparison of each individual series across categories.",
     "The interaction requires selection, drill-down, brushing, or zoom.",
     "The data communicates a part-to-whole relationship."
   ],
   "alternatives": [
-    {
-      "when": "Each category contains several additive series or needs normalized composition.",
-      "component": "component:ds-chart-bar-stacked",
-      "reason": "ChartBarStacked compares raw stacked totals or normalized 0–100% composition."
-    },
     {
       "when": "Users need to follow one or more trends across ordered categories.",
       "component": "component:ds-chart-line",
@@ -37,8 +33,8 @@
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-chart-bar-stacked",
-    "component:ds-card-shell-data-viz",
+    "component:ds-chart-legend",
+    "component:ds-card-data-viz",
     "component:ds-tooltip-data-viz"
   ],
   "accessibility": [
@@ -47,7 +43,9 @@
     "A future interactive tooltip must supplement rather than replace the chart's accessible value representation."
   ],
   "states": [
-    "The chart is currently a static single-series rendering without hover, selection, loading, or empty-state policy.",
+    "The chart is static without hover, selection, loading, or empty-state policy.",
+    "Single mode reads data. Stacked and percentage modes read aligned series and categories.",
+    "Stacked mode preserves raw totals; percentage mode normalizes every non-empty category to 100%.",
     "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
     "Bars use 2px top corner radii while the lower corners touching the zero axis remain square.",
     "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
@@ -61,13 +59,13 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign data as a JavaScript property; arrays are not supported as HTML attributes."
+      "Assign data, series, and categories as JavaScript properties; arrays are not supported as HTML attributes."
     ],
     "react": [
-      "Pass a stable data array; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+      "Pass stable data or series/category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
     ],
     "angular": [
-      "Bind data as a property; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+      "Bind data or series/categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
     ]
   },
   "references": [

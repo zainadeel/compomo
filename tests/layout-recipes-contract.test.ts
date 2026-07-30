@@ -4,28 +4,38 @@ import test from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('data-viz cards consume one shared body anatomy', () => {
-  for (const name of ['Bar', 'Line', 'Donut']) {
-    const css = read(`src/wc/components/CardDataViz${name}/CardDataViz${name}.css`);
-    const source = read(`src/wc/components/CardDataViz${name}/CardDataViz${name}.tsx`);
-    assert.match(css, /data-viz-card-layout\.css/);
-    assert.match(source, /ds-data-viz-card-layout/);
-    assert.match(source, /ds-data-viz-card-chart/);
-    assert.match(source, /ds-data-viz-card-legend/);
-  }
+test('one data-viz card owns every chart body anatomy', () => {
+  const css = read('src/wc/components/CardDataViz/CardDataViz.css');
+  const source = read('src/wc/components/CardDataViz/CardDataViz.tsx');
+  assert.match(source, /card-data-viz__layout/);
+  assert.match(source, /card-data-viz__chart/);
+  assert.match(source, /card-data-viz__legend/);
+  assert.match(css, /\.card-data-viz__chart--fill/);
 });
 
 test('primary controls consume shared frame, icon, and label anatomy', () => {
-  for (const name of ['ButtonFilled', 'ButtonUnfilled', 'Input', 'Select']) {
+  for (const name of ['Input', 'Select']) {
     const css = read(`src/wc/components/${name}/${name}.css`);
     assert.match(css, /control-parts\.css/);
   }
 
-  for (const name of ['ButtonFilled', 'ButtonUnfilled', 'Input', 'Select', 'SelectMulti']) {
+  for (const name of ['Input', 'Select']) {
     const source = read(`src/wc/components/${name}/${name}.tsx`);
     assert.match(source, /ds-control-frame/);
     assert.match(source, /ds-control-label-box/);
   }
+
+  for (const name of ['ButtonFilled', 'ButtonUnfilled']) {
+    const css = read(`src/wc/components/${name}/${name}.css`);
+    const source = read(`src/wc/components/${name}/${name}.tsx`);
+    assert.match(css, /button-base\.css/);
+    assert.match(source, /renderButtonContent/);
+    assert.match(source, /ds-control-frame/);
+  }
+
+  const renderer = read('src/wc/utils/button-render.tsx');
+  assert.match(renderer, /ds-control-label-box/);
+  assert.match(renderer, /ds-control-icon-box/);
 });
 
 test('field owners consume one vertical field flow recipe', () => {
@@ -37,11 +47,10 @@ test('field owners consume one vertical field flow recipe', () => {
   }
 });
 
-test('Select and SelectMulti delegate interaction behavior to SelectController', () => {
-  for (const name of ['Select', 'SelectMulti']) {
-    const source = read(`src/wc/components/${name}/${name}.tsx`);
-    assert.match(source, /new SelectController/);
-    assert.doesNotMatch(source, /addEventListener\('mousedown'/);
-    assert.doesNotMatch(source, /findChoiceTypeaheadMatch/);
-  }
+test('both Select cardinality modes delegate interaction behavior to SelectController', () => {
+  const source = read('src/wc/components/Select/Select.tsx');
+  assert.match(source, /new SelectController/);
+  assert.match(source, /multiple/);
+  assert.doesNotMatch(source, /addEventListener\('mousedown'/);
+  assert.doesNotMatch(source, /findChoiceTypeaheadMatch/);
 });

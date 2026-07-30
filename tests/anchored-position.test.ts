@@ -22,7 +22,7 @@ const OPPOSITE_SIDE: Record<AnchoredSide, AnchoredSide> = {
  * reference oracle. It decided by comparing *available space* per side, whereas
  * the shipped implementation compares *actual overflow* of each candidate rect.
  *
- * Menu, Select, and SelectMulti ran on this variant while Tooltip and Toast ran
+ * Menu and both Select modes ran on this variant while Tooltip and Toast ran
  * on the overflow variant. The sweep below asserts the two agree exactly, which
  * is what made consolidating them safe — keep it green so a future change to the
  * flip rule cannot silently move menus or selects.

@@ -5,37 +5,44 @@ import * as ShellAppStories from './ShellApp.stories';
 
 # App Shell
 
-`ds-shell-app` is the workspace layout primitive for Motive dashboard shells. It keeps one routed workspace mounted while adapting desktop/tablet chrome to a dedicated mobile stage below 768px.
+`ds-shell-app` is the standard application architecture for authenticated
+Motive workspaces. In its default managed composition, the application supplies
+three typed data objects and persistent content:
 
-## Slots
+- `navigation` is router-owned primary navigation, current route/context,
+  account identity, labels, and persistence configuration.
+- `pageChrome` is route-owned heading, peer sections, depth/back state,
+  subsections, and page actions.
+- `tools` is product-owned tool definitions, headers, unread state, shortcuts,
+  persistence, and fullscreen configuration.
+- Named `*-view` slots hold the product-owned tool views, and the default slot
+  holds the router-owned page content.
 
-| Slot | Element | Purpose |
-| --- | --- | --- |
-| `panel` | `ds-panel-nav` | Left navigation rail |
-| `bar` | `ds-bar-nav` | Top tab bar / heading row |
-| `tools` | `ds-shell-tools` or `ds-panel-tools` | Responsive tool host, or the backward-compatible desktop/tablet tool rail |
-| `mobile-sheet-nav` | `ds-mobile-sheet-nav` | Full-stage primary-area browser below 768px |
-| `mobile-bar-nav` | `ds-mobile-bar-nav` | Persistent five-item bottom navigation below 768px |
-| *(default)* | `ds-shell-page` | Scrollable routed page; ShellPage exposes its dedicated `mobile-header` presentation below 768px |
+ShellApp assembles PanelNav, BarNav, ShellTools/PanelTools, MobileSheetNav,
+MobileBarNav, MobileHeader, BarTitle, and ShellPage. It owns presentation state,
+responsive mode, active global surfaces, mobile Inbox grouping, focus return,
+and preservation across breakpoints. The application still owns authorization,
+URLs, browser history, route changes, page data, and tool data.
 
-## Props
+Navigation events are intent-only. Handle `dsNavSelect` and `dsTabChange` with
+the application router, then replace `navigation` and `pageChrome` together
+from the completed route state. Do not conditionally recreate routed content or
+tool views when the responsive presentation changes.
 
-| Prop | Default | Behavior |
-| --- | --- | --- |
-| `navStyle` | `dashboard` | Propagated to slotted `ds-panel-nav` and `ds-bar-nav` |
-| `gradientPreset` | `neutral` | Chrome treatment: `none` (solid secondary), `cool`, `neutral`, `warm`, or `fresh`. Color tokens adapt each wash to light and dark themes |
-| `shortcutsEnabled` | `true` | Global keyboard shortcuts (`[` panel toggle, `]` close tools, K/A/S/M/N tool drawers, `/` Help) |
-| `mobileDestination` | `area` | Controlled mobile stage: current area, Search, Agents, or Inbox |
-| `mobileSheetNavOpen` | `false` | Controlled Mobile Sheet Nav state |
+## Advanced slotted composition
 
-ShellApp resolves and reflects `responsive-mode="desktop | tablet | mobile"` at the fixed 1200px and 768px boundaries and emits `dsResponsiveModeChange` only when that mode changes. Mobile paints a solid primary surface, removes the chrome wash, makes hidden stages inert, and reserves safe-area-aware bottom-bar space without unmounting route or tool owners.
+Set `composition="slotted"` only when a specialized application has a verified
+reason to assemble the lower-level chrome itself. PanelNav, BarNav, PanelTools,
+ShellTools, ShellPage, and mobile chrome remain public primitives, but the
+application then owns their cross-component state wiring.
 
-## Gradient presets
+## Gradient preference
 
-Use `ds-shell-gradient-picker` (or menu gradient-picker sections) to let users pick a wash. **`none`** matches `--color-background-secondary` with no intent wash — useful when you want chrome framing without color tint.
+Use `ds-swatch-picker` directly or a Menu `swatch-picker` section with
+`shellGradientPickerSections()` to select the chrome wash. Applications own
+preference persistence, cross-tab synchronization, and account/server
+precedence; ShellApp paints the resolved preference.
 
-Applications own preference persistence, cross-tab synchronization, and account/server preference precedence. Pass the resolved value to `gradientPreset`; keep the picker in the user/account menu and apply changes immediately without closing the menu.
-
-See [Introduction](/?path=/docs/docs-introduction--docs) for package setup and the
-[framework integration guide](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md)
-for host-app wiring, viewport sizing, and Angular timing notes.
+See the [managed application story](/?path=/story/layout-shellapp--managed),
+the [Introduction](/?path=/docs/docs-introduction--docs), and the
+[framework integration guide](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md).

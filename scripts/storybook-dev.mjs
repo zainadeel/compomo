@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
-import { writeBuildStamp, writePackageVersion } from './write-build-stamp.mjs';
+import { writePackageVersion, writeStorybookStamp } from './write-build-stamp.mjs';
 
 writePackageVersion();
 
@@ -91,15 +91,15 @@ const startStorybook = () => {
   spawnScript('storybook:ui', 'storybook', undefined, { DS_STENCIL_WATCH: '1' });
 };
 
-const watcher = spawnScript('dev', 'stencil', line => {
+const watcher = spawnScript('dev:components', 'stencil', line => {
   if (line.includes('build finished, watching for changes')) {
     cleanCollisions();
-    writeBuildStamp();
+    writeStorybookStamp();
     if (!storybookStarted) {
       startStorybook();
     } else {
       process.stdout.write(
-        '[storybook-dev] Stencil rebuild finished — Storybook reloads when dist/.build-stamp updates\n',
+        '[storybook-dev] Component rebuild finished — Storybook reloads from dist/.storybook-ready\n',
       );
     }
   }

@@ -37,6 +37,20 @@ export type {
 export { TOKEN_DEFAULTS, TOKEN_CSS_LENGTHS } from './token-defaults';
 export type { TokenDefaultKey } from './token-defaults';
 export { DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from './required-validity';
+export {
+  restoreNumberArrayFormState,
+  restoreStringArrayFormState,
+  restoreStringFormState,
+  setFormControlValue,
+  setRepeatedFormControlValue,
+} from './form-association';
+export type {
+  FormControlState,
+  SetFormControlValueOptions,
+  SetRepeatedFormControlValueOptions,
+} from './form-association';
+export { resolveSafeUrl } from './safe-url';
+export type { ResolveSafeUrlOptions, SafeUrlProtocol } from './safe-url';
 export { controlWidthClass } from './control-width';
 export type { ControlWidth } from './control-width';
 export { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from './control-text';

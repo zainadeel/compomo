@@ -11,14 +11,13 @@ import {
 } from '@stencil/core';
 import {
   PANEL_TOOLS_LABELS,
-  PANEL_TOOLS_TOOL_IDS,
   type PanelToolsHeaderConfig,
   type PanelToolsHeaders,
   type PanelToolsItem,
   type PanelToolsToolId,
 } from '../PanelTools/panel-tools-types';
 import {
-  parsePanelToolsItems,
+  orderPanelToolsItems,
   reconcilePanelToolsAvailability,
   resolvePanelToolActivation,
 } from '../PanelTools/panel-tools-utils';
@@ -28,15 +27,6 @@ import {
   type ShellInboxToolId,
   type ShellResponsiveMode,
 } from '../../shell/shell-responsive';
-
-const MOBILE_VIEW_ORDER: PanelToolsToolId[] = [
-  'search',
-  'agents',
-  'messages',
-  'stacks',
-  'activity',
-  'help',
-];
 
 @Component({
   tag: 'ds-shell-tools',
@@ -56,9 +46,7 @@ export class ShellTools {
   @Prop({ attribute: 'fullscreen-header-mode', reflect: true })
   fullscreenHeaderMode: 'shared' | 'split' = 'shared';
   @Prop() items: PanelToolsItem[] = [];
-  @Prop({ attribute: 'items-json' }) itemsJson: string = '';
   @Prop() headers: PanelToolsHeaders = {};
-  @Prop({ attribute: 'headers-json' }) headersJson: string = '';
   @Prop({ attribute: 'storage-key' }) storageKey: string = '';
   @Prop() toolsLabel: string = 'Tools';
   @Prop() toolShortcutsLabel: string = 'Tool shortcuts';
@@ -97,17 +85,38 @@ export class ShellTools {
   private panelToolsEl: HTMLDsPanelToolsElement | null = null;
 
   private get resolvedItems(): PanelToolsItem[] {
-    return parsePanelToolsItems(this.items, this.itemsJson);
+    return this.items ?? [];
   }
 
   private get availableInboxTools(): ShellInboxToolId[] {
     return this.resolvedItems
-      .filter(item => !item.isInactive && isShellInboxTool(item.id))
+      .filter(
+        item =>
+          !item.isInactive &&
+          (item.mobileDestination === 'inbox' || isShellInboxTool(item.id))
+      )
       .map(item => item.id as ShellInboxToolId);
   }
 
+  private get mobileViewOrder(): PanelToolsToolId[] {
+    return orderPanelToolsItems(this.resolvedItems).map(item => item.id);
+  }
+
+  private toolLabel(id: PanelToolsToolId): string {
+    const item = this.resolvedItems.find(candidate => candidate.id === id);
+    return (
+      item?.label ??
+      item?.ariaLabel ??
+      PANEL_TOOLS_LABELS[id as keyof typeof PANEL_TOOLS_LABELS] ??
+      id
+    );
+  }
+
   private get mobileActiveTool(): PanelToolsToolId | '' {
-    if (!isShellInboxTool(this.activeTool)) return this.activeTool;
+    const item = this.resolvedItems.find(candidate => candidate.id === this.activeTool);
+    const inbox =
+      item?.mobileDestination === 'inbox' || isShellInboxTool(this.activeTool);
+    if (!inbox) return this.activeTool;
     return resolveAvailableInboxTool(this.activeTool, this.availableInboxTools);
   }
 
@@ -116,7 +125,6 @@ export class ShellTools {
   }
 
   @Watch('items')
-  @Watch('itemsJson')
   handleItemsChange() {
     this.reconcileAvailability();
   }
@@ -128,16 +136,7 @@ export class ShellTools {
   }
 
   private resolvedHeaders(): PanelToolsHeaders {
-    if (Object.keys(this.headers).length) return this.headers;
-    if (!this.headersJson.trim()) return {};
-    try {
-      const parsed = JSON.parse(this.headersJson);
-      return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-        ? (parsed as PanelToolsHeaders)
-        : {};
-    } catch {
-      return {};
-    }
+    return this.headers ?? {};
   }
 
   private activeHeader(tool: PanelToolsToolId): PanelToolsHeaderConfig {
@@ -155,7 +154,7 @@ export class ShellTools {
 
   private selectInboxTool = (event: CustomEvent<string>) => {
     const id = event.detail;
-    if (!isShellInboxTool(id) || id === this.mobileActiveTool) return;
+    if (!this.availableInboxTools.includes(id) || id === this.mobileActiveTool) return;
     this.open = true;
     this.activeTool = id;
     this.dsToolChange.emit({ id, selected: true });
@@ -220,7 +219,7 @@ export class ShellTools {
   }
 
   private renderForwardedSlots() {
-    return PANEL_TOOLS_TOOL_IDS.flatMap(id => [
+    return this.mobileViewOrder.flatMap(id => [
       <slot name={id} slot={id} />,
       <slot name={`${id}-view`} slot={`${id}-view`} />,
     ]);
@@ -254,13 +253,13 @@ export class ShellTools {
   private renderMobileHeader(tool: PanelToolsToolId) {
     const header = this.activeHeader(tool);
     const configuredTitle = header.title?.trim();
-    const title = configuredTitle || PANEL_TOOLS_LABELS[tool];
+    const title = configuredTitle || this.toolLabel(tool);
     const actions = (header.actions ?? []).filter(action => action.id !== 'fullscreen');
     const sections =
       isShellInboxTool(tool) && !header.showBack
         ? this.availableInboxTools.map(id => ({
             id,
-            label: PANEL_TOOLS_LABELS[id],
+            label: this.toolLabel(id),
           }))
         : [];
 
@@ -334,7 +333,7 @@ export class ShellTools {
       >
         {tool ? this.renderMobileHeader(tool) : null}
         <div class="shell-tools__mobile-body">
-          {MOBILE_VIEW_ORDER.map(id => {
+          {this.mobileViewOrder.map(id => {
             const active = this.open && id === tool;
             return (
               <div

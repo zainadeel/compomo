@@ -4,130 +4,132 @@
   "id": "pattern:shell-page",
   "kind": "pattern",
   "status": "stable",
-  "summary": "Compose one ShellPage inside ShellApp's content region with a slotted BarTitle and application-owned routed content.",
+  "summary": "Supply route-owned page chrome and content to managed ShellApp, which composes ShellPage, BarTitle, and MobileHeader without duplicate page state.",
   "useWhen": [
-    "A standard authenticated route needs shared page title chrome, sticky scroll compaction, and consistent content inset.",
-    "The page column can change width as global navigation or tools open and close."
+    "A standard authenticated route needs a shared heading, sections, depth, actions, sticky compaction, and content inset.",
+    "The routed page must keep one content owner while desktop and mobile header presentations differ."
   ],
   "avoidWhen": [
     "The experience does not use the standard authenticated ShellApp layout.",
-    "The content belongs to a drawer, modal, card, or fullscreen tool pane.",
-    "A ShellPage already owns the route; never nest ShellPages."
+    "The content belongs to a drawer, modal, card, or global tool pane.",
+    "Another route owner already supplies the active ShellApp pageChrome."
   ],
   "components": [
     {
       "component": "component:ds-shell-app",
-      "role": "Owns global chrome and the single scrolling content region.",
+      "role": "Receives pageChrome and persistent routed content, then owns responsive page presentation.",
       "required": true
     },
     {
       "component": "component:ds-shell-page",
-      "role": "Owns the page main landmark, sticky header orchestration, responsive variants, and content inset.",
-      "required": true
+      "role": "Managed internal page boundary; remains public for advanced slotted ShellApp composition.",
+      "required": false
     },
     {
       "component": "component:ds-bar-title",
-      "role": "Provides the page h1, inline route-section selector, Back intent, and page actions.",
-      "required": true
+      "role": "Managed desktop/tablet page-header presentation; remains public for advanced slotted composition.",
+      "required": false
+    },
+    {
+      "component": "component:ds-mobile-header",
+      "role": "Managed mobile page-header presentation using the same route-owned pageChrome data.",
+      "required": false
     }
   ],
   "stateOwnership": [
-    "ShellApp owns global navigation, tools, and scrolling; ShellPage never creates another scroll container.",
-    "ShellPage owns automatic BarTitle variant selection. Consumers do not synchronize BarTitle.variant when headerPresentation is auto.",
-    "The route owner owns heading copy, Back consequences, selected section value, available actions, data, forms, and product outcomes.",
-    "Keep dsSectionChange controlled by updating the route and passing the resolved value back to BarTitle."
+    "The router owns heading copy, selected section, depth, available actions, route data, and product outcomes.",
+    "The application replaces pageChrome from completed route state and handles ShellApp page intent events.",
+    "ShellApp owns ShellPage, BarTitle, MobileHeader, the content scroller, sticky presentation, and responsive switching.",
+    "The default slot contains application-owned routed content and is not recreated for header compaction or breakpoint changes.",
+    "Use a directly slotted ShellPage only inside composition=\"slotted\"."
   ],
   "accessibility": [
-    "Render one active ShellPage so the application contains one routed-page main landmark.",
-    "Provide one BarTitle in slot=header and one concise heading so the page contains one h1.",
-    "Use destination-specific Back labels and preserve action labels across inline and overflow presentations.",
-    "Keep route loading, error, empty, success, and validation communication in the ShellPage content slot."
+    "Keep exactly one active routed main landmark, supplied by the managed ShellPage.",
+    "Provide one concise route heading and destination-specific Back and action labels through pageChrome.",
+    "Keep route loading, error, empty, success, and validation communication in the default page-content slot.",
+    "Handle section and Back intent through the router without replacing focused tool or page owners unnecessarily."
   ],
   "responsiveBehavior": [
-    "Resolve viewport and persistent shell chrome into ShellPage.headerCapacity; ShellPage uses that explicit capacity plus scroll position to select expanded, compact, or constrained presentation.",
-    "Set primaryAction.collapse to never only when an ordinary routed-page action must preserve visible hierarchy; create and edit workflows use BarWorkflow instead.",
+    "ShellApp derives the desktop BarTitle and mobile MobileHeader from the same pageChrome object.",
+    "Route-level sections remain pageChrome tabs; subordinate local views use subsections.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
-    "Place TabGroup inside ShellPage content for inner-page panels; route-level sections remain in BarTitle."
+    "The routed content owner remains mounted while header presentation compacts or changes breakpoint."
   ],
   "implementations": {
     "customElements": {
       "status": "verified",
       "recipes": [
         {
-          "id": "routed-page",
-          "title": "Routed page shell",
-          "summary": "A standard page with an inline section selector and application-owned content.",
+          "id": "managed-page-chrome",
+          "title": "Managed routed page chrome",
+          "summary": "Assign route state to ShellApp and leave page structure to the managed composition.",
           "files": [
             {
-              "path": "page.html",
-              "language": "html",
-              "content": "<ds-shell-app>\n  <ds-shell-page header-capacity=\"roomy\">\n    <ds-bar-title\n      id=\"drivers-header\"\n      slot=\"header\"\n      heading=\"Drivers\"\n      value=\"active\"\n    ></ds-bar-title>\n    <section aria-label=\"Driver results\">Page content</section>\n  </ds-shell-page>\n</ds-shell-app>"
-            },
-            {
-              "path": "page.ts",
+              "path": "drivers-page.ts",
               "language": "typescript",
-              "content": "import '@ds-mo/ui/dist/components/ds-shell-app.js'\nimport '@ds-mo/ui/dist/components/ds-shell-page.js'\nimport '@ds-mo/ui/dist/components/ds-bar-title.js'\n\nconst header = document.querySelector<HTMLDsBarTitleElement>('#drivers-header')!\nheader.sections = [\n  { id: 'active', label: 'Active' },\n  { id: 'inactive', label: 'Inactive' },\n]\nheader.primaryAction = { id: 'create', label: 'Create driver' }\nheader.addEventListener('dsSectionChange', event => {\n  const value = (event as CustomEvent<string>).detail\n  // Update the route, then pass the resolved route value back to the header.\n  header.value = value\n})"
+              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('ds-shell-app')!\nconst pageChrome: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  primaryAction: { id: 'create', label: 'Create driver' },\n}\nshell.pageChrome = pageChrome\nshell.addEventListener('dsTabChange', event => appRouter.navigate(event.detail))\nshell.addEventListener('dsPageAction', event => driverActions.run(event.detail))"
             }
           ],
           "notes": [
-            "The complete application also supplies PanelNav, BarNav, and PanelTools through ShellApp's named slots.",
-            "Do not put page content inside BarTitle."
+            "Replace pageChrome after router navigation instead of maintaining duplicate local route selection.",
+            "Render routed content in the managed ShellApp default slot."
           ]
         }
       ],
       "references": [
-        "src/wc/components/ShellPage/ShellPage.stories.ts",
-        "tests/e2e/fixtures/bar-title.html"
+        "src/wc/components/ShellApp/ShellApp.stories.ts",
+        "src/wc/components/ShellPage/ShellPage.stories.ts"
       ]
     },
     "react": {
       "status": "verified",
       "recipes": [
         {
-          "id": "routed-page",
-          "title": "React routed page shell",
-          "summary": "Generated React wrappers with controlled route-section state.",
+          "id": "managed-page-chrome",
+          "title": "React managed routed page",
+          "summary": "Pass router-derived page chrome to the persistent ShellApp owner.",
           "files": [
             {
-              "path": "DriversPage.tsx",
+              "path": "DriversRoute.tsx",
               "language": "tsx",
-              "content": "import { useState } from 'react'\nimport { DsShellApp, DsBarTitle, DsShellPage } from '@ds-mo/ui/react'\n\nconst sections = [\n  { id: 'active', label: 'Active' },\n  { id: 'inactive', label: 'Inactive' },\n]\n\nexport function DriversPage() {\n  const [value, setValue] = useState('active')\n  return (\n    <DsShellApp>\n      <DsShellPage headerCapacity=\"roomy\">\n        <DsBarTitle\n          slot=\"header\"\n          heading=\"Drivers\"\n          sections={sections}\n          value={value}\n          primaryAction={{ id: 'create', label: 'Create driver' }}\n          onDsSectionChange={event => setValue(event.detail)}\n        />\n        <section aria-label=\"Driver results\">Page content</section>\n      </DsShellPage>\n    </DsShellApp>\n  )\n}"
+              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport const driversPageChrome: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  primaryAction: { id: 'create', label: 'Create driver' },\n}\n\nexport function DriversRoute() {\n  return <section aria-label=\"Driver results\">Page content</section>\n}"
             }
           ],
           "notes": [
-            "Resolve value from router state in production rather than keeping duplicate local route state.",
-            "Use contentInset=\"none\" only for full-bleed pages."
+            "The persistent application layout supplies driversPageChrome to DsShellApp.",
+            "Do not wrap the route in another ShellApp or ShellPage."
           ]
         }
       ],
-      "references": ["src/react/ds-shell-page.ts", "src/react/ds-bar-title.ts"]
+      "references": [
+        "src/wc/components/ShellApp/ShellApp.mdx",
+        "docs/framework-integration.md"
+      ]
     },
     "angular": {
       "status": "verified",
       "recipes": [
         {
-          "id": "routed-page",
-          "title": "Angular routed page shell",
-          "summary": "Generated standalone adapters with router-owned page content.",
+          "id": "managed-page-chrome",
+          "title": "Angular managed routed page",
+          "summary": "Expose route-owned pageChrome to the persistent shell layout.",
           "files": [
             {
-              "path": "drivers-page.component.html",
-              "language": "html",
-              "content": "<ds-shell-page [headerCapacity]=\"headerCapacity\">\n  <ds-bar-title\n    slot=\"header\"\n    heading=\"Drivers\"\n    [sections]=\"sections\"\n    [value]=\"selectedSection\"\n    [primaryAction]=\"primaryAction\"\n    (dsSectionChange)=\"selectSection($event.detail)\"\n  ></ds-bar-title>\n  <router-outlet />\n</ds-shell-page>"
-            },
-            {
-              "path": "drivers-page.component.ts",
+              "path": "drivers-page-chrome.ts",
               "language": "typescript",
-              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport type { ShellPageCapacity } from '@ds-mo/ui'\nimport { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title'\nimport { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page'\n\n@Component({\n  standalone: true,\n  imports: [DsBarTitle, DsShellPage, RouterOutlet],\n  templateUrl: './drivers-page.component.html',\n})\nexport class DriversPageComponent {\n  readonly headerCapacity: ShellPageCapacity = 'roomy'\n  readonly sections = [\n    { id: 'active', label: 'Active' },\n    { id: 'inactive', label: 'Inactive' },\n  ]\n  readonly primaryAction = { id: 'create', label: 'Create driver' }\n  selectedSection = 'active'\n\n  selectSection(id: string) {\n    this.selectedSection = id\n    // Navigate to the matching child route.\n  }\n}"
+              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport const DRIVERS_PAGE_CHROME: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  primaryAction: { id: 'create', label: 'Create driver' },\n}"
             }
           ],
           "notes": [
-            "ShellApp belongs in the persistent application layout; routed page components render ShellPage in its default content slot.",
-            "Do not add an overflow-auto wrapper around ds-shell-page."
+            "The persistent Angular shell binds the resolved pageChrome object to DsShellApp.",
+            "The routed component renders only product content."
           ]
         }
       ],
-      "references": ["src/angular/ds-shell-page.ts", "src/angular/ds-bar-title.ts"]
+      "references": [
+        "docs/framework-integration.md",
+        "scripts/verify-package-imports.mjs"
+      ]
     }
   },
   "references": [

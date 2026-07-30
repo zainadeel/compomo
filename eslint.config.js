@@ -10,7 +10,15 @@ import local from './eslint-plugin-local/index.js';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', 'storybook-static/**', 'scripts/**', 'src/angular/**', 'eslint-plugin-local/**'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'storybook-static/**',
+      'scripts/**',
+      'src/.generated/**',
+      'src/angular/**',
+      'eslint-plugin-local/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -35,7 +43,12 @@ export default tseslint.config(
       'react-hooks/exhaustive-deps': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+        {
+          argsIgnorePattern: '^_',
+          // Stencil's JSX transform consumes the imported h factory even
+          // though the TypeScript ESTree scope analyzer cannot observe it.
+          varsIgnorePattern: '^(?:_|h$)',
+        },
       ],
       // Primitives — warn only (same posture as stylelint). Prefer ds-text / ds-icon.
       'local/prefer-ds-text': 'warn',

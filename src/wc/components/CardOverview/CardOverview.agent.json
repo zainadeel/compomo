@@ -22,8 +22,8 @@
   "alternatives": [
     {
       "when": "A measure needs a chart or other data visualization.",
-      "component": "component:ds-card-shell-data-viz",
-      "reason": "CardShellDataViz owns the data-visualization shell contract; the overview grid presents values and change only."
+      "component": "component:ds-card-data-viz",
+      "reason": "CardDataViz owns the data-visualization card contract; the overview grid presents values and change only."
     },
     {
       "when": "The surface is a settings section with an edit workflow.",

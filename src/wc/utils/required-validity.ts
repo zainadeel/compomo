@@ -1,6 +1,6 @@
 /**
  * Shared "required field" validity contract for form-associated custom
- * elements (Checkbox, Radio, Switch, Input, Select, SelectMulti, …).
+ * elements (Checkbox, Radio, Switch, Input, Select, …).
  *
  * Each control computes its own `missing` condition (what counts as empty
  * differs: unchecked, no value, no selection, …) and its own form value, then

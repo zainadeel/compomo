@@ -73,6 +73,11 @@
   height: 100%;
 }
 
+.shell-app__panel > ds-panel-nav {
+  display: block;
+  height: 100%;
+}
+
 .shell-app__main {
   flex: 1 1 auto;
   min-width: 0;
@@ -99,6 +104,10 @@
 }
 
 .shell-app__bar ::slotted(ds-bar-nav) {
+  display: block;
+}
+
+.shell-app__bar > ds-bar-nav {
   display: block;
 }
 
@@ -142,6 +151,17 @@
   display: block;
   height: 100%;
   min-height: 0;
+}
+
+.shell-app__tools > ds-shell-tools {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.shell-app__content > ds-shell-page {
+  display: block;
+  min-height: 100%;
 }
 
 :host(.shell-app--tools-fullscreen) .shell-app__panel,

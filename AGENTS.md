@@ -31,8 +31,7 @@ and React adapters:
 
 - Source components: `src/wc/components/`
 - Shared component utilities: `src/wc/utils/`
-- Angular output: `src/angular/`
-- React output: `src/react/`
+- Generated framework source: ignored `src/.generated/{angular,react}/`
 - Storybook usage documentation: `src/docs/`
 - Agent intent and compositions: co-located `*.agent.json` and `agent/patterns/`
 - Generated registry: `public/r/`
@@ -80,8 +79,7 @@ Use Node from `.nvmrc`.
 Do not hand-edit:
 
 - `dist/`
-- `src/angular/`
-- `src/react/`
+- `src/.generated/`
 - `src/wc/components.d.ts`
 - generated registry content in `public/r/`
 

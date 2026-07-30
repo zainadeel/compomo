@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Selection patterns
 
-Use `ds-select` for one value and `ds-select-multi` for several independent
+Use `ds-select` for one value and `ds-select multiple` for several independent
 values. Both use the same visual list-row and popup foundation as `ds-menu`,
 but selects expose listbox semantics while menus remain collections of actions.
 
@@ -19,13 +19,13 @@ options.
 
 ## Shared popup interaction
 
-Select and SelectMulti use the same anchored positioning, outside dismissal,
+Both Select modes use the same anchored positioning, outside dismissal,
 search-focus, typeahead, and listbox traversal contract. Arrow keys skip
 inactive options and wrap; Home and End move to the first and last enabled
 option; Escape closes and restores trigger focus.
 
 Selection remains intentionally different. Select commits one value and closes
-the popup. SelectMulti toggles one value in its controlled array and keeps the
+the popup. Multiple Select toggles one value in its controlled array and keeps the
 popup open for further choices.
 
 ## Future hierarchical selection

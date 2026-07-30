@@ -8,11 +8,18 @@ const SCRIPT_PATH = fileURLToPath(import.meta.url);
 export const ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..');
 
 const FRAMEWORK_OUTPUTS = [
+  { directory: 'src/.generated/react', barrels: ['components.ts'] },
+  { directory: 'src/.generated/angular', barrels: ['proxies.ts', 'index.ts'] },
+];
+
+const LEGACY_FRAMEWORK_OUTPUTS = [
   { directory: 'src/react', barrels: ['components.ts'] },
   { directory: 'src/angular', barrels: ['proxies.ts', 'index.ts'] },
 ];
 
 const FILE_PROVIDER_COLLISION_OUTPUTS = [
+  { directory: 'src/.generated/react', pattern: / \d+\.ts$/ },
+  { directory: 'src/.generated/angular', pattern: / \d+\.ts$/ },
   { directory: 'src/react', pattern: / \d+\.ts$/ },
   { directory: 'src/angular', pattern: / \d+\.ts$/ },
   { directory: 'public/r', pattern: / \d+\.json$/ },
@@ -64,8 +71,20 @@ export function listFrameworkComponentProxies(
   root = ROOT,
   { includeCollisionCopies = false } = {}
 ) {
+  return listFrameworkComponentProxiesForOutputs(
+    root,
+    FRAMEWORK_OUTPUTS,
+    includeCollisionCopies
+  );
+}
+
+function listFrameworkComponentProxiesForOutputs(
+  root,
+  outputs,
+  includeCollisionCopies
+) {
   const proxies = [];
-  for (const { directory } of FRAMEWORK_OUTPUTS) {
+  for (const { directory } of outputs) {
     const absoluteDirectory = path.join(root, directory);
     if (!fs.existsSync(absoluteDirectory)) continue;
     for (const entry of fs.readdirSync(absoluteDirectory, { withFileTypes: true })) {
@@ -82,11 +101,33 @@ export function listFrameworkComponentProxies(
 }
 
 export function cleanFrameworkProxies(root = ROOT) {
+  const generatedRoot = path.join(root, 'src/.generated');
+  const generatedSourceArtifacts = [];
+  const collectArtifacts = directory => {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const absolutePath = path.join(directory, entry.name);
+      if (entry.isDirectory()) collectArtifacts(absolutePath);
+      else if (entry.isFile()) {
+        generatedSourceArtifacts.push(posix(path.relative(root, absolutePath)));
+      }
+    }
+  };
+  if (fs.existsSync(generatedRoot)) {
+    collectArtifacts(generatedRoot);
+    fs.rmSync(generatedRoot, { recursive: true, force: true });
+  }
+
+  const legacyArtifacts = listFrameworkComponentProxiesForOutputs(
+    root,
+    LEGACY_FRAMEWORK_OUTPUTS,
+    true
+  );
   const generatedArtifacts = [
-    ...listFrameworkComponentProxies(root, { includeCollisionCopies: true }),
+    ...generatedSourceArtifacts,
+    ...legacyArtifacts,
     ...cleanFileProviderCollisions(root),
   ];
-  for (const { directory, barrels } of FRAMEWORK_OUTPUTS) {
+  for (const { directory, barrels } of LEGACY_FRAMEWORK_OUTPUTS) {
     const absoluteDirectory = path.join(root, directory);
     if (!fs.existsSync(absoluteDirectory)) continue;
     for (const entry of fs.readdirSync(absoluteDirectory, { withFileTypes: true })) {
@@ -94,6 +135,13 @@ export function cleanFrameworkProxies(root = ROOT) {
         generatedArtifacts.push(posix(path.join(directory, entry.name)));
       }
     }
+  }
+
+  const legacyAngularRuntime = path.join(root, 'src/angular/angular-component-lib');
+  if (fs.existsSync(legacyAngularRuntime)) {
+    collectArtifacts(legacyAngularRuntime);
+    generatedArtifacts.push(...generatedSourceArtifacts);
+    fs.rmSync(legacyAngularRuntime, { recursive: true, force: true });
   }
 
   const removed = [...new Set(generatedArtifacts)].sort();

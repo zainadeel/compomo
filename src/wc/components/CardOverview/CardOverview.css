@@ -170,7 +170,7 @@
   flex-direction: row;
   align-items: center;
   gap: var(--dimension-space-050);
-  color: var(--color-always-dark-foreground-negative);
+  color: var(--color-reference-dark-red-30-l70-c20-bold);
 }
 
 /* ── Body ─────────────────────────────────────────────────────────────────── */

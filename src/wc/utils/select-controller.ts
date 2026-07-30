@@ -30,7 +30,7 @@ export interface SelectControllerState<T extends ChoiceOption> {
 }
 
 /**
- * Shared Select/SelectMulti interaction controller.
+ * Shared single/multiple Select interaction controller.
  *
  * Decorated Stencil state and scalar/array selection remain in each component;
  * this controller owns only popup lifecycle, focus, positioning, typeahead,

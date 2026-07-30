@@ -3,5 +3,6 @@ export type {
   SelectOption,
   SelectSection,
   SelectSize,
+  SelectValue,
   SelectWidth,
 } from './Select';

@@ -18,6 +18,7 @@ dist
 # Build
 *.tsbuildinfo
 .stencil/
+src/.generated/
 src/wc/components/Icon/system-icon-catalog.ts
 src/wc/components/Icon/flag-icon-catalog.ts
 

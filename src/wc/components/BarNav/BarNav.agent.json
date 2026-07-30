@@ -71,7 +71,7 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign tabs as a JavaScript property for structured data; tabs-json is the string fallback.",
+      "Assign tabs as a JavaScript property and replace the array reference when the collection changes.",
       "Update tabs, heading, basePath, currentUrl, and navStyle from the same resolved route state."
     ],
     "react": [

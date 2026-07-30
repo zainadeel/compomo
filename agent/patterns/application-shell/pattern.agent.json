@@ -3,111 +3,101 @@
   "schemaVersion": "1.0.0",
   "id": "pattern:application-shell",
   "kind": "pattern",
-  "status": "experimental",
-  "summary": "Required base-page composition for standard authenticated applications, with one ShellApp coordinating primary destinations, secondary route sections, tools chrome, responsive modes, and stable main content geometry.",
+  "status": "stable",
+  "summary": "Standard authenticated application architecture: one managed ShellApp receives router-owned navigation and page data plus product-owned tool data and persistent slotted content.",
   "useWhen": [
-    "Building any standard authenticated product or workspace page with CompoMo.",
-    "Application navigation and tools must remain consistent around changing route content.",
-    "Creating a reusable base-page template for CompoMo applications."
+    "Building a standard authenticated application or workspace with CompoMo.",
+    "Navigation, page chrome, global tools, and routed content must adapt across desktop, tablet, and mobile without parallel implementations.",
+    "Tool owners and routed content must preserve element identity while their responsive presentation changes."
   ],
   "avoidWhen": [
     "Building authentication, onboarding, public, marketing, print, error, or intentionally focused full-screen experiences.",
-    "The page is already rendered inside an ShellApp.",
-    "A nested or second application shell is being considered."
+    "The content is already rendered inside a ShellApp.",
+    "A specialized product has a verified reason to own every chrome component through composition=\"slotted\"."
   ],
   "components": [
     {
       "component": "component:ds-shell-app",
-      "role": "Provides the single workspace root and coordinates shell composition, shared chrome, responsive modes, and stable content geometry.",
+      "role": "Standard managed owner of responsive application chrome, global-surface state, focus restoration, and stable application content slots.",
       "required": true
     },
     {
       "component": "component:ds-panel-nav",
-      "role": "Provides the application's one primary navigation with top-level destinations and standard Dashboard/Settings and account footer controls.",
-      "required": true
+      "role": "Managed desktop and tablet primary-navigation presentation; remains public for advanced slotted shells.",
+      "required": false
     },
     {
       "component": "component:ds-bar-nav",
-      "role": "Provides secondary route-section navigation or the active primary destination label while preserving shell height.",
-      "required": true
+      "role": "Managed desktop and tablet route-section presentation; remains public for advanced slotted shells.",
+      "required": false
     },
     {
       "component": "component:ds-shell-tools",
-      "role": "Keeps each product tool owner mounted once while adapting desktop/tablet rail and drawer chrome to full-stage mobile Search, Agents, and Inbox surfaces.",
-      "required": true
-    },
-    {
-      "component": "component:ds-mobile-sheet-nav",
-      "role": "Browses Dashboard and Settings primary areas in the mobile stage without navigating until an area is selected.",
-      "required": true
+      "role": "Managed responsive adapter that presents persistent product-owned tool views through PanelTools or the mobile stage.",
+      "required": false
     },
     {
       "component": "component:ds-shell-page",
-      "role": "Owns routed page header stickiness and selects the desktop or mobile header presentation from explicit shell state.",
-      "required": true
+      "role": "Managed routed-page boundary with desktop BarTitle and mobile MobileHeader presentations.",
+      "required": false
     },
     {
-      "component": "component:ds-mobile-header",
-      "role": "Combines mobile page identity, peer-section switching, depth navigation, and contextual actions in one top bar.",
-      "required": true
+      "component": "component:ds-mobile-sheet-nav",
+      "role": "Managed mobile browser for Dashboard and Settings destinations.",
+      "required": false
     },
     {
       "component": "component:ds-mobile-bar-nav",
-      "role": "Provides persistent Menu, current area, Search, Agents, and Inbox destinations below 768px.",
-      "required": true
+      "role": "Managed persistent mobile destinations for Menu, current area, Search, Agents, Inbox, and Help.",
+      "required": false
     }
   ],
   "stateOwnership": [
-    "The application router owns the current route, Dashboard or Settings context, authorization filtering, destination and section collections, localized labels, and navigation execution.",
-    "ShellApp owns desktop, tablet, and mobile composition, shell geometry, navStyle and responsive-mode propagation, gradient alignment, chrome transitions, metrics, inert stage boundaries, and shell shortcuts.",
-    "PanelNav owns primary-destination presentation and the user-controlled desktop collapse preference.",
-    "BarNav derives the active secondary route from currentUrl and basePath and receives the active PanelNav destination label as heading.",
-    "ShellPage receives responsiveMode explicitly and exposes the same route-derived peer-section collection through MobileHeader without creating parallel mobile route state.",
-    "Nested page tabs stay subordinate: MobileHeader sections preserve the selected area page, while subsections carry local child views without promoting them into destinations.",
-    "The application owns mobileDestination, mobileSheetNavOpen, the actual active tool, and the last Inbox segment; ShellTools preserves product owners and presentation.",
-    "The application router owns only the routed workspace. Search, Agents, Inbox, and Menu changes never change router history.",
-    "PanelNav groups and BarNav dividers visually organize peers and never introduce nested navigation hierarchy."
+    "Lab or the consuming application supplies navigation, pageChrome, and tools objects to managed ShellApp.",
+    "The application router owns authorization, current URLs, history, route changes, and the routed content placed in ShellApp's default slot.",
+    "ShellApp emits stable navigation and page intent events; it never mutates router history.",
+    "ShellApp owns responsive mode, PanelNav presentation, tool open state, active tool, mobile Inbox grouping, Menu state, fullscreen presentation, focus restoration, and breakpoint state preservation.",
+    "Tool products and routed content are instantiated once by the application in named tool-view and default slots; ShellApp changes presentation without recreating those owners.",
+    "The application owns account menus, tool product data, page actions, and the consequences of every emitted intent event.",
+    "Use composition=\"slotted\" only when a team intentionally needs to assemble the public lower-level chrome components itself."
   ],
   "accessibility": [
-    "Render one main landmark in the default content region.",
-    "Use PanelNav exclusively for primary destinations and BarNav exclusively for secondary route sections.",
-    "Keep localized visible labels and accessible names available when navigation is collapsed or moved into overflow.",
-    "Provide localized accessible names for all five Mobile Bar Nav items and for every icon-only Mobile Sheet Nav header control.",
-    "Expose exactly one active page heading, preserve the current navigation level in MobileHeader, and keep peer-section and optional subsection switching available through separately named popup menus.",
-    "Preserve keyboard focus and route state across responsive and Dashboard/Settings context changes."
+    "Render exactly one managed ShellApp and one active routed main landmark.",
+    "Provide visible labels and accessible names in navigation, pageChrome, and tool definitions before passing them to ShellApp.",
+    "Handle ShellApp intent events without replacing focusable owners during responsive or fullscreen transitions.",
+    "Keep the canonical Search and Help tools available and preserve Inbox unread state when Messages, Stacks, and Activity are grouped on mobile.",
+    "Do not override browser keyboard chords when enabling shell shortcuts."
   ],
   "responsiveBehavior": [
-    "Use fixed system breakpoints: desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
-    "Desktop permits PanelNav expansion and collapse and restores the persisted user preference.",
-    "Tablet keeps PanelNav permanently collapsed and does not overwrite the desktop preference.",
-    "Mobile hides and inerts PanelNav and BarNav, removes the gradient wash, and uses a solid primary stage above a safe-area-aware persistent bottom bar.",
-    "Each routed ShellPage renders one sticky MobileHeader; nested local views use its subordinate subsection lane while the primary lane retains the page or entity identity.",
-    "The routed workspace stays mounted and is only concealed and inert while a global surface or navigation pane occupies the stage.",
-    "Messages, Stacks, and Activity map to mobile Inbox and preserve the selected segment across destination and breakpoint changes."
+    "ShellApp automatically resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
+    "Desktop and tablet use PanelNav, BarNav, PanelTools through ShellTools, and ShellPage chrome.",
+    "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner.",
+    "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
+    "Messages, Stacks, and Activity use explicit mobile grouping metadata and default to the canonical Inbox recipe."
   ],
   "implementations": {
     "customElements": {
       "status": "verified",
       "recipes": [
         {
-          "id": "responsive-shell",
-          "title": "Responsive application shell",
-          "summary": "One routed workspace and one set of persistent tool owners shared across desktop, tablet, and mobile presentations.",
+          "id": "managed-shell",
+          "title": "Managed application shell",
+          "summary": "Supply typed data and persistent application-owned content to one ShellApp.",
           "files": [
             {
               "path": "app-shell.html",
               "language": "html",
-              "content": "<ds-shell-app id=\"shell\" mobile-destination=\"area\">\n  <ds-panel-nav id=\"panel\" slot=\"panel\"></ds-panel-nav>\n  <ds-mobile-sheet-nav id=\"mobile-sheet-nav\" slot=\"mobile-sheet-nav\"></ds-mobile-sheet-nav>\n  <ds-bar-nav id=\"bar\" slot=\"bar\"></ds-bar-nav>\n  <ds-shell-tools id=\"tools\" slot=\"tools\">\n    <app-search slot=\"search-view\"></app-search>\n    <app-agents slot=\"agents-view\"></app-agents>\n    <app-messages slot=\"messages-view\"></app-messages>\n    <app-stacks slot=\"stacks-view\"></app-stacks>\n    <app-activity slot=\"activity-view\"></app-activity>\n    <app-help slot=\"help-view\"></app-help>\n  </ds-shell-tools>\n  <ds-shell-page id=\"page\" responsive-mode=\"mobile\">\n    <ds-bar-title slot=\"header\" heading=\"Live Map\"></ds-bar-title>\n    <ds-mobile-header slot=\"mobile-header\" heading=\"Live Map\"></ds-mobile-header>\n    <main><!-- routed workspace --></main>\n  </ds-shell-page>\n  <ds-mobile-bar-nav id=\"mobile-bar-nav\" slot=\"mobile-bar-nav\"></ds-mobile-bar-nav>\n</ds-shell-app>"
+              "content": "<ds-shell-app id=\"shell\">\n  <app-search slot=\"search-view\"></app-search>\n  <app-agents slot=\"agents-view\"></app-agents>\n  <app-messages slot=\"messages-view\"></app-messages>\n  <app-stacks slot=\"stacks-view\"></app-stacks>\n  <app-activity slot=\"activity-view\"></app-activity>\n  <app-help slot=\"help-view\"></app-help>\n  <app-route-content><!-- router-owned page --></app-route-content>\n</ds-shell-app>"
             },
             {
               "path": "app-shell.ts",
               "language": "typescript",
-              "content": "import '@ds-mo/ui/components/ds-shell-app.js'\nimport '@ds-mo/ui/components/ds-panel-nav.js'\nimport '@ds-mo/ui/components/ds-bar-nav.js'\nimport '@ds-mo/ui/components/ds-bar-title.js'\nimport '@ds-mo/ui/components/ds-shell-page.js'\nimport '@ds-mo/ui/components/ds-shell-tools.js'\nimport '@ds-mo/ui/components/ds-mobile-sheet-nav.js'\nimport '@ds-mo/ui/components/ds-mobile-header.js'\nimport '@ds-mo/ui/components/ds-mobile-bar-nav.js'\nimport type { MobileDestination } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('#shell')!\nconst bar = document.querySelector<HTMLDsMobileBarNavElement>('#mobile-bar-nav')!\nconst sheetNav = document.querySelector<HTMLDsMobileSheetNavElement>('#mobile-sheet-nav')!\n\nfunction setMobileState(destination: MobileDestination, sheetNavOpen = false) {\n  shell.mobileDestination = destination\n  shell.mobileSheetNavOpen = sheetNavOpen\n  bar.activeDestination = destination\n  bar.sheetNavExpanded = sheetNavOpen\n  sheetNav.open = sheetNavOpen\n}\n\nbar.addEventListener('dsSheetNavToggle', event => setMobileState(shell.mobileDestination, event.detail))\nbar.addEventListener('dsDestinationChange', event => setMobileState(event.detail.destination))"
+              "content": "import '@ds-mo/ui/components/ds-shell-app.js'\nimport { PANEL_TOOLS_DEFAULT_ITEMS } from '@ds-mo/ui/shell'\nimport type { ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('#shell')!\nconst navigation: ShellNavigationConfig = {\n  groups: [{ items: [{ id: 'overview', icon: 'Home', label: 'Overview', href: '/dashboard/overview' }] }],\n  dashboardGroups: [{ items: [{ id: 'overview', icon: 'Home', label: 'Overview', href: '/dashboard/overview' }] }],\n  currentUrl: location.pathname,\n  browseContext: 'dashboard',\n  routerMode: 'event',\n  userName: 'User Name',\n  userInitial: 'U',\n}\nconst pageChrome: ShellPageChromeConfig = {\n  heading: 'Overview',\n  tabs: [{ id: 'overview', label: 'Overview', href: '/dashboard/overview' }],\n  value: 'overview',\n  currentUrl: location.pathname,\n}\nconst tools: ShellToolsConfig = { items: PANEL_TOOLS_DEFAULT_ITEMS }\nshell.navigation = navigation\nshell.pageChrome = pageChrome\nshell.tools = tools\nshell.addEventListener('dsNavSelect', event => appRouter.navigate(event.detail))\nshell.addEventListener('dsTabChange', event => appRouter.navigate(event.detail))"
             }
           ],
           "notes": [
-            "Assign navigation groups, tabs, items, headers, and current-area data as JavaScript properties.",
-            "The router outlet remains in the default slot and global destination changes do not navigate."
+            "Update navigation and pageChrome together after router navigation.",
+            "Keep every tool owner and the router-owned page mounted in its slot."
           ]
         }
       ],
@@ -120,23 +110,24 @@
       "status": "verified",
       "recipes": [
         {
-          "id": "responsive-shell",
-          "title": "Responsive application shell",
-          "summary": "A controlled React shell coordinator with stable routed and tool children.",
+          "id": "managed-shell",
+          "title": "Managed React application shell",
+          "summary": "Use the generated ShellApp wrapper with memoized router-owned configuration and stable children.",
           "files": [
             {
               "path": "AppShell.tsx",
               "language": "tsx",
-              "content": "import { useState } from 'react'\nimport type { MobileDestination } from '@ds-mo/ui/shell'\nimport { DsBarNav, DsBarTitle, DsMobileBarNav, DsMobileHeader, DsMobileSheetNav, DsPanelNav, DsShellApp, DsShellPage, DsShellTools } from '@ds-mo/ui/react'\n\nexport function AppShell() {\n  const [destination, setDestination] = useState<MobileDestination>('area')\n  const [sheetNavOpen, setSheetNavOpen] = useState(false)\n  return (\n    <DsShellApp mobileDestination={destination} mobileSheetNavOpen={sheetNavOpen}>\n      <DsPanelNav slot=\"panel\" />\n      <DsMobileSheetNav slot=\"mobile-sheet-nav\" open={sheetNavOpen} />\n      <DsBarNav slot=\"bar\" />\n      <DsShellTools slot=\"tools\"><div slot=\"search-view\">Search</div></DsShellTools>\n      <DsShellPage responsiveMode=\"mobile\"><DsBarTitle slot=\"header\" heading=\"Live Map\" /><DsMobileHeader slot=\"mobile-header\" heading=\"Live Map\" /><main>{/* routed workspace */}</main></DsShellPage>\n      <DsMobileBarNav slot=\"mobile-bar-nav\" activeDestination={destination} sheetNavExpanded={sheetNavOpen} onDsSheetNavToggle={event => setSheetNavOpen(event.detail)} onDsDestinationChange={event => { setSheetNavOpen(false); setDestination(event.detail.destination) }} />\n    </DsShellApp>\n  )\n}"
+              "content": "import { useMemo } from 'react'\nimport { DsShellApp } from '@ds-mo/ui/react'\nimport { PANEL_TOOLS_DEFAULT_ITEMS } from '@ds-mo/ui/shell'\nimport type { ShellNavigationConfig, ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport function AppShell({ route, navigate, children }) {\n  const navigation = useMemo<ShellNavigationConfig>(() => ({ groups: route.groups, dashboardGroups: route.dashboardGroups, settingsGroups: route.settingsGroups, currentUrl: route.url, browseContext: route.context, routerMode: 'event', userName: route.user.name, userInitial: route.user.initial }), [route])\n  const pageChrome = useMemo<ShellPageChromeConfig>(() => ({ heading: route.heading, tabs: route.sections, value: route.section, currentUrl: route.url }), [route])\n  return <DsShellApp navigation={navigation} pageChrome={pageChrome} tools={{ items: PANEL_TOOLS_DEFAULT_ITEMS }} onDsNavSelect={event => navigate(event.detail)} onDsTabChange={event => navigate(event.detail)}>\n    <SearchProduct slot=\"search-view\" />\n    <AgentsProduct slot=\"agents-view\" />\n    <InboxProduct slot=\"messages-view\" />\n    <HelpProduct slot=\"help-view\" />\n    {children}\n  </DsShellApp>\n}"
             }
           ],
           "notes": [
-            "Keep routed and tool-owner element identity stable; control only shell visibility and selection state."
+            "Memoize structured configuration so unrelated product renders do not produce artificial shell input changes.",
+            "Do not conditionally recreate routed or tool children when responsive mode changes."
           ]
         }
       ],
       "references": [
-        "src/react/components.ts",
+        "src/wc/components/ShellApp/ShellApp.mdx",
         "docs/framework-integration.md"
       ]
     },
@@ -144,23 +135,24 @@
       "status": "verified",
       "recipes": [
         {
-          "id": "responsive-shell",
-          "title": "Responsive application shell",
-          "summary": "A controlled Angular shell using generated standalone adapters and native slot names.",
+          "id": "managed-shell",
+          "title": "Managed Angular application shell",
+          "summary": "Bind router-derived object properties to the generated standalone ShellApp adapter.",
           "files": [
             {
               "path": "app-shell.component.html",
               "language": "html",
-              "content": "<ds-shell-app [mobileDestination]=\"destination\" [mobileSheetNavOpen]=\"sheetNavOpen\">\n  <ds-panel-nav slot=\"panel\"></ds-panel-nav>\n  <ds-mobile-sheet-nav slot=\"mobile-sheet-nav\" [open]=\"sheetNavOpen\"></ds-mobile-sheet-nav>\n  <ds-bar-nav slot=\"bar\"></ds-bar-nav>\n  <ds-shell-tools slot=\"tools\"><app-search slot=\"search-view\" /></ds-shell-tools>\n  <ds-shell-page [responsiveMode]=\"mode\"><ds-bar-title slot=\"header\" heading=\"Live Map\"></ds-bar-title><ds-mobile-header slot=\"mobile-header\" heading=\"Live Map\"></ds-mobile-header><router-outlet /></ds-shell-page>\n  <ds-mobile-bar-nav slot=\"mobile-bar-nav\" [activeDestination]=\"destination\" [sheetNavExpanded]=\"sheetNavOpen\" (dsSheetNavToggle)=\"sheetNavOpen = $event.detail\" (dsDestinationChange)=\"selectDestination($event.detail.destination)\"></ds-mobile-bar-nav>\n</ds-shell-app>"
+              "content": "<ds-shell-app [navigation]=\"navigation\" [pageChrome]=\"pageChrome\" [tools]=\"tools\" (dsNavSelect)=\"navigate($event.detail)\" (dsTabChange)=\"navigate($event.detail)\">\n  <app-search slot=\"search-view\" />\n  <app-agents slot=\"agents-view\" />\n  <app-messages slot=\"messages-view\" />\n  <app-help slot=\"help-view\" />\n  <router-outlet />\n</ds-shell-app>"
             },
             {
               "path": "app-shell.component.ts",
               "language": "typescript",
-              "content": "import { Component } from '@angular/core'\nimport { RouterOutlet } from '@angular/router'\nimport type { MobileDestination, ShellResponsiveMode } from '@ds-mo/ui/shell'\nimport { DsBarNav } from '@ds-mo/ui/angular/ds-bar-nav'\nimport { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title'\nimport { DsMobileBarNav } from '@ds-mo/ui/angular/ds-mobile-bar-nav'\nimport { DsMobileHeader } from '@ds-mo/ui/angular/ds-mobile-header'\nimport { DsMobileSheetNav } from '@ds-mo/ui/angular/ds-mobile-sheet-nav'\nimport { DsPanelNav } from '@ds-mo/ui/angular/ds-panel-nav'\nimport { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app'\nimport { DsShellPage } from '@ds-mo/ui/angular/ds-shell-page'\nimport { DsShellTools } from '@ds-mo/ui/angular/ds-shell-tools'\n\n@Component({ selector: 'app-shell', standalone: true, imports: [RouterOutlet, DsBarNav, DsBarTitle, DsMobileBarNav, DsMobileHeader, DsMobileSheetNav, DsPanelNav, DsShellApp, DsShellPage, DsShellTools], templateUrl: './app-shell.component.html' })\nexport class AppShellComponent {\n  destination: MobileDestination = 'area'\n  sheetNavOpen = false\n  mode: ShellResponsiveMode = 'desktop'\n  selectDestination(destination: MobileDestination) { this.sheetNavOpen = false; this.destination = destination }\n}"
+              "content": "import { Component } from '@angular/core'\nimport { Router, RouterOutlet } from '@angular/router'\nimport { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app'\nimport { PANEL_TOOLS_DEFAULT_ITEMS } from '@ds-mo/ui/shell'\nimport type { ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from '@ds-mo/ui/shell'\n\n@Component({ selector: 'app-shell', standalone: true, imports: [DsShellApp, RouterOutlet], templateUrl: './app-shell.component.html' })\nexport class AppShellComponent {\n  navigation: ShellNavigationConfig = { groups: [], dashboardGroups: [], settingsGroups: [], routerMode: 'event' }\n  pageChrome: ShellPageChromeConfig = { heading: '' }\n  tools: ShellToolsConfig = { items: PANEL_TOOLS_DEFAULT_ITEMS }\n  constructor(private router: Router) {}\n  navigate(target: string) { void this.router.navigateByUrl(target) }\n}"
             }
           ],
           "notes": [
-            "Bind structured navigation and tool data as properties and update router-derived inputs together."
+            "Resolve and replace navigation and pageChrome on completed router navigation.",
+            "The router outlet and tool components remain application-owned slots."
           ]
         }
       ],
@@ -172,6 +164,7 @@
   },
   "references": [
     "src/wc/components/ShellApp/ShellApp.mdx",
-    "docs/framework-integration.md"
+    "docs/framework-integration.md",
+    "docs/migrations/v13.md"
   ]
 }

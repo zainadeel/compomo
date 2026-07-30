@@ -155,6 +155,11 @@ export class MobileBarNav {
       return;
     }
     this.dsDestinationChange.emit({ destination });
+    // Owners may replace the visible mobile stage (and transiently drop focus
+    // in WebKit) while handling the controlled destination change.
+    requestAnimationFrame(() => {
+      void this.focusDestination(destination);
+    });
   }
 
   @Method()

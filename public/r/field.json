@@ -15,7 +15,7 @@
       "status": "stable",
       "summary": "Accessible form-field composition that gives one Input or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
       "useWhen": [
-        "An Input, Select, or SelectMulti needs a persistent visible label in a form.",
+        "An Input or Select needs a persistent visible label in a form.",
         "Help text or an error message must be programmatically associated with one control.",
         "A form layout needs one consistent label-control-message rhythm."
       ],
@@ -34,7 +34,6 @@
       "commonlyComposedWith": [
         "component:ds-input",
         "component:ds-select",
-        "component:ds-select-multi",
         "component:ds-text"
       ],
       "accessibility": [
@@ -61,7 +60,7 @@
           "Assign child component values and option arrays through their normal JavaScript properties."
         ],
         "react": [
-          "Compose one DsInput, DsSelect, or DsSelectMulti child and control validation timing in the form owner."
+          "Compose one DsInput or DsSelect child and control validation timing in the form owner."
         ],
         "angular": [
           "Compose the generated Field adapter around the control adapter and its matching Angular value accessor."

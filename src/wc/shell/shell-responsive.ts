@@ -2,7 +2,7 @@ import type { PanelToolsToolId } from '../components/PanelTools/panel-tools-type
 
 export type ShellResponsiveMode = 'desktop' | 'tablet' | 'mobile';
 export type MobileDestination = 'area' | 'search' | 'agents' | 'inbox' | 'help';
-export type ShellInboxToolId = Extract<PanelToolsToolId, 'messages' | 'stacks' | 'activity'>;
+export type ShellInboxToolId = PanelToolsToolId;
 
 export const SHELL_DESKTOP_BREAKPOINT = 1200;
 export const SHELL_MOBILE_BREAKPOINT = 768;

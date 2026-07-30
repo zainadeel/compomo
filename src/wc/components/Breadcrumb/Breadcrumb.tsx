@@ -1,4 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';
+import { resolveSafeUrl } from '../../utils';
 import type { BreadcrumbItem, BreadcrumbSelectDetail } from './breadcrumb-types';
 
 @Component({
@@ -166,11 +167,12 @@ export class Breadcrumb {
       );
     }
 
-    if (item.href) {
+    const href = resolveSafeUrl(item.href);
+    if (href) {
       return (
         <a
           class="breadcrumb__link ds-focus-ring"
-          href={item.href}
+          href={href}
           aria-label={item.ariaLabel}
           onClick={(event: MouseEvent) => this.handleSelect(item, event)}
         >

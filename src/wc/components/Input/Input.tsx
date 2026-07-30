@@ -3,6 +3,8 @@ import {
   controlWidthClass,
   CONTROL_TEXT_VARIANT,
   DEFAULT_REQUIRED_MESSAGE,
+  restoreStringFormState,
+  setFormControlValue,
   setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
@@ -101,7 +103,7 @@ export class Input {
   @Watch('required')
   syncFormValue() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    this.internals.setFormValue(inactive ? null : this.value);
+    setFormControlValue(this.internals, this.value, { inactive });
     const missing = this.required && !inactive && this.value.length === 0;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
@@ -116,7 +118,7 @@ export class Input {
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
-    this.value = typeof state === 'string' ? state : '';
+    this.value = restoreStringFormState(state);
   }
 
   @Method()

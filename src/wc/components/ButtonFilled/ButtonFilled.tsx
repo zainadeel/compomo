@@ -1,7 +1,14 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
-import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
+import { controlWidthClass } from '../../utils';
 import type { ChoiceBackground } from '../../utils/choice-list';
 import { beginElevatedControlPress } from '../../utils/control-press';
+import { renderButtonContent } from '../../utils/button-render';
+import type {
+  ButtonPopup,
+  ButtonSize,
+  ButtonVariant,
+  ButtonWidth,
+} from '../../utils/button-types';
 
 export type ButtonFilledIntent =
   | 'neutral'
@@ -18,24 +25,10 @@ export type ButtonFilledContrast = 'bold' | 'strong' | 'medium' | 'faint';
 
 export type ButtonFilledBackground = ChoiceBackground;
 
-export type ButtonFilledVariant = 'icon' | 'label' | 'icon-label';
-
-export type ButtonFilledSize = 'lg' | 'md' | 'sm' | 'xs';
-
-export type ButtonFilledWidth = ControlWidth;
-
-export type ButtonFilledPopup = 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
-
-/**
- * `ds-icon` size prop matching control-density icon metrics
- * (lg→24 / md→20 / sm→16 / xs→12 via `--dimension-iconography-*`).
- */
-const ICON_SIZE: Record<ButtonFilledSize, 'lg' | 'md' | 'sm' | 'xs'> = {
-  lg: 'lg',
-  md: 'md',
-  sm: 'sm',
-  xs: 'xs',
-};
+export type ButtonFilledVariant = ButtonVariant;
+export type ButtonFilledSize = ButtonSize;
+export type ButtonFilledWidth = ButtonWidth;
+export type ButtonFilledPopup = ButtonPopup;
 
 @Component({
   tag: 'ds-button-filled',
@@ -115,9 +108,6 @@ export class ButtonFilled {
   /** Popup type exposed to assistive technology. */
   @Prop() haspopup: ButtonFilledPopup | undefined;
 
-  /** Pressed semantics for a toggle command that reports state elsewhere. */
-  @Prop() pressed: boolean | undefined;
-
   /**
    * This action *has* a menu: implies `aria-haspopup="menu"` and adds the trailing
    * chevron that carries the affordance.
@@ -148,19 +138,6 @@ export class ButtonFilled {
     this.dsClick.emit(event);
   };
 
-  private get showIcon(): boolean {
-    return this.variant === 'icon' || this.variant === 'icon-label';
-  }
-
-  private get showLabel(): boolean {
-    return this.variant === 'label' || this.variant === 'icon-label';
-  }
-
-  /** Icon-only triggers rely on their own glyph, so the chevron is label-bound. */
-  private get showChevron(): boolean {
-    return this.hasMenu && this.variant !== 'icon';
-  }
-
   private get resolvedHaspopup(): ButtonFilledPopup | undefined {
     return this.haspopup ?? (this.hasMenu ? 'menu' : undefined);
   }
@@ -172,11 +149,9 @@ export class ButtonFilled {
   }
 
   render() {
-    const textVariant = CONTROL_TEXT_VARIANT[this.size];
-    const iconSize = ICON_SIZE[this.size];
-
     const cls: Record<string, boolean> = {
       'button-filled': true,
+      'ds-button': true,
       'ds-focus-ring-inset': true,
       'ds-control-press-scale': this.pressScale,
       'ds-interaction-fill': !this.isInactive,
@@ -186,7 +161,9 @@ export class ButtonFilled {
       'ds-interaction-fill--on-medium': this.contrast === 'medium',
       /* faint → default app interaction tokens (no --on-*). */
       'button-filled--bordered': this.hasBorder,
+      'ds-button--bordered': this.hasBorder,
       'button-filled--expanded': this.expanded === true && !this.isInactive,
+      'ds-button--expanded': this.expanded === true && !this.isInactive,
       'ds-control-inactive': this.isInactive,
       'ds-control--lg': this.size === 'lg',
       'ds-control--md': this.size === 'md',
@@ -194,12 +171,14 @@ export class ButtonFilled {
       'ds-control--xs': this.size === 'xs',
       'ds-control-frame': true,
       'button-filled--icon': this.variant === 'icon',
+      'ds-button--icon': this.variant === 'icon',
       'button-filled--label': this.variant === 'label',
       'button-filled--icon-label': this.variant === 'icon-label',
       'button-filled--rounded': this.rounded,
+      'ds-button--rounded': this.rounded,
       [`button-filled--background-${this.background}`]: this.background !== undefined,
       [`button-filled--intent-${this.intent}`]: true,
-      [`button-filled--contrast-${this.contrast}`]: this.contrast !== 'bold',
+      [`button-filled--contrast-${this.contrast}`]: true,
     };
 
     return (
@@ -207,6 +186,7 @@ export class ButtonFilled {
         class={{
           'button-filled-host': true,
           'button-filled-host--icon': this.variant === 'icon',
+          'ds-button-host--icon': this.variant === 'icon',
           'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
@@ -228,7 +208,6 @@ export class ButtonFilled {
           aria-controls={this.controls}
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
           aria-haspopup={this.resolvedHaspopup}
-          aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
           onPointerDown={event =>
             beginElevatedControlPress(
               event,
@@ -237,48 +216,15 @@ export class ButtonFilled {
           }
           onClick={this.handleClick}
         >
-          {this.showIcon && (
-            <span class="button-filled__icon-wrap ds-control-icon-box ds-interaction-fill__content">
-              {this.isLoading
-                ? <ds-loader size={iconSize} color="inherit" />
-                : <ds-icon name={this.icon} size={iconSize} color="inherit" />
-              }
-            </span>
-          )}
-          {this.showLabel && (
-            <ds-text
-              class={{
-                'button-filled__label': true,
-                'ds-control-label-box': true,
-                'button-filled__label--loading': this.isLoading && this.variant === 'label',
-                'ds-interaction-fill__content': true,
-              }}
-              as="span"
-              variant={textVariant}
-              emphasis
-              color="inherit"
-            >
-              {this.label}
-            </ds-text>
-          )}
-          {this.showChevron && (
-            <span
-              class={{
-                'button-filled__chevron': true,
-                'ds-control-icon-box': true,
-                'ds-interaction-fill__content': true,
-                'button-filled__chevron--loading': this.isLoading && this.variant === 'label',
-              }}
-              aria-hidden="true"
-            >
-              <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
-            </span>
-          )}
-          {this.isLoading && this.variant === 'label' && (
-            <span class="button-filled__loader-overlay ds-interaction-fill__content">
-              <ds-loader size={iconSize} color="inherit" />
-            </span>
-          )}
+          {renderButtonContent({
+            namespace: 'button-filled',
+            variant: this.variant,
+            size: this.size,
+            label: this.label,
+            icon: this.icon,
+            hasMenu: this.hasMenu,
+            isLoading: this.isLoading,
+          })}
         </button>
       </Host>
     );

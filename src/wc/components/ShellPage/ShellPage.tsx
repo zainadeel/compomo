@@ -48,7 +48,9 @@ export class ShellPage {
   private headerMutationObserver: MutationObserver | null = null;
   private headerRevealFrame: number | null = null;
   private headerGeometryFrame: number | null = null;
+  private reconnectFrame: number | null = null;
   private scrollRoot: HTMLElement | Window | null = null;
+  private hasLoaded = false;
 
   @Watch('headerCapacity')
   @Watch('headerPresentation')
@@ -62,15 +64,26 @@ export class ShellPage {
   }
 
   componentDidLoad() {
-    this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
-    this.connectScrollRoot();
+    this.hasLoaded = true;
+    this.connectRuntime();
   }
 
   componentDidRender() {
     this.syncHeaderVariant();
   }
 
+  connectedCallback() {
+    if (!this.hasLoaded) return;
+    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
+    this.reconnectFrame = requestAnimationFrame(() => {
+      this.reconnectFrame = null;
+      if (this.el.isConnected) this.connectRuntime();
+    });
+  }
+
   disconnectedCallback() {
+    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
+    this.reconnectFrame = null;
     this.headerResizeObserver?.disconnect();
     this.headerResizeObserver = null;
     this.headerMutationObserver?.disconnect();
@@ -80,6 +93,11 @@ export class ShellPage {
     this.headerEl?.style.removeProperty('--ds-bar-title-divider-inset');
     this.scrollRoot?.removeEventListener('scroll', this.handleScroll);
     this.scrollRoot = null;
+  }
+
+  private connectRuntime() {
+    this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
+    this.connectScrollRoot();
   }
 
   private get effectiveVariant(): BarTitleVariant {
@@ -123,6 +141,13 @@ export class ShellPage {
     this.scrollRoot = next;
     this.scrollRoot.addEventListener('scroll', this.handleScroll, { passive: true });
     this.handleScroll();
+  }
+
+  private get scrollRootResolved(): boolean {
+    const shell = this.el.closest('ds-shell-app');
+    if (!shell) return true;
+    const expected = shell.querySelector<HTMLElement>('.shell-app__content');
+    return expected !== null && this.scrollRoot === expected;
   }
 
   private handleScroll = () => {
@@ -275,7 +300,10 @@ export class ShellPage {
       const geometryReady =
         this.effectiveVariant !== 'expanded' ||
         (this.expandedHeaderHeight > 0 && this.headerTravel > 0);
-      if ((geometryReady && framesElapsed >= 2) || framesRemaining <= 0) {
+      if (
+        (geometryReady && this.scrollRootResolved && framesElapsed >= 2) ||
+        framesRemaining <= 0
+      ) {
         this.headerGeometryFrame = null;
         return;
       }
@@ -370,6 +398,8 @@ export class ShellPage {
       this.headerMutationObserver.observe(header, {
         attributes: true,
         attributeFilter: ['class'],
+        childList: true,
+        subtree: true,
       });
     }
     this.syncHeaderVariant(true);

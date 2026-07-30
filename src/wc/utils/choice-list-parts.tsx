@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Stencil's configured JSX factory requires h at compile time.
 import { FunctionalComponent, h, VNode } from '@stencil/core';
 import type { ChoiceOption } from './choice-list';
 import {

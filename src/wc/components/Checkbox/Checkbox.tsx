@@ -1,5 +1,10 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
-import { CONTROL_TEXT_VARIANT, DEFAULT_REQUIRED_MESSAGE, setRequiredValidity } from '../../utils';
+import {
+  CONTROL_TEXT_VARIANT,
+  DEFAULT_REQUIRED_MESSAGE,
+  setFormControlValue,
+  setRequiredValidity,
+} from '../../utils';
 
 export type CheckboxSize = 'lg' | 'md' | 'sm' | 'xs';
 
@@ -59,7 +64,7 @@ export class Checkbox {
   @Watch('presentation')
   syncFormValue() {
     const inactive = this.isInactive || this.disabled || this.formDisabled || this.presentation;
-    this.internals.setFormValue(!inactive && this.checked ? this.value : null);
+    setFormControlValue(this.internals, this.checked ? this.value : null, { inactive });
     const missing = this.required && !inactive && !this.checked;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
   }

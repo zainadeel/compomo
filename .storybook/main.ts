@@ -5,8 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(__dirname, '..');
-const DIST_DIR = resolve(PROJECT_ROOT, 'dist/components');
-const DIST_STAMP = resolve(PROJECT_ROOT, 'dist/.build-stamp');
+const DIST_STAMP = resolve(PROJECT_ROOT, 'dist/.storybook-ready');
 const PACKAGE_JSON = resolve(PROJECT_ROOT, 'package.json');
 const PACKAGE_VERSION_JSON = resolve(PROJECT_ROOT, '.storybook/static/package-version.json');
 
@@ -18,10 +17,7 @@ function normalizePath(filePath: string): string {
 
 function isStencilDistOutput(filePath: string): boolean {
   const normalized = normalizePath(filePath);
-  return (
-    normalized.startsWith(normalizePath(DIST_DIR)) ||
-    normalized === normalizePath(DIST_STAMP)
-  );
+  return normalized === normalizePath(DIST_STAMP);
 }
 
 function createDistReloadPlugin(): Plugin {
@@ -43,16 +39,7 @@ function createDistReloadPlugin(): Plugin {
       const onDistFileEvent = (filePath: string) => {
         if (!isStencilDistOutput(filePath)) return;
 
-        if (filePath.endsWith('.js')) {
-          for (const mod of server.moduleGraph.getModulesByFile(filePath) ?? []) {
-            server.moduleGraph.invalidateModule(mod);
-          }
-        }
-
-        const reason = filePath.endsWith('.build-stamp')
-          ? 'build complete'
-          : filePath.split(/[/\\]/).pop() ?? 'dist';
-        scheduleFullReload(reason);
+        scheduleFullReload('component build complete');
       };
 
       const onPackageVersionEvent = (filePath: string) => {
@@ -72,7 +59,6 @@ function createDistReloadPlugin(): Plugin {
       server.watcher.on('change', onPackageVersionEvent);
 
       // dist/ is gitignored — must opt in explicitly (watch.ignored below also allows it).
-      server.watcher.add(DIST_DIR);
       server.watcher.add(DIST_STAMP);
       server.watcher.add(PACKAGE_JSON);
       server.watcher.add(PACKAGE_VERSION_JSON);

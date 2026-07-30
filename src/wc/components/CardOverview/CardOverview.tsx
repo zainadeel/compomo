@@ -8,6 +8,11 @@ import type {
   OverviewMetric,
   OverviewScore,
 } from './card-overview-types';
+import {
+  findNextOverviewMetricIndex,
+  resolveCardOverviewCollapseGeometry,
+  resolveOverviewRovingIndex,
+} from './card-overview-controller';
 
 /** Metric cells below this width drop a grid column rather than compress further. */
 const DEFAULT_METRIC_MIN_WIDTH = 'var(--dimension-menu-width-xs)';
@@ -19,8 +24,10 @@ const LOADING_PLACEHOLDER_COUNT = 4;
 const MAX_METRIC_COUNT = 6;
 
 const TREND_COLORS: Record<MetricTrend['tone'], TextColor> = {
-  positive: 'var(--color-always-dark-foreground-positive)',
-  negative: 'var(--color-always-dark-foreground-negative)',
+  // CardOverview is permanently always-dark. Reference-level dark-surface
+  // intent tokens avoid theme overrides and retain AA contrast at body size.
+  positive: 'var(--color-reference-dark-green-145-l70-c19-bold)',
+  negative: 'var(--color-reference-dark-red-30-l70-c20-bold)',
   neutral: 'var(--color-always-dark-foreground-secondary)',
 };
 
@@ -115,18 +122,13 @@ export class CardOverview {
   }
 
   private get scrollCollapseGeometry() {
-    const progress = this.resolvedScrollCollapseProgress;
     const compactHeight = resolveCssLengthPx(TOKEN_DEFAULTS.size600, 48);
-    const expandedHeight = Math.max(this.expandedHeight, compactHeight);
-    const distance = Math.max(0, expandedHeight - compactHeight);
-    const offset = distance * progress;
-
-    return {
-      active: progress > 0 && distance > 0,
-      expandedHeight,
-      offset,
-      visibleHeight: expandedHeight - offset,
-    };
+    return resolveCardOverviewCollapseGeometry({
+      variant: this.variant,
+      progress: this.resolvedScrollCollapseProgress,
+      expandedHeight: this.expandedHeight,
+      compactHeight,
+    });
   }
 
   private observeLayout() {
@@ -152,10 +154,7 @@ export class CardOverview {
 
   /** Index of the roving tab stop, skipping inactive metrics. */
   private get rovingIndex(): number {
-    const first = this.visibleMetrics.findIndex(metric => !metric.isInactive);
-    if (first < 0) return -1;
-    const current = this.visibleMetrics[this.focusedMetricIndex];
-    return current && !current.isInactive ? this.focusedMetricIndex : first;
+    return resolveOverviewRovingIndex(this.visibleMetrics, this.focusedMetricIndex);
   }
 
   private selectMetric(metric: OverviewMetric, index: number) {
@@ -167,19 +166,12 @@ export class CardOverview {
   /** Move the roving tab stop, wrapping and skipping inactive metrics. */
   private moveFocus(from: number, step: number) {
     const metrics = this.visibleMetrics;
-    const count = metrics.length;
-    if (count === 0) return;
+    const next = findNextOverviewMetricIndex(metrics, from, step < 0 ? -1 : 1);
+    if (next < 0) return;
 
-    for (let offset = 1; offset <= count; offset += 1) {
-      // Positive modulo so a backwards step from the first metric wraps to the last.
-      const next = (((from + step * offset) % count) + count) % count;
-      if (metrics[next]?.isInactive) continue;
-
-      this.focusedMetricIndex = next;
-      const cells = this.el.querySelectorAll<HTMLElement>('.card-overview__metric');
-      cells[next]?.focus();
-      return;
-    }
+    this.focusedMetricIndex = next;
+    const cells = this.el.querySelectorAll<HTMLElement>('.card-overview__metric');
+    cells[next]?.focus();
   }
 
   private handleMetricKeyDown = (event: KeyboardEvent, index: number) => {
@@ -304,6 +296,8 @@ export class CardOverview {
 
     return (
       <div class="card-overview__score card-overview__score--resolved ds-control--md" part="score">
+        {/* The row owns cross-layout baseline geometry and becomes display: contents in compact mode. */}
+        {/* eslint-disable-next-line local/prefer-direct-ds-text */}
         <div class="card-overview__score-label-row">
           <ds-text
             as="span"

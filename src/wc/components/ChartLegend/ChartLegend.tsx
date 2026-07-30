@@ -1,6 +1,6 @@
 import { Component, Prop, State, Event, EventEmitter, h, Host, Watch } from '@stencil/core';
 import { categoryColor } from '../../utils/chart-colors';
-import { formatCompactNumber, formatPercentage } from '../../utils';
+import { formatCompactNumber, formatPercentage, resolveSafeUrl } from '../../utils';
 import type { ChartLegendItem } from '../../utils/chart-types';
 
 export type ChartLegendDirection = 'vertical' | 'horizontal';
@@ -85,7 +85,8 @@ export class ChartLegend {
         >
           {this.items.map((item, i) => {
             const isDimmed = highlightLabel != null && item.label !== highlightLabel;
-            const RowTag = item.href ? 'a' : 'div';
+            const href = resolveSafeUrl(item.href);
+            const RowTag = href ? 'a' : 'div';
             const percentage = item.value != null
               ? formatPercentage(total ? item.value / total : 0, this.percentageDecimals, this.locale)
               : '';
@@ -95,14 +96,14 @@ export class ChartLegend {
                 <RowTag
                   class={{
                     'chart-legend__item': true,
-                    'chart-legend__item--interactive': !!item.href,
+                    'chart-legend__item--interactive': !!href,
                     'ds-control--md': true,
-                    'ds-interaction-fill': this.highlightOnHover || !!item.href,
-                    'ds-focus-ring-inset': !!item.href,
+                    'ds-interaction-fill': this.highlightOnHover || !!href,
+                    'ds-focus-ring-inset': !!href,
                   }}
                   style={{ opacity: isDimmed ? String(DIMMED_OPACITY) : '1' }}
-                  href={item.href}
-                  onClick={item.href ? (e: MouseEvent) => this.handleClick(item, e) : undefined}
+                  href={href}
+                  onClick={href ? (e: MouseEvent) => this.handleClick(item, e) : undefined}
                   onMouseEnter={
                     this.highlightOnHover ? () => this.handleHover(item) : undefined
                   }

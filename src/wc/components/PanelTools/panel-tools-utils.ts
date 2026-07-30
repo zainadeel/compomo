@@ -1,4 +1,3 @@
-import { parseJsonArrayProp } from '../BarNav/bar-nav-utils';
 import { parseCssTimeMs } from '../../utils/resolve-css-time-ms';
 import {
   PANEL_TOOLS_TOOL_IDS,
@@ -6,26 +5,38 @@ import {
   type PanelToolsToolId,
 } from './panel-tools-types';
 
-export function parsePanelToolsItems(items: PanelToolsItem[], itemsJson: string): PanelToolsItem[] {
-  if (itemsJson) {
-    return parseJsonArrayProp<PanelToolsItem>(itemsJson, []);
-  }
-  return items ?? [];
-}
-
 export function orderPanelToolsItems(items: PanelToolsItem[]): PanelToolsItem[] {
   const firstById = new Map<PanelToolsToolId, PanelToolsItem>();
   for (const item of items) {
-    if (!firstById.has(item.id)) firstById.set(item.id, item);
+    if (item.id.trim() && !firstById.has(item.id)) firstById.set(item.id, item);
   }
-  return PANEL_TOOLS_TOOL_IDS.flatMap(id => {
-    const item = firstById.get(id);
-    return item ? [item] : [];
+  const regionOrder = { header: 0, body: 1, footer: 2 } as const;
+  return Array.from(firstById.values()).sort((left, right) => {
+    const leftRegion = panelToolsRailPlacement(left);
+    const rightRegion = panelToolsRailPlacement(right);
+    const regionDelta = regionOrder[leftRegion] - regionOrder[rightRegion];
+    if (regionDelta !== 0) return regionDelta;
+
+    const leftCanonical = PANEL_TOOLS_TOOL_IDS.findIndex(id => id === left.id);
+    const rightCanonical = PANEL_TOOLS_TOOL_IDS.findIndex(id => id === right.id);
+    const leftOrder = left.order ?? (leftCanonical < 0 ? Number.MAX_SAFE_INTEGER : leftCanonical);
+    const rightOrder =
+      right.order ?? (rightCanonical < 0 ? Number.MAX_SAFE_INTEGER : rightCanonical);
+    return leftOrder - rightOrder;
   });
 }
 
 export function isPanelToolsToolId(value: string | null): value is PanelToolsToolId {
-  return value !== null && PANEL_TOOLS_TOOL_IDS.includes(value as PanelToolsToolId);
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+export function panelToolsRailPlacement(
+  item: PanelToolsItem
+): 'header' | 'body' | 'footer' {
+  if (item.railPlacement) return item.railPlacement;
+  if (item.id === 'search') return 'header';
+  if (item.id === 'help') return 'footer';
+  return 'body';
 }
 
 export function reconcilePanelToolsAvailability(
@@ -50,6 +61,11 @@ export function shouldResyncPanelToolsItems(
     return (
       prior.id !== item.id ||
       prior.icon !== item.icon ||
+      prior.label !== item.label ||
+      prior.railPlacement !== item.railPlacement ||
+      prior.order !== item.order ||
+      prior.shortcutKey !== item.shortcutKey ||
+      prior.mobileDestination !== item.mobileDestination ||
       prior.selected !== item.selected ||
       prior.dot !== item.dot ||
       prior.isInactive !== item.isInactive ||

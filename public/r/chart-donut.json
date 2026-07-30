@@ -27,8 +27,8 @@
       "alternatives": [
         {
           "when": "The product needs the canonical card, filter action, visible legend, and built-in hover synchronization.",
-          "component": "component:ds-card-data-viz-donut",
-          "reason": "The dedicated card owns that complete composition and suppresses redundant slice tooltips."
+          "component": "component:ds-card-data-viz",
+          "reason": "The donut card variant owns that complete composition and suppresses redundant slice tooltips."
         },
         {
           "when": "Users need to compare independent category magnitudes.",
@@ -39,7 +39,7 @@
       "commonlyComposedWith": [
         "component:ds-chart-legend",
         "component:ds-tooltip-data-viz",
-        "component:ds-card-data-viz-donut"
+        "component:ds-card-data-viz"
       ],
       "accessibility": [
         "Every non-empty slice remains keyboard focusable and exposes its label and value without depending on the visual tooltip.",
@@ -49,7 +49,7 @@
       ],
       "states": [
         "Genuine local pointer or keyboard focus may show a chart-owned tooltip; externally synchronized highlight never opens it.",
-        "When a visible legend already owns label and value detail, suppress the redundant donut tooltip. CardDataVizDonut does this automatically.",
+        "When a visible legend already owns label and value detail, suppress the redundant donut tooltip. CardDataViz donut mode does this automatically.",
         "Local hover and external highlight remain separate while both may dim non-matching slices.",
         "Zero or negative totals render a neutral empty ring without interactive slices.",
         "Center value and caption truncate when they exceed the safe inner-circle measure."
@@ -62,7 +62,7 @@
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Assign data as a JavaScript property and wire slice-hover detail to a sibling legend only when not using CardDataVizDonut."
+          "Assign data as a JavaScript property and wire slice-hover detail to a sibling legend only when not using CardDataViz donut mode."
         ],
         "react": [
           "Keep synchronized highlight controlled by the composition and disable slice tooltips when a sibling legend continuously shows the same details."

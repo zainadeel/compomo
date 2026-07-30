@@ -32,6 +32,7 @@ import {
 } from './panel-nav-types';
 import { scrollEdgeFadeClassMap } from '../../utils/scroll-edge-fade';
 import { prefersReducedMotion } from '../../utils/resolve-css-time-ms';
+import { resolveSafeUrl } from '../../utils/safe-url';
 
 @Component({
   tag: 'ds-panel-nav',
@@ -727,9 +728,10 @@ export class PanelNav {
       },
     };
 
-    const useAnchor = this.routerMode === 'anchor' && item.href;
+    const href = resolveSafeUrl(item.href);
+    const useAnchor = this.routerMode === 'anchor' && href;
     const control = useAnchor ? (
-      <a {...sharedProps} href={item.href}>
+      <a {...sharedProps} href={href}>
         {itemContent}
       </a>
     ) : (

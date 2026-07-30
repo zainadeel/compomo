@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
-import '../../../../dist/components/ds-card-shell-data-viz.js';
-import '../../../../dist/components/ds-card-data-viz-donut.js';
-import '../../../../dist/components/ds-card-data-viz-line.js';
+import '../../../../dist/components/ds-card-data-viz.js';
 import '../../../../dist/components/ds-chart-donut.js';
 import '../../../../dist/components/ds-chart-line.js';
 import '../../../../dist/components/ds-chart-bar.js';
@@ -15,8 +13,7 @@ import type { ChartDatum, ChartSeries, ChartLegendItem } from '../../utils/chart
  * against realistic shapes rather than generic placeholder numbers. Scaffold only —
  * visual design (card layout, chart styling, legend treatment) is intentionally undecided.
  *
- * Donut and line use their dedicated data-viz card compositions. Bar composes
- * `ds-card-shell-data-viz` directly until its dedicated composition lands.
+ * Each visualization uses the standard variant-driven data-viz card.
  */
 
 const AVAILABILITY_STATUS: ChartDatum[] = [
@@ -53,7 +50,7 @@ export const Review: Story = {
     <div
       style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:var(--dimension-space-300);padding:var(--dimension-space-400);background:var(--color-background-secondary);font-family:var(--typography-font-family, system-ui)"
     >
-      <ds-card-data-viz-donut heading="Availability status" card-width="lg">
+      <ds-card-data-viz heading="Availability status" card-width="lg" variant="donut">
         <ds-chart-donut
           slot="chart"
           ${ref(el => {
@@ -69,9 +66,9 @@ export const Review: Story = {
             (el as any).items = AVAILABILITY_STATUS;
           })}
         ></ds-chart-legend>
-      </ds-card-data-viz-donut>
+      </ds-card-data-viz>
 
-      <ds-card-data-viz-line heading="Fuel trend" card-width="lg">
+      <ds-card-data-viz heading="Fuel trend" card-width="lg" variant="line">
         <ds-chart-line
           slot="chart"
           ${ref(el => {
@@ -90,20 +87,19 @@ export const Review: Story = {
           })}
           direction="horizontal"
         ></ds-chart-legend>
-      </ds-card-data-viz-line>
+      </ds-card-data-viz>
 
-      <ds-card-shell-data-viz heading="Safety risk factors" card-width="lg">
-        <div style="padding:var(--dimension-space-400);box-sizing:border-box;flex:1;min-height:0">
-          <ds-chart-bar
-            ${ref(el => {
-              if (!el) return;
-              (el as any).data = SAFETY_RISK_FACTORS;
-            })}
-            width="380"
-            height="200"
-          ></ds-chart-bar>
-        </div>
-      </ds-card-shell-data-viz>
+      <ds-card-data-viz heading="Safety risk factors" card-width="lg" variant="bar">
+        <ds-chart-bar
+          slot="chart"
+          ${ref(el => {
+            if (!el) return;
+            (el as any).data = SAFETY_RISK_FACTORS;
+          })}
+          width="380"
+          height="200"
+        ></ds-chart-bar>
+      </ds-card-data-viz>
     </div>
   `,
 };

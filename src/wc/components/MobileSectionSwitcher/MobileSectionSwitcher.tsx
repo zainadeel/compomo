@@ -30,8 +30,6 @@ export class MobileSectionSwitcher {
 
   /** Ordered controlled sections. Divider entries group the popup menu. */
   @Prop() sections: TabItem[] = [];
-  /** JSON fallback for `sections`. */
-  @Prop({ attribute: 'sections-json' }) sectionsJson: string = '';
   /** Controlled selected section id. */
   @Prop() value: string = '';
   /** Accessible name for the section chooser. */
@@ -49,13 +47,7 @@ export class MobileSectionSwitcher {
   private triggerEl: HTMLButtonElement | null = null;
 
   private get resolvedSections(): TabItem[] {
-    if (!this.sectionsJson.trim()) return this.sections ?? [];
-    try {
-      const parsed = JSON.parse(this.sectionsJson);
-      return Array.isArray(parsed) ? (parsed as TabItem[]) : [];
-    } catch {
-      return [];
-    }
+    return this.sections ?? [];
   }
 
   private get selectableSections(): TabItemTab[] {
@@ -108,7 +100,6 @@ export class MobileSectionSwitcher {
   }
 
   @Watch('sections')
-  @Watch('sectionsJson')
   handleSectionsChange() {
     if (this.selectableSections.length <= 1) this.closeMenu();
   }

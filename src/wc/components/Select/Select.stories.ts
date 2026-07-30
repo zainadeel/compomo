@@ -112,6 +112,48 @@ export const RichOptions: Story = {
   `,
 };
 
+export const Multiple: Story = {
+  name: 'Multiple values',
+  render: () => html`
+    <div style="width:280px;min-height:380px;">
+      <ds-select
+        multiple
+        .sections=${SECTIONS}
+        .value=${['apple', 'cherry']}
+        placeholder="Fruit"
+        searchable
+        open
+        aria-label="Fruit"
+      ></ds-select>
+    </div>
+  `,
+};
+
+export const MultipleRequiredAndError: Story = {
+  name: 'Multiple required and error',
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:280px;">
+      <ds-select
+        multiple
+        .options=${OPTIONS}
+        .value=${[]}
+        required
+        placeholder="Required fruit"
+        aria-label="Required fruit"
+      ></ds-select>
+      <ds-select
+        multiple
+        .options=${OPTIONS}
+        .value=${['apple']}
+        error
+        error-message="Choose at least two fruit."
+        placeholder="Fruit"
+        aria-label="Invalid fruit"
+      ></ds-select>
+    </div>
+  `,
+};
+
 export const Loading: Story = {
   render: () => html`
     <div style="display:flex;gap:var(--dimension-space-200);width:520px;">

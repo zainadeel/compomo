@@ -4,8 +4,8 @@
     "noEmit": false,
     "declaration": true,
     "declarationMap": false,
-    "rootDir": "src/react",
+    "rootDir": "src/.generated/react",
     "outDir": "dist/react"
   },
-  "include": ["src/react/**/*.ts"]
+  "include": ["src/.generated/react/**/*.ts"]
 }

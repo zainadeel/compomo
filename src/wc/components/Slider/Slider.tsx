@@ -11,6 +11,12 @@ import {
   State,
   Watch,
 } from '@stencil/core';
+import {
+  restoreNumberArrayFormState,
+  restoreStringFormState,
+  setFormControlValue,
+  setRepeatedFormControlValue,
+} from '../../utils';
 
 export type SliderValue = number | number[];
 export type SliderSize = 'md' | 'sm' | 'xs';
@@ -115,17 +121,16 @@ export class Slider {
   @Watch('isInactive')
   syncFormValue() {
     const values = this.resolvedValues;
-    if (this.isDisabled || !this.name) {
-      this.internals.setFormValue(null);
-      return;
-    }
-
     if (this.isRange) {
-      const data = new FormData();
-      values.forEach(value => data.append(this.name as string, String(value)));
-      this.internals.setFormValue(data, JSON.stringify(values));
+      setRepeatedFormControlValue(this.internals, this.name, values, {
+        inactive: this.isDisabled,
+      });
     } else {
-      this.internals.setFormValue(String(values[0]), String(values[0]));
+      const value = String(values[0]);
+      setFormControlValue(this.internals, this.name ? value : null, {
+        inactive: this.isDisabled,
+        state: value,
+      });
     }
   }
 
@@ -143,16 +148,13 @@ export class Slider {
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
-    if (typeof state !== 'string') return;
     if (this.isRange) {
-      try {
-        const restored = JSON.parse(state);
-        if (Array.isArray(restored)) this.value = restored.map(Number).slice(0, 2);
-      } catch {
-        this.value = this.cloneValue(this.initialValue);
-      }
+      const restored = restoreNumberArrayFormState(state, 2);
+      this.value = restored.length
+        ? restored
+        : this.cloneValue(this.initialValue);
     } else {
-      const restored = Number(state);
+      const restored = Number(restoreStringFormState(state, 'NaN'));
       if (Number.isFinite(restored)) this.value = restored;
     }
     this.lastCommittedValue = this.cloneValue(this.publicValue);

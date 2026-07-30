@@ -56,7 +56,7 @@ activation remains native and is not promised an equivalent held frame.
 | `Radio` — `[role="radio"]` option rows | `interaction-fill` and checked state | None | Choice rows do not scale. |
 | `ScrollOverlay` — focusable overflow region | Focus/scroll state | None | A scroll region is not a momentary action. |
 | `Select` — `.trigger`, search input, and option rows | Pressed/expanded/selected interaction fills | Popup/choice-list positioning and enter animation | Popup anchors, editable search, and choices do not scale. |
-| `SelectMulti` — `.trigger`, search input, and option rows | Pressed/expanded/selected interaction fills | Popup/choice-list positioning and enter animation | Popup anchors, editable search, and choices do not scale. |
+| `Select multiple` — `.trigger`, search input, and option rows | Pressed/expanded/selected interaction fills | Popup/choice-list positioning and enter animation | Popup anchors, editable search, and choices do not scale. |
 | `TabGroup` — tab buttons | `interaction-fill` and selected tab state | None | Tabs do not scale. |
 | `Tag` — interactive tag button | `interaction-fill` and selected state | None | Selection targets retain stable geometry. |
 | `Toast` — delegated consumer-provided buttons, links, and inputs | Consumer-owned | Consumer-owned | Toast does not impose geometry on delegated interactive content; CompoMo button children keep their primitive policy. |
@@ -69,7 +69,6 @@ The issue’s former `ShellMobileBar`, `ShellMobileNav`, and
 
 | Component and exact target | Existing pressed/state paint | Transform ownership | Rationale and composition |
 | --- | --- | --- | --- |
-| `ShellGradientSwatch` — radio button and interaction/halo layers | Local active wash and selected stroke/halo | Selected halo scales independently | The swatch’s own selection animation remains isolated from physical press scale. |
 | `Slider` — native range input, active thumb, and rail press target | Drag-pressed thumb wash | Thumb travel is state/drag geometry | Continuous and drag interaction must never inherit action-button scale. |
 | `SwatchPicker` — `.swatch-picker__option` radio buttons | Local active wash and selected halo | Selected halo scales independently | Choice geometry and selection animation remain component-owned. |
 | `Switch` — host switch target and thumb | Local physical pressed wash; checked/read-only state | Thumb travel is state geometry | Toggle travel and pressed paint remain component-specific without scale. |

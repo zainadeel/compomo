@@ -1,59 +1,17 @@
-@import '../../utils/focus-ring.css';
-@import '../../utils/interaction-fill.css';
-@import '../../utils/control-press.css';
-@import '../../utils/control-inactive.css';
-@import '../../utils/control-density.css';
-@import '../../utils/control-parts.css';
-@import '../../utils/control-width.css';
+@import '../../utils/button-base.css';
 
 :host {
-  display: inline-flex;
-  outline: none;
   --ds-button-unfilled-fg: var(--color-foreground-secondary);
   --ds-button-unfilled-fg-active: var(--color-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-secondary);
   --ds-button-unfilled-border: var(--color-border-secondary);
 }
 
-/* Icon-only: fixed square from density height (hug). Fill stretches the hit target. */
-:host(.button-unfilled-host--icon.ds-control-width--hug) {
-  width: var(--ds-control-height, var(--dimension-size-400));
-  height: var(--ds-control-height, var(--dimension-size-400));
-  min-width: var(--ds-control-height, var(--dimension-size-400));
-  min-height: var(--ds-control-height, var(--dimension-size-400));
-}
-
-:host(.button-unfilled-host--icon.ds-control-width--fill) {
-  height: var(--ds-control-height, var(--dimension-size-400));
-  min-height: var(--ds-control-height, var(--dimension-size-400));
-}
-
-:host(.ds-control-width--fill) .button-unfilled {
-  width: 100%;
-}
-
 .button-unfilled {
-  justify-content: center;
   background: transparent;
-  border: none;
-  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   color: var(--ds-button-unfilled-fg);
-  cursor: default;
-  -webkit-user-select: none;
-  user-select: none;
-  overflow: hidden;
   /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected` / `--on-*`).
      Active and popup-open foreground changes resolve atomically with the fill. */
-}
-
-.button-unfilled--icon {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-
-.button-unfilled--rounded {
-  --ds-control-radius: var(--dimension-radius-half);
 }
 
 .button-unfilled--active {
@@ -65,20 +23,9 @@
  * pressed wash visible for the popup's complete rendered lifecycle even when
  * shell chrome opts out of selected fills with `activeFill=false`.
  */
-.button-unfilled.button-unfilled--expanded::after,
-.button-unfilled.button-unfilled--expanded:hover:not(:disabled)::after {
-  background: var(--ds-interaction-pressed);
-}
-
 /* Inset stroke via interaction-fill ::after (above selected / hover washes). */
 .button-unfilled--bordered {
-  --ds-interaction-border-width: var(--dimension-stroke-width-012);
   --ds-interaction-border-color: var(--ds-button-unfilled-border);
-}
-
-/* Fallback if interaction-fill is omitted (should be rare — prefer keep the util class). */
-.button-unfilled--bordered:not(.ds-interaction-fill) {
-  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
 /* Inactive: `.ds-control-inactive` (50% opacity). */
@@ -139,49 +86,4 @@
  */
 .button-unfilled.ds-interaction-fill--selected {
   --ds-button-unfilled-dot-ring: var(--ds-interaction-active);
-}
-
-.button-unfilled__icon-wrap {
-  position: relative;
-  z-index: 2;
-}
-
-.button-unfilled__label {
-  position: relative;
-  z-index: 2;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 0;
-}
-
-.button-unfilled__label--loading {
-  visibility: hidden;
-}
-
-.button-unfilled__chevron {
-  position: relative;
-  z-index: 2;
-}
-
-/* Hidden, not removed, so the label-only loader keeps the measured button width. */
-.button-unfilled__chevron--loading {
-  visibility: hidden;
-}
-
-.button-unfilled > .button-unfilled__loader-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.button-unfilled__dot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2;
-  pointer-events: none;
 }

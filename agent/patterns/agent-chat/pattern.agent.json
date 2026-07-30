@@ -29,8 +29,8 @@
   "responsiveBehavior": ["Let AgentResponse use the available transcript width while retaining readable text measure and horizontal scrolling for code or tables."],
   "implementations": {
     "customElements":{"status":"planned","references":["src/wc/components/MessageScroller/MessageScroller.stories.ts"]},
-    "react":{"status":"planned","references":["src/react/components.ts"]},
-    "angular":{"status":"planned","references":["src/angular/index.ts"]}
+    "react":{"status":"planned","references":["docs/framework-integration.md"]},
+    "angular":{"status":"planned","references":["docs/framework-integration.md"]}
   },
   "references": ["agent/patterns/conversation/pattern.agent.json","src/wc/components/AgentResponse/AgentResponse.tsx"]
 }

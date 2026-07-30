@@ -16,6 +16,10 @@ import {
   CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
   DEFAULT_REQUIRED_MESSAGE,
+  restoreStringArrayFormState,
+  restoreStringFormState,
+  setFormControlValue,
+  setRepeatedFormControlValue,
   setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
@@ -39,6 +43,7 @@ export type SelectSection = ChoiceSection;
 export type SelectBackground = ChoiceBackground;
 export type SelectSize = 'lg' | 'md' | 'sm' | 'xs';
 export type SelectWidth = ControlWidth;
+export type SelectValue = string | string[];
 
 const ICON_SIZE: Record<SelectSize, 'lg' | 'md' | 'sm' | 'xs'> = {
   lg: 'lg',
@@ -63,8 +68,10 @@ export class Select {
   @Prop() options: SelectOption[] = [];
   /** Grouped choices; takes precedence over options. Assign through JavaScript. */
   @Prop() sections: SelectSection[] = [];
-  /** Selected string value. Unknown values render the placeholder and are not submitted. */
-  @Prop({ mutable: true }) value: string = '';
+  /** Enable independent multi-value selection while keeping the popup open. */
+  @Prop({ reflect: true }) multiple: boolean = false;
+  /** Selected scalar or array value according to `multiple`. */
+  @Prop({ mutable: true }) value: SelectValue = '';
   /** Controlled popup visibility. */
   @Prop({ mutable: true, reflect: true }) open: boolean = false;
   /** Native form field name. */
@@ -95,6 +102,8 @@ export class Select {
   @Prop() allowClear: boolean = true;
   /** Localized clear action label. */
   @Prop() clearLabel: string = 'Clear';
+  /** Localized noun displayed after the selected count in multiple mode. */
+  @Prop() selectedLabel: string = 'selected';
   /** Show immediate local filtering over option labels, subtext, and section headings. */
   @Prop() searchable: boolean = false;
   /** Localized search-field placeholder and accessible name. */
@@ -118,8 +127,8 @@ export class Select {
   /** Additional IDs that describe the combobox. */
   @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;
 
-  /** Emitted after user selection or clearing with the next scalar value. */
-  @Event() dsChange!: EventEmitter<string>;
+  /** Emitted after selection or clearing with the next scalar or array value. */
+  @Event() dsChange!: EventEmitter<SelectValue>;
   /** Emitted after the footer clear action. */
   @Event() dsClear!: EventEmitter<void>;
   /** Emitted whenever popup visibility changes. */
@@ -135,7 +144,7 @@ export class Select {
   private readonly generatedId = `ds-select-${++selectId}`;
   private readonly listboxId = `${this.generatedId}-listbox`;
   private readonly errorId = `${this.generatedId}-error`;
-  private initialValue = '';
+  private initialValue: SelectValue = '';
   private readonly controller = this.createController();
 
   private createController() {
@@ -159,8 +168,9 @@ export class Select {
         return owner.isDisabled;
       },
       get preferredIndex() {
+        if (owner.multiple) return -1;
         return owner.visibleOptions.findIndex(
-          option => option.value === owner.value && !option.isInactive
+          option => option.value === owner.scalarValue && !option.isInactive
         );
       },
       get open() {
@@ -204,7 +214,8 @@ export class Select {
   }
 
   componentWillLoad() {
-    this.initialValue = this.value;
+    this.value = this.normalizeValueForMode(this.value);
+    this.initialValue = Array.isArray(this.value) ? [...this.value] : this.value;
     this.syncFormValue();
   }
 
@@ -217,16 +228,29 @@ export class Select {
   }
 
   @Watch('value')
+  @Watch('multiple')
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('name')
   @Watch('options')
   @Watch('sections')
   syncFormValue() {
+    if (
+      (this.multiple && !Array.isArray(this.value)) ||
+      (!this.multiple && Array.isArray(this.value))
+    ) {
+      this.value = this.normalizeValueForMode(this.value);
+    }
     const inactive = this.isDisabled;
-    const resolvedValue = this.hasSelection ? this.value : '';
-    this.internals.setFormValue(inactive ? null : resolvedValue);
-    const missing = this.required && !inactive && !resolvedValue;
+    if (this.multiple) {
+      const values = this.resolvedValues;
+      setRepeatedFormControlValue(this.internals, this.name, values, { inactive });
+    } else {
+      const value = this.hasSelection ? this.scalarValue : '';
+      setFormControlValue(this.internals, value, { inactive });
+    }
+    const missing = this.required && !inactive && !this.hasSelection;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
     this.controller.optionsChanged();
   }
@@ -258,12 +282,16 @@ export class Select {
   }
 
   formResetCallback() {
-    this.value = this.initialValue;
+    this.value = this.normalizeValueForMode(this.initialValue);
     this.closePopup();
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
-    this.value = typeof state === 'string' ? state : '';
+    if (!this.multiple) {
+      this.value = restoreStringFormState(state);
+      return;
+    }
+    this.value = restoreStringArrayFormState(state);
   }
 
   @Method()
@@ -273,6 +301,13 @@ export class Select {
 
   private get isDisabled(): boolean {
     return this.disabled || this.isInactive || this.formDisabled;
+  }
+
+  private normalizeValueForMode(value: SelectValue): SelectValue {
+    if (this.multiple) {
+      return Array.isArray(value) ? [...value] : value ? [value] : [];
+    }
+    return Array.isArray(value) ? value[0] ?? '' : value;
   }
 
   private get allSections(): SelectSection[] {
@@ -293,12 +328,23 @@ export class Select {
     return flattenChoiceSections(this.visibleSections);
   }
 
+  private get scalarValue(): string {
+    return typeof this.value === 'string' ? this.value : '';
+  }
+
+  private get resolvedValues(): string[] {
+    if (!this.multiple || !Array.isArray(this.value)) return [];
+    const valid = new Set(this.allOptions.map(option => option.value));
+    return [...new Set(this.value.filter(value => valid.has(value)))];
+  }
+
   private get selectedOption(): SelectOption | undefined {
-    return this.allOptions.find(option => option.value === this.value);
+    if (this.multiple) return undefined;
+    return this.allOptions.find(option => option.value === this.scalarValue);
   }
 
   private get hasSelection(): boolean {
-    return Boolean(this.selectedOption);
+    return this.multiple ? this.resolvedValues.length > 0 : Boolean(this.selectedOption);
   }
 
   private get activeOptionId(): string | undefined {
@@ -315,19 +361,30 @@ export class Select {
 
   private selectOption(option: SelectOption) {
     if (option.isInactive || this.isLoading) return;
+    if (this.multiple) {
+      const current = this.resolvedValues;
+      const next = current.includes(option.value)
+        ? current.filter(value => value !== option.value)
+        : [...current, option.value];
+      this.value = next;
+      this.dsChange.emit([...next]);
+      return;
+    }
     this.value = option.value;
-    this.dsChange.emit(this.value);
+    this.dsChange.emit(option.value);
     this.controller.closePopup(true);
   }
 
   private clearSelection = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
-    this.value = '';
-    this.dsChange.emit('');
+    this.value = this.multiple ? [] : '';
+    this.dsChange.emit(this.multiple ? [] : '');
     this.dsClear.emit();
-    const enabled = enabledChoiceIndexes(this.visibleOptions);
-    this.activeIndex = enabled[0] ?? -1;
+    if (!this.multiple) {
+      const enabled = enabledChoiceIndexes(this.visibleOptions);
+      this.activeIndex = enabled[0] ?? -1;
+    }
     this.controller.focusSearchOrTrigger();
   };
 
@@ -340,7 +397,9 @@ export class Select {
     usesIcons: boolean,
     usesSubtext: boolean
   ) {
-    const selected = option.value === this.value;
+    const selected = this.multiple
+      ? this.resolvedValues.includes(option.value)
+      : option.value === this.scalarValue;
     const active = index === this.activeIndex;
     return (
       <ChoiceOptionRow
@@ -352,7 +411,20 @@ export class Select {
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
         leading={
-          usesIcons && option.icon ? (
+          this.multiple ? (
+            <span
+              class="ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
+              aria-hidden="true"
+            >
+              <ds-checkbox
+                class="select-option__checkbox"
+                label=""
+                size={this.size}
+                checked={selected}
+                presentation
+              />
+            </span>
+          ) : usesIcons && option.icon ? (
             <span
               class="ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
               aria-hidden="true"
@@ -373,10 +445,15 @@ export class Select {
   render() {
     const inactive = this.isDisabled;
     const showPlaceholder = !this.hasSelection;
-    const label = showPlaceholder ? this.placeholder : this.selectedOption?.label;
+    const count = this.resolvedValues.length;
+    const label = this.multiple
+      ? `${this.placeholder}${count > 0 ? ` · ${count}` : ''}`
+      : showPlaceholder
+        ? this.placeholder
+        : this.selectedOption?.label;
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
-    const usesOptionIcons = choiceListUsesIcons(this.allOptions);
+    const usesOptionIcons = !this.multiple && choiceListUsesIcons(this.allOptions);
     const usesOptionSubtext = choiceListUsesSubtext(this.allOptions);
     const showError = this.error && Boolean(this.errorMessage);
     const describedBy =
@@ -396,6 +473,7 @@ export class Select {
       <Host
         class={{
           'select-host': true,
+          'select-host--multiple': this.multiple,
           'ds-field-stack': true,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
@@ -416,7 +494,7 @@ export class Select {
             'ds-interaction-fill': true,
             'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
             'trigger--bordered': this.hasBorder || this.error,
-            'trigger--placeholder': showPlaceholder,
+            'trigger--placeholder': showPlaceholder && !this.multiple,
             'trigger--has-value': this.hasSelection,
             'wrapper--error': this.error,
             [`ds-control--${this.size}`]: true,
@@ -494,6 +572,7 @@ export class Select {
               id={this.listboxId}
               class="ds-choice-list"
               role="listbox"
+              aria-multiselectable={this.multiple ? 'true' : undefined}
               aria-label={this.ariaLabel ?? this.placeholder}
               aria-busy={this.isLoading ? 'true' : undefined}
             >
@@ -553,6 +632,9 @@ export class Select {
             {this.allowClear && this.hasSelection && !this.isLoading && (
               <ChoiceFooter
                 size={this.size}
+                summary={
+                  this.multiple ? `${count} ${this.selectedLabel}` : undefined
+                }
                 clearLabel={this.clearLabel}
                 onClear={this.clearSelection}
               />
