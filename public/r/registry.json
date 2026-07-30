@@ -1845,7 +1845,7 @@
     {
       "name": "card-data-viz-donut",
       "title": "CardDataVizDonut",
-      "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
+      "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, built-in hover synchronization, and automatic suppression of redundant slice tooltips.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1856,7 +1856,7 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
+          "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, built-in hover synchronization, and automatic suppression of redundant slice tooltips.",
           "useWhen": [
             "A dashboard widget needs the standard donut and visible legend composition in one data-viz card.",
             "Chart slices and legend rows should cross-highlight without application hover wiring.",
@@ -1895,6 +1895,7 @@
             "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
             "The chart region fills remaining card height while the legend remains content-sized.",
             "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
+            "When the legend slot is populated, the card disables the slotted donut's chart-owned tooltip because the visible legend already provides persistent label and value detail; without a legend, the card restores the donut tooltip.",
             "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
             "The filter action emits intent while the parent owns popup content, applied constraints, and data updates."
           ],
@@ -1905,13 +1906,13 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots."
+              "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots; the card owns redundant tooltip suppression for that canonical pair."
             ],
             "react": [
-              "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+              "Keep filter and dataset state in the owner; the card handles hover synchronization and redundant donut-tooltip suppression for the canonical slotted pair."
             ],
             "angular": [
-              "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+              "Keep filter and dataset state in the owner; the card handles hover synchronization and redundant donut-tooltip suppression for the canonical slotted pair."
             ]
           },
           "references": [
@@ -2076,7 +2077,7 @@
     {
       "name": "card-overview",
       "title": "CardOverview",
-      "description": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional compact 48px presentation.",
+      "description": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional elevated scroll-collapse surface and compact 48px presentation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2087,7 +2088,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional compact 48px presentation.",
+          "summary": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional elevated scroll-collapse surface and compact 48px presentation.",
           "useWhen": [
             "A page opens with one headline figure that the surrounding measures explain.",
             "Every measure is compared against the same period, so one caption describes the comparison for all of them.",
@@ -2133,6 +2134,7 @@
             "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
             "At most six measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
             "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface.",
+            "During a page-controlled scroll collapse, the component preserves its expanded flow height while the elevated visual surface shrinks toward 48px and the full content translates upward inside an internal clip. The elevation remains fitted to the visible surface instead of being clipped with the content.",
             "compact is exactly 48px high and keeps only the score label, score value, trend, reporting copy, and slotted period control. It omits the score band, measures, and footer."
           ],
           "responsiveBehavior": [
@@ -2144,20 +2146,24 @@
             "In that stacked summary, the score and trend share one line at the start, while the score band is hidden to preserve space. The period control stays at the upper end, while the current period and comparison sit on separate right-aligned lines beside the score.",
             "Every measure occupies a full-width row in the stacked state.",
             "Set layout to stacked when the owning page shell enters a responsive mode before the card's own container reaches its narrow threshold.",
-            "CardOverview does not observe scroll or choose its own presentation. The page owner may use compact as sticky summary chrome on supported breakpoints."
+            "CardOverview does not observe scroll, choose sticky offsets, or switch its own presentation. The page owner supplies collapse progress, keeps the card sticky at the appropriate shell inset, and swaps to compact at the 48px endpoint.",
+            "Leave scroll collapse inactive on page modes that do not support sticky compact summary chrome."
           ],
           "frameworkCaveats": {
             "customElements": [
               "Assign score and metrics as JavaScript properties; both are objects and cannot be expressed as HTML attributes.",
-              "Place the period control in the filter slot; the component reserves space for it but never renders one."
+              "Place the period control in the filter slot; the component reserves space for it but never renders one.",
+              "When driving scroll collapse, update scrollCollapseProgress from page-owned geometry and swap to a separate compact presentation at the endpoint."
             ],
             "react": [
               "Pass score and metrics as props and read the selected measure from the onDsMetricSelect event detail.",
-              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision.",
+              "Keep sticky geometry and scrollCollapseProgress in the page owner; CardOverview only renders the visual collapse."
             ],
             "angular": [
               "Bind [score] and [metrics] as properties and read the selected measure from $event.detail on (dsMetricSelect).",
-              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision."
+              "Derive each trend with resolveMetricTrend so tone stays an explicit product decision.",
+              "Keep sticky geometry and [scrollCollapseProgress] in the page owner; CardOverview only renders the visual collapse."
             ]
           },
           "references": [
@@ -2206,6 +2212,10 @@
           },
           "scoreErrorMessage": {
             "type": "string | undefined",
+            "required": false
+          },
+          "scrollCollapseProgress": {
+            "type": "number",
             "required": false
           },
           "variant": {
@@ -2419,7 +2429,7 @@
             {
               "when": "The composition is the standard donut chart plus synchronized legend.",
               "component": "component:ds-card-data-viz-donut",
-              "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization."
+              "reason": "CardDataVizDonut composes this shell with donut-specific regions and hover synchronization, and automatically suppresses the redundant slice tooltip while the visible legend owns persistent detail."
             },
             {
               "when": "The composition is the standard line chart plus static horizontal legend.",

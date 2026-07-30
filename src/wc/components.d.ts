@@ -741,6 +741,11 @@ export namespace Components {
          */
         "scoreErrorMessage": string | undefined;
         /**
+          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps elevation on the shrinking surface, and clips translated content internally. The page still owns sticky positioning and the final swap to `variant="compact"`.
+          * @default 0
+         */
+        "scrollCollapseProgress": number;
+        /**
           * Full summary card, or the condensed 48px summary bar.
           * @default 'default'
          */
@@ -4894,6 +4899,11 @@ declare namespace LocalJSX {
          */
         "scoreErrorMessage"?: string | undefined;
         /**
+          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps elevation on the shrinking surface, and clips translated content internally. The page still owns sticky positioning and the final swap to `variant="compact"`.
+          * @default 0
+         */
+        "scrollCollapseProgress"?: number;
+        /**
           * Full summary card, or the condensed 48px summary bar.
           * @default 'default'
          */
@@ -7395,6 +7405,7 @@ declare namespace LocalJSX {
         "isLoading": boolean;
         "scoreErrorMessage": string | undefined;
         "overviewLabel": string;
+        "scrollCollapseProgress": number;
     }
     interface DsCardSettingAttributes {
         "heading": string;

@@ -1,4 +1,5 @@
 import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
+import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
 import type { TextColor, TextVariant } from '../Text/text-types';
 import type { MetricTrend } from '../../utils/metric-change';
 import type {
@@ -67,11 +68,38 @@ export class CardOverview {
   /** Accessible name for the region. */
   @Prop() overviewLabel: string = 'Overview';
 
+  /**
+   * Page-controlled visual collapse from the full card (`0`) toward its 48px
+   * compact handoff height (`1`). The component preserves its expanded flow
+   * height, keeps elevation on the shrinking surface, and clips translated
+   * content internally. The page still owns sticky positioning and the final
+   * swap to `variant="compact"`.
+   */
+  @Prop() scrollCollapseProgress: number = 0;
+
   /** Emitted when a metric that is not inactive is activated. */
   @Event() dsMetricSelect!: EventEmitter<OverviewMetric>;
 
   /** Roving tab stop across selectable metrics. */
   @State() private focusedMetricIndex: number = 0;
+  @State() private expandedHeight: number = 0;
+
+  private layoutEl?: HTMLElement;
+  private layoutResizeObserver: ResizeObserver | null = null;
+
+  componentDidLoad() {
+    this.observeLayout();
+  }
+
+  componentDidRender() {
+    // Re-bind after HMR when DidLoad's observer was dropped.
+    if (!this.layoutResizeObserver) this.observeLayout();
+  }
+
+  disconnectedCallback() {
+    this.layoutResizeObserver?.disconnect();
+    this.layoutResizeObserver = null;
+  }
 
   private get hasScore(): boolean {
     return this.score !== undefined || this.scoreErrorMessage !== undefined || this.isLoading;
@@ -79,6 +107,47 @@ export class CardOverview {
 
   private get visibleMetrics(): OverviewMetric[] {
     return this.metrics.slice(0, MAX_METRIC_COUNT);
+  }
+
+  private get resolvedScrollCollapseProgress(): number {
+    if (this.variant === 'compact' || !Number.isFinite(this.scrollCollapseProgress)) return 0;
+    return Math.min(1, Math.max(0, this.scrollCollapseProgress));
+  }
+
+  private get scrollCollapseGeometry() {
+    const progress = this.resolvedScrollCollapseProgress;
+    const compactHeight = resolveCssLengthPx(TOKEN_DEFAULTS.size600, 48);
+    const expandedHeight = Math.max(this.expandedHeight, compactHeight);
+    const distance = Math.max(0, expandedHeight - compactHeight);
+    const offset = distance * progress;
+
+    return {
+      active: progress > 0 && distance > 0,
+      expandedHeight,
+      offset,
+      visibleHeight: expandedHeight - offset,
+    };
+  }
+
+  private observeLayout() {
+    const layout = this.layoutEl;
+    if (!layout) return;
+
+    const updateHeight = (height: number) => {
+      if (height > 0 && Math.abs(height - this.expandedHeight) >= 0.5) {
+        this.expandedHeight = height;
+      }
+    };
+
+    updateHeight(layout.getBoundingClientRect().height);
+    if (typeof ResizeObserver === 'undefined') return;
+
+    this.layoutResizeObserver?.disconnect();
+    this.layoutResizeObserver = new ResizeObserver(entries => {
+      const height = entries[0]?.contentRect.height;
+      if (height !== undefined) updateHeight(height);
+    });
+    this.layoutResizeObserver.observe(layout);
   }
 
   /** Index of the roving tab stop, skipping inactive metrics. */
@@ -355,6 +424,7 @@ export class CardOverview {
   render() {
     const hasHeader = Boolean(this.periodLabel || this.comparisonLabel);
     const compact = this.variant === 'compact';
+    const collapse = this.scrollCollapseGeometry;
 
     return (
       <Host
@@ -363,100 +433,123 @@ export class CardOverview {
           'card-overview--has-score': this.hasScore,
           'card-overview--compact': compact,
           'card-overview--stacked': !compact && this.layout === 'stacked',
-          // Split shadow and inset highlight, so the opaque surface cannot cover
-          // the highlight the way a combined elevation shadow would.
-          'ds-control-elevation': true,
-          'ds-control-elevation--sm': !compact,
-          'ds-control-elevation--floating': compact,
+          'card-overview--scroll-collapsing': collapse.active,
         }}
         role="region"
         aria-label={this.overviewLabel}
         aria-busy={this.isLoading ? 'true' : undefined}
-        style={{ '--ds-card-overview-metric-min': this.metricMinWidth }}
+        style={{
+          '--ds-card-overview-metric-min': this.metricMinWidth,
+          '--ds-card-overview-expanded-height': collapse.active
+            ? `${collapse.expandedHeight}px`
+            : undefined,
+          '--ds-card-overview-visible-height': collapse.active
+            ? `${collapse.visibleHeight}px`
+            : undefined,
+          '--ds-card-overview-content-offset': collapse.active
+            ? `${collapse.offset}px`
+            : undefined,
+        }}
       >
         <div
           class={{
-            'card-overview__layout': true,
-            'card-overview__layout--has-score': this.hasScore,
+            'card-overview__surface': true,
+            // Split shadow and inset highlight, so the opaque surface cannot cover
+            // the highlight the way a combined elevation shadow would.
+            'ds-control-elevation': true,
+            'ds-control-elevation--sm': !compact,
+            'ds-control-elevation--floating': compact,
           }}
         >
-          <div class="card-overview__summary">
-            {this.hasScore && this.renderScore(compact)}
-
-            {/* `ds-control--md` supplies the 32px height and the label inset below. */}
+          <div class="card-overview__clip">
             <div
+              ref={element => {
+                this.layoutEl = (element as HTMLElement) ?? undefined;
+              }}
               class={{
-                'card-overview__header': true,
-                'card-overview__header--has-score': this.hasScore,
-                'ds-control--md': true,
+                'card-overview__layout': true,
+                'card-overview__layout--has-score': this.hasScore,
               }}
             >
-              {this.isLoading ? (
-                <div class="card-overview__period ds-control-label-box">
-                  {this.bar('text-body-medium', '184px')}
-                  {this.bar('text-body-medium', '248px')}
-                </div>
-              ) : (
-                hasHeader && (
-                  <div class="card-overview__period ds-control-label-box">
-                    {this.periodLabel && (
-                      <ds-text
-                        as="span"
-                        class="card-overview__period-current ds-control-label-box"
-                        variant="text-body-medium"
-                        emphasis
-                        color={ALWAYS_DARK_PRIMARY}
-                      >
-                        {this.periodLabel}
-                      </ds-text>
-                    )}
-                    {this.comparisonLabel && (
-                      <ds-text
-                        as="span"
-                        class="card-overview__period-comparison ds-control-label-box"
-                        variant="text-body-medium"
-                        color={ALWAYS_DARK_SECONDARY}
-                      >
-                        {this.comparisonLabel}
-                      </ds-text>
+              <div class="card-overview__summary">
+                {this.hasScore && this.renderScore(compact)}
+
+                {/* `ds-control--md` supplies the 32px height and the label inset below. */}
+                <div
+                  class={{
+                    'card-overview__header': true,
+                    'card-overview__header--has-score': this.hasScore,
+                    'ds-control--md': true,
+                  }}
+                >
+                  {this.isLoading ? (
+                    <div class="card-overview__period ds-control-label-box">
+                      {this.bar('text-body-medium', '184px')}
+                      {this.bar('text-body-medium', '248px')}
+                    </div>
+                  ) : (
+                    hasHeader && (
+                      <div class="card-overview__period ds-control-label-box">
+                        {this.periodLabel && (
+                          <ds-text
+                            as="span"
+                            class="card-overview__period-current ds-control-label-box"
+                            variant="text-body-medium"
+                            emphasis
+                            color={ALWAYS_DARK_PRIMARY}
+                          >
+                            {this.periodLabel}
+                          </ds-text>
+                        )}
+                        {this.comparisonLabel && (
+                          <ds-text
+                            as="span"
+                            class="card-overview__period-comparison ds-control-label-box"
+                            variant="text-body-medium"
+                            color={ALWAYS_DARK_SECONDARY}
+                          >
+                            {this.comparisonLabel}
+                          </ds-text>
+                        )}
+                      </div>
+                    )
+                  )}
+                  <div class="card-overview__filter">
+                    {/*
+                      Period control is application owned: it varies by product surface.
+                      While loading it is stood in for by a control-shaped skeleton so the
+                      header keeps its resolved proportions.
+                    */}
+                    {this.isLoading ? (
+                      <ds-skeleton
+                        variant="control"
+                        controlSize="md"
+                        width="128px"
+                        background="always-dark"
+                      />
+                    ) : (
+                      <slot name="filter" />
                     )}
                   </div>
-                )
-              )}
-              <div class="card-overview__filter">
-                {/*
-                  Period control is application owned: it varies by product surface.
-                  While loading it is stood in for by a control-shaped skeleton so the
-                  header keeps its resolved proportions.
-                */}
-                {this.isLoading ? (
-                  <ds-skeleton
-                    variant="control"
-                    controlSize="md"
-                    width="128px"
-                    background="always-dark"
-                  />
-                ) : (
-                  <slot name="filter" />
-                )}
+                </div>
               </div>
+
+              {!compact && (
+                <div
+                  class={{
+                    'card-overview__body': true,
+                    'card-overview__body--has-score': this.hasScore,
+                  }}
+                >
+                  <div class="card-overview__metrics" part="metrics">
+                    {this.renderMetrics()}
+                  </div>
+
+                  <slot name="footer" />
+                </div>
+              )}
             </div>
           </div>
-
-          {!compact && (
-            <div
-              class={{
-                'card-overview__body': true,
-                'card-overview__body--has-score': this.hasScore,
-              }}
-            >
-              <div class="card-overview__metrics" part="metrics">
-                {this.renderMetrics()}
-              </div>
-
-              <slot name="footer" />
-            </div>
-          )}
         </div>
       </Host>
     );

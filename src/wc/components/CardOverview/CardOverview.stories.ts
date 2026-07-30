@@ -137,6 +137,33 @@ export const Compact: Story = {
   `,
 };
 
+/** Mid-scroll visual state before the page swaps to the compact presentation. */
+export const ScrollCollapseSurface: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'The page supplies scroll progress. CardOverview preserves its expanded flow height while its elevated surface shrinks and its full content moves upward inside an internal clip. At the 48px endpoint, the page swaps to the compact presentation.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="width:960px;max-width:100%;${FRAME}">
+      <ds-card-overview
+        overview-label="Partially collapsed safety summary"
+        period-label="Jun 29, 2026 – Jul 26, 2026"
+        comparison-label="vs Previous period"
+        .score=${SCORE}
+        .metrics=${METRICS}
+        .scrollCollapseProgress=${0.55}
+      >
+        ${periodFilter()}
+      </ds-card-overview>
+    </div>
+  `,
+};
+
 /** Every tone and both directions, plus the no-trend case. */
 export const TrendTones: Story = {
   parameters: { controls: { disable: true } },

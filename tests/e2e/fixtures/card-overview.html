@@ -42,6 +42,10 @@
         width: 800px;
       }
 
+      #scroll-collapse {
+        width: 800px;
+      }
+
       #compact [slot='filter'] {
         height: var(--dimension-size-400);
       }
@@ -81,6 +85,13 @@
     <ds-card-overview
       id="forced-stacked"
       layout="stacked"
+      period-label="Jun 29, 2026 – Jul 26, 2026"
+      comparison-label="vs Previous period"
+    >
+      <button slot="filter" type="button">Last 4 weeks</button>
+    </ds-card-overview>
+    <ds-card-overview
+      id="scroll-collapse"
       period-label="Jun 29, 2026 – Jul 26, 2026"
       comparison-label="vs Previous period"
     >

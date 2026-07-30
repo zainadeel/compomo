@@ -25,15 +25,46 @@
   --ds-card-overview-divider-color: var(--color-always-dark-border-tertiary);
   --ds-card-overview-divider: var(--ds-card-overview-divider-width) solid
     var(--ds-card-overview-divider-color);
+  color: var(--color-always-dark-foreground-primary);
+}
+
+.card-overview__surface {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   border-radius: var(--dimension-radius-050);
   background: var(--color-always-dark-background);
   color: var(--color-always-dark-foreground-primary);
-  /*
-   * Clips the square-cornered metric washes to the card radius. The outer
-   * elevation shadow is painted outside the border box and is unaffected, and
-   * the inset highlight is meant to sit exactly on this edge.
-   */
-  overflow: hidden;
+  overflow-anchor: none;
+}
+
+/*
+ * The visual surface owns elevation outside this clipping viewport. Keeping
+ * those layers separate lets a page shrink the surface while content moves and
+ * clips inside it without cutting off the shadow or inset highlight.
+ */
+.card-overview__clip {
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background: inherit;
+  overflow: clip;
+}
+
+:host(.card-overview--scroll-collapsing) {
+  height: var(--ds-card-overview-expanded-height);
+  pointer-events: none;
+}
+
+:host(.card-overview--scroll-collapsing) .card-overview__surface {
+  height: var(--ds-card-overview-visible-height);
+  pointer-events: auto;
+  will-change: height;
+}
+
+:host(.card-overview--scroll-collapsing) .card-overview__layout {
+  transform: translateY(calc(-1 * var(--ds-card-overview-content-offset)));
+  will-change: transform;
 }
 
 .card-overview__layout {
@@ -509,6 +540,10 @@
 :host(.card-overview--compact) {
   height: var(--dimension-size-600);
   min-height: var(--dimension-size-600);
+}
+
+:host(.card-overview--compact) .card-overview__surface {
+  height: 100%;
 }
 
 :host(.card-overview--compact) .card-overview__layout,

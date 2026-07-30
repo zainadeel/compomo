@@ -6,7 +6,7 @@ import type { ChartLegendItem } from '../../utils/chart-types';
 export type ChartLegendDirection = 'vertical' | 'horizontal';
 export type ChartLegendPercentageDecimals = 1 | 2;
 
-const DIMMED_OPACITY = 0.25;
+const DIMMED_OPACITY = 0.5;
 
 /**
  * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style

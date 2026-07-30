@@ -51,6 +51,14 @@ const renderCard = (heading: string, cardWidth: string) => html`
 `;
 
 export const View: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The populated legend slot makes the card disable the donut’s chart-owned tooltip, because the legend already keeps every label and value visible. Removing the legend restores the standalone donut tooltip.',
+      },
+    },
+  },
   render: args => renderCard(args['heading'], args['cardWidth']),
 };
 

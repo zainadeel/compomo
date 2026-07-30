@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "card-data-viz-donut",
   "title": "CardDataVizDonut",
-  "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
+  "description": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, built-in hover synchronization, and automatic suppression of redundant slice tooltips.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,7 +13,7 @@
     "intent": {
       "audience": "specialized",
       "status": "experimental",
-      "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, and built-in hover synchronization.",
+      "summary": "Canonical donut-plus-legend dashboard card with shared data-viz chrome, a filter action, fill chart region, content-sized legend, built-in hover synchronization, and automatic suppression of redundant slice tooltips.",
       "useWhen": [
         "A dashboard widget needs the standard donut and visible legend composition in one data-viz card.",
         "Chart slices and legend rows should cross-highlight without application hover wiring.",
@@ -52,6 +52,7 @@
         "Bar, Line, and Donut cards share the same fill-chart and content-sized-legend body contract so dashboard card geometry remains aligned across chart types.",
         "The chart region fills remaining card height while the legend remains content-sized.",
         "Chart and legend regions render only when their corresponding slots contain content, allowing the owner to substitute loading, empty, or error presentations without dangling region padding.",
+        "When the legend slot is populated, the card disables the slotted donut's chart-owned tooltip because the visible legend already provides persistent label and value detail; without a legend, the card restores the donut tooltip.",
         "Hover synchronization changes highlight only; it never represents selection, filtering, or navigation.",
         "The filter action emits intent while the parent owns popup content, applied constraints, and data updates."
       ],
@@ -62,13 +63,13 @@
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots."
+          "Assign chart data and legend items as JavaScript properties and place the components in the chart and legend slots; the card owns redundant tooltip suppression for that canonical pair."
         ],
         "react": [
-          "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+          "Keep filter and dataset state in the owner; the card handles hover synchronization and redundant donut-tooltip suppression for the canonical slotted pair."
         ],
         "angular": [
-          "Keep filter and dataset state in the owner; the card handles hover synchronization for the canonical slotted pair."
+          "Keep filter and dataset state in the owner; the card handles hover synchronization and redundant donut-tooltip suppression for the canonical slotted pair."
         ]
       },
       "references": [

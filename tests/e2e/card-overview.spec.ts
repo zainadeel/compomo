@@ -209,6 +209,62 @@ test('renders compact summary chrome as one exact 48px bar', async ({ page }) =>
   await expect(trend).toHaveJSProperty('emphasis', false);
 });
 
+test('keeps elevation fitted to the shrinking surface while preserving expanded flow', async ({
+  page,
+}) => {
+  const card = page.locator('#scroll-collapse');
+  const surface = card.locator('.card-overview__surface');
+  const clip = card.locator('.card-overview__clip');
+  const layout = card.locator('.card-overview__layout');
+  const expandedHeight = await card.evaluate(element => element.getBoundingClientRect().height);
+
+  await card.evaluate(element => {
+    (element as HTMLElement & { scrollCollapseProgress: number }).scrollCollapseProgress = 0.5;
+  });
+
+  await expect(card).toHaveClass(/card-overview--scroll-collapsing/);
+  await expect
+    .poll(() => surface.evaluate(element => element.getBoundingClientRect().height))
+    .toBeCloseTo((expandedHeight + 48) / 2, 1);
+
+  const geometry = await card.evaluate(element => {
+    const host = element.getBoundingClientRect();
+    const surfaceElement = element.querySelector<HTMLElement>('.card-overview__surface')!;
+    const clipElement = element.querySelector<HTMLElement>('.card-overview__clip')!;
+    const layoutElement = element.querySelector<HTMLElement>('.card-overview__layout')!;
+    const surface = surfaceElement.getBoundingClientRect();
+    const layout = layoutElement.getBoundingClientRect();
+    const surfaceStyle = getComputedStyle(surfaceElement);
+
+    return {
+      hostHeight: host.height,
+      surfaceHeight: surface.height,
+      surfaceTop: surface.top,
+      hostTop: host.top,
+      contentOffset: surface.top - layout.top,
+      overflow: getComputedStyle(clipElement).overflow,
+      shadow: surfaceStyle.boxShadow,
+      highlight: getComputedStyle(surfaceElement, '::after').boxShadow,
+    };
+  });
+
+  expect(geometry.hostHeight).toBeCloseTo(expandedHeight, 1);
+  expect(geometry.surfaceHeight).toBeCloseTo((expandedHeight + 48) / 2, 1);
+  expect(geometry.surfaceTop).toBeCloseTo(geometry.hostTop, 1);
+  expect(geometry.contentOffset).toBeCloseTo(
+    expandedHeight - geometry.surfaceHeight,
+    1
+  );
+  expect(geometry.overflow).toBe('clip');
+  expect(geometry.shadow).not.toBe('none');
+  expect(geometry.highlight).not.toBe('none');
+  await expect(layout).toHaveCSS('will-change', 'transform');
+  await expect(clip).toHaveCSS(
+    'border-radius',
+    await surface.evaluate(el => getComputedStyle(el).borderRadius)
+  );
+});
+
 test('keeps the compact score centered while reporting copy truncates', async ({ page }) => {
   const card = page.locator('#compact');
 
