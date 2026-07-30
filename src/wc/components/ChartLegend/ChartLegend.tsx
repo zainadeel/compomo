@@ -6,8 +6,6 @@ import type { ChartLegendItem } from '../../utils/chart-types';
 export type ChartLegendDirection = 'vertical' | 'horizontal';
 export type ChartLegendPercentageDecimals = 1 | 2;
 
-const DIMMED_OPACITY = 0.5;
-
 /**
  * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style
  * legends differently (list w/ values, compact chips, bare swatches, external
@@ -97,11 +95,11 @@ export class ChartLegend {
                   class={{
                     'chart-legend__item': true,
                     'chart-legend__item--interactive': !!href,
+                    'chart-legend__item--dimmed': isDimmed,
                     'ds-control--md': true,
                     'ds-interaction-fill': this.highlightOnHover || !!href,
                     'ds-focus-ring-inset': !!href,
                   }}
-                  style={{ opacity: isDimmed ? String(DIMMED_OPACITY) : '1' }}
                   href={href}
                   onClick={href ? (e: MouseEvent) => this.handleClick(item, e) : undefined}
                   onMouseEnter={

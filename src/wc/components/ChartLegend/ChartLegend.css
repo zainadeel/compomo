@@ -63,6 +63,10 @@
   transition: opacity var(--effect-motion-short-2);
 }
 
+.chart-legend__item--dimmed {
+  opacity: var(--effect-opacity-medium);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chart-legend__item {
     transition: none;

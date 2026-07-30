@@ -14,7 +14,7 @@
 
 :host(.ds-control-inactive),
 .ds-control-inactive {
-  opacity: 0.5;
+  opacity: var(--effect-opacity-medium);
   pointer-events: none;
   cursor: not-allowed;
 }

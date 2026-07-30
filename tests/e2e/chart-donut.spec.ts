@@ -44,10 +44,7 @@ test('does not open a tooltip from external highlight or when explicitly disable
   });
 
   await expect(external.locator('ds-tooltip-data-viz')).toHaveCount(0);
-  await expect(external.locator('.chart-donut__svg path').nth(1)).toHaveAttribute(
-    'opacity',
-    '0.25',
-  );
+  await expect(external.locator('.chart-donut__svg path').nth(1)).toHaveCSS('opacity', '0.5');
 
   const disabled = page.locator('#tooltip-disabled');
   await hoverDonutRing(page, disabled);

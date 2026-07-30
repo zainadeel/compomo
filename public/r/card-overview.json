@@ -345,7 +345,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: metrics, score.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^5.0.0",
+          "@ds-mo/tokens ^5.1.0",
           "@ds-mo/icons ^6.4.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."

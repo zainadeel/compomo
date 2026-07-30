@@ -4,7 +4,6 @@ import { categoryColor } from '../../utils/chart-colors';
 import { formatCompactNumber, resolveCssLengthPx, truncateSvgTextToWidth, TOKEN_DEFAULTS } from '../../utils';
 import type { ChartDatum } from '../../utils/chart-types';
 
-const DIMMED_OPACITY = 0.25;
 /** Gap between the center value and caption line boxes. */
 const CENTER_GAP_PX = 0;
 /** Fraction of the inner-circle diameter center text is allowed to use before truncating. */
@@ -282,9 +281,9 @@ export class ChartDonut {
                   return (
                     <path
                       key={datum.label}
+                      class={{ 'chart-donut__slice--dimmed': isDimmed }}
                       d={arcGenerator(slice) ?? undefined}
                       fill={datum.color ?? categoryColor(i)}
-                      opacity={isDimmed ? DIMMED_OPACITY : 1}
                       tabindex={0}
                       role="img"
                       aria-label={`${datum.label}: ${datum.value}`}
