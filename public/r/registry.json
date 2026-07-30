@@ -6758,6 +6758,7 @@
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Replace navigation and pageChrome together from one completed route state.",
+            "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
             "Managed ShellApp keeps BarNav and ShellPage presentations present and owns page header stickiness and the content scroller.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
           ],

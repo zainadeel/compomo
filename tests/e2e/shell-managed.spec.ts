@@ -14,20 +14,83 @@ test.describe('Managed application shell', () => {
     await expect(shell).toHaveAttribute('responsive-mode', 'desktop');
     await expect(shell.locator('ds-panel-nav')).toBeVisible();
     await expect(shell.locator('ds-bar-nav')).toBeVisible();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'roomy'
+    );
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
+    ).toBeVisible();
+    await expect(shell.locator('ds-bar-title')).toHaveClass(
+      /bar-title-host--expanded/
+    );
+    await expect(shell.locator('ds-bar-title')).not.toHaveAttribute(
+      'data-shell-page-syncing',
+      ''
+    );
     await expect(shell.locator('ds-mobile-header')).not.toBeVisible();
     await expect(shell.locator('ds-mobile-bar-nav')).not.toBeVisible();
+    await expect(shell.getByRole('main')).toHaveCount(1);
+
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'compact'
+    );
+    await expect(shell.locator('ds-bar-title')).toHaveClass(/bar-title-host--compact/);
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
+    ).toBeVisible();
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'roomy'
+    );
 
     await page.setViewportSize({ width: 1024, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
     await expect(shell.locator('ds-panel-nav')).toBeVisible();
+    await expect(shell.locator('ds-panel-nav')).toHaveJSProperty(
+      'breakpoint',
+      1200
+    );
+    await expect(shell.locator('.panel-nav')).toHaveClass(
+      /panel-nav--breakpoint-locked/
+    );
+    await expect(shell.locator('.panel-nav')).toHaveClass(/panel-nav--collapsed/);
     await expect(shell.locator('ds-bar-nav')).toBeVisible();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'compact'
+    );
+    await expect(shell.locator('ds-bar-title')).toHaveClass(/bar-title-host--compact/);
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
+    ).toBeVisible();
     await expect(shell.locator('ds-mobile-header')).not.toBeVisible();
+
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'constrained'
+    );
+    await expect(shell.locator('ds-bar-title')).toHaveClass(
+      /bar-title-host--constrained/
+    );
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
+    ).toBeVisible();
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'compact'
+    );
 
     await page.setViewportSize({ width: 390, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
     await expect(shell.locator('ds-panel-nav')).not.toBeVisible();
     await expect(shell.locator('ds-bar-nav')).not.toBeVisible();
-    await expect(shell.locator('ds-mobile-header')).toBeVisible();
+    await expect(shell.locator('ds-mobile-header[slot="mobile-header"]')).toBeVisible();
     await expect(shell.locator('ds-mobile-bar-nav')).toBeVisible();
   });
 
@@ -40,6 +103,31 @@ test.describe('Managed application shell', () => {
       JSON.stringify({ type: 'dsNavSelect', detail: 'safety' })
     );
     expect(page.url()).toBe(originalUrl);
+  });
+
+  test('keeps detail identity in mobile chrome instead of promoting a peer route tab', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        heading: 'John Smith',
+        showBack: true,
+        backAriaLabel: 'Back to People',
+      };
+    });
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'John Smith' })
+    ).toBeVisible();
+    await expect(shell.getByRole('button', { name: 'Back to People' })).toBeVisible();
+    await expect(
+      shell.getByRole('button', { name: /Current section: Overview/ })
+    ).toHaveCount(0);
   });
 
   test('preserves routed and tool element identity across responsive presentation changes', async ({

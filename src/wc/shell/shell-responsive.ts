@@ -14,6 +14,14 @@ export function resolveShellResponsiveMode(width: number): ShellResponsiveMode {
   return 'mobile';
 }
 
+export function resolveManagedShellPageCapacity(
+  mode: ShellResponsiveMode,
+  toolsOpen: boolean
+): 'roomy' | 'compact' | 'constrained' {
+  if (mode === 'desktop') return toolsOpen ? 'compact' : 'roomy';
+  return toolsOpen ? 'constrained' : 'compact';
+}
+
 export function shellMobileDestinationForTool(
   open: boolean,
   tool: PanelToolsToolId | ''

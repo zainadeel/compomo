@@ -57,7 +57,9 @@ import {
 import {
   isShellInboxTool,
   resolveAvailableInboxTool,
+  resolveManagedShellPageCapacity,
   resolveShellResponsiveMode,
+  SHELL_DESKTOP_BREAKPOINT,
   shellMobileDestinationForTool,
   type MobileDestination,
   type ShellInboxToolId,
@@ -795,6 +797,7 @@ export class ShellApp {
       <ds-panel-nav
         navStyle={this.navStyle}
         groups={this.resolvedNavigationGroups}
+        breakpoint={SHELL_DESKTOP_BREAKPOINT}
         routerMode={navigation.routerMode ?? 'event'}
         activeId={navigation.activeId ?? ''}
         currentUrl={navigation.currentUrl ?? this.pageChrome.currentUrl ?? ''}
@@ -971,6 +974,7 @@ export class ShellApp {
 
   private renderManagedPage() {
     const page = this.pageChrome;
+    const mobileSections = page.showBack ? [] : (page.tabs ?? []);
     const barTitleSections: BarTitleSectionItem[] = (page.subsections ?? []).map(item =>
       'type' in item
         ? { type: 'divider' }
@@ -983,6 +987,10 @@ export class ShellApp {
     return (
       <ds-shell-page
         responsiveMode={this.resolvedMode}
+        headerCapacity={resolveManagedShellPageCapacity(
+          this.resolvedMode,
+          this.managedToolsOpen
+        )}
         contentInset={page.contentInset ?? 'default'}
       >
         <ds-bar-title
@@ -1009,8 +1017,8 @@ export class ShellApp {
           slot="mobile-header"
           heading={page.heading ?? ''}
           headingLevel={page.headingLevel ?? 'h1'}
-          sections={page.tabs ?? []}
-          value={page.value ?? ''}
+          sections={mobileSections}
+          value={page.showBack ? '' : (page.value ?? '')}
           sectionsAriaLabel={page.sectionsAriaLabel ?? 'Change page section'}
           subsections={page.subsections ?? []}
           subvalue={page.subvalue ?? ''}
