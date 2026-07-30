@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.0](https://github.com/zainadeel/compomo/compare/v12.8.0...v12.9.0) (2026-07-30)
+
+
+### Added
+
+* harden anchored overlays and card overview ([#390](https://github.com/zainadeel/compomo/issues/390)) ([d75e63b](https://github.com/zainadeel/compomo/commit/d75e63b5a0d8f5940f18e879ac07ba0a8ebdc314))
+
 ## [12.8.0](https://github.com/zainadeel/compomo/compare/v12.7.0...v12.8.0) (2026-07-29)
 
 
