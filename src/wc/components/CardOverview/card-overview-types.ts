@@ -2,6 +2,7 @@ import type { MetricTrend } from '../../utils/metric-change';
 
 export type CardOverviewVariant = 'default' | 'compact';
 export type CardOverviewLayout = 'auto' | 'stacked';
+export type SafetyScoreLevel = 'fair' | 'good' | 'excellent';
 
 /**
  * Leading summary block — the headline figure the rest of the bar contextualises.
@@ -10,13 +11,18 @@ export type CardOverviewLayout = 'auto' | 'stacked';
  * product decision rather than a design-system one.
  */
 export interface OverviewScore {
-  /** Category above the figure, for example `Safety score`. */
+  /** Category before the trend and figure, for example `Safety score`. */
   label: string;
   /** Display-ready headline figure. */
   value: string | number;
   /** Change against the comparison period. Omit when there is nothing to report. */
   trend?: MetricTrend;
-  /** Qualitative band beneath the figure, for example `Good (67–83)`. */
+  /**
+   * Safety score color level. Numeric values from 0–100 infer fair (0–50),
+   * good (51–80), or excellent (81–100) when this is omitted.
+   */
+  level?: SafetyScoreLevel;
+  /** @deprecated Ignored. The redesigned score cell no longer renders a band. */
   band?: string;
 }
 

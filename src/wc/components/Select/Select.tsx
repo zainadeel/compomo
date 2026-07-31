@@ -94,7 +94,7 @@ export class Select {
   @Prop() isLoading: boolean = false;
   /** Show the selected interaction fill when a valid value exists. */
   @Prop() activeFill: boolean = true;
-  /** Show the surface-aware inset border. */
+  /** Show the surface-aware inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
   /** Optional trigger prefix icon name. */
   @Prop() icon: string | undefined;
@@ -493,10 +493,10 @@ export class Select {
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
             'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
-            'trigger--bordered': this.hasBorder || this.error,
+            'trigger--bordered': this.hasBorder,
             'trigger--placeholder': showPlaceholder && !this.multiple,
             'trigger--has-value': this.hasSelection,
-            'wrapper--error': this.error,
+            'wrapper--error': this.hasBorder && this.error,
             [`ds-control--${this.size}`]: true,
             ...choiceBackgroundClassMap(this.background),
           }}

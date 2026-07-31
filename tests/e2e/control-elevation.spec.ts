@@ -180,7 +180,7 @@ test('retains transparent backdrop blur and borderless unfilled geometry', async
   expect(result.overlayZIndex).toBeGreaterThan(result.controlOverlayZIndex);
 });
 
-test('keeps wrapped Input strokes intact beneath the topmost highlight', async ({
+test('keeps wrapped borderless Input free of resting, focused, and error strokes', async ({
   page,
 }) => {
   const resting = await page.locator('#input-rest-wrapper').evaluate(wrapper => {
@@ -211,38 +211,36 @@ test('keeps wrapped Input strokes intact beneath the topmost highlight', async (
   await page.locator('#input-focus input').focus();
   const focus = await page.locator('#input-focus-wrapper').evaluate(wrapper => {
     const control = wrapper.querySelector<HTMLElement>('.input-control')!;
-    const probe = document.createElement('span');
-    document.body.append(probe);
-    probe.style.boxShadow =
-      'inset 0 0 0 var(--dimension-stroke-width-018) var(--color-border-bold-brand)';
-    const expected = getComputedStyle(probe).boxShadow;
-    probe.remove();
     return {
-      actual: getComputedStyle(control, '::after').boxShadow,
-      expected,
+      borderWidth: getComputedStyle(control)
+        .getPropertyValue('--ds-interaction-border-width')
+        .trim(),
+      borderedClass: control.classList.contains('input-control--bordered'),
+      errorClass: control.classList.contains('input-control--error'),
       controlZIndex: Number(getComputedStyle(control, '::after').zIndex),
       overlayZIndex: Number(getComputedStyle(wrapper, '::after').zIndex),
     };
   });
-  expect(focus.actual).toBe(focus.expected);
+  expect(focus.borderWidth).toBe('0px');
+  expect(focus.borderedClass).toBe(false);
+  expect(focus.errorClass).toBe(false);
   expect(focus.overlayZIndex).toBeGreaterThan(focus.controlZIndex);
 
   const error = await page.locator('#input-error-wrapper').evaluate(wrapper => {
     const control = wrapper.querySelector<HTMLElement>('.input-control')!;
-    const probe = document.createElement('span');
-    document.body.append(probe);
-    probe.style.boxShadow =
-      'inset 0 0 0 var(--dimension-stroke-width-018) var(--color-border-bold-negative)';
-    const expected = getComputedStyle(probe).boxShadow;
-    probe.remove();
     return {
-      actual: getComputedStyle(control, '::after').boxShadow,
-      expected,
+      borderWidth: getComputedStyle(control)
+        .getPropertyValue('--ds-interaction-border-width')
+        .trim(),
+      borderedClass: control.classList.contains('input-control--bordered'),
+      errorClass: control.classList.contains('input-control--error'),
       controlZIndex: Number(getComputedStyle(control, '::after').zIndex),
       overlayZIndex: Number(getComputedStyle(wrapper, '::after').zIndex),
     };
   });
-  expect(error.actual).toBe(error.expected);
+  expect(error.borderWidth).toBe('0px');
+  expect(error.borderedClass).toBe(false);
+  expect(error.errorClass).toBe(false);
   expect(error.overlayZIndex).toBeGreaterThan(error.controlZIndex);
   await expect(page.locator('#input-error input')).toHaveAttribute('aria-invalid', 'true');
 });

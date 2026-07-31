@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-card-overview.js';
-import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-select.js';
 import { resolveMetricTrend } from '../../utils/metric-change';
 import type { OverviewMetric, OverviewScore } from './card-overview-types';
@@ -13,9 +12,9 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'A responsive summary card pairing a headline score, reporting period, filter, and comparable metrics. ' +
-          'Trend tone is always supplied by the caller — derive it with `resolveMetricTrend` so whether a rise ' +
-          'reads well stays a product decision.',
+          'A page summary with a persistent 48px period bar and an equal-track grid below it. ' +
+          'The optional safety score is the first, nonselectable grid cell. Applications own ' +
+          'date math and compose fixed labels or Select controls through the period and filter slots.',
       },
     },
   },
@@ -24,100 +23,155 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-/** Mirrors the product's safety bar, with tone decided per measure. */
 const SCORE: OverviewScore = {
-  label: 'Score',
-  value: 81,
-  trend: resolveMetricTrend(81, 82, { neutral: true }) ?? undefined,
-  band: 'Good (67–83)',
+  label: 'Safety score',
+  value: 87,
+  trend: resolveMetricTrend(87, 83) ?? undefined,
 };
 
 const METRICS: OverviewMetric[] = [
   {
     id: 'distance',
-    label: 'Distance driven (km)',
-    value: '83.6k',
-    // Distance moving either way is context, not good or bad news.
+    label: 'Distance driven',
+    value: '176.4k',
     trend:
-      resolveMetricTrend(83_600, 85_300, { neutral: true, display: 'percentage' }) ?? undefined,
+      resolveMetricTrend(176_400, 172_900, { neutral: true, display: 'percentage' }) ?? undefined,
   },
   {
     id: 'drivers',
     label: 'Active drivers',
-    value: 55,
-    trend: resolveMetricTrend(55, 59, { neutral: true }) ?? undefined,
+    value: 56,
+    trend: resolveMetricTrend(56, 58, { neutral: true, display: 'percentage' }) ?? undefined,
   },
   {
     id: 'events',
-    label: 'Events / 1.6k km',
-    value: 91.6,
-    // More events is worse, so a rise reads negative.
-    trend: resolveMetricTrend(91.6, 69.4, { inverted: true, display: 'percentage' }) ?? undefined,
+    label: 'Events / 1k miles',
+    value: 27.3,
+    trend:
+      resolveMetricTrend(27.3, 28.7, { inverted: true, display: 'percentage' }) ?? undefined,
   },
   {
     id: 'speeding',
-    // No comparison available, so no trend is rendered at all.
-    label: 'Speeding over posted',
-    value: '1%',
+    label: 'Speeding',
+    value: '53%',
+    trend: resolveMetricTrend(53, 51, { inverted: true }) ?? undefined,
   },
   {
     id: 'collisions',
     label: 'Collisions',
-    value: 6,
-    // Fewer collisions is better, so a fall reads positive.
-    trend: resolveMetricTrend(6, 15, { inverted: true }) ?? undefined,
+    value: 4,
+    trend: resolveMetricTrend(4, 2, { inverted: true, display: 'percentage' }) ?? undefined,
   },
 ];
 
 const FRAME = 'padding:var(--dimension-space-200);max-width:100%;';
-const PERIOD_OPTIONS = [
-  { label: 'Last 4 weeks', value: '4w' },
-  { label: 'Last 8 weeks', value: '8w' },
-  { label: 'Last 12 weeks', value: '12w' },
+const COMPARISON_OPTIONS = [
+  { label: 'Previous 1 week', value: '1w' },
+  { label: 'Previous 2 weeks', value: '2w' },
+  { label: 'Previous 4 weeks', value: '4w' },
+];
+const CURRENT_RANGE_OPTIONS = [
+  { label: 'Jun 30–Jul 27', value: 'current-4w' },
+  { label: 'Jun 2–Jun 29', value: 'previous-4w' },
 ];
 
-const periodFilter = () => html`
+const comparisonSelect = () => html`
   <ds-select
     slot="filter"
     size="md"
     background="always-dark"
     .activeFill=${false}
-    aria-label="Reporting period"
-    .options=${PERIOD_OPTIONS}
+    .hasBorder=${false}
+    aria-label="Comparison window"
+    .options=${COMPARISON_OPTIONS}
     .value=${'4w'}
   ></ds-select>
 `;
 
-export const Structure: Story = {
+const currentRangeSelect = () => html`
+  <ds-select
+    slot="period"
+    size="md"
+    background="always-dark"
+    .activeFill=${false}
+    .hasBorder=${false}
+    aria-label="Current date range"
+    .options=${CURRENT_RANGE_OPTIONS}
+    .value=${'current-4w'}
+  ></ds-select>
+`;
+
+export const DateComparison: Story = {
   parameters: { controls: { disable: true } },
   render: () => html`
     <div style="${FRAME}">
       <ds-card-overview
         overview-label="Safety summary"
-        period-label="Jun 29, 2026 – Jul 26, 2026"
-        comparison-label="vs Previous period"
+        period-label="Jul 27"
+        comparison-label="vs."
         .score=${SCORE}
         .metrics=${METRICS}
       >
-        <!--
-          The period control is slotted, so the application picks it. Select
-          supports the always-dark surface directly, so no wrapper is needed.
-        -->
-        ${periodFilter()}
+        ${comparisonSelect()}
       </ds-card-overview>
     </div>
   `,
 };
 
-/** Condensed summary chrome for application-owned sticky page behavior. */
+export const RangeComparison: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'The current range can be application-owned Select content. The comparison Select still chooses a preceding window length, not an arbitrary date.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${FRAME}">
+      <ds-card-overview
+        overview-label="Safety summary"
+        comparison-label="vs."
+        .score=${SCORE}
+        .metrics=${METRICS}
+      >
+        ${currentRangeSelect()} ${comparisonSelect()}
+      </ds-card-overview>
+    </div>
+  `,
+};
+
+export const ScorePalette: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="display:grid;gap:var(--dimension-space-200);${FRAME}">
+      ${[
+        { label: 'Fair', value: 42 },
+        { label: 'Good', value: 72 },
+        { label: 'Excellent', value: 87 },
+      ].map(
+        score => html`
+          <ds-card-overview
+            period-label="Jul 27"
+            comparison-label="vs."
+            .score=${{ label: `${score.label} safety score`, value: score.value }}
+          >
+            ${comparisonSelect()}
+          </ds-card-overview>
+        `
+      )}
+    </div>
+  `,
+};
+
 export const Compact: Story = {
   parameters: {
     controls: { disable: true },
     docs: {
       description: {
         story:
-          'The compact presentation is exactly 48px high and omits measures and the score band. ' +
-          'Its owner decides when to show or stick it; CardOverview does not observe page scroll.',
+          'Compact is only the 48px period bar. It intentionally omits both Score and metrics.',
       },
     },
   },
@@ -126,144 +180,93 @@ export const Compact: Story = {
       <ds-card-overview
         variant="compact"
         overview-label="Compact safety summary"
-        period-label="Jun 29, 2026 – Jul 26, 2026"
-        comparison-label="vs Previous period"
+        period-label="Jul 27"
+        comparison-label="vs."
         .score=${SCORE}
         .metrics=${METRICS}
       >
-        ${periodFilter()}
+        ${comparisonSelect()}
       </ds-card-overview>
     </div>
   `,
 };
 
-/** Mid-scroll visual state before the page swaps to the compact presentation. */
 export const ScrollCollapseSurface: Story = {
-  parameters: {
-    controls: { disable: true },
-    docs: {
-      description: {
-        story:
-          'The page supplies scroll progress. CardOverview preserves its expanded flow height while its elevated surface shrinks and its full content moves upward inside an internal clip. At the 48px endpoint, the page swaps to the compact presentation.',
-      },
-    },
-  },
+  parameters: { controls: { disable: true } },
   render: () => html`
     <div style="width:960px;max-width:100%;${FRAME}">
       <ds-card-overview
-        overview-label="Partially collapsed safety summary"
-        period-label="Jun 29, 2026 – Jul 26, 2026"
-        comparison-label="vs Previous period"
+        period-label="Jul 27"
+        comparison-label="vs."
         .score=${SCORE}
         .metrics=${METRICS}
         .scrollCollapseProgress=${0.55}
       >
-        ${periodFilter()}
+        ${comparisonSelect()}
       </ds-card-overview>
     </div>
   `,
 };
 
-/** Every tone and both directions, plus the no-trend case. */
-export const TrendTones: Story = {
+export const Wrapping: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="width:640px;max-width:100%;${FRAME}">
+      <ds-card-overview
+        period-label="Jun 30–Jul 27"
+        comparison-label="vs."
+        .score=${SCORE}
+        .metrics=${METRICS}
+      >
+        ${comparisonSelect()}
+      </ds-card-overview>
+    </div>
+  `,
+};
+
+export const Stacked: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="width:640px;max-width:100%;${FRAME}">
+      <ds-card-overview
+        layout="stacked"
+        period-label="Jul 27"
+        comparison-label="vs."
+        .score=${SCORE}
+        .metrics=${METRICS}
+      >
+        ${comparisonSelect()}
+      </ds-card-overview>
+    </div>
+  `,
+};
+
+export const NoScore: Story = {
   parameters: { controls: { disable: true } },
   render: () => html`
     <div style="${FRAME}">
       <ds-card-overview
-        overview-label="Trend tones"
-        .metrics=${[
-          {
-            id: 'up-pos',
-            label: 'Rise reads positive',
-            value: 120,
-            trend: resolveMetricTrend(120, 100),
-          },
-          {
-            id: 'down-neg',
-            label: 'Fall reads negative',
-            value: 80,
-            trend: resolveMetricTrend(80, 100),
-          },
-          {
-            id: 'up-neg',
-            label: 'Rise reads negative',
-            value: 120,
-            trend: resolveMetricTrend(120, 100, { inverted: true }),
-          },
-          {
-            id: 'down-pos',
-            label: 'Fall reads positive',
-            value: 80,
-            trend: resolveMetricTrend(80, 100, { inverted: true }),
-          },
-          {
-            id: 'neutral',
-            label: 'Change reads neutral',
-            value: 90,
-            trend: resolveMetricTrend(90, 100, { neutral: true }),
-          },
-          { id: 'none', label: 'Nothing to report', value: 100 },
-        ]}
-      ></ds-card-overview>
-    </div>
-  `,
-};
-
-/** The grid reflows while keeping every occupied cell on equal-width tracks. */
-export const Stacking: Story = {
-  parameters: {
-    controls: { disable: true },
-    docs: {
-      description: {
-        story:
-          'Each frame is narrower than the last. Measures reflow to fewer equal-width columns and finally stack; ' +
-          'a partial final row leaves empty tracks instead of stretching its cells, and the bar never scrolls horizontally.',
-      },
-    },
-  },
-  render: () => html`
-    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-300);${FRAME}">
-      ${[960, 640, 380].map(
-        width => html`
-          <div style="width:${width}px;max-width:100%;">
-            <ds-card-overview
-              overview-label="Safety summary at ${width}px"
-              period-label="Jun 29 – Jul 26, 2026"
-              comparison-label="vs Previous period"
-              .score=${SCORE}
-              .metrics=${METRICS}
-            >
-              ${periodFilter()}
-            </ds-card-overview>
-          </div>
-        `
-      )}
-    </div>
-  `,
-};
-
-/** A page shell can choose the single-column composition before the card is narrow. */
-export const ForcedStacking: Story = {
-  parameters: {
-    controls: { disable: true },
-    docs: {
-      description: {
-        story:
-          'Set layout to stacked when the page shell has entered its responsive mode, even if the card still owns a wide content column.',
-      },
-    },
-  },
-  render: () => html`
-    <div style="width:960px;${FRAME}">
-      <ds-card-overview
-        layout="stacked"
-        overview-label="Forced stacked safety summary"
-        period-label="Jun 29 – Jul 26, 2026"
-        comparison-label="vs Previous period"
-        .score=${SCORE}
+        period-label="Jul 27"
+        comparison-label="vs."
         .metrics=${METRICS}
       >
-        ${periodFilter()}
+        ${comparisonSelect()}
+      </ds-card-overview>
+    </div>
+  `,
+};
+
+export const ScoreWithoutTrend: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="${FRAME}">
+      <ds-card-overview
+        period-label="Jul 27"
+        comparison-label="vs."
+        .score=${{ label: 'Safety score', value: 87 }}
+        .metrics=${METRICS}
+      >
+        ${comparisonSelect()}
       </ds-card-overview>
     </div>
   `,
@@ -273,22 +276,23 @@ export const Loading: Story = {
   parameters: { controls: { disable: true } },
   render: () => html`
     <div style="${FRAME}">
-      <ds-card-overview overview-label="Safety summary" is-loading></ds-card-overview>
+      <ds-card-overview overview-label="Loading safety summary" is-loading></ds-card-overview>
     </div>
   `,
 };
 
-/** The score can fail independently while the measures stay readable. */
 export const ScoreError: Story = {
   parameters: { controls: { disable: true } },
   render: () => html`
     <div style="${FRAME}">
       <ds-card-overview
-        overview-label="Safety summary"
-        period-label="Jun 29, 2026 – Jul 26, 2026"
+        period-label="Jul 27"
+        comparison-label="vs."
         score-error-message="Score unavailable"
         .metrics=${METRICS}
-      ></ds-card-overview>
+      >
+        ${comparisonSelect()}
+      </ds-card-overview>
     </div>
   `,
 };

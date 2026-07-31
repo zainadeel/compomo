@@ -1,52 +1,72 @@
 import '/dist/components/ds-card-overview.js';
+import '/dist/components/ds-select.js';
 
-await customElements.whenDefined('ds-card-overview');
+await Promise.all([
+  customElements.whenDefined('ds-card-overview'),
+  customElements.whenDefined('ds-select'),
+]);
+
+const comparisonOptions = [
+  { label: 'Previous 1 week', value: '1w' },
+  { label: 'Previous 2 weeks', value: '2w' },
+  { label: 'Previous 4 weeks', value: '4w' },
+];
+const rangeOptions = [
+  { label: 'Jun 30–Jul 27', value: 'current-4w' },
+  { label: 'Jun 2–Jun 29', value: 'previous-4w' },
+];
+
+for (const id of ['default-filter', 'range-filter', 'compact-filter']) {
+  const select = document.getElementById(id);
+  select.options = comparisonOptions;
+  select.value = '4w';
+  select.background = 'always-dark';
+  select.activeFill = false;
+  select.hasBorder = false;
+}
+
+const rangeSelect = document.getElementById('range-period');
+rangeSelect.options = rangeOptions;
+rangeSelect.value = 'current-4w';
+rangeSelect.background = 'always-dark';
+rangeSelect.activeFill = false;
+rangeSelect.hasBorder = false;
 
 const metrics = Array.from({ length: 7 }, (_, index) => ({
   id: `metric-${index + 1}`,
   label: `Metric ${index + 1}`,
   value: index + 1,
-  trend: {
-    direction: index % 2 === 0 ? 'up' : 'down',
-    value: '1',
-    tone: ['positive', 'negative', 'neutral'][index % 3],
-  },
+  trend:
+    index === 3
+      ? undefined
+      : {
+          direction: index % 2 === 0 ? 'up' : 'down',
+          value: '1',
+          tone: ['positive', 'negative', 'neutral'][index % 3],
+        },
 }));
 
-for (const [id, count] of [
-  ['five', 5],
-  ['six', 6],
-  ['clamped', 7],
-  ['wrapped-four', 4],
-  ['stacked', 3],
-  ['score-pressure', 5],
-  ['forced-stacked', 5],
-  ['scroll-collapse', 5],
-]) {
+const score = value => ({
+  label: 'Safety score',
+  value,
+  trend: { direction: 'up', value: '4', tone: 'positive' },
+});
+
+for (const id of ['default', 'range', 'wrapped', 'stacked', 'scroll-collapse']) {
   const card = document.getElementById(id);
-  card.metricMinWidth = id === 'stacked' ? '200px' : '180px';
-  card.metrics = metrics.slice(0, count);
+  card.metricMinWidth = '180px';
+  card.score = score(87);
+  card.metrics = metrics.slice(0, id === 'wrapped' ? 4 : 5);
 }
 
-const score = {
-  label: 'Score',
-  value: 81,
-  trend: {
-    direction: 'down',
-    value: '1',
-    tone: 'negative',
-  },
-  band: 'Good (67–83)',
-};
-
-document.getElementById('stacked').score = score;
-document.getElementById('score-pressure').score = score;
-document.getElementById('forced-stacked').score = score;
-document.getElementById('scroll-collapse').score = score;
-
-const compact = document.getElementById('compact');
-compact.score = score;
-compact.metrics = metrics.slice(0, 5);
+document.getElementById('compact').score = score(87);
+document.getElementById('compact').metrics = metrics.slice(0, 5);
+document.getElementById('fair').score = score(50);
+document.getElementById('good').score = score(80);
+document.getElementById('excellent').score = score(81);
+document.getElementById('no-score').metrics = metrics.slice(0, 2);
+document.getElementById('no-trend').score = { label: 'Safety score', value: 87 };
+document.getElementById('score-error').metrics = metrics.slice(0, 2);
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 document.documentElement.dataset.ready = 'true';

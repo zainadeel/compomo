@@ -13,90 +13,56 @@
 
       ds-card-overview {
         display: block;
+        width: 960px;
+        max-width: 100%;
         margin-block-end: 24px;
       }
 
-      #five,
-      #six,
-      #clamped {
-        width: 800px;
-      }
-
-      #wrapped-four {
+      #wrapped {
         width: 560px;
       }
 
       #stacked {
-        width: 380px;
-      }
-
-      #compact {
-        width: 800px;
-      }
-
-      #score-pressure {
-        width: 670px;
-      }
-
-      #forced-stacked {
-        width: 800px;
-      }
-
-      #scroll-collapse {
-        width: 800px;
-      }
-
-      #compact [slot='filter'] {
-        height: var(--dimension-size-400);
+        width: 640px;
       }
     </style>
   </head>
   <body>
-    <ds-card-overview
-      id="five"
-      period-label="Jun 29, 2026 – Jul 26, 2026"
-      comparison-label="vs Previous period"
-    ></ds-card-overview>
-    <ds-card-overview id="six"></ds-card-overview>
-    <ds-card-overview id="clamped"></ds-card-overview>
-    <ds-card-overview id="wrapped-four"></ds-card-overview>
+    <ds-card-overview id="default" period-label="Jul 27" comparison-label="vs.">
+      <ds-select id="default-filter" slot="filter" aria-label="Comparison window"></ds-select>
+    </ds-card-overview>
+
+    <ds-card-overview id="range" comparison-label="vs.">
+      <ds-select id="range-period" slot="period" aria-label="Current date range"></ds-select>
+      <ds-select id="range-filter" slot="filter" aria-label="Comparison window"></ds-select>
+    </ds-card-overview>
+
+    <ds-card-overview id="wrapped" period-label="Jul 27" comparison-label="vs."></ds-card-overview>
     <ds-card-overview
       id="stacked"
-      period-label="Jun 29, 2026 – Jul 26, 2026"
-      comparison-label="vs Previous period"
-    >
-      <button slot="filter" type="button">Last 4 weeks</button>
-    </ds-card-overview>
+      layout="stacked"
+      period-label="Jul 27"
+      comparison-label="vs."
+    ></ds-card-overview>
     <ds-card-overview
       id="compact"
       variant="compact"
-      period-label="Jun 29, 2026 – Jul 26, 2026"
-      comparison-label="vs Previous period"
+      period-label="Jul 27"
+      comparison-label="vs."
     >
-      <button slot="filter" type="button">Last 4 weeks</button>
-    </ds-card-overview>
-    <ds-card-overview
-      id="score-pressure"
-      period-label="Jun 29, 2026 – Jul 26, 2026"
-      comparison-label="vs Previous period"
-    >
-      <button slot="filter" type="button">Last 4 weeks</button>
-    </ds-card-overview>
-    <ds-card-overview
-      id="forced-stacked"
-      layout="stacked"
-      period-label="Jun 29, 2026 – Jul 26, 2026"
-      comparison-label="vs Previous period"
-    >
-      <button slot="filter" type="button">Last 4 weeks</button>
+      <ds-select id="compact-filter" slot="filter" aria-label="Comparison window"></ds-select>
     </ds-card-overview>
     <ds-card-overview
       id="scroll-collapse"
-      period-label="Jun 29, 2026 – Jul 26, 2026"
-      comparison-label="vs Previous period"
-    >
-      <button slot="filter" type="button">Last 4 weeks</button>
-    </ds-card-overview>
+      period-label="Jul 27"
+      comparison-label="vs."
+    ></ds-card-overview>
+    <ds-card-overview id="fair"></ds-card-overview>
+    <ds-card-overview id="good"></ds-card-overview>
+    <ds-card-overview id="excellent"></ds-card-overview>
+    <ds-card-overview id="no-score"></ds-card-overview>
+    <ds-card-overview id="no-trend"></ds-card-overview>
+    <ds-card-overview id="score-error" score-error-message="Score unavailable"></ds-card-overview>
 
     <script type="module" src="/card-overview-setup.mjs"></script>
   </body>

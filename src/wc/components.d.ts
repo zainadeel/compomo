@@ -661,7 +661,7 @@ export namespace Components {
     }
     interface DsCardOverview {
         /**
-          * Comparison caption, for example `vs Previous period`.
+          * Copy between the current period and comparison control, usually `vs.`.
           * @default ''
          */
         "comparisonLabel": string;
@@ -676,12 +676,12 @@ export namespace Components {
          */
         "layout": CardOverviewLayout;
         /**
-          * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
+          * Width a metric cell may shrink to before the grid drops a column. The grid uses this threshold while choosing an evenly distributed column count.
           * @default 'var(--dimension-menu-width-xs)'
          */
         "metricMinWidth": string;
         /**
-          * Measures rendered in the responsive grid. Only the first six are shown.
+          * Measures rendered in the responsive grid. Only the first seven are shown.
           * @default []
          */
         "metrics": OverviewMetric[];
@@ -691,12 +691,12 @@ export namespace Components {
          */
         "overviewLabel": string;
         /**
-          * Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`.
+          * Fixed current date or range. Replaced by content in the `period` slot.
           * @default ''
          */
         "periodLabel": string;
         /**
-          * Leading summary block. Omit to render the bar without a headline figure.
+          * Optional nonselectable safety score rendered as the first grid cell.
          */
         "score": OverviewScore | undefined;
         /**
@@ -704,7 +704,7 @@ export namespace Components {
          */
         "scoreErrorMessage": string | undefined;
         /**
-          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps elevation on the shrinking surface, and clips translated content internally. The page still owns sticky positioning and the final swap to `variant="compact"`.
+          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps the period bar stationary, and moves/clips the grid beneath it. The page still owns sticky positioning and the final compact handoff.
           * @default 0
          */
         "scrollCollapseProgress": number;
@@ -1168,7 +1168,7 @@ export namespace Components {
         "errorMessage": string | undefined;
         "form": string | undefined;
         /**
-          * Show the standard inset border.
+          * Show the standard inset border, including focused and invalid strokes.
           * @default true
          */
         "hasBorder": boolean;
@@ -2005,7 +2005,7 @@ export namespace Components {
          */
         "errorMessage": string | undefined;
         /**
-          * Show the surface-aware inset border.
+          * Show the surface-aware inset border, including focused and invalid strokes.
           * @default true
          */
         "hasBorder": boolean;
@@ -4482,7 +4482,7 @@ declare namespace LocalJSX {
     }
     interface DsCardOverview {
         /**
-          * Comparison caption, for example `vs Previous period`.
+          * Copy between the current period and comparison control, usually `vs.`.
           * @default ''
          */
         "comparisonLabel"?: string;
@@ -4497,12 +4497,12 @@ declare namespace LocalJSX {
          */
         "layout"?: CardOverviewLayout;
         /**
-          * Width a metric cell may shrink to before the grid drops a column. The grid reflows and then stacks from this alone, so no measurement is required.
+          * Width a metric cell may shrink to before the grid drops a column. The grid uses this threshold while choosing an evenly distributed column count.
           * @default 'var(--dimension-menu-width-xs)'
          */
         "metricMinWidth"?: string;
         /**
-          * Measures rendered in the responsive grid. Only the first six are shown.
+          * Measures rendered in the responsive grid. Only the first seven are shown.
           * @default []
          */
         "metrics"?: OverviewMetric[];
@@ -4516,12 +4516,12 @@ declare namespace LocalJSX {
          */
         "overviewLabel"?: string;
         /**
-          * Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`.
+          * Fixed current date or range. Replaced by content in the `period` slot.
           * @default ''
          */
         "periodLabel"?: string;
         /**
-          * Leading summary block. Omit to render the bar without a headline figure.
+          * Optional nonselectable safety score rendered as the first grid cell.
          */
         "score"?: OverviewScore | undefined;
         /**
@@ -4529,7 +4529,7 @@ declare namespace LocalJSX {
          */
         "scoreErrorMessage"?: string | undefined;
         /**
-          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps elevation on the shrinking surface, and clips translated content internally. The page still owns sticky positioning and the final swap to `variant="compact"`.
+          * Page-controlled visual collapse from the full card (`0`) toward its 48px compact handoff height (`1`). The component preserves its expanded flow height, keeps the period bar stationary, and moves/clips the grid beneath it. The page still owns sticky positioning and the final compact handoff.
           * @default 0
          */
         "scrollCollapseProgress"?: number;
@@ -5022,7 +5022,7 @@ declare namespace LocalJSX {
         "errorMessage"?: string | undefined;
         "form"?: string | undefined;
         /**
-          * Show the standard inset border.
+          * Show the standard inset border, including focused and invalid strokes.
           * @default true
          */
         "hasBorder"?: boolean;
@@ -5936,7 +5936,7 @@ declare namespace LocalJSX {
          */
         "form"?: string;
         /**
-          * Show the surface-aware inset border.
+          * Show the surface-aware inset border, including focused and invalid strokes.
           * @default true
          */
         "hasBorder"?: boolean;

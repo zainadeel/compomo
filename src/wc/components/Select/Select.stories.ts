@@ -47,6 +47,7 @@ const meta: Meta = {
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
+    hasBorder: { control: 'boolean' },
     searchable: { control: 'boolean' },
     isLoading: { control: 'boolean' },
     allowClear: { control: 'boolean' },
@@ -62,6 +63,7 @@ const meta: Meta = {
     size: 'md',
     width: 'hug',
     icon: 'Chart',
+    hasBorder: true,
     searchable: false,
     isLoading: false,
     allowClear: true,
@@ -84,6 +86,7 @@ export const Playground: Story = {
           size=${args['size']}
           width=${args['width']}
           icon=${args['icon']}
+          .hasBorder=${args['hasBorder']}
           background=${args['background']}
           ?searchable=${args['searchable']}
           ?is-loading=${args['isLoading']}
@@ -264,6 +267,19 @@ export const SizesAndStates: Story = {
         error
         error-message="Choose a valid fruit."
         aria-label="Invalid fruit"
+      ></ds-select>
+      <ds-select
+        .options=${OPTIONS}
+        value="cherry"
+        .hasBorder=${false}
+        aria-label="Borderless fruit"
+      ></ds-select>
+      <ds-select
+        .options=${OPTIONS}
+        .hasBorder=${false}
+        error
+        error-message="Choose a valid fruit."
+        aria-label="Invalid borderless fruit"
       ></ds-select>
     </div>
   `,

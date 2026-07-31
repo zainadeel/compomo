@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
   findNextOverviewMetricIndex,
   resolveCardOverviewCollapseGeometry,
+  resolveOverviewGridColumns,
   resolveOverviewRovingIndex,
+  resolveSafetyScoreLevel,
 } from '../src/wc/components/CardOverview/card-overview-controller';
 import type { OverviewMetric } from '../src/wc/components/CardOverview/card-overview-types';
 
@@ -52,5 +54,35 @@ describe('CardOverview controller', () => {
     assert.equal(resolveOverviewRovingIndex(metrics, 1), 0);
     assert.equal(findNextOverviewMetricIndex(metrics, 0, 1), 2);
     assert.equal(findNextOverviewMetricIndex(metrics, 0, -1), 2);
+  });
+
+  it('maps Safety Score boundaries to their semantic levels', () => {
+    assert.equal(resolveSafetyScoreLevel(0), 'fair');
+    assert.equal(resolveSafetyScoreLevel(50), 'fair');
+    assert.equal(resolveSafetyScoreLevel(51), 'good');
+    assert.equal(resolveSafetyScoreLevel(80), 'good');
+    assert.equal(resolveSafetyScoreLevel(81), 'excellent');
+    assert.equal(resolveSafetyScoreLevel(100), 'excellent');
+    assert.equal(resolveSafetyScoreLevel('87'), 'excellent');
+    assert.equal(resolveSafetyScoreLevel('unavailable'), undefined);
+    assert.equal(resolveSafetyScoreLevel(101), undefined);
+  });
+
+  it('prefers complete rows for even totals and dense rows for odd totals', () => {
+    const columns = (cellCount: number, capacity: number) =>
+      resolveOverviewGridColumns({
+        cellCount,
+        availableWidth: capacity * 180,
+        minCellWidth: 180,
+      });
+
+    assert.equal(columns(4, 4), 4);
+    assert.equal(columns(4, 3), 2);
+    assert.equal(columns(6, 4), 3);
+    assert.equal(columns(6, 2), 2);
+    assert.equal(columns(8, 4), 4);
+    assert.equal(columns(8, 3), 2);
+    assert.equal(columns(7, 4), 4);
+    assert.equal(columns(7, 3), 3);
   });
 });

@@ -3,4 +3,5 @@ export type {
   CardOverviewVariant,
   OverviewMetric,
   OverviewScore,
+  SafetyScoreLevel,
 } from './card-overview-types';

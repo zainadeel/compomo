@@ -38,6 +38,30 @@ test('defaults both select triggers to hug width and supports explicit fill', as
   }
 });
 
+test('keeps hasBorder=false borderless when selected, focused, and invalid', async ({ page }) => {
+  const select = page.locator('#borderless-error');
+  const trigger = select.getByRole('combobox');
+
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.value = 'cherry';
+  });
+  await trigger.focus();
+
+  const presentation = await trigger.evaluate(element => ({
+    borderWidth: getComputedStyle(element)
+      .getPropertyValue('--ds-interaction-border-width')
+      .trim(),
+    borderedClass: element.classList.contains('trigger--bordered'),
+    errorClass: element.classList.contains('wrapper--error'),
+  }));
+
+  await expect(select).toHaveJSProperty('hasBorder', false);
+  await expect(trigger).toHaveAttribute('aria-invalid', 'true');
+  expect(presentation.borderWidth).toBe('0px');
+  expect(presentation.borderedClass).toBe(false);
+  expect(presentation.errorClass).toBe(false);
+});
+
 test('uses combobox and listbox semantics with disabled-option keyboard skipping', async ({
   page,
 }) => {
