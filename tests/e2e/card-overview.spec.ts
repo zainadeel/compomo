@@ -255,7 +255,7 @@ test('keeps elevation fitted to the shrinking surface while preserving expanded 
     expandedHeight - geometry.surfaceHeight,
     1
   );
-  expect(geometry.overflow).toBe('clip');
+  expect(geometry.overflow).toBe('hidden');
   expect(geometry.shadow).not.toBe('none');
   expect(geometry.highlight).not.toBe('none');
   await expect(layout).toHaveCSS('will-change', 'transform');

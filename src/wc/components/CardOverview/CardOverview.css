@@ -43,7 +43,7 @@
   min-width: 0;
   border-radius: inherit;
   background: inherit;
-  overflow: clip;
+  overflow: hidden;
 }
 
 :host(.card-overview--scroll-collapsing) {
