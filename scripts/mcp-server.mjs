@@ -25,8 +25,8 @@
  * executable reads the generated snapshot bundled into dist/.
  */
 
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { McpServer } from '@modelcontextprotocol/server';
+import { StdioServerTransport } from '@modelcontextprotocol/server/stdio';
 import { z } from 'zod';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -290,10 +290,11 @@ Never hardcode these values. The tokens support light/dark theming automatically
 
 // ─── MCP Server ─────────────────────────────────────────────────────────────────
 
-const server = new McpServer({
-  name: 'compomo',
-  version: PACKAGE_VERSION,
-});
+function createServer() {
+  const server = new McpServer({
+    name: 'compomo',
+    version: PACKAGE_VERSION,
+  });
 
 // Tool 1: List components
 server.registerTool(
@@ -526,7 +527,10 @@ server.registerTool(
   }
 );
 
+  return server;
+}
+
 // ─── Start ──────────────────────────────────────────────────────────────────────
 
 const transport = new StdioServerTransport();
-await server.connect(transport);
+await createServer().connect(transport);

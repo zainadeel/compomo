@@ -5,8 +5,8 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { Client } from '@modelcontextprotocol/client';
+import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 
 const repoRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const pkg = JSON.parse(execFileSync('node', ['-e', "process.stdout.write(require('fs').readFileSync('package.json'))"], {
@@ -17,10 +17,13 @@ const packDir = mkdtempSync(join(tmpdir(), 'ds-mo-pack-'));
 const smokeDir = mkdtempSync(join(tmpdir(), 'ds-mo-consumer-'));
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
 
-async function verifyPackagedMcp(consumerDir) {
+async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
   const command = join(consumerDir, 'node_modules', '.bin', 'compomo-mcp');
   const transport = new StdioClientTransport({ command, cwd: consumerDir, stderr: 'pipe' });
-  const client = new Client({ name: 'ds-mo-package-smoke', version: '1.0.0' });
+  const client = new Client(
+    { name: 'ds-mo-package-smoke', version: '1.0.0' },
+    clientOptions,
+  );
   let stderr = '';
   transport.stderr?.on('data', chunk => {
     stderr += chunk.toString();
@@ -28,6 +31,11 @@ async function verifyPackagedMcp(consumerDir) {
 
   try {
     await client.connect(transport);
+    if (client.getProtocolEra() !== expectedEra) {
+      throw new Error(
+        `Packaged MCP connected through ${client.getProtocolEra() ?? 'unknown'} instead of ${expectedEra}.`
+      );
+    }
     const serverInfo = client.getServerVersion();
     if (serverInfo?.name !== 'compomo' || serverInfo.version !== pkg.version) {
       throw new Error(
@@ -222,7 +230,14 @@ try {
     cwd: smokeDir,
     stdio: 'inherit',
   });
-  await verifyPackagedMcp(smokeDir);
+  await verifyPackagedMcp(smokeDir, {
+    clientOptions: { versionNegotiation: { mode: 'auto' } },
+    expectedEra: 'legacy',
+  });
+  await verifyPackagedMcp(smokeDir, {
+    clientOptions: undefined,
+    expectedEra: 'legacy',
+  });
   console.log('✅ Packed native, Angular, React, shell, toast, utils, agent, and MCP entry points load successfully.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
