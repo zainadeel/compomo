@@ -111,8 +111,7 @@
     "@ds-mo/tokens": "^5.1.0",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
-    "rxjs": "^7.8.0",
-    "@stencil/react-output-target": ">=1.6 <2"
+    "rxjs": "^7.8.0"
   },
   "peerDependenciesMeta": {
     "@angular/core": {
@@ -128,9 +127,6 @@
       "optional": true
     },
     "rxjs": {
-      "optional": true
-    },
-    "@stencil/react-output-target": {
       "optional": true
     }
   },
@@ -189,6 +185,7 @@
     "dist/components/**/*.js"
   ],
   "dependencies": {
+    "@lit/react": "^1.0.8",
     "d3-array": "^3.2.4",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",

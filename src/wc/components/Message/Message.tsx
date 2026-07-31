@@ -3,7 +3,7 @@ import type {
   MessageDeliveryState,
   MessageDirection,
   MessageGroupPosition,
-  MessageMetadataActionsVisibility,
+  MessageMetadataVisibility,
 } from '../conversation-types';
 
 const DELIVERY_LABELS: Record<MessageDeliveryState, string> = {
@@ -31,7 +31,7 @@ export class Message {
   @Prop() deliveryState: MessageDeliveryState | undefined;
   @Prop() streaming: boolean = false;
   /** Controls whether the complete metadata footer is persistent or revealed through hover/focus. */
-  @Prop() metadataActionsVisibility: MessageMetadataActionsVisibility = 'always';
+  @Prop() metadataVisibility: MessageMetadataVisibility = 'always';
   @Prop({ reflect: true }) scrollAnchor: boolean = false;
 
   private formattedTimestamp(): string {
@@ -67,7 +67,7 @@ export class Message {
             message: true,
             [`message--${this.direction}`]: true,
             [`message--group-${this.groupPosition}`]: true,
-            [`message--metadata-actions-${this.metadataActionsVisibility}`]: true,
+            [`message--metadata-${this.metadataVisibility}`]: true,
           }}
           aria-label={this.author ? `Message from ${this.author}` : 'Message'}
         >

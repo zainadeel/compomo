@@ -28,7 +28,7 @@ export type {
   MessageDirection,
   MessageGroupPosition,
   MessageDeliveryState,
-  MessageMetadataActionsVisibility,
+  MessageMetadataVisibility,
   MessageFeedback,
   MessageCopyResultEventDetail,
   MessageScrollerPosition,

@@ -19,6 +19,10 @@ methods, slots, package versions, adapter paths, or token values.
 Every source component requires exactly one co-located agent JSON file validated
 by `agent/schemas/component-agent.schema.json`.
 
+Lifecycle changes follow
+[`docs/maintainers/component-lifecycle.md`](../docs/maintainers/component-lifecycle.md).
+Do not infer stability from production use alone.
+
 ## Patterns
 
 Cross-component workflows live in

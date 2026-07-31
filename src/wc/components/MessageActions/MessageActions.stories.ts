@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import type { MessageFeedback } from '../conversation-types';
 import '../../../../dist/components/ds-message-actions.js';
 
 export default {
@@ -20,6 +21,14 @@ export const Feedback: Story = {
       copy-text="A completed agent response."
       .feedbackEnabled=${true}
       feedback="positive"
+      @dsFeedbackChange=${(
+        event: CustomEvent<MessageFeedback | undefined>
+      ) => {
+        const actions = event.currentTarget as HTMLElement & {
+          feedback?: MessageFeedback;
+        };
+        actions.feedback = event.detail;
+      }}
     ></ds-message-actions>
   `,
 };

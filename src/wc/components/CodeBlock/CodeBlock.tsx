@@ -1,5 +1,5 @@
-import { Component, h, Host, Prop, State } from '@stencil/core';
-import { writeClipboardText } from '../../utils/clipboard';
+import { Component, h, Host, Prop, State, Watch } from '@stencil/core';
+import { ClipboardFeedbackController } from '../../utils/clipboard';
 
 @Component({
   tag: 'ds-code-block',
@@ -12,21 +12,25 @@ export class CodeBlock {
   @Prop() filename: string = '';
 
   @State() private copied: boolean = false;
-  private copiedTimer?: ReturnType<typeof setTimeout>;
+  private readonly copyFeedback = new ClipboardFeedbackController(copied => {
+    this.copied = copied;
+  });
+
+  connectedCallback() {
+    this.copyFeedback.connect();
+  }
+
+  @Watch('code')
+  handleCodeChange() {
+    this.copyFeedback.reset();
+  }
 
   disconnectedCallback() {
-    if (this.copiedTimer) clearTimeout(this.copiedTimer);
+    this.copyFeedback.disconnect();
   }
 
   private copy = async () => {
-    const copied = await writeClipboardText(this.code);
-    if (!copied) return;
-
-    this.copied = true;
-    if (this.copiedTimer) clearTimeout(this.copiedTimer);
-    this.copiedTimer = setTimeout(() => {
-      this.copied = false;
-    }, 2000);
+    await this.copyFeedback.copy(this.code);
   };
 
   render() {

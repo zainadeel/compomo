@@ -33,7 +33,7 @@ export const WithMetadataActions: Story = {
       author="Agent"
       .showAuthor=${false}
       timestamp="2:15 PM"
-      metadata-actions-visibility="hover"
+      metadata-visibility="hover"
       .parts=${[
         {
           id: 'answer',

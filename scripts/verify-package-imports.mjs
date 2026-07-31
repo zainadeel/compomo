@@ -209,7 +209,6 @@ try {
       '@ds-mo/icons': pkg.devDependencies['@ds-mo/icons'],
       '@ds-mo/tokens': pkg.devDependencies['@ds-mo/tokens'],
       '@ds-mo/ui': `file:${tarballPath}`,
-      '@stencil/react-output-target': pkg.devDependencies['@stencil/react-output-target'],
       react: pkg.devDependencies.react,
       'react-dom': pkg.devDependencies['react-dom'],
     },

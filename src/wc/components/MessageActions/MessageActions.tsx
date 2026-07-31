@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';
-import { writeClipboardText } from '../../utils/clipboard';
+import { ClipboardFeedbackController } from '../../utils/clipboard';
 import type { MessageCopyResultEventDetail, MessageFeedback } from '../conversation-types';
 
 @Component({
@@ -17,34 +17,28 @@ export class MessageActions {
   @Event() dsCopyResult!: EventEmitter<MessageCopyResultEventDetail>;
   @Event() dsFeedbackChange!: EventEmitter<MessageFeedback | undefined>;
 
-  private copiedTimer?: ReturnType<typeof setTimeout>;
+  private readonly copyFeedback = new ClipboardFeedbackController(copied => {
+    this.copied = copied;
+  });
+
+  connectedCallback() {
+    this.copyFeedback.connect();
+  }
 
   @Watch('copyText')
   handleCopyTextChange() {
-    this.clearCopiedState();
+    this.copyFeedback.reset();
   }
 
   disconnectedCallback() {
-    if (this.copiedTimer) clearTimeout(this.copiedTimer);
-  }
-
-  private clearCopiedState() {
-    if (this.copiedTimer) clearTimeout(this.copiedTimer);
-    this.copiedTimer = undefined;
-    this.copied = false;
+    this.copyFeedback.disconnect();
   }
 
   private copy = async () => {
-    const success = await writeClipboardText(this.copyText ?? '');
-    this.dsCopyResult.emit({ status: success ? 'success' : 'error' });
-    if (!success) return;
+    const success = await this.copyFeedback.copy(this.copyText ?? '');
+    if (success === undefined) return;
 
-    this.copied = true;
-    if (this.copiedTimer) clearTimeout(this.copiedTimer);
-    this.copiedTimer = setTimeout(() => {
-      this.copied = false;
-      this.copiedTimer = undefined;
-    }, 2000);
+    this.dsCopyResult.emit({ status: success ? 'success' : 'error' });
   };
 
   private changeFeedback(feedback: MessageFeedback, selected: boolean) {

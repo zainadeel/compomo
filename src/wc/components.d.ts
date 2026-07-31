@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataActionsVisibility, MessageScrollerPosition } from "./components/conversation-types";
+import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { AvatarSize } from "./components/Avatar/Avatar";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -61,7 +61,7 @@ import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
-export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataActionsVisibility, MessageScrollerPosition } from "./components/conversation-types";
+export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { AvatarSize } from "./components/Avatar/Avatar";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -145,7 +145,7 @@ export namespace Components {
           * Controls whether the complete message metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
-        "metadataActionsVisibility": MessageMetadataActionsVisibility;
+        "metadataVisibility": MessageMetadataVisibility;
         /**
           * @default []
          */
@@ -1340,7 +1340,7 @@ export namespace Components {
           * Controls whether the complete metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
-        "metadataActionsVisibility": MessageMetadataActionsVisibility;
+        "metadataVisibility": MessageMetadataVisibility;
         /**
           * @default false
          */
@@ -3925,7 +3925,7 @@ declare namespace LocalJSX {
           * Controls whether the complete message metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
-        "metadataActionsVisibility"?: MessageMetadataActionsVisibility;
+        "metadataVisibility"?: MessageMetadataVisibility;
         /**
           * @default []
          */
@@ -5205,7 +5205,7 @@ declare namespace LocalJSX {
           * Controls whether the complete metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
-        "metadataActionsVisibility"?: MessageMetadataActionsVisibility;
+        "metadataVisibility"?: MessageMetadataVisibility;
         /**
           * @default false
          */
@@ -6734,7 +6734,7 @@ declare namespace LocalJSX {
         "showAuthor": boolean;
         "timestamp": string;
         "streaming": boolean;
-        "metadataActionsVisibility": MessageMetadataActionsVisibility;
+        "metadataVisibility": MessageMetadataVisibility;
     }
     interface DsAgentSourceListAttributes {
         "heading": string;
@@ -7030,7 +7030,7 @@ declare namespace LocalJSX {
         "timestamp": string;
         "deliveryState": MessageDeliveryState | undefined;
         "streaming": boolean;
-        "metadataActionsVisibility": MessageMetadataActionsVisibility;
+        "metadataVisibility": MessageMetadataVisibility;
         "scrollAnchor": boolean;
     }
     interface DsMessageActionsAttributes {

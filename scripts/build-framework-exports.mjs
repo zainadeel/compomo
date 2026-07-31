@@ -16,7 +16,25 @@ const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 cleanFileProviderCollisions();
 
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react.json'], { stdio: 'inherit' });
+execFileSync(npx, ['tsc', '-p', 'tsconfig.react-runtime.json'], { stdio: 'inherit' });
 execFileSync(npx, ['ngc', '-p', 'tsconfig.angular.json'], { stdio: 'inherit' });
+
+const stencilReactRuntime = '@stencil/react-output-target/runtime';
+let rewrittenReactRuntimeImports = 0;
+for (const file of readdirSync('dist/react').filter(
+  name => name.endsWith('.js') || name.endsWith('.d.ts')
+)) {
+  const path = `dist/react/${file}`;
+  const source = readFileSync(path, 'utf8');
+  const publishSource = source.replaceAll(stencilReactRuntime, './react-runtime.js');
+  if (source !== publishSource) {
+    rewrittenReactRuntimeImports += 1;
+    writeFileSync(path, publishSource);
+  }
+}
+if (!rewrittenReactRuntimeImports) {
+  throw new Error('Generated React adapters did not contain the expected Stencil runtime import');
+}
 
 const generatedAngularOutput = 'dist/.generated/angular';
 if (!existsSync(generatedAngularOutput)) {
@@ -48,4 +66,4 @@ for (const dir of ['dist/angular', 'dist/framework']) {
   }
 }
 
-console.log('  Built dist/react and dist/angular framework adapters');
+console.log('  Built self-contained dist/react and dist/angular framework adapters');

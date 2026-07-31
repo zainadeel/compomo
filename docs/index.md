@@ -31,6 +31,7 @@ from Storybook and `public/r/`.
 | Release or publish | [Releasing](maintainers/releasing.md), [CI guidance](../.github/AGENTS.md) |
 | Agent metadata ownership | [Component metadata ownership](component-metadata-ownership.md) |
 | Agent contract design | [Agent contract RFC](agent-contract-rfc.md) |
+| Change component lifecycle status | [Component lifecycle](maintainers/component-lifecycle.md) |
 | Control press policy | [Control press policy](control-press-policy.md) |
 | Internal layout recipe ownership | [Layout recipe foundation](layout-recipe-foundation.md) |
 

@@ -119,6 +119,35 @@ test('reveals hover metadata actions for keyboard focus and preserves persistent
   await expect(message.locator('.message__footer #persistent-action')).toHaveCount(0);
 });
 
+test('keeps hover metadata visible for touch and coarse-pointer input', async ({
+  browser,
+}, testInfo) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 390, height: 844 },
+  });
+  const page = await context.newPage();
+
+  try {
+    const baseURL = testInfo.project.use.baseURL as string;
+    await page.goto(`${baseURL}/message-row.html`);
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => matchMedia('(hover: hover) and (pointer: fine)').matches
+        )
+      )
+      .toBe(false);
+    await expect(page.locator('#incoming-actions .message__footer')).toHaveCSS(
+      'opacity',
+      '1'
+    );
+  } finally {
+    await context.close();
+  }
+});
+
 test('copies message text and emits controlled feedback intent', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'clipboard', {
@@ -203,6 +232,52 @@ test('reports clipboard failure without entering copied state', async ({ page })
 
   await expect(actions).toHaveAttribute('data-copy-result', 'error');
   await expect(actions.locator('ds-button-unfilled[aria-label="Copied"]')).toHaveCount(0);
+});
+
+test('ignores an in-flight clipboard result after message actions disconnect', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    let finishClipboardWrite: (() => void) | undefined;
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: () =>
+          new Promise<void>(resolve => {
+            finishClipboardWrite = resolve;
+          }),
+      },
+    });
+    Object.defineProperty(window, 'finishClipboardWrite', {
+      configurable: true,
+      value: () => finishClipboardWrite?.(),
+    });
+  });
+  await page.goto('/message-row.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+  const message = page.locator('#outgoing-actions');
+  const actions = message.locator('ds-message-actions');
+  await actions.evaluate(element => {
+    element.addEventListener('dsCopyResult', () => {
+      document.documentElement.dataset.disconnectedCopyResult = 'emitted';
+    });
+  });
+  await message.hover();
+  await actions.locator('ds-button-unfilled[aria-label="Copy message"]').click();
+  await actions.evaluate(element => element.remove());
+  await page.evaluate(() => {
+    (
+      window as Window & {
+        finishClipboardWrite?: () => void;
+      }
+    ).finishClipboardWrite?.();
+  });
+
+  await expect(page.locator('html')).not.toHaveAttribute(
+    'data-disconnected-copy-result',
+    'emitted'
+  );
 });
 
 test('suppresses the complete metadata row until the last grouped message', async ({

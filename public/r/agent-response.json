@@ -74,10 +74,10 @@
           "required": false,
           "mutable": false
         },
-        "metadataActionsVisibility": {
-          "type": "MessageMetadataActionsVisibility",
+        "metadataVisibility": {
+          "type": "MessageMetadataVisibility",
           "resolvedType": "\"always\" | \"hover\"",
-          "attribute": "metadata-actions-visibility",
+          "attribute": "metadata-visibility",
           "default": "'always'",
           "required": false,
           "mutable": false,
@@ -136,10 +136,10 @@
         "required": false,
         "mutable": false
       },
-      "metadataActionsVisibility": {
-        "type": "MessageMetadataActionsVisibility",
+      "metadataVisibility": {
+        "type": "MessageMetadataVisibility",
         "resolvedType": "\"always\" | \"hover\"",
-        "attribute": "metadata-actions-visibility",
+        "attribute": "metadata-visibility",
         "default": "'always'",
         "required": false,
         "mutable": false,
@@ -230,7 +230,7 @@
     },
     {
       "path": "src/wc/components/AgentResponse/AgentResponse.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type {\n  AgentResponsePart,\n  MessageMetadataActionsVisibility,\n} from '../conversation-types';\n\n@Component({ tag: 'ds-agent-response', styleUrl: 'AgentResponse.css', scoped: true })\nexport class AgentResponse {\n  @Prop() messageId: string = '';\n  @Prop() author: string = '';\n  @Prop() showAuthor: boolean = true;\n  @Prop() timestamp: string = '';\n  @Prop() parts: AgentResponsePart[] = [];\n  @Prop() streaming: boolean = false;\n  /** Controls whether the complete message metadata footer is persistent or revealed through hover/focus. */\n  @Prop() metadataActionsVisibility: MessageMetadataActionsVisibility = 'always';\n\n  private renderPart(part: AgentResponsePart) {\n    switch (part.type) {\n      case 'markdown':\n        return (\n          <ds-markdown\n            key={part.id}\n            content={part.content}\n            streaming={part.state === 'streaming'}\n          />\n        );\n      case 'activity':\n        return <ds-agent-activity key={part.id} items={part.items} />;\n      case 'tool':\n        return (\n          <ds-agent-tool-call\n            key={part.id}\n            name={part.name}\n            label={part.label}\n            state={part.state}\n            input={part.input}\n            output={part.output}\n            error={part.error}\n          />\n        );\n      case 'attachments':\n        return <ds-attachment-list key={part.id} items={part.items} />;\n      case 'sources':\n        return <ds-agent-source-list key={part.id} items={part.items} />;\n    }\n  }\n\n  render() {\n    return (\n      <Host>\n        <ds-message\n          messageId={this.messageId}\n          direction=\"incoming\"\n          author={this.author}\n          showAuthor={this.showAuthor}\n          timestamp={this.timestamp}\n          streaming={this.streaming}\n          metadataActionsVisibility={this.metadataActionsVisibility}\n        >\n          <div class=\"agent-response\">{this.parts.map(part => this.renderPart(part))}</div>\n          <slot name=\"footer\" slot=\"footer\" />\n          <slot name=\"metadata-actions\" slot=\"metadata-actions\" />\n          <slot name=\"actions\" slot=\"actions\" />\n        </ds-message>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type {\n  AgentResponsePart,\n  MessageMetadataVisibility,\n} from '../conversation-types';\n\n@Component({ tag: 'ds-agent-response', styleUrl: 'AgentResponse.css', scoped: true })\nexport class AgentResponse {\n  @Prop() messageId: string = '';\n  @Prop() author: string = '';\n  @Prop() showAuthor: boolean = true;\n  @Prop() timestamp: string = '';\n  @Prop() parts: AgentResponsePart[] = [];\n  @Prop() streaming: boolean = false;\n  /** Controls whether the complete message metadata footer is persistent or revealed through hover/focus. */\n  @Prop() metadataVisibility: MessageMetadataVisibility = 'always';\n\n  private renderPart(part: AgentResponsePart) {\n    switch (part.type) {\n      case 'markdown':\n        return (\n          <ds-markdown\n            key={part.id}\n            content={part.content}\n            streaming={part.state === 'streaming'}\n          />\n        );\n      case 'activity':\n        return <ds-agent-activity key={part.id} items={part.items} />;\n      case 'tool':\n        return (\n          <ds-agent-tool-call\n            key={part.id}\n            name={part.name}\n            label={part.label}\n            state={part.state}\n            input={part.input}\n            output={part.output}\n            error={part.error}\n          />\n        );\n      case 'attachments':\n        return <ds-attachment-list key={part.id} items={part.items} />;\n      case 'sources':\n        return <ds-agent-source-list key={part.id} items={part.items} />;\n    }\n  }\n\n  render() {\n    return (\n      <Host>\n        <ds-message\n          messageId={this.messageId}\n          direction=\"incoming\"\n          author={this.author}\n          showAuthor={this.showAuthor}\n          timestamp={this.timestamp}\n          streaming={this.streaming}\n          metadataVisibility={this.metadataVisibility}\n        >\n          <div class=\"agent-response\">{this.parts.map(part => this.renderPart(part))}</div>\n          <slot name=\"footer\" slot=\"footer\" />\n          <slot name=\"metadata-actions\" slot=\"metadata-actions\" />\n          <slot name=\"actions\" slot=\"actions\" />\n        </ds-message>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

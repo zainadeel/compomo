@@ -57,7 +57,7 @@ export const MetadataActions: Story = {
         author="Agent"
         .showAuthor=${false}
         timestamp="9:41 AM"
-        metadata-actions-visibility="hover"
+        metadata-visibility="hover"
       >
         <p style="margin:0;">The requested summary is ready.</p>
         <ds-message-actions
@@ -73,7 +73,7 @@ export const MetadataActions: Story = {
         .showAuthor=${false}
         timestamp="9:45 AM"
         delivery-state="read"
-        metadata-actions-visibility="hover"
+        metadata-visibility="hover"
       >
         <ds-message-bubble variant="user">Share it with dispatch.</ds-message-bubble>
         <ds-message-actions

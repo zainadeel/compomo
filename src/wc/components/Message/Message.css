@@ -69,21 +69,21 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .message--metadata-actions-hover .message__footer {
+  .message--metadata-hover .message__footer {
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--effect-motion-short-2);
   }
 
-  .message--metadata-actions-hover:hover .message__footer,
-  .message--metadata-actions-hover:focus-within .message__footer {
+  .message--metadata-hover:hover .message__footer,
+  .message--metadata-hover:focus-within .message__footer {
     opacity: 1;
     pointer-events: auto;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .message--metadata-actions-hover .message__footer {
+  .message--metadata-hover .message__footer {
     transition: none;
   }
 }
