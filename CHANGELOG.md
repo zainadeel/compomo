@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.5.0](https://github.com/zainadeel/compomo/compare/v13.4.0...v13.5.0) (2026-07-31)
+
+
+### Added
+
+* redesign card overview comparisons ([#405](https://github.com/zainadeel/compomo/issues/405)) ([78082e8](https://github.com/zainadeel/compomo/commit/78082e825da142d9603a677f946640537f0ae01a)), closes [#401](https://github.com/zainadeel/compomo/issues/401)
+
 ## [13.4.0](https://github.com/zainadeel/compomo/compare/v13.3.0...v13.4.0) (2026-07-31)
 
 
