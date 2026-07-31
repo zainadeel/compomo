@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.4.0](https://github.com/zainadeel/compomo/compare/v13.3.0...v13.4.0) (2026-07-31)
+
+
+### Added
+
+* add reusable message actions ([#400](https://github.com/zainadeel/compomo/issues/400)) ([7abc144](https://github.com/zainadeel/compomo/commit/7abc1447a19941eae318aefe1457e0d8cf7a0900))
+
 ## [13.3.0](https://github.com/zainadeel/compomo/compare/v13.2.0...v13.3.0) (2026-07-31)
 
 
