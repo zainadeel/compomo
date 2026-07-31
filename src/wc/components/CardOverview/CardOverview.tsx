@@ -24,15 +24,13 @@ const LOADING_PLACEHOLDER_COUNT = 4;
 const MAX_METRIC_COUNT = 6;
 
 const TREND_COLORS: Record<MetricTrend['tone'], TextColor> = {
-  // CardOverview is permanently always-dark. Reference-level dark-surface
-  // intent tokens avoid theme overrides and retain AA contrast at body size.
-  positive: 'var(--color-reference-dark-green-145-l70-c19-bold)',
-  negative: 'var(--color-reference-dark-red-30-l70-c20-bold)',
-  neutral: 'var(--color-always-dark-foreground-secondary)',
+  positive: 'var(--color-inverted-foreground-positive)',
+  negative: 'var(--color-inverted-foreground-negative)',
+  neutral: 'var(--color-inverted-foreground-secondary)',
 };
 
-const ALWAYS_DARK_PRIMARY: TextColor = 'var(--color-always-dark-foreground-primary)';
-const ALWAYS_DARK_SECONDARY: TextColor = 'var(--color-always-dark-foreground-secondary)';
+const INVERTED_PRIMARY: TextColor = 'var(--color-inverted-foreground-primary)';
+const INVERTED_SECONDARY: TextColor = 'var(--color-inverted-foreground-secondary)';
 
 @Component({
   tag: 'ds-card-overview',
@@ -195,9 +193,8 @@ export class CardOverview {
    * A skeleton bar matching the type metrics of the text it stands in for, so the
    * loading state holds the same shape and rhythm as the resolved content.
    *
-   * `background` is always passed: the default base is the theme's quaternary
-   * foreground, which is black and therefore invisible on this permanently dark
-   * surface.
+   * `background` is always passed so the base and shimmer follow the card's
+   * inverted surface in both themes.
    */
   private bar(textVariant: TextVariant, width: string, className?: string) {
     return (
@@ -206,7 +203,7 @@ export class CardOverview {
         variant="text"
         textVariant={textVariant}
         width={width}
-        background="always-dark"
+        background="inverted"
       />
     );
   }
@@ -304,7 +301,7 @@ export class CardOverview {
             class="card-overview__score-label"
             variant="text-body-medium"
             emphasis={!compact}
-            color={ALWAYS_DARK_SECONDARY}
+            color={INVERTED_SECONDARY}
           >
             {score.label}
           </ds-text>
@@ -315,7 +312,7 @@ export class CardOverview {
             class="card-overview__score-value"
             variant={compact ? 'text-body-medium' : 'text-display-medium'}
             emphasis
-            color={ALWAYS_DARK_PRIMARY}
+            color={INVERTED_PRIMARY}
             fontFeature="tabular-nums"
           >
             {score.value}
@@ -331,7 +328,7 @@ export class CardOverview {
             as="span"
             class="card-overview__score-band"
             variant="text-caption"
-            color={ALWAYS_DARK_SECONDARY}
+            color={INVERTED_SECONDARY}
           >
             {score.band}
           </ds-text>
@@ -347,7 +344,7 @@ export class CardOverview {
         as="span"
         class="card-overview__metric-label"
         variant="text-body-small"
-        color={ALWAYS_DARK_SECONDARY}
+        color={INVERTED_SECONDARY}
       >
         {metric.label}
       </ds-text>
@@ -361,8 +358,7 @@ export class CardOverview {
           // Selection targets get the shared wash; press scaling is not used here
           // so the grid keeps its columns aligned. See docs/control-press-policy.md.
           'ds-interaction-fill': selectable,
-          // The card is permanently dark, so interaction tokens come from that family.
-          'ds-interaction-fill--on-always-dark': selectable,
+          'ds-interaction-fill--on-inverted': selectable,
           'ds-focus-ring-inset': selectable,
         }}
         part="metric"
@@ -386,7 +382,7 @@ export class CardOverview {
             as="span"
             class="card-overview__metric-value"
             variant="text-body-medium"
-            color={ALWAYS_DARK_PRIMARY}
+            color={INVERTED_PRIMARY}
             fontFeature="tabular-nums"
           >
             {metric.value}
@@ -490,7 +486,7 @@ export class CardOverview {
                             class="card-overview__period-current ds-control-label-box"
                             variant="text-body-medium"
                             emphasis
-                            color={ALWAYS_DARK_PRIMARY}
+                            color={INVERTED_PRIMARY}
                           >
                             {this.periodLabel}
                           </ds-text>
@@ -500,7 +496,7 @@ export class CardOverview {
                             as="span"
                             class="card-overview__period-comparison ds-control-label-box"
                             variant="text-body-medium"
-                            color={ALWAYS_DARK_SECONDARY}
+                            color={INVERTED_SECONDARY}
                           >
                             {this.comparisonLabel}
                           </ds-text>
@@ -519,7 +515,7 @@ export class CardOverview {
                         variant="control"
                         controlSize="md"
                         width="128px"
-                        background="always-dark"
+                        background="inverted"
                       />
                     ) : (
                       <slot name="filter" />

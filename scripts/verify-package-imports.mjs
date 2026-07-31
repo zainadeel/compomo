@@ -5,8 +5,8 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { Client } from '@modelcontextprotocol/client';
+import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 
 const repoRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const pkg = JSON.parse(execFileSync('node', ['-e', "process.stdout.write(require('fs').readFileSync('package.json'))"], {
@@ -17,10 +17,26 @@ const packDir = mkdtempSync(join(tmpdir(), 'ds-mo-pack-'));
 const smokeDir = mkdtempSync(join(tmpdir(), 'ds-mo-consumer-'));
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
 
-async function verifyPackagedMcp(consumerDir) {
+function resultText(result) {
+  return result.content
+    ?.filter(item => item.type === 'text')
+    .map(item => item.text)
+    .join('\n') ?? '';
+}
+
+function assertCompatibleText(result, toolName) {
+  if (!resultText(result).trim()) {
+    throw new Error(`Packaged MCP tool lost its backward-compatible text response: ${toolName}`);
+  }
+}
+
+async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
   const command = join(consumerDir, 'node_modules', '.bin', 'compomo-mcp');
   const transport = new StdioClientTransport({ command, cwd: consumerDir, stderr: 'pipe' });
-  const client = new Client({ name: 'ds-mo-package-smoke', version: '1.0.0' });
+  const client = new Client(
+    { name: 'ds-mo-package-smoke', version: '1.0.0' },
+    clientOptions,
+  );
   let stderr = '';
   transport.stderr?.on('data', chunk => {
     stderr += chunk.toString();
@@ -28,6 +44,23 @@ async function verifyPackagedMcp(consumerDir) {
 
   try {
     await client.connect(transport);
+    if (client.getProtocolEra() !== expectedEra) {
+      throw new Error(
+        `Packaged MCP connected through ${client.getProtocolEra() ?? 'unknown'} instead of ${expectedEra}.`
+      );
+    }
+    const discover = client.getDiscoverResult();
+    if (expectedEra === 'modern') {
+      if (
+        !discover?.supportedVersions?.includes('2026-07-28') ||
+        !discover.capabilities?.tools
+      ) {
+        throw new Error('Packaged MCP discovery did not advertise the modern protocol and tools.');
+      }
+    } else if (discover !== undefined) {
+      throw new Error('Legacy packaged MCP connection unexpectedly retained a discovery result.');
+    }
+
     const serverInfo = client.getServerVersion();
     if (serverInfo?.name !== 'compomo' || serverInfo.version !== pkg.version) {
       throw new Error(
@@ -45,6 +78,11 @@ async function verifyPackagedMcp(consumerDir) {
       'list_patterns',
       'get_pattern',
     ];
+    if (toolNames.size !== expectedTools.length) {
+      throw new Error(
+        `Packaged MCP advertised ${toolNames.size} tools instead of ${expectedTools.length}.`
+      );
+    }
     for (const name of expectedTools) {
       if (!toolNames.has(name)) throw new Error(`Missing packaged MCP tool: ${name}`);
     }
@@ -74,6 +112,7 @@ async function verifyPackagedMcp(consumerDir) {
     ) {
       throw new Error('Packaged MCP did not return structured ButtonFilled metadata without source files.');
     }
+    assertCompatibleText(componentResult, 'get_component');
 
     const sourceResult = await client.callTool({
       name: 'get_component_source',
@@ -86,6 +125,7 @@ async function verifyPackagedMcp(consumerDir) {
     ) {
       throw new Error('Packaged MCP did not return structured ButtonFilled source files.');
     }
+    assertCompatibleText(sourceResult, 'get_component_source');
 
     const setupResult = await client.callTool({
       name: 'get_setup_guide',
@@ -98,6 +138,7 @@ async function verifyPackagedMcp(consumerDir) {
     ) {
       throw new Error('Packaged MCP did not return the structured setup guide.');
     }
+    assertCompatibleText(setupResult, 'get_setup_guide');
 
     const componentListResult = await client.callTool({
       name: 'list_components',
@@ -110,6 +151,7 @@ async function verifyPackagedMcp(consumerDir) {
     ) {
       throw new Error('Packaged MCP did not return a structured filtered component summary.');
     }
+    assertCompatibleText(componentListResult, 'list_components');
 
     const patternListResult = await client.callTool({
       name: 'list_patterns',
@@ -122,15 +164,13 @@ async function verifyPackagedMcp(consumerDir) {
     ) {
       throw new Error('Packaged MCP did not return a structured filtered pattern summary.');
     }
+    assertCompatibleText(patternListResult, 'list_patterns');
 
     const result = await client.callTool({
       name: 'get_pattern',
       arguments: { name: 'menu-trigger', framework: 'react' },
     });
-    const text = result.content
-      ?.filter(item => item.type === 'text')
-      .map(item => item.text)
-      .join('\n') ?? '';
+    const text = resultText(result);
     if (
       result.isError ||
       !text.includes('pattern:menu-trigger') ||
@@ -141,6 +181,7 @@ async function verifyPackagedMcp(consumerDir) {
     ) {
       throw new Error('Packaged MCP did not return the executable React menu-trigger recipe.');
     }
+    assertCompatibleText(result, 'get_pattern');
   } catch (error) {
     if (stderr) error.message += `\nMCP stderr:\n${stderr}`;
     throw error;
@@ -222,7 +263,14 @@ try {
     cwd: smokeDir,
     stdio: 'inherit',
   });
-  await verifyPackagedMcp(smokeDir);
+  await verifyPackagedMcp(smokeDir, {
+    clientOptions: { versionNegotiation: { mode: 'auto' } },
+    expectedEra: 'modern',
+  });
+  await verifyPackagedMcp(smokeDir, {
+    clientOptions: undefined,
+    expectedEra: 'legacy',
+  });
   console.log('✅ Packed native, Angular, React, shell, toast, utils, agent, and MCP entry points load successfully.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
