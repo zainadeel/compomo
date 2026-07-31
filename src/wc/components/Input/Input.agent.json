@@ -49,7 +49,7 @@
   ],
   "states": [
     "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
-    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; the control then remains borderless at rest, while focused, and while invalid, with semantics and supporting error copy unchanged.",
     "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
     "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
     "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",

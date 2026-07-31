@@ -63,7 +63,7 @@ export class Input {
   @Prop() size: InputSize = 'md';
   /** Width fit — fill the parent (default) or hug the available content. */
   @Prop() width: InputWidth = 'fill';
-  /** Show the standard inset border. */
+  /** Show the standard inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
   /** Optional leading icon name. */
   @Prop() icon: string | undefined;
@@ -184,8 +184,8 @@ export class Input {
           class={{
             'input-control': true,
             'ds-control-frame': true,
-            'input-control--bordered': this.hasBorder || this.error,
-            'input-control--error': this.error,
+            'input-control--bordered': this.hasBorder,
+            'input-control--error': this.hasBorder && this.error,
             'ds-interaction-fill': true,
             [`ds-control--${this.size}`]: true,
           }}

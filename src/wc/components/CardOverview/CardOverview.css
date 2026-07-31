@@ -4,22 +4,15 @@
 @import '../../utils/control-parts.css';
 @import '../../styles/control-elevation.css';
 
-/* The summary bar follows the always-dark sub-theme. */
-
 :host {
   display: block;
   box-sizing: border-box;
-  /* Drives the narrow layout below from the card's own width, not the viewport's. */
   container-type: inline-size;
-  /* A summary is read, not copied; stray selection while clicking cells is noise. */
   -webkit-user-select: none;
   user-select: none;
-  /* Width a metric may shrink to before the grid drops a column. */
   --ds-card-overview-metric-min: calc(var(--dimension-size-400) * 5);
   --ds-card-overview-divider-width: var(--dimension-stroke-width-012);
   --ds-card-overview-divider-color: var(--color-always-dark-border-tertiary);
-  --ds-card-overview-divider: var(--ds-card-overview-divider-width) solid
-    var(--ds-card-overview-divider-color);
   color: var(--color-always-dark-foreground-primary);
 }
 
@@ -27,17 +20,12 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  border-radius: var(--dimension-radius-050);
+  border-radius: var(--dimension-radius-125);
   background: var(--color-always-dark-background);
   color: var(--color-always-dark-foreground-primary);
   overflow-anchor: none;
 }
 
-/*
- * The visual surface owns elevation outside this clipping viewport. Keeping
- * those layers separate lets a page shrink the surface while content moves and
- * clips inside it without cutting off the shadow or inset highlight.
- */
 .card-overview__clip {
   height: 100%;
   min-width: 0;
@@ -57,207 +45,101 @@
   will-change: height;
 }
 
-:host(.card-overview--scroll-collapsing) .card-overview__layout {
+:host(.card-overview--scroll-collapsing) .card-overview__body {
   transform: translateY(calc(-1 * var(--ds-card-overview-content-offset)));
   will-change: transform;
 }
 
 .card-overview__layout {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-columns: minmax(0, 1fr);
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
-.card-overview__layout--has-score {
-  grid-template-columns: auto minmax(0, 1fr);
-}
-
-/*
- * Transparent at regular widths so the score and header participate in the
- * inner layout grid directly. At the narrow breakpoint it becomes the unified
- * summary block above the metrics.
- */
 .card-overview__summary {
-  display: contents;
-}
-
-/* ── Score ────────────────────────────────────────────────────────────────── */
-
-/*
- * Hugs its content and never shrinks, so the headline figure keeps its size and
- * the metric grid absorbs the remaining width.
- */
-/*
- * Top aligned rather than centred, and padded to match the header, so the score
- * label sits in the same 32px box at the same offset as the period text beside
- * it. Both use the same type variant, so their baselines land together.
- */
-.card-overview__score {
-  display: flex;
-  grid-row: 1 / span 2;
-  grid-column: 1;
-  flex: 0 0 auto;
-  flex-direction: column;
-  gap: 0;
-  min-width: 0;
-  padding: var(--dimension-space-100) var(--dimension-space-200);
-  border-inline-end: var(--ds-card-overview-divider);
-}
-
-.card-overview__score--resolved {
-  min-inline-size: max-content;
-}
-
-/* The control-height box that aligns this label with the period text. */
-.card-overview__score-label-row {
-  display: flex;
-  align-items: center;
-  min-height: var(--ds-control-height);
-}
-
-/*
- * The score is its own column, so its rows cannot baseline-align with the measure
- * rows through flex or grid — those only align items that share a line. These two
- * offsets pull the column onto the measure baselines instead.
- *
- * They are compensation for how much lower a display-scale figure sits in its line
- * box than the body text it aligns to, so they are coupled to the type pairing:
- * change the score or measure variants and both need re-measuring.
- */
-.card-overview__score-figure {
-  display: flex;
-  align-items: baseline;
-  gap: var(--dimension-space-050);
-  min-width: 0;
-  margin-block-start: calc(-1 * (var(--dimension-space-150) + var(--dimension-space-012)));
-}
-
-.card-overview__score-value {
-  flex: 0 0 auto;
-}
-
-/* Second half of the baseline compensation described above the score figure. */
-.card-overview__score-band {
-  margin-block-start: calc(-1 * var(--dimension-space-025));
-}
-
-/*
- * A skeleton bar is a solid block, so in a baseline-aligned row it aligns on its
- * bottom edge while the text it stands in for aligns on its baseline. Next to a
- * display-scale figure that difference is the descent under the figure's
- * baseline, which drops the bar below where the resolved trend sits.
- *
- * The offset is applied with relative positioning rather than a margin: a margin
- * is not part of a synthesized baseline, so it grows the figure instead of moving
- * the bar, which then pushes the band below it out of place.
- *
- * Only needed beside the score figure; the measure rows pair body variants whose
- * bottom edge and baseline already agree.
- */
-.card-overview__skeleton-baseline {
   position: relative;
-  inset-block-start: calc(-1 * var(--dimension-space-150));
-}
-
-.card-overview__score--error {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--dimension-space-050);
-  color: var(--color-always-dark-foreground-negative);
-}
-
-/* ── Body ─────────────────────────────────────────────────────────────────── */
-
-/*
- * Takes the remaining inline space. The minimum is what makes the host wrap: once
- * the score and roughly two measure columns no longer fit side by side, the body
- * drops below the score instead of squeezing it. `min()` keeps that from becoming
- * an overflow floor on very narrow viewports.
- */
-.card-overview__body {
-  display: flex;
-  grid-row: 2;
-  grid-column: 1;
-  flex-direction: column;
+  z-index: 1;
+  flex: 0 0 auto;
   min-width: 0;
+  background: var(--color-always-dark-background);
 }
 
-.card-overview__body--has-score {
-  grid-column: 2;
-}
-
-/*
- * One control row: 8px of padding on every side around a 32px md control, so the
- * bar is 8 + 32 + 8. Both ends of the bar are control-shaped boxes — the period
- * text on the left and the slotted control on the right — so the row reads
- * balanced rather than text on one side and a control on the other.
- */
 .card-overview__header {
   display: flex;
-  grid-row: 1;
-  grid-column: 1;
+  position: relative;
   align-items: center;
-  gap: var(--dimension-space-100);
+  gap: 0;
+  width: 100%;
+  height: var(--dimension-size-600);
   min-width: 0;
   padding: var(--dimension-space-100);
-  border-block-end: var(--ds-card-overview-divider);
   box-sizing: border-box;
 }
 
-.card-overview__header--has-score {
-  grid-column: 2;
+.card-overview__header::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: var(--ds-card-overview-divider-width);
+  background: var(--ds-card-overview-divider-color);
+  pointer-events: none;
 }
 
-/*
- * Matches the control's box on the opposite end, including its inline padding, so
- * the text lands at the same optical inset the slotted control does:
- * 8 from the bar + 6 from this box + 2 from the label inset = 16.
- *
- * Nowrap keeps the row at the control height; the period truncates rather than
- * growing the bar to two lines.
- */
 .card-overview__period {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   align-items: center;
-  gap: var(--dimension-space-050);
-  min-height: var(--ds-control-height);
+  gap: 0;
   min-width: 0;
-  padding-inline: var(--ds-control-padding-inline);
+  min-height: var(--ds-control-height);
   overflow: hidden;
   white-space: nowrap;
 }
 
-/* The period control is slotted, so only reserve space for it. */
-.card-overview__filter {
+.card-overview__period-current,
+.card-overview__period-comparison {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-overview__period-current {
   display: flex;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   align-items: center;
 }
 
-/* ── Metrics ──────────────────────────────────────────────────────────────── */
+.card-overview__period-fixed {
+  flex: 0 1 auto;
+  min-width: 0;
+}
 
-/*
- * `auto-fit` gives every occupied track an equal share while all metrics fit on
- * one row. Once wrapping creates another row, its cells stay on those same
- * tracks, so a partial final row leaves empty space instead of stretching one
- * measure wider than its peers.
- *
- * Dividers are painted outward from each cell and clipped by this grid. That
- * leaves only the lines between cells: anything emitted from the final column or
- * final row lands outside the grid and is clipped without needing to detect the
- * number of tracks.
- *
- * `flex: 1 1 auto` makes the grid absorb whatever height the body has
- * left, so cells reach the card bottom and their hover wash has no dead strip.
- */
+.card-overview__period-comparison {
+  flex: 0 0 auto;
+}
+
+.card-overview__filter {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  min-width: 0;
+}
+
+.card-overview__body {
+  display: flex;
+  position: relative;
+  z-index: 0;
+  flex-direction: column;
+  min-width: 0;
+  transform: translateY(0);
+}
+
 .card-overview__metrics {
   display: grid;
   flex: 1 1 auto;
   grid-template-columns: repeat(
-    auto-fit,
+    var(--ds-card-overview-grid-columns, auto-fit),
     minmax(min(100%, var(--ds-card-overview-metric-min)), 1fr)
   );
   align-content: stretch;
@@ -265,30 +147,91 @@
   overflow: clip;
 }
 
-/*
- * Square by design. Cells tile edge to edge against their dividers, so a radius
- * would break the seam; the card's own radius clips the outer corners instead.
- *
- * Padding is plain rather than control-derived: a cell is a block of content, not
- * a control box that has to optically match something on the far side.
- */
+.card-overview__score,
 .card-overview__metric {
   display: flex;
-  position: relative;
-  flex-direction: column;
-  gap: var(--dimension-space-050);
   min-width: 0;
-  padding: var(--dimension-space-175) var(--dimension-space-200);
-  border-radius: 0;
+  padding: var(--dimension-space-100);
   box-shadow:
     var(--ds-card-overview-divider-width) 0 0 0 var(--ds-card-overview-divider-color),
     0 var(--ds-card-overview-divider-width) 0 0 var(--ds-card-overview-divider-color);
+  box-sizing: border-box;
 }
 
-.card-overview__metric[role='button'] {
+.card-overview__score-content,
+.card-overview__metric-action {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--dimension-space-075);
+  border-radius: var(--dimension-radius-025);
+  box-sizing: border-box;
+}
+
+.card-overview__score-content {
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dimension-space-100);
+  background: var(--color-always-dark-interaction-active);
+  color: var(--color-always-dark-foreground-primary);
+}
+
+.card-overview__score-content--fair {
+  background: var(--color-safety-score-background-fair);
+  color: var(--color-safety-score-foreground-on-fair);
+}
+
+.card-overview__score-content--good {
+  background: var(--color-safety-score-background-good);
+  color: var(--color-safety-score-foreground-on-good);
+}
+
+.card-overview__score-content--excellent {
+  background: var(--color-safety-score-background-excellent);
+  color: var(--color-safety-score-foreground-on-excellent);
+}
+
+.card-overview__score-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+}
+
+.card-overview__score-value,
+.card-overview__score-figure {
+  flex: 0 0 auto;
+  margin-block: calc(-1 * var(--dimension-space-150));
+}
+
+.card-overview__score-content--error {
+  align-items: center;
+  justify-content: center;
+  border: var(--ds-card-overview-divider-width) solid
+    var(--color-always-dark-border-tertiary);
+  background: transparent;
+  color: var(--color-always-dark-foreground-negative);
+  text-align: center;
+}
+
+.card-overview__metric-action {
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--dimension-space-050);
+}
+
+.card-overview__metric-action[role='button'] {
   cursor: default;
-  -webkit-user-select: none;
-  user-select: none;
+}
+
+.card-overview__metric-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--dimension-space-050);
+  min-width: 0;
 }
 
 .card-overview__metric-label {
@@ -302,336 +245,40 @@
   min-width: 0;
 }
 
-/* ── Trend ────────────────────────────────────────────────────────────────── */
-
-/*
- * Tone arrives resolved from the caller: the arrow direction and the sentiment
- * are independent, so a falling metric can read positive or neutral. The arrow is
- * a glyph inside this text node, so it always matches the surrounding weight.
- */
 .card-overview__trend {
   flex: 0 0 auto;
   white-space: nowrap;
-}
-
-/* ── Narrow layout ────────────────────────────────────────────────────────── */
-
-/*
- * Below roughly two measure columns the card becomes a full stack. The summary
- * wrapper owns one block above the metrics: score label, figure, and trend stay
- * together at the start; the period control sits at the upper end; and the period
- * copy follows the score instead of becoming a separate divided row.
- */
-/*
- * Selectors are host-qualified purely for specificity: the compiled sheet places
- * these rules ahead of the base ones, so a plain class here would only ever add
- * properties and never override them.
- */
-@container (max-width: 480px) {
-  :host .card-overview__layout {
-    grid-template-rows: auto minmax(0, 1fr);
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  :host .card-overview__summary {
-    display: grid;
-    grid-row: 1;
-    grid-column: 1;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto;
-    border-block-end: var(--ds-card-overview-divider);
-  }
-
-  :host .card-overview__score {
-    display: grid;
-    grid-row: 1;
-    grid-column: 1;
-    grid-template-rows: auto auto;
-    grid-template-columns: auto auto;
-    justify-content: start;
-    column-gap: var(--dimension-space-100);
-    width: auto;
-    padding-block-end: var(--dimension-space-100);
-    padding-inline-end: var(--dimension-space-100);
-    border-inline-end: none;
-  }
-
-  :host .card-overview__score-label-row {
-    grid-row: 1;
-    grid-column: 1 / -1;
-    min-height: var(--ds-control-height);
-  }
-
-  /*
-   * The wide score uses optical offsets to meet the neighbouring metric
-   * baselines. In the stacked summary those neighbours are gone, so natural
-   * document flow keeps the label, figure, band, and period clearly ordered.
-   */
-  :host .card-overview__score-band,
-  :host .card-overview__score-figure {
-    grid-row: 2;
-    margin-block-start: 0;
-  }
-
-  :host .card-overview__score-figure {
-    grid-column: 1;
-    align-self: baseline;
-    gap: var(--dimension-space-100);
-  }
-
-  :host .card-overview__score-band {
-    grid-column: 2;
-    align-self: baseline;
-    display: none;
-  }
-
-  :host .card-overview__header {
-    display: grid;
-    grid-row: 1;
-    grid-column: 2;
-    grid-template-rows: auto auto;
-    align-content: start;
-    gap: 0;
-    padding: 0;
-    border-block-end: none;
-  }
-
-  :host .card-overview__filter {
-    grid-row: 1;
-    grid-column: 1;
-    align-self: start;
-    justify-self: end;
-    padding: var(--dimension-space-100) var(--dimension-space-100) 0 0;
-  }
-
-  :host .card-overview__period {
-    grid-row: 2;
-    grid-column: 1;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-self: stretch;
-    gap: 0;
-    min-height: 0;
-    padding-block: var(--dimension-space-150) var(--dimension-space-100);
-    padding-inline: var(--dimension-space-100) var(--dimension-space-200);
-    overflow: visible;
-    text-align: end;
-    white-space: nowrap;
-  }
-
-  :host .card-overview__body {
-    grid-row: 2;
-    grid-column: 1;
-  }
-}
-
-/*
- * Page shells may enter a responsive mode before this card itself becomes
- * narrow. The explicit stacked layout applies the same composition without
- * coupling CardOverview to a viewport breakpoint.
- */
-:host(.card-overview--stacked) .card-overview__layout {
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-columns: minmax(0, 1fr);
-}
-
-:host(.card-overview--stacked) .card-overview__summary {
-  display: grid;
-  grid-row: 1;
-  grid-column: 1;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto;
-  border-block-end: var(--ds-card-overview-divider);
-}
-
-:host(.card-overview--stacked) .card-overview__score {
-  display: grid;
-  grid-row: 1;
-  grid-column: 1;
-  grid-template-rows: auto auto;
-  grid-template-columns: auto auto;
-  justify-content: start;
-  column-gap: var(--dimension-space-100);
-  width: auto;
-  padding-block-end: var(--dimension-space-100);
-  padding-inline-end: var(--dimension-space-100);
-  border-inline-end: none;
-}
-
-:host(.card-overview--stacked) .card-overview__score-label-row {
-  grid-row: 1;
-  grid-column: 1 / -1;
-  min-height: var(--ds-control-height);
-}
-
-:host(.card-overview--stacked) .card-overview__score-band,
-:host(.card-overview--stacked) .card-overview__score-figure {
-  grid-row: 2;
-  margin-block-start: 0;
-}
-
-:host(.card-overview--stacked) .card-overview__score-figure {
-  grid-column: 1;
-  align-self: baseline;
-  gap: var(--dimension-space-100);
-}
-
-:host(.card-overview--stacked) .card-overview__score-band {
-  grid-column: 2;
-  align-self: baseline;
-  display: none;
-}
-
-:host(.card-overview--stacked) .card-overview__header {
-  display: grid;
-  grid-row: 1;
-  grid-column: 2;
-  grid-template-rows: auto auto;
-  align-content: start;
-  gap: 0;
-  padding: 0;
-  border-block-end: none;
-}
-
-:host(.card-overview--stacked) .card-overview__filter {
-  grid-row: 1;
-  grid-column: 1;
-  align-self: start;
-  justify-self: end;
-  padding: var(--dimension-space-100) var(--dimension-space-100) 0 0;
-}
-
-:host(.card-overview--stacked) .card-overview__period {
-  grid-row: 2;
-  grid-column: 1;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-self: stretch;
-  gap: 0;
-  min-height: 0;
-  padding-block: var(--dimension-space-150) var(--dimension-space-100);
-  padding-inline: var(--dimension-space-100) var(--dimension-space-200);
-  overflow: visible;
-  text-align: end;
-  white-space: nowrap;
-}
-
-:host(.card-overview--stacked) .card-overview__body {
-  grid-row: 2;
-  grid-column: 1;
 }
 
 :host(.card-overview--stacked) .card-overview__metrics {
   grid-template-columns: minmax(0, 1fr);
 }
 
-/* ── Compact presentation ───────────────────────────────────────────────── */
-
-/*
- * Matches the shared 48px bar contract: one 32px control row with 8px above
- * and below. The score remains a distinct leading cell, while reporting copy
- * absorbs the available width and the application-owned control never shrinks.
- */
 :host(.card-overview--compact) {
   height: var(--dimension-size-600);
   min-height: var(--dimension-size-600);
 }
 
-:host(.card-overview--compact) .card-overview__surface {
-  height: 100%;
-}
-
+:host(.card-overview--compact) .card-overview__surface,
+:host(.card-overview--compact) .card-overview__clip,
 :host(.card-overview--compact) .card-overview__layout,
 :host(.card-overview--compact) .card-overview__summary {
-  display: flex;
   width: 100%;
   height: 100%;
-  min-width: 0;
 }
 
-:host(.card-overview--compact) .card-overview__score {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--dimension-space-100);
-  width: auto;
-  height: 100%;
-  min-width: 0;
-  padding: var(--dimension-space-100) var(--dimension-space-200);
-  border-inline-end: var(--ds-card-overview-divider);
-  box-sizing: border-box;
-}
-
-:host(.card-overview--compact) .card-overview__score-label-row {
-  display: contents;
-  min-height: 0;
-}
-
-:host(.card-overview--compact) .card-overview__score-label,
-:host(.card-overview--compact) .card-overview__score-figure,
-:host(.card-overview--compact) .card-overview__trend {
-  flex: 0 0 auto;
-}
-
-:host(.card-overview--compact) .card-overview__score-figure {
-  display: flex;
-  align-self: center;
-  align-items: baseline;
-  gap: var(--dimension-space-050);
-  margin-block-start: 0;
-}
-
-:host(.card-overview--compact) .card-overview__score-band {
+:host(.card-overview--compact) .card-overview__header::after {
   display: none;
 }
 
-:host(.card-overview--compact) .card-overview__header {
-  display: flex;
-  flex: 1 1 auto;
-  grid-row: auto;
-  grid-column: auto;
-  align-items: center;
-  gap: var(--dimension-space-100);
-  height: 100%;
-  min-width: 0;
-  padding: var(--dimension-space-100);
-  border-block-end: none;
-  box-sizing: border-box;
-}
+@media (forced-colors: active) {
+  .card-overview__header::after {
+    background: var(--ds-forced-color-content);
+  }
 
-:host(.card-overview--compact) .card-overview__period {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--dimension-space-050);
-  min-width: 0;
-  min-height: var(--ds-control-height);
-  padding-inline: var(--ds-control-padding-inline);
-  overflow: hidden;
-  text-align: start;
-  white-space: nowrap;
-}
-
-:host(.card-overview--compact) .card-overview__period-current,
-:host(.card-overview--compact) .card-overview__period-comparison {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-:host(.card-overview--compact) .card-overview__period-current {
-  flex: 0 1 auto;
-}
-
-:host(.card-overview--compact) .card-overview__period-comparison {
-  flex: 1 1 auto;
-}
-
-:host(.card-overview--compact) .card-overview__filter {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  padding: 0;
+  .card-overview__score-content {
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    background: var(--ds-forced-color-surface);
+    color: var(--ds-forced-color-content);
+  }
 }

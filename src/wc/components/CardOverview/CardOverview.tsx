@@ -11,7 +11,9 @@ import type {
 import {
   findNextOverviewMetricIndex,
   resolveCardOverviewCollapseGeometry,
+  resolveOverviewGridColumns,
   resolveOverviewRovingIndex,
+  resolveSafetyScoreLevel,
 } from './card-overview-controller';
 
 /** Metric cells below this width drop a grid column rather than compress further. */
@@ -21,7 +23,7 @@ const DEFAULT_METRIC_MIN_WIDTH = 'var(--dimension-menu-width-xs)';
 const LOADING_PLACEHOLDER_COUNT = 4;
 
 /** Maximum number of comparable measures the summary bar presents at once. */
-const MAX_METRIC_COUNT = 6;
+const MAX_METRIC_COUNT = 7;
 
 const TREND_COLORS: Record<MetricTrend['tone'], TextColor> = {
   positive: 'var(--color-always-dark-foreground-positive)',
@@ -46,21 +48,21 @@ export class CardOverview {
   /** Intrinsic responsive layout, or a page-owned single-column stack. */
   @Prop() layout: CardOverviewLayout = 'auto';
 
-  /** Leading summary block. Omit to render the bar without a headline figure. */
+  /** Optional nonselectable safety score rendered as the first grid cell. */
   @Prop() score: OverviewScore | undefined;
 
-  /** Current reporting period, for example `Jun 29, 2026 – Jul 26, 2026`. */
+  /** Fixed current date or range. Replaced by content in the `period` slot. */
   @Prop() periodLabel: string = '';
 
-  /** Comparison caption, for example `vs Previous period`. */
+  /** Copy between the current period and comparison control, usually `vs.`. */
   @Prop() comparisonLabel: string = '';
 
-  /** Measures rendered in the responsive grid. Only the first six are shown. */
+  /** Measures rendered in the responsive grid. Only the first seven are shown. */
   @Prop() metrics: OverviewMetric[] = [];
 
   /**
    * Width a metric cell may shrink to before the grid drops a column. The grid
-   * reflows and then stacks from this alone, so no measurement is required.
+   * uses this threshold while choosing an evenly distributed column count.
    */
   @Prop() metricMinWidth: string = DEFAULT_METRIC_MIN_WIDTH;
 
@@ -76,9 +78,8 @@ export class CardOverview {
   /**
    * Page-controlled visual collapse from the full card (`0`) toward its 48px
    * compact handoff height (`1`). The component preserves its expanded flow
-   * height, keeps elevation on the shrinking surface, and clips translated
-   * content internally. The page still owns sticky positioning and the final
-   * swap to `variant="compact"`.
+   * height, keeps the period bar stationary, and moves/clips the grid beneath
+   * it. The page still owns sticky positioning and the final compact handoff.
    */
   @Prop() scrollCollapseProgress: number = 0;
 
@@ -88,6 +89,7 @@ export class CardOverview {
   /** Roving tab stop across selectable metrics. */
   @State() private focusedMetricIndex: number = 0;
   @State() private expandedHeight: number = 0;
+  @State() private gridColumns: number | undefined;
 
   private layoutEl?: HTMLElement;
   private layoutResizeObserver: ResizeObserver | null = null;
@@ -99,6 +101,7 @@ export class CardOverview {
   componentDidRender() {
     // Re-bind after HMR when DidLoad's observer was dropped.
     if (!this.layoutResizeObserver) this.observeLayout();
+    else this.updateLayoutGeometry();
   }
 
   disconnectedCallback() {
@@ -106,12 +109,16 @@ export class CardOverview {
     this.layoutResizeObserver = null;
   }
 
-  private get hasScore(): boolean {
-    return this.score !== undefined || this.scoreErrorMessage !== undefined || this.isLoading;
-  }
-
   private get visibleMetrics(): OverviewMetric[] {
     return this.metrics.slice(0, MAX_METRIC_COUNT);
+  }
+
+  private get visibleCellCount(): number {
+    const metricCount =
+      this.isLoading && this.metrics.length === 0
+        ? LOADING_PLACEHOLDER_COUNT
+        : this.visibleMetrics.length;
+    return 1 + metricCount;
   }
 
   private get resolvedScrollCollapseProgress(): number {
@@ -133,21 +140,36 @@ export class CardOverview {
     const layout = this.layoutEl;
     if (!layout) return;
 
-    const updateHeight = (height: number) => {
-      if (height > 0 && Math.abs(height - this.expandedHeight) >= 0.5) {
-        this.expandedHeight = height;
-      }
-    };
-
-    updateHeight(layout.getBoundingClientRect().height);
+    const bounds = layout.getBoundingClientRect();
+    this.updateLayoutGeometry(bounds.width, bounds.height);
     if (typeof ResizeObserver === 'undefined') return;
 
     this.layoutResizeObserver?.disconnect();
     this.layoutResizeObserver = new ResizeObserver(entries => {
-      const height = entries[0]?.contentRect.height;
-      if (height !== undefined) updateHeight(height);
+      const rect = entries[0]?.contentRect;
+      if (rect) this.updateLayoutGeometry(rect.width, rect.height);
     });
     this.layoutResizeObserver.observe(layout);
+  }
+
+  private updateLayoutGeometry(width?: number, height?: number) {
+    const layout = this.layoutEl;
+    if (!layout) return;
+
+    const bounds = width === undefined || height === undefined ? layout.getBoundingClientRect() : null;
+    const resolvedWidth = width ?? bounds?.width ?? 0;
+    const resolvedHeight = height ?? bounds?.height ?? 0;
+
+    if (resolvedHeight > 0 && Math.abs(resolvedHeight - this.expandedHeight) >= 0.5) {
+      this.expandedHeight = resolvedHeight;
+    }
+
+    const columns = resolveOverviewGridColumns({
+      cellCount: this.visibleCellCount,
+      availableWidth: resolvedWidth,
+      minCellWidth: resolveCssLengthPx(this.metricMinWidth, TOKEN_DEFAULTS.menuWidthXs),
+    });
+    if (columns !== this.gridColumns) this.gridColumns = columns;
   }
 
   /** Index of the roving tab stop, skipping inactive metrics. */
@@ -168,7 +190,7 @@ export class CardOverview {
     if (next < 0) return;
 
     this.focusedMetricIndex = next;
-    const cells = this.el.querySelectorAll<HTMLElement>('.card-overview__metric');
+    const cells = this.el.querySelectorAll<HTMLElement>('.card-overview__metric-action');
     cells[next]?.focus();
   }
 
@@ -217,18 +239,24 @@ export class CardOverview {
    *
    * Tone is supplied by the caller and never inferred here.
    */
-  private renderTrend(trend: MetricTrend | undefined, variant: TextVariant, emphasis = false) {
+  private renderTrend(
+    trend: MetricTrend | undefined,
+    variant: TextVariant,
+    emphasis = false,
+    color?: TextColor
+  ) {
     if (!trend) return null;
     return (
       <ds-text
         as="span"
         class={{
           'card-overview__trend': true,
+          'ds-control-label-box': true,
           [`card-overview__trend--${trend.tone}`]: true,
         }}
         variant={variant}
         emphasis={emphasis}
-        color={TREND_COLORS[trend.tone]}
+        color={color ?? TREND_COLORS[trend.tone]}
         fontFeature="tabular-nums"
       >
         {trend.direction === 'up' ? '↑' : '↓'} {trend.value}
@@ -236,53 +264,37 @@ export class CardOverview {
     );
   }
 
-  private renderScore(compact: boolean) {
+  private renderScore() {
     if (this.isLoading) {
-      if (compact) {
-        return (
-          <div class="card-overview__score ds-control--md" part="score">
-            {this.bar('text-body-medium', '40px', 'card-overview__score-label')}
+      return (
+        <div class="card-overview__score" part="score">
+          <div class="card-overview__score-content">
+            <div class="card-overview__score-copy">
+              {this.bar('text-body-small', '64px', 'card-overview__score-label')}
+              {this.bar('text-body-medium', '28px')}
+            </div>
             <div class="card-overview__score-figure">
-              {this.bar('text-body-medium', '24px')}
-              {this.bar('text-body-medium', '32px')}
+              {this.bar('text-display-medium', '56px')}
             </div>
           </div>
-        );
-      }
-
-      return (
-        <div class="card-overview__score ds-control--md" part="score">
-          {/*
-           * The label row is kept but left empty. It carries the control-height
-           * box that aligns the score block with the period control, so dropping
-           * it would shift the whole block up; a bar inside it would collide with
-           * the figure, which sits under the label by design.
-           */}
-          <div class="card-overview__score-label-row" />
-          <div class="card-overview__score-figure">
-            {this.bar('text-display-medium', '56px')}
-            {this.bar('text-body-small', '24px', 'card-overview__skeleton-baseline')}
-          </div>
-          {/*
-           * Class goes on the skeleton itself, matching the resolved band. In a
-           * wrapper the bar picks up inline leading and drops below the resolved
-           * band position.
-           */}
-          {this.bar(
-            'text-caption',
-            '80px',
-            'card-overview__score-band card-overview__score-band--loading'
-          )}
         </div>
       );
     }
 
-    if (this.scoreErrorMessage) {
+    const unavailableMessage =
+      this.scoreErrorMessage || (!this.score ? 'Score unavailable' : undefined);
+    if (unavailableMessage) {
       return (
-        <div class="card-overview__score card-overview__score--error" part="score" role="alert">
-          <ds-icon name="CircleExclamation" size="sm" color="inherit" aria-hidden="true" />
-          <ds-text as="span" variant="text-body-medium" color="inherit">
-            {this.scoreErrorMessage}
+        /* eslint-disable-next-line local/prefer-direct-ds-text -- The score track owns the grid divider and 8px outer inset. */
+        <div class="card-overview__score" part="score">
+          <ds-text
+            as="span"
+            class="card-overview__score-content card-overview__score-content--error"
+            variant="text-body-medium"
+            color="inherit"
+            role="alert"
+          >
+            {unavailableMessage}
           </ds-text>
         </div>
       );
@@ -290,49 +302,38 @@ export class CardOverview {
 
     const score = this.score;
     if (!score) return null;
+    const level = score.level ?? resolveSafetyScoreLevel(score.value);
 
     return (
-      <div class="card-overview__score card-overview__score--resolved ds-control--md" part="score">
-        {/* The row owns cross-layout baseline geometry and becomes display: contents in compact mode. */}
-        {/* eslint-disable-next-line local/prefer-direct-ds-text */}
-        <div class="card-overview__score-label-row">
+      <div class="card-overview__score" part="score">
+        <div
+          class={{
+            'card-overview__score-content': true,
+            [`card-overview__score-content--${level}`]: Boolean(level),
+          }}
+        >
+          <div class="card-overview__score-copy">
+            <ds-text
+              as="span"
+              class="card-overview__score-label ds-control-label-box"
+              variant="text-body-small"
+              color="inherit"
+            >
+              {score.label}
+            </ds-text>
+            {this.renderTrend(score.trend, 'text-body-medium', false, 'inherit')}
+          </div>
           <ds-text
             as="span"
-            class="card-overview__score-label"
-            variant="text-body-medium"
-            emphasis={!compact}
-            color={ALWAYS_DARK_SECONDARY}
-          >
-            {score.label}
-          </ds-text>
-        </div>
-        <div class="card-overview__score-figure">
-          <ds-text
-            as="span"
-            class="card-overview__score-value"
-            variant={compact ? 'text-body-medium' : 'text-display-medium'}
+            class="card-overview__score-value ds-control-label-box"
+            variant="text-display-medium"
             emphasis
-            color={ALWAYS_DARK_PRIMARY}
+            color="inherit"
             fontFeature="tabular-nums"
           >
             {score.value}
           </ds-text>
-          {this.renderTrend(
-            score.trend,
-            compact ? 'text-body-medium' : 'text-body-small',
-            !compact
-          )}
         </div>
-        {score.band && !compact && (
-          <ds-text
-            as="span"
-            class="card-overview__score-band"
-            variant="text-caption"
-            color={ALWAYS_DARK_SECONDARY}
-          >
-            {score.band}
-          </ds-text>
-        )}
       </div>
     );
   }
@@ -342,7 +343,7 @@ export class CardOverview {
     const label = (
       <ds-text
         as="span"
-        class="card-overview__metric-label"
+        class="card-overview__metric-label ds-control-label-box"
         variant="text-body-small"
         color={ALWAYS_DARK_SECONDARY}
       >
@@ -351,43 +352,46 @@ export class CardOverview {
     );
 
     return (
-      <div
-        class={{
-          'card-overview__metric': true,
-          'card-overview__metric--inactive': !selectable,
-          // Selection targets get the shared wash; press scaling is not used here
-          // so the grid keeps its columns aligned. See docs/control-press-policy.md.
-          'ds-interaction-fill': selectable,
-          'ds-interaction-fill--on-always-dark': selectable,
-          'ds-focus-ring-inset': selectable,
-        }}
-        part="metric"
-        role={selectable ? 'button' : undefined}
-        tabIndex={selectable && index === this.rovingIndex ? 0 : -1}
-        onClick={() => this.selectMetric(metric, index)}
-        onKeyDown={event => this.handleMetricKeyDown(event, index)}
-        onFocusin={() => {
-          if (selectable) this.focusedMetricIndex = index;
-        }}
-      >
-        {metric.labelTooltip ? (
-          <ds-tooltip label={metric.labelTooltip} side="top" size="sm">
-            {label}
-          </ds-tooltip>
-        ) : (
-          label
-        )}
-        <div class="card-overview__metric-figure">
-          <ds-text
-            as="span"
-            class="card-overview__metric-value"
-            variant="text-body-medium"
-            color={ALWAYS_DARK_PRIMARY}
-            fontFeature="tabular-nums"
-          >
-            {metric.value}
-          </ds-text>
-          {this.renderTrend(metric.trend, 'text-body-medium')}
+      <div class="card-overview__metric" part="metric">
+        <div
+          class={{
+            'card-overview__metric-action': true,
+            'card-overview__metric-action--inactive': !selectable,
+            // Selection targets get the shared wash; press scaling is not used here
+            // so the grid keeps its columns aligned. See docs/control-press-policy.md.
+            'ds-interaction-fill': selectable,
+            'ds-interaction-fill--on-always-dark': selectable,
+            'ds-focus-ring-inset': selectable,
+          }}
+          role={selectable ? 'button' : undefined}
+          tabIndex={selectable && index === this.rovingIndex ? 0 : -1}
+          onClick={() => this.selectMetric(metric, index)}
+          onKeyDown={event => this.handleMetricKeyDown(event, index)}
+          onFocusin={() => {
+            if (selectable) this.focusedMetricIndex = index;
+          }}
+        >
+          <div class="ds-interaction-fill__content card-overview__metric-content">
+            {metric.labelTooltip ? (
+              <ds-tooltip label={metric.labelTooltip} side="top" size="sm">
+                {label}
+              </ds-tooltip>
+            ) : (
+              label
+            )}
+            <div class="card-overview__metric-figure">
+              <ds-text
+                as="span"
+                class="card-overview__metric-value ds-control-label-box"
+                variant="text-body-medium"
+                color={ALWAYS_DARK_PRIMARY}
+                fontFeature="tabular-nums"
+              >
+                {metric.value}
+              </ds-text>
+              {this.renderTrend(metric.trend, 'text-body-medium')}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -395,24 +399,31 @@ export class CardOverview {
 
   private renderMetrics() {
     if (this.isLoading && this.metrics.length === 0) {
-      return Array.from({ length: LOADING_PLACEHOLDER_COUNT }, (_, index) => (
-        <div class="card-overview__metric" key={`loading-${index}`}>
-          {this.bar('text-body-small', '70%', 'card-overview__metric-label')}
-          <div class="card-overview__metric-figure">
-            {this.bar('text-body-medium', '36px')}
-            {/* text-body-medium, matching renderTrend for a metric — a smaller
-             * variant here leaves the trend bar short of the value beside it. */}
-            {this.bar('text-body-medium', '40px')}
+      return [
+        this.renderScore(),
+        ...Array.from({ length: LOADING_PLACEHOLDER_COUNT }, (_, index) => (
+          <div class="card-overview__metric" key={`loading-${index}`}>
+            <div class="card-overview__metric-action card-overview__metric-action--inactive">
+              {this.bar('text-body-small', '70%', 'card-overview__metric-label')}
+              <div class="card-overview__metric-figure">
+                {this.bar('text-body-medium', '36px')}
+                {/* text-body-medium, matching renderTrend for a metric — a smaller
+                 * variant here leaves the trend bar short of the value beside it. */}
+                {this.bar('text-body-medium', '40px')}
+              </div>
+            </div>
           </div>
-        </div>
-      ));
+        )),
+      ];
     }
 
-    return this.visibleMetrics.map((metric, index) => this.renderMetric(metric, index));
+    return [
+      this.renderScore(),
+      ...this.visibleMetrics.map((metric, index) => this.renderMetric(metric, index)),
+    ];
   }
 
   render() {
-    const hasHeader = Boolean(this.periodLabel || this.comparisonLabel);
     const compact = this.variant === 'compact';
     const collapse = this.scrollCollapseGeometry;
 
@@ -420,7 +431,6 @@ export class CardOverview {
       <Host
         class={{
           'card-overview': true,
-          'card-overview--has-score': this.hasScore,
           'card-overview--compact': compact,
           'card-overview--stacked': !compact && this.layout === 'stacked',
           'card-overview--scroll-collapsing': collapse.active,
@@ -430,6 +440,9 @@ export class CardOverview {
         aria-busy={this.isLoading ? 'true' : undefined}
         style={{
           '--ds-card-overview-metric-min': this.metricMinWidth,
+          '--ds-card-overview-grid-columns': this.gridColumns
+            ? String(this.gridColumns)
+            : undefined,
           '--ds-card-overview-expanded-height': collapse.active
             ? `${collapse.expandedHeight}px`
             : undefined,
@@ -458,51 +471,46 @@ export class CardOverview {
               }}
               class={{
                 'card-overview__layout': true,
-                'card-overview__layout--has-score': this.hasScore,
               }}
             >
               <div class="card-overview__summary">
-                {this.hasScore && this.renderScore(compact)}
-
-                {/* `ds-control--md` supplies the 32px height and the label inset below. */}
-                <div
-                  class={{
-                    'card-overview__header': true,
-                    'card-overview__header--has-score': this.hasScore,
-                    'ds-control--md': true,
-                  }}
-                >
+                <div class="card-overview__header ds-control--md">
                   {this.isLoading ? (
-                    <div class="card-overview__period ds-control-label-box">
+                    <div class="card-overview__period">
                       {this.bar('text-body-medium', '184px')}
                       {this.bar('text-body-medium', '248px')}
                     </div>
                   ) : (
-                    hasHeader && (
-                      <div class="card-overview__period ds-control-label-box">
-                        {this.periodLabel && (
-                          <ds-text
-                            as="span"
-                            class="card-overview__period-current ds-control-label-box"
-                            variant="text-body-medium"
-                            emphasis
-                            color={ALWAYS_DARK_PRIMARY}
-                          >
-                            {this.periodLabel}
-                          </ds-text>
-                        )}
-                        {this.comparisonLabel && (
-                          <ds-text
-                            as="span"
-                            class="card-overview__period-comparison ds-control-label-box"
-                            variant="text-body-medium"
-                            color={ALWAYS_DARK_SECONDARY}
-                          >
-                            {this.comparisonLabel}
-                          </ds-text>
-                        )}
+                    <div class="card-overview__period">
+                      <div class="card-overview__period-current">
+                        <slot name="period">
+                          {this.periodLabel && (
+                            /* eslint-disable-next-line local/prefer-direct-ds-text -- Fixed copy uses the same structural frame and label inset as a slotted Select. */
+                            <div class="card-overview__period-fixed ds-control-frame">
+                              <ds-text
+                                as="span"
+                                class="ds-control-label-box"
+                                variant="text-body-medium"
+                                emphasis
+                                color={ALWAYS_DARK_PRIMARY}
+                              >
+                                {this.periodLabel}
+                              </ds-text>
+                            </div>
+                          )}
+                        </slot>
                       </div>
-                    )
+                      {this.comparisonLabel && (
+                        <ds-text
+                          as="span"
+                          class="card-overview__period-comparison ds-control-label-box"
+                          variant="text-body-medium"
+                          color={ALWAYS_DARK_SECONDARY}
+                        >
+                          {this.comparisonLabel}
+                        </ds-text>
+                      )}
+                    </div>
                   )}
                   <div class="card-overview__filter">
                     {/*
@@ -525,12 +533,7 @@ export class CardOverview {
               </div>
 
               {!compact && (
-                <div
-                  class={{
-                    'card-overview__body': true,
-                    'card-overview__body--has-score': this.hasScore,
-                  }}
-                >
+                <div class="card-overview__body">
                   <div class="card-overview__metrics" part="metrics">
                     {this.renderMetrics()}
                   </div>

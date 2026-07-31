@@ -18,6 +18,7 @@ for (const id of [
   'searchable',
   'loading',
   'surface',
+  'borderless-error',
   'required-single',
   'contained-single',
 ]) {
@@ -28,6 +29,7 @@ for (const id of ['multi', 'multi-search', 'required-multi', 'contained-multi'])
 }
 
 document.getElementById('single').value = 'cherry';
+document.getElementById('borderless-error').hasBorder = false;
 document.getElementById('multi').value = ['apple', 'cherry'];
 
 window.__selectChanges = [];

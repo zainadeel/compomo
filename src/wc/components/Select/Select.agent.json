@@ -68,7 +68,7 @@
     "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
     "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
     "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the Select exposes validity and error presentation without imposing that policy.",
-    "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry.",
+    "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry. Set hasBorder to false for chrome where the trigger must remain borderless at rest, when selected or focused, and when invalid; error semantics and supporting copy remain available.",
     "An initially empty option set is not an expected Select use case. The no-results state describes a search with no matches, not a source with no choices.",
     "Use options for a flat list or sections for grouped choices; when sections are present they take precedence.",
     "The background prop describes the actual parent surface and uses the same surface set as ButtonUnfilled."

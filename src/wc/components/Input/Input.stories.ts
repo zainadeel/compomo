@@ -83,6 +83,14 @@ export const SizesAndStates: Story = {
       <ds-input value="Read-only value" read-only aria-label="Read-only input"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Borderless</ds-text>
       <ds-input value="Borderless value" .hasBorder=${false} aria-label="Borderless input"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Borderless error</ds-text>
+      <ds-input
+        value="Invalid borderless value"
+        .hasBorder=${false}
+        error
+        error-message="This field is invalid"
+        aria-label="Invalid borderless input"
+      ></ds-input>
     </div>
   `,
 };

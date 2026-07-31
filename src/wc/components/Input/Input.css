@@ -39,7 +39,7 @@
   --ds-interaction-border-color: var(--color-border-bold-negative);
 }
 
-.input-control:focus-within:not(.input-control--error) {
+.input-control--bordered:focus-within:not(.input-control--error) {
   --ds-interaction-border-width: var(--dimension-stroke-width-018);
   --ds-interaction-border-color: var(--color-border-bold-brand);
 }
@@ -118,7 +118,7 @@
 }
 
 @media (forced-colors: active) {
-  .input-control:focus-within:not(.input-control--error)::after {
+  .input-control--bordered:focus-within:not(.input-control--error)::after {
     outline-color: var(--ds-forced-color-selected);
   }
 

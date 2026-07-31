@@ -1,10 +1,42 @@
-import type { CardOverviewVariant, OverviewMetric } from './card-overview-types';
+import type {
+  CardOverviewVariant,
+  OverviewMetric,
+  SafetyScoreLevel,
+} from './card-overview-types';
 
 export interface CardOverviewCollapseGeometry {
   active: boolean;
   expandedHeight: number;
   offset: number;
   visibleHeight: number;
+}
+
+/**
+ * Choose the densest column count that fits without leaving an incomplete row
+ * for even cell totals. Odd totals retain the densest fitting layout and may
+ * therefore leave an orphan in the final row.
+ */
+export function resolveOverviewGridColumns(options: {
+  cellCount: number;
+  availableWidth: number;
+  minCellWidth: number;
+  maxColumns?: number;
+}): number {
+  const cellCount = Math.max(1, Math.floor(options.cellCount));
+  const minCellWidth = Math.max(1, options.minCellWidth);
+  const maxColumns = Math.max(1, Math.floor(options.maxColumns ?? 4));
+  const fittingColumns = Math.max(
+    1,
+    Math.min(cellCount, maxColumns, Math.floor(Math.max(0, options.availableWidth) / minCellWidth))
+  );
+
+  if (cellCount % 2 !== 0) return fittingColumns;
+
+  for (let columns = fittingColumns; columns >= 1; columns -= 1) {
+    if (cellCount % columns === 0) return columns;
+  }
+
+  return 1;
 }
 
 export function resolveCardOverviewCollapseGeometry(options: {
@@ -28,6 +60,14 @@ export function resolveCardOverviewCollapseGeometry(options: {
     offset,
     visibleHeight: expandedHeight - offset,
   };
+}
+
+export function resolveSafetyScoreLevel(value: string | number): SafetyScoreLevel | undefined {
+  const numericValue = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 100) return undefined;
+  if (numericValue <= 50) return 'fair';
+  if (numericValue <= 80) return 'good';
+  return 'excellent';
 }
 
 export function resolveOverviewRovingIndex(

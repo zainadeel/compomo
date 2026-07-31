@@ -7,7 +7,7 @@
   "audience": "general",
   "tag": "ds-card-overview",
   "status": "experimental",
-  "summary": "Page-level summary card pairing one headline score with a reporting period, an application-owned period control, and a responsive grid of comparable measures, with an optional elevated scroll-collapse surface and compact 48px presentation.",
+  "summary": "Page-level summary with a persistent 48px reporting bar above an equal-track grid of an optional safety score and comparable measures, plus an elevated page-controlled collapse surface.",
   "useWhen": [
     "A page opens with one headline figure that the surrounding measures explain.",
     "Every measure is compared against the same period, so one caption describes the comparison for all of them.",
@@ -39,8 +39,7 @@
   ],
   "accessibility": [
     "The bar is a labelled region; set overviewLabel to name what is being summarised, such as Safety summary.",
-    "Trend arrows are decorative and hidden from assistive technology, so the formatted change value must read correctly on its own.",
-    "Colour never carries the trend meaning alone; the arrow direction and the value are both present.",
+    "Colour never carries trend meaning alone; the arrow direction and formatted change value are both included in the accessible text.",
     "Measures become selectable only when they are not inactive. Selectable measures form one roving tab stop, so the grid is a single stop and arrow keys move between measures.",
     "Set labelTooltip when a measure's label needs qualifying rather than shortening the label into something ambiguous.",
     "While loading, the region exposes a busy state and renders skeletons whose type metrics match the resolved content."
@@ -49,20 +48,21 @@
     "Score and measures are supplied as data; the component owns their type treatment so summary bars stay consistent across pages.",
     "Trend is supplied already resolved as a direction, a formatted value, and a tone. Whether a rise reads well is a product decision, so the component never infers tone from the numbers. Derive it with resolveMetricTrend.",
     "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
-    "Omit score to render the bar without a headline figure. Set scoreErrorMessage to report that the figure could not be resolved while the measures remain readable.",
+    "Omit score to render a centered Score unavailable cell with a tertiary border and no score fill. Set scoreErrorMessage to replace that copy while the measures remain readable.",
     "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
-    "At most six measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
-    "The period control is slotted rather than owned, because the choice of stepper, select, or date range varies by product surface.",
-    "During a page-controlled scroll collapse, the component preserves its expanded flow height while the elevated visual surface shrinks toward 48px and the full content translates upward inside an internal clip. The elevation remains fitted to the visible surface instead of being clipped with the content.",
-    "compact is exactly 48px high and keeps only the score label, score value, trend, reporting copy, and slotted period control. It omits the score band, measures, and footer."
+    "At most seven measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
+    "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary.",
+    "A numeric safety score infers fair from 0–50, good from 51–80, and excellent from 81–100. The level can be supplied explicitly when the displayed value is not numeric. The deprecated band field is ignored.",
+    "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. The display value removes 12px from both block edges of its line box so it does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
+    "During page-controlled scroll collapse, the component preserves its expanded flow height and stationary reporting bar while the metric grid moves and clips beneath it. Elevation remains fitted to the visible surface.",
+    "compact is exactly 48px high and renders only the reporting bar. It omits Score, measures, and footer."
   ],
   "responsiveBehavior": [
-    "The measure grid reflows to fewer columns and finally stacks, driven by the minimum measure width alone. There is no measurement and no horizontal scrolling.",
+    "The measure grid reflows to fewer columns and finally stacks without horizontal scrolling. Even cell totals prefer complete rows; odd totals retain the densest fitting layout and may leave an orphan in the final row.",
     "Every occupied grid track has the same width. When a final row is incomplete, its measures keep the same width as the row above and the unused tracks remain empty.",
     "Set metricMinWidth to change the width a measure may shrink to before the grid drops a column.",
-    "The score block hugs its content and never shrinks, so the headline figure holds its size while the grid absorbs the remaining width.",
-    "Once the card reaches its narrow stacked state, one summary block holds the score label, score, trend, score band, reporting period, and the application-owned period control above the single-column measures.",
-    "In that stacked summary, the score and trend share one line at the start, while the score band is hidden to preserve space. The period control stays at the upper end, while the current period and comparison sit on separate right-aligned lines beside the score.",
+    "The safety score participates in the same equal-width tracks as measures rather than occupying a separate rail.",
+    "The reporting bar owns an exact 8px inset on every edge. Fixed current copy and slotted controls begin at that inset; their labels share md control-frame geometry and truncate before changing the 48px height.",
     "Every measure occupies a full-width row in the stacked state.",
     "Set layout to stacked when the owning page shell enters a responsive mode before the card's own container reaches its narrow threshold.",
     "CardOverview does not observe scroll, choose sticky offsets, or switch its own presentation. The page owner supplies collapse progress, keeps the card sticky at the appropriate shell inset, and swaps to compact at the 48px endpoint.",
@@ -71,7 +71,7 @@
   "frameworkCaveats": {
     "customElements": [
       "Assign score and metrics as JavaScript properties; both are objects and cannot be expressed as HTML attributes.",
-      "Place the period control in the filter slot; the component reserves space for it but never renders one.",
+      "Place an optional current-range control in the period slot and the comparison-window control in the filter slot; the component reserves their layout but never computes or renders controls.",
       "When driving scroll collapse, update scrollCollapseProgress from page-owned geometry and swap to a separate compact presentation at the endpoint."
     ],
     "react": [
@@ -82,7 +82,7 @@
     "angular": [
       "Bind [score] and [metrics] as properties and read the selected measure from $event.detail on (dsMetricSelect).",
       "Derive each trend with resolveMetricTrend so tone stays an explicit product decision.",
-      "Keep sticky geometry and [scrollCollapseProgress] in the page owner; CardOverview only renders the visual collapse."
+      "Keep date math, sticky geometry, and [scrollCollapseProgress] in the page owner; CardOverview only renders the supplied composition and visual collapse."
     ]
   },
   "references": [
