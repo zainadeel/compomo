@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.3.0](https://github.com/zainadeel/compomo/compare/v13.2.0...v13.3.0) (2026-07-31)
+
+
+### Added
+
+* add forced-colors accessibility support ([#398](https://github.com/zainadeel/compomo/issues/398)) ([a1b4375](https://github.com/zainadeel/compomo/commit/a1b4375ac472983d12349651ac54248988e9770a)), closes [#332](https://github.com/zainadeel/compomo/issues/332)
+
 ## [13.2.0](https://github.com/zainadeel/compomo/compare/v13.1.0...v13.2.0) (2026-07-31)
 
 
