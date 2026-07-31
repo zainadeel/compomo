@@ -80,7 +80,7 @@ const periodFilter = () => html`
   <ds-select
     slot="filter"
     size="md"
-    background="inverted"
+    background="always-dark"
     .activeFill=${false}
     aria-label="Reporting period"
     .options=${PERIOD_OPTIONS}
@@ -101,7 +101,7 @@ export const Structure: Story = {
       >
         <!--
           The period control is slotted, so the application picks it. Select
-          supports the inverted surface directly, so no wrapper is needed.
+          supports the always-dark surface directly, so no wrapper is needed.
         -->
         ${periodFilter()}
       </ds-card-overview>

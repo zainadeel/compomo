@@ -335,9 +335,7 @@ test('keeps the current period primary and comparison copy secondary', async ({ 
   expect(colors.current).not.toBe(colors.comparison);
 });
 
-test('follows inverted surface and foreground tokens in both themes', async ({ page }) => {
-  const themeColors: string[] = [];
-
+test('keeps its always-dark surface and foreground tokens in both themes', async ({ page }) => {
   for (const theme of ['light', 'dark']) {
     await page.evaluate(value => document.documentElement.setAttribute('data-theme', value), theme);
     const colors = await page.locator('#score-pressure').evaluate(element => {
@@ -359,27 +357,27 @@ test('follows inverted surface and foreground tokens in both themes', async ({ p
       return [
         {
           actual: getComputedStyle(surface).backgroundColor,
-          expected: resolveColor('--color-inverted-background'),
+          expected: resolveColor('--color-always-dark-background'),
         },
         {
           actual: getComputedStyle(primary).color,
-          expected: resolveColor('--color-inverted-foreground-primary'),
+          expected: resolveColor('--color-always-dark-foreground-primary'),
         },
         {
           actual: getComputedStyle(secondary).color,
-          expected: resolveColor('--color-inverted-foreground-secondary'),
+          expected: resolveColor('--color-always-dark-foreground-secondary'),
         },
         {
           actual: getComputedStyle(trends[0]).color,
-          expected: resolveColor('--color-inverted-foreground-positive'),
+          expected: resolveColor('--color-always-dark-foreground-positive'),
         },
         {
           actual: getComputedStyle(trends[1]).color,
-          expected: resolveColor('--color-inverted-foreground-negative'),
+          expected: resolveColor('--color-always-dark-foreground-negative'),
         },
         {
           actual: getComputedStyle(trends[2]).color,
-          expected: resolveColor('--color-inverted-foreground-secondary'),
+          expected: resolveColor('--color-always-dark-foreground-secondary'),
         },
       ];
     });
@@ -387,8 +385,5 @@ test('follows inverted surface and foreground tokens in both themes', async ({ p
     for (const color of colors) {
       expect(color.actual).toBe(color.expected);
     }
-    themeColors.push(colors[0].actual);
   }
-
-  expect(themeColors[0]).not.toBe(themeColors[1]);
 });
