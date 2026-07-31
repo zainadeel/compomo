@@ -1,4 +1,5 @@
 @import './focus-ring.css';
+@import './forced-colors.css';
 @import './interaction-fill.css';
 @import './control-press.css';
 @import './control-inactive.css';
@@ -95,4 +96,11 @@
   right: 0;
   z-index: 2;
   pointer-events: none;
+}
+
+@media (forced-colors: active) {
+  .ds-button {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
 }

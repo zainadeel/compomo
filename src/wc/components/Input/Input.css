@@ -5,6 +5,7 @@
 @import '../../utils/control-width.css';
 @import '../../utils/field-stack.css';
 @import '../../utils/typography.css';
+@import '../../utils/forced-colors.css';
 
 :host(.input-host) {
   display: inline-flex;
@@ -114,4 +115,14 @@
 
 .error-text {
   width: 100%;
+}
+
+@media (forced-colors: active) {
+  .input-control:focus-within:not(.input-control--error)::after {
+    outline-color: var(--ds-forced-color-selected);
+  }
+
+  .input-control--error::after {
+    outline-style: dashed;
+  }
 }

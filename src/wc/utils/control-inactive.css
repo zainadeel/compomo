@@ -1,3 +1,5 @@
+@import './forced-colors.css';
+
 /**
  * Control inactive — shared disabled/inactive visual for interactive controls.
  *
@@ -17,4 +19,12 @@
   opacity: var(--effect-opacity-medium);
   pointer-events: none;
   cursor: not-allowed;
+}
+
+@media (forced-colors: active) {
+  :host(.ds-control-inactive),
+  .ds-control-inactive {
+    color: var(--ds-forced-color-disabled);
+    opacity: 1;
+  }
 }

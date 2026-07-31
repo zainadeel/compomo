@@ -1,3 +1,5 @@
+@import './forced-colors.css';
+
 /**
  * Interaction fill — selected (`::before`) + hover/press (`::after`) overlays.
  *
@@ -197,4 +199,36 @@
   --ds-interaction-pressed: var(--color-navigation-interaction-pressed);
   --ds-interaction-active: var(--color-navigation-interaction-active);
   --ds-focus-ring-color: var(--color-navigation-interaction-focus);
+}
+
+@media (forced-colors: active) {
+  /*
+   * Forced-colors removes box-shadows and remaps translucent fills. Restore
+   * boundaries with outlines and make selection a non-color-only inset ring.
+   * Focus-ring selectors remain more specific and replace this outline while
+   * keyboard focus is visible.
+   */
+  :host(.ds-interaction-fill)::after,
+  .ds-interaction-fill::after {
+    box-shadow: none;
+    outline:
+      var(--ds-interaction-border-width) solid
+      var(--ds-forced-color-control-boundary);
+    outline-offset: calc(-1 * var(--ds-interaction-border-width));
+  }
+
+  :host(.ds-interaction-fill--selected)::before,
+  .ds-interaction-fill--selected::before {
+    background: transparent;
+    outline: var(--dimension-stroke-width-025) solid var(--ds-forced-color-selected);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+  }
+}
+
+@media (forced-colors: active) and (hover: hover) and (pointer: fine) {
+  :host(.ds-interaction-fill:hover:not(:disabled):not(:focus-visible):not(:focus-within):not(.ds-focus-ring--visible))::after,
+  .ds-interaction-fill:hover:not(:disabled):not(:focus-visible):not(:focus-within):not(.ds-focus-ring--visible)::after {
+    outline-color: var(--ds-forced-color-selected);
+    outline-width: var(--dimension-stroke-width-012);
+  }
 }

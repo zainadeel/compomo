@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/control-inactive.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   box-sizing: border-box;
@@ -130,5 +131,31 @@
   .swatch-picker__halo,
   .swatch-picker__stroke {
     transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .swatch-picker__fill {
+    forced-color-adjust: none;
+  }
+
+  .swatch-picker__border {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  .swatch-picker__halo {
+    box-shadow: none;
+  }
+
+  .swatch-picker__stroke {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-025) solid var(--ds-forced-color-selected);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+  }
+
+  .swatch-picker__divider {
+    background-color: var(--ds-forced-color-content);
   }
 }

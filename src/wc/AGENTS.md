@@ -11,6 +11,8 @@ adding component-local geometry that may already have an owner.
 ## Styling
 
 - Use TokoMo variables for every design value.
+- For forced-colors behavior, use the internal OS-role mapping and exception
+  rules in [forced-colors accessibility](../../docs/maintainers/forced-colors.md).
 - Keep component styles in the co-located CSS file.
 - Use `:host` for host behavior and classes for internal structure.
 - Do not override `ds-text` font metrics. Select an atomic variant and emphasis.

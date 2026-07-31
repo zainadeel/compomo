@@ -177,6 +177,11 @@ their named domain meaning; they are not substitute chart palettes.
 ## Accessibility
 
 - Do not communicate status through color alone.
+- In Windows Contrast Themes and browser forced-colors mode, the OS owns the
+  actual palette. Keep `forced-color-adjust` at its default so CompoMo can map
+  boundaries, focus, selection, invalid, disabled, and loading states to the
+  user's system colors. Product code must not opt component chrome out of
+  forced colors.
 - Verify text and essential icon contrast against the rendered surface in both
   themes.
 - Restrict tertiary and quaternary foregrounds to genuinely inactive/disabled
@@ -187,6 +192,11 @@ their named domain meaning; they are not substitute chart palettes.
   sufficient rendered contrast even when hidden from assistive technology.
 - Use matching on-background families for colored surfaces.
 - Let semantic tokens adapt to theme; do not freeze their resolved values.
+
+Authored colors remain only for literal component-owned data marks whose color
+encodes a category or value, such as chart marks and corresponding legend
+swatches. Labels, focus, controls, and surrounding chrome still follow the OS
+palette.
 
 ## Avoid
 

@@ -1,3 +1,5 @@
+@import '../../utils/forced-colors.css';
+
 :host {
   display: inline-block;
   max-width: 100%;
@@ -37,4 +39,15 @@
   stroke-width: var(--dimension-stroke-width-018);
   r: calc(var(--dimension-size-075) / 2);
   vector-effect: non-scaling-stroke;
+}
+
+@media (forced-colors: active) {
+  .chart-line__path,
+  .chart-line__point {
+    forced-color-adjust: none;
+  }
+
+  .chart-line__point {
+    stroke: var(--ds-forced-color-surface);
+  }
 }

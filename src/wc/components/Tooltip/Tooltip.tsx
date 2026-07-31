@@ -404,7 +404,7 @@ export class Tooltip {
       tip.id = this.tooltipId;
       tip.setAttribute('role', 'tooltip');
       // `sc-ds-tooltip` is required for Stencil scoped CSS to match outside the host.
-      tip.className = 'tooltip-popup sc-ds-tooltip';
+      tip.className = 'tooltip-popup ds-forced-colors-scope sc-ds-tooltip';
       Object.assign(tip.style, {
         position: 'fixed',
         left: '0',

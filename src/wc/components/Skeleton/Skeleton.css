@@ -126,3 +126,9 @@
 :host(.skeleton--control.skeleton--rounded) .skeleton__shape {
   border-radius: var(--dimension-radius-half);
 }
+
+@media (forced-colors: active) {
+  .skeleton__shape {
+    background-color: var(--ds-forced-color-disabled);
+  }
+}
