@@ -88,6 +88,11 @@ test('overlays a centered rounded action at the 8px right inset', async ({ page 
   const actions = item.locator('.conversation-list-item__actions');
   const trigger = item.locator('#conversation-actions-trigger');
 
+  // Linux headless Chromium can initialize its pointer at (0, 0), inside this
+  // fixture's first row. Establish the non-hover precondition explicitly.
+  const viewport = page.viewportSize();
+  if (!viewport) throw new Error('Conversation list test requires a viewport');
+  await page.mouse.move(viewport.width - 1, viewport.height - 1);
   await expect(actions).toHaveCSS('opacity', '0');
   await row.hover();
   await expect(actions).toHaveCSS('opacity', '1');

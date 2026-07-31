@@ -36,6 +36,11 @@
       "required": true
     },
     {
+      "component": "component:ds-message-actions",
+      "role": "Provides optional message Copy and controlled response-feedback actions in the Message metadata region.",
+      "required": false
+    },
+    {
       "component": "component:ds-typing-indicator",
       "role": "Presents transient participant typing status without representing it as persisted message content.",
       "required": false
@@ -57,12 +62,14 @@
     "When history search is present, distinguish an empty history from a populated history with no matching conversations.",
     "Plain user-sent and received person-to-person copy uses MessageBubble's body-medium regular default; user bubbles use secondary foreground, and the application must not promote ordinary conversation turns to body-large.",
     "TypingIndicator owns transient participant typing status and is composed directly in an incoming Message; it is never approximated with a MessageBubble variant.",
+    "MessageActions owns browser Copy behavior and controlled feedback intent. The application supplies copyable content and owns feedback persistence, submission, permissions, analytics, and consequences.",
     "MessageScroller owns reader-relative transcript position and follow behavior. Compose MessageComposer in its overlay slot with 8px padding on every side so transcript content moves behind the surface while measured bottom clearance keeps the latest turn readable.",
     "MessageComposer emits intent while the application controls its value and status. Its submit action defaults to brand for agent and person-to-person channels; select another submitIntent only for a different semantic consequence, never merely to identify AI content."
   ],
   "accessibility": [
     "Give history and transcript regions distinct localized names.",
     "Preserve message author, order, time, status, and delivery meaning in text.",
+    "When metadata actions use hover visibility, fade the complete reserved metadata row, preserve keyboard access, and keep the row visible for touch input.",
     "Do not force the reader back to the live edge after deliberate transcript interaction."
   ],
   "responsiveBehavior": [

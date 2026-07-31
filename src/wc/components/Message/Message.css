@@ -27,6 +27,7 @@
 
 .message__header:empty,
 .message__footer:empty,
+.message__metadata-actions:empty,
 .message__actions:empty {
   display: none;
 }
@@ -60,10 +61,31 @@
 
 .message__header,
 .message__footer,
+.message__metadata-actions,
 .message__actions {
   display: flex;
   align-items: center;
   gap: var(--dimension-space-050);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .message--metadata-hover .message__footer {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--effect-motion-short-2);
+  }
+
+  .message--metadata-hover:hover .message__footer,
+  .message--metadata-hover:focus-within .message__footer {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message--metadata-hover .message__footer {
+    transition: none;
+  }
 }
 
 .message__content {

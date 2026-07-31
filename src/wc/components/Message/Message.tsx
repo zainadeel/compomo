@@ -3,6 +3,7 @@ import type {
   MessageDeliveryState,
   MessageDirection,
   MessageGroupPosition,
+  MessageMetadataVisibility,
 } from '../conversation-types';
 
 const DELIVERY_LABELS: Record<MessageDeliveryState, string> = {
@@ -29,6 +30,8 @@ export class Message {
   @Prop() timestamp: string = '';
   @Prop() deliveryState: MessageDeliveryState | undefined;
   @Prop() streaming: boolean = false;
+  /** Controls whether the complete metadata footer is persistent or revealed through hover/focus. */
+  @Prop() metadataVisibility: MessageMetadataVisibility = 'always';
   @Prop({ reflect: true }) scrollAnchor: boolean = false;
 
   private formattedTimestamp(): string {
@@ -39,6 +42,14 @@ export class Message {
       hour: 'numeric',
       minute: '2-digit',
     }).format(new Date(parsed));
+  }
+
+  private renderMetadataActions() {
+    return (
+      <div class="message__metadata-actions">
+        <slot name="metadata-actions" />
+      </div>
+    );
   }
 
   render() {
@@ -56,6 +67,7 @@ export class Message {
             message: true,
             [`message--${this.direction}`]: true,
             [`message--group-${this.groupPosition}`]: true,
+            [`message--metadata-${this.metadataVisibility}`]: true,
           }}
           aria-label={this.author ? `Message from ${this.author}` : 'Message'}
         >
@@ -72,6 +84,7 @@ export class Message {
               <slot />
             </div>
             <div class="message__footer">
+              {this.direction === 'incoming' ? this.renderMetadataActions() : null}
               <slot name="footer" />
               {delivery ? (
                 <ds-text
@@ -94,6 +107,7 @@ export class Message {
                   </ds-text>
                 </time>
               ) : null}
+              {this.direction !== 'incoming' ? this.renderMetadataActions() : null}
             </div>
           </div>
           <div class="message__actions">

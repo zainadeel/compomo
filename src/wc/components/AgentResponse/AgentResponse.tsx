@@ -1,5 +1,8 @@
 import { Component, Prop, h, Host } from '@stencil/core';
-import type { AgentResponsePart } from '../conversation-types';
+import type {
+  AgentResponsePart,
+  MessageMetadataVisibility,
+} from '../conversation-types';
 
 @Component({ tag: 'ds-agent-response', styleUrl: 'AgentResponse.css', scoped: true })
 export class AgentResponse {
@@ -9,6 +12,8 @@ export class AgentResponse {
   @Prop() timestamp: string = '';
   @Prop() parts: AgentResponsePart[] = [];
   @Prop() streaming: boolean = false;
+  /** Controls whether the complete message metadata footer is persistent or revealed through hover/focus. */
+  @Prop() metadataVisibility: MessageMetadataVisibility = 'always';
 
   private renderPart(part: AgentResponsePart) {
     switch (part.type) {
@@ -51,9 +56,11 @@ export class AgentResponse {
           showAuthor={this.showAuthor}
           timestamp={this.timestamp}
           streaming={this.streaming}
+          metadataVisibility={this.metadataVisibility}
         >
           <div class="agent-response">{this.parts.map(part => this.renderPart(part))}</div>
           <slot name="footer" slot="footer" />
+          <slot name="metadata-actions" slot="metadata-actions" />
           <slot name="actions" slot="actions" />
         </ds-message>
       </Host>

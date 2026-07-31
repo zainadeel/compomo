@@ -23,6 +23,70 @@
       >
         <ds-message-bubble variant="user">I’ll confirm it now.</ds-message-bubble>
       </ds-message>
+      <ds-message
+        id="incoming-actions"
+        direction="incoming"
+        author="Agent"
+        show-author="false"
+        timestamp="9:48 AM"
+        metadata-visibility="hover"
+      >
+        <p>The requested summary is ready.</p>
+        <ds-message-actions
+          slot="metadata-actions"
+          copy-text="The requested summary is ready."
+          feedback-enabled
+        ></ds-message-actions>
+        <ds-button-unfilled
+          id="persistent-action"
+          slot="actions"
+          size="sm"
+          label="Retry"
+          icon="ArrowClockwise"
+          variant="icon-label"
+        ></ds-button-unfilled>
+      </ds-message>
+      <ds-message
+        id="outgoing-actions"
+        direction="outgoing"
+        author="You"
+        show-author="false"
+        timestamp="9:49 AM"
+        delivery-state="read"
+        metadata-visibility="hover"
+      >
+        <ds-message-bubble variant="user">Share it with dispatch.</ds-message-bubble>
+        <ds-message-actions
+          slot="metadata-actions"
+          copy-text="Share it with dispatch."
+        ></ds-message-actions>
+      </ds-message>
+      <ds-message
+        id="group-first"
+        direction="incoming"
+        author="Avery"
+        group-position="first"
+        timestamp="9:50 AM"
+      >
+        <ds-message-bubble variant="received">First grouped message.</ds-message-bubble>
+        <ds-message-actions
+          slot="metadata-actions"
+          copy-text="First grouped message."
+        ></ds-message-actions>
+      </ds-message>
+      <ds-message
+        id="group-last"
+        direction="incoming"
+        author="Avery"
+        group-position="last"
+        timestamp="9:51 AM"
+      >
+        <ds-message-bubble variant="received">Last grouped message.</ds-message-bubble>
+        <ds-message-actions
+          slot="metadata-actions"
+          copy-text="Last grouped message."
+        ></ds-message-actions>
+      </ds-message>
     </main>
     <script type="module" src="/message-row-setup.mjs"></script>
   </body>

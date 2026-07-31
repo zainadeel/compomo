@@ -15,6 +15,7 @@ changed.
 | Add or change a component | [Web component guidance](src/wc/AGENTS.md), [component authoring](docs/maintainers/component-authoring.md), then the component's source, story, and agent JSON |
 | Change forced-colors or high-contrast behavior | [Forced-colors accessibility](docs/maintainers/forced-colors.md), then the affected shared utility and component sources |
 | Change shared component composition | Applicable pattern under [agent/patterns](agent/patterns/) |
+| Change component lifecycle status | [Component lifecycle](docs/maintainers/component-lifecycle.md), [agent guidance](agent/AGENTS.md) |
 | Change agent metadata, patterns, registry, or MCP | [Agent guidance](agent/AGENTS.md), [build and registry](docs/maintainers/build-and-registry.md) |
 | Change framework integration or package exports | [Framework integration](docs/framework-integration.md), [build and registry](docs/maintainers/build-and-registry.md) |
 | Choose verification | [Testing strategy](docs/maintainers/testing.md) |

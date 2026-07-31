@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-message.js';
+import '../../../../dist/components/ds-message-actions.js';
 import '../../../../dist/components/ds-message-bubble.js';
 
 export default { title: 'Conversation/Message row', tags: ['autodocs'] } satisfies Meta;
@@ -44,6 +45,43 @@ export const FailedOutgoing: Story = {
     >
       <ds-message-bubble variant="user">I’ll confirm it now.</ds-message-bubble>
     </ds-message>
+  `,
+};
+
+export const MetadataActions: Story = {
+  render: () => html`
+    <div style="display:grid; gap:var(--dimension-space-300); width:min(600px, 90vw);">
+      <ds-message
+        message-id="action-incoming"
+        direction="incoming"
+        author="Agent"
+        .showAuthor=${false}
+        timestamp="9:41 AM"
+        metadata-visibility="hover"
+      >
+        <p style="margin:0;">The requested summary is ready.</p>
+        <ds-message-actions
+          slot="metadata-actions"
+          copy-text="The requested summary is ready."
+          .feedbackEnabled=${true}
+        ></ds-message-actions>
+      </ds-message>
+      <ds-message
+        message-id="action-outgoing"
+        direction="outgoing"
+        author="You"
+        .showAuthor=${false}
+        timestamp="9:45 AM"
+        delivery-state="read"
+        metadata-visibility="hover"
+      >
+        <ds-message-bubble variant="user">Share it with dispatch.</ds-message-bubble>
+        <ds-message-actions
+          slot="metadata-actions"
+          copy-text="Share it with dispatch."
+        ></ds-message-actions>
+      </ds-message>
+    </div>
   `,
 };
 

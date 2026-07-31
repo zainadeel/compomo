@@ -18,6 +18,8 @@ const REQUIRED_PATHS = [
   'dist/styles/prose.css',
   'dist/react/components.js',
   'dist/react/components.d.ts',
+  'dist/react/react-runtime.js',
+  'dist/react/react-runtime.d.ts',
   'dist/framework/angular.js',
   'dist/framework/angular.d.ts',
   'dist/agent.json',

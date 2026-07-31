@@ -12,12 +12,14 @@
     {"component":"component:ds-message","role":"Renders participant turns with channel-neutral semantics.","required":true},
     {"component":"component:ds-message-bubble","role":"Renders user-sent prompts with the shared body-medium regular message baseline and secondary foreground.","required":true},
     {"component":"component:ds-agent-response","role":"Renders ordered normalized agent response parts.","required":true},
+    {"component":"component:ds-message-actions","role":"Provides completed-response Copy and controlled feedback without owning response data or consequences.","required":false},
     {"component":"component:ds-message-composer","role":"Emits participant submission and stop intent.","required":true}
   ],
   "stateOwnership": [
     "The application owns scripted or real transport, immutable response parts, retry, stop, generated titles, and persistence.",
     "User-sent prompts use MessageBubble's user variant and body-medium regular default with secondary foreground; the application does not promote ordinary sent-message copy to body-large.",
     "AgentResponse renders directly in Message without a MessageBubble surface, owns ordered display only, and never reveals private reasoning.",
+    "MessageActions may copy application-authored response text and emit controlled feedback intent; the application owns serialization, persistence, submission, permissions, analytics, and model consequences.",
     "Markdown parsing and safe node creation belong to the renderer; the renderer-neutral @ds-mo/ui/prose.css surface owns only semantic-tree styling.",
     "Tool-call components display execution state but do not request participant approval."
   ],

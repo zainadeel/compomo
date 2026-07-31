@@ -6,7 +6,7 @@
   "package": "@ds-mo/ui",
   "tag": "ds-avatar",
   "audience": "general",
-  "status": "experimental",
+  "status": "stable",
   "summary": "Compact icon avatar for visually identifying a person, group, channel, or conversation type.",
   "useWhen": [
     "A list or message composition needs a consistent circular identity marker represented by an icon at md, sm, or xs control density."

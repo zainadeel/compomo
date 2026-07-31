@@ -16,6 +16,10 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 
 Generated proxy source never lands in the authored tree. The publish step
 retains the existing `dist/angular`, `dist/react`, and package import paths.
+The generated React wrappers use CompoMo's private runtime adapter, backed by
+the same `@lit/react` bridge selected by Stencil's React output target.
+Consumers install only the documented React peers; Stencil's output-target
+package remains a build dependency and is not required at application runtime.
 
 There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. Deliberate renderer-neutral exports include `@ds-mo/ui/prose.css` for safe semantic document trees and `@ds-mo/ui/control-elevation.css` for elevated wrappers around controls.
 
