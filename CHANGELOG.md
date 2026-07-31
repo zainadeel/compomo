@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.0](https://github.com/zainadeel/compomo/compare/v13.1.0...v13.2.0) (2026-07-31)
+
+
+### Added
+
+* adopt MCP v2 and inverted overview theme ([#396](https://github.com/zainadeel/compomo/issues/396)) ([e823c8a](https://github.com/zainadeel/compomo/commit/e823c8af1c90c7748566d81bbfbca7b4bcc2c9da))
+
 ## [13.1.0](https://github.com/zainadeel/compomo/compare/v13.0.0...v13.1.0) (2026-07-30)
 
 
