@@ -17,6 +17,19 @@ const packDir = mkdtempSync(join(tmpdir(), 'ds-mo-pack-'));
 const smokeDir = mkdtempSync(join(tmpdir(), 'ds-mo-consumer-'));
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
 
+function resultText(result) {
+  return result.content
+    ?.filter(item => item.type === 'text')
+    .map(item => item.text)
+    .join('\n') ?? '';
+}
+
+function assertCompatibleText(result, toolName) {
+  if (!resultText(result).trim()) {
+    throw new Error(`Packaged MCP tool lost its backward-compatible text response: ${toolName}`);
+  }
+}
+
 async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
   const command = join(consumerDir, 'node_modules', '.bin', 'compomo-mcp');
   const transport = new StdioClientTransport({ command, cwd: consumerDir, stderr: 'pipe' });
@@ -36,6 +49,18 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
         `Packaged MCP connected through ${client.getProtocolEra() ?? 'unknown'} instead of ${expectedEra}.`
       );
     }
+    const discover = client.getDiscoverResult();
+    if (expectedEra === 'modern') {
+      if (
+        !discover?.supportedVersions?.includes('2026-07-28') ||
+        !discover.capabilities?.tools
+      ) {
+        throw new Error('Packaged MCP discovery did not advertise the modern protocol and tools.');
+      }
+    } else if (discover !== undefined) {
+      throw new Error('Legacy packaged MCP connection unexpectedly retained a discovery result.');
+    }
+
     const serverInfo = client.getServerVersion();
     if (serverInfo?.name !== 'compomo' || serverInfo.version !== pkg.version) {
       throw new Error(
@@ -53,6 +78,11 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
       'list_patterns',
       'get_pattern',
     ];
+    if (toolNames.size !== expectedTools.length) {
+      throw new Error(
+        `Packaged MCP advertised ${toolNames.size} tools instead of ${expectedTools.length}.`
+      );
+    }
     for (const name of expectedTools) {
       if (!toolNames.has(name)) throw new Error(`Missing packaged MCP tool: ${name}`);
     }
@@ -82,6 +112,7 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     ) {
       throw new Error('Packaged MCP did not return structured ButtonFilled metadata without source files.');
     }
+    assertCompatibleText(componentResult, 'get_component');
 
     const sourceResult = await client.callTool({
       name: 'get_component_source',
@@ -94,6 +125,7 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     ) {
       throw new Error('Packaged MCP did not return structured ButtonFilled source files.');
     }
+    assertCompatibleText(sourceResult, 'get_component_source');
 
     const setupResult = await client.callTool({
       name: 'get_setup_guide',
@@ -106,6 +138,7 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     ) {
       throw new Error('Packaged MCP did not return the structured setup guide.');
     }
+    assertCompatibleText(setupResult, 'get_setup_guide');
 
     const componentListResult = await client.callTool({
       name: 'list_components',
@@ -118,6 +151,7 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     ) {
       throw new Error('Packaged MCP did not return a structured filtered component summary.');
     }
+    assertCompatibleText(componentListResult, 'list_components');
 
     const patternListResult = await client.callTool({
       name: 'list_patterns',
@@ -130,15 +164,13 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     ) {
       throw new Error('Packaged MCP did not return a structured filtered pattern summary.');
     }
+    assertCompatibleText(patternListResult, 'list_patterns');
 
     const result = await client.callTool({
       name: 'get_pattern',
       arguments: { name: 'menu-trigger', framework: 'react' },
     });
-    const text = result.content
-      ?.filter(item => item.type === 'text')
-      .map(item => item.text)
-      .join('\n') ?? '';
+    const text = resultText(result);
     if (
       result.isError ||
       !text.includes('pattern:menu-trigger') ||
@@ -149,6 +181,7 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     ) {
       throw new Error('Packaged MCP did not return the executable React menu-trigger recipe.');
     }
+    assertCompatibleText(result, 'get_pattern');
   } catch (error) {
     if (stderr) error.message += `\nMCP stderr:\n${stderr}`;
     throw error;
@@ -232,7 +265,7 @@ try {
   });
   await verifyPackagedMcp(smokeDir, {
     clientOptions: { versionNegotiation: { mode: 'auto' } },
-    expectedEra: 'legacy',
+    expectedEra: 'modern',
   });
   await verifyPackagedMcp(smokeDir, {
     clientOptions: undefined,

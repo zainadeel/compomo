@@ -72,6 +72,12 @@ Use registry tools when component selection or a composition contract is
 unclear. API facts come from Stencil metadata; curated intent comes from
 co-located component agent JSON and executable patterns.
 
+`compomo-mcp` uses stdio only. It serves the modern `2026-07-28` protocol and
+the legacy initialize-based revisions through `2025-11-25`; clients that
+support modern discovery should use automatic version negotiation. Legacy
+serving may be removed only in a future major release after CompoMo's supported
+MCP hosts no longer require an initialize-based connection.
+
 ## Documentation
 
 - [Storybook introduction and usage](src/docs/Introduction.mdx)

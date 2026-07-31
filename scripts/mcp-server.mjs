@@ -26,7 +26,7 @@
  */
 
 import { McpServer } from '@modelcontextprotocol/server';
-import { StdioServerTransport } from '@modelcontextprotocol/server/stdio';
+import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { z } from 'zod';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -532,5 +532,7 @@ server.registerTool(
 
 // ─── Start ──────────────────────────────────────────────────────────────────────
 
-const transport = new StdioServerTransport();
-await createServer().connect(transport);
+serveStdio(createServer, {
+  // Keep the 2025 initialize flow available while supported hosts migrate.
+  legacy: 'serve',
+});
