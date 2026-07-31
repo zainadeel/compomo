@@ -30,6 +30,7 @@ export class Message {
   @Prop() timestamp: string = '';
   @Prop() deliveryState: MessageDeliveryState | undefined;
   @Prop() streaming: boolean = false;
+  /** Controls whether the complete metadata footer is persistent or revealed through hover/focus. */
   @Prop() metadataActionsVisibility: MessageMetadataActionsVisibility = 'always';
   @Prop({ reflect: true }) scrollAnchor: boolean = false;
 

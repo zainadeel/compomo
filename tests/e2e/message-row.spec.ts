@@ -63,15 +63,17 @@ test('places metadata actions around timestamps without moving metadata on hover
 
   const incoming = page.locator('#incoming-actions');
   const incomingActions = incoming.locator('.message__metadata-actions');
+  const incomingFooter = incoming.locator('.message__footer');
   const incomingTime = incoming.locator('time');
   const outgoing = page.locator('#outgoing-actions');
   const outgoingActions = outgoing.locator('.message__metadata-actions');
+  const outgoingFooter = outgoing.locator('.message__footer');
   const outgoingTime = outgoing.locator('time');
 
-  await expect(incomingActions).toHaveCSS('opacity', '0');
+  await expect(incomingFooter).toHaveCSS('opacity', '0');
   const incomingTimeBefore = await incomingTime.boundingBox();
   await incoming.hover();
-  await expect(incomingActions).toHaveCSS('opacity', '1');
+  await expect(incomingFooter).toHaveCSS('opacity', '1');
   const [incomingActionBox, incomingTimeAfter] = await Promise.all([
     incomingActions.boundingBox(),
     incomingTime.boundingBox(),
@@ -85,6 +87,7 @@ test('places metadata actions around timestamps without moving metadata on hover
   expect(incomingTimeAfter.x).toBeCloseTo(incomingTimeBefore.x, 0);
 
   await outgoing.hover();
+  await expect(outgoingFooter).toHaveCSS('opacity', '1');
   const [outgoingActionBox, outgoingTimeBox] = await Promise.all([
     outgoingActions.boundingBox(),
     outgoingTime.boundingBox(),
@@ -104,12 +107,12 @@ test('reveals hover metadata actions for keyboard focus and preserves persistent
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 
   const message = page.locator('#incoming-actions');
-  const metadataActions = message.locator('.message__metadata-actions');
+  const metadataFooter = message.locator('.message__footer');
   const copy = message.locator('ds-button-unfilled[aria-label="Copy message"]');
   await page.mouse.move(0, 0);
-  await expect(metadataActions).toHaveCSS('opacity', '0');
+  await expect(metadataFooter).toHaveCSS('opacity', '0');
   await copy.focus();
-  await expect(metadataActions).toHaveCSS('opacity', '1');
+  await expect(metadataFooter).toHaveCSS('opacity', '1');
 
   const persistent = message.locator('.message__actions #persistent-action');
   await expect(persistent).toBeVisible();

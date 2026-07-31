@@ -12,6 +12,7 @@ export class AgentResponse {
   @Prop() timestamp: string = '';
   @Prop() parts: AgentResponsePart[] = [];
   @Prop() streaming: boolean = false;
+  /** Controls whether the complete message metadata footer is persistent or revealed through hover/focus. */
   @Prop() metadataActionsVisibility: MessageMetadataActionsVisibility = 'always';
 
   private renderPart(part: AgentResponsePart) {

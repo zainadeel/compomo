@@ -142,6 +142,7 @@ export namespace Components {
          */
         "messageId": string;
         /**
+          * Controls whether the complete message metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
         "metadataActionsVisibility": MessageMetadataActionsVisibility;
@@ -1336,6 +1337,7 @@ export namespace Components {
          */
         "messageId": string;
         /**
+          * Controls whether the complete metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
         "metadataActionsVisibility": MessageMetadataActionsVisibility;
@@ -3920,6 +3922,7 @@ declare namespace LocalJSX {
          */
         "messageId"?: string;
         /**
+          * Controls whether the complete message metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
         "metadataActionsVisibility"?: MessageMetadataActionsVisibility;
@@ -5199,6 +5202,7 @@ declare namespace LocalJSX {
          */
         "messageId"?: string;
         /**
+          * Controls whether the complete metadata footer is persistent or revealed through hover/focus.
           * @default 'always'
          */
         "metadataActionsVisibility"?: MessageMetadataActionsVisibility;
