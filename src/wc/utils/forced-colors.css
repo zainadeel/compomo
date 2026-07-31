@@ -1,0 +1,17 @@
+/*
+ * Platform color roles for Windows High Contrast / forced-colors mode.
+ * The operating system owns the resolved palette; components own only the
+ * semantic role and the geometry needed to keep meaning visible.
+ */
+@media (forced-colors: active) {
+  :root,
+  :host,
+  .ds-forced-colors-scope {
+    --ds-forced-color-surface: Canvas;
+    --ds-forced-color-content: CanvasText;
+    --ds-forced-color-control-boundary: ButtonText;
+    --ds-forced-color-selected: Highlight;
+    --ds-forced-color-on-selected: HighlightText;
+    --ds-forced-color-disabled: GrayText;
+  }
+}

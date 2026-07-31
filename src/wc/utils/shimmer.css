@@ -1,3 +1,5 @@
+@import './forced-colors.css';
+
 /*
  * Shared shimmer paint recipes.
  *
@@ -91,6 +93,23 @@
     animation: none;
     background-image: none;
     -webkit-text-fill-color: currentColor;
+  }
+
+  .ds-shimmer-surface::after {
+    display: none;
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-shimmer-text {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  .ds-shimmer-surface {
+    background-color: var(--ds-forced-color-disabled);
   }
 
   .ds-shimmer-surface::after {

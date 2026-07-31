@@ -1,5 +1,6 @@
 @import '../../utils/control-density.css';
 @import '../../utils/key-hint.css';
+@import '../../utils/forced-colors.css';
 
 .tooltip-popup {
   box-sizing: border-box;
@@ -67,5 +68,13 @@
   .tooltip-popup--closing {
     animation: none;
     opacity: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .tooltip-popup {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
   }
 }

@@ -1,3 +1,5 @@
+@import '../../utils/forced-colors.css';
+
 :host {
   display: inline-block;
   font-family: var(--typography-font-family);
@@ -69,4 +71,14 @@
   letter-spacing: var(--typography-letterspacing-negative-half);
   cursor: default;
   pointer-events: none;
+}
+
+@media (forced-colors: active) {
+  .chart-donut__svg path {
+    forced-color-adjust: none;
+  }
+
+  .chart-donut__svg path:focus-visible {
+    stroke: var(--ds-forced-color-selected);
+  }
 }

@@ -1,5 +1,6 @@
 @import '../../utils/control-inactive.css';
 @import '../../utils/field-stack.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   --ds-slider-control-size: var(--dimension-size-400);
@@ -237,5 +238,29 @@
   .slider__thumb-visual,
   .slider__thumb-wash {
     transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .slider__rail {
+    border: var(--ds-slider-track-stroke) solid var(--ds-forced-color-content);
+    box-shadow: none;
+  }
+
+  .slider__indicator {
+    background-color: var(--ds-forced-color-selected);
+  }
+
+  .slider__thumb-visual {
+    border:
+      var(--dimension-stroke-width-012) solid
+      var(--ds-forced-color-control-boundary);
+    background-color: var(--ds-forced-color-surface);
+    box-shadow: none;
+  }
+
+  .slider__input:focus-visible + .slider__thumb-visual,
+  :host([data-review-focus]) .slider__thumb[data-index='0'] .slider__thumb-visual {
+    outline-color: var(--ds-forced-color-selected);
   }
 }

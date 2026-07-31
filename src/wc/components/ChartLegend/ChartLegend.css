@@ -1,6 +1,7 @@
 @import '../../utils/control-density.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/focus-ring.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   display: block;
@@ -113,4 +114,11 @@
   width: 100%;
   text-align: right;
   min-width: 0;
+}
+
+@media (forced-colors: active) {
+  .chart-legend__swatch {
+    forced-color-adjust: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+  }
 }

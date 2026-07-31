@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/control-inactive.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   --ds-switch-width: var(--dimension-size-400);
@@ -119,5 +120,25 @@
 
   .thumb {
     transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    border: var(--ds-switch-stroke) solid var(--ds-forced-color-content);
+    box-shadow: none;
+  }
+
+  :host(.checked) {
+    background-color: var(--ds-forced-color-selected);
+    border-color: var(--ds-forced-color-selected);
+  }
+
+  .thumb {
+    background-color: var(--ds-forced-color-content);
+  }
+
+  :host(.checked) .thumb {
+    background-color: var(--ds-forced-color-on-selected);
   }
 }

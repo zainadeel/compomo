@@ -1,4 +1,5 @@
 @import '../../utils/chrome-layout.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   display: flex;
@@ -93,4 +94,12 @@ ds-text.card-data-viz__title {
   box-sizing: border-box;
   padding: 0 var(--dimension-space-100) var(--dimension-space-100)
     var(--dimension-space-100);
+}
+
+@media (forced-colors: active) {
+  :host {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
 }

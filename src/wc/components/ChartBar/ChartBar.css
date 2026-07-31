@@ -1,3 +1,5 @@
+@import '../../utils/forced-colors.css';
+
 :host {
   display: inline-block;
   max-width: 100%;
@@ -39,4 +41,16 @@
   stroke-width: var(--dimension-stroke-width-012);
   stroke-linecap: butt;
   vector-effect: non-scaling-stroke;
+}
+
+@media (forced-colors: active) {
+  .chart-bar__bar,
+  .chart-bar__segment-shape,
+  .chart-bar__segment-square-base {
+    forced-color-adjust: none;
+  }
+
+  .chart-bar__segment-separator {
+    stroke: var(--ds-forced-color-surface);
+  }
 }

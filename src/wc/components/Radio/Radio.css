@@ -2,6 +2,7 @@
 @import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   display: flex;
@@ -90,4 +91,20 @@
   flex: 1;
   min-width: 0;
   padding: 0 var(--ds-control-label-inset);
+}
+
+@media (forced-colors: active) {
+  .radio__circle {
+    border: var(--_radio-stroke) solid var(--ds-forced-color-content);
+    box-shadow: none;
+  }
+
+  .radio__circle--checked {
+    background-color: var(--ds-forced-color-selected);
+    border-color: var(--ds-forced-color-selected);
+  }
+
+  .radio__dot {
+    background-color: var(--ds-forced-color-on-selected);
+  }
 }

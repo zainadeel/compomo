@@ -1,3 +1,5 @@
+@import '../../utils/forced-colors.css';
+
 :host {
   --_divider-color: var(--color-divider-divider);
   --_divider-inset: 0;
@@ -62,4 +64,10 @@
 :host([background='inverted']),
 :host(.divider--background-inverted) {
   --_divider-color: var(--color-inverted-divider);
+}
+
+@media (forced-colors: active) {
+  :host {
+    background-color: var(--ds-forced-color-content);
+  }
 }

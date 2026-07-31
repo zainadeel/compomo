@@ -2,6 +2,7 @@
 @import '../../utils/control-density.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/forced-colors.css';
 
 :host {
   display: inline-flex;
@@ -93,4 +94,17 @@
   flex: 1;
   min-width: 0;
   padding: 0 var(--ds-control-label-inset);
+}
+
+@media (forced-colors: active) {
+  .box {
+    border: var(--_checkbox-stroke) solid var(--ds-forced-color-content);
+    box-shadow: none;
+  }
+
+  .box--marked {
+    color: var(--ds-forced-color-on-selected);
+    background-color: var(--ds-forced-color-selected);
+    border-color: var(--ds-forced-color-selected);
+  }
 }
