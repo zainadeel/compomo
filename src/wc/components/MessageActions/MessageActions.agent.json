@@ -1,0 +1,41 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-message-actions",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-message-actions",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Reusable message-level Copy and controlled response-feedback actions with consistent compact presentation and browser clipboard feedback.",
+  "useWhen": [
+    "A message metadata row needs Copy alone or Copy with mutually exclusive positive and negative response feedback."
+  ],
+  "avoidWhen": [
+    "The action executes, retries, regenerates, approves, edits, or otherwise changes message content."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-message",
+    "component:ds-agent-response",
+    "component:ds-button-unfilled"
+  ],
+  "patterns": ["pattern:conversation", "pattern:agent-chat"],
+  "accessibility": [
+    "Every icon action has a matching tooltip and accessible name.",
+    "Feedback uses genuine pressed toggle semantics and Copy announces its temporary Copied state through the control name."
+  ],
+  "states": [
+    "The component owns clipboard execution and temporary copied feedback while the application supplies the exact copyable text.",
+    "Feedback is controlled: the component emits the requested positive, negative, or cleared value while the application owns persistence and consequences.",
+    "Copy, positive feedback, and negative feedback retain one stable order."
+  ],
+  "responsiveBehavior": [
+    "The compact action group follows the visibility and metadata placement policy of its owning Message."
+  ],
+  "references": [
+    {
+      "label": "Message metadata composition",
+      "path": "src/wc/components/Message/Message.stories.ts"
+    }
+  ]
+}

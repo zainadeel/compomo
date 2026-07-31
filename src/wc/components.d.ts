@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
+import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataActionsVisibility, MessageScrollerPosition } from "./components/conversation-types";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { AvatarSize } from "./components/Avatar/Avatar";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -61,7 +61,7 @@ import { TabBackground } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
-export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageDeliveryState, MessageDirection, MessageGroupPosition, MessageScrollerPosition } from "./components/conversation-types";
+export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataActionsVisibility, MessageScrollerPosition } from "./components/conversation-types";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { AvatarSize } from "./components/Avatar/Avatar";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -141,6 +141,10 @@ export namespace Components {
           * @default ''
          */
         "messageId": string;
+        /**
+          * @default 'always'
+         */
+        "metadataActionsVisibility": MessageMetadataActionsVisibility;
         /**
           * @default []
          */
@@ -1332,6 +1336,10 @@ export namespace Components {
          */
         "messageId": string;
         /**
+          * @default 'always'
+         */
+        "metadataActionsVisibility": MessageMetadataActionsVisibility;
+        /**
           * @default false
          */
         "scrollAnchor": boolean;
@@ -1349,6 +1357,14 @@ export namespace Components {
           * @default ''
          */
         "timestamp": string;
+    }
+    interface DsMessageActions {
+        "copyText": string | undefined;
+        "feedback": MessageFeedback | undefined;
+        /**
+          * @default false
+         */
+        "feedbackEnabled": boolean;
     }
     interface DsMessageBubble {
         /**
@@ -2765,6 +2781,10 @@ export interface DsMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsMenuElement;
 }
+export interface DsMessageActionsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsMessageActionsElement;
+}
 export interface DsMessageComposerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsMessageComposerElement;
@@ -3270,6 +3290,24 @@ declare global {
     var HTMLDsMessageElement: {
         prototype: HTMLDsMessageElement;
         new (): HTMLDsMessageElement;
+    };
+    interface HTMLDsMessageActionsElementEventMap {
+        "dsCopyResult": MessageCopyResultEventDetail;
+        "dsFeedbackChange": MessageFeedback | undefined;
+    }
+    interface HTMLDsMessageActionsElement extends Components.DsMessageActions, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsMessageActionsElementEventMap>(type: K, listener: (this: HTMLDsMessageActionsElement, ev: DsMessageActionsCustomEvent<HTMLDsMessageActionsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsMessageActionsElementEventMap>(type: K, listener: (this: HTMLDsMessageActionsElement, ev: DsMessageActionsCustomEvent<HTMLDsMessageActionsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsMessageActionsElement: {
+        prototype: HTMLDsMessageActionsElement;
+        new (): HTMLDsMessageActionsElement;
     };
     interface HTMLDsMessageBubbleElement extends Components.DsMessageBubble, HTMLStencilElement {
     }
@@ -3822,6 +3860,7 @@ declare global {
         "ds-markdown": HTMLDsMarkdownElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-message": HTMLDsMessageElement;
+        "ds-message-actions": HTMLDsMessageActionsElement;
         "ds-message-bubble": HTMLDsMessageBubbleElement;
         "ds-message-composer": HTMLDsMessageComposerElement;
         "ds-message-scroller": HTMLDsMessageScrollerElement;
@@ -3880,6 +3919,10 @@ declare namespace LocalJSX {
           * @default ''
          */
         "messageId"?: string;
+        /**
+          * @default 'always'
+         */
+        "metadataActionsVisibility"?: MessageMetadataActionsVisibility;
         /**
           * @default []
          */
@@ -5156,6 +5199,10 @@ declare namespace LocalJSX {
          */
         "messageId"?: string;
         /**
+          * @default 'always'
+         */
+        "metadataActionsVisibility"?: MessageMetadataActionsVisibility;
+        /**
           * @default false
          */
         "scrollAnchor"?: boolean;
@@ -5173,6 +5220,16 @@ declare namespace LocalJSX {
           * @default ''
          */
         "timestamp"?: string;
+    }
+    interface DsMessageActions {
+        "copyText"?: string | undefined;
+        "feedback"?: MessageFeedback | undefined;
+        /**
+          * @default false
+         */
+        "feedbackEnabled"?: boolean;
+        "onDsCopyResult"?: (event: DsMessageActionsCustomEvent<MessageCopyResultEventDetail>) => void;
+        "onDsFeedbackChange"?: (event: DsMessageActionsCustomEvent<MessageFeedback | undefined>) => void;
     }
     interface DsMessageBubble {
         /**
@@ -6673,6 +6730,7 @@ declare namespace LocalJSX {
         "showAuthor": boolean;
         "timestamp": string;
         "streaming": boolean;
+        "metadataActionsVisibility": MessageMetadataActionsVisibility;
     }
     interface DsAgentSourceListAttributes {
         "heading": string;
@@ -6968,7 +7026,13 @@ declare namespace LocalJSX {
         "timestamp": string;
         "deliveryState": MessageDeliveryState | undefined;
         "streaming": boolean;
+        "metadataActionsVisibility": MessageMetadataActionsVisibility;
         "scrollAnchor": boolean;
+    }
+    interface DsMessageActionsAttributes {
+        "copyText": string | undefined;
+        "feedbackEnabled": boolean;
+        "feedback": MessageFeedback | undefined;
     }
     interface DsMessageBubbleAttributes {
         "variant": MessageBubbleVariant;
@@ -7318,6 +7382,7 @@ declare namespace LocalJSX {
         "ds-markdown": Omit<DsMarkdown, keyof DsMarkdownAttributes> & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes]?: DsMarkdown[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `attr:${K}`]?: DsMarkdownAttributes[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `prop:${K}`]?: DsMarkdown[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-message": Omit<DsMessage, keyof DsMessageAttributes> & { [K in keyof DsMessage & keyof DsMessageAttributes]?: DsMessage[K] } & { [K in keyof DsMessage & keyof DsMessageAttributes as `attr:${K}`]?: DsMessageAttributes[K] } & { [K in keyof DsMessage & keyof DsMessageAttributes as `prop:${K}`]?: DsMessage[K] };
+        "ds-message-actions": Omit<DsMessageActions, keyof DsMessageActionsAttributes> & { [K in keyof DsMessageActions & keyof DsMessageActionsAttributes]?: DsMessageActions[K] } & { [K in keyof DsMessageActions & keyof DsMessageActionsAttributes as `attr:${K}`]?: DsMessageActionsAttributes[K] } & { [K in keyof DsMessageActions & keyof DsMessageActionsAttributes as `prop:${K}`]?: DsMessageActions[K] };
         "ds-message-bubble": Omit<DsMessageBubble, keyof DsMessageBubbleAttributes> & { [K in keyof DsMessageBubble & keyof DsMessageBubbleAttributes]?: DsMessageBubble[K] } & { [K in keyof DsMessageBubble & keyof DsMessageBubbleAttributes as `attr:${K}`]?: DsMessageBubbleAttributes[K] } & { [K in keyof DsMessageBubble & keyof DsMessageBubbleAttributes as `prop:${K}`]?: DsMessageBubble[K] };
         "ds-message-composer": Omit<DsMessageComposer, keyof DsMessageComposerAttributes> & { [K in keyof DsMessageComposer & keyof DsMessageComposerAttributes]?: DsMessageComposer[K] } & { [K in keyof DsMessageComposer & keyof DsMessageComposerAttributes as `attr:${K}`]?: DsMessageComposerAttributes[K] } & { [K in keyof DsMessageComposer & keyof DsMessageComposerAttributes as `prop:${K}`]?: DsMessageComposer[K] };
         "ds-message-scroller": Omit<DsMessageScroller, keyof DsMessageScrollerAttributes> & { [K in keyof DsMessageScroller & keyof DsMessageScrollerAttributes]?: DsMessageScroller[K] } & { [K in keyof DsMessageScroller & keyof DsMessageScrollerAttributes as `attr:${K}`]?: DsMessageScrollerAttributes[K] } & { [K in keyof DsMessageScroller & keyof DsMessageScrollerAttributes as `prop:${K}`]?: DsMessageScroller[K] };
@@ -7405,6 +7470,7 @@ declare module "@stencil/core" {
             "ds-markdown": LocalJSX.IntrinsicElements["ds-markdown"] & JSXBase.HTMLAttributes<HTMLDsMarkdownElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-message": LocalJSX.IntrinsicElements["ds-message"] & JSXBase.HTMLAttributes<HTMLDsMessageElement>;
+            "ds-message-actions": LocalJSX.IntrinsicElements["ds-message-actions"] & JSXBase.HTMLAttributes<HTMLDsMessageActionsElement>;
             "ds-message-bubble": LocalJSX.IntrinsicElements["ds-message-bubble"] & JSXBase.HTMLAttributes<HTMLDsMessageBubbleElement>;
             "ds-message-composer": LocalJSX.IntrinsicElements["ds-message-composer"] & JSXBase.HTMLAttributes<HTMLDsMessageComposerElement>;
             "ds-message-scroller": LocalJSX.IntrinsicElements["ds-message-scroller"] & JSXBase.HTMLAttributes<HTMLDsMessageScrollerElement>;

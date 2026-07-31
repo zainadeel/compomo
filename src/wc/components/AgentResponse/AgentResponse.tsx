@@ -1,5 +1,8 @@
 import { Component, Prop, h, Host } from '@stencil/core';
-import type { AgentResponsePart } from '../conversation-types';
+import type {
+  AgentResponsePart,
+  MessageMetadataActionsVisibility,
+} from '../conversation-types';
 
 @Component({ tag: 'ds-agent-response', styleUrl: 'AgentResponse.css', scoped: true })
 export class AgentResponse {
@@ -9,6 +12,7 @@ export class AgentResponse {
   @Prop() timestamp: string = '';
   @Prop() parts: AgentResponsePart[] = [];
   @Prop() streaming: boolean = false;
+  @Prop() metadataActionsVisibility: MessageMetadataActionsVisibility = 'always';
 
   private renderPart(part: AgentResponsePart) {
     switch (part.type) {
@@ -51,9 +55,11 @@ export class AgentResponse {
           showAuthor={this.showAuthor}
           timestamp={this.timestamp}
           streaming={this.streaming}
+          metadataActionsVisibility={this.metadataActionsVisibility}
         >
           <div class="agent-response">{this.parts.map(part => this.renderPart(part))}</div>
           <slot name="footer" slot="footer" />
+          <slot name="metadata-actions" slot="metadata-actions" />
           <slot name="actions" slot="actions" />
         </ds-message>
       </Host>

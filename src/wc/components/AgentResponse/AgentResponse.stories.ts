@@ -7,6 +7,7 @@ import '../../../../dist/components/ds-message.js';
 import '../../../../dist/components/ds-message-bubble.js';
 import '../../../../dist/components/ds-message-composer.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-message-actions.js';
 
 export default { title: 'Agent/Response', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
@@ -24,6 +25,30 @@ export const Playground: Story = {
         },
       ]}
     ></ds-agent-response>`,
+};
+
+export const WithMetadataActions: Story = {
+  render: () =>
+    html`<ds-agent-response
+      author="Agent"
+      .showAuthor=${false}
+      timestamp="2:15 PM"
+      metadata-actions-visibility="hover"
+      .parts=${[
+        {
+          id: 'answer',
+          type: 'markdown',
+          content: 'The requested summary is ready.',
+          state: 'complete',
+        },
+      ]}
+    >
+      <ds-message-actions
+        slot="metadata-actions"
+        copy-text="The requested summary is ready."
+        .feedbackEnabled=${true}
+      ></ds-message-actions>
+    </ds-agent-response>`,
 };
 
 const attachments: ConversationAttachment[] = [

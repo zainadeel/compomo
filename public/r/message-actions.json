@@ -1,0 +1,186 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message-actions",
+  "title": "MessageActions",
+  "description": "Reusable message-level Copy and controlled response-feedback actions with consistent compact presentation and browser clipboard feedback.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/message-actions",
+    "source": "src/wc/components/MessageActions/MessageActions.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Reusable message-level Copy and controlled response-feedback actions with consistent compact presentation and browser clipboard feedback.",
+      "useWhen": [
+        "A message metadata row needs Copy alone or Copy with mutually exclusive positive and negative response feedback."
+      ],
+      "avoidWhen": [
+        "The action executes, retries, regenerates, approves, edits, or otherwise changes message content."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message",
+        "component:ds-agent-response",
+        "component:ds-button-unfilled"
+      ],
+      "patterns": [
+        "pattern:conversation",
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Every icon action has a matching tooltip and accessible name.",
+        "Feedback uses genuine pressed toggle semantics and Copy announces its temporary Copied state through the control name."
+      ],
+      "states": [
+        "The component owns clipboard execution and temporary copied feedback while the application supplies the exact copyable text.",
+        "Feedback is controlled: the component emits the requested positive, negative, or cleared value while the application owns persistence and consequences.",
+        "Copy, positive feedback, and negative feedback retain one stable order."
+      ],
+      "responsiveBehavior": [
+        "The compact action group follows the visibility and metadata placement policy of its owning Message."
+      ],
+      "references": [
+        {
+          "label": "Message metadata composition",
+          "path": "src/wc/components/Message/Message.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "copyText": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "copy-text",
+          "required": false,
+          "mutable": false
+        },
+        "feedback": {
+          "type": "MessageFeedback | undefined",
+          "resolvedType": "\"negative\" | \"positive\" | undefined",
+          "attribute": "feedback",
+          "required": false,
+          "mutable": false
+        },
+        "feedbackEnabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "feedback-enabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsCopyResult",
+          "detail": "MessageCopyResultEventDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsFeedbackChange",
+          "detail": "MessageFeedback | undefined",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "copyText": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "copy-text",
+        "required": false,
+        "mutable": false
+      },
+      "feedback": {
+        "type": "MessageFeedback | undefined",
+        "resolvedType": "\"negative\" | \"positive\" | undefined",
+        "attribute": "feedback",
+        "required": false,
+        "mutable": false
+      },
+      "feedbackEnabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "feedback-enabled",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsCopyResult",
+        "detail": "MessageCopyResultEventDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsFeedbackChange",
+        "detail": "MessageFeedback | undefined",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-message-actions",
+      "react": "DsMessageActions",
+      "angular": "DsMessageActions"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-message-actions.js';",
+        "example": "<ds-message-actions></ds-message-actions>"
+      },
+      "react": {
+        "import": "import { DsMessageActions } from '@ds-mo/ui/react';",
+        "example": "<DsMessageActions />"
+      },
+      "angular": {
+        "import": "import { DsMessageActions } from '@ds-mo/ui/angular/ds-message-actions';",
+        "example": "<ds-message-actions></ds-message-actions>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^5.1.0",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/MessageActions/MessageActions.css",
+      "content": ":host {\n  display: inline-flex;\n  box-sizing: border-box;\n}\n\n.message-actions {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MessageActions/MessageActions.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';\nimport { writeClipboardText } from '../../utils/clipboard';\nimport type { MessageCopyResultEventDetail, MessageFeedback } from '../conversation-types';\n\n@Component({\n  tag: 'ds-message-actions',\n  styleUrl: 'MessageActions.css',\n  scoped: true,\n})\nexport class MessageActions {\n  @Prop() copyText: string | undefined;\n  @Prop() feedbackEnabled: boolean = false;\n  @Prop() feedback: MessageFeedback | undefined;\n\n  @State() private copied: boolean = false;\n\n  @Event() dsCopyResult!: EventEmitter<MessageCopyResultEventDetail>;\n  @Event() dsFeedbackChange!: EventEmitter<MessageFeedback | undefined>;\n\n  private copiedTimer?: ReturnType<typeof setTimeout>;\n\n  @Watch('copyText')\n  handleCopyTextChange() {\n    this.clearCopiedState();\n  }\n\n  disconnectedCallback() {\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n  }\n\n  private clearCopiedState() {\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n    this.copiedTimer = undefined;\n    this.copied = false;\n  }\n\n  private copy = async () => {\n    const success = await writeClipboardText(this.copyText ?? '');\n    this.dsCopyResult.emit({ status: success ? 'success' : 'error' });\n    if (!success) return;\n\n    this.copied = true;\n    if (this.copiedTimer) clearTimeout(this.copiedTimer);\n    this.copiedTimer = setTimeout(() => {\n      this.copied = false;\n      this.copiedTimer = undefined;\n    }, 2000);\n  };\n\n  private changeFeedback(feedback: MessageFeedback, selected: boolean) {\n    this.dsFeedbackChange.emit(selected ? feedback : undefined);\n  }\n\n  render() {\n    const copyLabel = this.copied ? 'Copied' : 'Copy message';\n\n    return (\n      <Host>\n        <div class=\"message-actions\" role=\"group\" aria-label=\"Message actions\">\n          {this.copyText ? (\n            <ds-tooltip label={copyLabel} side=\"top\" size=\"sm\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                icon={this.copied ? 'Check' : 'Copy'}\n                size=\"xs\"\n                aria-label={copyLabel}\n                hasBorder={false}\n                onDsClick={this.copy}\n              />\n            </ds-tooltip>\n          ) : null}\n          {this.feedbackEnabled ? (\n            <ds-tooltip label=\"Good response\" side=\"top\" size=\"sm\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                icon={this.feedback === 'positive' ? 'ThumbsUpFilled' : 'ThumbsUp'}\n                size=\"xs\"\n                aria-label=\"Good response\"\n                hasBorder={false}\n                pressed={this.feedback === 'positive'}\n                onDsChange={(event: CustomEvent<boolean>) =>\n                  this.changeFeedback('positive', event.detail)\n                }\n              />\n            </ds-tooltip>\n          ) : null}\n          {this.feedbackEnabled ? (\n            <ds-tooltip label=\"Bad response\" side=\"top\" size=\"sm\">\n              <ds-button-unfilled\n                variant=\"icon\"\n                icon={this.feedback === 'negative' ? 'ThumbsDownFilled' : 'ThumbsDown'}\n                size=\"xs\"\n                aria-label=\"Bad response\"\n                hasBorder={false}\n                pressed={this.feedback === 'negative'}\n                onDsChange={(event: CustomEvent<boolean>) =>\n                  this.changeFeedback('negative', event.detail)\n                }\n              />\n            </ds-tooltip>\n          ) : null}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+:host {
+  display: inline-flex;
+  box-sizing: border-box;
+}
+
+.message-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+}

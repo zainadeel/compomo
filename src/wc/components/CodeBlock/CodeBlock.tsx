@@ -1,4 +1,5 @@
 import { Component, h, Host, Prop, State } from '@stencil/core';
+import { writeClipboardText } from '../../utils/clipboard';
 
 @Component({
   tag: 'ds-code-block',
@@ -18,8 +19,9 @@ export class CodeBlock {
   }
 
   private copy = async () => {
-    if (!navigator.clipboard || !this.code) return;
-    await navigator.clipboard.writeText(this.code);
+    const copied = await writeClipboardText(this.code);
+    if (!copied) return;
+
     this.copied = true;
     if (this.copiedTimer) clearTimeout(this.copiedTimer);
     this.copiedTimer = setTimeout(() => {

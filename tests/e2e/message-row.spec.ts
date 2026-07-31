@@ -54,3 +54,163 @@ test('reports failed delivery in footer metadata without changing the bubble', a
   if (!contentBox || !failureBox) throw new Error('Failed delivery metadata did not render');
   expect(failureBox.y - (contentBox.y + contentBox.height)).toBeCloseTo(4, 0);
 });
+
+test('places metadata actions around timestamps without moving metadata on hover', async ({
+  page,
+}) => {
+  await page.goto('/message-row.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+  const incoming = page.locator('#incoming-actions');
+  const incomingActions = incoming.locator('.message__metadata-actions');
+  const incomingTime = incoming.locator('time');
+  const outgoing = page.locator('#outgoing-actions');
+  const outgoingActions = outgoing.locator('.message__metadata-actions');
+  const outgoingTime = outgoing.locator('time');
+
+  await expect(incomingActions).toHaveCSS('opacity', '0');
+  const incomingTimeBefore = await incomingTime.boundingBox();
+  await incoming.hover();
+  await expect(incomingActions).toHaveCSS('opacity', '1');
+  const [incomingActionBox, incomingTimeAfter] = await Promise.all([
+    incomingActions.boundingBox(),
+    incomingTime.boundingBox(),
+  ]);
+  if (!incomingActionBox || !incomingTimeBefore || !incomingTimeAfter) {
+    throw new Error('Incoming metadata actions did not render');
+  }
+  expect(incomingActionBox.x + incomingActionBox.width).toBeLessThanOrEqual(
+    incomingTimeAfter.x
+  );
+  expect(incomingTimeAfter.x).toBeCloseTo(incomingTimeBefore.x, 0);
+
+  await outgoing.hover();
+  const [outgoingActionBox, outgoingTimeBox] = await Promise.all([
+    outgoingActions.boundingBox(),
+    outgoingTime.boundingBox(),
+  ]);
+  if (!outgoingActionBox || !outgoingTimeBox) {
+    throw new Error('Outgoing metadata actions did not render');
+  }
+  expect(outgoingActionBox.x).toBeGreaterThanOrEqual(
+    outgoingTimeBox.x + outgoingTimeBox.width
+  );
+});
+
+test('reveals hover metadata actions for keyboard focus and preserves persistent actions', async ({
+  page,
+}) => {
+  await page.goto('/message-row.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+  const message = page.locator('#incoming-actions');
+  const metadataActions = message.locator('.message__metadata-actions');
+  const copy = message.locator('ds-button-unfilled[aria-label="Copy message"]');
+  await page.mouse.move(0, 0);
+  await expect(metadataActions).toHaveCSS('opacity', '0');
+  await copy.focus();
+  await expect(metadataActions).toHaveCSS('opacity', '1');
+
+  const persistent = message.locator('.message__actions #persistent-action');
+  await expect(persistent).toBeVisible();
+  await expect(message.locator('.message__footer #persistent-action')).toHaveCount(0);
+});
+
+test('copies message text and emits controlled feedback intent', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (text: string) => {
+          document.documentElement.dataset.copiedText = text;
+        },
+      },
+    });
+  });
+  await page.goto('/message-row.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+  const actions = page.locator('#incoming-actions ds-message-actions');
+  await actions.evaluate(element => {
+    element.addEventListener('dsCopyResult', event => {
+      element.setAttribute(
+        'data-copy-result',
+        (event as CustomEvent<{ status: string }>).detail.status
+      );
+    });
+    element.addEventListener('dsFeedbackChange', event => {
+      element.setAttribute(
+        'data-feedback-result',
+        (event as CustomEvent<string | undefined>).detail ?? 'cleared'
+      );
+    });
+  });
+
+  const copy = actions.locator('ds-button-unfilled[aria-label="Copy message"]');
+  await page.locator('#incoming-actions').hover();
+  await copy.click();
+  await expect(actions).toHaveAttribute('data-copy-result', 'success');
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-copied-text',
+    'The requested summary is ready.'
+  );
+  await expect(actions.locator('ds-button-unfilled[aria-label="Copied"]')).toBeVisible();
+  await expect(actions.locator('ds-button-unfilled[aria-label="Copy message"]')).toBeVisible({
+    timeout: 2500,
+  });
+
+  const positive = actions.locator('ds-button-unfilled[aria-label="Good response"]');
+  await positive.click();
+  await expect(actions).toHaveAttribute('data-feedback-result', 'positive');
+  await actions.evaluate(element => {
+    (element as HTMLElement & { feedback?: string }).feedback = 'positive';
+  });
+  await expect(positive).toHaveJSProperty('pressed', true);
+  await positive.click();
+  await expect(actions).toHaveAttribute('data-feedback-result', 'cleared');
+
+  const negative = actions.locator('ds-button-unfilled[aria-label="Bad response"]');
+  await negative.click();
+  await expect(actions).toHaveAttribute('data-feedback-result', 'negative');
+});
+
+test('reports clipboard failure without entering copied state', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: () => Promise.reject(new Error('Clipboard denied')),
+      },
+    });
+  });
+  await page.goto('/message-row.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+  const actions = page.locator('#outgoing-actions ds-message-actions');
+  await actions.evaluate(element => {
+    element.addEventListener('dsCopyResult', event => {
+      element.setAttribute(
+        'data-copy-result',
+        (event as CustomEvent<{ status: string }>).detail.status
+      );
+    });
+  });
+  await page.locator('#outgoing-actions').hover();
+  await actions.locator('ds-button-unfilled[aria-label="Copy message"]').click();
+
+  await expect(actions).toHaveAttribute('data-copy-result', 'error');
+  await expect(actions.locator('ds-button-unfilled[aria-label="Copied"]')).toHaveCount(0);
+});
+
+test('suppresses the complete metadata row until the last grouped message', async ({
+  page,
+}) => {
+  await page.goto('/message-row.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+
+  await expect(page.locator('#group-first .message__footer')).toBeHidden();
+  await expect(page.locator('#group-last .message__footer')).toBeVisible();
+  await expect(
+    page.locator('#group-last ds-button-unfilled[aria-label="Copy message"]')
+  ).toBeVisible();
+});

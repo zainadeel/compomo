@@ -6,6 +6,14 @@ export type MessageGroupPosition = 'single' | 'first' | 'middle' | 'last';
 
 export type MessageDeliveryState = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
 
+export type MessageMetadataActionsVisibility = 'always' | 'hover';
+
+export type MessageFeedback = 'positive' | 'negative';
+
+export interface MessageCopyResultEventDetail {
+  status: 'success' | 'error';
+}
+
 export type MessageScrollerPosition = 'start' | 'end' | 'last-anchor';
 
 export type MessageComposerStatus = 'ready' | 'submitted' | 'streaming' | 'error';
