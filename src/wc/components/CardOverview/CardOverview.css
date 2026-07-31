@@ -4,12 +4,7 @@
 @import '../../utils/control-parts.css';
 @import '../../styles/control-elevation.css';
 
-/*
- * A permanently dark surface, independent of the page theme, so the summary bar
- * reads the same on every product surface. Every foreground, border, and
- * interaction token below therefore comes from the always-dark family rather
- * than the theme-reactive one.
- */
+/* The summary bar follows the theme-reactive inverted sub-theme. */
 
 :host {
   display: block;
@@ -22,10 +17,10 @@
   /* Width a metric may shrink to before the grid drops a column. */
   --ds-card-overview-metric-min: calc(var(--dimension-size-400) * 5);
   --ds-card-overview-divider-width: var(--dimension-stroke-width-012);
-  --ds-card-overview-divider-color: var(--color-always-dark-border-tertiary);
+  --ds-card-overview-divider-color: var(--color-inverted-border-tertiary);
   --ds-card-overview-divider: var(--ds-card-overview-divider-width) solid
     var(--ds-card-overview-divider-color);
-  color: var(--color-always-dark-foreground-primary);
+  color: var(--color-inverted-foreground-primary);
 }
 
 .card-overview__surface {
@@ -33,8 +28,8 @@
   min-width: 0;
   box-sizing: border-box;
   border-radius: var(--dimension-radius-050);
-  background: var(--color-always-dark-background);
-  color: var(--color-always-dark-foreground-primary);
+  background: var(--color-inverted-background);
+  color: var(--color-inverted-foreground-primary);
   overflow-anchor: none;
 }
 
@@ -170,7 +165,7 @@
   flex-direction: row;
   align-items: center;
   gap: var(--dimension-space-050);
-  color: var(--color-reference-dark-red-30-l70-c20-bold);
+  color: var(--color-inverted-foreground-negative);
 }
 
 /* ── Body ─────────────────────────────────────────────────────────────────── */

@@ -335,25 +335,60 @@ test('keeps the current period primary and comparison copy secondary', async ({ 
   expect(colors.current).not.toBe(colors.comparison);
 });
 
-test('applies always-dark positive, negative, and neutral foregrounds to trends', async ({
-  page,
-}) => {
-  const trends = page.locator('#five .card-overview__trend');
+test('follows inverted surface and foreground tokens in both themes', async ({ page }) => {
+  const themeColors: string[] = [];
 
-  for (const [index, token] of [
-    [0, '--color-always-dark-foreground-positive'],
-    [1, '--color-always-dark-foreground-negative'],
-    [2, '--color-always-dark-foreground-secondary'],
-  ] as const) {
-    const colors = await trends.nth(index).evaluate((element, property) => {
-      const probe = document.createElement('span');
-      probe.style.color = `var(${property})`;
-      document.body.append(probe);
-      const expected = getComputedStyle(probe).color;
-      probe.remove();
-      return { actual: getComputedStyle(element).color, expected };
-    }, token);
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate(value => document.documentElement.setAttribute('data-theme', value), theme);
+    const colors = await page.locator('#score-pressure').evaluate(element => {
+      const resolveColor = (property: string) => {
+        const probe = document.createElement('span');
+        probe.style.color = `var(${property})`;
+        document.body.append(probe);
+        const color = getComputedStyle(probe).color;
+        probe.remove();
+        return color;
+      };
+      const surface = element.querySelector<HTMLElement>('.card-overview__surface')!;
+      const primary = element.querySelector<HTMLElement>('.card-overview__score-value')!;
+      const secondary = element.querySelector<HTMLElement>('.card-overview__score-label')!;
+      const trends = element.querySelectorAll<HTMLElement>(
+        '.card-overview__metrics .card-overview__trend'
+      );
 
-    expect(colors.actual).toBe(colors.expected);
+      return [
+        {
+          actual: getComputedStyle(surface).backgroundColor,
+          expected: resolveColor('--color-inverted-background'),
+        },
+        {
+          actual: getComputedStyle(primary).color,
+          expected: resolveColor('--color-inverted-foreground-primary'),
+        },
+        {
+          actual: getComputedStyle(secondary).color,
+          expected: resolveColor('--color-inverted-foreground-secondary'),
+        },
+        {
+          actual: getComputedStyle(trends[0]).color,
+          expected: resolveColor('--color-inverted-foreground-positive'),
+        },
+        {
+          actual: getComputedStyle(trends[1]).color,
+          expected: resolveColor('--color-inverted-foreground-negative'),
+        },
+        {
+          actual: getComputedStyle(trends[2]).color,
+          expected: resolveColor('--color-inverted-foreground-secondary'),
+        },
+      ];
+    });
+
+    for (const color of colors) {
+      expect(color.actual).toBe(color.expected);
+    }
+    themeColors.push(colors[0].actual);
   }
+
+  expect(themeColors[0]).not.toBe(themeColors[1]);
 });
