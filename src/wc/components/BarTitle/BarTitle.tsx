@@ -418,8 +418,7 @@ export class BarTitle {
         <div
           class={{
             'bar-title': true,
-            'ds-chrome-row': compact,
-            'ds-chrome-space--md': compact,
+            'ds-chrome-header': compact,
           }}
         >
           <div class="bar-title__inner">

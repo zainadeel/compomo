@@ -228,14 +228,14 @@ describe('tool view composition contract', () => {
       'utf8'
     );
 
-    assert.match(styles, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
-    assert.match(source, /panel-tool-header ds-chrome-row ds-chrome-space--md/);
+    assert.match(styles, /@import ['"]\.\.\/\.\.\/utils\/chrome-header\.css['"];/);
+    assert.match(source, /panel-tool-header ds-chrome-header ds-chrome-header--bounded/);
     assert.match(styles, /\.panel-tool-header\s*{[\s\S]*?user-select: none;/);
     assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?flex: 1 1 0;/);
     assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?width: auto;/);
     assert.match(styles, /ds-text\.panel-tool-header__heading\s*{[\s\S]*?user-select: none;/);
-    assert.match(styles, /\.panel-tool-header__leading\s*{[\s\S]*?flex: 0 0 auto;/);
-    assert.match(styles, /\.panel-tool-header__trailing\s*{[\s\S]*?flex: 0 0 auto;/);
+    assert.match(source, /panel-tool-header__leading ds-chrome-header__leading/);
+    assert.match(source, /panel-tool-header__trailing ds-chrome-header__trailing/);
     assert.doesNotMatch(styles, /grid-template-columns:/);
   });
 

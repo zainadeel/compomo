@@ -62,8 +62,8 @@ export class PanelToolHeader {
 
     return (
       <Host>
-        <header class="panel-tool-header ds-chrome-row ds-chrome-space--md">
-          <div class="panel-tool-header__leading">
+        <header class="panel-tool-header ds-chrome-header ds-chrome-header--bounded">
+          <div class="panel-tool-header__leading ds-chrome-header__leading">
             {this.showBack ? (
               <ds-tooltip label={this.backAriaLabel} side="bottom" size="sm">
                 <ds-button-unfilled
@@ -80,7 +80,7 @@ export class PanelToolHeader {
             ) : null}
           </div>
           <ds-text
-            class="panel-tool-header__heading ds-control--md"
+            class="panel-tool-header__heading ds-chrome-header__heading ds-control--md"
             as="h2"
             variant="text-body-medium"
             emphasis
@@ -89,7 +89,7 @@ export class PanelToolHeader {
           >
             {this.heading}
           </ds-text>
-          <div class="panel-tool-header__trailing">
+          <div class="panel-tool-header__trailing ds-chrome-header__trailing">
             {actions.map(action => (
               <ds-tooltip key={action.id} label={action.ariaLabel} side="bottom" size="sm">
                 <ds-button-unfilled

@@ -1,3 +1,4 @@
+@import '../../utils/chrome-header.css';
 @import '../../utils/chrome-layout.css';
 @import '../../utils/forced-colors.css';
 
@@ -79,17 +80,19 @@
 }
 
 .modal-header {
-  height: var(--dimension-size-800);
+  align-items: flex-start;
   flex: 0 0 auto;
-  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   color: var(--color-foreground-primary);
 }
 
-ds-text.modal-heading {
-  flex: 1 1 0;
+.modal-copy,
+ds-text.modal-heading,
+ds-text.modal-description {
   width: auto;
-  min-width: 0;
   text-align: left;
+}
+
+ds-text.modal-heading {
   -webkit-user-select: none;
   user-select: none;
 }

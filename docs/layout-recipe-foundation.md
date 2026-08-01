@@ -26,6 +26,21 @@ label, control, description, and error message. Field, Input, Select,
 Select in either cardinality mode, and Slider use the same recipe. It does not impose width,
 validation timing, or form semantics.
 
+## Compact header anatomy
+
+`src/wc/utils/chrome-header.css` owns the geometry repeated by Banner, Modal,
+PanelToolHeader, and compact BarTitle:
+
+- a 48px compact minimum with an 8px outer inset and 8px zone gap;
+- the md row's 6px all-side copy-container inset and 2px balanced inline text inset;
+- leading, yielding copy, and trailing-control zones;
+- a 4px title-to-description gap when copy is stacked or wraps to a new line;
+- an optional tertiary bottom boundary for bounded chrome.
+
+The recipe does not choose heading semantics, typography, surface color,
+wrapping policy, or actions. Each component keeps those responsibilities and
+may remain taller than the compact minimum when supporting copy wraps.
+
 ## Empty regions
 
 `src/wc/utils/empty-region.css` centers an empty presentation in available

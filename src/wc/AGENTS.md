@@ -50,6 +50,7 @@ at the line where they occur.
 - `field-stack.css`: label/control/supporting-message flow.
 - `empty-region.css`: bounded empty-region centering.
 - `chrome-layout.css`: spacing-only row/column/grid chrome.
+- `chrome-header.css`: compact header anatomy and copy/control alignment.
 - `CardDataViz`: one component-owned chart/legend card anatomy.
 - `select-controller.ts`: single and multiple Select popup lifecycle and traversal.
 - `anchored-position.ts`: pure element-anchored popup geometry (flip + clamp).

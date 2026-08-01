@@ -1046,6 +1046,9 @@ export class ShellApp {
   ) {
     return (
       <Host class={shellCls} responsive-mode={this.resolvedMode}>
+        <div class="shell-app__banner">
+          <slot name="banner" />
+        </div>
         <div class="shell-app__row">
           <div class="shell-app__chrome" aria-hidden="true" />
           <div
@@ -1137,6 +1140,9 @@ export class ShellApp {
 
     return (
       <Host class={shellCls} responsive-mode={this.resolvedMode}>
+        <div class="shell-app__banner">
+          <slot name="banner" />
+        </div>
         <div class="shell-app__row">
           <div class="shell-app__chrome" aria-hidden="true" />
           <div class="shell-app__panel" aria-hidden={fullscreen ? 'true' : undefined} inert={fullscreen ? true : undefined}>

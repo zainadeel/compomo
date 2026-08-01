@@ -123,7 +123,8 @@ test('read-only tool titles use the same md density variables as their actions',
 
   assert.match(panelToolsSource, /<ds-panel-tool-header/);
   assert.match(headerCss, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
-  assert.match(headerSource, /class="panel-tool-header__heading ds-control--md"/);
+  assert.match(headerCss, /@import ['"]\.\.\/\.\.\/utils\/chrome-header\.css['"];/);
+  assert.match(headerSource, /class="panel-tool-header__heading ds-chrome-header__heading ds-control--md"/);
   assert.match(headerCss, /height: var\(--ds-control-height\);/);
   assert.match(
     headerCss,

@@ -31,6 +31,18 @@
   position: relative;
 }
 
+.shell-app__banner {
+  flex: 0 0 auto;
+  min-width: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.shell-app__banner ::slotted(ds-banner) {
+  display: grid;
+  width: 100%;
+}
+
 /*
  * One chrome layer behind the shell row. Wash uses background-attachment: fixed
  * so the pattern is locked to the viewport — panel/tools collapse only changes the
@@ -172,6 +184,7 @@
 
 :host(.shell-app--mobile) {
   --_shell-chrome-bg: var(--color-background-primary);
+  padding-block-start: env(safe-area-inset-top);
 }
 
 :host(.shell-app--mobile) .shell-app__chrome,
@@ -182,7 +195,6 @@
 
 :host(.shell-app--mobile) .shell-app__main {
   width: 100%;
-  padding-block-start: env(safe-area-inset-top);
   box-sizing: border-box;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;

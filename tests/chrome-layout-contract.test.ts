@@ -30,6 +30,46 @@ test('chrome spacing defines matching padding and gap without owning size', () =
   assert.match(css, /\.ds-chrome-grid\s*{[\s\S]*?display: grid;[\s\S]*?align-items: center;/);
 });
 
+test('compact headers share one geometry and copy-zone anatomy', () => {
+  const css = read('src/wc/utils/chrome-header.css');
+
+  assert.match(css, /@import ['"]\.\/control-density\.css['"];/);
+
+  assert.match(css, /\.ds-chrome-header\s*{[\s\S]*?min-block-size: var\(--dimension-size-600\);/);
+  assert.match(css, /\.ds-chrome-header\s*{[\s\S]*?padding: var\(--dimension-space-100\);[\s\S]*?gap: var\(--dimension-space-100\);/);
+  assert.match(css, /\.ds-chrome-header--bounded\s*{[\s\S]*?border-block-end: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\);/);
+  assert.match(css, /\.ds-chrome-header__copy\s*{[\s\S]*?padding: var\(--ds-control-padding-inline, var\(--dimension-space-075\)\);/);
+  assert.match(css, /\.ds-chrome-header__heading,[\s\S]*?\.ds-chrome-header__description\s*{[\s\S]*?padding-inline: var\(--ds-control-label-inset, var\(--dimension-space-025\)\);/);
+  assert.match(css, /\.ds-chrome-header__copy--wrapping\s*{[\s\S]*?column-gap: var\(--dimension-space-100\);[\s\S]*?row-gap: var\(--dimension-space-050\);/);
+  assert.match(css, /\.ds-chrome-header__copy--stacked\s*{[\s\S]*?flex-direction: column;[\s\S]*?gap: var\(--dimension-space-050\);/);
+
+  assert.match(
+    read('src/wc/components/Banner/Banner.tsx'),
+    /banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md/,
+  );
+  assert.match(
+    read('src/wc/components/Modal/Modal.tsx'),
+    /modal-copy ds-chrome-header__copy ds-chrome-header__copy--stacked ds-control--md/,
+  );
+
+  const consumers = {
+    Banner: /banner-surface ds-chrome-header ds-chrome-header--wrapping/,
+    Modal: /modal-header ds-chrome-header ds-chrome-header--bounded/,
+    PanelToolHeader: /panel-tool-header ds-chrome-header ds-chrome-header--bounded/,
+    BarTitle: /'ds-chrome-header': compact/,
+  } as const;
+
+  for (const [component, contract] of Object.entries(consumers)) {
+    const source = read(`src/wc/components/${component}/${component}.tsx`);
+    assert.match(source, contract, component);
+    assert.match(
+      read(`src/wc/components/${component}/${component}.css`),
+      /@import ['"]\.\.\/\.\.\/utils\/chrome-header\.css['"];/,
+      component,
+    );
+  }
+});
+
 test('CardSetting pilots md row chrome while retaining explicit 48px ownership', () => {
   const source = read('src/wc/components/CardSetting/CardSetting.tsx');
   const css = read('src/wc/components/CardSetting/CardSetting.css');
@@ -51,7 +91,6 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
     ['src/wc/components/CardDataViz/CardDataViz.tsx', /card-data-viz__header ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
-    ['src/wc/components/PanelToolHeader/PanelToolHeader.tsx', /panel-tool-header ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/MobileHeader/MobileHeader.tsx', /mobile-header__primary ds-chrome-grid ds-chrome-space--md/],
     ['src/wc/components/MobileSheetNav/MobileSheetNav.tsx', /mobile-sheet-nav__header ds-chrome-grid ds-chrome-space--md/],
     ['src/wc/components/MobileBarNav/MobileBarNav.tsx', /mobile-bar-nav ds-chrome-row ds-chrome-space--md/],
@@ -86,7 +125,9 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
   );
 
   const modal = read('src/wc/components/Modal/Modal.tsx');
-  assert.match(modal, /modal-header ds-chrome-row ds-chrome-space--lg/);
+  assert.match(modal, /modal-header ds-chrome-header ds-chrome-header--bounded/);
+  assert.match(modal, /modal-copy ds-chrome-header__copy ds-chrome-header__copy--stacked/);
+  assert.match(modal, /variant="text-title-small"/);
   assert.match(modal, /class="modal-footer__actions"/);
 });
 
@@ -107,7 +148,11 @@ test('mobile shell owns the top safe area while the secondary bottom bar owns th
 
   assert.match(
     shellCss,
-    /:host\(\.shell-app--mobile\) \.shell-app__main\s*{[\s\S]*?padding-block-start: env\(safe-area-inset-top\);[\s\S]*?box-sizing: border-box;/,
+    /:host\(\.shell-app--mobile\)\s*{[\s\S]*?padding-block-start: env\(safe-area-inset-top\);/,
+  );
+  assert.doesNotMatch(
+    shellCss,
+    /:host\(\.shell-app--mobile\) \.shell-app__main\s*{[^}]*padding-block-start:/,
   );
   assert.match(
     mobileBarCss,

@@ -9,7 +9,13 @@ const read = (relativePath: string) => fs.readFileSync(path.join(root, relativeP
 test('isolates every open Modal docs example in its own iframe', () => {
   const docs = read('src/wc/components/Modal/Modal.docs.mdx');
   const stories = read('src/wc/components/Modal/Modal.stories.ts');
-  const exports = ['Playground', 'DeleteConfirmation', 'LeaveConfirmation', 'WithoutFooter'];
+  const exports = [
+    'Playground',
+    'HeaderDescription',
+    'DeleteConfirmation',
+    'LeaveConfirmation',
+    'WithoutFooter',
+  ];
 
   assert.doesNotMatch(stories, /tags:\s*\[['"]autodocs['"]\]/);
   for (const story of exports) {

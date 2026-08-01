@@ -50,6 +50,11 @@
       "component": "component:ds-mobile-bar-nav",
       "role": "Managed persistent mobile destinations for Menu, current area, Search, Agents, Inbox, and Help.",
       "required": false
+    },
+    {
+      "component": "component:ds-banner",
+      "role": "Optional application-owned global message placed in the single shell banner lane.",
+      "required": false
     }
   ],
   "stateOwnership": [
@@ -59,6 +64,7 @@
     "ShellApp owns responsive mode, PanelNav presentation, tool open state, active tool, mobile Inbox grouping, Menu state, fullscreen presentation, focus restoration, and breakpoint state preservation.",
     "Tool products and routed content are instantiated once by the application in named tool-view and default slots; ShellApp changes presentation without recreating those owners.",
     "The application owns account menus, tool product data, page actions, and the consequences of every emitted intent event.",
+    "The application resolves competing global messages to one Banner and owns its actions, controlled open state, orientation for the available shell capacity, dismissal persistence, and removal after exit motion.",
     "Use composition=\"slotted\" only when a team intentionally needs to assemble the public lower-level chrome components itself."
   ],
   "accessibility": [
@@ -72,6 +78,7 @@
     "ShellApp automatically resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
     "Desktop and tablet use PanelNav, BarNav, PanelTools through ShellTools, and ShellPage chrome.",
     "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner.",
+    "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
     "Messages, Stacks, and Activity use explicit mobile grouping metadata and default to the canonical Inbox recipe."
   ],

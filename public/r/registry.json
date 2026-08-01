@@ -658,6 +658,160 @@
       ]
     },
     {
+      "name": "banner",
+      "title": "Banner",
+      "description": "Persistent in-flow application banner with semantic color intent, explicit announcement urgency, horizontal actions, and controlled dismissal motion.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/banner",
+        "source": "src/wc/components/Banner/Banner.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Persistent in-flow application banner with semantic color intent, explicit announcement urgency, horizontal actions, and controlled dismissal motion.",
+          "useWhen": [
+            "A persistent application-wide condition or announcement must remain visible while the user works.",
+            "A shell-level message needs optional actions and dismissal while reflowing the application rather than floating over it.",
+            "Message urgency and color intent must be selected independently."
+          ],
+          "avoidWhen": [
+            "Feedback is transient, queued, promise-driven, or anchored to a control; use Toast.",
+            "The message belongs inside a field, card, or bounded content section; use the future inline banner rather than shrinking the application shell.",
+            "Several global messages must be prioritized or queued; the application must resolve them to one active banner before rendering."
+          ],
+          "alternatives": [
+            {
+              "when": "Feedback is transient or follows a completed action.",
+              "component": "component:ds-toast",
+              "reason": "Toast owns queues, timers, stacking, swipe dismissal, and anchored feedback."
+            },
+            {
+              "when": "A bounded region has no content to show.",
+              "component": "component:ds-empty-state",
+              "reason": "EmptyState explains an empty result without creating global application urgency."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-button-unfilled"
+          ],
+          "patterns": [
+            "pattern:application-shell"
+          ],
+          "accessibility": [
+            "Choose announcement=none for content present at page load, polite for non-urgent dynamic changes, and assertive only when immediate interruption is necessary.",
+            "Visual intent never chooses live-region urgency; a negative banner can be persistent and non-urgent, while a neutral banner can require prompt attention.",
+            "The close control is always available. Localize dismissLabel and keep the banner mounted until dsAfterClose before removing it.",
+            "Slotted actions retain their own accessible names, keyboard behavior, and outcome messaging."
+          ],
+          "states": [
+            "The application owns open. The always-present close control emits dsClose, and the application sets open=false to begin exit motion.",
+            "dsAfterClose fires once after the closing banner is inert, hidden from assistive technology, and no longer occupies layout space.",
+            "The opaque surface slides by its complete block size while occupied-shell space expands with the same short-3 duration. Opening uses the shell tool panel's ease-out curve; dismissal reverses with its ease-in curve, keeping the Banner boundary flush with the shell throughout.",
+            "Heading is optional and description is required. With orientation=horizontal they share one inline copy flow, so description begins after the heading and continuation lines use the complete text width beneath it. With orientation=vertical, description starts on the next line with a 4px gap.",
+            "The actions slot accepts at most two ds-button-unfilled controls. They stay in one horizontal trailing lane, align to the top of the dismiss control when sharing the copy row, and must receive the matching parent-surface background context.",
+            "Intent selects neutral, brand, positive, warning, caution, or negative hue. Contrast independently selects faint, medium, strong, or bold fill.",
+            "Banner has a real bottom boundary, no radius, no elevation, no icon, no timeout, and no internal queue."
+          ],
+          "responsiveBehavior": [
+            "Applications select orientation explicitly. Horizontal keeps copy and actions in one row, with actions top-aligned to dismissal. Vertical puts actions below copy on the 16px text boundary and keeps controls 16px above the bottom boundary.",
+            "When placed in ShellApp's banner slot, the banner spans the complete application above navigation, workspace, and tools.",
+            "ShellApp reserves the mobile top safe area once above the banner and keeps the banner visible while mobile tools or navigation surfaces replace the routed stage."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsClose, set open=false, and wait for dsAfterClose before conditionally removing the element.",
+              "Place at most one ds-banner in ShellApp's banner slot, choose horizontal or vertical orientation for the available shell capacity, and assign no more than two ds-button-unfilled elements slot=actions."
+            ],
+            "react": [
+              "Keep the component mounted while open changes from true to false; remove it in onDsAfterClose when unmounting is required.",
+              "Project no more than two ds-button-unfilled actions and pass each the matching background context."
+            ],
+            "angular": [
+              "Bind open as controlled application state, handle dsClose to update it, and wait for dsAfterClose before removing an ngIf owner.",
+              "Import and project no more than two DsButtonUnfilled actions with slot=actions and their matching background input."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Banner/Banner.stories.ts"
+            },
+            {
+              "label": "Rendered behavior coverage",
+              "path": "tests/e2e/banner.spec.ts"
+            },
+            {
+              "label": "Application shell contract",
+              "path": "agent/patterns/application-shell/pattern.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "announcement": {
+            "type": "BannerAnnouncement",
+            "required": false
+          },
+          "contrast": {
+            "type": "BannerContrast",
+            "required": false
+          },
+          "description": {
+            "type": "string",
+            "required": true
+          },
+          "dismissLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "intent": {
+            "type": "BannerIntent",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "orientation": {
+            "type": "BannerOrientation",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAfterClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsClose",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-banner",
+          "react": "DsBanner",
+          "angular": "DsBanner"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text",
+        "tooltip"
+      ]
+    },
+    {
       "name": "bar-nav",
       "title": "BarNav",
       "description": "Required secondary route navigation within ShellApp, showing peer sections of the active PanelNav destination or its destination label when no section tabs apply.",
@@ -890,7 +1044,7 @@
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
             "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
-            "Compact titles use the shared md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
+            "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
             "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
           ],
           "frameworkCaveats": {
@@ -4525,6 +4679,7 @@
           "states": [
             "The component owns clipboard execution and temporary copied feedback while the application supplies the exact copyable text.",
             "Feedback is controlled: the component emits the requested positive, negative, or cleared value while the application owns persistence and consequences.",
+            "Selected feedback changes to the filled thumb icon without adding a persistent selected fill; hover and press feedback remain available.",
             "Copy, positive feedback, and negative feedback retain one stable order."
           ],
           "responsiveBehavior": [
@@ -5306,7 +5461,7 @@
     {
       "name": "modal",
       "title": "Modal",
-      "description": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
+      "description": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a compact title-and-close header, optional supporting description, composable content, and an optional two-action footer.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5317,7 +5472,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
+          "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a compact title-and-close header, optional supporting description, composable content, and an optional two-action footer.",
           "useWhen": [
             "The user must confirm or cancel one focused decision before returning to the underlying interface.",
             "A short blocking task or compact form needs dialog semantics, focus containment, and explicit completion actions.",
@@ -5355,6 +5510,7 @@
           ],
           "accessibility": [
             "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
+            "When concise supporting context belongs in the header, provide description; it stays below the title and is included in the dialog's accessible description.",
             "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
             "Opening the native modal dialog moves focus to the header Close action, whose visible tooltip matches its accessible name, traps Tab navigation inside the top layer, and makes outside content inert.",
             "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
@@ -5367,12 +5523,13 @@
             "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
             "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
             "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
+            "The optional header description remains stacked beneath the title with the shared compact-header rhythm; longer task content belongs in the default slot.",
             "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",
             "The owner performs save, delete, cancel, and other product consequences before or while closing the modal."
           ],
           "responsiveBehavior": [
             "Choose the smallest sm, md, or lg width that fits the focused task; the top-layer dialog clamps to the viewport with token-based outer space.",
-            "Content scrolls independently when needed while the 64px header and optional 64px footer remain fixed.",
+            "Content scrolls independently when needed while the header and optional 64px footer remain fixed. The title-only header uses the shared 48px compact geometry and grows when its optional description wraps.",
             "Avoid layouts whose minimum content width exceeds the narrow viewport clamp.",
             "The native top layer escapes transformed ancestors, clipping containers, and application stacking contexts without moving slotted content."
           ],
@@ -5414,6 +5571,10 @@
             "required": false
           },
           "closeAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "description": {
             "type": "string",
             "required": false
           },
@@ -5855,7 +6016,7 @@
           ],
           "states": [
             "The title remains left aligned whether the header has no actions, Back, one trailing action, or several trailing actions.",
-            "Leading and trailing control zones never shrink; only the title consumes and truncates within the remaining width, with a fixed 4px gap between zones.",
+            "Leading and trailing control zones never shrink; only the title consumes and truncates within the remaining width. The header uses the shared 8px compact-header zone gap, while adjacent trailing actions retain their 4px control gap.",
             "Header chrome text is not selectable; actions remain keyboard focusable and interactive.",
             "Adjacent trailing actions keep the shared 4px control gap in drawer and fullscreen presentations.",
             "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
@@ -6833,6 +6994,7 @@
             "component:ds-mobile-header",
             "component:ds-mobile-bar-nav",
             "component:ds-shell-page",
+            "component:ds-banner",
             "component:ds-swatch-picker"
           ],
           "patterns": [
@@ -6854,6 +7016,7 @@
             "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, Inbox state, focus restoration, and mobile-stage visibility.",
             "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
             "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
+            "The optional banner slot accepts one application-owned ds-banner above the complete shell row. The application owns its open state, orientation for the current shell capacity, action consequences, dismissal persistence, and resolution when several messages compete.",
             "Use composition=slotted only for advanced application architectures that intentionally own all lower-level chrome wiring.",
             "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
@@ -6869,6 +7032,7 @@
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
+            "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
             "The bottom bar remains visible at all route and tool depths in the foundation release."

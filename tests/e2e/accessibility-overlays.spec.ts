@@ -107,19 +107,32 @@ test('modal uses the top layer, reports dismissal reasons, and restores its trig
   const chromeHeights = await dialog.evaluate(element => ({
     header: getComputedStyle(element.querySelector('.modal-header')!).height,
     headerPaddingInline: getComputedStyle(element.querySelector('.modal-header')!).paddingInline,
+    copyPaddingInline: getComputedStyle(element.querySelector('.modal-copy')!).paddingInline,
+    copyPaddingBlock: getComputedStyle(element.querySelector('.modal-copy')!).paddingBlock,
     footer: getComputedStyle(element.querySelector('.modal-footer')!).height,
     titleFontSize: getComputedStyle(element.querySelector('.modal-heading')!).fontSize,
     titleLineHeight: getComputedStyle(element.querySelector('.modal-heading')!).lineHeight,
     titlePaddingInline: getComputedStyle(element.querySelector('.modal-heading')!).paddingInline,
+    titleCenter: (() => {
+      const bounds = element.querySelector('.modal-heading')!.getBoundingClientRect();
+      return bounds.top + bounds.height / 2;
+    })(),
+    closeCenter: (() => {
+      const bounds = element.querySelector('.modal-close')!.getBoundingClientRect();
+      return bounds.top + bounds.height / 2;
+    })(),
   }));
-  expect(chromeHeights).toEqual({
-    header: '64px',
-    headerPaddingInline: '16px',
+  expect(chromeHeights).toMatchObject({
+    header: '49px',
+    headerPaddingInline: '8px',
+    copyPaddingInline: '6px',
+    copyPaddingBlock: '6px',
     footer: '64px',
-    titleFontSize: '18px',
-    titleLineHeight: '24px',
-    titlePaddingInline: '0px',
+    titleFontSize: '14px',
+    titleLineHeight: '20px',
+    titlePaddingInline: '2px',
   });
+  expect(chromeHeights.titleCenter).toBeCloseTo(chromeHeights.closeCenter, 1);
 
   await dialog.getByRole('button', { name: 'Cancel' }).focus();
   await page.keyboard.press('Tab');
@@ -171,6 +184,31 @@ test('modal omits the footer block when no footer actions are assigned', async (
   await expect(dialog).toBeVisible();
   await expect(footer).toHaveClass(/modal-footer--empty/);
   await expect(footer).toBeHidden();
+  await expect(dialog.locator('.modal-description')).toHaveText(
+    'Changes are already available to everyone.',
+  );
+  await expect(dialog.locator('.modal-heading')).toHaveClass(/ds-text--title-small/);
+  await expect(dialog.locator('.modal-copy')).toHaveCSS('gap', '4px');
+  await expect(dialog.locator('.modal-copy')).toHaveCSS('padding-inline', '6px');
+  await expect(dialog.locator('.modal-copy')).toHaveCSS('padding-block', '6px');
+  await expect(dialog.locator('.modal-heading')).toHaveCSS('padding-inline', '2px');
+  await expect(dialog.locator('.modal-description')).toHaveCSS('padding-inline', '2px');
+  const stackedHeader = await dialog.evaluate(element => {
+    const header = element.querySelector('.modal-header')!.getBoundingClientRect();
+    const heading = element.querySelector('.modal-heading')!.getBoundingClientRect();
+    const description = element.querySelector('.modal-description')!.getBoundingClientRect();
+    const close = element.querySelector('.modal-close')!.getBoundingClientRect();
+    return {
+      headerHeight: header.height,
+      copyGap: description.top - heading.bottom,
+      titleCenter: heading.top + heading.height / 2,
+      closeCenter: close.top + close.height / 2,
+    };
+  });
+  expect(stackedHeader.headerHeight).toBeGreaterThan(49);
+  expect(stackedHeader.copyGap).toBeCloseTo(4, 0);
+  expect(stackedHeader.titleCenter).toBeCloseTo(stackedHeader.closeCenter, 1);
+  await expect(dialog).toHaveAttribute('aria-describedby', /ds-modal-title-\d+-description/);
   await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
 
   await page.keyboard.press('Escape');

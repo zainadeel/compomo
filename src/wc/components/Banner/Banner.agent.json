@@ -1,0 +1,86 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-banner",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-banner",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Persistent in-flow application banner with semantic color intent, explicit announcement urgency, horizontal actions, and controlled dismissal motion.",
+  "useWhen": [
+    "A persistent application-wide condition or announcement must remain visible while the user works.",
+    "A shell-level message needs optional actions and dismissal while reflowing the application rather than floating over it.",
+    "Message urgency and color intent must be selected independently."
+  ],
+  "avoidWhen": [
+    "Feedback is transient, queued, promise-driven, or anchored to a control; use Toast.",
+    "The message belongs inside a field, card, or bounded content section; use the future inline banner rather than shrinking the application shell.",
+    "Several global messages must be prioritized or queued; the application must resolve them to one active banner before rendering."
+  ],
+  "alternatives": [
+    {
+      "when": "Feedback is transient or follows a completed action.",
+      "component": "component:ds-toast",
+      "reason": "Toast owns queues, timers, stacking, swipe dismissal, and anchored feedback."
+    },
+    {
+      "when": "A bounded region has no content to show.",
+      "component": "component:ds-empty-state",
+      "reason": "EmptyState explains an empty result without creating global application urgency."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-shell-app",
+    "component:ds-button-unfilled"
+  ],
+  "patterns": ["pattern:application-shell"],
+  "accessibility": [
+    "Choose announcement=none for content present at page load, polite for non-urgent dynamic changes, and assertive only when immediate interruption is necessary.",
+    "Visual intent never chooses live-region urgency; a negative banner can be persistent and non-urgent, while a neutral banner can require prompt attention.",
+    "The close control is always available. Localize dismissLabel and keep the banner mounted until dsAfterClose before removing it.",
+    "Slotted actions retain their own accessible names, keyboard behavior, and outcome messaging."
+  ],
+  "states": [
+    "The application owns open. The always-present close control emits dsClose, and the application sets open=false to begin exit motion.",
+    "dsAfterClose fires once after the closing banner is inert, hidden from assistive technology, and no longer occupies layout space.",
+    "The opaque surface slides by its complete block size while occupied-shell space expands with the same short-3 duration. Opening uses the shell tool panel's ease-out curve; dismissal reverses with its ease-in curve, keeping the Banner boundary flush with the shell throughout.",
+    "Heading is optional and description is required. With orientation=horizontal they share one inline copy flow, so description begins after the heading and continuation lines use the complete text width beneath it. With orientation=vertical, description starts on the next line with a 4px gap.",
+    "The actions slot accepts at most two ds-button-unfilled controls. They stay in one horizontal trailing lane, align to the top of the dismiss control when sharing the copy row, and must receive the matching parent-surface background context.",
+    "Intent selects neutral, brand, positive, warning, caution, or negative hue. Contrast independently selects faint, medium, strong, or bold fill.",
+    "Banner has a real bottom boundary, no radius, no elevation, no icon, no timeout, and no internal queue."
+  ],
+  "responsiveBehavior": [
+    "Applications select orientation explicitly. Horizontal keeps copy and actions in one row, with actions top-aligned to dismissal. Vertical puts actions below copy on the 16px text boundary and keeps controls 16px above the bottom boundary.",
+    "When placed in ShellApp's banner slot, the banner spans the complete application above navigation, workspace, and tools.",
+    "ShellApp reserves the mobile top safe area once above the banner and keeps the banner visible while mobile tools or navigation surfaces replace the routed stage."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsClose, set open=false, and wait for dsAfterClose before conditionally removing the element.",
+      "Place at most one ds-banner in ShellApp's banner slot, choose horizontal or vertical orientation for the available shell capacity, and assign no more than two ds-button-unfilled elements slot=actions."
+    ],
+    "react": [
+      "Keep the component mounted while open changes from true to false; remove it in onDsAfterClose when unmounting is required.",
+      "Project no more than two ds-button-unfilled actions and pass each the matching background context."
+    ],
+    "angular": [
+      "Bind open as controlled application state, handle dsClose to update it, and wait for dsAfterClose before removing an ngIf owner.",
+      "Import and project no more than two DsButtonUnfilled actions with slot=actions and their matching background input."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Banner/Banner.stories.ts"
+    },
+    {
+      "label": "Rendered behavior coverage",
+      "path": "tests/e2e/banner.spec.ts"
+    },
+    {
+      "label": "Application shell contract",
+      "path": "agent/patterns/application-shell/pattern.agent.json"
+    }
+  ]
+}
