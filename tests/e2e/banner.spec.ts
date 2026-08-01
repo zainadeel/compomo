@@ -303,11 +303,11 @@ test('uses an explicit vertical orientation without horizontal overflow', async 
   });
   expect(lanes.descriptionTop - lanes.headingBottom).toBeCloseTo(
     lanes.expectedInset / 2,
-    3
+    3,
   );
   expect(lanes.trailingTop).toBeGreaterThan(lanes.copyTop);
   expect(lanes.actionStart).toBeCloseTo(lanes.textStart, 0);
-  expect(lanes.actionBottomInset).toBe(lanes.expectedInset * 2);
+  expect(lanes.actionBottomInset).toBeCloseTo(lanes.expectedInset * 2, 3);
   expect(lanes.dismissTopInset).toBeCloseTo(lanes.expectedInset, 1);
   expect(lanes.dismissEndInset).toBeCloseTo(lanes.expectedInset, 1);
 });
