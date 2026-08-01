@@ -1,5 +1,5 @@
 @import '../../utils/control-density.css';
-@import '../../utils/chrome-layout.css';
+@import '../../utils/chrome-header.css';
 
 :host {
   display: block;
@@ -9,17 +9,9 @@
 
 .panel-tool-header {
   height: var(--dimension-size-600);
-  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   color: var(--color-foreground-primary);
   -webkit-user-select: none;
   user-select: none;
-}
-
-.panel-tool-header__leading,
-.panel-tool-header__trailing {
-  display: flex;
-  align-items: center;
-  min-width: 0;
 }
 
 .panel-tool-header__leading:empty,
@@ -27,12 +19,7 @@
   display: none;
 }
 
-.panel-tool-header__leading {
-  flex: 0 0 auto;
-}
-
 .panel-tool-header__trailing {
-  flex: 0 0 auto;
   gap: var(--dimension-space-050);
   justify-content: flex-end;
 }

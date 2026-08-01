@@ -9,9 +9,14 @@ const meta: Meta = {
   title: 'Overlay/Modal',
   argTypes: {
     heading: { control: 'text' },
+    description: { control: 'text' },
     modalWidth: { control: 'select', options: ['sm', 'md', 'lg'] },
   },
-  args: { heading: 'Save changes?', modalWidth: 'md' },
+  args: {
+    heading: 'Save changes?',
+    description: 'Review the impact before continuing.',
+    modalWidth: 'md',
+  },
 };
 
 export default meta;
@@ -28,6 +33,7 @@ export const Playground: Story = {
     <ds-modal
       ?open=${true}
       heading=${args['heading'] ?? 'Save changes?'}
+      description=${args['description'] ?? ''}
       modal-width=${args['modalWidth'] ?? 'md'}
       aria-describedby="modal-playground-description"
     >
@@ -54,6 +60,21 @@ export const Playground: Story = {
         has-border
         @dsClick=${closeOwningModal}
       ></ds-button-unfilled>
+    </ds-modal>
+  `,
+};
+
+export const HeaderDescription: Story = {
+  render: () => html`
+    <ds-modal
+      ?open=${true}
+      heading="Connection interrupted"
+      description="Your changes remain available on this device."
+      modal-width="sm"
+    >
+      <ds-text as="p" variant="text-body-medium" color="secondary">
+        Retry when the network connection is restored.
+      </ds-text>
     </ds-modal>
   `,
 };

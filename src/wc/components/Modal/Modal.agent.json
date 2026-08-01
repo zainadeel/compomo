@@ -7,7 +7,7 @@
   "tag": "ds-modal",
   "audience": "general",
   "status": "stable",
-  "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a fixed title-and-close header, composable content, and an optional two-action footer.",
+  "summary": "Dismissible native top-layer dialog for a focused confirmation or short blocking task, with a compact title-and-close header, optional supporting description, composable content, and an optional two-action footer.",
   "useWhen": [
     "The user must confirm or cancel one focused decision before returning to the underlying interface.",
     "A short blocking task or compact form needs dialog semantics, focus containment, and explicit completion actions.",
@@ -45,6 +45,7 @@
   ],
   "accessibility": [
     "Provide a concise visible heading; the component uses it as the dialog's accessible name.",
+    "When concise supporting context belongs in the header, provide description; it stays below the title and is included in the dialog's accessible description.",
     "Give the primary explanatory copy a stable id and pass it through aria-describedby so assistive technology receives the decision context.",
     "Opening the native modal dialog moves focus to the header Close action, whose visible tooltip matches its accessible name, traps Tab navigation inside the top layer, and makes outside content inert.",
     "Close, Escape, and backdrop activation emit dsClose with close-button, escape, or backdrop reason before beginning dismissal; use the component only when every dismissal path is safe.",
@@ -57,12 +58,13 @@
     "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
     "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
     "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
+    "The optional header description remains stacked beneath the title with the shared compact-header rhythm; longer task content belongs in the default slot.",
     "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",
     "The owner performs save, delete, cancel, and other product consequences before or while closing the modal."
   ],
   "responsiveBehavior": [
     "Choose the smallest sm, md, or lg width that fits the focused task; the top-layer dialog clamps to the viewport with token-based outer space.",
-    "Content scrolls independently when needed while the 64px header and optional 64px footer remain fixed.",
+    "Content scrolls independently when needed while the header and optional 64px footer remain fixed. The title-only header uses the shared 48px compact geometry and grows when its optional description wraps.",
     "Avoid layouts whose minimum content width exceeds the narrow viewport clamp.",
     "The native top layer escapes transformed ancestors, clipping containers, and application stacking contexts without moving slotted content."
   ],

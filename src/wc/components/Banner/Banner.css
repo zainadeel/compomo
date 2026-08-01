@@ -1,0 +1,224 @@
+@import '../../utils/forced-colors.css';
+@import '../../utils/chrome-header.css';
+
+:host {
+  display: grid;
+  overflow: hidden;
+  min-width: 0;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--effect-animation-duration-short-3)
+    var(--_banner-motion-easing);
+
+  --ds-banner-background: var(--color-background-faint-neutral);
+  --ds-banner-heading: var(--color-foreground-primary);
+  --ds-banner-description: var(--color-foreground-secondary);
+  --ds-banner-border: var(--color-border-tertiary);
+  --_banner-motion-easing: var(--effect-animation-easing-ease-in-out, ease);
+}
+
+:host(.banner--open) {
+  grid-template-rows: 1fr;
+  --_banner-motion-easing: var(--effect-animation-easing-ease-out, ease-out);
+}
+
+:host(.banner--closing) {
+  --_banner-motion-easing: var(--effect-animation-easing-ease-in, ease-in);
+}
+
+:host(.banner--hidden) {
+  display: none;
+}
+
+.banner-overflow {
+  min-height: 0;
+  overflow: visible;
+}
+
+.banner-surface {
+  display: flex;
+  position: relative;
+  width: 100%;
+  padding-inline-end: calc(var(--dimension-size-400) + var(--dimension-space-200));
+  color: var(--ds-banner-description);
+  background-color: var(--ds-banner-background);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--ds-banner-border);
+  transform: translateY(-100%);
+  transition: transform var(--effect-animation-duration-short-3) var(--_banner-motion-easing);
+}
+
+:host(.banner--open) .banner-surface {
+  transform: translateY(0);
+}
+
+.banner-copy {
+  flex-basis: var(--dimension-card-width-sm);
+}
+
+:host(.banner--orientation-horizontal) .banner-surface {
+  flex-wrap: nowrap;
+}
+
+:host(.banner--orientation-vertical) .banner-copy {
+  flex-basis: 100%;
+}
+
+.banner-copy-flow {
+  box-sizing: border-box;
+  min-width: 0;
+  padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
+  color: var(--ds-banner-description);
+}
+
+.banner-heading {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin-inline-end: var(--dimension-space-100);
+  vertical-align: baseline;
+  color: var(--ds-banner-heading);
+}
+
+.banner-description {
+  color: var(--ds-banner-description);
+}
+
+.banner-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+  gap: var(--dimension-space-100);
+}
+
+.banner-actions slot {
+  display: contents;
+}
+
+.banner-actions ::slotted(:not(ds-button-unfilled)),
+.banner-actions ::slotted(ds-button-unfilled:nth-of-type(n + 3)) {
+  display: none;
+}
+
+.banner-actions--empty {
+  display: none;
+}
+
+.banner-trailing {
+  align-self: flex-start;
+  flex-wrap: nowrap;
+}
+
+:host(.banner--orientation-vertical.banner--has-actions) .banner-trailing {
+  margin-inline: var(--dimension-space-100) auto;
+  padding-block-end: var(--dimension-space-100);
+  box-sizing: border-box;
+}
+
+:host(.banner--orientation-vertical) .banner-description {
+  display: block;
+}
+
+:host(.banner--orientation-vertical) .banner-heading + .banner-description {
+  margin-block-start: var(--dimension-space-050);
+}
+
+.banner-close {
+  flex: 0 0 auto;
+}
+
+.banner-dismiss {
+  position: absolute;
+  inset-block-start: var(--dimension-space-100);
+  inset-inline-end: var(--dimension-space-100);
+}
+
+:host(.banner--intent-neutral) {
+  --ds-banner-faint-background: var(--color-background-faint-neutral);
+}
+
+:host(.banner--intent-brand) {
+  --ds-banner-faint-background: var(--color-background-faint-brand);
+}
+
+:host(.banner--intent-positive) {
+  --ds-banner-faint-background: var(--color-background-faint-positive);
+}
+
+:host(.banner--intent-warning) {
+  --ds-banner-faint-background: var(--color-background-faint-warning);
+}
+
+:host(.banner--intent-caution) {
+  --ds-banner-faint-background: var(--color-background-faint-caution);
+}
+
+:host(.banner--intent-negative) {
+  --ds-banner-faint-background: var(--color-background-faint-negative);
+}
+
+:host(.banner--contrast-faint) {
+  --ds-banner-background: var(--ds-banner-faint-background);
+  --ds-banner-heading: var(--color-foreground-primary);
+  --ds-banner-description: var(--color-foreground-secondary);
+  --ds-banner-border: var(--color-border-tertiary);
+}
+
+:host(.banner--contrast-medium) {
+  --ds-banner-background: var(--color-background-medium-neutral);
+  --ds-banner-heading: var(--color-foreground-on-medium-background-primary);
+  --ds-banner-description: var(--color-foreground-on-medium-background-secondary);
+  --ds-banner-border: var(--color-border-on-medium-background-tertiary);
+}
+
+:host(.banner--intent-brand.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-brand); }
+:host(.banner--intent-positive.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-positive); }
+:host(.banner--intent-warning.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-warning); }
+:host(.banner--intent-caution.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-caution); }
+:host(.banner--intent-negative.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-negative); }
+
+:host(.banner--contrast-strong) {
+  --ds-banner-background: var(--color-background-strong-neutral);
+  --ds-banner-heading: var(--color-foreground-on-strong-background-primary);
+  --ds-banner-description: var(--color-foreground-on-strong-background-secondary);
+  --ds-banner-border: var(--color-border-on-strong-background-tertiary);
+}
+
+:host(.banner--intent-brand.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-brand); }
+:host(.banner--intent-positive.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-positive); }
+:host(.banner--intent-warning.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-warning); }
+:host(.banner--intent-caution.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-caution); }
+:host(.banner--intent-negative.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-negative); }
+
+:host(.banner--contrast-bold) {
+  --ds-banner-background: var(--color-background-bold-neutral);
+  --ds-banner-heading: var(--color-foreground-on-bold-background-primary);
+  --ds-banner-description: var(--color-foreground-on-bold-background-secondary);
+  --ds-banner-border: var(--color-border-on-bold-background-tertiary);
+}
+
+:host(.banner--intent-brand.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-brand); }
+:host(.banner--intent-positive.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-positive); }
+:host(.banner--intent-warning.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-warning); }
+:host(.banner--intent-caution.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-caution); }
+:host(.banner--intent-negative.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-negative); }
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .banner-surface {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .banner-surface {
+    color: var(--ds-forced-color-content);
+    background-color: var(--ds-forced-color-surface);
+    border-bottom-color: var(--ds-forced-color-content);
+  }
+
+  .banner-heading,
+  .banner-description {
+    color: var(--ds-forced-color-content);
+  }
+}

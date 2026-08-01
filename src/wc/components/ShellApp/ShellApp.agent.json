@@ -27,12 +27,14 @@
     "component:ds-mobile-header",
     "component:ds-mobile-bar-nav",
     "component:ds-shell-page",
+    "component:ds-banner",
     "component:ds-swatch-picker"
   ],
   "patterns": ["pattern:application-shell", "pattern:shell-page"],
   "accessibility": [
     "Supply primary destinations through navigation and secondary route sections through pageChrome so managed ShellApp preserves their correct semantics.",
     "Ensure the default content region contains the page's single main landmark.",
+    "Keep the shell-owned routed-content scroller keyboard-focusable while its page landmark retains content semantics.",
     "Keep the managed desktop/tablet and mobile presentations available without conditionally recreating routed or tool content.",
     "Do not override browser keyboard chords when enabling shell shortcuts.",
     "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
@@ -45,6 +47,7 @@
     "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, Inbox state, focus restoration, and mobile-stage visibility.",
     "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
     "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
+    "The optional banner slot accepts one application-owned ds-banner above the complete shell row. The application owns its open state, orientation for the current shell capacity, action consequences, dismissal persistence, and resolution when several messages compete.",
     "Use composition=slotted only for advanced application architectures that intentionally own all lower-level chrome wiring.",
     "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
     "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
@@ -60,6 +63,7 @@
     "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
     "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
     "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
+    "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
     "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
     "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
     "The bottom bar remains visible at all route and tool depths in the foundation release."

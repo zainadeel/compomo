@@ -39,6 +39,8 @@ export class Modal {
 
   @Prop({ mutable: true }) open: boolean = false;
   @Prop() heading!: string;
+  /** Optional supporting copy shown below the heading. */
+  @Prop() description: string = '';
   @Prop() closeAriaLabel: string = 'Close';
   @Prop() modalWidth: ModalWidth | string = 'md';
   /** Optional id reference for explanatory content in the default slot. */
@@ -53,6 +55,7 @@ export class Modal {
   @Event() dsAfterClose!: EventEmitter<void>;
 
   private titleId = `ds-modal-title-${++modalIdCounter}`;
+  private descriptionId = `${this.titleId}-description`;
   private dialogEl: HTMLDialogElement | null = null;
   private previousFocus: HTMLElement | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
@@ -160,6 +163,13 @@ export class Modal {
     return this.modalWidth as string;
   }
 
+  private get describedBy(): string | undefined {
+    const ids = [this.description ? this.descriptionId : '', this.ariaDescribedby ?? ''].filter(
+      Boolean,
+    );
+    return ids.length > 0 ? ids.join(' ') : undefined;
+  }
+
   private get closeAnimationMs(): number {
     return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
   }
@@ -183,7 +193,7 @@ export class Modal {
           }}
           class={{ 'modal-dialog': true, 'modal-dialog--closing': this.closing }}
           aria-labelledby={this.titleId}
-          aria-describedby={this.ariaDescribedby}
+          aria-describedby={this.describedBy}
           onCancel={(event: Event) => this.handleCancel(event)}
           onPointerDown={(event: PointerEvent) => this.handleBackdropPointerDown(event)}
           onKeyDown={(event: KeyboardEvent) => this.handleKeyDown(event)}
@@ -191,19 +201,33 @@ export class Modal {
             width: `min(${this.resolvedWidth}, calc(100vw - 2 * var(--dimension-space-200)))`,
           }}
         >
-          <div class="modal-header ds-chrome-row ds-chrome-space--lg">
-            <ds-text
-              class="modal-heading"
-              as="h2"
-              variant="text-title-medium"
-              emphasis
-              color="primary"
-              lineTruncation={1}
-              textId={this.titleId}
-            >
-              {this.heading}
-            </ds-text>
-            <ds-tooltip class="modal-close-tooltip" label={this.closeAriaLabel} side="bottom" size="sm">
+          <div class="modal-header ds-chrome-header ds-chrome-header--bounded">
+            <div class="modal-copy ds-chrome-header__copy ds-chrome-header__copy--stacked ds-control--md">
+              <ds-text
+                class="modal-heading ds-chrome-header__heading"
+                as="h2"
+                variant="text-title-small"
+                emphasis
+                color="primary"
+                lineTruncation={1}
+                textId={this.titleId}
+              >
+                {this.heading}
+              </ds-text>
+              {this.description ? (
+                <ds-text
+                  class="modal-description ds-chrome-header__description"
+                  as="p"
+                  variant="text-body-medium"
+                  color="secondary"
+                  wrap="wrap"
+                  textId={this.descriptionId}
+                >
+                  {this.description}
+                </ds-text>
+              ) : null}
+            </div>
+            <ds-tooltip class="modal-close-tooltip ds-chrome-header__trailing" label={this.closeAriaLabel} side="bottom" size="sm">
               <ds-button-unfilled
                 class="modal-close"
                 variant="icon"

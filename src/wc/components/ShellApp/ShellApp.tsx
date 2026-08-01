@@ -1046,6 +1046,9 @@ export class ShellApp {
   ) {
     return (
       <Host class={shellCls} responsive-mode={this.resolvedMode}>
+        <div class="shell-app__banner">
+          <slot name="banner" />
+        </div>
         <div class="shell-app__row">
           <div class="shell-app__chrome" aria-hidden="true" />
           <div
@@ -1080,9 +1083,10 @@ export class ShellApp {
               <slot name="tools" />
             </div>
             <div
-              class="shell-app__content"
+              class="shell-app__content ds-focus-ring"
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
+              tabIndex={0}
             >
               <slot />
             </div>
@@ -1137,6 +1141,9 @@ export class ShellApp {
 
     return (
       <Host class={shellCls} responsive-mode={this.resolvedMode}>
+        <div class="shell-app__banner">
+          <slot name="banner" />
+        </div>
         <div class="shell-app__row">
           <div class="shell-app__chrome" aria-hidden="true" />
           <div class="shell-app__panel" aria-hidden={fullscreen ? 'true' : undefined} inert={fullscreen ? true : undefined}>
@@ -1163,9 +1170,10 @@ export class ShellApp {
               {this.renderManagedTools()}
             </div>
             <div
-              class="shell-app__content"
+              class="shell-app__content ds-focus-ring"
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
+              tabIndex={0}
             >
               {this.renderManagedPage()}
             </div>

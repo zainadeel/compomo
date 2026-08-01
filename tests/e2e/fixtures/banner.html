@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Banner e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        font-family: var(--typography-font-family, system-ui);
+        background: var(--color-background-primary);
+      }
+
+      main {
+        display: grid;
+        gap: var(--dimension-space-200);
+        padding: var(--dimension-space-200);
+      }
+
+      #narrow-owner {
+        width: 320px;
+      }
+
+      #inline-wrap-owner {
+        width: 720px;
+      }
+
+      #shell-owner {
+        width: 900px;
+        height: 600px;
+      }
+
+      #shell {
+        width: 100%;
+        height: 100%;
+      }
+
+      #shell-panel {
+        width: 220px;
+        height: 100%;
+        background: var(--color-background-secondary);
+      }
+
+      #shell-bar {
+        height: var(--dimension-size-800);
+        background: var(--color-background-secondary);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Banner test</h1>
+      <ds-banner
+        id="controlled"
+        heading="Connection interrupted"
+        description="Changes will sync when service returns."
+        intent="warning"
+        contrast="medium"
+        dismiss-label="Dismiss connection notice"
+      >
+        <ds-button-unfilled
+          id="retry"
+          slot="actions"
+          label="Retry"
+          background="medium"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          id="status"
+          slot="actions"
+          label="View status"
+          background="medium"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          id="extra-action"
+          slot="actions"
+          label="Extra action"
+          background="medium"
+        ></ds-button-unfilled>
+        <button id="unsupported-action" slot="actions">Unsupported action</button>
+      </ds-banner>
+
+      <ds-banner id="description-only" description="Reporting data is current."></ds-banner>
+      <ds-banner id="polite" description="A background export completed." announcement="polite"></ds-banner>
+      <ds-banner id="assertive" description="The connection was lost." announcement="assertive"></ds-banner>
+
+      <div id="inline-wrap-owner">
+        <ds-banner
+          id="inline-wrap"
+          heading="Reporting delay"
+          description="Dashboard totals may take several minutes to reflect newly completed trips, but incoming vehicle activity and saved changes remain available while reporting catches up."
+          intent="warning"
+        >
+          <ds-button-unfilled slot="actions" label="View status" background="faint"></ds-button-unfilled>
+        </ds-banner>
+      </div>
+
+      <div id="narrow-owner">
+        <ds-banner
+          id="narrow"
+          orientation="vertical"
+          heading="Long heading for a constrained banner"
+          description="Long supporting text wraps without forcing the page to overflow horizontally."
+          intent="negative"
+        >
+          <ds-button-unfilled slot="actions" label="Retry now" background="faint"></ds-button-unfilled>
+          <ds-button-unfilled slot="actions" label="View details" background="faint"></ds-button-unfilled>
+        </ds-banner>
+      </div>
+
+      <div id="matrix"></div>
+
+      <div id="shell-owner">
+        <ds-shell-app id="shell" composition="slotted">
+          <ds-banner
+            id="shell-banner"
+            slot="banner"
+            heading="Scheduled maintenance"
+            description="Application reporting may be delayed."
+            intent="brand"
+          ></ds-banner>
+          <div id="shell-panel" slot="panel"></div>
+          <div id="shell-bar" slot="bar"></div>
+          <div id="shell-tools" slot="tools"></div>
+          <section id="shell-content">Stable routed content</section>
+        </ds-shell-app>
+      </div>
+    </main>
+    <script type="module" src="/banner-setup.mjs"></script>
+  </body>
+</html>

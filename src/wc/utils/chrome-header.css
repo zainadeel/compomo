@@ -1,0 +1,80 @@
+@import './control-density.css';
+
+/**
+ * Shared compact-header anatomy.
+ *
+ * This recipe owns only the geometry repeated by bounded and shell chrome:
+ * compact minimum height, outer inset, md copy-container and balanced-text
+ * insets, zone spacing, yielding copy, stacked or wrapping copy rhythm, and
+ * trailing-control alignment. Components retain
+ * their semantics, typography selection, surfaces, responsive policy, and
+ * interaction behavior.
+ */
+
+.ds-chrome-header {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 0;
+  min-block-size: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+  gap: var(--dimension-space-100);
+}
+
+.ds-chrome-header--wrapping {
+  flex-wrap: wrap;
+}
+
+.ds-chrome-header--bounded {
+  border-block-end: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.ds-chrome-header__leading,
+.ds-chrome-header__trailing {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.ds-chrome-header__trailing {
+  margin-inline-start: auto;
+  gap: var(--dimension-space-100);
+}
+
+.ds-chrome-header__copy {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--ds-control-padding-inline, var(--dimension-space-075));
+  box-sizing: border-box;
+}
+
+.ds-chrome-header__copy--wrapping {
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: var(--dimension-space-100);
+  row-gap: var(--dimension-space-050);
+}
+
+.ds-chrome-header__copy--stacked {
+  align-items: stretch;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+}
+
+.ds-chrome-header__heading,
+.ds-chrome-header__description {
+  width: auto;
+  min-width: 0;
+  padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
+  box-sizing: border-box;
+}
+
+.ds-chrome-header__heading {
+  flex: 0 1 auto;
+}
+
+.ds-chrome-header__copy--wrapping .ds-chrome-header__description {
+  flex: 1 1 var(--dimension-card-width-xs);
+}

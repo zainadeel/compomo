@@ -198,6 +198,11 @@ test('copies message text and emits controlled feedback intent', async ({ page }
     (element as HTMLElement & { feedback?: string }).feedback = 'positive';
   });
   await expect(positive).toHaveJSProperty('pressed', true);
+  await expect(positive).toHaveJSProperty('activeFill', false);
+  await expect(positive).toHaveJSProperty('icon', 'ThumbsUpFilled');
+  await expect(positive.locator('.button-unfilled')).not.toHaveClass(
+    /ds-interaction-fill--selected/
+  );
   await positive.click();
   await expect(actions).toHaveAttribute('data-feedback-result', 'cleared');
 

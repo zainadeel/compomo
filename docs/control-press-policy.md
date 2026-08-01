@@ -57,6 +57,7 @@ activation remains native and is not promised an equivalent held frame.
 | `ScrollOverlay` — focusable overflow region | Focus/scroll state | None | A scroll region is not a momentary action. |
 | `Select` — `.trigger`, search input, and option rows | Pressed/expanded/selected interaction fills | Popup/choice-list positioning and enter animation | Popup anchors, editable search, and choices do not scale. |
 | `Select multiple` — `.trigger`, search input, and option rows | Pressed/expanded/selected interaction fills | Popup/choice-list positioning and enter animation | Popup anchors, editable search, and choices do not scale. |
+| `ShellApp` — keyboard-focusable routed-content scroller | Scroll/focus state | Shell sizing and chrome transitions are container-owned | A scroll container is not a momentary action. |
 | `TabGroup` — tab buttons | `interaction-fill` and selected tab state | None | Tabs do not scale. |
 | `Tag` — interactive tag button | `interaction-fill` and selected state | None | Selection targets retain stable geometry. |
 | `Toast` — delegated consumer-provided buttons, links, and inputs | Consumer-owned | Consumer-owned | Toast does not impose geometry on delegated interactive content; CompoMo button children keep their primitive policy. |

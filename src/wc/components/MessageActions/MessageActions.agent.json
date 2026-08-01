@@ -27,6 +27,7 @@
   "states": [
     "The component owns clipboard execution and temporary copied feedback while the application supplies the exact copyable text.",
     "Feedback is controlled: the component emits the requested positive, negative, or cleared value while the application owns persistence and consequences.",
+    "Selected feedback changes to the filled thumb icon without adding a persistent selected fill; hover and press feedback remain available.",
     "Copy, positive feedback, and negative feedback retain one stable order."
   ],
   "responsiveBehavior": [

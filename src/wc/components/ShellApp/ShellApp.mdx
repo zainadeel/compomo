@@ -15,6 +15,8 @@ three typed data objects and persistent content:
   subsections, and page actions.
 - `tools` is product-owned tool definitions, headers, unread state, shortcuts,
   persistence, and fullscreen configuration.
+- The optional `banner` slot holds one application-owned `ds-banner` above the
+  complete navigation, workspace, and tools row.
 - Named `*-view` slots hold the product-owned tool views, and the default slot
   holds the router-owned page content.
 
@@ -28,6 +30,12 @@ Navigation events are intent-only. Handle `dsNavSelect` and `dsTabChange` with
 the application router, then replace `navigation` and `pageChrome` together
 from the completed route state. Do not conditionally recreate routed content or
 tool views when the responsive presentation changes.
+
+Banner visibility is also application-owned. Handle its `dsClose` event by
+setting `open=false`, and keep it mounted until `dsAfterClose` when conditional
+removal is required. Resolve competing global messages to one active banner;
+ShellApp does not queue or prioritize them. Set Banner's `orientation` from the
+application's current shell-capacity policy.
 
 ## Advanced slotted composition
 

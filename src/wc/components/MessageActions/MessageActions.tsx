@@ -71,6 +71,7 @@ export class MessageActions {
                 size="xs"
                 aria-label="Good response"
                 hasBorder={false}
+                activeFill={false}
                 pressed={this.feedback === 'positive'}
                 onDsChange={(event: CustomEvent<boolean>) =>
                   this.changeFeedback('positive', event.detail)
@@ -86,6 +87,7 @@ export class MessageActions {
                 size="xs"
                 aria-label="Bad response"
                 hasBorder={false}
+                activeFill={false}
                 pressed={this.feedback === 'negative'}
                 onDsChange={(event: CustomEvent<boolean>) =>
                   this.changeFeedback('negative', event.detail)
