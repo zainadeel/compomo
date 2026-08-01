@@ -1,5 +1,6 @@
 @import '../../utils/control-density.css';
 @import '../../utils/chrome-layout.css';
+@import '../../utils/focus-ring.css';
 @import '../../utils/scrollbar-hidden.css';
 
 :host {

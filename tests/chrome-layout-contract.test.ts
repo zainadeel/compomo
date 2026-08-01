@@ -101,7 +101,9 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
   }
 
   const panelTools = read('src/wc/components/PanelTools/PanelTools.tsx');
-  assert.match(panelTools, /panel-tools__rail-body ds-chrome-column ds-chrome-space--md/);
+  assert.match(panelTools, /'panel-tools__rail-body': true/);
+  assert.match(panelTools, /'ds-chrome-column': true/);
+  assert.match(panelTools, /'ds-chrome-space--md': true/);
   assert.match(panelTools, /class="panel-tools__rail-actions"/);
 
   const panelNav = read('src/wc/components/PanelNav/PanelNav.tsx');

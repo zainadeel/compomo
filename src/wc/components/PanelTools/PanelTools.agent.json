@@ -47,6 +47,7 @@
     "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
     "Use the canonical default recipe when the product needs Search first and Help last; custom recipes must preserve a deliberate keyboard and visual order.",
     "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
+    "When the shortcut rail overflows, its labeled body becomes a keyboard-focusable scroll region without changing the rail action order.",
     "Do not trigger global shortcuts while focus is in an editable control.",
     "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
     "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."

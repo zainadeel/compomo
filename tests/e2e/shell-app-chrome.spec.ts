@@ -109,6 +109,11 @@ test.describe('App shell chrome', () => {
     await expect(shellRoot).toHaveCSS('overscroll-behavior', 'none');
     await expect(content).toHaveCSS('overflow', 'auto');
     await expect(content).toHaveCSS('overscroll-behavior', 'none');
+    await expect(content).toHaveAttribute('tabindex', '0');
+    await content.focus();
+    await expect(content).toBeFocused();
+    await content.press('PageDown');
+    await expect.poll(() => content.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
 
     await content.evaluate(element => {
       element.scrollTop = 480;
@@ -285,6 +290,20 @@ test.describe('App shell chrome', () => {
     await user.focus();
     await user.press('ArrowLeft');
     await expect(page.locator('.panel-nav__footer-btn .button-unfilled')).toBeFocused();
+  });
+
+  test('makes an overflowing tool rail keyboard-scrollable', async ({ page }) => {
+    const tools = page.locator('ds-panel-tools');
+    await tools.evaluate(element => {
+      element.querySelector<HTMLElement>('.panel-tools__rail-body')!.style.maxHeight = '96px';
+    });
+
+    const scrollRegion = page.getByRole('region', { name: 'Tool shortcuts' });
+    await expect(scrollRegion).toHaveAttribute('tabindex', '0');
+    await scrollRegion.focus();
+    await expect(scrollRegion).toBeFocused();
+    await scrollRegion.press('PageDown');
+    await expect.poll(() => scrollRegion.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   });
 
   test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts', async ({

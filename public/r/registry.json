@@ -6306,6 +6306,7 @@
             "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
             "Use the canonical default recipe when the product needs Search first and Help last; custom recipes must preserve a deliberate keyboard and visual order.",
             "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
+            "When the shortcut rail overflows, its labeled body becomes a keyboard-focusable scroll region without changing the rail action order.",
             "Do not trigger global shortcuts while focus is in an editable control.",
             "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
             "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."
@@ -7004,6 +7005,7 @@
           "accessibility": [
             "Supply primary destinations through navigation and secondary route sections through pageChrome so managed ShellApp preserves their correct semantics.",
             "Ensure the default content region contains the page's single main landmark.",
+            "Keep the shell-owned routed-content scroller keyboard-focusable while its page landmark retains content semantics.",
             "Keep the managed desktop/tablet and mobile presentations available without conditionally recreating routed or tool content.",
             "Do not override browser keyboard chords when enabling shell shortcuts.",
             "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",

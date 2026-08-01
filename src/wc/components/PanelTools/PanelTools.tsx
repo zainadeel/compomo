@@ -115,6 +115,7 @@ export class PanelTools {
 
   @State() private rovingIndex = 0;
   @State() private fullViewToolIds: PanelToolsToolId[] = [];
+  @State() private railBodyScrollable = false;
 
   private motionEnableGeneration = 0;
   private presentationMotionGeneration = 0;
@@ -124,6 +125,8 @@ export class PanelTools {
   private ignoreReplacementTerminal = false;
   private focusBeforeFullscreen: HTMLElement | null = null;
   private fullViewObserver: MutationObserver | null = null;
+  private railBodyEl?: HTMLElement;
+  private railBodyObserver?: ResizeObserver;
 
   private get railItems(): PanelToolsItem[] {
     return this.items ?? [];
@@ -141,6 +144,7 @@ export class PanelTools {
     this.motionEnableGeneration += 1;
     this.fullViewObserver?.disconnect();
     this.fullViewObserver = null;
+    this.disconnectRailBodyObserver();
   }
 
   @Watch('presentation')
@@ -245,6 +249,8 @@ export class PanelTools {
 
   componentDidLoad() {
     this.deferMotionEnable();
+    this.connectRailBodyObserver();
+    this.updateRailBodyScrollable();
     this.syncFullViewTools();
     this.fullViewObserver = new MutationObserver(() => this.syncFullViewTools());
     this.fullViewObserver.observe(this.el, {
@@ -252,6 +258,29 @@ export class PanelTools {
       attributes: true,
       attributeFilter: ['slot'],
     });
+  }
+
+  componentDidRender() {
+    this.updateRailBodyScrollable();
+  }
+
+  private connectRailBodyObserver() {
+    this.disconnectRailBodyObserver();
+    if (!this.railBodyEl || typeof ResizeObserver === 'undefined') return;
+    this.railBodyObserver = new ResizeObserver(() => this.updateRailBodyScrollable());
+    this.railBodyObserver.observe(this.railBodyEl);
+  }
+
+  private disconnectRailBodyObserver() {
+    this.railBodyObserver?.disconnect();
+    this.railBodyObserver = undefined;
+  }
+
+  private updateRailBodyScrollable() {
+    const next = Boolean(
+      this.railBodyEl && this.railBodyEl.scrollHeight > this.railBodyEl.clientHeight + 1
+    );
+    if (next !== this.railBodyScrollable) this.railBodyScrollable = next;
   }
 
   @Watch('items')
@@ -582,7 +611,24 @@ export class PanelTools {
                 {headerItems.map((item, index) => this.renderRailAction(item, index))}
               </div>
             ) : null}
-            <div class="panel-tools__rail-body ds-chrome-column ds-chrome-space--md ds-scrollbar-hidden">
+            <div
+              class={{
+                'panel-tools__rail-body': true,
+                'ds-chrome-column': true,
+                'ds-chrome-space--md': true,
+                'ds-scrollbar-hidden': true,
+                'ds-focus-ring': this.railBodyScrollable,
+              }}
+              ref={element => {
+                const next = (element as HTMLElement) ?? undefined;
+                if (next === this.railBodyEl) return;
+                this.railBodyEl = next;
+                this.connectRailBodyObserver();
+              }}
+              role={this.railBodyScrollable ? 'region' : undefined}
+              aria-label={this.railBodyScrollable ? this.toolShortcutsLabel : undefined}
+              tabIndex={this.railBodyScrollable ? 0 : undefined}
+            >
               <div class="panel-tools__rail-actions">
                 {bodyItems.map((item, bodyIdx) =>
                   this.renderRailAction(item, headerCount + bodyIdx)

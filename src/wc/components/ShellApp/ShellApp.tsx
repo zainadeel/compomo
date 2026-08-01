@@ -1083,9 +1083,10 @@ export class ShellApp {
               <slot name="tools" />
             </div>
             <div
-              class="shell-app__content"
+              class="shell-app__content ds-focus-ring"
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
+              tabIndex={0}
             >
               <slot />
             </div>
@@ -1169,9 +1170,10 @@ export class ShellApp {
               {this.renderManagedTools()}
             </div>
             <div
-              class="shell-app__content"
+              class="shell-app__content ds-focus-ring"
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
+              tabIndex={0}
             >
               {this.renderManagedPage()}
             </div>
