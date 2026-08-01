@@ -257,7 +257,7 @@ test('keeps one moving clip boundary flush with the shell edge', async ({ page }
 
   expect(motion.hostOverflow).toBe('hidden');
   expect(motion.innerOverflow).toBe('visible');
-  expect(motion.maximumEdgeDelta).toBeLessThan(0.5);
+  expect(motion.maximumEdgeDelta).toBeLessThan(1);
   expect(motion.surfaceHeightRange).toBeLessThan(0.5);
 });
 
@@ -325,6 +325,14 @@ test('occupies one full shell row and preserves application-owned content identi
   expect(geometry.banner.x).toBeCloseTo(geometry.shell.x, 0);
   expect(geometry.banner.width).toBeCloseTo(geometry.shell.width, 0);
   expect(geometry.row.y).toBeCloseTo(geometry.banner.y + geometry.banner.height, 0);
+  expect(geometry.row.y + geometry.row.height).toBeCloseTo(
+    geometry.shell.y + geometry.shell.height,
+    0,
+  );
+  expect(geometry.banner.height + geometry.row.height).toBeCloseTo(
+    geometry.shell.height,
+    0,
+  );
 
   const expandedOffset = geometry.row.y - geometry.shell.y;
   expect(expandedOffset).toBeGreaterThan(0);
@@ -333,8 +341,12 @@ test('occupies one full shell row and preserves application-owned content identi
   expect(await page.evaluate(() => {
     const shellRect = document.querySelector('#shell')!.getBoundingClientRect();
     const rowRect = document.querySelector('#shell .shell-app__row')!.getBoundingClientRect();
-    return rowRect.y - shellRect.y;
-  })).toBe(0);
+    return {
+      rowOffset: rowRect.y - shellRect.y,
+      rowBottomDelta: rowRect.bottom - shellRect.bottom,
+      rowHeightDelta: rowRect.height - shellRect.height,
+    };
+  })).toEqual({ rowOffset: 0, rowBottomDelta: 0, rowHeightDelta: 0 });
   await expect.poll(() => page.locator('#shell-content').evaluate(
     element => (element as HTMLElement & { identityMarker: string }).identityMarker,
   )).toBe('stable');

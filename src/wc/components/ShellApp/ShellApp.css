@@ -1,14 +1,4 @@
 :host {
-  display: block;
-  height: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  overscroll-behavior: none;
-  --ds-shell-panel-tools-width: var(--dimension-panel-width-xs);
-}
-
-.shell-app {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -17,6 +7,7 @@
   overflow: hidden;
   overscroll-behavior: none;
   font-family: var(--typography-font-family, system-ui);
+  --ds-shell-panel-tools-width: var(--dimension-panel-width-xs);
 }
 
 :host {
@@ -25,9 +16,8 @@
 
 .shell-app__row {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
-  height: 100%;
   position: relative;
 }
 
