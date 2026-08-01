@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.6.0](https://github.com/zainadeel/compomo/compare/v13.5.0...v13.6.0) (2026-08-01)
+
+
+### Added
+
+* add shell banner and shared chrome headers ([#408](https://github.com/zainadeel/compomo/issues/408)) ([a102fa3](https://github.com/zainadeel/compomo/commit/a102fa31920a48e61c9230a62629813349df0147))
+
 ## [13.5.0](https://github.com/zainadeel/compomo/compare/v13.4.0...v13.5.0) (2026-07-31)
 
 
