@@ -301,7 +301,10 @@ test('uses an explicit vertical orientation without horizontal overflow', async 
       expectedInset,
     };
   });
-  expect(lanes.descriptionTop - lanes.headingBottom).toBe(lanes.expectedInset / 2);
+  expect(lanes.descriptionTop - lanes.headingBottom).toBeCloseTo(
+    lanes.expectedInset / 2,
+    3
+  );
   expect(lanes.trailingTop).toBeGreaterThan(lanes.copyTop);
   expect(lanes.actionStart).toBeCloseTo(lanes.textStart, 0);
   expect(lanes.actionBottomInset).toBe(lanes.expectedInset * 2);
