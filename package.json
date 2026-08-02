@@ -81,8 +81,6 @@
     "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/build-lib-exports.mjs && node scripts/build-style-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/build-mcp.mjs && node scripts/verify-framework-proxies.mjs && node scripts/write-build-stamp.mjs",
     "verify:pack": "node scripts/verify-framework-proxies.mjs && node scripts/verify-npm-pack.mjs && node scripts/verify-package-imports.mjs",
     "test": "node --import tsx/esm --test tests/*.test.ts",
-    "test:inventory": "node scripts/test-inventory.mjs --json",
-    "test:inventory:check": "node scripts/test-inventory.mjs --check",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:install": "playwright install chromium firefox webkit",
     "prebuild:docs": "npm run clean:framework-proxies",
