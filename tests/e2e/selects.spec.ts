@@ -217,23 +217,6 @@ test('keeps single and multi popups viewport-anchored inside contained clipping 
   }
 });
 
-test('keeps loading and empty listboxes structurally valid and announced as unavailable options', async ({
-  page,
-}) => {
-  const loading = page.locator('#loading');
-  await loading.getByRole('combobox').click();
-  const loadingOption = loading.getByRole('option', { name: 'Loading' });
-  await expect(loadingOption).toHaveAttribute('aria-disabled', 'true');
-  await expect(loadingOption).toHaveAttribute('aria-selected', 'false');
-
-  const searchable = page.locator('#searchable');
-  await searchable.getByRole('combobox').click();
-  await searchable.getByRole('searchbox').fill('does not exist');
-  const emptyOption = searchable.getByRole('option', { name: 'No results found' });
-  await expect(emptyOption).toHaveAttribute('aria-disabled', 'true');
-  await expect(emptyOption).toHaveAttribute('aria-selected', 'false');
-});
-
 test('falls back to one text-only option layout when icon data is mixed',
   chromiumOnly('controlled-behavior', 'Mixed option data maps deterministically to one component-owned layout.'),
   async ({ page }) => {
@@ -289,17 +272,23 @@ test('supports buffered local typeahead and clear while preserving the open popu
   const select = page.locator('#single');
   const trigger = select.getByRole('combobox');
 
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.value = '';
+  });
+  await expect(trigger).not.toHaveClass(/ds-interaction-fill--selected/);
   await trigger.press('a');
   await trigger.press('Enter');
   await expect
     .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
     .toBe('apple');
+  await expect(trigger).toHaveClass(/ds-interaction-fill--selected/);
 
   await trigger.click();
   await select.getByRole('button', { name: 'Clear' }).click();
   await expect
     .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
     .toBe('');
+  await expect(trigger).not.toHaveClass(/ds-interaction-fill--selected/);
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect.poll(() => page.evaluate(() => window.__selectClears)).toContain('single');
 
@@ -442,7 +431,7 @@ test('shares a rounded sm search clear button across single and multi selects',
 });
 
 test('uses body-only Empty State for empty single and multi search results',
-  chromiumOnly('controlled-behavior', 'Empty-result composition is deterministic after search filtering completes.'),
+  chromiumOnly('controlled-behavior', 'Empty-result composition and unavailable-option semantics are deterministic after filtering.'),
   async ({ page }) => {
   for (const selector of ['#searchable', '#multi-search']) {
     const select = page.locator(selector);
@@ -450,6 +439,9 @@ test('uses body-only Empty State for empty single and multi search results',
     await select.getByRole('searchbox', { name: 'Search' }).fill('no matching choices');
 
     const emptyState = select.locator('ds-empty-state');
+    const emptyOption = select.getByRole('option', { name: 'No results found' });
+    await expect(emptyOption).toHaveAttribute('aria-disabled', 'true');
+    await expect(emptyOption).toHaveAttribute('aria-selected', 'false');
     await expect(emptyState).toHaveCount(1);
     await expect(emptyState.locator('ds-icon')).toHaveCount(0);
     await expect(emptyState.locator('.empty-state__title')).toHaveCount(0);
@@ -460,7 +452,7 @@ test('uses body-only Empty State for empty single and multi search results',
 });
 
 test('shows busy state in the trigger and popup',
-  chromiumOnly('controlled-behavior', 'Busy-state composition follows explicit controlled props.'),
+  chromiumOnly('controlled-behavior', 'Busy-state composition and ARIA semantics follow explicit controlled props.'),
   async ({ page }) => {
   const select = page.locator('#loading');
   const trigger = select.getByRole('combobox');
@@ -471,6 +463,8 @@ test('shows busy state in the trigger and popup',
   const loadingOption = select.getByRole('option', { name: 'Loading' });
   const popupLoader = loadingOption.locator('ds-loader');
   await expect(loadingOption).toHaveCount(1);
+  await expect(loadingOption).toHaveAttribute('aria-disabled', 'true');
+  await expect(loadingOption).toHaveAttribute('aria-selected', 'false');
   await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
 
   const [loadingBox, loaderBox] = await Promise.all([

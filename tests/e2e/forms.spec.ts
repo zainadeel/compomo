@@ -136,45 +136,6 @@ test('input read-only state remains focusable and submittable without a clear ac
   )).toBe('Kept value');
 });
 
-test('select applies selected styling only after choosing an option',
-  chromiumOnly('controlled-behavior', 'Selected styling follows deterministic controlled state after the interaction is complete.'),
-  async ({ page }) => {
-  const trigger = page.locator('#region .trigger');
-
-  await expect(trigger).not.toHaveClass(/ds-interaction-fill--selected/);
-  await trigger.click();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  await expect(trigger).not.toHaveClass(/ds-interaction-fill--selected/);
-
-  await page.locator('#region').getByRole('option', { name: 'Canada' }).click();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-  await expect(trigger).toHaveClass(/ds-interaction-fill--selected/);
-});
-
-test('select search clear action has balanced top, right, and bottom insets',
-  chromiumOnly('layout-geometry', 'Clear-action insets are token-backed local geometry.'),
-  async ({ page }) => {
-  const select = page.locator('#region');
-  await select.evaluate((element: HTMLDsSelectElement) => { element.searchable = true; });
-  await select.locator('.trigger').click();
-  await select.locator('input[type="search"]').fill('no matching option');
-
-  const clear = select.locator('.select-search__clear');
-  await expect(clear).toHaveJSProperty('icon', 'CrossCircle');
-  const alignment = await select.evaluate(element => {
-    const control = element.querySelector<HTMLElement>('.select-search__control')!.getBoundingClientRect();
-    const clearAction = element.querySelector<HTMLElement>('.select-search__clear')!.getBoundingClientRect();
-    return {
-      top: clearAction.top - control.top,
-      right: control.right - clearAction.right,
-      bottom: control.bottom - clearAction.bottom,
-    };
-  });
-
-  expect(alignment.right).toBeCloseTo(alignment.top, 3);
-  expect(alignment.right).toBeCloseTo(alignment.bottom, 3);
-});
-
 test('input follows shared control density, focus, and search-clear recipes', async ({ page }) => {
   const expected = {
     lg: { height: 40, icon: 24, textClass: 'ds-text--body-large' },
