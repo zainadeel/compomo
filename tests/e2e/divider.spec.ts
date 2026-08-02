@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -62,9 +61,4 @@ test('resolves parent-selected length and symmetric inset values', async ({ page
   await expect.poll(() => semantic.evaluate(element => (
     element.style.getPropertyValue('--_divider-inset')
   ))).toBe('var(--dimension-space-100)');
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

@@ -1,5 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
+
+const semanticProseAxe = chromiumOnly(
+  'accessibility',
+  'The semantic prose tree and its integrated Axe scan are engine-neutral DOM contracts.',
+);
 
 test.describe('renderer-neutral prose foundation', () => {
   test.beforeEach(async ({ page }) => {
@@ -177,7 +183,7 @@ test.describe('renderer-neutral prose foundation', () => {
     expect(metrics.lineHeight).toBe(metrics.expectedLineHeight);
   });
 
-  test('preserves semantic accessibility relationships', async ({ page }) => {
+  test('preserves semantic accessibility relationships', semanticProseAxe, async ({ page }) => {
     await expect(page.locator('#semantic-prose h2')).toHaveCount(1);
     await expect(page.locator('#semantic-prose ol > li')).toHaveCount(2);
     await expect(page.locator('#semantic-prose blockquote')).toHaveCount(1);

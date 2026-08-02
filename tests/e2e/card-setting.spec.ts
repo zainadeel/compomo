@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -72,9 +71,4 @@ test('emits typed actions while the parent enforces one editing section', async 
     { action: 'edit', hasOriginalEvent: true },
     { action: 'save', hasOriginalEvent: true },
   ]);
-});
-
-test('has no automatically detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

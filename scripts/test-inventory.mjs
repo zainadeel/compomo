@@ -89,6 +89,24 @@ function extractSourceTests(filePath, sourceText, layer, policy) {
   return cases;
 }
 
+function extractAxeCaseLines(filePath, sourceText) {
+  const source = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true);
+  const lines = [];
+  function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      isTestCall(expressionName(node.expression)) &&
+      node.getText(source).includes('new AxeBuilder')
+    ) {
+      lines.push(source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1);
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return lines;
+}
+
 function annotationDescription(spec, type) {
   for (const projectTest of spec.tests ?? []) {
     const annotation = projectTest.annotations?.find(candidate => candidate.type === type);
@@ -137,7 +155,7 @@ export async function extractRenderedInventory(repositoryRoot, policy) {
             : policy.defaults.rendered.decision,
         browsers: [...browsers].sort(),
         reason: reason ?? suitePolicy?.reason ?? policy.defaults.rendered.reason,
-        audited: Boolean(suitePolicy),
+        audited: Boolean(suitePolicy || owner || reason),
       });
     }
     for (const child of suite.suites ?? []) visitSuite(child, nextParents, false);
@@ -185,6 +203,9 @@ export function summarizeTestInventory(cases, policy) {
   for (const testCase of cases) {
     byDecision[testCase.decision] = (byDecision[testCase.decision] ?? 0) + 1;
   }
+  for (const retiredCase of policy.retiredRenderedCases ?? []) {
+    byDecision[retiredCase.decision] = (byDecision[retiredCase.decision] ?? 0) + 1;
+  }
   const rendered = cases.filter(testCase => testCase.layer === 'rendered');
   return {
     byLayer,
@@ -193,6 +214,8 @@ export function summarizeTestInventory(cases, policy) {
       (total, testCase) => total + testCase.browsers.length,
       0
     ),
+    retiredRenderedCases: policy.retiredRenderedCases?.length ?? 0,
+    activeRenderedAxeCases: rendered.filter(testCase => testCase.accessibilityAudit).length,
     baselineRenderedBrowserExecutions: policy.baseline.renderedBrowserExecutions,
   };
 }
@@ -226,6 +249,14 @@ export function validateTestInventory(inventory, policy) {
           `${testCase.id} resolves ${testCase.decision} to ${testCase.browsers.join(', ') || 'no browsers'}.`
         );
       }
+      if (testCase.accessibilityAudit) {
+        if (testCase.owner !== 'accessibility') {
+          errors.push(`${testCase.id} runs Axe without accessibility ownership.`);
+        }
+        if (testCase.decision !== 'chromium-only') {
+          errors.push(`${testCase.id} runs redundant cross-browser Axe coverage.`);
+        }
+      }
     }
   }
   for (const suite of Object.keys(policy.auditedRenderedSuites)) {
@@ -233,6 +264,37 @@ export function validateTestInventory(inventory, policy) {
     if (!cases.length) errors.push(`${suite} is marked audited but contains no discovered tests.`);
     if (cases.some(testCase => !testCase.audited)) {
       errors.push(`${suite} contains rendered tests without an audited suite policy.`);
+    }
+  }
+  const storyFiles = new Set(
+    inventory.tests
+      .filter(testCase => testCase.layer === 'storybook')
+      .map(testCase => testCase.file)
+  );
+  const retiredKeys = new Set();
+  for (const retiredCase of inventory.retiredRenderedCases ?? []) {
+    const key = `${retiredCase.file}:${retiredCase.title}`;
+    if (retiredKeys.has(key)) errors.push(`${key} is listed as retired more than once.`);
+    retiredKeys.add(key);
+    if (retiredCase.owner !== 'storybook-accessibility') {
+      errors.push(`${key} must transfer ownership to Storybook accessibility.`);
+    }
+    if (retiredCase.decision !== 'remove-redundant') {
+      errors.push(`${key} must use the remove-redundant decision.`);
+    }
+    if (!retiredCase.reason?.trim()) errors.push(`${key} is missing a retirement reason.`);
+    if (!storyFiles.has(retiredCase.replacementFile)) {
+      errors.push(`${key} references missing Storybook coverage ${retiredCase.replacementFile}.`);
+    }
+    if (
+      inventory.tests.some(
+        testCase =>
+          testCase.layer === 'rendered' &&
+          testCase.file === retiredCase.file &&
+          testCase.title === retiredCase.title
+      )
+    ) {
+      errors.push(`${key} is still active after being classified as retired.`);
     }
   }
   if (
@@ -259,7 +321,21 @@ export async function buildTestInventory(repositoryRoot = defaultRepositoryRoot)
       ...extractSourceTests(relative, await fs.readFile(absolute, 'utf8'), 'unit', policy)
     );
   }
-  tests.push(...(await extractRenderedInventory(repositoryRoot, policy)));
+  const renderedTests = await extractRenderedInventory(repositoryRoot, policy);
+  const renderedFiles = await filesBelow(path.join(repositoryRoot, 'tests/e2e'), absolute =>
+    /\.spec\.ts$/.test(absolute)
+  );
+  for (const absolute of renderedFiles) {
+    const relative = path.relative(repositoryRoot, absolute);
+    const sourceText = await fs.readFile(absolute, 'utf8');
+    for (const line of extractAxeCaseLines(relative, sourceText)) {
+      const testCase = renderedTests.find(
+        candidate => candidate.file === relative && candidate.line === line
+      );
+      if (testCase) testCase.accessibilityAudit = true;
+    }
+  }
+  tests.push(...renderedTests);
   for (const absolute of storyFiles) {
     const relative = path.relative(repositoryRoot, absolute);
     tests.push(...extractStories(relative, await fs.readFile(absolute, 'utf8'), policy));
@@ -269,6 +345,7 @@ export async function buildTestInventory(repositoryRoot = defaultRepositoryRoot)
     schemaVersion: policy.schemaVersion,
     summary: summarizeTestInventory(tests, policy),
     tests,
+    retiredRenderedCases: policy.retiredRenderedCases ?? [],
   };
 }
 
@@ -284,7 +361,9 @@ async function run() {
     process.stdout.write(
       `Test inventory: ${summary.byLayer.unit} unit, ${summary.byLayer.rendered} rendered, ` +
         `${summary.byLayer.storybook} Storybook; ${summary.renderedBrowserExecutions} rendered ` +
-        `browser executions (baseline ${summary.baselineRenderedBrowserExecutions}).\n`
+        `browser executions, ${summary.activeRenderedAxeCases} active and ` +
+        `${summary.retiredRenderedCases} retired rendered Axe cases ` +
+        `(baseline ${summary.baselineRenderedBrowserExecutions}).\n`
     );
   }
   if (process.argv.includes('--check')) {

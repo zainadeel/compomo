@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -44,9 +43,4 @@ test('stops rotation while preserving the glyph under reduced motion', async ({ 
   await expect(loader).toHaveCSS('animation-name', 'none');
   await expect(loader.locator('svg')).toBeVisible();
   await expect(page.locator('#standalone').getByRole('status')).toHaveCount(1);
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

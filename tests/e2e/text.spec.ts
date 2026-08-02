@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -96,9 +95,4 @@ test('keeps generating text readable and static under reduced motion', async ({ 
 test('uses tabular glyph widths only when requested', async ({ page }) => {
   await expect(page.locator('#numbers')).toHaveCSS('font-variant-numeric', 'tabular-nums');
   await expect(page.locator('#default')).toHaveCSS('font-variant-numeric', 'normal');
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

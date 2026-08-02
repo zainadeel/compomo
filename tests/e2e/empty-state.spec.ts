@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -34,9 +33,4 @@ test('owns centered typography and exact composition spacing', async ({ page }) 
   await expect(complete.locator('.empty-state__title')).toHaveClass(/ds-text--color-primary/);
   await expect(complete.locator('.empty-state__body')).toHaveClass(/ds-text--body-medium/);
   await expect(complete.locator('.empty-state__body')).toHaveClass(/ds-text--color-secondary/);
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });
