@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 test.describe('App shell chrome', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,7 +17,9 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
-  test('panel nav controls inherit the shared md control radius', async ({ page }) => {
+  test('panel nav controls inherit the shared md control radius',
+    chromiumOnly('layout-geometry', 'The shared control radius is a token-backed recipe with contract coverage.'),
+    async ({ page }) => {
     const nav = page.locator('.panel-nav');
     await expect(nav).toHaveClass(/ds-control--md/);
     await nav.evaluate(element => {
@@ -27,7 +30,9 @@ test.describe('App shell chrome', () => {
     await expect(nav.locator('.panel-nav__item').first()).toHaveCSS('border-radius', '10px');
   });
 
-  test('keeps one default cursor across desktop button hit areas', async ({ page }) => {
+  test('keeps one default cursor across desktop button hit areas',
+    chromiumOnly('layout-geometry', 'Static cursor recipes do not depend on an engine-specific API.'),
+    async ({ page }) => {
     const targets = page.locator(
       '.panel-nav__item, .bar-nav__tab, .panel-tools__rail-action .button-unfilled'
     );
@@ -44,7 +49,9 @@ test.describe('App shell chrome', () => {
     expect(new Set(cursors)).toEqual(new Set(['default']));
   });
 
-  test('keeps tool-rail dot halos aligned below the interaction wash while pressed', async ({
+  test('keeps tool-rail dot halos aligned below the interaction wash while pressed',
+    chromiumOnly('layout-geometry', 'Layer ordering and dot geometry are static shared recipes.'),
+    async ({
     page,
   }) => {
     const action = page.getByRole('button', { name: 'Activity' });
@@ -141,7 +148,9 @@ test.describe('App shell chrome', () => {
     expect(afterBoundaryWheel).toEqual(beforeBoundaryWheel);
   });
 
-  test('keeps a base-view tool header action exactly 8px from the drawer edge', async ({
+  test('keeps a base-view tool header action exactly 8px from the drawer edge',
+    chromiumOnly('layout-geometry', 'Header action inset is a local token-backed geometry contract.'),
+    async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
@@ -159,7 +168,9 @@ test.describe('App shell chrome', () => {
       .toBe(8);
   });
 
-  test('keeps 4px between header actions in drawer and fullscreen presentations', async ({
+  test('keeps 4px between header actions in drawer and fullscreen presentations',
+    chromiumOnly('layout-geometry', 'Header action gaps are static token-backed geometry.'),
+    async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
@@ -183,7 +194,9 @@ test.describe('App shell chrome', () => {
     await expect.poll(actionGap).toBe(4);
   });
 
-  test('keeps shared 8px header gaps while only the title shrinks', async ({ page }) => {
+  test('keeps shared 8px header gaps while only the title shrinks',
+    chromiumOnly('layout-geometry', 'Shared header gaps and title flex behavior are local geometry contracts.'),
+    async ({ page }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
     const shell = page.locator('ds-shell-app');
     const tools = page.locator('ds-panel-tools');
@@ -233,7 +246,9 @@ test.describe('App shell chrome', () => {
     expect(narrow!.titleWidth).toBeLessThan(wide!.titleWidth);
   });
 
-  test('does not allow tool header title selection', async ({ page }) => {
+  test('does not allow tool header title selection',
+    chromiumOnly('layout-geometry', 'The user-select recipe is a static CSS contract.'),
+    async ({ page }) => {
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
     const tools = page.locator('ds-panel-tools');
     const title = page.getByRole('heading', { name: 'Agents', level: 2 });
@@ -306,7 +321,9 @@ test.describe('App shell chrome', () => {
     await expect.poll(() => scrollRegion.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   });
 
-  test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts', async ({
+  test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts',
+    chromiumOnly('layout-geometry', 'The suffix zone is static token-backed navigation geometry.'),
+    async ({
     page,
   }) => {
     await expect(page.locator('.panel-nav__item-dot')).toHaveCount(1);
@@ -451,7 +468,9 @@ test.describe('App shell chrome', () => {
     await expect(page.getByRole('tab', { name: 'Live Map' })).toBeVisible();
   });
 
-  test('collapsed user initial keeps caption metrics and optical centering', async ({ page }) => {
+  test('collapsed user initial keeps caption metrics and optical centering',
+    chromiumOnly('layout-geometry', 'Caption metrics and centering are a static compact-navigation recipe.'),
+    async ({ page }) => {
     await page.getByRole('button', { name: 'Collapse navigation' }).click();
 
     const geometry = await page.locator('.panel-nav__user-initial').evaluate(element => {
@@ -490,7 +509,9 @@ test.describe('App shell chrome', () => {
     expect(Math.abs(geometry.inkCenterDeltaY)).toBeLessThanOrEqual(0.5);
   });
 
-  test('collapsed account trigger promotes its initial immediately while its menu is expanded', async ({
+  test('collapsed account trigger promotes its initial immediately while its menu is expanded',
+    chromiumOnly('controlled-behavior', 'Expanded state deterministically promotes the existing initial without browser APIs.'),
+    async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Collapse navigation' }).click();
@@ -598,7 +619,9 @@ test.describe('App shell chrome', () => {
     await expect(page.getByRole('tab', { name: 'Health' })).toBeVisible();
   });
 
-  test('none preset keeps the solid secondary chrome layer mounted', async ({ page }) => {
+  test('none preset keeps the solid secondary chrome layer mounted',
+    chromiumOnly('layout-geometry', 'The explicit none preset maps to a deterministic chrome surface recipe.'),
+    async ({ page }) => {
     const shell = page.locator('ds-shell-app');
     const chrome = page.locator('.shell-app__chrome');
     await chrome.evaluate(element => {
@@ -734,7 +757,9 @@ test.describe('App shell chrome', () => {
     await expect(fullView).toBeHidden();
   });
 
-  test('uses the same fixed 300px drawer width on desktop and tablet', async ({ page }) => {
+  test('uses the same fixed 300px drawer width on desktop and tablet',
+    chromiumOnly('layout-geometry', 'Fixed drawer width is a token-backed local geometry contract.'),
+    async ({ page }) => {
     const surface = page.locator('.panel-tools__drawer-surface');
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
     await expect(surface).toHaveCSS('width', '300px');

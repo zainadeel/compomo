@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 async function expectSelectedFillBelowContent(control: Locator) {
   const layers = await control.evaluate(element => ({
@@ -51,7 +52,9 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'mobile');
   });
 
-  test('renders two fixed icon-only groups without overflow and keeps status dots supplemental', async ({
+  test('renders two fixed icon-only groups without overflow and keeps status dots supplemental',
+    chromiumOnly('layout-geometry', 'Fixed mobile-bar groups, icon sizing, and supplemental dots are static chrome recipes.'),
+    async ({
     page,
   }) => {
     const primary = page.getByRole('navigation', { name: 'Primary' });
@@ -234,7 +237,9 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Search' })).toBeFocused();
   });
 
-  test('uses one icon-only sheet header lane and large-density destination rows', async ({
+  test('uses one icon-only sheet header lane and large-density destination rows',
+    chromiumOnly('layout-geometry', 'Sheet header and destination density are token-backed static geometry.'),
+    async ({
     page,
   }) => {
     await page.locator('ds-mobile-sheet-nav').evaluate(element => {
@@ -394,7 +399,9 @@ test.describe('Responsive mobile shell foundation', () => {
     ]);
   });
 
-  test('uses the centered section chooser and emphasis-only sheet selection', async ({
+  test('uses the centered section chooser and emphasis-only sheet selection',
+    chromiumOnly('layout-geometry', 'Chooser alignment and selection emphasis are static component recipes.'),
+    async ({
     page,
   }) => {
     await expect(
@@ -417,7 +424,9 @@ test.describe('Responsive mobile shell foundation', () => {
     ).resolves.toBe('rgba(0, 0, 0, 0)');
   });
 
-  test('keeps local page tabs subordinate to the selected area section', async ({ page }) => {
+  test('keeps local page tabs subordinate to the selected area section',
+    chromiumOnly('controlled-behavior', 'Explicit area and page state map deterministically to the visible section control.'),
+    async ({ page }) => {
     await page.locator('#mobile-header').evaluate(header => {
       const mobileHeader = header as HTMLElement & {
         sections: Array<{ id: string; label: string }>;
@@ -550,7 +559,9 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toBeVisible();
   });
 
-  test('uses a solid primary stage with the selected route in the mobile header', async ({
+  test('uses a solid primary stage with the selected route in the mobile header',
+    chromiumOnly('layout-geometry', 'Mobile stage surface and selected-route styling are deterministic chrome recipes.'),
+    async ({
     page,
   }) => {
     await expect(page.locator('.shell-app__chrome')).toHaveCSS('display', 'none');

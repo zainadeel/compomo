@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 type BarTitleEventRecord = { type: string; id?: string };
 
@@ -19,7 +20,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('uses the default cursor for breadcrumb commands and pointer only for links', async ({
+test('uses the default cursor for breadcrumb commands and pointer only for links',
+  chromiumOnly('layout-geometry', 'Static cursor recipes do not depend on an engine-specific API.'),
+  async ({
   page,
 }) => {
   await expect(
@@ -30,7 +33,9 @@ test('uses the default cursor for breadcrumb commands and pointer only for links
   ).toHaveCSS('cursor', 'pointer');
 });
 
-test('composes one page main and semantic h1 with the default content inset', async ({ page }) => {
+test('composes one page main and semantic h1 with the default content inset',
+  chromiumOnly('layout-geometry', 'Static semantic structure and token-backed insets are authoritative in Chromium.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
@@ -92,7 +97,9 @@ test('composes one page main and semantic h1 with the default content inset', as
   expect(geometry.dividerRight).toBe(32);
 });
 
-test('reduces the default page inset for tablet and mobile modes', async ({ page }) => {
+test('reduces the default page inset for tablet and mobile modes',
+  chromiumOnly('responsive-shell', 'Explicit responsive-mode rendering checks token-backed insets without viewport measurement.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const content = shell.locator('.shell-page__content');
 
@@ -115,7 +122,9 @@ test('reduces the default page inset for tablet and mobile modes', async ({ page
   await expect(content).toHaveCSS('padding-left', '16px');
 });
 
-test('aligns expanded title and actions below a full-width breadcrumb row', async ({ page }) => {
+test('aligns expanded title and actions below a full-width breadcrumb row',
+  chromiumOnly('layout-geometry', 'This is a local token-backed alignment contract with shared geometry tolerance.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
@@ -175,7 +184,9 @@ test('aligns expanded title and actions below a full-width breadcrumb row', asyn
   expect(withoutBreadcrumb).toEqual({ actionsTop: 32, titleTop: 32 });
 });
 
-test('supports multi-level expanded breadcrumbs without changing compact Back', async ({
+test('supports multi-level expanded breadcrumbs without changing compact Back',
+  chromiumOnly('controlled-behavior', 'This verifies deterministic variant composition rather than browser navigation behavior.'),
+  async ({
   page,
 }) => {
   const shell = page.locator('#shell-page');
@@ -438,7 +449,9 @@ test('keeps inline section state controlled and restores trigger focus', async (
   expect(events).toContainEqual({ type: 'section', id: 'history' });
 });
 
-test('uses the complete rounded md control recipe for the section trigger', async ({ page }) => {
+test('uses the complete rounded md control recipe for the section trigger',
+  chromiumOnly('layout-geometry', 'The shared control recipe is token-backed and independently protected by contract tests.'),
+  async ({ page }) => {
   const trigger = page
     .locator('#detail-header')
     .getByRole('button', { name: 'Change driver section. Current section: Summary' });
@@ -496,7 +509,9 @@ test('uses the complete rounded md control recipe for the section trigger', asyn
   });
 });
 
-test('balances title and section-label spacing around the divider in every presentation', async ({
+test('balances title and section-label spacing around the divider in every presentation',
+  chromiumOnly('layout-geometry', 'Static spacing recipes are engine-neutral token contracts.'),
+  async ({
   page,
 }) => {
   const shell = page.locator('#shell-page');
@@ -534,7 +549,9 @@ test('balances title and section-label spacing around the divider in every prese
   }
 });
 
-test('emits the same command ids from visible and overflow actions', async ({ page }) => {
+test('emits the same command ids from visible and overflow actions',
+  chromiumOnly('controlled-behavior', 'Custom-event identity is deterministic and does not rely on a browser-specific API.'),
+  async ({ page }) => {
   const header = page.locator('#detail-header');
 
   await header.getByRole('button', { name: 'Back to Drivers' }).click();
@@ -558,7 +575,9 @@ test('emits the same command ids from visible and overflow actions', async ({ pa
   ]);
 });
 
-test('borders overflow only while a primary action is visible beside it', async ({ page }) => {
+test('borders overflow only while a primary action is visible beside it',
+  chromiumOnly('layout-geometry', 'This is a deterministic class and border-recipe state check.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
   const more = header.locator('.bar-title__more-actions');
@@ -599,7 +618,9 @@ test('borders overflow only while a primary action is visible beside it', async 
   await expect.poll(hasBorder).toBe(false);
 });
 
-test('selects compact and constrained variants from supplied ShellPage capacity', async ({
+test('selects compact and constrained variants from supplied ShellPage capacity',
+  chromiumOnly('responsive-shell', 'Supplied capacity maps deterministically to variants without viewport measurement.'),
+  async ({
   page,
 }) => {
   const viewport = page.locator('#app-viewport');
@@ -678,7 +699,9 @@ test('selects compact and constrained variants from supplied ShellPage capacity'
   await expect(page.getByRole('menuitem', { name: 'Call driver' })).toHaveCount(1);
 });
 
-test('aligns a compact top-level title with BarNav control text', async ({ page }) => {
+test('aligns a compact top-level title with BarNav control text',
+  chromiumOnly('layout-geometry', 'This is a local typography and padding alignment contract.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
@@ -711,7 +734,9 @@ test('aligns a compact top-level title with BarNav control text', async ({ page 
   expect(geometry.headingHeight).toBe(32);
 });
 
-test('keeps a never-collapse primary action visible when constrained', async ({ page }) => {
+test('keeps a never-collapse primary action visible when constrained',
+  chromiumOnly('controlled-behavior', 'Explicit capacity and action priority produce deterministic rendered state.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
 
@@ -933,7 +958,9 @@ test('keeps an open header menu in the top layer while the sticky header compact
   expect(await menu.evaluate(element => element.matches(':popover-open'))).toBe(true);
 });
 
-test('honors explicit ShellPage presentation overrides', async ({ page }) => {
+test('honors explicit ShellPage presentation overrides',
+  chromiumOnly('controlled-behavior', 'Explicit presentation props map deterministically to rendered variants.'),
+  async ({ page }) => {
   const viewport = page.locator('#app-viewport');
   const shell = page.locator('#shell-page');
   const header = page.locator('#detail-header');
@@ -955,7 +982,9 @@ test('honors explicit ShellPage presentation overrides', async ({ page }) => {
   await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
 });
 
-test('supports full-bleed content without changing header inset', async ({ page }) => {
+test('supports full-bleed content without changing header inset',
+  chromiumOnly('layout-geometry', 'Full-bleed and header insets are static token-backed geometry.'),
+  async ({ page }) => {
   const shell = page.locator('#shell-page');
   const headerPaddingBefore = await page
     .locator('#detail-header .bar-title__inner')
@@ -1009,7 +1038,9 @@ test('truncates a long heading before it can crowd fixed controls', async ({ pag
   expect(geometry.actionsRight).toBeLessThanOrEqual(geometry.hostRight);
 });
 
-test('omits a redundant section menu when only one section exists', async ({ page }) => {
+test('omits a redundant section menu when only one section exists',
+  chromiumOnly('controlled-behavior', 'Single-section omission is deterministic composition behavior.'),
+  async ({ page }) => {
   const header = page.locator('#detail-header');
   await header.evaluate((element: HTMLDsBarTitleElement) => {
     element.sections = [{ id: 'general', label: 'General' }];
@@ -1020,7 +1051,9 @@ test('omits a redundant section menu when only one section exists', async ({ pag
   await expect(header.locator('.bar-title__section-menu')).toHaveCount(0);
 });
 
-test('has no automatically detectable accessibility violations', async ({ page }) => {
+test('has no automatically detectable accessibility violations',
+  chromiumOnly('accessibility', 'Storybook already runs documented states in Chromium; this fixture retains one integrated Axe check.'),
+  async ({ page }) => {
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });

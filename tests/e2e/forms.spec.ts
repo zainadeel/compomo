@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 import AxeBuilder from '@axe-core/playwright';
 
 test.beforeEach(async ({ page }) => {
@@ -6,7 +7,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('non-button selection, editing, popup, continuous, and drag targets never scale', async ({
+test('non-button selection, editing, popup, continuous, and drag targets never scale',
+  chromiumOnly('interaction', 'The no-scale policy is a shared static interaction recipe.'),
+  async ({
   page,
 }) => {
   const targets = [
@@ -133,7 +136,9 @@ test('input read-only state remains focusable and submittable without a clear ac
   )).toBe('Kept value');
 });
 
-test('select applies selected styling only after choosing an option', async ({ page }) => {
+test('select applies selected styling only after choosing an option',
+  chromiumOnly('controlled-behavior', 'Selected styling follows deterministic controlled state after the interaction is complete.'),
+  async ({ page }) => {
   const trigger = page.locator('#region .trigger');
 
   await expect(trigger).not.toHaveClass(/ds-interaction-fill--selected/);
@@ -146,7 +151,9 @@ test('select applies selected styling only after choosing an option', async ({ p
   await expect(trigger).toHaveClass(/ds-interaction-fill--selected/);
 });
 
-test('select search clear action has balanced top, right, and bottom insets', async ({ page }) => {
+test('select search clear action has balanced top, right, and bottom insets',
+  chromiumOnly('layout-geometry', 'Clear-action insets are token-backed local geometry.'),
+  async ({ page }) => {
   const select = page.locator('#region');
   await select.evaluate((element: HTMLDsSelectElement) => { element.searchable = true; });
   await select.locator('.trigger').click();
@@ -243,7 +250,9 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('ds-button-unfilled')).toHaveCount(0);
 });
 
-test('select, multi-select, and menu propagate density into choice rows', async ({ page }) => {
+test('select, multi-select, and menu propagate density into choice rows',
+  chromiumOnly('layout-geometry', 'Density propagation is deterministic and its token recipes have contract coverage.'),
+  async ({ page }) => {
   const select = page.locator('#select-lg');
   await select.locator('.trigger').click();
   const selectRow = select.getByRole('option', { name: /Primary/ });
@@ -284,7 +293,9 @@ test('select, multi-select, and menu propagate density into choice rows', async 
   await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty('variant', 'text-caption');
 });
 
-test('checkbox sizes center owned marks with density-specific strokes', async ({ page }) => {
+test('checkbox sizes center owned marks with density-specific strokes',
+  chromiumOnly('layout-geometry', 'Density-specific mark sizing is static token-backed geometry.'),
+  async ({ page }) => {
   const expected = {
     lg: { height: 40, placement: 24, box: 20, mark: 20, stroke: '1.5px' },
     md: { height: 32, placement: 20, box: 16, mark: 16, stroke: '1.25px' },
@@ -343,7 +354,9 @@ test('checkbox supports Enter and Space activation with mixed-state and presenta
   await expect(presentation.locator('ds-text')).toHaveCount(0);
 });
 
-test('radio sizes match checkbox density and use a component-owned selected circle', async ({ page }) => {
+test('radio sizes match checkbox density and use a component-owned selected circle',
+  chromiumOnly('layout-geometry', 'Radio sizing and selected-mark ownership are static component recipes.'),
+  async ({ page }) => {
   const expected = {
     lg: { height: 40, placement: 24, circle: 20, dot: 10, stroke: '1.5px' },
     md: { height: 32, placement: 20, circle: 16, dot: 8, stroke: '1.25px' },
@@ -438,7 +451,9 @@ test('switch supports readonly, required, unchecked, and external form behavior'
   await expect(labeled).toHaveAttribute('aria-checked', 'true');
 });
 
-test('switch sizes preserve density-specific thumb insets and an outset focus ring', async ({ page }) => {
+test('switch sizes preserve density-specific thumb insets and an outset focus ring',
+  chromiumOnly('layout-geometry', 'Switch density and focus-ring geometry are token-backed recipes.'),
+  async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const expected = {
     lg: { width: 40, height: 24, thumb: 16, inset: 4, blockInset: 4, stroke: '1px' },
@@ -563,7 +578,9 @@ test('slider uses native range semantics with complete labels and dynamic range 
   await expect(externallyLabeledInput).toBeFocused();
 });
 
-test('slider label matches Field while its value keeps the same primary metric without emphasis', async ({ page }) => {
+test('slider label matches Field while its value keeps the same primary metric without emphasis',
+  chromiumOnly('layout-geometry', 'Typography variants are deterministic component composition.'),
+  async ({ page }) => {
   const textRecipe = async (selector: string) => page.locator(selector).evaluate(text => {
     const element = text.querySelector<HTMLElement>('.ds-text__element');
     if (!element) throw new Error(`Missing rendered text element for ${selector}`);
@@ -644,7 +661,9 @@ test('slider pointer press selects the nearest thumb and emits one committed val
   await expect.poll(() => range.evaluate((element: HTMLDsSliderElement) => element.value)).toEqual([30, 80]);
 });
 
-test('slider thumb alignment keeps edge and center rail endpoints geometrically consistent', async ({ page }) => {
+test('slider thumb alignment keeps edge and center rail endpoints geometrically consistent',
+  chromiumOnly('layout-geometry', 'Endpoint alignment is a local geometry contract with explicit tolerance.'),
+  async ({ page }) => {
   const horizontal = page.locator('#slider-single');
   const vertical = page.locator('#slider-vertical');
 
@@ -785,7 +804,9 @@ test('slider drag paint stays locked to the pointer without positional easing', 
   await expect.poll(() => slider.evaluate((element: HTMLDsSliderElement) => element.value)).toBe(82);
 });
 
-test('slider sizes align with the control density system', async ({ page }) => {
+test('slider sizes align with the control density system',
+  chromiumOnly('layout-geometry', 'Slider density values are token-backed and protected by shared density contracts.'),
+  async ({ page }) => {
   const expected = {
     md: { control: 32, thumb: 16, track: 8, trackStroke: '1px' },
     sm: { control: 24, thumb: 12, track: 6, trackStroke: '1px' },
@@ -862,7 +883,9 @@ test('slider submits single and repeated range values, associates externally, an
   await expect(page.locator('#slider-single')).not.toHaveAttribute('data-dirty');
 });
 
-test('has no serious or critical accessibility violations', async ({ page }) => {
+test('has no serious or critical accessibility violations',
+  chromiumOnly('accessibility', 'Storybook owns the component state matrix; this fixture retains one integrated Chromium Axe check.'),
+  async ({ page }) => {
   const results = await new AxeBuilder({ page }).analyze();
   const highImpact = results.violations.filter(violation =>
     violation.impact === 'serious' || violation.impact === 'critical'

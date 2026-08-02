@@ -20,6 +20,31 @@ measurement, popup positioning, form association, scrolling, or animation
 lifecycle. Chromium-only is appropriate for a narrow local geometry check when
 cross-browser behavior is unaffected.
 
+## Browser tiers and ownership inventory
+
+Rendered tests remain cross-browser by default. A reviewed assertion may use
+`chromiumOnly(owner, reason)` from `tests/e2e/browser-tier.ts` when Chromium is
+the authoritative layer for engine-neutral composition, token-backed geometry,
+or an integrated Axe fixture already covered by the Storybook state matrix.
+The reason is required and is emitted in the machine-readable inventory.
+
+Do not use the Chromium-only tier for browser APIs, focus behavior, native form
+association, popup positioning, scrolling, responsive owner identity, direct
+touch, or animation lifecycle. Those cases continue in Chromium, Firefox, and
+WebKit.
+
+```bash
+npm run test:inventory:check
+npm run test:inventory > test-inventory.json
+```
+
+The inventory resolves every Node test, actual Playwright case (including
+parameterized cases), and exported Storybook story to its owner, risk, decision,
+browser set, and rationale. `tests/test-ownership-policy.json` holds defaults,
+audited suite boundaries, and the pre-audit browser-execution baseline. CI
+rejects missing ownership metadata or an audited policy that does not reduce
+the baseline.
+
 Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.

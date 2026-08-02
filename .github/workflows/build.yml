@@ -60,6 +60,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Verify test ownership inventory
+        run: npm run test:inventory:check
+
       - name: Verify npm pack (nav + utils)
         run: npm run verify:pack
 
