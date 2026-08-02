@@ -90,6 +90,49 @@
   },
   "retiredRenderedCases": [
     {
+      "file": "tests/e2e/forms.spec.ts",
+      "title": "select applies selected styling only after choosing an option",
+      "owner": "interaction",
+      "decision": "remove-redundant",
+      "replacements": [
+        {
+          "file": "tests/e2e/selects.spec.ts",
+          "title": "supports buffered local typeahead and clear while preserving the open popup"
+        }
+      ],
+      "reason": "The authoritative Select typeahead and clear lifecycle now verifies empty, selected, and cleared trigger fill states."
+    },
+    {
+      "file": "tests/e2e/forms.spec.ts",
+      "title": "select search clear action has balanced top, right, and bottom insets",
+      "owner": "layout-geometry",
+      "decision": "remove-redundant",
+      "replacements": [
+        {
+          "file": "tests/e2e/selects.spec.ts",
+          "title": "shares a rounded sm search clear button across single and multi selects"
+        }
+      ],
+      "reason": "The dedicated Select recipe already covers icon, size, border, radius, balanced insets, activation, focus restoration, and both cardinalities."
+    },
+    {
+      "file": "tests/e2e/selects.spec.ts",
+      "title": "keeps loading and empty listboxes structurally valid and announced as unavailable options",
+      "owner": "controlled-behavior",
+      "decision": "remove-redundant",
+      "replacements": [
+        {
+          "file": "tests/e2e/selects.spec.ts",
+          "title": "uses body-only Empty State for empty single and multi search results"
+        },
+        {
+          "file": "tests/e2e/selects.spec.ts",
+          "title": "shows busy state in the trigger and popup"
+        }
+      ],
+      "reason": "Unavailable-option semantics now live with the controlled empty and loading compositions that render those exact states."
+    },
+    {
       "file": "tests/e2e/shell-mobile.spec.ts",
       "title": "keeps Help on the persistent tool owner across mobile and wider breakpoints",
       "owner": "responsive-shell",
