@@ -368,6 +368,35 @@ test('uses an explicit vertical orientation without horizontal overflow', async 
   expectGeometryClose(lanes.dismissEndInset, lanes.expectedInset, 'Dismiss end inset');
 });
 
+test(
+  'keeps vertical description-only copy visually balanced without an empty action row',
+  chromiumOnly(
+    'layout-geometry',
+    'Vertical no-action padding and trailing-lane removal are static Banner geometry.',
+  ),
+  async ({ page }) => {
+    const banner = page.locator('#vertical-description-only');
+    await expect(banner.locator('.banner-trailing')).toHaveCSS('display', 'contents');
+
+    const geometry = await banner.evaluate(element => {
+      const surfaceElement = element.querySelector('.banner-surface')!;
+      const surface = surfaceElement.getBoundingClientRect();
+      const description = element.querySelector('.banner-description')!.getBoundingClientRect();
+      const borderWidth = Number.parseFloat(getComputedStyle(surfaceElement).borderBottomWidth);
+      return {
+        topInset: description.top - surface.top,
+        bottomInset: surface.bottom - borderWidth - description.bottom,
+      };
+    });
+
+    expectGeometryClose(
+      geometry.bottomInset,
+      geometry.topInset,
+      'Vertical description-only visual block insets',
+    );
+  },
+);
+
 test('occupies one full shell row and preserves application-owned content identity', async ({ page }) => {
   const shell = page.locator('#shell');
   const banner = page.locator('#shell-banner');

@@ -192,6 +192,19 @@ export const VerticalLongHeading: Story = {
   `,
 };
 
+export const VerticalDescriptionOnly: Story = {
+  render: () => html`
+    <div style="width:min(100%,360px);">
+      <ds-banner
+        orientation="vertical"
+        description="Reporting is delayed while the latest vehicle activity is processed."
+        intent="warning"
+        contrast="faint"
+      ></ds-banner>
+    </div>
+  `,
+};
+
 export const VerticalLongDescriptionAndActions: Story = {
   render: () => html`
     <div style="width:min(100%,360px);">

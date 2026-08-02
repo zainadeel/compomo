@@ -77,7 +77,7 @@
   "responsiveBehavior": [
     "ShellApp automatically resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
     "Desktop and tablet use PanelNav, BarNav, PanelTools through ShellTools, and ShellPage chrome.",
-    "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner.",
+    "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner. MobileBarNav paints its primary surface through the bottom safe-area inset so light browser chrome and application chrome meet without a secondary-surface seam.",
     "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
     "Messages, Stacks, and Activity use explicit mobile grouping metadata and default to the canonical Inbox recipe."

@@ -144,7 +144,7 @@ test('choice sections migrate last to the shared sm column recipe', () => {
   assert.doesNotMatch(css, /\.ds-choice-section\s*{[^}]*(?:gap|padding):/);
 });
 
-test('mobile shell owns the top safe area while the secondary bottom bar owns the bottom', () => {
+test('mobile shell owns the top safe area while the primary bottom bar owns the bottom', () => {
   const shellCss = read('src/wc/components/ShellApp/ShellApp.css');
   const mobileBarCss = read('src/wc/components/MobileBarNav/MobileBarNav.css');
 
@@ -158,6 +158,6 @@ test('mobile shell owns the top safe area while the secondary bottom bar owns th
   );
   assert.match(
     mobileBarCss,
-    /\.mobile-bar-nav\s*{[\s\S]*?padding-block-end: max\(var\(--ds-chrome-padding\), env\(safe-area-inset-bottom\)\);[\s\S]*?background: var\(--color-background-secondary\);/,
+    /\.mobile-bar-nav\s*{[\s\S]*?padding-block-end: max\(var\(--ds-chrome-padding\), env\(safe-area-inset-bottom\)\);[\s\S]*?background: var\(--color-background-primary\);/,
   );
 });
