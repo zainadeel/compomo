@@ -235,6 +235,21 @@ test.describe('Responsive mobile shell foundation', () => {
       'false'
     );
     await expect(page.getByRole('button', { name: 'Search' })).toBeFocused();
+
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.getByRole('button', { name: 'Help & Support' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-selected-area', 'help');
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'help');
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('open');
+    await expect(page.getByRole('button', { name: 'Help & Support' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    await expect(page.getByText('Help view', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
   });
 
   test('uses one icon-only sheet header lane and large-density destination rows',
@@ -478,31 +493,6 @@ test.describe('Responsive mobile shell foundation', () => {
         name: 'Change Workforce page. Current section: People',
       })
     ).toBeVisible();
-  });
-
-  test('keeps Help on the persistent tool owner across mobile and wider breakpoints', async ({
-    page,
-  }) => {
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await page.getByRole('button', { name: 'Help & Support' }).click();
-    await expect(page.locator('html')).toHaveAttribute('data-selected-area', 'help');
-    await expect(page.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'help');
-    await expect(page.locator('ds-shell-tools')).toHaveAttribute('open');
-    await expect(page.getByRole('button', { name: 'Help & Support' })).toHaveAttribute(
-      'aria-current',
-      'page'
-    );
-    await expect(page.getByText('Help view', { exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute(
-      'aria-expanded',
-      'false'
-    );
-
-    await page.setViewportSize({ width: 1200, height: 760 });
-    await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'desktop');
-    await expect(page.locator('ds-panel-tools')).toHaveAttribute('active-tool', 'help');
-    await expect(page.locator('ds-panel-tools')).toHaveAttribute('open');
-    await expect(page.getByText('Help view', { exact: true })).toBeVisible();
   });
 
   test('preserves a slotted tool owner and form value across destination and breakpoint changes', async ({

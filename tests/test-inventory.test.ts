@@ -39,13 +39,26 @@ describe('test ownership inventory', () => {
     assert.ok(reviewed.some(testCase => testCase.decision === 'chromium-only'));
   });
 
-  it('records retired fixture Axe cases and their Storybook replacements', async () => {
+  it('records retired rendered cases and their authoritative replacements', async () => {
     const inventory = await buildTestInventory(repositoryRoot);
 
-    assert.equal(inventory.retiredRenderedCases.length, 10);
-    assert.equal(inventory.summary.retiredRenderedCases, 10);
+    assert.equal(
+      inventory.summary.retiredRenderedCases,
+      inventory.retiredRenderedCases.length
+    );
+    assert.equal(inventory.summary.retiredRenderedAxeCases, 10);
     assert.equal(inventory.summary.activeRenderedAxeCases, 11);
-    assert.equal(inventory.summary.byDecision['remove-redundant'], 10);
+    assert.equal(
+      inventory.summary.byDecision['remove-redundant'],
+      inventory.retiredRenderedCases.length
+    );
+    assert.ok(
+      inventory.retiredRenderedCases.some(
+        testCase =>
+          testCase.owner === 'responsive-shell' &&
+          testCase.replacements?.length === 2
+      )
+    );
     assert.ok(
       inventory.tests
         .filter(testCase => testCase.accessibilityAudit)
@@ -53,6 +66,26 @@ describe('test ownership inventory', () => {
           testCase =>
             testCase.owner === 'accessibility' && testCase.decision === 'chromium-only'
         )
+    );
+  });
+
+  it('rejects a retired rendered case whose replacement is no longer active', async () => {
+    const inventory = structuredClone(await buildTestInventory(repositoryRoot));
+    const shellRetirement = inventory.retiredRenderedCases.find(
+      testCase => testCase.owner === 'responsive-shell'
+    );
+    assert.ok(shellRetirement);
+    shellRetirement.replacements = [
+      {
+        file: 'tests/e2e/shell-mobile.spec.ts',
+        title: 'missing replacement',
+      },
+    ];
+
+    assert.ok(
+      validateTestInventory(inventory, policy).some(error =>
+        error.includes('references missing rendered coverage')
+      )
     );
   });
 });

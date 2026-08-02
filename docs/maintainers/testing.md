@@ -53,6 +53,11 @@ the interaction that establishes the state remains cross-browser in its own
 test. Retired fixture scans and their Storybook replacements are recorded in the
 inventory policy so deletion retains an explicit ownership trail.
 
+Record any other merged or removed rendered case in the same policy with its
+owner, rationale, and `replacements` list. Inventory validation requires every
+listed rendered replacement to remain active, preventing a consolidation from
+silently deleting the last owner of a behavior.
+
 Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.
