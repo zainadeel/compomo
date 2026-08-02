@@ -1,12 +1,15 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/selects.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('defaults both select triggers to hug width and supports explicit fill', async ({ page }) => {
+test('defaults both select triggers to hug width and supports explicit fill',
+  chromiumOnly('layout-geometry', 'Explicit width props map to deterministic trigger geometry.'),
+  async ({ page }) => {
   for (const selector of ['#single', '#multi']) {
     const select = page.locator(selector);
     await expect
@@ -38,7 +41,9 @@ test('defaults both select triggers to hug width and supports explicit fill', as
   }
 });
 
-test('keeps hasBorder=false borderless when selected, focused, and invalid', async ({ page }) => {
+test('keeps hasBorder=false borderless when selected, focused, and invalid',
+  chromiumOnly('controlled-behavior', 'The borderless override is a deterministic visual-state contract.'),
+  async ({ page }) => {
   const select = page.locator('#borderless-error');
   const trigger = select.getByRole('combobox');
 
@@ -229,7 +234,9 @@ test('keeps loading and empty listboxes structurally valid and announced as unav
   await expect(emptyOption).toHaveAttribute('aria-selected', 'false');
 });
 
-test('falls back to one text-only option layout when icon data is mixed', async ({ page }) => {
+test('falls back to one text-only option layout when icon data is mixed',
+  chromiumOnly('controlled-behavior', 'Mixed option data maps deterministically to one component-owned layout.'),
+  async ({ page }) => {
   const select = page.locator('#single');
   await select.evaluate((element: HTMLDsSelectElement) => {
     element.options = [
@@ -378,7 +385,9 @@ test('filters locally by subtext and preserves group semantics', async ({ page }
   await expect(options.first()).toContainText('Cherry');
 });
 
-test('shares a rounded sm search clear button across single and multi selects', async ({
+test('shares a rounded sm search clear button across single and multi selects',
+  chromiumOnly('layout-geometry', 'The shared clear-button recipe is token-backed static geometry.'),
+  async ({
   page,
 }) => {
   for (const selector of ['#searchable', '#multi-search']) {
@@ -432,7 +441,9 @@ test('shares a rounded sm search clear button across single and multi selects', 
   }
 });
 
-test('uses body-only Empty State for empty single and multi search results', async ({ page }) => {
+test('uses body-only Empty State for empty single and multi search results',
+  chromiumOnly('controlled-behavior', 'Empty-result composition is deterministic after search filtering completes.'),
+  async ({ page }) => {
   for (const selector of ['#searchable', '#multi-search']) {
     const select = page.locator(selector);
     await select.getByRole('combobox').click();
@@ -448,7 +459,9 @@ test('uses body-only Empty State for empty single and multi search results', asy
   }
 });
 
-test('shows busy state in the trigger and popup', async ({ page }) => {
+test('shows busy state in the trigger and popup',
+  chromiumOnly('controlled-behavior', 'Busy-state composition follows explicit controlled props.'),
+  async ({ page }) => {
   const select = page.locator('#loading');
   const trigger = select.getByRole('combobox');
 
@@ -476,7 +489,9 @@ test('shows busy state in the trigger and popup', async ({ page }) => {
   );
 });
 
-test('uses a thicker inset stroke for error without changing control geometry', async ({
+test('uses a thicker inset stroke for error without changing control geometry',
+  chromiumOnly('layout-geometry', 'Error stroke and unchanged bounds are local token-backed geometry.'),
+  async ({
   page,
 }) => {
   for (const selector of ['#single', '#multi']) {
@@ -642,7 +657,9 @@ test('submits repeated multi values, validates required controls, and resets', a
     .toEqual([]);
 });
 
-test('keeps prefix icons and chevrons secondary across selected surface contexts', async ({
+test('keeps prefix icons and chevrons secondary across selected surface contexts',
+  chromiumOnly('layout-geometry', 'Foreground token mapping is deterministic across explicit contexts.'),
+  async ({
   page,
 }) => {
   const cases = [
@@ -718,7 +735,9 @@ test('keeps prefix icons and chevrons secondary across selected surface contexts
   }
 });
 
-test('has no detectable accessibility violations', async ({ page }) => {
+test('has no detectable accessibility violations',
+  chromiumOnly('accessibility', 'Storybook owns documented select states; this fixture retains one integrated Chromium Axe check.'),
+  async ({ page }) => {
   await page.locator('#multi-search').getByRole('combobox').click();
   await expect(page.locator('#multi-search').getByRole('listbox')).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();

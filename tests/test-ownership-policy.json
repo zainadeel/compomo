@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "renderedBrowserExecutions": 987
+  },
+  "defaults": {
+    "unit": {
+      "owner": "unit-contract",
+      "risk": "deterministic-logic",
+      "decision": "keep",
+      "browsers": [],
+      "reason": "Pure logic and source contracts are authoritative in the Node suite."
+    },
+    "rendered": {
+      "owner": "rendered-behavior",
+      "risk": "browser-sensitive-unreviewed",
+      "decision": "keep-cross-browser-pending-audit",
+      "browsers": ["chromium", "firefox", "webkit"],
+      "reason": "Unreviewed rendered coverage remains cross-browser by default."
+    },
+    "storybook": {
+      "owner": "storybook-accessibility",
+      "risk": "semantic-accessibility",
+      "decision": "keep",
+      "browsers": ["chromium"],
+      "reason": "Storybook accessibility is authoritative for documented component states."
+    }
+  },
+  "auditedRenderedSuites": {
+    "tests/e2e/bar-title.spec.ts": {
+      "owner": "layout-geometry",
+      "risk": "layout-and-header-interaction",
+      "authoritativeBehaviors": [
+        "page-header presentation and capacity",
+        "breadcrumb truncation and compact transition",
+        "header actions, section control, and sticky snap behavior"
+      ],
+      "reason": "BarTitle keeps cross-browser coverage for measurement, focus, scrolling, overlay, and truncation behavior; static recipes may opt into Chromium."
+    },
+    "tests/e2e/forms.spec.ts": {
+      "owner": "forms",
+      "risk": "native-form-and-input-behavior",
+      "authoritativeBehaviors": [
+        "cross-control native form association",
+        "keyboard, pointer, focus, and reset behavior",
+        "shared form-control density integration"
+      ],
+      "reason": "Forms keep cross-browser coverage for association, keyboard, pointer, focus, and native control behavior; token-backed recipes may opt into Chromium."
+    },
+    "tests/e2e/selects.spec.ts": {
+      "owner": "interaction",
+      "risk": "popup-focus-and-form-behavior",
+      "authoritativeBehaviors": [
+        "single and multi-select popup lifecycle",
+        "choice traversal, filtering, and active descendant behavior",
+        "select-specific form submission and reset"
+      ],
+      "reason": "Selects keep cross-browser coverage for popup positioning, focus, keyboard, scrolling, and form behavior; static recipes may opt into Chromium."
+    },
+    "tests/e2e/shell-app-chrome.spec.ts": {
+      "owner": "responsive-shell",
+      "risk": "responsive-layout-focus-and-motion",
+      "authoritativeBehaviors": [
+        "desktop and tablet PanelNav geometry",
+        "PanelTools drawer and fullscreen lifecycle",
+        "shell scrolling, focus entry, persistence, and chrome motion"
+      ],
+      "reason": "Shell chrome keeps cross-browser coverage for responsive measurement, focus, scrolling, persistence, and animation lifecycle; static chrome recipes may opt into Chromium."
+    },
+    "tests/e2e/shell-mobile.spec.ts": {
+      "owner": "responsive-shell",
+      "risk": "responsive-layout-and-owner-identity",
+      "authoritativeBehaviors": [
+        "mobile destination and sheet navigation",
+        "direct-touch shell interaction",
+        "application-owned tool identity across responsive handoff"
+      ],
+      "reason": "Mobile shell keeps cross-browser coverage for direct touch, responsive handoff, persistent owner identity, and presentation transitions; static chrome recipes may opt into Chromium."
+    },
+    "tests/e2e/shell-managed.spec.ts": {
+      "owner": "responsive-shell",
+      "risk": "managed-composition-and-owner-identity",
+      "authoritativeBehaviors": [
+        "managed configuration wiring",
+        "managed navigation intent",
+        "managed page and tool identity across presentations"
+      ],
+      "reason": "Managed ShellApp owns configuration wiring and application-owned node identity; it does not repeat the detailed desktop or mobile chrome geometry owned by the adjacent shell suites."
+    }
+  }
+}
