@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.6.1](https://github.com/zainadeel/compomo/compare/v13.6.0...v13.6.1) (2026-08-02)
+
+
+### Fixed
+
+* balance banner and mobile shell surfaces ([#417](https://github.com/zainadeel/compomo/issues/417)) ([6749b7b](https://github.com/zainadeel/compomo/commit/6749b7b8421f43d5b4e93203e13b302ba070c49a))
+
 ## [13.6.0](https://github.com/zainadeel/compomo/compare/v13.5.0...v13.6.0) (2026-08-01)
 
 
