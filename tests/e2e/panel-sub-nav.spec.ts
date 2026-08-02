@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/panel-sub-nav.html');
@@ -159,9 +158,4 @@ test('uses surface-aware interaction fills and foregrounds', async ({ page }) =>
       getComputedStyle(element, '::before').backgroundColor
     ))).toBe(await resolveColor(surface.active));
   }
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

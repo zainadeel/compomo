@@ -1,5 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
+
+const focusedFixtureAxe = chromiumOnly(
+  'accessibility',
+  'Axe audits the integrated focused-control matrix in Chromium; focus and elevation behavior retain dedicated coverage.',
+);
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/control-elevation.html');
@@ -245,9 +251,7 @@ test('keeps wrapped borderless Input free of resting, focused, and error strokes
   await expect(page.locator('#input-error input')).toHaveAttribute('aria-invalid', 'true');
 });
 
-test('keeps the focused fixture free of serious accessibility violations', async ({
-  page,
-}) => {
+test('keeps the focused fixture free of serious accessibility violations', focusedFixtureAxe, async ({ page }) => {
   const results = await new AxeBuilder({ page }).include('main').analyze();
   const blocking = results.violations.filter(finding =>
     ['critical', 'serious'].includes(finding.impact ?? ''),

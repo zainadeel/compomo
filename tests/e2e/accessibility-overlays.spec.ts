@@ -1,5 +1,15 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
+
+const openPopupAxe = chromiumOnly(
+  'accessibility',
+  'Axe audits the integrated open popup in Chromium; popup focus and keyboard behavior remain cross-browser.',
+);
+const openModalAxe = chromiumOnly(
+  'accessibility',
+  'Axe audits the integrated open modal in Chromium; top-layer, focus, and dismissal behavior remain cross-browser elsewhere.',
+);
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/accessibility-overlays.html');
@@ -56,7 +66,7 @@ test('menu flips above a bottom-edge trigger instead of overlapping the viewport
   expect(menuBox!.y + menuBox!.height).toBeLessThanOrEqual(anchorBox!.y);
 });
 
-test('rich preference popup exposes dialog and radio-group semantics without stealing arrow keys', async ({ page }) => {
+test('rich preference popup exposes dialog and radio-group semantics without stealing arrow keys', openPopupAxe, async ({ page }) => {
   await page.locator('#rich-anchor').click();
   const popup = page.getByRole('dialog', { name: 'Appearance' });
   await expect(popup).toBeVisible();
@@ -88,7 +98,7 @@ test('rich preference popup exposes dialog and radio-group semantics without ste
   expect(results.violations).toEqual([]);
 });
 
-test('modal uses the top layer, reports dismissal reasons, and restores its trigger', async ({ page }) => {
+test('modal uses the top layer, reports dismissal reasons, and restores its trigger', openModalAxe, async ({ page }) => {
   const trigger = page.locator('#modal-trigger');
   await trigger.focus();
   await trigger.press('Enter');

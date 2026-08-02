@@ -1,5 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
+
+const liveToastAxe = chromiumOnly(
+  'accessibility',
+  'Axe audits the integrated live Toast state in Chromium; manager, focus, and announcement behavior retain dedicated coverage.',
+);
 
 type ToastTestWindow = typeof window & {
   __addToast: (options: Record<string, unknown>) => string;
@@ -449,7 +455,7 @@ test('routes F6 to an eligible custom-manager region', async ({ page }) => {
   await expect(page.locator('#secondary-toast .toast-region')).toBeFocused();
 });
 
-test('has no automatically detectable accessibility violations', async ({ page }) => {
+test('has no automatically detectable accessibility violations', liveToastAxe, async ({ page }) => {
   await page.evaluate(() => {
     (window as ToastTestWindow).__addToast({
       id: 'accessible',

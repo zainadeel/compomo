@@ -87,5 +87,87 @@
       ],
       "reason": "Managed ShellApp owns configuration wiring and application-owned node identity; it does not repeat the detailed desktop or mobile chrome geometry owned by the adjacent shell suites."
     }
-  }
+  },
+  "retiredRenderedCases": [
+    {
+      "file": "tests/e2e/card-setting.spec.ts",
+      "title": "has no automatically detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/CardSetting/CardSetting.stories.ts",
+      "reason": "Four documented CardSetting compositions run through the shared Storybook accessibility audit in light and dark themes."
+    },
+    {
+      "file": "tests/e2e/chip.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Chip/Chip.stories.ts",
+      "reason": "Five documented Chip state, size, radius, and inactive compositions run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/divider.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Divider/Divider.stories.ts",
+      "reason": "Eight documented Divider visual and semantic compositions run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/empty-state.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/EmptyState/EmptyState.stories.ts",
+      "reason": "All four supported EmptyState content anatomies run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/icon.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Icon/Icon.stories.ts",
+      "reason": "Seven documented Icon compositions, including the dedicated accessibility story, run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/loader.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Loader/Loader.stories.ts",
+      "reason": "Four documented Loader states, including the labeled status composition, run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/panel-sub-nav.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/PanelSubNav/PanelSubNav.stories.ts",
+      "reason": "PanelSubNav default, surface, and inactive-item compositions run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/skeleton.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Skeleton/Skeleton.stories.ts",
+      "reason": "Nine documented Skeleton anatomies and states run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/tag.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Tag/Tag.stories.ts",
+      "reason": "Six documented Tag compositions, including the interactive menu trigger, run through the shared Storybook accessibility audit."
+    },
+    {
+      "file": "tests/e2e/text.spec.ts",
+      "title": "has no detectable accessibility violations",
+      "owner": "storybook-accessibility",
+      "decision": "remove-redundant",
+      "replacementFile": "src/wc/components/Text/Text.stories.ts",
+      "reason": "Nine documented Text typography and semantic compositions run through the shared Storybook accessibility audit."
+    }
+  ]
 }

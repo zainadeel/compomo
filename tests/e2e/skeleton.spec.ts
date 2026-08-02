@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -69,9 +68,4 @@ test('supports static mode and removes shimmer motion under reduced motion', asy
   await expect.poll(() => page.locator('#text .skeleton__shape').evaluate(element => (
     getComputedStyle(element, '::after').display
   ))).toBe('none');
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

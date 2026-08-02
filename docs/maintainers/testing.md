@@ -45,6 +45,14 @@ audited suite boundaries, and the pre-audit browser-execution baseline. CI
 rejects missing ownership metadata or an audited policy that does not reduce
 the baseline.
 
+Storybook owns generic component Axe coverage across documented light and dark
+states. Keep a fixture Axe scan only when it covers an integrated, open, focused,
+loading, live-region, or semantic-document state that the component stories do
+not reproduce. Retained fixture scans use `chromiumOnly('accessibility', reason)`;
+the interaction that establishes the state remains cross-browser in its own
+test. Retired fixture scans and their Storybook replacements are recorded in the
+inventory policy so deletion retains an explicit ownership trail.
+
 Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.

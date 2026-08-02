@@ -38,4 +38,21 @@ describe('test ownership inventory', () => {
     assert.ok(reviewed.some(testCase => testCase.decision === 'keep-cross-browser'));
     assert.ok(reviewed.some(testCase => testCase.decision === 'chromium-only'));
   });
+
+  it('records retired fixture Axe cases and their Storybook replacements', async () => {
+    const inventory = await buildTestInventory(repositoryRoot);
+
+    assert.equal(inventory.retiredRenderedCases.length, 10);
+    assert.equal(inventory.summary.retiredRenderedCases, 10);
+    assert.equal(inventory.summary.activeRenderedAxeCases, 11);
+    assert.equal(inventory.summary.byDecision['remove-redundant'], 10);
+    assert.ok(
+      inventory.tests
+        .filter(testCase => testCase.accessibilityAudit)
+        .every(
+          testCase =>
+            testCase.owner === 'accessibility' && testCase.decision === 'chromium-only'
+        )
+    );
+  });
 });

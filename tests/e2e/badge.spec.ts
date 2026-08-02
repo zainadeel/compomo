@@ -1,5 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
+
+const integratedAxe = chromiumOnly(
+  'accessibility',
+  'The integrated Badge semantic scan and static non-interactive recipe are engine-neutral.',
+);
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/badge.html');
@@ -63,7 +69,7 @@ test('omits the separation ring in reserved safe-area placements', async ({ page
   ))).toBe('0');
 });
 
-test('remains non-interactive and has no detectable accessibility violations', async ({ page }) => {
+test('remains non-interactive and has no detectable accessibility violations', integratedAxe, async ({ page }) => {
   await expect(page.locator('#counter')).toHaveCSS('pointer-events', 'none');
   await expect(page.locator('ds-badge button')).toHaveCount(0);
 

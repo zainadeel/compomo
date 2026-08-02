@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -48,9 +47,4 @@ test('truncates one line only when constrained by maxWidth', async ({ page }) =>
   expect(await label.locator('span').evaluate(
     element => element.scrollWidth > element.clientWidth,
   )).toBe(true);
-});
-
-test('has no detectable accessibility violations', async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
 });

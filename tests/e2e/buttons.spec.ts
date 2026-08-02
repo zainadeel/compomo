@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { chromiumOnly } from './browser-tier';
+
+const loadingAxe = chromiumOnly(
+  'accessibility',
+  'Axe audits the integrated loading-state matrix in Chromium; loading semantics retain dedicated rendered coverage.',
+);
 
 const BUTTON_IDS = [
   'filled-label',
@@ -531,7 +537,7 @@ test('requires an explicit accessible name for icon-only buttons', async ({ page
   }
 });
 
-test('has no detectable accessibility violations while loading', async ({ page }) => {
+test('has no detectable accessibility violations while loading', loadingAxe, async ({ page }) => {
   await page.evaluate(ids => {
     for (const id of ids) {
       (document.getElementById(id) as HTMLElement & { isLoading: boolean }).isLoading = true;

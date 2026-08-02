@@ -10,6 +10,7 @@ export interface TestInventoryCase {
   browsers: string[];
   reason: string;
   audited: boolean;
+  accessibilityAudit?: boolean;
 }
 
 export interface TestInventory {
@@ -18,9 +19,19 @@ export interface TestInventory {
     byLayer: Record<string, number>;
     byDecision: Record<string, number>;
     renderedBrowserExecutions: number;
+    retiredRenderedCases: number;
+    activeRenderedAxeCases: number;
     baselineRenderedBrowserExecutions: number;
   };
   tests: TestInventoryCase[];
+  retiredRenderedCases: Array<{
+    file: string;
+    title: string;
+    owner: string;
+    decision: string;
+    replacementFile: string;
+    reason: string;
+  }>;
 }
 
 export function buildTestInventory(repositoryRoot?: string): Promise<TestInventory>;

@@ -1,5 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
+
+const reducedMotionAxe = chromiumOnly(
+  'accessibility',
+  'This integrated reduced-motion fixture scan is authoritative in Chromium; announcement and motion behavior retain dedicated coverage.',
+);
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/banner.html');
@@ -376,7 +382,7 @@ test('preserves a real boundary in forced colors', async ({ page, browserName })
     .toBeGreaterThan(0);
 });
 
-test('has no detectable accessibility violations', async ({ page }) => {
+test('has no detectable accessibility violations', reducedMotionAxe, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
