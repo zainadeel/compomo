@@ -109,6 +109,10 @@
   flex-wrap: nowrap;
 }
 
+:host(.banner--orientation-vertical:not(.banner--has-actions)) .banner-trailing {
+  display: contents;
+}
+
 :host(.banner--orientation-vertical.banner--has-actions) .banner-trailing {
   margin-inline: var(--dimension-space-100) auto;
   padding-block-end: var(--dimension-space-100);

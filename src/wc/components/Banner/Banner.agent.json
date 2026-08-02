@@ -51,7 +51,7 @@
     "Banner has a real bottom boundary, no radius, no elevation, no icon, no timeout, and no internal queue."
   ],
   "responsiveBehavior": [
-    "Applications select orientation explicitly. Horizontal keeps copy and actions in one row, with actions top-aligned to dismissal. Vertical puts actions below copy on the 16px text boundary and keeps controls 16px above the bottom boundary.",
+    "Applications select orientation explicitly. Horizontal keeps copy and actions in one row, with actions top-aligned to dismissal. Vertical puts actions below copy on the 16px text boundary and keeps controls 16px above the bottom boundary; without actions it reserves no trailing row and keeps the copy visually balanced between the top and bottom edges.",
     "When placed in ShellApp's banner slot, the banner spans the complete application above navigation, workspace, and tools.",
     "ShellApp reserves the mobile top safe area once above the banner and keeps the banner visible while mobile tools or navigation surfaces replace the routed stage."
   ],

@@ -88,8 +88,8 @@ test.describe('Responsive mobile shell foundation', () => {
       const primaryForeground = getComputedStyle(colorProbe).color;
       colorProbe.style.color = 'var(--color-foreground-tertiary)';
       const tertiaryForeground = getComputedStyle(colorProbe).color;
-      colorProbe.style.backgroundColor = 'var(--color-background-secondary)';
-      const secondaryBackground = getComputedStyle(colorProbe).backgroundColor;
+      colorProbe.style.backgroundColor = 'var(--color-background-primary)';
+      const primaryBackground = getComputedStyle(colorProbe).backgroundColor;
       colorProbe.remove();
       const barRect = bar?.getBoundingClientRect();
       const groupRects = groups.map(group => group.getBoundingClientRect());
@@ -99,6 +99,7 @@ test.describe('Responsive mobile shell foundation', () => {
         barJustifyContent: bar ? getComputedStyle(bar).justifyContent : '',
         barPaddingInline: bar ? getComputedStyle(bar).paddingInline : '',
         barBackground: bar ? getComputedStyle(bar).backgroundColor : '',
+        hostBackground: getComputedStyle(element).backgroundColor,
         groupEdgeInsets:
           barRect && groupRects.length === 2
             ? [
@@ -124,14 +125,15 @@ test.describe('Responsive mobile shell foundation', () => {
         unselectedForeground: unselected ? getComputedStyle(unselected).color : '',
         primaryForeground,
         tertiaryForeground,
-        secondaryBackground,
+        primaryBackground,
       };
     });
 
     expect(metrics.barGap).toBe('8px');
     expect(metrics.barJustifyContent).toBe('space-between');
     expect(metrics.barPaddingInline).toBe('8px');
-    expect(metrics.barBackground).toBe(metrics.secondaryBackground);
+    expect(metrics.barBackground).toBe(metrics.primaryBackground);
+    expect(metrics.hostBackground).toBe(metrics.primaryBackground);
     expect(metrics.groupEdgeInsets).toEqual([8, 8]);
     expect(metrics.groupGaps).toEqual(['8px', '8px']);
     expect(metrics.itemSizes).toEqual(Array.from({ length: 5 }, () => [40, 40]));
