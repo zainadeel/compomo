@@ -90,6 +90,23 @@
   },
   "retiredRenderedCases": [
     {
+      "file": "tests/e2e/shell-mobile.spec.ts",
+      "title": "keeps Help on the persistent tool owner across mobile and wider breakpoints",
+      "owner": "responsive-shell",
+      "decision": "remove-redundant",
+      "replacements": [
+        {
+          "file": "tests/e2e/shell-mobile.spec.ts",
+          "title": "keeps the bar available over navigation and browsing contexts does not navigate"
+        },
+        {
+          "file": "tests/e2e/shell-mobile.spec.ts",
+          "title": "preserves a slotted tool owner and form value across destination and breakpoint changes"
+        }
+      ],
+      "reason": "The navigation-flow owner now covers Help activation from the mobile sheet, while the generic slotted-tool case owns element and state persistence across responsive handoff."
+    },
+    {
       "file": "tests/e2e/card-setting.spec.ts",
       "title": "has no automatically detectable accessibility violations",
       "owner": "storybook-accessibility",

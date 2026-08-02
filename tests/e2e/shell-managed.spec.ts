@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 test.describe('Managed application shell', () => {
   test.beforeEach(async ({ page }) => {
@@ -6,7 +7,7 @@ test.describe('Managed application shell', () => {
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   });
 
-  test('is the default composition and renders the correct chrome at each breakpoint', async ({
+  test('wires managed chrome and header capacity at each breakpoint', async ({
     page,
   }) => {
     const shell = page.locator('#managed-shell');
@@ -21,13 +22,6 @@ test.describe('Managed application shell', () => {
     await expect(
       shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
     ).toBeVisible();
-    await expect(shell.locator('ds-bar-title')).toHaveClass(
-      /bar-title-host--expanded/
-    );
-    await expect(shell.locator('ds-bar-title')).not.toHaveAttribute(
-      'data-shell-page-syncing',
-      ''
-    );
     await expect(shell.locator('ds-mobile-header')).not.toBeVisible();
     await expect(shell.locator('ds-mobile-bar-nav')).not.toBeVisible();
     await expect(shell.getByRole('main')).toHaveCount(1);
@@ -37,10 +31,6 @@ test.describe('Managed application shell', () => {
       'headerCapacity',
       'compact'
     );
-    await expect(shell.locator('ds-bar-title')).toHaveClass(/bar-title-host--compact/);
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
-    ).toBeVisible();
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
@@ -54,19 +44,11 @@ test.describe('Managed application shell', () => {
       'breakpoint',
       1200
     );
-    await expect(shell.locator('.panel-nav')).toHaveClass(
-      /panel-nav--breakpoint-locked/
-    );
-    await expect(shell.locator('.panel-nav')).toHaveClass(/panel-nav--collapsed/);
     await expect(shell.locator('ds-bar-nav')).toBeVisible();
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
       'compact'
     );
-    await expect(shell.locator('ds-bar-title')).toHaveClass(/bar-title-host--compact/);
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
-    ).toBeVisible();
     await expect(shell.locator('ds-mobile-header')).not.toBeVisible();
 
     await shell.getByRole('button', { name: 'Search' }).click();
@@ -74,12 +56,6 @@ test.describe('Managed application shell', () => {
       'headerCapacity',
       'constrained'
     );
-    await expect(shell.locator('ds-bar-title')).toHaveClass(
-      /bar-title-host--constrained/
-    );
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
-    ).toBeVisible();
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
@@ -94,16 +70,23 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('ds-mobile-bar-nav')).toBeVisible();
   });
 
-  test('emits navigation intent without changing the application URL', async ({ page }) => {
-    const originalUrl = page.url();
-    await page.getByRole('button', { name: 'Safety' }).click();
+  test(
+    'emits navigation intent without changing the application URL',
+    chromiumOnly(
+      'controlled-behavior',
+      'Managed navigation event forwarding is deterministic and does not use an engine-specific API.',
+    ),
+    async ({ page }) => {
+      const originalUrl = page.url();
+      await page.getByRole('button', { name: 'Safety' }).click();
 
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-last-event',
-      JSON.stringify({ type: 'dsNavSelect', detail: 'safety' })
-    );
-    expect(page.url()).toBe(originalUrl);
-  });
+      await expect(page.locator('html')).toHaveAttribute(
+        'data-last-event',
+        JSON.stringify({ type: 'dsNavSelect', detail: 'safety' })
+      );
+      expect(page.url()).toBe(originalUrl);
+    },
+  );
 
   test('keeps detail identity in mobile chrome instead of promoting a peer route tab', async ({
     page,

@@ -215,6 +215,9 @@ export function summarizeTestInventory(cases, policy) {
       0
     ),
     retiredRenderedCases: policy.retiredRenderedCases?.length ?? 0,
+    retiredRenderedAxeCases: (policy.retiredRenderedCases ?? []).filter(
+      testCase => testCase.owner === 'storybook-accessibility'
+    ).length,
     activeRenderedAxeCases: rendered.filter(testCase => testCase.accessibilityAudit).length,
     baselineRenderedBrowserExecutions: policy.baseline.renderedBrowserExecutions,
   };
@@ -276,14 +279,27 @@ export function validateTestInventory(inventory, policy) {
     const key = `${retiredCase.file}:${retiredCase.title}`;
     if (retiredKeys.has(key)) errors.push(`${key} is listed as retired more than once.`);
     retiredKeys.add(key);
-    if (retiredCase.owner !== 'storybook-accessibility') {
-      errors.push(`${key} must transfer ownership to Storybook accessibility.`);
-    }
+    if (!allowedOwners.has(retiredCase.owner)) errors.push(`${key} has unknown ownership.`);
     if (retiredCase.decision !== 'remove-redundant') {
       errors.push(`${key} must use the remove-redundant decision.`);
     }
     if (!retiredCase.reason?.trim()) errors.push(`${key} is missing a retirement reason.`);
-    if (!storyFiles.has(retiredCase.replacementFile)) {
+    if (retiredCase.replacements?.length) {
+      for (const replacement of retiredCase.replacements) {
+        const activeReplacement = inventory.tests.some(
+          testCase =>
+            testCase.layer === 'rendered' &&
+            testCase.file === replacement.file &&
+            (testCase.title === replacement.title ||
+              testCase.title.endsWith(` › ${replacement.title}`))
+        );
+        if (!activeReplacement) {
+          errors.push(
+            `${key} references missing rendered coverage ${replacement.file}:${replacement.title}.`
+          );
+        }
+      }
+    } else if (!storyFiles.has(retiredCase.replacementFile)) {
       errors.push(`${key} references missing Storybook coverage ${retiredCase.replacementFile}.`);
     }
     if (
@@ -291,7 +307,8 @@ export function validateTestInventory(inventory, policy) {
         testCase =>
           testCase.layer === 'rendered' &&
           testCase.file === retiredCase.file &&
-          testCase.title === retiredCase.title
+          (testCase.title === retiredCase.title ||
+            testCase.title.endsWith(` › ${retiredCase.title}`))
       )
     ) {
       errors.push(`${key} is still active after being classified as retired.`);
@@ -361,8 +378,9 @@ async function run() {
     process.stdout.write(
       `Test inventory: ${summary.byLayer.unit} unit, ${summary.byLayer.rendered} rendered, ` +
         `${summary.byLayer.storybook} Storybook; ${summary.renderedBrowserExecutions} rendered ` +
-        `browser executions, ${summary.activeRenderedAxeCases} active and ` +
-        `${summary.retiredRenderedCases} retired rendered Axe cases ` +
+        `browser executions, ${summary.activeRenderedAxeCases} active rendered Axe cases, ` +
+        `${summary.retiredRenderedCases} retired rendered cases ` +
+        `(${summary.retiredRenderedAxeCases} Axe) ` +
         `(baseline ${summary.baselineRenderedBrowserExecutions}).\n`
     );
   }
