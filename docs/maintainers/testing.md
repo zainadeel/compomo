@@ -57,5 +57,13 @@ Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.
 
+Use `tests/e2e/rendered-geometry.ts` for measured layout contracts. Its default
+half-pixel tolerance covers ordinary CSS subpixel rounding without accepting a
+whole-pixel regression. The larger composited-edge ceiling is only for adjacent
+moving layers and remains strict enough to reject a visible gap. Use definite
+bounds and hit-target checks when a rendered test depends on fixture-owned
+viewport dimensions or pointer geometry, so an invalid fixture fails as setup
+rather than masquerading as a component regression.
+
 Do not report a suite as passing unless it ran to completion. Record existing
 warnings separately from failures.

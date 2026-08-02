@@ -1,6 +1,14 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
+import {
+  COMPOSITED_EDGE_CEILING_PX,
+  expectDefiniteBounds,
+  expectGeometryBelow,
+  expectGeometryClose,
+  expectHitTarget,
+  SUBPIXEL_TOLERANCE_PX,
+} from './rendered-geometry';
 
 const reducedMotionAxe = chromiumOnly(
   'accessibility',
@@ -48,6 +56,31 @@ test('renders required description, optional heading, actions, and localized dis
   await expect(descriptionOnly.getByRole('button', { name: 'Dismiss banner' })).toBeVisible();
 });
 
+test(
+  'fixture provides a definite shell viewport and rendered interaction targets',
+  chromiumOnly(
+    'layout-geometry',
+    'This smoke check identifies fixture setup failures before component geometry is evaluated.',
+  ),
+  async ({ page }) => {
+    await expectDefiniteBounds(page.locator('#shell-owner'), {
+      label: 'Banner shell fixture viewport',
+      width: 900,
+      height: 600,
+    });
+    await expectHitTarget(page.locator('#controlled .banner-dismiss'), {
+      label: 'Banner dismiss control',
+      minimumWidth: 32,
+      minimumHeight: 32,
+    });
+    await expectHitTarget(page.locator('#retry button'), {
+      label: 'Banner action control',
+      minimumWidth: 32,
+      minimumHeight: 32,
+    });
+  },
+);
+
 test('flows wrapped description beneath its heading and top-aligns horizontal actions with dismiss', async ({ page }) => {
   const banner = page.locator('#inline-wrap');
   await expect(banner).toHaveAttribute('orientation', 'horizontal');
@@ -76,8 +109,12 @@ test('flows wrapped description beneath its heading and top-aligns horizontal ac
 
   expect(geometry.descriptionLineCount).toBeGreaterThan(1);
   expect(geometry.firstDescriptionStart).toBeGreaterThan(geometry.headingEnd);
-  expect(geometry.continuationStart).toBeCloseTo(geometry.textStart, 0);
-  expect(geometry.actionTop).toBeCloseTo(geometry.dismissTop, 0);
+  expectGeometryClose(
+    geometry.continuationStart,
+    geometry.textStart,
+    'Wrapped description continuation alignment',
+  );
+  expectGeometryClose(geometry.actionTop, geometry.dismissTop, 'Action and dismiss top alignment');
 });
 
 test('keeps announcement urgency independent from visual intent', async ({ page }) => {
@@ -263,10 +300,16 @@ test('keeps one moving clip boundary flush with the shell edge', async ({ page }
 
   expect(motion.hostOverflow).toBe('hidden');
   expect(motion.innerOverflow).toBe('visible');
-  // WebKit can expose adjacent composited rectangles up to two CSS pixels apart
-  // while a frame settles; a three-pixel ceiling still rejects a visible gap.
-  expect(motion.maximumEdgeDelta).toBeLessThan(3);
-  expect(motion.surfaceHeightRange).toBeLessThan(0.5);
+  expectGeometryBelow(
+    motion.maximumEdgeDelta,
+    COMPOSITED_EDGE_CEILING_PX,
+    'Banner and shell moving-edge separation',
+  );
+  expectGeometryBelow(
+    motion.surfaceHeightRange,
+    SUBPIXEL_TOLERANCE_PX,
+    'Banner surface height change during motion',
+  );
 });
 
 test('uses an explicit vertical orientation without horizontal overflow', async ({ page }) => {
@@ -309,15 +352,20 @@ test('uses an explicit vertical orientation without horizontal overflow', async 
       expectedInset,
     };
   });
-  expect(lanes.descriptionTop - lanes.headingBottom).toBeCloseTo(
+  expectGeometryClose(
+    lanes.descriptionTop - lanes.headingBottom,
     lanes.expectedInset / 2,
-    3,
+    'Vertical heading-description gap',
   );
   expect(lanes.trailingTop).toBeGreaterThan(lanes.copyTop);
-  expect(lanes.actionStart).toBeCloseTo(lanes.textStart, 0);
-  expect(lanes.actionBottomInset).toBeCloseTo(lanes.expectedInset * 2, 3);
-  expect(lanes.dismissTopInset).toBeCloseTo(lanes.expectedInset, 1);
-  expect(lanes.dismissEndInset).toBeCloseTo(lanes.expectedInset, 1);
+  expectGeometryClose(lanes.actionStart, lanes.textStart, 'Vertical action and copy alignment');
+  expectGeometryClose(
+    lanes.actionBottomInset,
+    lanes.expectedInset * 2,
+    'Vertical action bottom inset',
+  );
+  expectGeometryClose(lanes.dismissTopInset, lanes.expectedInset, 'Dismiss top inset');
+  expectGeometryClose(lanes.dismissEndInset, lanes.expectedInset, 'Dismiss end inset');
 });
 
 test('occupies one full shell row and preserves application-owned content identity', async ({ page }) => {
@@ -330,16 +378,22 @@ test('occupies one full shell row and preserves application-owned content identi
     row: document.querySelector('#shell .shell-app__row').getBoundingClientRect().toJSON(),
   }));
 
-  expect(geometry.banner.x).toBeCloseTo(geometry.shell.x, 0);
-  expect(geometry.banner.width).toBeCloseTo(geometry.shell.width, 0);
-  expect(geometry.row.y).toBeCloseTo(geometry.banner.y + geometry.banner.height, 0);
-  expect(geometry.row.y + geometry.row.height).toBeCloseTo(
-    geometry.shell.y + geometry.shell.height,
-    0,
+  expectGeometryClose(geometry.banner.x, geometry.shell.x, 'Banner and shell start edge');
+  expectGeometryClose(geometry.banner.width, geometry.shell.width, 'Banner and shell width');
+  expectGeometryClose(
+    geometry.row.y,
+    geometry.banner.y + geometry.banner.height,
+    'Shell row and banner boundary',
   );
-  expect(geometry.banner.height + geometry.row.height).toBeCloseTo(
+  expectGeometryClose(
+    geometry.row.y + geometry.row.height,
+    geometry.shell.y + geometry.shell.height,
+    'Shell row and shell bottom edge',
+  );
+  expectGeometryClose(
+    geometry.banner.height + geometry.row.height,
     geometry.shell.height,
-    0,
+    'Banner and shell row combined height',
   );
 
   const expandedOffset = geometry.row.y - geometry.shell.y;
