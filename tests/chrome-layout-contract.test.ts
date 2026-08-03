@@ -88,7 +88,7 @@ test('CardSetting pilots md row chrome while retaining explicit 48px ownership',
 
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {
   const migrations = [
-    ['src/wc/components/CardDataViz/CardDataViz.tsx', /card-data-viz__header ds-chrome-row ds-chrome-space--md/],
+    ['src/wc/components/CardChart/CardChart.tsx', /card-chart__header ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/MobileHeader/MobileHeader.tsx', /mobile-header__primary ds-chrome-grid ds-chrome-space--md/],

@@ -6,11 +6,11 @@
   "package": "@ds-mo/ui",
   "tag": "ds-chart-legend",
   "audience": "specialized",
-  "status": "experimental",
-  "summary": "Display-first chart legend with swatches, labels, optional values and percentages, explicit deep links, and highlight-only chart synchronization.",
+  "status": "stable",
+  "summary": "External chart legend with swatches, labels, optional values and percentages, and explicit deep links.",
   "useWhen": [
     "A chart needs the standard swatch, label, and optional numeric-detail legend.",
-    "Donut slices or line series need a continuously visible key beside or below the visualization.",
+    "Polar slices or Cartesian series need a continuously visible key beside or below the visualization.",
     "A category has an explicit deep-link destination and should render as an accessible link."
   ],
   "avoidWhen": [
@@ -25,25 +25,18 @@
       "reason": "Compose product-owned semantic markup from the same chart data rather than forcing it into this row recipe."
     },
     {
-      "when": "The donut belongs in the canonical dashboard card.",
-      "component": "component:ds-card-data-viz",
-      "reason": "The donut variant places the legend and handles bidirectional highlight synchronization."
-    },
-    {
-      "when": "A static line chart and series key belong in the canonical dashboard card.",
-      "component": "component:ds-card-data-viz",
-      "reason": "The line variant places the horizontal legend and disables decorative local hover highlighting."
+      "when": "A chart and static series key belong in the canonical dashboard card.",
+      "component": "component:ds-card-chart",
+      "reason": "The chart variant places the external legend and disables decorative local hover highlighting."
     }
   ],
   "commonlyComposedWith": [
-    "component:ds-chart-donut",
-    "component:ds-chart-bar",
-    "component:ds-chart-line",
-    "component:ds-card-data-viz"
+    "component:ds-chart",
+    "component:ds-card-chart"
   ],
   "accessibility": [
     "Rows remain non-interactive unless the item supplies an actual link destination.",
-    "Synced highlight changes opacity only and never moves focus or announces selection.",
+    "Optional highlight changes opacity only and never moves focus or announces selection.",
     "Keep full labels available when visible text truncates, and retain stable tabular numeric columns.",
     "Do not rely on swatch color alone; every entry requires a meaningful visible label."
   ],

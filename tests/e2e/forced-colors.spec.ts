@@ -289,12 +289,11 @@ test('preserves only literal data marks while chart chrome follows the OS palett
   page,
   browserName,
 }) => {
-  await openFixture(page, '/card-data-viz.html', browserName);
+  await openFixture(page, '/card-chart.html', browserName);
 
   for (const selector of [
-    '#donut-card .chart-donut__svg path',
-    '#line-card .chart-line__path',
-    '#bar-card .chart-bar__segment-shape',
+    '#donut-card .chart__mark',
+    '#chart-card .chart__mark',
     '#donut-card .chart-legend__swatch',
   ]) {
     await expect(page.locator(selector).first()).toHaveCSS(
@@ -305,7 +304,7 @@ test('preserves only literal data marks while chart chrome follows the OS palett
 
   expect(
     await page
-      .locator('#line-card .chart-line__axis-label')
+      .locator('#chart-card .chart__tick')
       .first()
       .evaluate(element => getComputedStyle(element).forcedColorAdjust)
   ).not.toBe('none');

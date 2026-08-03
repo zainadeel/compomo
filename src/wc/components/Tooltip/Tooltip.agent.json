@@ -31,8 +31,8 @@
     },
     {
       "when": "A chart needs a cursor- or data-point-positioned value callout.",
-      "component": "component:ds-tooltip-data-viz",
-      "reason": "TooltipDataViz accepts chart coordinates and is designed for data visualization hover feedback."
+      "component": "component:ds-tooltip-chart",
+      "reason": "TooltipChart accepts chart coordinates and is designed for data visualization hover feedback."
     }
   ],
   "commonlyComposedWith": [

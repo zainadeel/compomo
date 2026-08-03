@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-chart",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-chart",
+  "audience": "specialized",
+  "status": "stable",
+  "summary": "Responsive chart grammar for Cartesian, polar, heatmap, and distribution compositions with one keyed scene and centralized focus.",
+  "useWhen": [
+    "A product needs a responsive line, area, bar, scatter, pie, donut, gauge, radar, heatmap, histogram, density, or boxplot visualization.",
+    "Several mark layers must share scales and semantic interaction points."
+  ],
+  "avoidWhen": [
+    "The visualization needs maps, networks, brushing, zooming, selection, or Canvas."
+  ],
+  "alternatives": [],
+  "commonlyComposedWith": [
+    "component:ds-chart-legend",
+    "component:ds-card-chart",
+    "component:ds-tooltip-chart"
+  ],
+  "accessibility": [
+    "Provide the required label and an adjacent exact-value summary when exact values are essential.",
+    "The SVG is one tab stop; arrow keys, Home, End, and Escape control semantic focus.",
+    "Pointer and keyboard input resolve through the same interaction points and polite status output."
+  ],
+  "states": [
+    "Definition compilation is renderer-independent and regenerates when data, locale, width, or height changes.",
+    "Stable mark and datum keys preserve focus across responsive recompilation and reordered data.",
+    "Tooltip rows are chart-owned while legends remain external and static.",
+    "Polar center content defaults to its authored total and may opt into focused content."
+  ],
+  "responsiveBehavior": [
+    "The chart observes its container unless width is fixed and recompiles geometry at CSS pixel dimensions.",
+    "Height is product-owned through height, aspectRatio, or the 320px default.",
+    "Measured guide labels reserve margins and thin colliding ticks while retaining boundary ticks."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign definition as a JavaScript property and import D3 scale factories from granular D3 packages."
+    ],
+    "react": [
+      "Pass the typed definition object as a property; do not serialize it to an attribute."
+    ],
+    "angular": [
+      "Bind definition as a property so accessors and D3 factories remain intact."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Chart/Chart.stories.ts"
+    },
+    {
+      "label": "Chart guide",
+      "path": "src/docs/Charts.mdx"
+    }
+  ]
+}

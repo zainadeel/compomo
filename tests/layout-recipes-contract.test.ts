@@ -4,13 +4,21 @@ import test from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('one data-viz card owns every chart body anatomy', () => {
-  const css = read('src/wc/components/CardDataViz/CardDataViz.css');
-  const source = read('src/wc/components/CardDataViz/CardDataViz.tsx');
-  assert.match(source, /card-data-viz__layout/);
-  assert.match(source, /card-data-viz__chart/);
-  assert.match(source, /card-data-viz__legend/);
-  assert.match(css, /\.card-data-viz__chart--fill/);
+test('one chart card owns every chart body anatomy', () => {
+  const css = read('src/wc/components/CardChart/CardChart.css');
+  const source = read('src/wc/components/CardChart/CardChart.tsx');
+  assert.match(source, /card-chart__layout/);
+  assert.match(source, /card-chart__chart/);
+  assert.match(source, /card-chart__legend/);
+  assert.match(css, /\.card-chart__chart > \*/);
+  assert.doesNotMatch(source, /chart-donut|dsSliceHover/);
+});
+
+test('chart chrome lines use subordinate foreground roles', () => {
+  const css = read('src/wc/components/Chart/Chart.css');
+  assert.match(css, /\.chart__axis-line[\s\S]*?stroke: var\(--color-foreground-tertiary\)/);
+  assert.match(css, /\.chart__grid[\s\S]*?stroke: var\(--color-foreground-quaternary\)/);
+  assert.doesNotMatch(css, /\.chart__(?:axis-line|grid)[^{]*\{[^}]*foreground-primary/);
 });
 
 test('primary controls consume shared frame, icon, and label anatomy', () => {

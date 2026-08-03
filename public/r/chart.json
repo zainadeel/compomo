@@ -1,0 +1,257 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chart",
+  "title": "Chart",
+  "description": "Responsive chart grammar for Cartesian, polar, heatmap, and distribution compositions with one keyed scene and centralized focus.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart",
+    "source": "src/wc/components/Chart/Chart.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "stable",
+      "summary": "Responsive chart grammar for Cartesian, polar, heatmap, and distribution compositions with one keyed scene and centralized focus.",
+      "useWhen": [
+        "A product needs a responsive line, area, bar, scatter, pie, donut, gauge, radar, heatmap, histogram, density, or boxplot visualization.",
+        "Several mark layers must share scales and semantic interaction points."
+      ],
+      "avoidWhen": [
+        "The visualization needs maps, networks, brushing, zooming, selection, or Canvas."
+      ],
+      "alternatives": [],
+      "commonlyComposedWith": [
+        "component:ds-chart-legend",
+        "component:ds-card-chart",
+        "component:ds-tooltip-chart"
+      ],
+      "accessibility": [
+        "Provide the required label and an adjacent exact-value summary when exact values are essential.",
+        "The SVG is one tab stop; arrow keys, Home, End, and Escape control semantic focus.",
+        "Pointer and keyboard input resolve through the same interaction points and polite status output."
+      ],
+      "states": [
+        "Definition compilation is renderer-independent and regenerates when data, locale, width, or height changes.",
+        "Stable mark and datum keys preserve focus across responsive recompilation and reordered data.",
+        "Tooltip rows are chart-owned while legends remain external and static.",
+        "Polar center content defaults to its authored total and may opt into focused content."
+      ],
+      "responsiveBehavior": [
+        "The chart observes its container unless width is fixed and recompiles geometry at CSS pixel dimensions.",
+        "Height is product-owned through height, aspectRatio, or the 320px default.",
+        "Measured guide labels reserve margins and thin colliding ticks while retaining boundary ticks."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign definition as a JavaScript property and import D3 scale factories from granular D3 packages."
+        ],
+        "react": [
+          "Pass the typed definition object as a property; do not serialize it to an attribute."
+        ],
+        "angular": [
+          "Bind definition as a property so accessors and D3 factories remain intact."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Chart/Chart.stories.ts"
+        },
+        {
+          "label": "Chart guide",
+          "path": "src/docs/Charts.mdx"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "aspectRatio": {
+          "type": "number",
+          "resolvedType": "number | undefined",
+          "attribute": "aspect-ratio",
+          "required": false,
+          "mutable": false,
+          "description": "Derives height from the current width when height is not supplied."
+        },
+        "definition": {
+          "type": "ChartDefinition",
+          "resolvedType": "ChartDefinition<unknown>",
+          "required": true,
+          "mutable": false,
+          "description": "Typed chart definition. Set as a JavaScript property, not an HTML attribute."
+        },
+        "description": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "description",
+          "required": false,
+          "mutable": false,
+          "description": "Optional longer accessible description."
+        },
+        "height": {
+          "type": "number",
+          "resolvedType": "number | undefined",
+          "attribute": "height",
+          "required": false,
+          "mutable": false,
+          "description": "Product-owned surface height. Wins over aspectRatio."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false,
+          "description": "Required accessible name for the visualization."
+        },
+        "locale": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "locale",
+          "required": false,
+          "mutable": false,
+          "description": "Locale used by axes and default tooltip formatters."
+        },
+        "width": {
+          "type": "number",
+          "resolvedType": "number | undefined",
+          "attribute": "width",
+          "required": false,
+          "mutable": false,
+          "description": "Fixed surface width. Otherwise the chart observes its container."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChartFocusChange",
+          "detail": "ChartFocusChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Fires whenever pointer or keyboard focus resolves to semantic chart points."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "aspectRatio": {
+        "type": "number",
+        "resolvedType": "number | undefined",
+        "attribute": "aspect-ratio",
+        "required": false,
+        "mutable": false,
+        "description": "Derives height from the current width when height is not supplied."
+      },
+      "definition": {
+        "type": "ChartDefinition",
+        "resolvedType": "ChartDefinition<unknown>",
+        "required": true,
+        "mutable": false,
+        "description": "Typed chart definition. Set as a JavaScript property, not an HTML attribute."
+      },
+      "description": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "description",
+        "required": false,
+        "mutable": false,
+        "description": "Optional longer accessible description."
+      },
+      "height": {
+        "type": "number",
+        "resolvedType": "number | undefined",
+        "attribute": "height",
+        "required": false,
+        "mutable": false,
+        "description": "Product-owned surface height. Wins over aspectRatio."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false,
+        "description": "Required accessible name for the visualization."
+      },
+      "locale": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "locale",
+        "required": false,
+        "mutable": false,
+        "description": "Locale used by axes and default tooltip formatters."
+      },
+      "width": {
+        "type": "number",
+        "resolvedType": "number | undefined",
+        "attribute": "width",
+        "required": false,
+        "mutable": false,
+        "description": "Fixed surface width. Otherwise the chart observes its container."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChartFocusChange",
+        "detail": "ChartFocusChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Fires whenever pointer or keyboard focus resolves to semantic chart points."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-chart",
+      "react": "DsChart",
+      "angular": "DsChart"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-chart.js';",
+        "example": "<ds-chart></ds-chart>"
+      },
+      "react": {
+        "import": "import { DsChart } from '@ds-mo/ui/react';",
+        "example": "<DsChart />"
+      },
+      "angular": {
+        "import": "import { DsChart } from '@ds-mo/ui/angular/ds-chart';",
+        "example": "<ds-chart></ds-chart>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: definition.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^5.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "tooltip-chart"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Chart/Chart.css",
+      "content": "@import '../../utils/forced-colors.css';\n\n:host {\n  position: relative;\n  display: block;\n  width: var(--ds-chart-width, 100%);\n  max-width: 100%;\n  height: var(--ds-chart-height, 320px);\n  font-family: var(--typography-font-family);\n}\n\n.chart__surface {\n  display: block;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  outline: none;\n  touch-action: none;\n}\n\n.chart__surface:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-focus);\n  outline-offset: var(--dimension-space-025);\n}\n\n.chart__grid,\n.chart__axis-line,\n.chart__mark {\n  vector-effect: non-scaling-stroke;\n}\n\n.chart__grid {\n  stroke: var(--color-foreground-quaternary);\n  stroke-width: var(--dimension-stroke-width-012);\n}\n\n.chart__axis-line {\n  stroke: var(--color-foreground-tertiary);\n  stroke-width: var(--dimension-stroke-width-012);\n}\n\n.chart__tick,\n.chart__text-mark {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-medium);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart__axis-title {\n  fill: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xs);\n  font-weight: var(--typography-weight-semibold);\n  letter-spacing: var(--typography-letterspacing-positive);\n  text-transform: uppercase;\n}\n\n.chart__center-value {\n  fill: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-xl);\n  font-weight: var(--typography-weight-semibold);\n  letter-spacing: var(--typography-letterspacing-negative-double);\n}\n\n.chart__center-caption {\n  fill: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n}\n\n.chart__focus {\n  fill: none;\n  stroke: var(--color-border-focus);\n  stroke-width: var(--dimension-stroke-width-025);\n  vector-effect: non-scaling-stroke;\n  pointer-events: none;\n}\n\n.chart__description,\n.chart__status {\n  position: absolute;\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-stroke-width-012);\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  clip-path: inset(50%);\n  white-space: nowrap;\n}\n\n@media (forced-colors: active) {\n  .chart__mark,\n  .chart__focus {\n    forced-color-adjust: none;\n  }\n\n  .chart__focus {\n    stroke: var(--ds-forced-color-focus);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Chart/Chart.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  Prop,\n  State,\n  Watch,\n  h,\n  Host,\n} from '@stencil/core';\nimport type {\n  ChartDefinition,\n  ChartPoint,\n  ChartTooltipItem,\n  ChartTooltipOptions,\n} from '../../utils/chart-grammar';\nimport {\n  compileChartScene,\n  findChartFocus,\n  type ChartScene,\n  type ChartSceneNode,\n} from '../../utils/chart-scene';\nimport { resolveChartTheme } from '../../utils/chart-theme';\n\nconst DEFAULT_WIDTH = 480;\nconst DEFAULT_HEIGHT = 320;\n\nexport type ChartFocusSource = 'pointer' | 'keyboard';\n\nexport interface ChartFocusChangeDetail {\n  primary: ChartPoint | null;\n  points: readonly ChartPoint[];\n  source: ChartFocusSource;\n}\n\ninterface FocusState {\n  primary: ChartPoint;\n  points: ChartPoint[];\n  source: ChartFocusSource;\n}\n\n@Component({\n  tag: 'ds-chart',\n  styleUrl: 'Chart.css',\n  scoped: true,\n})\nexport class Chart {\n  @Element() el!: HTMLElement;\n\n  /** Typed chart definition. Set as a JavaScript property, not an HTML attribute. */\n  @Prop() definition!: ChartDefinition;\n  /** Required accessible name for the visualization. */\n  @Prop() label!: string;\n  /** Optional longer accessible description. */\n  @Prop() description?: string;\n  /** Locale used by axes and default tooltip formatters. */\n  @Prop() locale?: string;\n  /** Fixed surface width. Otherwise the chart observes its container. */\n  @Prop() width?: number;\n  /** Product-owned surface height. Wins over aspectRatio. */\n  @Prop() height?: number;\n  /** Derives height from the current width when height is not supplied. */\n  @Prop() aspectRatio?: number;\n\n  /** Fires whenever pointer or keyboard focus resolves to semantic chart points. */\n  @Event() dsChartFocusChange!: EventEmitter<ChartFocusChangeDetail>;\n\n  @State() private surfaceWidth = DEFAULT_WIDTH;\n  @State() private scene?: ChartScene;\n  @State() private focusState?: FocusState;\n\n  private resizeObserver?: ResizeObserver;\n  private resizeFrame?: number;\n  private compileFrame?: number;\n  private warnedConflictingHeight = false;\n  private measuredLabels = new Map<string, { width: number; height: number }>();\n  private descriptionId = `ds-chart-description-${Math.random().toString(36).slice(2)}`;\n  private clipId = `ds-chart-clip-${Math.random().toString(36).slice(2)}`;\n\n  componentWillLoad() {\n    if (this.width && this.width > 0) this.surfaceWidth = this.width;\n    this.compile();\n  }\n\n  componentDidLoad() {\n    this.connectResizeObserver();\n    this.waitForFonts();\n  }\n\n  componentDidRender() {\n    this.measureRenderedLabels();\n  }\n\n  disconnectedCallback() {\n    this.resizeObserver?.disconnect();\n    if (this.resizeFrame) cancelAnimationFrame(this.resizeFrame);\n    if (this.compileFrame) cancelAnimationFrame(this.compileFrame);\n  }\n\n  @Watch('definition')\n  @Watch('locale')\n  @Watch('height')\n  @Watch('aspectRatio')\n  onDefinitionInputChange() {\n    this.scheduleCompile();\n  }\n\n  @Watch('width')\n  onWidthChange() {\n    if (this.width && this.width > 0) this.surfaceWidth = this.width;\n    else this.measureHost();\n    this.scheduleCompile();\n  }\n\n  private get surfaceHeight(): number {\n    if (this.height && this.height > 0) {\n      if (this.aspectRatio && !this.warnedConflictingHeight) {\n        this.warnedConflictingHeight = true;\n        console.warn('[ds-chart] height wins when both height and aspectRatio are supplied.');\n      }\n      return this.height;\n    }\n    if (this.aspectRatio && this.aspectRatio > 0) {\n      return Math.max(1, this.surfaceWidth / this.aspectRatio);\n    }\n    return DEFAULT_HEIGHT;\n  }\n\n  private connectResizeObserver() {\n    this.resizeObserver?.disconnect();\n    if (typeof ResizeObserver === 'undefined') return;\n    this.resizeObserver = new ResizeObserver(entries => {\n      const entry = entries[0];\n      if (!entry || this.width) return;\n      if (this.resizeFrame) cancelAnimationFrame(this.resizeFrame);\n      this.resizeFrame = requestAnimationFrame(() => {\n        this.resizeFrame = undefined;\n        this.applyMeasuredWidth(entry.contentRect.width);\n      });\n    });\n    this.resizeObserver.observe(this.el);\n    this.measureHost();\n  }\n\n  private measureHost() {\n    if (this.width) return;\n    this.applyMeasuredWidth(this.el.getBoundingClientRect().width);\n  }\n\n  private applyMeasuredWidth(width: number) {\n    if (!(width > 0)) return;\n    const next = Math.round(width * 100) / 100;\n    if (next !== this.surfaceWidth) {\n      this.surfaceWidth = next;\n      this.scheduleCompile();\n    }\n  }\n\n  private scheduleCompile() {\n    if (this.compileFrame) cancelAnimationFrame(this.compileFrame);\n    this.compileFrame = requestAnimationFrame(() => {\n      this.compileFrame = undefined;\n      this.compile();\n    });\n  }\n\n  private compile() {\n    if (!this.definition || !(this.surfaceWidth > 0) || !(this.surfaceHeight > 0)) return;\n    const previousKey = this.focusState?.primary.sceneKey;\n    const scene = compileChartScene(\n      this.definition,\n      this.surfaceWidth,\n      this.surfaceHeight,\n      this.locale ?? document.documentElement.lang ?? 'en',\n      text => this.measuredLabels.get(text) ?? { width: text.length * 7, height: 14 },\n      resolveChartTheme(this.el),\n    );\n    this.scene = scene;\n    if (previousKey) {\n      const restored = scene.points.find(point => point.sceneKey === previousKey);\n      if (restored && this.focusState) {\n        const grouped = findChartFocus(scene.points, scene.focus, restored.x, restored.y);\n        this.focusState = grouped\n          ? { ...grouped, source: this.focusState.source }\n          : undefined;\n      } else {\n        this.focusState = undefined;\n      }\n    }\n  }\n\n  private waitForFonts() {\n    if (!document.fonts) return;\n    void document.fonts.ready.then(() => {\n      this.measuredLabels.clear();\n      this.scheduleCompile();\n    });\n  }\n\n  private measureRenderedLabels() {\n    const labels = this.el.querySelectorAll<SVGTextElement>('[data-chart-measure]');\n    let changed = false;\n    labels.forEach(label => {\n      const text = label.textContent ?? '';\n      let box: DOMRect;\n      try {\n        box = label.getBBox();\n      } catch {\n        return;\n      }\n      const previous = this.measuredLabels.get(text);\n      if (!previous || Math.abs(previous.width - box.width) > 0.5 || Math.abs(previous.height - box.height) > 0.5) {\n        this.measuredLabels.set(text, { width: box.width, height: box.height });\n        changed = true;\n      }\n    });\n    if (changed) this.scheduleCompile();\n  }\n\n  private resolveFocus(x: number, y: number, source: ChartFocusSource) {\n    if (!this.scene) return;\n    const result = findChartFocus(\n      this.scene.points,\n      this.scene.focus,\n      x,\n      y,\n      this.scene.maxFocusDistance,\n    );\n    if (!result) {\n      this.clearFocus(source);\n      return;\n    }\n    if (\n      this.focusState?.primary.sceneKey === result.primary.sceneKey &&\n      this.focusState.source === source\n    ) return;\n    this.focusState = { ...result, source };\n    this.dsChartFocusChange.emit({ ...result, source });\n  }\n\n  private clearFocus(source: ChartFocusSource) {\n    if (!this.focusState) return;\n    this.focusState = undefined;\n    this.dsChartFocusChange.emit({ primary: null, points: [], source });\n  }\n\n  private onPointerMove = (event: PointerEvent) => {\n    const svg = event.currentTarget as SVGSVGElement;\n    const rect = svg.getBoundingClientRect();\n    this.resolveFocus(event.clientX - rect.left, event.clientY - rect.top, 'pointer');\n  };\n\n  private keyboardPoints(): ChartPoint[] {\n    if (!this.scene) return [];\n    return [...this.scene.points].sort((a, b) => a.x - b.x || a.y - b.y);\n  }\n\n  private onKeyDown = (event: KeyboardEvent) => {\n    const points = this.keyboardPoints();\n    if (points.length === 0) return;\n    if (event.key === 'Escape') {\n      event.preventDefault();\n      this.clearFocus('keyboard');\n      return;\n    }\n    const current = this.focusState\n      ? points.findIndex(point => point.sceneKey === this.focusState?.primary.sceneKey)\n      : -1;\n    let next: number | undefined;\n    if (event.key === 'Home') next = 0;\n    else if (event.key === 'End') next = points.length - 1;\n    else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = Math.min(points.length - 1, current + 1);\n    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = Math.max(0, current < 0 ? 0 : current - 1);\n    else return;\n    event.preventDefault();\n    const point = points[next ?? 0] ?? points[0];\n    this.resolveFocus(point.x, point.y, 'keyboard');\n  };\n\n  private renderNode(node: ChartSceneNode, className = 'chart__mark') {\n    const resolvedClassName = node.className ?? className;\n    const presentation = {\n      fill: node.style.fill,\n      stroke: node.style.stroke,\n      opacity: node.style.opacity,\n      'fill-opacity': node.style.fillOpacity,\n      'stroke-opacity': node.style.strokeOpacity,\n      'stroke-width': node.style.strokeWidth,\n      'stroke-dasharray': node.style.strokeDasharray || undefined,\n    };\n    if (node.type === 'path') return <path key={node.key} class={resolvedClassName} d={node.d} transform={node.transform} {...presentation} />;\n    if (node.type === 'rect') {\n      return <rect key={node.key} class={resolvedClassName} x={node.x} y={node.y} width={node.width} height={node.height} rx={node.style.radius} {...presentation} />;\n    }\n    if (node.type === 'circle') return <circle key={node.key} class={resolvedClassName} cx={node.x} cy={node.y} r={node.radius} {...presentation} />;\n    if (node.type === 'line') return <line key={node.key} class={resolvedClassName} x1={node.x1} x2={node.x2} y1={node.y1} y2={node.y2} {...presentation} />;\n    return <text key={node.key} class={node.className ?? `${className} chart__text-mark`} data-chart-measure={node.measure ? '' : undefined} x={node.x} y={node.y} dx={node.dx} dy={node.dy} text-anchor={node.style.textAnchor} font-family={node.style.fontFamily} font-size={node.style.fontSize} font-weight={node.style.fontWeight} dominant-baseline={node.dominantBaseline ?? 'middle'} transform={node.rotate ? `rotate(${node.rotate} ${node.x} ${node.y})` : undefined} {...presentation}>{node.text}</text>;\n  }\n\n  private tooltipContent(): { heading?: string; items: ChartTooltipItem[] } | undefined {\n    if (!this.scene || !this.focusState || this.scene.tooltip === false) return undefined;\n    const options: ChartTooltipOptions =\n      typeof this.scene.tooltip === 'object' ? this.scene.tooltip : {};\n    const locale = this.locale ?? document.documentElement.lang ?? 'en';\n    const points = this.focusState.points;\n    const formatValue = (point: ChartPoint) => {\n      const value = point.value ?? point.yValue;\n      return options.format?.(point, locale) ??\n        (typeof value === 'number'\n          ? new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value)\n          : String(value));\n    };\n    return {\n      heading:\n        points.length > 1\n          ? options.formatGroupHeading?.(points, locale) ?? String(this.focusState.primary.xValue)\n          : undefined,\n      items: points.map(point =>\n        options.formatGroupItem?.(point, locale) ?? {\n          label: point.groupLabel ?? point.markId,\n          value: formatValue(point),\n          color: point.color,\n        },\n      ),\n    };\n  }\n\n  private statusText(): string {\n    const content = this.tooltipContent();\n    if (!content) return '';\n    return [content.heading, ...content.items.map(item => `${item.label}: ${item.value}`)]\n      .filter(Boolean)\n      .join('. ');\n  }\n\n  render() {\n    const scene = this.scene;\n    const tooltip = this.tooltipContent();\n    const focus = this.focusState?.primary;\n    const center = focus && scene?.center?.focused\n      ? scene.center.focused(focus, this.locale ?? document.documentElement.lang ?? 'en')\n      : scene?.center;\n    return (\n      <Host\n        class=\"chart\"\n        style={{\n          '--ds-chart-width': this.width ? `${this.width}px` : '100%',\n          '--ds-chart-height': `${this.surfaceHeight}px`,\n        }}\n      >\n        {this.description && <span id={this.descriptionId} class=\"chart__description\">{this.description}</span>}\n        {scene && (\n          /* eslint-disable-next-line local/prefer-ds-icon -- SVG is the chart renderer. */\n          <svg\n            class=\"chart__surface\"\n            width={scene.width}\n            height={scene.height}\n            viewBox={`0 0 ${scene.width} ${scene.height}`}\n            role=\"img\"\n            aria-label={this.label || 'Chart'}\n            aria-describedby={this.description ? this.descriptionId : undefined}\n            tabindex={0}\n            onPointerMove={this.onPointerMove}\n            onPointerLeave={() => this.clearFocus('pointer')}\n            onKeyDown={this.onKeyDown}\n          >\n            <defs aria-hidden=\"true\">\n              <clipPath id={this.clipId}>\n                <rect x={scene.plot.left} y={scene.plot.top} width={scene.plot.width} height={scene.plot.height} />\n              </clipPath>\n            </defs>\n            <g class=\"chart__guides\" aria-hidden=\"true\">\n              {scene.guides.map(node => this.renderNode(node, 'chart__grid chart__polar-guide'))}\n              {scene.yAxis.line && <line class=\"chart__axis-line\" x1={scene.plot.left} x2={scene.plot.left} y1={scene.plot.top} y2={scene.plot.bottom} />}\n              {scene.yAxis.ticks.map(tick => (\n                <g key={`y-${tick.key}`}>\n                  {scene.yAxis.grid && <line class=\"chart__grid\" x1={scene.plot.left} x2={scene.plot.right} y1={tick.position} y2={tick.position} />}\n                  <line class=\"chart__axis-line chart__tick-stub\" x1={scene.plot.left - scene.yAxis.tickSize} x2={scene.plot.left} y1={tick.position} y2={tick.position} />\n                  {tick.labelVisible && <text data-chart-measure class=\"chart__tick chart__tick--y\" x={scene.plot.left - scene.yAxis.tickSize - scene.yAxis.tickPadding} y={tick.position} text-anchor=\"end\" dominant-baseline=\"middle\">{tick.label}</text>}\n                </g>\n              ))}\n              {scene.xAxis.line && <line class=\"chart__axis-line\" x1={scene.plot.left} x2={scene.plot.right} y1={scene.plot.bottom} y2={scene.plot.bottom} />}\n              {scene.xAxis.ticks.map(tick => (\n                <g key={`x-${tick.key}`}>\n                  {scene.xAxis.grid && <line class=\"chart__grid\" x1={tick.position} x2={tick.position} y1={scene.plot.top} y2={scene.plot.bottom} />}\n                  <line class=\"chart__axis-line chart__tick-stub\" x1={tick.position} x2={tick.position} y1={scene.plot.bottom} y2={scene.plot.bottom + scene.xAxis.tickSize} />\n                  {tick.labelVisible && <text data-chart-measure class=\"chart__tick chart__tick--x\" x={tick.position} y={scene.plot.bottom + scene.xAxis.tickSize + scene.xAxis.tickPadding} text-anchor=\"middle\" dominant-baseline=\"hanging\" transform={scene.xAxis.rotate ? `rotate(${scene.xAxis.rotate} ${tick.position} ${scene.plot.bottom + scene.xAxis.tickSize + scene.xAxis.tickPadding})` : undefined}>{tick.label}</text>}\n                </g>\n              ))}\n              {scene.xAxis.label && <text class=\"chart__axis-title\" x={(scene.plot.left + scene.plot.right) / 2} y={scene.height - 4} text-anchor=\"middle\">{scene.xAxis.label}</text>}\n              {scene.yAxis.label && <text class=\"chart__axis-title\" x=\"8\" y={(scene.plot.top + scene.plot.bottom) / 2} text-anchor=\"middle\" dominant-baseline=\"middle\" transform={`rotate(-90 8 ${(scene.plot.top + scene.plot.bottom) / 2})`}>{scene.yAxis.label}</text>}\n            </g>\n            <g class=\"chart__marks\" aria-hidden=\"true\" clip-path={scene.clip ? `url(#${this.clipId})` : undefined}>{scene.nodes.map(node => this.renderNode(node))}</g>\n            {focus && <circle class=\"chart__focus\" cx={focus.x} cy={focus.y} r=\"6\" aria-hidden=\"true\" />}\n            {center?.value && (\n              <text\n                class=\"chart__center-value\"\n                x={(scene.plot.left + scene.plot.right) / 2}\n                y={(scene.plot.top + scene.plot.bottom) / 2 - (center.caption ? 10 : 0)}\n                text-anchor=\"middle\"\n                dominant-baseline=\"middle\"\n                aria-hidden=\"true\"\n              >\n                {center.value}\n              </text>\n            )}\n            {center?.caption && (\n              <text\n                class=\"chart__center-caption\"\n                x={(scene.plot.left + scene.plot.right) / 2}\n                y={(scene.plot.top + scene.plot.bottom) / 2 + 14}\n                text-anchor=\"middle\"\n                dominant-baseline=\"middle\"\n                aria-hidden=\"true\"\n              >\n                {center.caption}\n              </text>\n            )}\n          </svg>\n        )}\n        {tooltip && focus && (\n          <ds-tooltip-chart\n            heading={tooltip.heading}\n            items={tooltip.items}\n            x={focus.x}\n            y={focus.y}\n          />\n        )}\n        <span class=\"chart__status\" aria-live=\"polite\" aria-atomic=\"true\">{this.statusText()}</span>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-chart",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-chart",
+  "audience": "specialized",
+  "status": "stable",
+  "summary": "Standard chart card chrome with variant-owned chart and legend composition.",
+  "useWhen": [
+    "A chart, legend, metric visualization, or custom chart composition needs standard card chrome.",
+    "A chart and static external legend need one standard card layout.",
+    "A chart card needs a visible heading, optional filter action, and application-owned chart data."
+  ],
+  "avoidWhen": [
+    "The card contains editable settings; use CardSetting.",
+    "The surface contains ordinary non-visualization content.",
+    "The application needs to replace the card chrome rather than compose its chart and actions."
+  ],
+  "alternatives": [
+    {
+      "when": "The surface contains editable settings.",
+      "component": "component:ds-card-setting",
+      "reason": "CardSetting owns the controlled settings-section workflow."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-chart",
+    "component:ds-chart-legend",
+    "component:ds-button-unfilled"
+  ],
+  "accessibility": [
+    "Provide a concise visible heading; the component renders it as a section heading.",
+    "Slotted actions must provide accessible names and controlled-state semantics.",
+    "Charts retain their own image names and data summaries.",
+    "A visible legend provides persistent labels while the chart retains its own accessible name and focus behavior."
+  ],
+  "states": [
+    "Custom mode provides flexible body chrome and does not mutate chart or legend interaction.",
+    "Chart mode keeps a slotted external legend static by disabling hover emphasis.",
+    "showFilter adds the standard filter action and emits dsFilterClick without owning filter state."
+  ],
+  "responsiveBehavior": [
+    "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
+    "The body allocates remaining height to the chart while legends retain content height.",
+    "Parent layouts own wrapping, stacking, and breakpoint-dependent card width."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set variant to chart for the standard chart and static legend layout; slot chart, legend, actions, and supporting content by name."
+    ],
+    "react": [
+      "Keep chart data in React and pass chart, legend, and action elements through named slots."
+    ],
+    "angular": [
+      "Keep chart data in Angular and project chart, legend, and action elements through named slots."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CardChart/CardChart.stories.ts"
+    }
+  ]
+}

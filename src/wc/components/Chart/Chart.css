@@ -1,0 +1,105 @@
+@import '../../utils/forced-colors.css';
+
+:host {
+  position: relative;
+  display: block;
+  width: var(--ds-chart-width, 100%);
+  max-width: 100%;
+  height: var(--ds-chart-height, 320px);
+  font-family: var(--typography-font-family);
+}
+
+.chart__surface {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  outline: none;
+  touch-action: none;
+}
+
+.chart__surface:focus-visible {
+  outline: var(--dimension-stroke-width-025) solid var(--color-border-focus);
+  outline-offset: var(--dimension-space-025);
+}
+
+.chart__grid,
+.chart__axis-line,
+.chart__mark {
+  vector-effect: non-scaling-stroke;
+}
+
+.chart__grid {
+  stroke: var(--color-foreground-quaternary);
+  stroke-width: var(--dimension-stroke-width-012);
+}
+
+.chart__axis-line {
+  stroke: var(--color-foreground-tertiary);
+  stroke-width: var(--dimension-stroke-width-012);
+}
+
+.chart__tick,
+.chart__text-mark {
+  fill: var(--color-foreground-secondary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-xs);
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: var(--typography-letterspacing-positive);
+  text-transform: uppercase;
+}
+
+.chart__axis-title {
+  fill: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-xs);
+  font-weight: var(--typography-weight-semibold);
+  letter-spacing: var(--typography-letterspacing-positive);
+  text-transform: uppercase;
+}
+
+.chart__center-value {
+  fill: var(--color-foreground-primary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-xl);
+  font-weight: var(--typography-weight-semibold);
+  letter-spacing: var(--typography-letterspacing-negative-double);
+}
+
+.chart__center-caption {
+  fill: var(--color-foreground-secondary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  font-weight: var(--typography-weight-regular);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+.chart__focus {
+  fill: none;
+  stroke: var(--color-border-focus);
+  stroke-width: var(--dimension-stroke-width-025);
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.chart__description,
+.chart__status {
+  position: absolute;
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-stroke-width-012);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .chart__mark,
+  .chart__focus {
+    forced-color-adjust: none;
+  }
+
+  .chart__focus {
+    stroke: var(--ds-forced-color-focus);
+  }
+}

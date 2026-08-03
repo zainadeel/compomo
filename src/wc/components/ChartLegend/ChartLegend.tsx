@@ -11,7 +11,7 @@ export type ChartLegendPercentageDecimals = 1 | 2;
  * legends differently (list w/ values, compact chips, bare swatches, external
  * stat callouts) — this covers the common "swatch + label + optional value" case.
  * Consumers who need a different treatment skip this component entirely and
- * render their own markup against the same `ChartDatum[]` data.
+ * render their own markup against the same `ChartLegendItem[]` data.
  */
 @Component({
   tag: 'ds-chart-legend',
@@ -63,7 +63,7 @@ export class ChartLegend {
   render() {
     const total = this.items.reduce((sum, item) => sum + (item.value ?? 0), 0);
     // Highlight/dim from either this component's own hover or an externally-synced label
-    // (e.g. a sibling ds-chart-donut slice) — same mechanism ds-chart-donut uses for its slices.
+    // (e.g. an application-owned chart focus state).
     const highlightLabel = this.activeLabel ?? (this.highlightOnHover ? this.hoveredLabel : null);
 
     return (

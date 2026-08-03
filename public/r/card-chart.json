@@ -1,0 +1,238 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-chart",
+  "title": "CardChart",
+  "description": "Standard chart card chrome with variant-owned chart and legend composition.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-chart",
+    "source": "src/wc/components/CardChart/CardChart.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "stable",
+      "summary": "Standard chart card chrome with variant-owned chart and legend composition.",
+      "useWhen": [
+        "A chart, legend, metric visualization, or custom chart composition needs standard card chrome.",
+        "A chart and static external legend need one standard card layout.",
+        "A chart card needs a visible heading, optional filter action, and application-owned chart data."
+      ],
+      "avoidWhen": [
+        "The card contains editable settings; use CardSetting.",
+        "The surface contains ordinary non-visualization content.",
+        "The application needs to replace the card chrome rather than compose its chart and actions."
+      ],
+      "alternatives": [
+        {
+          "when": "The surface contains editable settings.",
+          "component": "component:ds-card-setting",
+          "reason": "CardSetting owns the controlled settings-section workflow."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-chart",
+        "component:ds-chart-legend",
+        "component:ds-button-unfilled"
+      ],
+      "accessibility": [
+        "Provide a concise visible heading; the component renders it as a section heading.",
+        "Slotted actions must provide accessible names and controlled-state semantics.",
+        "Charts retain their own image names and data summaries.",
+        "A visible legend provides persistent labels while the chart retains its own accessible name and focus behavior."
+      ],
+      "states": [
+        "Custom mode provides flexible body chrome and does not mutate chart or legend interaction.",
+        "Chart mode keeps a slotted external legend static by disabling hover emphasis.",
+        "showFilter adds the standard filter action and emits dsFilterClick without owning filter state."
+      ],
+      "responsiveBehavior": [
+        "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
+        "The body allocates remaining height to the chart while legends retain content height.",
+        "Parent layouts own wrapping, stacking, and breakpoint-dependent card width."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Set variant to chart for the standard chart and static legend layout; slot chart, legend, actions, and supporting content by name."
+        ],
+        "react": [
+          "Keep chart data in React and pass chart, legend, and action elements through named slots."
+        ],
+        "angular": [
+          "Keep chart data in Angular and project chart, legend, and action elements through named slots."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/CardChart/CardChart.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "cardWidth": {
+          "type": "CardChartWidth",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "card-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Width token with the matching chart-card min-height."
+        },
+        "filterLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "filter-label",
+          "default": "'Filter'",
+          "required": false,
+          "mutable": false
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "Chart heading shown in the card header."
+        },
+        "showFilter": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-filter",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Renders the standard filter action before custom actions."
+        },
+        "variant": {
+          "type": "CardChartVariant",
+          "resolvedType": "\"chart\" | \"custom\"",
+          "attribute": "variant",
+          "default": "'custom'",
+          "required": false,
+          "mutable": false,
+          "description": "Chart composition behavior."
+        }
+      },
+      "events": [
+        {
+          "name": "dsFilterClick",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emits when the standard header filter control is activated."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "cardWidth": {
+        "type": "CardChartWidth",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "card-width",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Width token with the matching chart-card min-height."
+      },
+      "filterLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "filter-label",
+        "default": "'Filter'",
+        "required": false,
+        "mutable": false
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "Chart heading shown in the card header."
+      },
+      "showFilter": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-filter",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Renders the standard filter action before custom actions."
+      },
+      "variant": {
+        "type": "CardChartVariant",
+        "resolvedType": "\"chart\" | \"custom\"",
+        "attribute": "variant",
+        "default": "'custom'",
+        "required": false,
+        "mutable": false,
+        "description": "Chart composition behavior."
+      }
+    },
+    "events": [
+      {
+        "name": "dsFilterClick",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emits when the standard header filter control is activated."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-chart",
+      "react": "DsCardChart",
+      "angular": "DsCardChart"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-chart.js';",
+        "example": "<ds-card-chart></ds-card-chart>"
+      },
+      "react": {
+        "import": "import { DsCardChart } from '@ds-mo/ui/react';",
+        "example": "<DsCardChart />"
+      },
+      "angular": {
+        "import": "import { DsCardChart } from '@ds-mo/ui/angular/ds-card-chart';",
+        "example": "<ds-card-chart></ds-card-chart>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^5.1.1",
+          "@ds-mo/icons ^6.4.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CardChart/CardChart.css",
+      "content": "@import '../../utils/chrome-layout.css';\n@import '../../utils/forced-colors.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n  width: var(--_card-chart-width);\n  min-height: var(--_card-chart-min-height);\n  max-width: 100%;\n  overflow: hidden;\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n.card-chart__header {\n  flex-shrink: 0;\n  justify-content: space-between;\n  height: var(--dimension-size-600);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  background-color: var(--color-background-secondary);\n}\n\nds-text.card-chart__title {\n  display: flex;\n  flex: 1 1 auto;\n  align-items: center;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: calc(var(--dimension-space-075) + var(--dimension-space-025));\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.card-chart__actions {\n  display: flex;\n  flex-shrink: 0;\n  align-items: center;\n  gap: var(--dimension-space-100);\n}\n\n.card-chart__actions:empty {\n  display: none;\n}\n\n.card-chart__body,\n.card-chart__layout {\n  display: flex;\n  flex: 1 1 auto;\n  flex-direction: column;\n  box-sizing: border-box;\n  min-height: 0;\n}\n\n.card-chart__body {\n  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);\n  background-color: var(--color-background-primary);\n}\n\n.card-chart__layout {\n  height: 100%;\n  gap: var(--dimension-space-200);\n}\n\n.card-chart__chart {\n  display: grid;\n  flex: 1 1 auto;\n  align-items: center;\n  box-sizing: border-box;\n  min-height: 0;\n  padding: var(--dimension-space-400) var(--dimension-space-400) 0\n    var(--dimension-space-400);\n}\n\n.card-chart__chart > * {\n  width: 100%;\n  min-width: 0;\n  max-width: 100%;\n}\n\n.card-chart__legend {\n  flex: 0 0 auto;\n  box-sizing: border-box;\n  padding: 0 var(--dimension-space-100) var(--dimension-space-100)\n    var(--dimension-space-100);\n}\n\n@media (forced-colors: active) {\n  :host {\n    box-shadow: none;\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CardChart/CardChart.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n} from '@stencil/core';\n\nexport type CardChartWidth = 'sm' | 'md' | 'lg';\nexport type CardChartVariant = 'custom' | 'chart';\n\ntype LegendSlot = HTMLElement & {\n  activeLabel?: string | null;\n  highlightOnHover?: boolean;\n};\n\nconst CARD_WIDTH_VARS: Record<CardChartWidth, string> = {\n  sm: 'var(--dimension-card-width-sm)',\n  md: 'var(--dimension-card-width-md)',\n  lg: 'var(--dimension-card-width-lg)',\n};\n\nconst CARD_HEIGHT_VARS: Record<CardChartWidth, string> = {\n  sm: 'var(--dimension-card-height-sm)',\n  md: 'var(--dimension-card-height-md)',\n  lg: 'var(--dimension-card-height-lg)',\n};\n\n/**\n * Standard chart card chrome and composition. The variant owns\n * only the chart/legend relationship; applications continue to own data.\n */\n@Component({\n  tag: 'ds-card-chart',\n  styleUrl: 'CardChart.css',\n  scoped: true,\n})\nexport class CardChart {\n  @Element() el!: HTMLElement;\n\n  /** Chart heading shown in the card header. */\n  @Prop() heading!: string;\n  /** Chart composition behavior. */\n  @Prop() variant: CardChartVariant = 'custom';\n  /** Width token with the matching chart-card min-height. */\n  @Prop() cardWidth: CardChartWidth = 'md';\n  /** Renders the standard filter action before custom actions. */\n  @Prop() showFilter: boolean = false;\n  @Prop() filterLabel: string = 'Filter';\n\n  /** Emits when the standard header filter control is activated. */\n  @Event() dsFilterClick!: EventEmitter<void>;\n\n  @State() private hasChartSlot = false;\n  @State() private hasLegendSlot = false;\n\n  componentWillRender() {\n    this.hasChartSlot = !!this.el.querySelector('[slot=\"chart\"]');\n    this.hasLegendSlot = !!this.el.querySelector('[slot=\"legend\"]');\n  }\n\n  componentDidRender() {\n    const legend = this.el.querySelector(\n      'ds-chart-legend[slot=\"legend\"]'\n    ) as LegendSlot | null;\n    if (this.variant === 'chart' && legend) {\n      legend.setAttribute('highlight-on-hover', 'false');\n      if ('highlightOnHover' in legend) legend.highlightOnHover = false;\n    }\n  }\n\n  private handleFilterClick = () => {\n    this.dsFilterClick.emit();\n  };\n\n  render() {\n    const usesChartLayout = this.variant !== 'custom' || this.hasChartSlot;\n    return (\n      <Host\n        class={{\n          'card-chart': true,\n          [`card-chart--${this.variant}`]: true,\n        }}\n        style={{\n          '--_card-chart-width': CARD_WIDTH_VARS[this.cardWidth],\n          '--_card-chart-min-height': CARD_HEIGHT_VARS[this.cardWidth],\n        }}\n      >\n        <header class=\"card-chart__header ds-chrome-row ds-chrome-space--md\">\n          <ds-text\n            class=\"card-chart__title\"\n            variant=\"text-title-small\"\n            emphasis\n            color=\"primary\"\n            as=\"h2\"\n          >\n            {this.heading}\n          </ds-text>\n          <div class=\"card-chart__actions\">\n            {this.showFilter ? (\n              <ds-button-unfilled\n                variant=\"icon\"\n                type=\"button\"\n                icon=\"Filters\"\n                aria-label={this.filterLabel}\n                onDsClick={this.handleFilterClick}\n              />\n            ) : null}\n            <slot name=\"actions\" />\n          </div>\n        </header>\n        <div class=\"card-chart__body\">\n          {usesChartLayout ? (\n            <div class=\"card-chart__layout\">\n              {this.hasChartSlot ? (\n                <div\n                  class={{\n                    'card-chart__chart': true,\n                  }}\n                >\n                  <slot name=\"chart\" />\n                </div>\n              ) : null}\n              {this.hasLegendSlot ? (\n                <div class=\"card-chart__legend\">\n                  <slot name=\"legend\" />\n                </div>\n              ) : null}\n              <slot />\n            </div>\n          ) : (\n            <slot />\n          )}\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

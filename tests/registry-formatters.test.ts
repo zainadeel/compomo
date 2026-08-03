@@ -30,9 +30,9 @@ test('formats compiler API, framework imports, and complete intent', () => {
 });
 
 test('formats completed semantic intent for migrated components', () => {
-  const output = formatComponentDetail(loadComponent('card-data-viz'));
-  assert.match(output, /Standard data-visualization card chrome/);
-  assert.match(output, /donut mode suppresses the redundant slice tooltip/);
+  const output = formatComponentDetail(loadComponent('card-chart'));
+  assert.match(output, /Standard chart card chrome/);
+  assert.match(output, /A chart and static external legend need one standard card layout/);
   assert.doesNotMatch(output, /\nundefined\n/);
 });
 
