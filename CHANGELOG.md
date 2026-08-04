@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.0](https://github.com/zainadeel/compomo/compare/v13.6.1...v13.7.0) (2026-08-04)
+
+
+### Added
+
+* **charts:** build unified D3 chart grammar ([#419](https://github.com/zainadeel/compomo/issues/419)) ([0f62909](https://github.com/zainadeel/compomo/commit/0f62909a5a7fdee47967ab82cdde45f3249773a0))
+
 ## [13.6.1](https://github.com/zainadeel/compomo/compare/v13.6.0...v13.6.1) (2026-08-02)
 
 
