@@ -106,7 +106,7 @@ test('groups multi-line focus with a vertical guide and enlarged tooltip points'
     const coordinate = surface.createSVGPoint();
     coordinate.x = element.cx.baseVal.value;
     coordinate.y = element.cy.baseVal.value;
-    const screenCoordinate = coordinate.matrixTransform(surface.getScreenCTM()!);
+    const screenCoordinate = coordinate.matrixTransform(element.getScreenCTM()!);
     return { x: screenCoordinate.x, y: screenCoordinate.y };
   });
   await page.mouse.move(point.x, point.y);
