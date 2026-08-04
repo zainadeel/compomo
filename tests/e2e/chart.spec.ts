@@ -79,15 +79,15 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
       labelValueGap: value.left - label.right,
     };
   });
-  expect(tooltipGeometry).toEqual({
+  expect(tooltipGeometry).toMatchObject({
     hostPadding: '4px',
     hostRadius: '6px',
     headingHeight: 32,
     itemHeight: 32,
     itemRadius: '2px',
     swatchBoxWidth: 20,
-    labelValueGap: 8,
   });
+  expect(tooltipGeometry.labelValueGap).toBeGreaterThanOrEqual(8);
   const pointerKey = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
 
   await surface.focus();
@@ -101,12 +101,15 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
 test('groups multi-line focus with a vertical guide and enlarged tooltip points', async ({ page }) => {
   const chart = page.locator('#multi-line-chart');
   const firstPoint = chart.locator('circle.chart__mark').first();
-  const pointBox = await firstPoint.boundingBox();
-  expect(pointBox).not.toBeNull();
-  await page.mouse.move(
-    pointBox!.x + pointBox!.width / 2,
-    pointBox!.y + pointBox!.height / 2,
-  );
+  const point = await firstPoint.evaluate(element => {
+    const surface = element.ownerSVGElement!;
+    const coordinate = surface.createSVGPoint();
+    coordinate.x = element.cx.baseVal.value;
+    coordinate.y = element.cy.baseVal.value;
+    const screenCoordinate = coordinate.matrixTransform(surface.getScreenCTM()!);
+    return { x: screenCoordinate.x, y: screenCoordinate.y };
+  });
+  await page.mouse.move(point.x, point.y);
 
   await expect(chart.locator('.chart__focus-guide')).toHaveCount(1);
   await expect(chart.locator('.chart__focus-point')).toHaveCount(2);

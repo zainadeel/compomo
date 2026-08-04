@@ -59,6 +59,10 @@
   text-align: end;
 }
 
+.tooltip-chart__label {
+  margin-inline-end: var(--dimension-space-050);
+}
+
 .tooltip-chart__label,
 .tooltip-chart__value {
   flex: none;
