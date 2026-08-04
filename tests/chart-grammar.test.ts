@@ -78,8 +78,9 @@ describe('chart scene compiler', () => {
     y: { scale: scaleLinear, nice: true, grid: true },
   };
 
-  it('uses a three-pixel default dot radius and token-sized polar label clearance', () => {
-    assert.equal(defaultChartTheme.dotRadius, 'var(--dimension-stroke-width-037)');
+  it('uses token-sized dot core, halo, and polar label clearance', () => {
+    assert.equal(defaultChartTheme.dotRadius, 'var(--dimension-stroke-width-025)');
+    assert.equal(defaultChartTheme.dotHaloWidth, 'var(--dimension-stroke-width-012)');
     assert.equal(defaultChartTheme.polarLabelGap, 16);
   });
 
@@ -99,7 +100,7 @@ describe('chart scene compiler', () => {
     }), 480, 320);
     assert.deepEqual(scene.nodes.map(node => node.markId), ['area', 'rule', 'line', 'dots', 'dots']);
     const dotNodes = scene.nodes.filter(node => node.markId === 'dots');
-    assert.ok(dotNodes.every(node => node.style.stroke === 'none' && node.style.strokeWidth === 0));
+    assert.ok(dotNodes.every(node => node.style.stroke === 'var(--color-background-primary)' && node.style.strokeWidth === 'var(--dimension-stroke-width-012)'));
   });
 
   it('creates line gaps and omits invalid semantic points', () => {

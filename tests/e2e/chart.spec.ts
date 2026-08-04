@@ -140,7 +140,7 @@ test('renders axis baselines and outward tick stubs independently from grids and
   expect(extendsOutward).toBe(true);
 });
 
-test('frames the plot with light top and right boundaries and clips three-pixel edge dots intentionally', async ({ page }) => {
+test('frames the plot and clips six-pixel haloed edge dots intentionally', async ({ page }) => {
   const chart = page.locator('#density-chart');
   const boundaries = chart.locator('.chart__plot-boundary');
   const dots = chart.locator('circle.chart__mark');
@@ -156,9 +156,9 @@ test('frames the plot with light top and right boundaries and clips three-pixel 
     const last = circles.at(-1)!;
     const clipRight = Number(clip.getAttribute('x')) + Number(clip.getAttribute('width'));
     return {
-      dotRadius: middle.r.baseVal.value,
+      circleRadius: middle.r.baseVal.value,
       dotStroke: getComputedStyle(middle).stroke,
-      dotStrokeWidth: middle.getAttribute('stroke-width'),
+      dotStrokeWidth: Number.parseFloat(getComputedStyle(middle).strokeWidth),
       lastCenter: last.cx.baseVal.value,
       clipRight,
       topY: Number(top.getAttribute('y1')),
@@ -169,9 +169,10 @@ test('frames the plot with light top and right boundaries and clips three-pixel 
     };
   });
 
-  expect(geometry.dotRadius).toBe(3);
-  expect(geometry.dotStroke).toBe('none');
-  expect(geometry.dotStrokeWidth).toBe('0');
+  expect(geometry.circleRadius * 2 - geometry.dotStrokeWidth).toBe(4);
+  expect(geometry.circleRadius * 2 + geometry.dotStrokeWidth).toBe(6);
+  expect(geometry.dotStroke).not.toBe('none');
+  expect(geometry.dotStrokeWidth).toBe(1);
   expect(geometry.lastCenter).toBeCloseTo(geometry.clipRight, 4);
   expect(geometry.topY).toBeCloseTo(geometry.clipTop, 4);
   expect(geometry.rightX).toBeCloseTo(geometry.clipRight, 4);
