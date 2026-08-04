@@ -101,15 +101,7 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
 test('groups multi-line focus with a vertical guide and enlarged tooltip points', async ({ page }) => {
   const chart = page.locator('#multi-line-chart');
   const firstPoint = chart.locator('circle.chart__mark').first();
-  const point = await firstPoint.evaluate(element => {
-    const surface = element.ownerSVGElement!;
-    const coordinate = surface.createSVGPoint();
-    coordinate.x = element.cx.baseVal.value;
-    coordinate.y = element.cy.baseVal.value;
-    const screenCoordinate = coordinate.matrixTransform(element.getScreenCTM()!);
-    return { x: screenCoordinate.x, y: screenCoordinate.y };
-  });
-  await page.mouse.move(point.x, point.y);
+  await firstPoint.hover();
 
   await expect(chart.locator('.chart__focus-guide')).toHaveCount(1);
   await expect(chart.locator('.chart__focus-point')).toHaveCount(2);
