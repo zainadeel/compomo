@@ -78,8 +78,8 @@ describe('chart scene compiler', () => {
     y: { scale: scaleLinear, nice: true, grid: true },
   };
 
-  it('uses a two-pixel default dot radius and token-sized polar label clearance', () => {
-    assert.equal(defaultChartTheme.dotRadius, 'var(--dimension-stroke-width-025)');
+  it('uses a three-pixel default dot radius and token-sized polar label clearance', () => {
+    assert.equal(defaultChartTheme.dotRadius, 'var(--dimension-stroke-width-037)');
     assert.equal(defaultChartTheme.polarLabelGap, 16);
   });
 

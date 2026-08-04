@@ -140,7 +140,7 @@ test('renders axis baselines and outward tick stubs independently from grids and
   expect(extendsOutward).toBe(true);
 });
 
-test('frames the plot with light top and right boundaries and clips two-pixel edge dots intentionally', async ({ page }) => {
+test('frames the plot with light top and right boundaries and clips three-pixel edge dots intentionally', async ({ page }) => {
   const chart = page.locator('#density-chart');
   const boundaries = chart.locator('.chart__plot-boundary');
   const dots = chart.locator('circle.chart__mark');
@@ -167,7 +167,7 @@ test('frames the plot with light top and right boundaries and clips two-pixel ed
     };
   });
 
-  expect(geometry.dotRadius).toBe(2);
+  expect(geometry.dotRadius).toBe(3);
   expect(geometry.lastCenter).toBeCloseTo(geometry.clipRight, 4);
   expect(geometry.topY).toBeCloseTo(geometry.clipTop, 4);
   expect(geometry.rightX).toBeCloseTo(geometry.clipRight, 4);
