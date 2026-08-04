@@ -71,6 +71,8 @@ interface ChartSceneBaseNode {
   markId: string;
   style: ChartSceneStyle;
   className?: string;
+  /** Keep discrete nodes visible when their center lies on a plot boundary. */
+  clipToPlot?: boolean;
 }
 
 export interface ChartScenePath extends ChartSceneBaseNode {
@@ -781,7 +783,7 @@ function buildCartesianNodes(
         );
         statistics.outliers.forEach((value, index) => {
           const y = scalePosition(yScale, value);
-          if (y !== undefined) nodes.push({ type: 'circle', key: `${first.sceneKey}:outlier:${index}`, markId: first.markId, x: center, y, radius: dotCircleRadius(theme.dotRadius, theme.dotHaloWidth), style: styleFor(first, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
+          if (y !== undefined) nodes.push({ type: 'circle', key: `${first.sceneKey}:outlier:${index}`, markId: first.markId, x: center, y, radius: dotCircleRadius(theme.dotRadius, theme.dotHaloWidth), clipToPlot: false, style: styleFor(first, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
         });
         const summaryObservation: Observation = { ...first, y: statistics.median, value: statistics.median, datumKey: chartValueKey(first.x), sceneKey: `${first.markId}:${chartValueKey(first.x)}` };
         if (mark.options.interactive !== false) points.push(pointFor(summaryObservation, center, yMedian as number, color));
@@ -866,7 +868,7 @@ function buildCartesianNodes(
       if (x === undefined || y === undefined) return;
       if (mark.kind === 'dot') {
         const radius = 'r' in mark.options ? visualValue(observation.datum, observation.index, observation.source, mark.options.r, theme.dotRadius) : theme.dotRadius;
-        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x, y, radius: dotCircleRadius(radius, theme.dotHaloWidth), style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
+        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x, y, radius: dotCircleRadius(radius, theme.dotHaloWidth), clipToPlot: false, style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
       } else if (mark.kind === 'text' && observation.text) {
         const options = mark.options;
         nodes.push({
@@ -1050,7 +1052,7 @@ function buildPolarScene(
         const position = polarPoint(centerX, centerY, angleFor(observation.angle), radialPosition);
         const color = colorFor(observation);
         const radius = 'r' in mark.options ? visualValue(observation.datum, observation.index, observation.source, mark.options.r, theme.dotRadius) : theme.dotRadius;
-        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x: position.x, y: position.y, radius: dotCircleRadius(radius, theme.dotHaloWidth), style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
+        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x: position.x, y: position.y, radius: dotCircleRadius(radius, theme.dotHaloWidth), clipToPlot: false, style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
         if (mark.options.interactive !== false) points.push(pointFor(observation, position.x, position.y, color));
       });
     }

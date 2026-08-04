@@ -298,6 +298,26 @@ export class Chart {
     return <text key={node.key} class={node.className ?? `${className} chart__text-mark`} data-chart-measure={node.measure ? '' : undefined} x={node.x} y={node.y} dx={node.dx} dy={node.dy} text-anchor={node.style.textAnchor} font-family={node.style.fontFamily} font-size={node.style.fontSize} font-weight={node.style.fontWeight} dominant-baseline={node.dominantBaseline ?? 'middle'} transform={node.rotate ? `rotate(${node.rotate} ${node.x} ${node.y})` : undefined} {...presentation}>{node.text}</text>;
   }
 
+  private renderMarkLayers(scene: ChartScene) {
+    const layers: Array<{ clipped: boolean; nodes: ChartSceneNode[] }> = [];
+    scene.nodes.forEach(node => {
+      const clipped = scene.clip && node.clipToPlot !== false;
+      const current = layers[layers.length - 1];
+      if (current?.clipped === clipped) current.nodes.push(node);
+      else layers.push({ clipped, nodes: [node] });
+    });
+    return layers.map((layer, index) => (
+      <g
+        key={`marks-${index}`}
+        class="chart__marks"
+        aria-hidden="true"
+        clip-path={layer.clipped ? `url(#${this.clipId})` : undefined}
+      >
+        {layer.nodes.map(node => this.renderNode(node))}
+      </g>
+    ));
+  }
+
   private tooltipContent(): { heading?: string; items: ChartTooltipItem[] } | undefined {
     if (!this.scene || !this.focusState || this.scene.tooltip === false) return undefined;
     const options: ChartTooltipOptions =
@@ -397,7 +417,7 @@ export class Chart {
                 </g>
               )}
             </g>
-            <g class="chart__marks" aria-hidden="true" clip-path={scene.clip ? `url(#${this.clipId})` : undefined}>{scene.nodes.map(node => this.renderNode(node))}</g>
+            {this.renderMarkLayers(scene)}
             {focus && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
             {center?.value && (
               <text

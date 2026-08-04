@@ -101,6 +101,8 @@ describe('chart scene compiler', () => {
     assert.deepEqual(scene.nodes.map(node => node.markId), ['area', 'rule', 'line', 'dots', 'dots']);
     const dotNodes = scene.nodes.filter(node => node.markId === 'dots');
     assert.ok(dotNodes.every(node => node.style.stroke === 'var(--color-background-primary)' && node.style.strokeWidth === 'var(--dimension-stroke-width-012)'));
+    assert.ok(dotNodes.every(node => node.clipToPlot === false));
+    assert.ok(scene.nodes.filter(node => node.markId !== 'dots').every(node => node.clipToPlot === undefined));
   });
 
   it('creates line gaps and omits invalid semantic points', () => {

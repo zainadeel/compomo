@@ -140,7 +140,7 @@ test('renders axis baselines and outward tick stubs independently from grids and
   expect(extendsOutward).toBe(true);
 });
 
-test('frames the plot and clips six-pixel haloed edge dots intentionally', async ({ page }) => {
+test('frames the plot while keeping six-pixel haloed edge dots visible', async ({ page }) => {
   const chart = page.locator('#density-chart');
   const boundaries = chart.locator('.chart__plot-boundary');
   const dots = chart.locator('circle.chart__mark');
@@ -160,6 +160,7 @@ test('frames the plot and clips six-pixel haloed edge dots intentionally', async
       dotStroke: getComputedStyle(middle).stroke,
       dotStrokeWidth: Number.parseFloat(getComputedStyle(middle).strokeWidth),
       lastCenter: last.cx.baseVal.value,
+      lastLayerClipPath: last.parentElement?.getAttribute('clip-path'),
       clipRight,
       topY: Number(top.getAttribute('y1')),
       clipTop: Number(clip.getAttribute('y')),
@@ -174,6 +175,7 @@ test('frames the plot and clips six-pixel haloed edge dots intentionally', async
   expect(geometry.dotStroke).not.toBe('none');
   expect(geometry.dotStrokeWidth).toBe(1);
   expect(geometry.lastCenter).toBeCloseTo(geometry.clipRight, 4);
+  expect(geometry.lastLayerClipPath).toBeNull();
   expect(geometry.topY).toBeCloseTo(geometry.clipTop, 4);
   expect(geometry.rightX).toBeCloseTo(geometry.clipRight, 4);
   expect(geometry.boundaryStroke).toBe(geometry.expectedStroke);
