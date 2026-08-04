@@ -443,6 +443,14 @@ export class Chart {
                 <rect x={scene.plot.left} y={scene.plot.top} width={scene.plot.width} height={scene.plot.height} />
               </clipPath>
             </defs>
+            <rect
+              class="chart__interaction-surface"
+              x="0"
+              y="0"
+              width={scene.width}
+              height={scene.height}
+              aria-hidden="true"
+            />
             <g class="chart__guides" aria-hidden="true">
               {scene.guides.map(node => this.renderNode(node, 'chart__grid chart__polar-guide'))}
               {scene.yAxis.line && <line class="chart__axis-line" x1={scene.plot.left} x2={scene.plot.left} y1={scene.plot.top} y2={scene.plot.bottom} />}

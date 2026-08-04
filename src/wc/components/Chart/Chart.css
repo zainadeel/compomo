@@ -23,6 +23,11 @@
   outline-offset: var(--dimension-space-025);
 }
 
+.chart__interaction-surface {
+  fill: transparent;
+  pointer-events: all;
+}
+
 .chart__grid,
 .chart__axis-line,
 .chart__plot-boundary,
