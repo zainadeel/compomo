@@ -1,0 +1,111 @@
+@import '../../utils/chrome-header.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--_card-chart-width);
+  min-height: var(--_card-chart-min-height);
+  max-width: 100%;
+  overflow: visible;
+  border: none;
+  border-radius: var(--dimension-radius-125);
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-shadow-elevated-sm);
+}
+
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow: var(--effect-highlight-elevated-sm);
+  pointer-events: none;
+}
+
+.card-chart__header {
+  flex-shrink: 0;
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  background-color: var(--color-background-primary);
+}
+
+.card-chart__copy {
+  align-items: center;
+}
+
+ds-text.card-chart__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.card-chart__actions {
+  flex-shrink: 0;
+}
+
+.card-chart__actions:empty {
+  display: none;
+}
+
+.card-chart__body,
+.card-chart__layout {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.card-chart__body {
+  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
+  background-color: var(--color-background-primary);
+}
+
+.card-chart__layout {
+  height: 100%;
+  gap: var(--dimension-space-200);
+}
+
+.card-chart__chart {
+  display: grid;
+  flex: 1 1 auto;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: var(--dimension-space-200) var(--dimension-space-200) 0
+    var(--dimension-space-200);
+}
+
+.card-chart__chart > * {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.card-chart__chart > ds-chart {
+  --ds-chart-container-height: 100%;
+}
+
+.card-chart__legend {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  padding: 0 var(--dimension-space-100) var(--dimension-space-100)
+    var(--dimension-space-100);
+}
+
+@media (forced-colors: active) {
+  :host {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  :host::after {
+    box-shadow: none;
+  }
+}

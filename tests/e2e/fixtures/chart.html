@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Chart e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <div id="chart-container" style="width:720px">
+      <ds-chart
+        id="chart"
+        height="260"
+        label="Vehicle activity by month"
+        description="Exact values are available in the fleet activity table."
+      ></ds-chart>
+    </div>
+    <div id="polar-container" style="width:360px">
+      <ds-chart id="polar-chart" height="320" label="Device status distribution"></ds-chart>
+    </div>
+    <div id="heatmap-container" style="width:480px">
+      <ds-chart id="heatmap-chart" height="240" label="Activity heatmap"></ds-chart>
+    </div>
+    <div id="density-container" style="width:720px">
+      <ds-chart id="density-chart" height="280" label="Value density"></ds-chart>
+    </div>
+    <div id="multi-line-container" style="width:720px">
+      <ds-chart id="multi-line-chart" height="280" label="Fleet score comparison"></ds-chart>
+    </div>
+    <div id="radar-container" style="width:420px">
+      <ds-chart id="radar-chart" height="340" label="Fleet performance radar"></ds-chart>
+    </div>
+    <script type="module" src="/chart-setup.mjs"></script>
+  </body>
+</html>

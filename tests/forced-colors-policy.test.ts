@@ -28,10 +28,8 @@ test('authored colors survive forced colors only for approved information marks'
     .sort();
 
   assert.deepEqual(optOutOwners, [
-    'components/ChartBar/ChartBar.css',
-    'components/ChartDonut/ChartDonut.css',
+    'components/Chart/Chart.css',
     'components/ChartLegend/ChartLegend.css',
-    'components/ChartLine/ChartLine.css',
     'components/SwatchPicker/SwatchPicker.css',
   ]);
 

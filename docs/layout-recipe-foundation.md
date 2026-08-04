@@ -51,7 +51,7 @@ one equivalent region recipe rather than repeating centering rules around each
 
 ## Data-visualization card anatomy
 
-`src/wc/components/CardDataViz` keeps Bar, Line, Donut, and custom card bodies
+`src/wc/components/CardChart` keeps Bar, Line, Donut, and custom card bodies
 aligned within one public component:
 
 - the body is a vertical fill layout;

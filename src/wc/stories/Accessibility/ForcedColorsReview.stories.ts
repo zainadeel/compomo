@@ -3,8 +3,8 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
-import '../../../../dist/components/ds-card-data-viz.js';
-import '../../../../dist/components/ds-chart-donut.js';
+import '../../../../dist/components/ds-card-chart.js';
+import '../../../../dist/components/ds-chart.js';
 import '../../../../dist/components/ds-chart-legend.js';
 import '../../../../dist/components/ds-checkbox.js';
 import '../../../../dist/components/ds-divider.js';
@@ -20,6 +20,7 @@ import '../../../../dist/components/ds-slider.js';
 import '../../../../dist/components/ds-switch.js';
 import '../../../../dist/components/ds-tab-group.js';
 import '../../../../dist/components/ds-tooltip.js';
+import { arcMark, defineChart, pieLayout, polar } from '../../utils/chart-grammar';
 
 const meta: Meta = {
   title: 'Accessibility/Forced Colors Review',
@@ -45,6 +46,12 @@ const availability = [
   { label: 'Missing', value: 25 },
   { label: 'Out of service', value: 25 },
 ];
+const availabilitySlices = pieLayout(availability, { value: 'value', key: 'label', label: 'label' });
+const availabilityDefinition = defineChart({
+  marks: [polar({ innerRadius: 0.75, grid: 'none', marks: [arcMark(availabilitySlices, { id: 'availability', key: 'key', theta1: 'theta1', theta2: 'theta2', z: 'label', value: 'value', label: 'label' })], center: { value: '200', caption: 'Total vehicles' } })],
+  focus: 'nearest',
+  tooltip: true,
+});
 
 const pageStyle =
   'box-sizing:border-box;min-height:100vh;padding:var(--dimension-space-400);' +
@@ -190,21 +197,22 @@ export const DataVisualization: Story = {
         Authored colors remain only on literal data marks and legend swatches.
         Labels, focus, controls, and the card boundary follow the OS palette.
       </p>
-      <ds-card-data-viz heading="Availability status" card-width="lg" variant="donut">
-        <ds-chart-donut
+      <ds-card-chart heading="Availability status" card-width="lg" variant="chart">
+        <ds-chart
           slot="chart"
-          center-caption="Total vehicles"
+          height="240"
+          label="Availability status"
           ${ref(element => {
-            if (element) (element as HTMLDsChartDonutElement).data = availability;
+            if (element) (element as HTMLElement & { definition: unknown }).definition = availabilityDefinition;
           })}
-        ></ds-chart-donut>
+        ></ds-chart>
         <ds-chart-legend
           slot="legend"
           ${ref(element => {
             if (element) (element as HTMLDsChartLegendElement).items = availability;
           })}
         ></ds-chart-legend>
-      </ds-card-data-viz>
+      </ds-card-chart>
     </main>
   `,
 };

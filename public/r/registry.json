@@ -1880,24 +1880,24 @@
       ]
     },
     {
-      "name": "card-data-viz",
-      "title": "CardDataViz",
-      "description": "Standard data-visualization card chrome with variant-owned chart and legend composition.",
+      "name": "card-chart",
+      "title": "CardChart",
+      "description": "Standard chart card chrome with variant-owned chart and legend composition.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-data-viz",
-        "source": "src/wc/components/CardDataViz/CardDataViz.tsx",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-chart",
+        "source": "src/wc/components/CardChart/CardChart.tsx",
         "intentStatus": "complete",
         "intent": {
           "audience": "specialized",
-          "status": "experimental",
-          "summary": "Standard data-visualization card chrome with variant-owned chart and legend composition.",
+          "status": "stable",
+          "summary": "Standard chart card chrome with variant-owned chart and legend composition.",
           "useWhen": [
-            "A chart, legend, metric visualization, or custom data-viz composition needs standard card chrome.",
-            "Bar and line legends should remain static, or a donut and legend should cross-highlight without redundant donut tooltips.",
-            "A data-viz card needs a visible heading, optional filter action, and application-owned chart data."
+            "A chart, legend, metric visualization, or custom chart composition needs standard card chrome.",
+            "A chart and static external legend need one standard card layout.",
+            "A chart card needs a visible heading, optional filter action, and application-owned chart data."
           ],
           "avoidWhen": [
             "The card contains editable settings; use CardSetting.",
@@ -1912,9 +1912,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-chart-bar",
-            "component:ds-chart-donut",
-            "component:ds-chart-line",
+            "component:ds-chart",
             "component:ds-chart-legend",
             "component:ds-button-unfilled"
           ],
@@ -1922,22 +1920,21 @@
             "Provide a concise visible heading; the component renders it as a section heading.",
             "Slotted actions must provide accessible names and controlled-state semantics.",
             "Charts retain their own image names and data summaries.",
-            "A visible donut legend owns persistent labels and values, so donut mode suppresses the redundant slice tooltip."
+            "A visible legend provides persistent labels while the chart retains its own accessible name and focus behavior."
           ],
           "states": [
             "Custom mode provides flexible body chrome and does not mutate chart or legend interaction.",
-            "Bar and line modes keep a slotted legend static by disabling hover emphasis.",
-            "Donut mode synchronizes active labels between chart and legend and shows chart tooltips only when no legend is present.",
+            "Chart mode keeps a slotted external legend static by disabling hover emphasis.",
             "showFilter adds the standard filter action and emits dsFilterClick without owning filter state."
           ],
           "responsiveBehavior": [
             "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
-            "The body allocates remaining height to the chart while legends retain content height.",
+            "The body allocates remaining height to an unconfigured ds-chart while legends retain content height; authored chart height and aspectRatio remain authoritative.",
             "Parent layouts own wrapping, stacking, and breakpoint-dependent card width."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Set variant to bar, line, or donut when the component should manage legend interaction; slot chart, legend, actions, and supporting content by name."
+              "Set variant to chart for the standard chart and static legend layout; slot chart, legend, actions, and supporting content by name."
             ],
             "react": [
               "Keep chart data in React and pass chart, legend, and action elements through named slots."
@@ -1949,13 +1946,13 @@
           "references": [
             {
               "label": "Storybook examples",
-              "path": "src/wc/components/CardDataViz/CardDataViz.stories.ts"
+              "path": "src/wc/components/CardChart/CardChart.stories.ts"
             }
           ]
         },
         "props": {
           "cardWidth": {
-            "type": "CardDataVizWidth",
+            "type": "CardChartWidth",
             "required": false
           },
           "filterLabel": {
@@ -1971,7 +1968,7 @@
             "required": false
           },
           "variant": {
-            "type": "CardDataVizVariant",
+            "type": "CardChartVariant",
             "required": false
           }
         },
@@ -1983,9 +1980,9 @@
         ],
         "slots": [],
         "exports": {
-          "customElement": "ds-card-data-viz",
-          "react": "DsCardDataViz",
-          "angular": "DsCardDataViz"
+          "customElement": "ds-card-chart",
+          "react": "DsCardChart",
+          "angular": "DsCardChart"
         }
       },
       "dependencies": [
@@ -2026,8 +2023,8 @@
           "alternatives": [
             {
               "when": "A measure needs a chart or other data visualization.",
-              "component": "component:ds-card-data-viz",
-              "reason": "CardDataViz owns the data-visualization card contract; the overview grid presents values and change only."
+              "component": "component:ds-card-chart",
+              "reason": "CardChart owns the data-visualization card contract; the overview grid presents values and change only."
             },
             {
               "when": "The surface is a settings section with an edit workflow.",
@@ -2199,8 +2196,8 @@
           "alternatives": [
             {
               "when": "The surface contains a chart or specialized data-visualization composition.",
-              "component": "component:ds-card-data-viz",
-              "reason": "CardDataViz owns the independently evolving data-visualization card contract."
+              "component": "component:ds-card-chart",
+              "reason": "CardChart owns the independently evolving chart-card contract."
             },
             {
               "when": "The task must block the interface for one focused decision or short workflow.",
@@ -2317,106 +2314,95 @@
       ]
     },
     {
-      "name": "chart-bar",
-      "title": "ChartBar",
-      "description": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
+      "name": "chart",
+      "title": "Chart",
+      "description": "Responsive chart grammar for Cartesian, polar, heatmap, and distribution compositions with one keyed scene and centralized focus.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-bar",
-        "source": "src/wc/components/ChartBar/ChartBar.tsx",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart",
+        "source": "src/wc/components/Chart/Chart.tsx",
         "intentStatus": "complete",
         "intent": {
           "audience": "specialized",
-          "status": "experimental",
-          "summary": "Bar chart for single-series magnitude, additive stacked totals, or normalized 0–100% composition across categories.",
+          "status": "stable",
+          "summary": "Responsive chart grammar for Cartesian, polar, heatmap, and distribution compositions with one keyed scene and centralized focus.",
           "useWhen": [
-            "Users need to compare one numeric measure across a small set of categories.",
-            "Values are grouped into ordered time buckets such as hours, days, weeks, or months and equal visual spacing is appropriate.",
-            "A data-viz card needs a compact magnitude comparison rather than a continuous trend.",
-            "Several consistent series contribute to each category total or its normalized composition."
+            "A product needs a responsive line, area, bar, scatter, pie, donut, gauge, radar, heatmap, histogram, density, or boxplot visualization.",
+            "Several mark layers must share scales and semantic interaction points."
           ],
           "avoidWhen": [
-            "Timestamp positions must reflect irregular elapsed time; pre-bucket the data or use a future continuous time-scale chart.",
-            "The visualization needs grouped bars or precise comparison of each individual series across categories.",
-            "The interaction requires selection, drill-down, brushing, or zoom.",
-            "The data communicates a part-to-whole relationship."
+            "The visualization needs maps, networks, brushing, zooming, selection, or Canvas."
           ],
-          "alternatives": [
-            {
-              "when": "Users need to follow one or more trends across ordered categories.",
-              "component": "component:ds-chart-line",
-              "reason": "ChartLine connects ordered observations and supports multiple named series."
-            },
-            {
-              "when": "The data communicates parts of a total.",
-              "component": "component:ds-chart-donut",
-              "reason": "ChartDonut provides the part-to-whole composition and center aggregate."
-            }
-          ],
+          "alternatives": [],
           "commonlyComposedWith": [
             "component:ds-chart-legend",
-            "component:ds-card-data-viz",
-            "component:ds-tooltip-data-viz"
+            "component:ds-card-chart",
+            "component:ds-tooltip-chart"
           ],
           "accessibility": [
-            "Keep category labels concise and provide an adjacent textual summary when exact values are critical to completing a task.",
-            "Do not rely on bar color alone to communicate category meaning.",
-            "A future interactive tooltip must supplement rather than replace the chart's accessible value representation."
+            "Provide the required label and an adjacent exact-value summary when exact values are essential.",
+            "The SVG is one tab stop; arrow keys, Home, End, and Escape control semantic focus.",
+            "Pointer and keyboard input resolve through the same interaction points and polite status output."
           ],
           "states": [
-            "The chart is static without hover, selection, loading, or empty-state policy.",
-            "Single mode reads data. Stacked and percentage modes read aligned series and categories.",
-            "Stacked mode preserves raw totals; percentage mode normalizes every non-empty category to 100%.",
-            "An empty dataset renders no bars; the owning card or product supplies meaningful empty-state messaging.",
-            "Bars use 2px top corner radii while the lower corners touching the zero axis remain square.",
-            "Use one consistent bar color across time buckets when every bar is the same measure at a different interval; categorical color changes are for genuinely distinct categories.",
-            "Authored datum colors override the shared categorical palette."
+            "Definition compilation is renderer-independent and regenerates when data, locale, width, or height changes.",
+            "Stable mark and datum keys preserve focus across responsive recompilation and reordered data.",
+            "Tooltip rows are chart-owned while legends remain external and static.",
+            "Pie and donut pointer tooltips require direct slice containment and follow the pointer; keyboard tooltips remain anchored to the semantic slice.",
+            "Polar center content defaults to its authored total and may opt into focused content."
           ],
           "responsiveBehavior": [
-            "Width and height provide the standalone intrinsic viewport; container constraints are measured and reflow the plot across the available pixels.",
-            "Responsive layout changes bar positions and plot extents without scaling SVG text, strokes, corner radii, or margins.",
-            "Limit or pre-format long category labels so they remain legible at the chosen width.",
-            "Time labels remain ordered, pre-formatted buckets with equal spacing rather than raw continuous timestamps."
+            "The chart observes its container unless width is fixed and recompiles geometry at CSS pixel dimensions.",
+            "Height uses an authored height or aspectRatio, fills the chart region supplied by CardChart, and otherwise defaults to 320px.",
+            "Measured guide labels reserve margins and thin colliding ticks while retaining boundary ticks."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign data, series, and categories as JavaScript properties; arrays are not supported as HTML attributes."
+              "Assign definition as a JavaScript property and import D3 scale factories from granular D3 packages."
             ],
             "react": [
-              "Pass stable data or series/category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+              "Pass the typed definition object as a property; do not serialize it to an attribute."
             ],
             "angular": [
-              "Bind data or series/categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
+              "Bind definition as a property so accessors and D3 factories remain intact."
             ]
           },
           "references": [
             {
               "label": "Storybook examples",
-              "path": "src/wc/components/ChartBar/ChartBar.stories.ts"
+              "path": "src/wc/components/Chart/Chart.stories.ts"
+            },
+            {
+              "label": "Chart guide",
+              "path": "src/docs/Charts.mdx"
             }
           ]
         },
         "props": {
-          "categories": {
-            "type": "string[]",
+          "aspectRatio": {
+            "type": "number",
             "required": false
           },
-          "data": {
-            "type": "ChartDatum[]",
+          "definition": {
+            "type": "ChartDefinition",
+            "required": true
+          },
+          "description": {
+            "type": "string",
             "required": false
           },
           "height": {
             "type": "number",
             "required": false
           },
-          "series": {
-            "type": "ChartSeries[]",
-            "required": false
+          "label": {
+            "type": "string",
+            "required": true
           },
-          "variant": {
-            "type": "ChartBarVariant",
+          "locale": {
+            "type": "string",
             "required": false
           },
           "width": {
@@ -2424,156 +2410,17 @@
             "required": false
           }
         },
-        "events": [],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-chart-bar",
-          "react": "DsChartBar",
-          "angular": "DsChartBar"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
-    },
-    {
-      "name": "chart-donut",
-      "title": "ChartDonut",
-      "description": "Part-to-whole donut chart with a center aggregate, responsive fill sizing, local slice tooltip feedback, and externally controlled legend highlighting.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-donut",
-        "source": "src/wc/components/ChartDonut/ChartDonut.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "experimental",
-          "summary": "Part-to-whole donut chart with a center aggregate, responsive fill sizing, local slice tooltip feedback, and externally controlled legend highlighting.",
-          "useWhen": [
-            "Users need to understand a small part-to-whole breakdown with a prominent total or status in the center.",
-            "A standalone donut needs pointer and keyboard-focus value feedback through a chart-owned data-viz tooltip.",
-            "A donut and visible ChartLegend should cross-highlight by matching stable labels."
-          ],
-          "avoidWhen": [
-            "The data is a trend, time sequence, or independent magnitude comparison.",
-            "The category count creates slices too small to understand reliably.",
-            "Hover is intended to select, filter, or navigate rather than temporarily highlight data."
-          ],
-          "alternatives": [
-            {
-              "when": "The product needs the canonical card, filter action, visible legend, and built-in hover synchronization.",
-              "component": "component:ds-card-data-viz",
-              "reason": "The donut card variant owns that complete composition and suppresses redundant slice tooltips."
-            },
-            {
-              "when": "Users need to compare independent category magnitudes.",
-              "component": "component:ds-chart-bar",
-              "reason": "Bars make category magnitude differences easier to compare."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-chart-legend",
-            "component:ds-tooltip-data-viz",
-            "component:ds-card-data-viz"
-          ],
-          "accessibility": [
-            "Every non-empty slice remains keyboard focusable and exposes its label and value without depending on the visual tooltip.",
-            "Use a visible legend when the full set of labels, values, or percentages must remain continuously available.",
-            "Provide localized no-data text for the neutral empty ring.",
-            "Center text is a visual summary and must not be the only source of essential category detail."
-          ],
-          "states": [
-            "Genuine local pointer or keyboard focus may show a chart-owned tooltip; externally synchronized highlight never opens it.",
-            "When a visible legend already owns label and value detail, suppress the redundant donut tooltip. CardDataViz donut mode does this automatically.",
-            "Local hover and external highlight remain separate while both may dim non-matching slices.",
-            "Zero or negative totals render a neutral empty ring without interactive slices.",
-            "Center value and caption truncate when they exceed the safe inner-circle measure."
-          ],
-          "responsiveBehavior": [
-            "Prefer container-fill sizing inside data-viz cards and explicit sizing only in layouts that own a stable diameter.",
-            "Fill sizing remains centered and constrained to the shared donut size band.",
-            "Changing the measured diameter changes the ring radius without scaling its token-based thickness, typography, focus stroke, or corner treatment.",
-            "The owner adapts category count and legend placement for available space."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign data as a JavaScript property and wire slice-hover detail to a sibling legend only when not using CardDataViz donut mode."
-            ],
-            "react": [
-              "Keep synchronized highlight controlled by the composition and disable slice tooltips when a sibling legend continuously shows the same details."
-            ],
-            "angular": [
-              "Keep synchronized highlight controlled by the composition and disable slice tooltips when a sibling legend continuously shows the same details."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/ChartDonut/ChartDonut.stories.ts"
-            }
-          ]
-        },
-        "props": {
-          "activeLabel": {
-            "type": "string | null",
-            "required": false
-          },
-          "centerCaption": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "centerValue": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "cornerRadius": {
-            "type": "number | string",
-            "required": false
-          },
-          "data": {
-            "type": "ChartDatum[]",
-            "required": false
-          },
-          "gap": {
-            "type": "number",
-            "required": false
-          },
-          "locale": {
-            "type": "string | undefined",
-            "required": false
-          },
-          "noDataLabel": {
-            "type": "string",
-            "required": false
-          },
-          "showTooltip": {
-            "type": "boolean",
-            "required": false
-          },
-          "size": {
-            "type": "number | undefined",
-            "required": false
-          },
-          "thickness": {
-            "type": "number | string",
-            "required": false
-          }
-        },
         "events": [
           {
-            "name": "dsSliceHover",
-            "detail": "ChartDatum | null"
+            "name": "dsChartFocusChange",
+            "detail": "ChartFocusChangeDetail"
           }
         ],
         "slots": [],
         "exports": {
-          "customElement": "ds-chart-donut",
-          "react": "DsChartDonut",
-          "angular": "DsChartDonut"
+          "customElement": "ds-chart",
+          "react": "DsChart",
+          "angular": "DsChart"
         }
       },
       "dependencies": [
@@ -2581,13 +2428,13 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "tooltip-data-viz"
+        "tooltip-chart"
       ]
     },
     {
       "name": "chart-legend",
       "title": "ChartLegend",
-      "description": "Display-first chart legend with swatches, labels, optional values and percentages, explicit deep links, and highlight-only chart synchronization.",
+      "description": "External chart legend with swatches, labels, optional values and percentages, and explicit deep links.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2597,11 +2444,11 @@
         "intentStatus": "complete",
         "intent": {
           "audience": "specialized",
-          "status": "experimental",
-          "summary": "Display-first chart legend with swatches, labels, optional values and percentages, explicit deep links, and highlight-only chart synchronization.",
+          "status": "stable",
+          "summary": "External chart legend with swatches, labels, optional values and percentages, and explicit deep links.",
           "useWhen": [
             "A chart needs the standard swatch, label, and optional numeric-detail legend.",
-            "Donut slices or line series need a continuously visible key beside or below the visualization.",
+            "Polar slices or Cartesian series need a continuously visible key beside or below the visualization.",
             "A category has an explicit deep-link destination and should render as an accessible link."
           ],
           "avoidWhen": [
@@ -2616,25 +2463,18 @@
               "reason": "Compose product-owned semantic markup from the same chart data rather than forcing it into this row recipe."
             },
             {
-              "when": "The donut belongs in the canonical dashboard card.",
-              "component": "component:ds-card-data-viz",
-              "reason": "The donut variant places the legend and handles bidirectional highlight synchronization."
-            },
-            {
-              "when": "A static line chart and series key belong in the canonical dashboard card.",
-              "component": "component:ds-card-data-viz",
-              "reason": "The line variant places the horizontal legend and disables decorative local hover highlighting."
+              "when": "A chart and static series key belong in the canonical dashboard card.",
+              "component": "component:ds-card-chart",
+              "reason": "The chart variant places the external legend and disables decorative local hover highlighting."
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-chart-donut",
-            "component:ds-chart-bar",
-            "component:ds-chart-line",
-            "component:ds-card-data-viz"
+            "component:ds-chart",
+            "component:ds-card-chart"
           ],
           "accessibility": [
             "Rows remain non-interactive unless the item supplies an actual link destination.",
-            "Synced highlight changes opacity only and never moves focus or announces selection.",
+            "Optional highlight changes opacity only and never moves focus or announces selection.",
             "Keep full labels available when visible text truncates, and retain stable tabular numeric columns.",
             "Do not rely on swatch color alone; every entry requires a meaningful visible label."
           ],
@@ -2726,120 +2566,6 @@
       "registryDependencies": [
         "text"
       ]
-    },
-    {
-      "name": "chart-line",
-      "title": "ChartLine",
-      "description": "Static single- or multi-series line chart for trends across ordered, evenly spaced categories, including preformatted time-period labels.",
-      "type": "registry:ui",
-      "meta": {
-        "library": "@ds-mo/ui",
-        "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/chart-line",
-        "source": "src/wc/components/ChartLine/ChartLine.tsx",
-        "intentStatus": "complete",
-        "intent": {
-          "audience": "specialized",
-          "status": "experimental",
-          "summary": "Static single- or multi-series line chart for trends across ordered, evenly spaced categories, including preformatted time-period labels.",
-          "useWhen": [
-            "Users need to follow one or more numeric trends across a shared ordered x-axis.",
-            "Time periods are already grouped into equally spaced labels such as months, weeks, or days.",
-            "A horizontal ChartLegend should identify multiple series."
-          ],
-          "avoidWhen": [
-            "Pixel position must reflect irregular elapsed time or continuous timestamps.",
-            "The primary task is comparing unrelated category magnitudes rather than following a trend.",
-            "The chart needs built-in zoom, brushing, selection, or drill-down.",
-            "Series lengths do not align with the shared category list."
-          ],
-          "alternatives": [
-            {
-              "when": "Users need to compare one measure across discrete categories or time buckets.",
-              "component": "component:ds-chart-bar",
-              "reason": "Bars emphasize independent bucket magnitudes."
-            },
-            {
-              "when": "The data communicates parts of a total.",
-              "component": "component:ds-chart-donut",
-              "reason": "Donut provides the part-to-whole and center-summary treatment."
-            }
-          ],
-          "commonlyComposedWith": [
-            "component:ds-chart-legend",
-            "component:ds-card-data-viz",
-            "component:ds-tooltip-data-viz"
-          ],
-          "accessibility": [
-            "Provide a visible legend or adjacent textual summary when exact series values are important; the chart image name alone is not a complete data table.",
-            "Do not rely on series color alone to communicate meaning.",
-            "A future point tooltip must supplement rather than replace accessible series and value context."
-          ],
-          "states": [
-            "The chart is currently static and does not own hover, selection, loading, or empty-state policy.",
-            "Its standard horizontal legend is a static key with local hover highlighting disabled.",
-            "Point markers may be shown or hidden without changing the underlying series meaning.",
-            "Authored series colors override the shared categorical palette."
-          ],
-          "responsiveBehavior": [
-            "Width and height provide the standalone intrinsic viewport; constrained card regions are measured and reflow both axes to their rendered pixel dimensions.",
-            "Responsive layout changes point positions and plot extents without scaling SVG text, line strokes, point markers, or margins.",
-            "Category positions are always equally spaced, even when labels represent time.",
-            "Reduce or pre-format dense labels before passing them; the chart renders authored labels without a continuous time scale."
-          ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign series and categories as JavaScript properties and keep every series aligned to the category count."
-            ],
-            "react": [
-              "Pass stable series and category arrays; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
-            ],
-            "angular": [
-              "Bind series and categories as properties; width and height provide standalone intrinsic dimensions while constrained containers reflow automatically."
-            ]
-          },
-          "references": [
-            {
-              "label": "Storybook examples",
-              "path": "src/wc/components/ChartLine/ChartLine.stories.ts"
-            }
-          ]
-        },
-        "props": {
-          "categories": {
-            "type": "string[]",
-            "required": false
-          },
-          "height": {
-            "type": "number",
-            "required": false
-          },
-          "series": {
-            "type": "ChartSeries[]",
-            "required": false
-          },
-          "showPoints": {
-            "type": "boolean",
-            "required": false
-          },
-          "width": {
-            "type": "number",
-            "required": false
-          }
-        },
-        "events": [],
-        "slots": [],
-        "exports": {
-          "customElement": "ds-chart-line",
-          "react": "DsChartLine",
-          "angular": "DsChartLine"
-        }
-      },
-      "dependencies": [
-        "@ds-mo/ui",
-        "@ds-mo/tokens"
-      ],
-      "registryDependencies": []
     },
     {
       "name": "checkbox",
@@ -8791,8 +8517,8 @@
             },
             {
               "when": "A chart needs a cursor- or data-point-positioned value callout.",
-              "component": "component:ds-tooltip-data-viz",
-              "reason": "TooltipDataViz accepts chart coordinates and is designed for data visualization hover feedback."
+              "component": "component:ds-tooltip-chart",
+              "reason": "TooltipChart accepts chart coordinates and is designed for data visualization hover feedback."
             }
           ],
           "commonlyComposedWith": [
@@ -8902,19 +8628,19 @@
       ]
     },
     {
-      "name": "tooltip-data-viz",
-      "title": "TooltipDataViz",
+      "name": "tooltip-chart",
+      "title": "TooltipChart",
       "description": "Chart-owned, non-interactive label and value callout positioned from pointer or focused-mark coordinates inside a visualization wrapper.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip-data-viz",
-        "source": "src/wc/components/TooltipDataViz/TooltipDataViz.tsx",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/tooltip-chart",
+        "source": "src/wc/components/TooltipChart/TooltipChart.tsx",
         "intentStatus": "complete",
         "intent": {
           "audience": "specialized",
-          "status": "experimental",
+          "status": "stable",
           "summary": "Chart-owned, non-interactive label and value callout positioned from pointer or focused-mark coordinates inside a visualization wrapper.",
           "useWhen": [
             "A chart needs immediate visual value feedback for a genuinely hovered or keyboard-focused mark.",
@@ -8940,9 +8666,7 @@
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-chart-bar",
-            "component:ds-chart-line",
-            "component:ds-chart-donut"
+            "component:ds-chart"
           ],
           "accessibility": [
             "The callout is presentation-only and never replaces the owning chart mark's accessible label or an adjacent data summary.",
@@ -8975,13 +8699,21 @@
           "references": [
             {
               "label": "Storybook example",
-              "path": "src/wc/components/TooltipDataViz/TooltipDataViz.stories.ts"
+              "path": "src/wc/components/TooltipChart/TooltipChart.stories.ts"
             }
           ]
         },
         "props": {
           "delay": {
             "type": "number | string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "items": {
+            "type": "TooltipChartItem[]",
             "required": false
           },
           "label": {
@@ -9004,9 +8736,9 @@
         "events": [],
         "slots": [],
         "exports": {
-          "customElement": "ds-tooltip-data-viz",
-          "react": "DsTooltipDataViz",
-          "angular": "DsTooltipDataViz"
+          "customElement": "ds-tooltip-chart",
+          "react": "DsTooltipChart",
+          "angular": "DsTooltipChart"
         }
       },
       "dependencies": [

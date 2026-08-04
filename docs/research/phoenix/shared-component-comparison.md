@@ -157,7 +157,7 @@ Overview can make items clickable and keyboard-navigable.
 
 CompoMo does not expose a generic Card. CardOverview owns a reporting-period and
 measure-summary job, CardSetting owns a controlled settings view/edit workflow,
-and CardDataViz owns visualization chrome.
+and CardChart owns visualization chrome.
 
 **Assessment:** this is an intentional move toward task-specific surfaces. Add a
 generic card only if repeated product compositions require a stable semantic or
@@ -221,4 +221,4 @@ rendered Storybooks:
 | Tooltip            | `projects/core/src/lib/tooltip/`                                              | [Tooltip intent](../../../src/wc/components/Tooltip/Tooltip.agent.json) and [Tooltip source](../../../src/wc/components/Tooltip/Tooltip.tsx)                                                                                                                         |
 | Toggle and switch  | `projects/core/src/lib/toggle/`                                               | [Switch intent](../../../src/wc/components/Switch/Switch.agent.json) and [ButtonUnfilled intent](../../../src/wc/components/ButtonUnfilled/ButtonUnfilled.agent.json)                                                                                                |
 | Tabs and routes    | `projects/core/src/lib/tabset/`                                               | [TabGroup intent](../../../src/wc/components/TabGroup/TabGroup.agent.json), [BarNav intent](../../../src/wc/components/BarNav/BarNav.agent.json), and [PanelNav intent](../../../src/wc/components/PanelNav/PanelNav.agent.json)                                     |
-| Cards and overview | `projects/core/src/lib/card/` and `projects/core/src/lib/overview/`           | [CardOverview intent](../../../src/wc/components/CardOverview/CardOverview.agent.json), [CardSetting intent](../../../src/wc/components/CardSetting/CardSetting.agent.json), and [CardDataViz intent](../../../src/wc/components/CardDataViz/CardDataViz.agent.json) |
+| Cards and overview | `projects/core/src/lib/card/` and `projects/core/src/lib/overview/`           | [CardOverview intent](../../../src/wc/components/CardOverview/CardOverview.agent.json), [CardSetting intent](../../../src/wc/components/CardSetting/CardSetting.agent.json), and [CardChart intent](../../../src/wc/components/CardChart/CardChart.agent.json) |

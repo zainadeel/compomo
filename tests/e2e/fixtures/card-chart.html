@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Chart card</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <ds-card-chart id="viz-shell" heading="Fuel trend" card-width="sm">
+      <ds-button-unfilled slot="actions" variant="icon" icon="Filters" aria-label="Filter fuel trend"></ds-button-unfilled>
+      <div id="viz-content">Visualization content</div>
+    </ds-card-chart>
+
+    <ds-card-chart id="donut-card" heading="Availability status" card-width="sm" variant="chart" show-filter>
+      <ds-chart slot="chart" height="240" label="Availability status"></ds-chart>
+      <ds-chart-legend slot="legend"></ds-chart-legend>
+    </ds-card-chart>
+
+    <ds-card-chart id="chart-card" heading="Vehicle activity" card-width="sm" variant="chart" show-filter>
+      <ds-chart slot="chart" label="Vehicle activity by month"></ds-chart>
+      <ds-chart-legend slot="legend" direction="horizontal"></ds-chart-legend>
+    </ds-card-chart>
+
+    <script type="module" src="/card-chart-setup.mjs"></script>
+  </body>
+</html>

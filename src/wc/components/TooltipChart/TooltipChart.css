@@ -1,0 +1,89 @@
+@import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  position: absolute;
+  z-index: var(--dimension-z-index-tooltip);
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--color-translucent-translucent);
+  backdrop-filter: blur(var(--effect-blur-md));
+  -webkit-backdrop-filter: blur(var(--effect-blur-md));
+  border-radius: var(--dimension-radius-075);
+  box-shadow: var(--effect-elevation-elevated-floating);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  padding: var(--dimension-space-050);
+}
+
+:host(.tooltip-chart--visible) {
+  animation: tooltip-chart-fade-in var(--effect-motion-short-2) forwards;
+}
+
+.tooltip-chart__item {
+  width: 100%;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+}
+
+.tooltip-chart__heading {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding-inline: calc(
+    var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
+}
+
+.tooltip-chart__items {
+  display: grid;
+}
+
+.tooltip-chart__swatch-box {
+  pointer-events: none;
+}
+
+.tooltip-chart__swatch {
+  width: var(--dimension-size-100);
+  height: var(--dimension-size-100);
+  flex: none;
+  border-radius: var(--dimension-radius-half);
+  background: var(--ds-tooltip-chart-swatch);
+}
+
+.tooltip-chart__value {
+  margin-inline-start: auto;
+  text-align: end;
+}
+
+.tooltip-chart__label {
+  margin-inline-end: var(--dimension-space-050);
+}
+
+.tooltip-chart__label,
+.tooltip-chart__value {
+  flex: none;
+}
+
+@keyframes tooltip-chart-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.tooltip-chart--visible) {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+}

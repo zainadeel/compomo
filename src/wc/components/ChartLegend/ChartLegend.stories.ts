@@ -2,16 +2,16 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-chart-legend.js';
-import type { ChartDatum } from '../../utils/chart-types';
+import type { ChartLegendItem } from '../../utils/chart-types';
 
-const MOCK_DATA: ChartDatum[] = [
+const MOCK_DATA: ChartLegendItem[] = [
   { label: 'Passed', value: 68 },
   { label: 'Needs review', value: 22 },
   { label: 'Failed', value: 10 },
 ];
 
 const meta: Meta = {
-  title: 'Data Viz/Chart Legend',
+  title: 'Charts/Chart Legend',
   tags: ['autodocs'],
   argTypes: {
     direction: { control: 'select', options: ['vertical', 'horizontal'] },
@@ -46,7 +46,7 @@ export const Playground: Story = {
 
 // Round-numbers through every compact-formatting bracket: 1000 -> 1k, 1500 -> 1.5k,
 // 10100 -> 10.1k, 110100 -> 110.1k, 1000000 -> 1m.
-const NUMBER_FORMAT_ITEMS: ChartDatum[] = [
+const NUMBER_FORMAT_ITEMS: ChartLegendItem[] = [
   { label: 'Miles driven', value: 1000 },
   { label: 'Fuel spend', value: 1500 },
   { label: 'Idle minutes', value: 10100 },
@@ -55,7 +55,7 @@ const NUMBER_FORMAT_ITEMS: ChartDatum[] = [
 ];
 
 // Labels of increasing length: fits comfortably, then must truncate at exactly 1 line.
-const TRUNCATE_ITEMS: ChartDatum[] = [
+const TRUNCATE_ITEMS: ChartLegendItem[] = [
   { label: 'Online', value: 42 },
   { label: 'Needs attention this week', value: 8 },
   { label: 'Vehicles flagged for inspection and compliance review', value: 5 },

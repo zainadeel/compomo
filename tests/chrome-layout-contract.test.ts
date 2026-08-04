@@ -57,6 +57,7 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
     Modal: /modal-header ds-chrome-header ds-chrome-header--bounded/,
     PanelToolHeader: /panel-tool-header ds-chrome-header ds-chrome-header--bounded/,
     BarTitle: /'ds-chrome-header': compact/,
+    CardChart: /card-chart__header ds-chrome-header/,
   } as const;
 
   for (const [component, contract] of Object.entries(consumers)) {
@@ -88,7 +89,6 @@ test('CardSetting pilots md row chrome while retaining explicit 48px ownership',
 
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {
   const migrations = [
-    ['src/wc/components/CardDataViz/CardDataViz.tsx', /card-data-viz__header ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/MobileHeader/MobileHeader.tsx', /mobile-header__primary ds-chrome-grid ds-chrome-space--md/],
