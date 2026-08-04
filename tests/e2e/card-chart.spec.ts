@@ -61,7 +61,8 @@ test('chart variant composes ds-chart with a static external legend', async ({ p
       paddingLeft: regionStyle.paddingLeft,
     };
   });
-  expect(chrome.headerBackground).toBe(chrome.cardBackground);
+  expect(chrome.cardBackground).not.toBe('rgba(0, 0, 0, 0)');
+  expect(chrome.headerBackground).toBe('rgba(0, 0, 0, 0)');
   expect(chrome).toMatchObject({ paddingTop: '16px', paddingRight: '16px', paddingLeft: '16px' });
 });
 

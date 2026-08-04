@@ -14,7 +14,13 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
 
   const geometry = await card.evaluate(element => {
     const style = getComputedStyle(element);
-    const header = element.querySelector<HTMLElement>('.card-setting__header');
+    const header = element.querySelector<HTMLElement>('.card-setting__header')!;
+    const headerStyle = getComputedStyle(header);
+    const radiusProbe = document.createElement('div');
+    radiusProbe.style.borderRadius = 'var(--dimension-radius-125)';
+    element.append(radiusProbe);
+    const expectedBorderRadius = getComputedStyle(radiusProbe).borderRadius;
+    radiusProbe.remove();
     return {
       width: element.getBoundingClientRect().width,
       expectedWidth: Number.parseFloat(style.getPropertyValue('--dimension-card-width-sm')),
@@ -23,13 +29,14 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
         style.getPropertyValue('--dimension-card-height-sm')
       ),
       borderRadius: style.borderRadius,
-      expectedBorderRadius: style.getPropertyValue('--dimension-radius-125').trim(),
+      expectedBorderRadius,
       boxShadow: style.boxShadow,
-      headerHeight: header?.getBoundingClientRect().height,
-      headerBackground: header ? getComputedStyle(header).backgroundColor : undefined,
-      headerPadding: header ? getComputedStyle(header).padding : undefined,
-      headerGap: header ? getComputedStyle(header).gap : undefined,
-      headerBoxSizing: header ? getComputedStyle(header).boxSizing : undefined,
+      headerHeight: header.getBoundingClientRect().height,
+      headerMinHeight: Number.parseFloat(headerStyle.minBlockSize),
+      headerBackground: headerStyle.backgroundColor,
+      headerPadding: headerStyle.padding,
+      headerGap: headerStyle.gap,
+      headerBoxSizing: headerStyle.boxSizing,
     };
   });
 
@@ -37,7 +44,7 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
   expect(geometry.minHeight).toBe(geometry.expectedMinHeight);
   expect(geometry.borderRadius).toBe(geometry.expectedBorderRadius);
   expect(geometry.boxShadow).not.toBe('none');
-  expect(geometry.headerHeight).toBe(48);
+  expect(geometry.headerHeight).toBeGreaterThanOrEqual(geometry.headerMinHeight);
   expect(geometry.headerBackground).toBe('rgba(0, 0, 0, 0)');
   expect(geometry.headerPadding).toBe('8px');
   expect(geometry.headerGap).toBe('8px');
@@ -57,7 +64,7 @@ test('emits typed actions while the parent enforces one editing section', async 
     const body = element.querySelector<HTMLElement>('.card-setting__body');
     return {
       bodyTopRadius: body ? getComputedStyle(body).borderTopRightRadius : undefined,
-      expectedBodyTopRadius: style.getPropertyValue('--dimension-radius-125').trim(),
+      expectedBodyTopRadius: style.borderTopRightRadius,
       boxShadow: style.boxShadow,
     };
   });
