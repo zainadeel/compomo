@@ -63,6 +63,15 @@
     <ds-card-overview id="no-score"></ds-card-overview>
     <ds-card-overview id="no-trend"></ds-card-overview>
     <ds-card-overview id="score-error" score-error-message="Score unavailable"></ds-card-overview>
+    <ds-card-overview
+      id="loading-overview"
+      period-label="Jul 27"
+      comparison-label="vs."
+      is-loading
+    >
+      <ds-select id="loading-filter" slot="filter" aria-label="Comparison window"></ds-select>
+    </ds-card-overview>
+    <ds-card-overview id="loading-with-metrics" is-loading></ds-card-overview>
 
     <script type="module" src="/card-overview-setup.mjs"></script>
   </body>

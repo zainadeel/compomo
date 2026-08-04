@@ -20,7 +20,7 @@ import {
 const DEFAULT_METRIC_MIN_WIDTH = 'var(--dimension-menu-width-xs)';
 
 /** Skeleton cells rendered while loading with no metrics supplied yet. */
-const LOADING_PLACEHOLDER_COUNT = 4;
+const DEFAULT_LOADING_METRIC_COUNT = 5;
 
 /** Maximum number of comparable measures the summary bar presents at once. */
 const MAX_METRIC_COUNT = 7;
@@ -114,11 +114,13 @@ export class CardOverview {
   }
 
   private get visibleCellCount(): number {
-    const metricCount =
-      this.isLoading && this.metrics.length === 0
-        ? LOADING_PLACEHOLDER_COUNT
-        : this.visibleMetrics.length;
+    const metricCount = this.isLoading ? this.loadingMetricCount : this.visibleMetrics.length;
     return 1 + metricCount;
+  }
+
+  /** Preserve an authored data shape while loading, or use the standard six-cell grid. */
+  private get loadingMetricCount(): number {
+    return this.visibleMetrics.length || DEFAULT_LOADING_METRIC_COUNT;
   }
 
   private get resolvedScrollCollapseProgress(): number {
@@ -398,18 +400,19 @@ export class CardOverview {
   }
 
   private renderMetrics() {
-    if (this.isLoading && this.metrics.length === 0) {
+    if (this.isLoading) {
       return [
         this.renderScore(),
-        ...Array.from({ length: LOADING_PLACEHOLDER_COUNT }, (_, index) => (
+        ...Array.from({ length: this.loadingMetricCount }, (_, index) => (
           <div class="card-overview__metric" key={`loading-${index}`}>
             <div class="card-overview__metric-action card-overview__metric-action--inactive">
-              {this.bar('text-body-small', '70%', 'card-overview__metric-label')}
-              <div class="card-overview__metric-figure">
-                {this.bar('text-body-medium', '36px')}
-                {/* text-body-medium, matching renderTrend for a metric — a smaller
-                 * variant here leaves the trend bar short of the value beside it. */}
-                {this.bar('text-body-medium', '40px')}
+              <div class="card-overview__metric-content">
+                {this.bar('text-body-small', '35%', 'card-overview__metric-label')}
+                <div class="card-overview__metric-figure">
+                  {this.bar('text-body-medium', '40px')}
+                  {/* Match renderTrend's type canvas and the score trend's 28px width. */}
+                  {this.bar('text-body-medium', '28px')}
+                </div>
               </div>
             </div>
           </div>
@@ -475,59 +478,38 @@ export class CardOverview {
             >
               <div class="card-overview__summary">
                 <div class="card-overview__header ds-control--md">
-                  {this.isLoading ? (
-                    <div class="card-overview__period">
-                      {this.bar('text-body-medium', '184px')}
-                      {this.bar('text-body-medium', '248px')}
+                  <div class="card-overview__period">
+                    <div class="card-overview__period-current">
+                      <slot name="period">
+                        {this.periodLabel && (
+                          /* eslint-disable-next-line local/prefer-direct-ds-text -- Fixed copy uses the same structural frame and label inset as a slotted Select. */
+                          <div class="card-overview__period-fixed ds-control-frame">
+                            <ds-text
+                              as="span"
+                              class="ds-control-label-box"
+                              variant="text-body-medium"
+                              emphasis
+                              color={ALWAYS_DARK_PRIMARY}
+                            >
+                              {this.periodLabel}
+                            </ds-text>
+                          </div>
+                        )}
+                      </slot>
                     </div>
-                  ) : (
-                    <div class="card-overview__period">
-                      <div class="card-overview__period-current">
-                        <slot name="period">
-                          {this.periodLabel && (
-                            /* eslint-disable-next-line local/prefer-direct-ds-text -- Fixed copy uses the same structural frame and label inset as a slotted Select. */
-                            <div class="card-overview__period-fixed ds-control-frame">
-                              <ds-text
-                                as="span"
-                                class="ds-control-label-box"
-                                variant="text-body-medium"
-                                emphasis
-                                color={ALWAYS_DARK_PRIMARY}
-                              >
-                                {this.periodLabel}
-                              </ds-text>
-                            </div>
-                          )}
-                        </slot>
-                      </div>
-                      {this.comparisonLabel && (
-                        <ds-text
-                          as="span"
-                          class="card-overview__period-comparison ds-control-label-box"
-                          variant="text-body-medium"
-                          color={ALWAYS_DARK_SECONDARY}
-                        >
-                          {this.comparisonLabel}
-                        </ds-text>
-                      )}
-                    </div>
-                  )}
-                  <div class="card-overview__filter">
-                    {/*
-                      Period control is application owned: it varies by product surface.
-                      While loading it is stood in for by a control-shaped skeleton so the
-                      header keeps its resolved proportions.
-                    */}
-                    {this.isLoading ? (
-                      <ds-skeleton
-                        variant="control"
-                        controlSize="md"
-                        width="128px"
-                        background="always-dark"
-                      />
-                    ) : (
-                      <slot name="filter" />
+                    {this.comparisonLabel && (
+                      <ds-text
+                        as="span"
+                        class="card-overview__period-comparison ds-control-label-box"
+                        variant="text-body-medium"
+                        color={ALWAYS_DARK_SECONDARY}
+                      >
+                        {this.comparisonLabel}
+                      </ds-text>
                     )}
+                  </div>
+                  <div class="card-overview__filter">
+                    <slot name="filter" />
                   </div>
                 </div>
               </div>

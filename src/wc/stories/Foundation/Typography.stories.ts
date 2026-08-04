@@ -35,8 +35,8 @@ type VariantSpec = {
 };
 
 const VARIANTS: VariantSpec[] = [
-  { variant: 'text-display-medium', emphasis: true,  label: 'text-display-medium', spec: '44px / 64px  bold', sample: 'Display Medium' },
-  { variant: 'text-display-medium', emphasis: false, label: 'text-display-medium regular', spec: '44px / 64px  semibold', sample: 'Display Medium' },
+  { variant: 'text-display-medium', emphasis: true,  label: 'text-display-medium', spec: '44px / 56px  bold', sample: 'Display Medium' },
+  { variant: 'text-display-medium', emphasis: false, label: 'text-display-medium regular', spec: '44px / 56px  semibold', sample: 'Display Medium' },
   { variant: 'text-display-small',  emphasis: true,  label: 'text-display-small', spec: '32px / 48px  bold', sample: 'Display Small' },
   { variant: 'text-display-small',  emphasis: false, label: 'text-display-small regular', spec: '32px / 48px  semibold', sample: 'Display Small' },
   { variant: 'text-title-large',    emphasis: true,  label: 'text-title-large', spec: '24px / 32px  semibold', sample: 'Title Large' },

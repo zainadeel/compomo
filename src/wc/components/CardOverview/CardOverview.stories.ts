@@ -276,7 +276,14 @@ export const Loading: Story = {
   parameters: { controls: { disable: true } },
   render: () => html`
     <div style="${FRAME}">
-      <ds-card-overview overview-label="Loading safety summary" is-loading></ds-card-overview>
+      <ds-card-overview
+        overview-label="Loading safety summary"
+        period-label="Jul 27"
+        comparison-label="vs."
+        is-loading
+      >
+        ${comparisonSelect()}
+      </ds-card-overview>
     </div>
   `,
 };

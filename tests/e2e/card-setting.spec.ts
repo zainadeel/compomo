@@ -22,7 +22,11 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
       expectedMinHeight: Number.parseFloat(
         style.getPropertyValue('--dimension-card-height-sm')
       ),
+      borderRadius: style.borderRadius,
+      expectedBorderRadius: style.getPropertyValue('--dimension-radius-125').trim(),
+      boxShadow: style.boxShadow,
       headerHeight: header?.getBoundingClientRect().height,
+      headerBackground: header ? getComputedStyle(header).backgroundColor : undefined,
       headerPadding: header ? getComputedStyle(header).padding : undefined,
       headerGap: header ? getComputedStyle(header).gap : undefined,
       headerBoxSizing: header ? getComputedStyle(header).boxSizing : undefined,
@@ -31,7 +35,10 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
 
   expect(geometry.width).toBe(geometry.expectedWidth);
   expect(geometry.minHeight).toBe(geometry.expectedMinHeight);
+  expect(geometry.borderRadius).toBe(geometry.expectedBorderRadius);
+  expect(geometry.boxShadow).not.toBe('none');
   expect(geometry.headerHeight).toBe(48);
+  expect(geometry.headerBackground).toBe('rgba(0, 0, 0, 0)');
   expect(geometry.headerPadding).toBe('8px');
   expect(geometry.headerGap).toBe('8px');
   expect(geometry.headerBoxSizing).toBe('border-box');
@@ -44,6 +51,18 @@ test('emits typed actions while the parent enforces one editing section', async 
   await page.getByRole('button', { name: 'Edit General' }).click();
   await expect(general).toHaveClass(/card-setting--editing/);
   await expect(drivers).not.toHaveClass(/card-setting--editing/);
+
+  const editGeometry = await general.evaluate(element => {
+    const style = getComputedStyle(element);
+    const body = element.querySelector<HTMLElement>('.card-setting__body');
+    return {
+      bodyTopRadius: body ? getComputedStyle(body).borderTopRightRadius : undefined,
+      expectedBodyTopRadius: style.getPropertyValue('--dimension-radius-125').trim(),
+      boxShadow: style.boxShadow,
+    };
+  });
+  expect(editGeometry.bodyTopRadius).toBe(editGeometry.expectedBodyTopRadius);
+  expect(editGeometry.boxShadow).not.toBe('none');
 
   await page.getByRole('button', { name: 'Edit Driver identification' }).click();
   await expect(general).not.toHaveClass(/card-setting--editing/);

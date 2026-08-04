@@ -5,10 +5,25 @@ import { writePackageVersion, writeStorybookStamp } from './write-build-stamp.mj
 writePackageVersion();
 
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const storybookWatchEnv =
+  process.platform === 'darwin' && process.env.WATCHPACK_POLLING === undefined
+    ? { WATCHPACK_POLLING: '1000' }
+    : {};
 
 const children = new Set();
 let storybookStarted = false;
 let shuttingDown = false;
+
+const stopChild = (child, signal = 'SIGTERM') => {
+  if (!child.pid || child.exitCode !== null) return;
+
+  try {
+    if (process.platform === 'win32') child.kill(signal);
+    else process.kill(-child.pid, signal);
+  } catch (error) {
+    if (error?.code !== 'ESRCH') throw error;
+  }
+};
 
 const cleanCollisions = () => {
   const collisions = cleanFileProviderCollisions();
@@ -65,6 +80,7 @@ const spawnScript = (scriptName, prefix, onLine, extraEnv = {}) => {
   const child = spawn(npmCmd, ['run', scriptName], {
     stdio: ['inherit', 'pipe', 'pipe'],
     env: { ...process.env, ...extraEnv },
+    detached: process.platform !== 'win32',
   });
 
   children.add(child);
@@ -77,7 +93,7 @@ const spawnScript = (scriptName, prefix, onLine, extraEnv = {}) => {
 
     if (code !== 0) {
       shuttingDown = true;
-      for (const other of children) other.kill('SIGTERM');
+      for (const other of children) stopChild(other);
       process.exit(code ?? 1);
     }
   });
@@ -88,7 +104,10 @@ const spawnScript = (scriptName, prefix, onLine, extraEnv = {}) => {
 const startStorybook = () => {
   if (storybookStarted) return;
   storybookStarted = true;
-  spawnScript('storybook:ui', 'storybook', undefined, { DS_STENCIL_WATCH: '1' });
+  spawnScript('storybook:ui', 'storybook', undefined, {
+    DS_STENCIL_WATCH: '1',
+    ...storybookWatchEnv,
+  });
 };
 
 const watcher = spawnScript('dev:components', 'stencil', line => {
@@ -111,7 +130,7 @@ const shutdown = signal => {
   clearInterval(collisionSweep);
 
   for (const child of children) {
-    child.kill(signal);
+    stopChild(child, signal);
   }
 
   // Give children a moment to exit before we leave.
@@ -120,6 +139,7 @@ const shutdown = signal => {
 
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGHUP', () => shutdown('SIGHUP'));
 
 watcher.on('spawn', () => {
   process.stdout.write('[storybook-dev] Waiting for initial Stencil watch build before starting Storybook...\n');

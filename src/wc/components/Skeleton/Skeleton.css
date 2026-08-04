@@ -70,11 +70,11 @@
 :host(.skeleton--text) {
   width: 100%;
   height: var(--ds-skeleton-canvas-size);
-  padding-block: var(--dimension-space-025);
+  padding-block: 0;
 }
 
 :host(.skeleton--text) .skeleton__shape {
-  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));
+  height: 75%;
 }
 
 :host(.skeleton--text-text-display-medium) { --ds-skeleton-canvas-size: var(--typography-lineheight-3xl); }
@@ -92,12 +92,12 @@
 :host(.skeleton--icon) {
   width: var(--ds-skeleton-canvas-size);
   height: var(--ds-skeleton-canvas-size);
-  padding: var(--dimension-space-025);
+  padding: 0;
 }
 
 :host(.skeleton--icon) .skeleton__shape {
-  width: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));
-  height: calc(var(--ds-skeleton-canvas-size) - var(--dimension-space-050));
+  width: 75%;
+  height: 75%;
 }
 
 :host(.skeleton--icon.skeleton--rounded) .skeleton__shape {

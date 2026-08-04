@@ -65,54 +65,57 @@ export class CardSetting {
           '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],
         }}
       >
-        <header class="card-setting__header ds-chrome-row ds-chrome-space--md">
-          <ds-text
-            class="card-setting__title"
-            variant="text-title-small"
-            emphasis
-            color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
-            as="h2"
-          >
-            {this.heading}
-          </ds-text>
-          <div class="card-setting__actions">
-          {!editing ? (
-            <ds-button-unfilled
-              variant="icon"
-              type="button"
-              icon="Pencil"
-              aria-label={this.editLabel}
-              onDsClick={(event: CustomEvent<MouseEvent>) =>
-                this.emitAction('edit', event.detail)
-              }
-            />
-          ) : (
-            [
+        <header class="card-setting__header ds-chrome-header">
+          {/* eslint-disable-next-line local/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
+          <div class="card-setting__copy ds-chrome-header__copy ds-control--md">
+            <ds-text
+              class="card-setting__title ds-chrome-header__heading"
+              variant="text-title-small"
+              emphasis
+              color={editing ? FAINT_BRAND_TITLE_COLOR : 'primary'}
+              as="h2"
+            >
+              {this.heading}
+            </ds-text>
+          </div>
+          <div class="card-setting__actions ds-chrome-header__trailing">
+            {!editing ? (
               <ds-button-unfilled
-                key="cancel"
                 variant="icon"
                 type="button"
-                icon="Cross"
-                background="bold"
-                aria-label={this.cancelLabel}
+                icon="Pencil"
+                aria-label={this.editLabel}
                 onDsClick={(event: CustomEvent<MouseEvent>) =>
-                  this.emitAction('cancel', event.detail)
+                  this.emitAction('edit', event.detail)
                 }
-              />,
-              <ds-button-filled
-                key="save"
-                variant="icon"
-                type="button"
-                icon="Check"
-                intent="brand"
-                contrast="faint"
-                aria-label={this.saveLabel}
-                onDsClick={(event: CustomEvent<MouseEvent>) =>
-                  this.emitAction('save', event.detail)
-                }
-              />,
-            ]
-          )}
+              />
+            ) : (
+              [
+                <ds-button-unfilled
+                  key="cancel"
+                  variant="icon"
+                  type="button"
+                  icon="Cross"
+                  background="bold"
+                  aria-label={this.cancelLabel}
+                  onDsClick={(event: CustomEvent<MouseEvent>) =>
+                    this.emitAction('cancel', event.detail)
+                  }
+                />,
+                <ds-button-filled
+                  key="save"
+                  variant="icon"
+                  type="button"
+                  icon="Check"
+                  intent="brand"
+                  contrast="faint"
+                  aria-label={this.saveLabel}
+                  onDsClick={(event: CustomEvent<MouseEvent>) =>
+                    this.emitAction('save', event.detail)
+                  }
+                />,
+              ]
+            )}
           </div>
         </header>
         <div class="card-setting__body">

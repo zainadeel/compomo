@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^5.1.1",
+        "@ds-mo/tokens ^5.1.2",
         "@ds-mo/icons ^6.4.0"
       ],
       "optional": [],
@@ -2050,11 +2050,11 @@
             "Trend is supplied already resolved as a direction, a formatted value, and a tone. Whether a rise reads well is a product decision, so the component never infers tone from the numbers. Derive it with resolveMetricTrend.",
             "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
             "Omit score to render a centered Score unavailable cell with a tertiary border and no score fill. Set scoreErrorMessage to replace that copy while the measures remain readable.",
-            "Loading replaces the score and the measures with skeletons and does not alter the slotted period control.",
+            "Loading replaces the score and measures with skeletons and does not alter the slotted period control. When measures are already supplied, their count preserves the resolved grid shape; otherwise five measure placeholders join the score in the standard six-cell grid.",
             "At most seven measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
             "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary.",
             "A numeric safety score infers fair from 0–50, good from 51–80, and excellent from 81–100. The level can be supplied explicitly when the displayed value is not numeric. The deprecated band field is ignored.",
-            "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. The display value removes 12px from both block edges of its line box so it does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
+            "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. The display value removes 8px from both block edges of its line box so it does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
             "During page-controlled scroll collapse, the component preserves its expanded flow height and stationary reporting bar while the metric grid moves and clips beneath it. Elevation remains fitted to the visible surface.",
             "compact is exactly 48px high and renders only the reporting bar. It omits Score, measures, and footer."
           ],
@@ -7269,7 +7269,7 @@
             "The owner preserves focus and meaningful reading order when replacing placeholders with real content."
           ],
           "states": [
-            "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes; control atoms inherit the selected control density's default radius.",
+            "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes. Text bars occupy 75% of their line-height canvas, while icon shapes occupy 75% of their square canvas; both remain centered with a proportional 12.5% inset per applicable edge. Control atoms inherit the selected control density's default radius.",
             "Compose approximate line count, hierarchy, widths, and control placement without simulating actual values.",
             "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
             "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",

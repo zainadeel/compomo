@@ -28,6 +28,54 @@ test('matches selected metric canvases and resolves numeric width to pixels', as
   await expect(control.locator('.skeleton__shape')).toHaveCSS('border-radius', '10px');
 });
 
+test('scales icon shape insets proportionally from the medium canvas', async ({ page }) => {
+  const icon = page.locator('#icon');
+  const geometry = () =>
+    icon.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const shape = element.shadowRoot!.querySelector<HTMLElement>('.skeleton__shape')!;
+      const shapeBounds = shape.getBoundingClientRect();
+      const tenth = (value: number) => Math.round(value * 10) / 10;
+      return {
+        hostSize: tenth(host.width),
+        shapeSize: tenth(shapeBounds.width),
+        inset: tenth(shapeBounds.left - host.left),
+      };
+    });
+
+  await expect.poll(geometry).toEqual({ hostSize: 20, shapeSize: 15, inset: 2.5 });
+
+  await icon.evaluate(element => {
+    (element as HTMLElement & { iconSize: string }).iconSize = '3xl';
+  });
+  await expect(icon).toHaveClass(/skeleton--icon-3xl/);
+  await expect.poll(geometry).toEqual({ hostSize: 56, shapeSize: 42, inset: 7 });
+});
+
+test('scales text bar block insets proportionally from the body-medium canvas', async ({ page }) => {
+  const text = page.locator('#text');
+  const geometry = () =>
+    text.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const shape = element.shadowRoot!.querySelector<HTMLElement>('.skeleton__shape')!;
+      const shapeBounds = shape.getBoundingClientRect();
+      const tenth = (value: number) => Math.round(value * 10) / 10;
+      return {
+        hostHeight: tenth(host.height),
+        shapeHeight: tenth(shapeBounds.height),
+        inset: tenth(shapeBounds.top - host.top),
+      };
+    });
+
+  await expect.poll(geometry).toEqual({ hostHeight: 20, shapeHeight: 15, inset: 2.5 });
+
+  await text.evaluate(element => {
+    (element as HTMLElement & { textVariant: string }).textVariant = 'text-display-medium';
+  });
+  await expect(text).toHaveClass(/skeleton--text-text-display-medium/);
+  await expect.poll(geometry).toEqual({ hostHeight: 56, shapeHeight: 42, inset: 7 });
+});
+
 test('uses concise background contexts with explicit faint support', async ({ page }) => {
   const skeleton = page.locator('#text');
   const contexts = [

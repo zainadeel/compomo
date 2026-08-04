@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/web-components-vite';
 import type { Plugin, ViteDevServer } from 'vite';
+import { unwatchFile, watchFile } from 'node:fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -10,14 +11,10 @@ const PACKAGE_JSON = resolve(PROJECT_ROOT, 'package.json');
 const PACKAGE_VERSION_JSON = resolve(PROJECT_ROOT, '.storybook/static/package-version.json');
 
 const RELOAD_DEBOUNCE_MS = 350;
+const RELOAD_POLL_INTERVAL_MS = 500;
 
 function normalizePath(filePath: string): string {
   return filePath.replace(/\\/g, '/');
-}
-
-function isStencilDistOutput(filePath: string): boolean {
-  const normalized = normalizePath(filePath);
-  return normalized === normalizePath(DIST_STAMP);
 }
 
 function createDistReloadPlugin(): Plugin {
@@ -36,32 +33,31 @@ function createDistReloadPlugin(): Plugin {
         }, RELOAD_DEBOUNCE_MS);
       };
 
-      const onDistFileEvent = (filePath: string) => {
-        if (!isStencilDistOutput(filePath)) return;
+      const watchedFiles = new Map([
+        [DIST_STAMP, 'component build complete'],
+        [PACKAGE_JSON, 'package version'],
+        [PACKAGE_VERSION_JSON, 'package version'],
+      ]);
 
-        scheduleFullReload('component build complete');
-      };
+      for (const [filePath, reason] of watchedFiles) {
+        watchFile(
+          filePath,
+          { interval: RELOAD_POLL_INTERVAL_MS, persistent: false },
+          (current, previous) => {
+            if (
+              current.mtimeMs === previous.mtimeMs &&
+              current.size === previous.size
+            ) {
+              return;
+            }
+            scheduleFullReload(reason);
+          },
+        );
+      }
 
-      const onPackageVersionEvent = (filePath: string) => {
-        const normalized = normalizePath(filePath);
-        if (
-          normalized !== normalizePath(PACKAGE_JSON) &&
-          normalized !== normalizePath(PACKAGE_VERSION_JSON)
-        ) {
-          return;
-        }
-        scheduleFullReload('package version');
-      };
-
-      server.watcher.on('add', onDistFileEvent);
-      server.watcher.on('change', onDistFileEvent);
-      server.watcher.on('unlink', onDistFileEvent);
-      server.watcher.on('change', onPackageVersionEvent);
-
-      // dist/ is gitignored — must opt in explicitly (watch.ignored below also allows it).
-      server.watcher.add(DIST_STAMP);
-      server.watcher.add(PACKAGE_JSON);
-      server.watcher.add(PACKAGE_VERSION_JSON);
+      server.httpServer?.once('close', () => {
+        for (const filePath of watchedFiles.keys()) unwatchFile(filePath);
+      });
     },
   };
 }
@@ -101,7 +97,8 @@ const config: StorybookConfig = {
       resolve(PROJECT_ROOT, 'dist'),
     ];
 
-    // dist/ is in .gitignore — Vite's default watcher skips it unless we allow it here.
+    // Stencil publishes one atomic completion stamp. The reload plugin polls that
+    // file directly, so Vite does not need to watch the generated dist tree.
     config.server.watch = {
       ...config.server.watch,
       awaitWriteFinish: {
@@ -110,9 +107,9 @@ const config: StorybookConfig = {
       },
       ignored: (filePath: string) => {
         const normalized = normalizePath(filePath);
-        if (isStencilDistOutput(normalized)) return false;
         if (normalized.includes('/node_modules/')) return true;
         if (normalized.includes('/.git/')) return true;
+        if (normalized.includes('/dist/')) return true;
         return false;
       },
     };

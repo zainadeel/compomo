@@ -58,6 +58,7 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
     PanelToolHeader: /panel-tool-header ds-chrome-header ds-chrome-header--bounded/,
     BarTitle: /'ds-chrome-header': compact/,
     CardChart: /card-chart__header ds-chrome-header/,
+    CardSetting: /card-setting__header ds-chrome-header/,
   } as const;
 
   for (const [component, contract] of Object.entries(consumers)) {
@@ -69,22 +70,6 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
       component,
     );
   }
-});
-
-test('CardSetting pilots md row chrome while retaining explicit 48px ownership', () => {
-  const source = read('src/wc/components/CardSetting/CardSetting.tsx');
-  const css = read('src/wc/components/CardSetting/CardSetting.css');
-
-  assert.match(source, /card-setting__header ds-chrome-row ds-chrome-space--md/);
-  assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
-  assert.match(
-    css,
-    /\.card-setting__header\s*{[\s\S]*?height: var\(--dimension-size-600\);/,
-  );
-  assert.doesNotMatch(
-    css,
-    /\.card-setting__header\s*{[^}]*(?:padding|gap): var\(--dimension-space-100\);/,
-  );
 });
 
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {

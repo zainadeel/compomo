@@ -1,6 +1,8 @@
-@import '../../utils/chrome-layout.css';
+@import '../../utils/chrome-header.css';
+@import '../../utils/forced-colors.css';
 
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -8,46 +10,55 @@
   min-height: var(--_card-setting-min-height);
   max-width: 100%;
   overflow: hidden;
-  background-color: var(--color-background-primary);
   border: none;
-  border-radius: var(--dimension-radius-025);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
+  border-radius: var(--dimension-radius-125);
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-shadow-elevated-sm);
+}
+
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow: var(--effect-highlight-elevated-sm);
+  pointer-events: none;
 }
 
 :host(.card-setting--editing) {
   background-color: var(--color-background-bold-brand);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-025)
+    var(--color-border-bold-brand);
+}
+
+:host(.card-setting--editing)::after {
+  box-shadow: none;
 }
 
 .card-setting__header {
-  justify-content: space-between;
-  height: var(--dimension-size-600);
   flex: 0 0 auto;
-  background-color: var(--color-background-secondary);
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
 }
 
 :host(.card-setting--editing) .card-setting__header {
-  background-color: transparent;
   border-bottom-color: transparent;
 }
 
-ds-text.card-setting__title {
-  display: flex;
-  flex: 1 1 auto;
+.card-setting__copy {
   align-items: center;
-  min-width: 0;
-  padding: calc(var(--dimension-space-075) + var(--dimension-space-025));
-  box-sizing: border-box;
+}
+
+ds-text.card-setting__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   -webkit-user-select: none;
   user-select: none;
 }
 
 .card-setting__actions {
-  display: flex;
   flex-shrink: 0;
-  align-items: center;
-  gap: var(--dimension-space-100);
 }
 
 .card-setting__body {
@@ -57,9 +68,21 @@ ds-text.card-setting__title {
   min-height: 0;
   box-sizing: border-box;
   background-color: var(--color-background-primary);
-  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);
+  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
 }
 
 :host(.card-setting--editing) .card-setting__body {
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--dimension-radius-125);
+}
+
+@media (forced-colors: active) {
+  :host {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  :host::after {
+    box-shadow: none;
+  }
 }

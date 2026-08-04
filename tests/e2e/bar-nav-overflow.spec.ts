@@ -180,7 +180,7 @@ test.describe('BarNav responsive overflow', () => {
     expect(focusRing!.afterOutlineOffset).toBe('-2px');
   });
 
-  test('overflow menu opens from the ellipses trigger', async ({ page }) => {
+  test('overflow menu opens from the down-chevron trigger', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(320));
     await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
 
@@ -221,7 +221,7 @@ test.describe('BarNav responsive overflow', () => {
         | null;
       return icon?.name ?? null;
     });
-    expect(iconName).toBe('Ellipses');
+    expect(iconName).toBe('ChevronDown');
   });
 
   test('pointer-opened overflow menu does not show focus ring or hover paint', async ({

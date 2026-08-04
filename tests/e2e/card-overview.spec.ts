@@ -158,8 +158,8 @@ test('keeps equal-height cell content with the inset, content, and text balance 
     Array.from({ length: 5 }, () => ({ top: '0px', right: '2px', bottom: '0px', left: '2px' }))
   );
   expect(Math.max(...geometry.cellHeights) - Math.min(...geometry.cellHeights)).toBeLessThan(0.1);
-  expect(geometry.scoreValueMarginTop).toBe('-12px');
-  expect(geometry.scoreValueMarginBottom).toBe('-12px');
+  expect(geometry.scoreValueMarginTop).toBe('-8px');
+  expect(geometry.scoreValueMarginBottom).toBe('-8px');
   expect(geometry.divider).not.toBe('none');
   expect(geometry.actionRadius).toBe('2px');
   expect(geometry.scoreRadius).toBe('2px');
@@ -170,6 +170,54 @@ test('keeps equal-height cell content with the inset, content, and text balance 
     getComputedStyle(element, '::after').backgroundColor
   );
   expect(hoverFill).not.toBe('rgba(0, 0, 0, 0)');
+});
+
+test('keeps loading placeholders in the resolved content geometry', async ({ page }) => {
+  const card = page.locator('#loading-overview');
+  const scoreContent = card.locator('.card-overview__score-content');
+  const metricAction = card.locator('.card-overview__metric-action').first();
+  const metricContent = metricAction.locator('.card-overview__metric-content');
+
+  await expect(card.locator('.card-overview__header')).toContainText('Jul 27');
+  await expect(card.locator('.card-overview__header')).toContainText('Previous 4 weeks');
+  await expect(card.locator('.card-overview__metric-content')).toHaveCount(5);
+
+  const geometry = await card.evaluate(element => {
+    const score = element.querySelector<HTMLElement>('.card-overview__score-content')!;
+    const scoreFigure = element.querySelector<HTMLElement>('.card-overview__score-figure')!;
+    const metricAction = element.querySelector<HTMLElement>('.card-overview__metric-action')!;
+    const metricContent = element.querySelector<HTMLElement>('.card-overview__metric-content')!;
+    return {
+      scoreHeight: score.getBoundingClientRect().height,
+      scoreFigureMarginTop: getComputedStyle(scoreFigure).marginTop,
+      scoreFigureMarginBottom: getComputedStyle(scoreFigure).marginBottom,
+      metricActionWidth: metricAction.getBoundingClientRect().width,
+      metricContentWidth: metricContent.getBoundingClientRect().width,
+    };
+  });
+
+  expect(geometry.scoreHeight).toBeGreaterThan(0);
+  expect(geometry.scoreFigureMarginTop).toBe('-8px');
+  expect(geometry.scoreFigureMarginBottom).toBe('-8px');
+  expect(geometry.metricContentWidth).toBe(geometry.metricActionWidth - 12);
+  await expect(scoreContent).toBeVisible();
+  await expect(metricContent).toBeVisible();
+
+  const metricSkeletonWidths = await metricContent.locator('ds-skeleton').evaluateAll(elements =>
+    elements.map(element => element.getBoundingClientRect().width)
+  );
+  expect(metricSkeletonWidths[0]).toBeCloseTo(geometry.metricContentWidth * 0.35, 1);
+  expect(metricSkeletonWidths.slice(1)).toEqual([40, 28]);
+});
+
+test('preserves an authored metric count without leaking resolved data while loading', async ({
+  page,
+}) => {
+  const card = page.locator('#loading-with-metrics');
+
+  await expect(card.locator('.card-overview__metric')).toHaveCount(3);
+  await expect(card.locator('.card-overview__metric ds-skeleton')).toHaveCount(9);
+  await expect(card).not.toContainText('Metric 1');
 });
 
 test('supports fixed-date and selectable-range period compositions', async ({ page }) => {
