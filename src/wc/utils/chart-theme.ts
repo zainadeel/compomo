@@ -9,7 +9,8 @@ export interface ChartTheme {
   gridStrokeWidth: string;
   barRadius: string;
   polarCornerRadius: number;
-  dotRadius: string;
+  polarLabelGap: number;
+  dotRadius: number | string;
   focusRadius: number;
   areaOpacity: number;
   heatmapMinimumOpacity: number;
@@ -26,7 +27,8 @@ export const defaultChartTheme: ChartTheme = {
   gridStrokeWidth: 'var(--dimension-stroke-width-012)',
   barRadius: 'var(--dimension-radius-025)',
   polarCornerRadius: 2,
-  dotRadius: 'var(--dimension-size-075)',
+  polarLabelGap: 16,
+  dotRadius: 'var(--dimension-stroke-width-025)',
   focusRadius: 6,
   areaOpacity: 0.25,
   heatmapMinimumOpacity: 0.25,
@@ -51,6 +53,8 @@ export function resolveChartTheme(element?: Element): ChartTheme {
   return {
     ...defaultChartTheme,
     polarCornerRadius: resolveCssLengthPx(TOKEN_DEFAULTS.radius025, 2),
+    polarLabelGap: resolveCssLengthPx(TOKEN_DEFAULTS.space200, 16),
+    dotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth025, 2),
     stackGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
     donutGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
     areaOpacity: resolvedLowOpacity,

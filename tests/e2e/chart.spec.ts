@@ -140,6 +140,40 @@ test('renders axis baselines and outward tick stubs independently from grids and
   expect(extendsOutward).toBe(true);
 });
 
+test('frames the plot with light top and right boundaries and clips two-pixel edge dots intentionally', async ({ page }) => {
+  const chart = page.locator('#density-chart');
+  const boundaries = chart.locator('.chart__plot-boundary');
+  const dots = chart.locator('circle.chart__mark');
+  await expect(boundaries).toHaveCount(2);
+  await expect(dots).toHaveCount(5);
+
+  const geometry = await chart.evaluate(element => {
+    const clip = element.querySelector('clipPath rect') as SVGRectElement;
+    const top = element.querySelector('.chart__plot-boundary--top') as SVGLineElement;
+    const right = element.querySelector('.chart__plot-boundary--right') as SVGLineElement;
+    const circles = [...element.querySelectorAll<SVGCircleElement>('circle.chart__mark')];
+    const middle = circles[2];
+    const last = circles.at(-1)!;
+    const clipRight = Number(clip.getAttribute('x')) + Number(clip.getAttribute('width'));
+    return {
+      dotRadius: middle.r.baseVal.value,
+      lastCenter: last.cx.baseVal.value,
+      clipRight,
+      topY: Number(top.getAttribute('y1')),
+      clipTop: Number(clip.getAttribute('y')),
+      rightX: Number(right.getAttribute('x1')),
+      boundaryStroke: getComputedStyle(top).stroke,
+      expectedStroke: getComputedStyle(element.querySelector('.chart__grid') as SVGLineElement).stroke,
+    };
+  });
+
+  expect(geometry.dotRadius).toBe(2);
+  expect(geometry.lastCenter).toBeCloseTo(geometry.clipRight, 4);
+  expect(geometry.topY).toBeCloseTo(geometry.clipTop, 4);
+  expect(geometry.rightX).toBeCloseTo(geometry.clipRight, 4);
+  expect(geometry.boundaryStroke).toBe(geometry.expectedStroke);
+});
+
 test('clips density marks to a zero-inclusive solved plot at wide and card widths', async ({ page }) => {
   const container = page.locator('#density-container');
   const chart = page.locator('#density-chart');

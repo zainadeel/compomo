@@ -78,6 +78,11 @@ describe('chart scene compiler', () => {
     y: { scale: scaleLinear, nice: true, grid: true },
   };
 
+  it('uses a two-pixel default dot radius and token-sized polar label clearance', () => {
+    assert.equal(defaultChartTheme.dotRadius, 'var(--dimension-stroke-width-025)');
+    assert.equal(defaultChartTheme.polarLabelGap, 16);
+  });
+
   it('preserves declaration order for layered marks', () => {
     const rows = [
       { id: 'a', x: 'A', y: 2, low: 1, high: 3 },

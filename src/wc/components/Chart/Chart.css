@@ -25,11 +25,17 @@
 
 .chart__grid,
 .chart__axis-line,
+.chart__plot-boundary,
 .chart__mark {
   vector-effect: non-scaling-stroke;
 }
 
 .chart__grid {
+  stroke: var(--color-foreground-quaternary);
+  stroke-width: var(--dimension-stroke-width-012);
+}
+
+.chart__plot-boundary {
   stroke: var(--color-foreground-quaternary);
   stroke-width: var(--dimension-stroke-width-012);
 }

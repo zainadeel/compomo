@@ -1,5 +1,5 @@
 import '/dist/components/ds-chart.js';
-import { arcMark, areaY, barY, cell, defineChart, lineY, pieLayout, polar, radialArea, radialDot, radialLine } from '/dist/lib/utils/index.js';
+import { arcMark, areaY, barY, cell, defineChart, dot, lineY, pieLayout, polar, radialArea, radialDot, radialLine } from '/dist/lib/utils/index.js';
 import { scaleBand, scaleLinear } from 'd3-scale';
 
 await customElements.whenDefined('ds-chart');
@@ -76,6 +76,7 @@ document.getElementById('density-chart').definition = defineChart({
   marks: [
     areaY(densityRows, { id: 'density-area', key: 'id', x: 'x', y: 'density', interactive: false }),
     lineY(densityRows, { id: 'density-line', key: 'id', x: 'x', y: 'density' }),
+    dot(densityRows, { id: 'density-dots', key: 'id', x: 'x', y: 'density' }),
   ],
   x: { scale: scaleLinear, nice: true, axis: { label: 'Value' } },
   y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Density' } },

@@ -18,7 +18,8 @@ test('chart chrome lines use subordinate foreground roles', () => {
   const css = read('src/wc/components/Chart/Chart.css');
   assert.match(css, /\.chart__axis-line[\s\S]*?stroke: var\(--color-foreground-tertiary\)/);
   assert.match(css, /\.chart__grid[\s\S]*?stroke: var\(--color-foreground-quaternary\)/);
-  assert.doesNotMatch(css, /\.chart__(?:axis-line|grid)[^{]*\{[^}]*foreground-primary/);
+  assert.match(css, /\.chart__plot-boundary[\s\S]*?stroke: var\(--color-foreground-quaternary\)/);
+  assert.doesNotMatch(css, /\.chart__(?:axis-line|grid|plot-boundary)[^{]*\{[^}]*foreground-primary/);
 });
 
 test('primary controls consume shared frame, icon, and label anatomy', () => {

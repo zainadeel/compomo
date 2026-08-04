@@ -191,7 +191,6 @@ interface ScaleResolution {
 
 const DEFAULT_MARGIN = { top: 16, right: 16, bottom: 32, left: 40 };
 const POLAR_MARGIN = 24;
-const AXIS_GAP = 8;
 const DEFAULT_TICK_SPACING = 8;
 const DEFAULT_TICK_SIZE = 4;
 const DEFAULT_TICK_PADDING = 4;
@@ -930,7 +929,7 @@ function buildPolarScene(
         const angle = angleFor(angleValue);
         const localX = Math.sin(angle);
         const localY = -Math.cos(angle);
-        const position = polarPoint(centerX, centerY, angle, outerRadius + AXIS_GAP);
+        const position = polarPoint(centerX, centerY, angle, outerRadius + theme.polarLabelGap);
         const measurement = measurer(spec.angle?.ticks?.format?.(angleValue, locale) ?? formatTick(angleValue, locale));
         const left = localX < -0.01 ? position.x - measurement.width : localX > 0.01 ? position.x : position.x - measurement.width / 2;
         const right = localX < -0.01 ? position.x : localX > 0.01 ? position.x + measurement.width : position.x + measurement.width / 2;
@@ -975,7 +974,7 @@ function buildPolarScene(
     angleDomain.forEach((angleValue, index) => {
       const angle = angleFor(angleValue);
       const end = polarPoint(centerX, centerY, angle, outerRadius);
-      const label = polarPoint(centerX, centerY, angle, outerRadius + AXIS_GAP);
+      const label = polarPoint(centerX, centerY, angle, outerRadius + theme.polarLabelGap);
       const localX = Math.sin(angle);
       const localY = -Math.cos(angle);
       guides.push(

@@ -390,6 +390,12 @@ export class Chart {
               ))}
               {scene.xAxis.label && <text class="chart__axis-title" x={(scene.plot.left + scene.plot.right) / 2} y={scene.height - 4} text-anchor="middle">{scene.xAxis.label}</text>}
               {scene.yAxis.label && <text class="chart__axis-title" x="8" y={(scene.plot.top + scene.plot.bottom) / 2} text-anchor="middle" dominant-baseline="middle" transform={`rotate(-90 8 ${(scene.plot.top + scene.plot.bottom) / 2})`}>{scene.yAxis.label}</text>}
+              {scene.coordinate === 'cartesian' && (
+                <g class="chart__plot-frame">
+                  <line class="chart__plot-boundary chart__plot-boundary--top" x1={scene.plot.left} x2={scene.plot.right} y1={scene.plot.top} y2={scene.plot.top} />
+                  <line class="chart__plot-boundary chart__plot-boundary--right" x1={scene.plot.right} x2={scene.plot.right} y1={scene.plot.top} y2={scene.plot.bottom} />
+                </g>
+              )}
             </g>
             <g class="chart__marks" aria-hidden="true" clip-path={scene.clip ? `url(#${this.clipId})` : undefined}>{scene.nodes.map(node => this.renderNode(node))}</g>
             {focus && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
