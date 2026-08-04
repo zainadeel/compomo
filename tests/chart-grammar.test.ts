@@ -98,6 +98,8 @@ describe('chart scene compiler', () => {
       ...axes,
     }), 480, 320);
     assert.deepEqual(scene.nodes.map(node => node.markId), ['area', 'rule', 'line', 'dots', 'dots']);
+    const dotNodes = scene.nodes.filter(node => node.markId === 'dots');
+    assert.ok(dotNodes.every(node => node.style.stroke === 'none' && node.style.strokeWidth === 0));
   });
 
   it('creates line gaps and omits invalid semantic points', () => {

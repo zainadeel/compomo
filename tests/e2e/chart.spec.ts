@@ -157,6 +157,8 @@ test('frames the plot with light top and right boundaries and clips three-pixel 
     const clipRight = Number(clip.getAttribute('x')) + Number(clip.getAttribute('width'));
     return {
       dotRadius: middle.r.baseVal.value,
+      dotStroke: getComputedStyle(middle).stroke,
+      dotStrokeWidth: middle.getAttribute('stroke-width'),
       lastCenter: last.cx.baseVal.value,
       clipRight,
       topY: Number(top.getAttribute('y1')),
@@ -168,6 +170,8 @@ test('frames the plot with light top and right boundaries and clips three-pixel 
   });
 
   expect(geometry.dotRadius).toBe(3);
+  expect(geometry.dotStroke).toBe('none');
+  expect(geometry.dotStrokeWidth).toBe('0');
   expect(geometry.lastCenter).toBeCloseTo(geometry.clipRight, 4);
   expect(geometry.topY).toBeCloseTo(geometry.clipTop, 4);
   expect(geometry.rightX).toBeCloseTo(geometry.clipRight, 4);

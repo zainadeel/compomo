@@ -774,7 +774,7 @@ function buildCartesianNodes(
         );
         statistics.outliers.forEach((value, index) => {
           const y = scalePosition(yScale, value);
-          if (y !== undefined) nodes.push({ type: 'circle', key: `${first.sceneKey}:outlier:${index}`, markId: first.markId, x: center, y, radius: theme.dotRadius, style: styleFor(first, mark, color, { fill: color, stroke: 'var(--color-background-primary)' }) });
+          if (y !== undefined) nodes.push({ type: 'circle', key: `${first.sceneKey}:outlier:${index}`, markId: first.markId, x: center, y, radius: theme.dotRadius, style: styleFor(first, mark, color, { fill: color, stroke: 'none', strokeWidth: 0 }) });
         });
         const summaryObservation: Observation = { ...first, y: statistics.median, value: statistics.median, datumKey: chartValueKey(first.x), sceneKey: `${first.markId}:${chartValueKey(first.x)}` };
         if (mark.options.interactive !== false) points.push(pointFor(summaryObservation, center, yMedian as number, color));
@@ -859,7 +859,7 @@ function buildCartesianNodes(
       if (x === undefined || y === undefined) return;
       if (mark.kind === 'dot') {
         const radius = 'r' in mark.options ? visualValue(observation.datum, observation.index, observation.source, mark.options.r, theme.dotRadius) : theme.dotRadius;
-        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x, y, radius, style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)' }) });
+        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x, y, radius, style: styleFor(observation, mark, color, { fill: color, stroke: 'none', strokeWidth: 0 }) });
       } else if (mark.kind === 'text' && observation.text) {
         const options = mark.options;
         nodes.push({
@@ -1043,7 +1043,7 @@ function buildPolarScene(
         const position = polarPoint(centerX, centerY, angleFor(observation.angle), radialPosition);
         const color = colorFor(observation);
         const radius = 'r' in mark.options ? visualValue(observation.datum, observation.index, observation.source, mark.options.r, theme.dotRadius) : theme.dotRadius;
-        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x: position.x, y: position.y, radius, style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)' }) });
+        nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x: position.x, y: position.y, radius, style: styleFor(observation, mark, color, { fill: color, stroke: 'none', strokeWidth: 0 }) });
         if (mark.options.interactive !== false) points.push(pointFor(observation, position.x, position.y, color));
       });
     }
