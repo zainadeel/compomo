@@ -1,6 +1,6 @@
 import '/dist/components/ds-chart.js';
 import { arcMark, areaY, barY, cell, defineChart, dot, lineY, pieLayout, polar, radialArea, radialDot, radialLine } from '/dist/lib/utils/index.js';
-import { scaleBand, scaleLinear } from 'd3-scale';
+import { scaleBand, scaleLinear, scalePoint } from 'd3-scale';
 
 await customElements.whenDefined('ds-chart');
 
@@ -80,6 +80,25 @@ document.getElementById('density-chart').definition = defineChart({
   ],
   x: { scale: scaleLinear, nice: true, axis: { label: 'Value' } },
   y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Density' } },
+});
+
+const comparisonRows = [
+  { id: 'jan-current', month: 'Jan', series: 'Current', value: 61 },
+  { id: 'feb-current', month: 'Feb', series: 'Current', value: 66 },
+  { id: 'mar-current', month: 'Mar', series: 'Current', value: 70 },
+  { id: 'jan-previous', month: 'Jan', series: 'Previous', value: 58 },
+  { id: 'feb-previous', month: 'Feb', series: 'Previous', value: 60 },
+  { id: 'mar-previous', month: 'Mar', series: 'Previous', value: 64 },
+];
+document.getElementById('multi-line-chart').definition = defineChart({
+  marks: [
+    lineY(comparisonRows, { id: 'score-lines', key: 'id', x: 'month', y: 'value', z: 'series', interactive: false }),
+    dot(comparisonRows, { id: 'score-points', key: 'id', x: 'month', y: 'value', z: 'series' }),
+  ],
+  x: { scale: scalePoint },
+  y: { scale: scaleLinear, nice: true, grid: true },
+  focus: 'group-x',
+  tooltip: true,
 });
 
 const radarRows = [

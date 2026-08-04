@@ -157,6 +157,8 @@ export interface ChartScene {
   maxFocusDistance?: number;
   tooltip: ChartSpec['tooltip'];
   clip: boolean;
+  focusDotCircleRadius: number | string;
+  focusDotHaloWidth: number | string;
 }
 
 interface Observation {
@@ -1103,7 +1105,7 @@ export function compileChartScene(
   const polar = spec.coordinate?.type === 'polar';
   if (polar) {
     const built = buildPolarScene(spec, marks, observations, width, height, locale, colorFor, theme, measurer);
-    return { width, height, coordinate: 'polar', ...built, xAxis: { ...EMPTY_AXIS }, yAxis: { ...EMPTY_AXIS }, center: spec.center, focus: spec.focus ?? 'nearest', maxFocusDistance: spec.maxFocusDistance, tooltip: spec.tooltip, clip: spec.clip ?? true };
+    return { width, height, coordinate: 'polar', ...built, xAxis: { ...EMPTY_AXIS }, yAxis: { ...EMPTY_AXIS }, center: spec.center, focus: spec.focus ?? 'nearest', maxFocusDistance: spec.maxFocusDistance, tooltip: spec.tooltip, clip: spec.clip ?? true, focusDotCircleRadius: dotCircleRadius(theme.focusDotRadius, theme.dotHaloWidth), focusDotHaloWidth: theme.dotHaloWidth };
   }
 
   if (!spec.x || !spec.y) throw new TypeError('Cartesian chart definitions require x and y scale options.');
@@ -1128,7 +1130,7 @@ export function compileChartScene(
     if (settled) break;
   }
   const built = buildCartesianNodes(marks, observations, xScale, yScale, plot, colorFor, theme);
-  return { width, height, coordinate: 'cartesian', plot, xAxis, yAxis, guides: [], nodes: built.nodes, points: built.points, center: spec.center, focus: spec.focus ?? 'nearest', maxFocusDistance: spec.maxFocusDistance, tooltip: spec.tooltip, clip: spec.clip ?? true };
+  return { width, height, coordinate: 'cartesian', plot, xAxis, yAxis, guides: [], nodes: built.nodes, points: built.points, center: spec.center, focus: spec.focus ?? 'nearest', maxFocusDistance: spec.maxFocusDistance, tooltip: spec.tooltip, clip: spec.clip ?? true, focusDotCircleRadius: dotCircleRadius(theme.focusDotRadius, theme.dotHaloWidth), focusDotHaloWidth: theme.dotHaloWidth };
 }
 
 export function findChartFocus(

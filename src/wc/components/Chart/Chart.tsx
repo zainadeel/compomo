@@ -318,6 +318,16 @@ export class Chart {
     ));
   }
 
+  private focusedCirclePoints(scene: ChartScene): ChartPoint[] {
+    if (!this.focusState) return [];
+    const circleKeys = new Set(
+      scene.nodes
+        .filter(node => node.type === 'circle')
+        .map(node => node.key),
+    );
+    return this.focusState.points.filter(point => circleKeys.has(point.sceneKey));
+  }
+
   private tooltipContent(): { heading?: string; items: ChartTooltipItem[] } | undefined {
     if (!this.scene || !this.focusState || this.scene.tooltip === false) return undefined;
     const options: ChartTooltipOptions =
@@ -358,6 +368,10 @@ export class Chart {
     const scene = this.scene;
     const tooltip = this.tooltipContent();
     const focus = this.focusState?.primary;
+    const focusedCirclePoints = scene ? this.focusedCirclePoints(scene) : [];
+    const groupedPointFocus = scene?.coordinate === 'cartesian' &&
+      scene.focus === 'group-x' &&
+      focusedCirclePoints.length > 1;
     const center = focus && scene?.center?.focused
       ? scene.center.focused(focus, this.locale ?? document.documentElement.lang ?? 'en')
       : scene?.center;
@@ -418,7 +432,30 @@ export class Chart {
               )}
             </g>
             {this.renderMarkLayers(scene)}
-            {focus && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
+            {groupedPointFocus && focus && (
+              <line
+                class="chart__focus-guide"
+                x1={focus.x}
+                x2={focus.x}
+                y1={scene.plot.top}
+                y2={scene.plot.bottom}
+                aria-hidden="true"
+              />
+            )}
+            {focusedCirclePoints.map(point => (
+              <circle
+                key={`focus-${point.sceneKey}`}
+                class="chart__focus-point"
+                cx={point.x}
+                cy={point.y}
+                r={scene.focusDotCircleRadius}
+                fill={point.color}
+                stroke="var(--color-background-primary)"
+                stroke-width={scene.focusDotHaloWidth}
+                aria-hidden="true"
+              />
+            ))}
+            {focus && focusedCirclePoints.length === 0 && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
             {center?.value && (
               <text
                 class="chart__center-value"

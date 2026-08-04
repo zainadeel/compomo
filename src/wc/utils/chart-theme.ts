@@ -12,7 +12,7 @@ export interface ChartTheme {
   polarLabelGap: number;
   dotRadius: number | string;
   dotHaloWidth: number | string;
-  focusRadius: number;
+  focusDotRadius: number | string;
   areaOpacity: number;
   heatmapMinimumOpacity: number;
   heatmapMaximumOpacity: number;
@@ -31,7 +31,7 @@ export const defaultChartTheme: ChartTheme = {
   polarLabelGap: 16,
   dotRadius: 'var(--dimension-stroke-width-025)',
   dotHaloWidth: 'var(--dimension-stroke-width-012)',
-  focusRadius: 6,
+  focusDotRadius: 'var(--dimension-stroke-width-037)',
   areaOpacity: 0.25,
   heatmapMinimumOpacity: 0.25,
   heatmapMaximumOpacity: 1,
@@ -58,6 +58,7 @@ export function resolveChartTheme(element?: Element): ChartTheme {
     polarLabelGap: resolveCssLengthPx(TOKEN_DEFAULTS.space200, 16),
     dotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth025, 2),
     dotHaloWidth: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
+    focusDotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth037, 3),
     stackGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
     donutGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
     areaOpacity: resolvedLowOpacity,

@@ -88,6 +88,18 @@
   pointer-events: none;
 }
 
+.chart__focus-guide {
+  stroke: var(--color-foreground-quaternary);
+  stroke-width: var(--dimension-stroke-width-012);
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.chart__focus-point {
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
 .chart__description,
 .chart__status {
   position: absolute;
@@ -101,7 +113,8 @@
 
 @media (forced-colors: active) {
   .chart__mark,
-  .chart__focus {
+  .chart__focus,
+  .chart__focus-point {
     forced-color-adjust: none;
   }
 

@@ -72,6 +72,41 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
   await expect(chart.locator('ds-tooltip-chart')).toHaveCount(0);
 });
 
+test('groups multi-line focus with a vertical guide and enlarged tooltip points', async ({ page }) => {
+  const chart = page.locator('#multi-line-chart');
+  const firstPoint = chart.locator('circle.chart__mark').first();
+  const pointBox = await firstPoint.boundingBox();
+  expect(pointBox).not.toBeNull();
+  await page.mouse.move(
+    pointBox!.x + pointBox!.width / 2,
+    pointBox!.y + pointBox!.height / 2,
+  );
+
+  await expect(chart.locator('.chart__focus-guide')).toHaveCount(1);
+  await expect(chart.locator('.chart__focus-point')).toHaveCount(2);
+  await expect(chart.locator('.tooltip-chart__item')).toHaveCount(2);
+
+  const geometry = await chart.evaluate(element => {
+    const guide = element.querySelector('.chart__focus-guide') as SVGLineElement;
+    const points = [...element.querySelectorAll<SVGCircleElement>('.chart__focus-point')];
+    const first = points[0];
+    const strokeWidth = Number.parseFloat(getComputedStyle(first).strokeWidth);
+    return {
+      pointCount: points.length,
+      guideX: Number(guide.getAttribute('x1')),
+      aligned: points.every(point => point.cx.baseVal.value === Number(guide.getAttribute('x1'))),
+      coreDiameter: first.r.baseVal.value * 2 - strokeWidth,
+      outerDiameter: first.r.baseVal.value * 2 + strokeWidth,
+    };
+  });
+
+  expect(geometry.pointCount).toBe(2);
+  expect(geometry.aligned).toBe(true);
+  expect(geometry.guideX).toBeGreaterThan(0);
+  expect(geometry.coreDiameter).toBe(6);
+  expect(geometry.outerDiameter).toBe(8);
+});
+
 test('stable keyed focus survives data reorder and resize', async ({ page }) => {
   const chart = page.locator('#chart');
   const surface = chart.locator('svg');

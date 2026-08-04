@@ -81,6 +81,7 @@ describe('chart scene compiler', () => {
   it('uses token-sized dot core, halo, and polar label clearance', () => {
     assert.equal(defaultChartTheme.dotRadius, 'var(--dimension-stroke-width-025)');
     assert.equal(defaultChartTheme.dotHaloWidth, 'var(--dimension-stroke-width-012)');
+    assert.equal(defaultChartTheme.focusDotRadius, 'var(--dimension-stroke-width-037)');
     assert.equal(defaultChartTheme.polarLabelGap, 16);
   });
 
